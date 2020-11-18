@@ -1,0 +1,69 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = { 1.91938996315, 1.5319600105286, 29.351999282837, },
+            bbMin = { -2.0629599094391, -1.5319900512695, 3.2851300239563, },
+        },
+        collider = {
+            params = { },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            type = "MESH",
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            animations = {
+                                forever = {
+                                    forward = true,
+                                    params = {
+                                        keyframes = {
+                                            {
+                                                rot = { 0, 0, 0, },
+                                                time = 0,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                            {
+                                                rot = { 90, 0, 0, },
+                                                time = 3000,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                            {
+                                                rot = { 180, 0, 0, },
+                                                time = 6000,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                            {
+                                                rot = { 270, 0, 0, },
+                                                time = 9000,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                            {
+                                                rot = { 360, 0, 0, },
+                                                time = 12000,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                        },
+                                        origin = { 0, 0, 0, },
+                                    },
+                                    type = "KEYFRAME",
+                                },
+                            },
+                            materials = { "asset/icon/asset_icon_mark.mtl", },
+                            mesh = "asset/icon/lod_0_icon_exclamation_mark.msh",
+                            transf = { 10, 0, 0, 0, 0, 10, 0, 0, 0, 0, 10, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 8000,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+    end
+    

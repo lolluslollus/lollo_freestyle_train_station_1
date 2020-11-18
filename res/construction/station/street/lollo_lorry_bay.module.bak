@@ -1,0 +1,96 @@
+local transf = require "transf"
+local vec3 = require "vec3"
+local modulesutil = require "modulesutil"
+local constructionutil = require "constructionutil"
+local edgeUtils = require('lollo_lorry_station/edgeHelper')
+local slotUtils = require('lollo_lorry_station/slotHelpers')
+local _constants = require('lollo_lorry_station/constants')
+
+function data()
+
+return { 
+	cost = {
+		price = 24000,
+	},
+	category = {
+		categories = { "cargo", },
+	},
+	description = {
+		name = _("Lollo lorry bay"),
+		description = _("Lollo lorry bay."),
+		icon = "ui/construction/station/street/platform_cargo.tga"
+	}, 
+	availability = {
+		yearFrom = 0,
+		yearTo = 0
+	},
+	type = _constants.lorryBayStreetside15x5ModuleType,
+	order = {
+		value = 6,
+	},
+	metadata = {
+		cargo = true,
+	},
+	-- skipCollision = true, -- useless
+	updateFn = function(result, transform, tag, slotId, addModelFn, params)
+        local x, y, baseId = result.demangleId(slotId)
+		if not x or not y or not baseId then return end
+
+		-- tag looks like __module_121309, it has nothing to do with the slot tag
+		-- params are those of the modular construction
+		-- result is that of the parent modular construction, and they contain the slots with their tags
+		print('LOLLO slotId, x, y, baseId = ', slotId, x, y, baseId)
+		print('LOLLO module received transform =')
+		debugPrint(transform)
+		print('LOLLO module received tag =')
+		debugPrint(tag)
+		print('LOLLO module received slotId =')
+		debugPrint(slotId)
+		print('LOLLO module received result =')
+		debugPrint(result)
+
+		local modelTag = _constants.lorryBayStreetside15x5ModelTag
+		-- if type(result) == 'table' and type (result.slots) == 'table' then
+		-- 	for _, slotData in pairs(result.slots) do
+		-- 		if slotData.id == slotId and type(slotData.tag) == 'table' then
+		-- 			modelTag = slotData.tag
+		-- 			break
+		-- 		end
+		-- 	end
+		-- end
+		addModelFn(_constants.lorryBayStreetside15x5ModelFileName, transf.transl(vec3.new(-_constants.anyStreetsideXShift, 0.0, 0.0)), modelTag)
+		
+		-- if params.modules[result.mangleId({x, right and y + 1 or y - 1, 1})] == nil then
+		-- 	addModelFn("station/road/streetstation/" .. result.erastr .. "cargo_pltfrm_r_top.mdl", transf.rotZTransl(right and 0 or math.pi, vec3.new(.0, .0, .0)))
+		-- end
+		-- if params.modules[result.mangleId({x, right and y - 1 or y + 1, 1})] == nil then
+		-- 	addModelFn("station/road/streetstation/" .. result.erastr .. "cargo_pltfrm_r_btm.mdl", transf.rotZTransl(right and 0 or math.pi, vec3.new(.0, .0, .0)))
+		-- end
+		
+		-- addModelFn("station/road/streetstation/" .. result.erastr .. "cargo_path_rep" .. result.cat .. ".mdl", transf.rotZTransl(right and 0 or math.pi, vec3.new(right and -7.5 or 7.5, .0, .0)))
+		-- result.coord2terminalInfo[x][y] = {
+		-- 	model = #result.models - 1,
+		-- 	terminal = 0,
+		-- }
+		if not result.coord2terminalInfo[tostring(x)] then result.coord2terminalInfo[tostring(x)] = {} end
+		print('LOLLO setting coord2TerminalInfo in cargo path module, x = ', tostring(x), ' and y = ', tostring(y))
+		result.coord2terminalInfo[tostring(x)][tostring(y)] = {
+			model = #result.models - 1,
+			terminal = 0
+		}
+	end,
+	
+	getModelsFn = function()
+		
+		local result = {
+			{
+				id = _constants.lorryBayStreetside15x5ModelFileName,
+				transf = transf.transl(vec3.new(0.0, 0.0, 0.0)),
+			},
+		}
+		
+		return result
+	end
+}
+
+end

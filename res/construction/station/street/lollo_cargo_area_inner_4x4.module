@@ -1,0 +1,70 @@
+local transf = require "transf"
+local vec3 = require "vec3"
+local modulesutil = require "modulesutil"
+local constructionutil = require "constructionutil"
+local _constants = require('lollo_lorry_station/constants')
+local moduleHelpers = require('lollo_lorry_station.moduleHelpers')
+
+function data()
+
+return {
+	availability = {
+		yearFrom = 0,
+		yearTo = 0
+	},
+	cost = {
+		price = 24000,
+	},
+	category = {
+		categories = { "cargo", },
+	},
+	description = {
+		name = _("Cargo area, 4 x 4 m"),
+		description = _("Area for waiting cargo, 4 x 4 m."),
+		icon = "ui/construction/station/street/cargo_area_inner_4x4.tga"
+	},
+	metadata = {
+		cargo = true,
+	},
+	order = {
+		value = 7,
+	},
+	type = _constants.cargoAreaInner4x4ModuleType,
+	updateFn = function(result, transform, tag, slotId, addModelFn, params, callback)
+        local x, y, baseId = result.demangleId(slotId)
+		if not x or not y or not baseId then return end
+
+		-- print('LOLLO small cargo area module received slotId, x, y, baseId = ', slotId, x, y, baseId)
+		-- print('LOLLO result =')
+		-- debugPrint(result)
+
+		-- addModelFn(_constants.cargoAreaInner4x4ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
+		result.models[#result.models + 1] = {
+			id = _constants.cargoAreaInner4x4ModelFileName,
+			slotId = slotId,
+			transf = transform,
+			tag = _constants.cargoAreaInner4x4ModelTag
+		}
+
+		local face = {
+			{-3, -3, 0, 1},
+			{-3, 3, 0, 1},
+			{3, 3, 0, 1},
+			{3, -3, 0, 1},
+		}
+		modulesutil.TransformFaces(transform, face)
+		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
+		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face)
+	end,
+
+	getModelsFn = function()
+		return {
+			{
+				id = _constants.cargoAreaInner4x4ModelFileName,
+				transf = transf.transl(vec3.new(0.0, 0.0, 0.0)),
+			},
+		}
+	end
+}
+
+end

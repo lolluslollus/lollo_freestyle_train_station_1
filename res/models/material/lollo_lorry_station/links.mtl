@@ -1,0 +1,70 @@
+function data()
+    return {
+        order = 0,
+        params = {
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            map_albedo = {
+                fileName = "lollo_lorry_station/new_medium_paving_with_arrows_albedo_bc1a_1024.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_metal_gloss_ao = {
+                fileName = "terrain/ballast_metal_gloss_ao_h.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_normal = {
+                fileName = "ground_texture/farmland_brown_01_nrml.dds",
+                -- fileName = "terrain/scree_nrml.dds",
+                -- fileName = "terrain/soil_01_nrml.dds",
+                redGreen = true,
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_1 = {
+                fileName = "models/industry/overlay_textures/small_03.tga",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_2 = {
+                fileName = "streets/country_new_overlay.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            normal_scale = {
+                normalScale = 0.36,
+            },
+            operation_1 = {
+                mode = "WORLD_XY",
+                op = "OVERLAY",
+                opacity = 0.30000001192093,
+                scale = { 0.00062499998603016, 0.00062499998603016, },
+            },
+            operation_2 = {
+                mode = "WORLD_XY",
+                op = "OVERLAY",
+                opacity = 0.30000001192093,
+                scale = { 0.0049999998882413, 0.0049999998882413, },
+            },
+            polygon_offset = {
+                factor = -1,
+                units = -1,
+                forceDepthWrite = true,
+            },
+            two_sided = {
+                flipNormal = false,
+                twoSided = false,
+            },
+        },
+        type = "PHYSICAL_NRML_MAP_OP",
+    }
+    end
+    

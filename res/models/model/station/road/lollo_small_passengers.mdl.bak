@@ -1,0 +1,115 @@
+local laneutil = require "laneutil"
+
+--Begin Generated
+local generatedData = {
+	["lanes_road"] = {
+		curves = {
+			["cargo_path_rep_road"] = {
+				{ { 0.00000, -5.00000, 0.00000 }, { 0.00000, 0.00000, 0.00000 }, },
+				{ { 0.00000, 0.00000, 0.00000 }, { 0.00000, 5.00000, 0.00000 }, },
+			},
+		},
+	},
+	["lanes_terminal"] = {
+		curves = {
+			["cargo_path_rep_cargo"] = {
+				{ { 10.00000, -5.00000, 0.34450 }, { 10.00000, 5.00000, 0.34450 }, },
+			},
+			["cargo_path_rep_cargo2"] = {
+				{ { 5.00000, -5.00000, 0.34450 }, { 5.00000, 5.00000, 0.34450 }, },
+			},
+		},
+	},
+}
+--End Generated
+
+function data()
+    return {
+        boundingInfo = {
+            bbMax = { 3.840000629425, 2.1260833740234, 3.2567188739777, },
+            bbMin = { -3.4699983596802, -1.5046007633209, -0.29989165067673, },
+        },
+        collider = {
+            params = {
+                halfExtents = { 3.6549994945526, 1.8153420686722, 1.7783052921295, },
+            },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            type = "BOX",
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = { "station/rail/cargo/cargo_station_borders_1.mtl", "station/rail/cargo/cargo_station_borders_2.mtl", "station/rail/cargo/cargo_station_windows_and_doors_2.mtl", "station/rail/cargo/cargo_station_roof_2.mtl", },
+                            mesh = "station/road/small_cargo/small_street_platform_lod0.msh",
+                            name = "small_street_platform",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                        {
+                            materials = { "station/rail/cargo/cargo_assets_1.mtl", },
+                            mesh = "station/rail/asset/cargo_pallet_jack/pallet_jack_lod0.msh",
+                            name = "pallet_jack",
+                            transf = { 0.97029572725296, 0.24192188680172, 0, 0, -0.24192188680172, 0.97029572725296, 0, 0, 0, 0, 1, 0, -2.075092792511, 1.1254241466522, 0, 1, },
+                        },
+                        {
+                            materials = { "asset/industry/crates_mix_1.mtl", },
+                            mesh = "asset/industry/pallet_01/pallet_01_lod0.msh",
+                            name = "pallet_01",
+                            transf = { 1, 0, 0, 0, 0, 0.3387379348278, 0.94088071584702, 0, 0, -0.94088071584702, 0.3387379348278, 0, 1.9544242620468, 1.8165782690048, 0.53996938467026, 1, },
+                        },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1085.5139160156,
+            },
+        },
+        metadata = {
+            availability = {
+                yearFrom = 0,
+                yearTo = 0,
+            },
+            cost = {
+                price = 1200,
+            },
+            description = {
+                description = _("Lollo small passenger station to build a truck stop to unload cargo, to be placed on the sidewalk. Does not allow loading of cargo."),
+                name = _("Lollo passenger - truck unload stop"),
+            },
+            -- lollo = { -- useless
+            --     true
+            -- },
+            streetTerminal = {
+                cargo = false,
+            },
+            -- LOLLO added this to the stock small_cargo.mdl. It has no effect when plopping the Lollo truck unload stop,
+            -- but it does when plopping the construction that contains it. By the way,.it is rotated 90^ wrong.
+            transportNetworkProvider = { -- useless
+                laneLists = {
+                    laneutil.createLanes(
+                        generatedData["lanes_road"], -- curves
+                        { "BUS", "ELECTRIC_TRAM", "TRAM", "TRUCK" }, -- means of transport
+                        20, -- max speed
+                        3, -- lane width
+                        false -- linkable
+                    ),
+                    laneutil.createLanes(generatedData["lanes_terminal"], { "CARGO" }, 20, 4, false),
+                },
+                runways = { },
+                terminals = {
+                    {
+                        -- order = 0,
+                        personEdges = { 2, 3, },
+                        personNodes = { 4, 5, },
+                        vehicleNode = 2,
+                    },
+                },
+            },
+        },
+        version = 1,
+    }
+    end
+    

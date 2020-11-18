@@ -1,0 +1,83 @@
+local transf = require "transf"
+local vec3 = require "vec3"
+local modulesutil = require "modulesutil"
+local constructionutil = require "constructionutil"
+local _constants = require('lollo_lorry_station/constants')
+local moduleHelpers = require('lollo_lorry_station.moduleHelpers')
+
+function data()
+
+return {
+	availability = {
+		yearFrom = 0,
+		yearTo = 0
+	},
+	cost = {
+		price = 24000,
+	},
+	category = {
+		categories = { "cargo", },
+	},
+	description = {
+		name = _("Cargo area, 12 x 12 m"),
+		description = _("Area for waiting cargo, 12 x 12 m."),
+		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+	},
+	metadata = {
+		cargo = true,
+	},
+	order = {
+		value = 7,
+	},
+	type = _constants.cargoAreaInner12x12ModuleType,
+	updateFn = function(result, transform, tag, slotId, addModelFn, params, callback)
+		local x, y, baseId = result.demangleId(slotId)
+		if not x or not y or not baseId then return end
+
+		-- print('LOLLO cargo area module received slotId, x, y, baseId = ', slotId, x, y, baseId)
+		-- print('LOLLO result =')
+		-- debugPrint(result)
+
+		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
+		result.models[#result.models + 1] = {
+			id = _constants.cargoAreaInner12x12ModelFileName,
+			slotId = slotId,
+			transf = transform,
+			tag = _constants.cargoAreaInner12x12ModelTag
+		}
+
+		-- if params.modules[result.mangleId({x, right and y + 1 or y - 1, 1})] == nil then
+		-- 	addModelFn("station/road/streetstation/" .. result.erastr .. "cargo_pltfrm_r_top.mdl", transf.rotZTransl(right and 0 or math.pi, vec3.new(.0, .0, .0)))
+		-- end
+		-- if params.modules[result.mangleId({x, right and y - 1 or y + 1, 1})] == nil then
+		-- 	addModelFn("station/road/streetstation/" .. result.erastr .. "cargo_pltfrm_r_btm.mdl", transf.rotZTransl(right and 0 or math.pi, vec3.new(.0, .0, .0)))
+		-- end
+
+		-- addModelFn("station/road/streetstation/" .. result.erastr .. "cargo_path_rep" .. result.cat .. ".mdl", transf.rotZTransl(right and 0 or math.pi, vec3.new(right and -7.5 or 7.5, .0, .0)))
+		-- result.coord2terminalInfo[x][y] = {
+		-- 	model = #result.models - 1,
+		-- 	terminal = 0,
+		-- }
+
+		local face = {
+			{-7, -7, 0, 1},
+			{-7, 7, 0, 1},
+			{7, 7, 0, 1},
+			{7, -7, 0, 1},
+		}
+		modulesutil.TransformFaces(transform, face)
+		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
+		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face)
+	end,
+
+	getModelsFn = function(params)
+		return {
+			{
+				id = _constants.cargoAreaInner12x12ModelFileName,
+				transf = transf.transl(vec3.new(0.0, 0.0, 0.0)),
+			},
+		}
+	end
+}
+
+end

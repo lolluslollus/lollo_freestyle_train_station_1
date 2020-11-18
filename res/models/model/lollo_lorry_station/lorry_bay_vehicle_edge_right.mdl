@@ -1,0 +1,69 @@
+function data()
+	local _cargoNodeZ = -4 -- 0.3
+	local _vehicleNodeZ = 0
+
+	return {
+		boundingInfo = {
+			bbMax = { 0.2, 0.2, 0.2, },
+			bbMin = { 0, 0, 0, },
+		},
+		collider = {
+            params = {
+                halfExtents = { 0.1, 0.1, 0.1, },
+            },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+			-- type = 'NONE'
+        },
+		lods = {
+			{
+				node = {
+					name = "RootNode",
+					transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 0,
+				visibleTo = 1000,
+			},
+		},
+		metadata = {
+			transportNetworkProvider = {
+				laneLists = {
+					-- in the middle of the road
+					{
+						linkable = false,
+						nodes = {
+							{{ 1, 0, _vehicleNodeZ }, { -1, 0, 0, }, 3}, -- edge 0 -- node 0
+							{{ 0, 0, _vehicleNodeZ }, { -1, 0, 0, }, 3}, -- node 1
+
+							{{ 0, 0, _vehicleNodeZ }, { -1, 0, 0 }, 3}, -- edge 1 -- node 2
+							{{ -1, 0, _vehicleNodeZ }, { -1, 0, 0 }, 3}, -- node 3
+						},
+						speedLimit = 30,
+						transportModes = { 'BUS', 'ELECTRIC_TRAM', 'TRAM', 'TRUCK' },
+					},
+					-- anywhere out of the way, we only need it to avoid crashes
+					{
+						linkable = false,
+						nodes = {
+							{{ 7, 4, _cargoNodeZ, },{ -0.2, 0, 0, }, 3}, -- edge 2
+							{{ 6.8, 4, _cargoNodeZ, },{ -0.2, 0, 0, }, 3},
+						},
+						speedLimit = 30,
+						transportModes = { 'CARGO' },
+					},
+				},
+				runways = { },
+				terminals = {
+					{
+						-- order = 999,
+						personEdges = { 2 },
+						personNodes = { 5 },
+						vehicleNode = 2,
+					},
+				},
+			},
+		},
+		version = 1,
+	}
+end
