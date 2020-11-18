@@ -22,8 +22,9 @@ local function _getContiguousEdges(edgeId, trackType)
     local _myMap = api.engine.system.streetSystem.getNode2SegmentMap()
     local results = { edgeId }
 
-    local node = _baseEdge.node0
-    local edges = _myMap[node]
+    local edgeId = _edgeId
+    local nodeId = _baseEdge.node0
+    local edges = _myMap[nodeId]
     local isExit = false
     while not(isExit) do
         if #edges ~= 2 then
@@ -38,10 +39,10 @@ local function _getContiguousEdges(edgeId, trackType)
                     else
                         table.insert(results, 1, edges[i])
                         local edgeData = api.engine.getComponent(edges[i], api.type.ComponentType.BASE_EDGE)
-                        if edgeData.node0 ~= node then
-                            node = edgeData.node0
+                        if edgeData.node0 ~= nodeId then
+                            nodeId = edgeData.node0
                         else
-                            node = edgeData.node1
+                            nodeId = edgeData.node1
                         end
                         edgeId = edges[i]
                         break
@@ -52,8 +53,8 @@ local function _getContiguousEdges(edgeId, trackType)
     end
 
     edgeId = _edgeId
-    node = _baseEdge.node1
-    edges = _myMap[node]
+    nodeId = _baseEdge.node1
+    edges = _myMap[nodeId]
     isExit = false
     while not(isExit) do
         if #edges ~= 2 then
@@ -68,10 +69,10 @@ local function _getContiguousEdges(edgeId, trackType)
                     else
                         table.insert(results, edges[i])
                         local edgeData = api.engine.getComponent(edges[i], api.type.ComponentType.BASE_EDGE)
-                        if edgeData.node0 ~= node then
-                            node = edgeData.node0
+                        if edgeData.node0 ~= nodeId then
+                            nodeId = edgeData.node0
                         else
-                            node = edgeData.node1
+                            nodeId = edgeData.node1
                         end
                         edgeId = edges[i]
                         break
@@ -80,6 +81,8 @@ local function _getContiguousEdges(edgeId, trackType)
             end
         end
     end
+
+    return results
 end
 
 local function _getLastBuiltEdge(entity2tn)
