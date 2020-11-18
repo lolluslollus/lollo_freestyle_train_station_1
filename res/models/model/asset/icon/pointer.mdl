@@ -1,0 +1,51 @@
+function data()
+    return {
+        boundingInfo = {
+            --		bbMax = { 0.82412099838257, 0.15319600701332, 2.9688000679016, },
+            --		bbMin = { -0.66414201259613, -0.15319900214672, 0.32851299643517, },
+            bbMax = {0.1, 0.1, 0.1},
+            bbMin = {-0.1, -0.1, 0.0}
+        },
+        --[[         collider = {
+            params = {},
+            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
+            type = 'MESH'
+        }, ]]
+        collider = {
+            type = 'NONE'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {'asset/icon/asset_icon_mark.mtl'},
+                            -- mesh = 'asset/icon/lod_0_icon_exclamation_mark.msh',
+                            mesh = 'asset/icon/lod_0_icon_pointer.msh',
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                        },
+                    },
+                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000
+            }
+        },
+        metadata = {
+            availability = {
+                yearFrom = 0,
+                yearTo = 0
+            },
+            cost = {
+                price = 0
+            },
+            autoRemovable = true,
+            skipCollision = true,
+            skipCollisionCheck = true
+        },
+        skipCollision = true,
+        skipCollisionCheck = true,
+        version = 1
+    }
+end

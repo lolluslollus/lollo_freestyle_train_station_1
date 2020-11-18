@@ -1,0 +1,54 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 0.58293998241425, 3.269150018692, 2.920243024826, },
+		bbMin = { -0.58293998241425, -3.269150018692, -0.79846996068954, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 0.5, 2.5, 2, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, },
+		type = "CYLINDER",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "railroad/crossing_simple.mtl", },
+						mesh = "railroad/lod_0_signal_waypoint.msh",
+						transf = { -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, -0.5, -2.5, -0.52999997138977, 1, },
+					},
+					{
+						materials = { "railroad/crossing_simple.mtl", },
+						mesh = "railroad/lod_0_signal_waypoint.msh",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.5, 2.5, -0.52999997138977, 1, },
+					},
+				},
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 980,
+		},
+	},
+	metadata = {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0,
+		},
+		cost = {
+			price = 2000,
+		},
+		description = {
+			description = _("Used for rerouting a line. Can be added to a line like a station."),
+			name = _("Lollo Waypoint"),
+		},
+		signal = {
+			type = "WAYPOINT",
+		},
+	},
+	version = 1,
+}
+end
