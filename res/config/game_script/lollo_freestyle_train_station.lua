@@ -165,7 +165,6 @@ function data()
         end,
         guiHandleEvent = function(id, name, param)
             -- LOLLO NOTE param can have different types, even boolean, depending on the event id and name
-            
             if name == 'builder.apply' then
                 xpcall(
                     function()
@@ -210,6 +209,10 @@ function data()
                                     -- waypoint built on platform
                                     -- LOLLO TODO:
                                     -- find all consecutive edges of the same type
+                                    local test = _getContiguousEdges(
+                                        lastBuiltEdge.id,
+                                        platformTrackType
+                                    )
                                     -- sort them from first to last
                                     -- left side: find the 2 tracks (real tracks, not platform tracks) nearest to the platform start and end
                                     -- repeat on the right side
