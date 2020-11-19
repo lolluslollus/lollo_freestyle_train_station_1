@@ -158,7 +158,7 @@ function data()
                 xpcall(
                     function()
                         print('guiHandleEvent caught id =', id, 'name =', name, 'param =')
-                        debugPrint(param)
+                        -- debugPrint(param)
 
                         if param and param.proposal and param.proposal.proposal
                         and param.proposal.proposal.edgeObjectsToAdd
@@ -205,6 +205,8 @@ function data()
                                     )
                                     print('contiguous edges =')
                                     debugPrint(test)
+                                    print('type of contiguous edges =')
+                                    debugPrint(type(test))
 
                                     -- left side: find the 2 tracks (real tracks, not platform tracks) nearest to the platform start and end
                                     -- repeat on the right side
@@ -272,51 +274,6 @@ function data()
                     end,
                     _myErrorHandler
                 )
-            
-            --[[ elseif name == 'select' then
-                print('guiHandleEvent firing, id =', id, 'name =', name, 'param =')
-                debugPrint(param)
-
-                if type(param) == 'number' then
-                    local entity = game.interface.getEntity(param)
-
-                    if (entity and entity.type == "STATION_GROUP") then
-                        local allLorryStationConstructions = game.interface.getEntities(
-                            {pos = entity.position, radius = 999},
-                            {type = "CONSTRUCTION", includeData = true, fileName = "station/street/lollo_lorry_bay_with_edges.con"}
-                        )
-                        print('allLorryStationConstructions =')
-                        debugPrint(allLorryStationConstructions)
-
-                        -- the game distinguishes constructions, stations and station groups.
-                        -- Constructions and stations in a station group are not selected, only the station group itself,
-                        -- which does not contain a lot of data: this is why we need this loop.
-                        -- The API here does not help, the old game.interface is better.
-                        for _, staId in ipairs(entity.stations) do
-                            for _, con in pairs(allLorryStationConstructions) do
-                                if arrayUtils.arrayHasValue(con.stations, staId) then
-                                    print('found con =')
-                                    debugPrint(con)
-                                    if con.id and con.params and con.params.streetType_ then
-                                        local allStreetData = streetUtils.getGlobalStreetData(streetUtils.getStreetDataFilters().STOCK_AND_MODS)
-
-                                        print('#allStreetData =', #allStreetData)
-                                        if con.params.streetType_ > #allStreetData then
-                                            game.interface.sendScriptEvent(
-                                                _eventId,
-                                                "lorryStationSelected",
-                                                {
-                                                    constructionEntityId = con.id,
-                                                    constructionParams = con.params
-                                                }
-                                            )
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end ]]
             end
         end,
         update = function()

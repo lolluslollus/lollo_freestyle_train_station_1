@@ -23,7 +23,7 @@ function data()
                         },
                         {
                             materials = {'asset/icon/asset_icon_mark.mtl'},
-                            mesh = 'asset/icon/lod_0_icon_pointer.msh',
+                            mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
                             transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 20, 0.8, 1}
                         },
                     },
@@ -36,6 +36,7 @@ function data()
             },
         },
         metadata = {
+            --[[
             transportNetworkProvider = {
                 -- LOLLO NOTE
                 -- copied from tn_passenger_wait_area.mdl.
@@ -100,6 +101,7 @@ function data()
                     },
                 },
             },
+             ]]
         },
         version = 1,
     }
