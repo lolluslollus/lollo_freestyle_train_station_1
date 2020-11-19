@@ -14,15 +14,15 @@ local _eventNames = {
 local function _getContiguousEdges(edgeId, trackType)
     if not(edgeId) or not(trackType) then return {} end
 
-    local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-    if not(baseEdgeTrack) or baseEdgeTrack.trackType ~= trackType then return {} end
+    local _baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+    if not(_baseEdgeTrack) or _baseEdgeTrack.trackType ~= trackType then return {} end
 
     local _baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
     local _edgeId = edgeId
     local _myMap = api.engine.system.streetSystem.getNode2SegmentMap()
     local results = { edgeId }
 
-    local edgeId = _edgeId
+    edgeId = _edgeId
     local nodeId = _baseEdge.node0
     local edges = _myMap[nodeId]
     local isExit = false
@@ -49,6 +49,7 @@ local function _getContiguousEdges(edgeId, trackType)
                     end
                 end
             end
+            edges = _myMap[nodeId]
         end
     end
 
@@ -79,6 +80,7 @@ local function _getContiguousEdges(edgeId, trackType)
                     end
                 end
             end
+            edges = _myMap[nodeId]
         end
     end
 
