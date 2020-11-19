@@ -12,43 +12,52 @@ local _eventNames = {
 }
 
 local function _calcContiguousEdges(firstEdgeId, firstNodeId, map, trackType, isInsertFirst, results)
-    local edgeId = firstEdgeId
-    local edges = map[firstNodeId]
-    local nodeId = firstNodeId
+    local refEdgeId = firstEdgeId
+    local edgeIds = map[firstNodeId] -- userdata
+    local refNodeId = firstNodeId
     local isExit = false
     while not(isExit) do
-        if #edges ~= 2 then
+        if not(edgeIds) or #edgeIds ~= 2 then
             isExit = true
         else
-            for i = 1, #edges do
-                if edges[i] ~= edgeId then
-                    local baseEdgeTrack = api.engine.getComponent(edges[i], api.type.ComponentType.BASE_EDGE_TRACK)
+            for _, edgeId in pairs(edgeIds) do -- cannot use edgeIds[index] here
+                print('edgeId =')
+                debugPrint(edgeId)
+                if edgeId ~= refEdgeId then
+                    local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                    print('baseEdgeTrack =')
+                    debugPrint(baseEdgeTrack)
                     if not(baseEdgeTrack) or baseEdgeTrack.trackType ~= trackType then
                         isExit = true
                         break
                     else
                         if isInsertFirst then
-                            table.insert(results, 1, edges[i])
+                            table.insert(results, 1, edgeId)
                         else
-                            table.insert(results, edges[i])
+                            table.insert(results, edgeId)
                         end
-                        local edgeData = api.engine.getComponent(edges[i], api.type.ComponentType.BASE_EDGE)
-                        if edgeData.node0 ~= nodeId then
-                            nodeId = edgeData.node0
+                        local edgeData = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                        if edgeData.node0 ~= refNodeId then
+                            refNodeId = edgeData.node0
                         else
-                            nodeId = edgeData.node1
+                            refNodeId = edgeData.node1
                         end
-                        edgeId = edges[i]
+                        refEdgeId = edgeId
                         break
                     end
                 end
             end
-            edges = map[nodeId]
+            edgeIds = map[refNodeId]
         end
     end
 end
 
 local function _getContiguousEdges(edgeId, trackType)
+    print('_getContiguousEdges starting, edgeId =')
+    debugPrint(edgeId)
+    print('track type =')
+    debugPrint(trackType)
+
     if not(edgeId) or not(trackType) then return {} end
 
     local _baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
