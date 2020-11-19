@@ -11,20 +11,10 @@ local _eventNames = {
     WAYPOINT_BUILT_OUTSIDE_PLATFORM = 'waypointBuiltOutsidePlatform',
 }
 
-local function _getContiguousEdges(edgeId, trackType)
-    if not(edgeId) or not(trackType) then return {} end
-
-    local _baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-    if not(_baseEdgeTrack) or _baseEdgeTrack.trackType ~= trackType then return {} end
-
-    local _baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-    local _edgeId = edgeId
-    local _myMap = api.engine.system.streetSystem.getNode2SegmentMap()
-    local results = { edgeId }
-
-    edgeId = _edgeId
-    local nodeId = _baseEdge.node0
-    local edges = _myMap[nodeId]
+local function _calcContiguousEdges(firstEdgeId, firstNodeId, map, trackType, isInsertFirst, results)
+    local edgeId = firstEdgeId
+    local edges = map[firstNodeId]
+    local nodeId = firstNodeId
     local isExit = false
     while not(isExit) do
         if #edges ~= 2 then
@@ -37,7 +27,11 @@ local function _getContiguousEdges(edgeId, trackType)
                         isExit = true
                         break
                     else
-                        table.insert(results, 1, edges[i])
+                        if isInsertFirst then
+                            table.insert(results, 1, edges[i])
+                        else
+                            table.insert(results, edges[i])
+                        end
                         local edgeData = api.engine.getComponent(edges[i], api.type.ComponentType.BASE_EDGE)
                         if edgeData.node0 ~= nodeId then
                             nodeId = edgeData.node0
@@ -49,40 +43,24 @@ local function _getContiguousEdges(edgeId, trackType)
                     end
                 end
             end
-            edges = _myMap[nodeId]
+            edges = map[nodeId]
         end
     end
+end
 
-    edgeId = _edgeId
-    nodeId = _baseEdge.node1
-    edges = _myMap[nodeId]
-    isExit = false
-    while not(isExit) do
-        if #edges ~= 2 then
-            isExit = true
-        else
-            for i = 1, #edges do
-                if edges[i] ~= edgeId then
-                    local baseEdgeTrack = api.engine.getComponent(edges[i], api.type.ComponentType.BASE_EDGE_TRACK)
-                    if not(baseEdgeTrack) or baseEdgeTrack.trackType ~= trackType then
-                        isExit = true
-                        break
-                    else
-                        table.insert(results, edges[i])
-                        local edgeData = api.engine.getComponent(edges[i], api.type.ComponentType.BASE_EDGE)
-                        if edgeData.node0 ~= nodeId then
-                            nodeId = edgeData.node0
-                        else
-                            nodeId = edgeData.node1
-                        end
-                        edgeId = edges[i]
-                        break
-                    end
-                end
-            end
-            edges = _myMap[nodeId]
-        end
-    end
+local function _getContiguousEdges(edgeId, trackType)
+    if not(edgeId) or not(trackType) then return {} end
+
+    local _baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+    if not(_baseEdgeTrack) or _baseEdgeTrack.trackType ~= trackType then return {} end
+
+    local _baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    local _edgeId = edgeId
+    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local results = { edgeId }
+
+    _calcContiguousEdges(_edgeId, _baseEdge.node0, _map, trackType, true, results)
+    _calcContiguousEdges(_edgeId, _baseEdge.node1, _map, trackType, false, results)
 
     return results
 end
@@ -211,11 +189,14 @@ function data()
                                     -- waypoint built on platform
                                     -- LOLLO TODO:
                                     -- find all consecutive edges of the same type
+                                    -- sort them from first to last
                                     local test = _getContiguousEdges(
                                         lastBuiltEdge.id,
                                         platformTrackType
                                     )
-                                    -- sort them from first to last
+                                    print('contiguous edges =')
+                                    debugPrint(test)
+
                                     -- left side: find the 2 tracks (real tracks, not platform tracks) nearest to the platform start and end
                                     -- repeat on the right side
                                     -- if at least one normal track was found:
