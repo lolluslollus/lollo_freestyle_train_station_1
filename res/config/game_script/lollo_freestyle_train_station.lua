@@ -355,7 +355,7 @@ local _actions = {
         )
     end,
 
-    replageEdgeWithSame = function(oldEdgeId)
+    replageEdgeWithSame = function(oldEdgeId, objectIdToRemove)
         -- only for testing
         -- replaces a track segment with an identical one, without destroying the buildings
         if type(oldEdgeId) ~= 'number' or oldEdgeId < 0 then return end
@@ -477,7 +477,7 @@ local _actions = {
         )
     end,
 
-    splitEdge = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, waypointId)
+    splitEdge = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove)
         if type(wholeEdgeId) ~= 'number' or wholeEdgeId < 0 or type(nodeBetween) ~= 'table' then return end
 
         local node0TangentLength = edgeUtils.getVectorLength({
@@ -553,18 +553,11 @@ local _actions = {
         newEdge1.playerOwned = playerOwned
         newEdge1.trackEdge = oldEdgeTrack
 
-        print('#oldEdge.objects =', #oldEdge.objects)
         if type(oldEdge.objects) == 'table' and #oldEdge.objects > 1 then
-            -- local edge0StationGroups = {}
-            -- local edge1StationGroups = {}
             local edge0Objects = {}
             local edge1Objects = {}
-            print('waypointId =')
-            debugPrint(waypointId)
             for _, edgeObj in pairs(oldEdge.objects) do
-                if edgeObj[1] ~= waypointId then
-                    print('edgeObj =')
-                    debugPrint(edgeObj)
+                if edgeObj[1] ~= objectIdToRemove then
                     -- print('edgeObjEntityId =', edgeObj[1])
                     -- local edgeObjPositionOld = _utils.getObjectPositionOld(edgeObj[1])
                     local edgeObjPosition = _utils.getObjectPosition(edgeObj[1])
@@ -608,10 +601,10 @@ local _actions = {
         proposal.streetProposal.edgesToAdd[1] = newEdge0
         proposal.streetProposal.edgesToAdd[2] = newEdge1
         proposal.streetProposal.edgesToRemove[1] = wholeEdgeId
-        proposal.streetProposal.edgeObjectsToRemove[1] = waypointId
+        proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
         proposal.streetProposal.nodesToAdd[1] = newNodeBetween
-        print('split proposal =')
-        debugPrint(proposal)
+        -- print('split proposal =')
+        -- debugPrint(proposal)
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- default is false, true gives smoother Z
