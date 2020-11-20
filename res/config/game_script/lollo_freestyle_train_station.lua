@@ -496,7 +496,7 @@ local _actions = {
         )
     end,
 
-    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove)
+    splitEdge = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, waypointId)
         if type(wholeEdgeId) ~= 'number' or wholeEdgeId < 0 or type(nodeBetween) ~= 'table' then return end
 
         local node0TangentLength = edgeUtils.getVectorLength({
@@ -577,7 +577,9 @@ local _actions = {
             local edge0Objects = {}
             local edge1Objects = {}
             for _, edgeObj in pairs(oldEdge.objects) do
-                if edgeObj[1] ~= objectIdToRemove then
+                if edgeObj[1] == waypointId then
+                    table.insert(edge0Objects, { edgeObj[1], edgeObj[2] })
+                else
                     -- print('edgeObjEntityId =', edgeObj[1])
                     -- local edgeObjPositionOld = _utils.getObjectPositionOld(edgeObj[1])
                     local edgeObjPosition = _utils.getObjectPosition(edgeObj[1])
@@ -621,7 +623,7 @@ local _actions = {
         proposal.streetProposal.edgesToAdd[1] = newEdge0
         proposal.streetProposal.edgesToAdd[2] = newEdge1
         proposal.streetProposal.edgesToRemove[1] = wholeEdgeId
-        proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
+        -- proposal.streetProposal.edgeObjectsToRemove[1] = waypointId
         proposal.streetProposal.nodesToAdd[1] = newNodeBetween
         -- print('split proposal =')
         -- debugPrint(proposal)
@@ -682,7 +684,7 @@ function data()
                                 }
                             )
 
-                            _actions.splitEdgeRemovingObject(
+                            _actions.splitEdge(
                                 param.edgeId,
                                 node0.position,
                                 oldEdge.tangent0,
