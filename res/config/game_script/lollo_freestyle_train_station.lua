@@ -355,7 +355,7 @@ local _actions = {
         )
     end,
 
-    replageEdgeWithSame = function(oldEdgeId, objectIdToRemove)
+    replageEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
         -- only for testing
         -- replaces a track segment with an identical one, without destroying the buildings
         if type(oldEdgeId) ~= 'number' or oldEdgeId < 0 then return end
@@ -370,14 +370,33 @@ local _actions = {
         local newEdge = api.type.SegmentAndEntity.new()
         newEdge.entity = -1
         newEdge.type = _newEdgeType
-        newEdge.comp = oldEdge
-        -- newEdge.playerOwned = {player = api.engine.util.getPlayer()}
+        -- newEdge.comp = oldEdge -- no good enough if I want to remove objects, the api moans
+        newEdge.comp.node0 = oldEdge.node0
+        newEdge.comp.node1 = oldEdge.node1
+        newEdge.comp.tangent0 = oldEdge.tangent0
+        newEdge.comp.tangent1 = oldEdge.tangent1
+        newEdge.comp.type = oldEdge.type -- respect bridge or tunnel
+        newEdge.comp.typeIndex = oldEdge.typeIndex -- respect bridge or tunnel
         newEdge.playerOwned = playerOwned
         newEdge.trackEdge = oldEdgeTrack
 
         local proposal = api.type.SimpleProposal.new()
         proposal.streetProposal.edgesToRemove[1] = oldEdgeId
         proposal.streetProposal.edgesToAdd[1] = newEdge
+
+        if type(objectIdToRemove) == 'number' and objectIdToRemove > 0 then
+            local edgeObjects = {}
+            for _, edgeObj in pairs(oldEdge.objects) do
+                if edgeObj[1] ~= objectIdToRemove then
+                    table.insert(edgeObjects, { edgeObj[1], edgeObj[2] })
+                end
+            end
+            newEdge.comp.objects = edgeObjects -- LOLLO NOTE cannot insert directly into edge0.comp.objects
+            proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
+        else
+            newEdge.comp.objects = oldEdge.comp.objects
+        end
+
         --[[ local sampleNewEdge =
         {
         entity = -1,
@@ -423,8 +442,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, nil, false),
             function(res, success)
-                print('LOLLO res = ')
-                debugPrint(res)
+                -- print('LOLLO res = ')
+                -- debugPrint(res)
                 --for _, v in pairs(res.entities) do print(v) end
                 -- print('LOLLO success = ')
                 debugPrint(success)
@@ -477,7 +496,7 @@ local _actions = {
         )
     end,
 
-    splitEdge = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove)
+    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove)
         if type(wholeEdgeId) ~= 'number' or wholeEdgeId < 0 or type(nodeBetween) ~= 'table' then return end
 
         local node0TangentLength = edgeUtils.getVectorLength({
@@ -506,8 +525,9 @@ local _actions = {
         -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
         if oldEdge == nil or oldEdgeTrack == nil then return end
 
-        local playerOwned = api.type.PlayerOwned.new()
-        playerOwned.player = api.engine.util.getPlayer()
+        -- local playerOwned = api.type.PlayerOwned.new()
+        -- playerOwned.player = api.engine.util.getPlayer()
+        local playerOwned = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.PLAYER_OWNED)
 
         local newNodeBetween = api.type.NodeAndEntity.new()
         newNodeBetween.entity = -3
@@ -644,9 +664,6 @@ function data()
 
             if name == _eventNames.TRACK_WAYPOINT_1_BUILT_OUTSIDE_PLATFORM or name == _eventNames.TRACK_WAYPOINT_2_BUILT_OUTSIDE_PLATFORM then
                 if param.edgeId and param.transf then
-                    -- _actions.replageEdgeWithSame(param.edgeId)
-                    -- if true then return end
-
                     local oldEdge = api.engine.getComponent(param.edgeId, api.type.ComponentType.BASE_EDGE)
                     if oldEdge then
                         local node0 = api.engine.getComponent(oldEdge.node0, api.type.ComponentType.BASE_NODE)
@@ -665,7 +682,7 @@ function data()
                                 }
                             )
 
-                            _actions.splitEdge(
+                            _actions.splitEdgeRemovingObject(
                                 param.edgeId,
                                 node0.position,
                                 oldEdge.tangent0,
@@ -676,6 +693,12 @@ function data()
                             )
                         end
                     end
+                end
+            elseif name == _eventNames.TRACK_WAYPOINT_1_BUILT_ON_PLATFORM
+            or name == _eventNames.TRACK_WAYPOINT_2_BUILT_ON_PLATFORM
+            or name == _eventNames.PLATFORM_WAYPOINT_BUILT_OUTSIDE_PLATFORM then
+                if param.edgeId and param.transf then
+                    _actions.replageEdgeWithSameRemovingObject(param.edgeId, param.waypointId)
                 end
             end
             -- print('param.constructionEntityId =', param.constructionEntityId or 'NIL')
