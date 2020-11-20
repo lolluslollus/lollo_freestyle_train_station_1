@@ -130,6 +130,32 @@ helper.getNearestEdgeId = function(transf)
     end
 end
 
+helper.getNearestEdgeIds = function(transf, searchRadius)
+    if type(transf) ~= 'table' then return nil end
+
+    local _position = transfUtils.getVec123Transformed({0, 0, 0}, transf)
+    local _searchRadius = searchRadius or 0.5
+    local _box0 = api.type.Box3.new(
+        api.type.Vec3f.new(_position[1] - _searchRadius, _position[2] - _searchRadius, -9999),
+        api.type.Vec3f.new(_position[1] + _searchRadius, _position[2] + _searchRadius, 9999)
+    )
+    local baseEdgeIds = {}
+    local callback0 = function(entity, boundingVolume)
+        -- print('callback0 found entity', entity)
+        -- print('boundingVolume =')
+        -- debugPrint(boundingVolume)
+        if not(entity) then return end
+
+        if not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE)) then return end
+        -- print('the entity is a BASE_EDGE')
+
+        baseEdgeIds[#baseEdgeIds+1] = entity
+    end
+    api.engine.system.octreeSystem.findIntersectingEntities(_box0, callback0)
+
+    return baseEdgeIds
+end
+
 local function sign(num1)
     if type(num1) ~= 'number' then return nil end
 
