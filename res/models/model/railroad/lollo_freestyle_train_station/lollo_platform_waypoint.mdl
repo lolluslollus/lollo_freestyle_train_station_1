@@ -25,6 +25,11 @@ return {
 						mesh = "railroad/lod_0_signal_waypoint.msh",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.5, 2.5, -0.52999997138977, 1, },
 					},
+					{
+						materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},
+						mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
+						transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+					},
 				},
 				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 			},
@@ -43,7 +48,7 @@ return {
 		},
 		description = {
 			description = _("Used for rerouting a line. Can be added to a line like a station."),
-			name = _("Lollo Waypoint"),
+			name = _("Lollo Platform Waypoint"),
 		},
 		signal = {
 			type = "WAYPOINT",
