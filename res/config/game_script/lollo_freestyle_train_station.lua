@@ -10,7 +10,7 @@ end
 
 local _eventId = '__lolloFreestyleTrainStation__'
 local _eventNames = {
-    PLATFORM_WAYPOINT_BUILT_ON_PLATFORM = 'platformWaypointBuiltOnPlatform',
+    BUILD_STATION_REQUESTED = 'platformWaypointBuiltOnPlatform',
     PLATFORM_WAYPOINT_BULLDOZE_REQUESTED = 'platformWaypointBulldozeRequested',
     TRACK_WAYPOINT_1_BUILT_ON_TRACK = 'trackWaypoint1BuiltOnTrack',
     TRACK_WAYPOINT_1_BULLDOZE_REQUESTED = 'trackWaypoint1BulldozeRequested',
@@ -181,19 +181,7 @@ local _utils = {
         return results
     end,
 
---[[     getTransfFromApiResult = function(transfStr)
-        transfStr = transfStr:gsub('%(%(', '(')
-        transfStr = transfStr:gsub('%)%)', ')')
-        local results = {}
-        for match0 in transfStr:gmatch('%([^(%))]+%)') do
-            local noBrackets = match0:gsub('%(', '')
-            noBrackets = noBrackets:gsub('%)', '')
-            for match1 in noBrackets:gmatch('[%-%.%d]+') do
-                results[#results + 1] = tonumber(match1 or '0')
-            end
-        end
-        return results
-    end, ]]
+
 
     getWaypointId = function(edgeObjects, refModelId)
         local result = nil
@@ -711,9 +699,14 @@ function data()
                 if param.edgeId and param.waypointId then
                     _actions.replageEdgeWithSameRemovingObject(param.edgeId, param.waypointId)
                 end
-            elseif name == _eventNames.PLATFORM_WAYPOINT_BUILT_ON_PLATFORM
+            elseif name == _eventNames.BUILD_STATION_REQUESTED
             then
-                -- LOLLO TODO make splits at track flags and build station
+                -- LOLLO TODO make splits at track flags
+                -- LOLLO TODO find out tracks between track flags
+                -- LOLLO TODO write away the track params
+                -- LOLLO TODO write away the platform params
+                -- LOLLO TODO bulldoze those tracks
+                -- build station basing on those params
                 if param.edgeId and param.transf then
                     local oldEdge = api.engine.getComponent(param.edgeId, api.type.ComponentType.BASE_EDGE)
                     if oldEdge then
@@ -794,8 +787,12 @@ function data()
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
                                     )
                                     if param.proposal.proposal.addedSegments[1].trackEdge.trackType ~= platformTrackType
-                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, platformWaypointModelId) > 1 then
-                                        -- waypoint built outside platform or another waypoint exists nearby
+                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, platformWaypointModelId) > 1
+                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, trackWaypoint1ModelId) < 1
+                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, trackWaypoint2ModelId) < 1
+                                    then
+                                        -- waypoint built outside platform or another waypoint exists nearby,
+                                        -- on no track waypoints built yet
                                         game.interface.sendScriptEvent(_eventId, _eventNames.PLATFORM_WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdge.id,
                                             transf = transf,
@@ -852,13 +849,15 @@ function data()
                                             -- the worker thread will:
                                             -- destroy the waypoint
                                         -- endif
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.PLATFORM_WAYPOINT_BUILT_ON_PLATFORM, {
+                                        game.interface.sendScriptEvent(_eventId, _eventNames.BUILD_STATION_REQUESTED, {
                                             edgeId = lastBuiltEdge.id,
                                             transf = transf,
                                             waypointId = waypointId,
                                         })
                                         -- LOLLO TODO the worker thread must destroy the waypoint
                                     end
+                                    -- LOLLO TODO if there are previous waypoints,
+                                    -- bar building a waypoint not connected to a previous waypoint
                                 elseif param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint1ModelId then
                                     print('LOLLO track waypoint 1 built!')
                                     local lastBuiltEdge = _utils.getLastBuiltEdge(param.data.entity2tn)
