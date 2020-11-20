@@ -639,24 +639,11 @@ local _actions = {
                         {position1.x, position1.y, position1.z},
                         nodeBetween
                     )
-                    -- if assignment.assignToFirstEstimate == 0 then
                     if assignment.assignToSecondEstimate == 0 then
                         table.insert(edge0Objects, { edgeObj[1], edgeObj[2] })
-                        -- local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(edgeObj[1])
-                        -- LOLLO TODO do we really need this check? Now we know that the crash happens with removed mod stations!
-                        -- if arrayUtils.arrayHasValue(edge1StationGroups, stationGroupId) then return end -- don't split station groups
-                        -- if type(stationGroupId) == 'number' and stationGroupId > 0 then table.insert(edge0StationGroups, stationGroupId) end
-                    -- elseif assignment.assignToFirstEstimate == 1 then
                     elseif assignment.assignToSecondEstimate == 1 then
                         table.insert(edge1Objects, { edgeObj[1], edgeObj[2] })
-                        -- local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(edgeObj[1])
-                        -- LOLLO TODO do we really need this check? Now we know that the crash happens with removed mod stations!
-                        -- if arrayUtils.arrayHasValue(edge0StationGroups, stationGroupId) then return end -- don't split station groups
-                        -- if type(stationGroupId) == 'number' and stationGroupId > 0 then table.insert(edge1StationGroups, stationGroupId) end
                     else
-                        -- print('don\'t change anything and leave')
-                        -- print('LOLLO error, assignment.assignToFirstEstimate =', assignment.assignToFirstEstimate)
-                        -- print('LOLLO error, assignment.assignToSecondEstimate =', assignment.assignToSecondEstimate)
                         return -- change nothing and leave
                     end
                 end
@@ -724,9 +711,9 @@ function data()
                 if param.edgeId and param.waypointId then
                     _actions.replageEdgeWithSameRemovingObject(param.edgeId, param.waypointId)
                 end
-            elseif name == _eventNames.TRACK_WAYPOINT_1_BUILT_ON_TRACK
-            or name == _eventNames.TRACK_WAYPOINT_2_BUILT_ON_TRACK
+            elseif name == _eventNames.PLATFORM_WAYPOINT_BUILT_ON_PLATFORM
             then
+                -- LOLLO TODO make splits at track flags and build station
                 if param.edgeId and param.transf then
                     local oldEdge = api.engine.getComponent(param.edgeId, api.type.ComponentType.BASE_EDGE)
                     if oldEdge then
