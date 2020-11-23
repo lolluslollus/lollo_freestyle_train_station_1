@@ -84,6 +84,162 @@ local _utils = {
         return results
     end,
 
+    getTrackEdgesBetween = function(_edge1Id, _edge2Id)
+        print('one')
+        if type(_edge1Id) ~= 'number' or _edge1Id < 1 then return {} end
+        if type(_edge2Id) ~= 'number' or _edge2Id < 1 then return {} end
+        print('two')
+        if _edge1Id == _edge2Id then return { _edge1Id } end
+        print('three')
+        local _baseEdge1 = api.engine.getComponent(
+            _edge1Id,
+            api.type.ComponentType.BASE_EDGE
+        )
+        local _baseEdge2 = api.engine.getComponent(
+            _edge2Id,
+            api.type.ComponentType.BASE_EDGE
+        )
+        if _baseEdge1 == nil or _baseEdge2 == nil then return {} end
+        print('four')
+        local _baseEdgeTrack2 = api.engine.getComponent(_edge2Id, api.type.ComponentType.BASE_EDGE_TRACK)
+        if not(_baseEdgeTrack2) then return {} end
+        print('five')
+        local _trackType2 = _baseEdgeTrack2.trackType
+
+        local _isTrackEdgeContiguousTo2 = function(baseEdge1)
+            if baseEdge1.node0 == _baseEdge2.node0 or baseEdge1.node0 == _baseEdge2.node1
+            or baseEdge1.node1 == _baseEdge2.node0 or baseEdge1.node1 == _baseEdge2.node1 then
+                return true
+            end
+
+            return false
+        end
+
+        local _isTrackEdgesSameTypeAs2 = function(edge1Id)
+            local baseEdgeTrack1 = api.engine.getComponent(edge1Id, api.type.ComponentType.BASE_EDGE_TRACK)
+            if not(baseEdgeTrack1) or baseEdgeTrack1.trackType ~= _trackType2 then return false end
+
+            return true
+        end
+
+        if _isTrackEdgeContiguousTo2(_baseEdge1) then
+            if _isTrackEdgesSameTypeAs2(_edge1Id) then print('six') return { _edge1Id, _edge2Id } end
+            print('seven')
+            return {}
+        end
+
+        -- LOLLO TODO test this function from here on, we don't know how good it is
+        local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+        local _getEdgesBetween = function(node0Or1FieldName)
+            local baseEdge1 = _baseEdge1
+            local baseEdges = { _baseEdge1, _baseEdge2 }
+            local edge1Id = _edge1Id
+            local edgeIds = { _edge1Id, _edge2Id }
+            local counter = 0
+            while counter < 20 do
+                counter = counter + 1
+                print('eight')
+                local nodeId = baseEdge1[node0Or1FieldName]
+                local adjacentEdgeIds = _map[nodeId] -- userdata
+                if not(adjacentEdgeIds) or #adjacentEdgeIds ~= 2 then
+                    print('nine')
+                    return false
+                else
+                    for _, edgeId in pairs(adjacentEdgeIds) do -- cannot use adjacentEdgeIds[index] here
+                        print('ten')
+                        if edgeId ~= edge1Id then
+                            print('eleven')
+                            edge1Id = edgeId
+                            edgeIds[#edgeIds-1] = edgeId
+                            baseEdge1 = api.engine.getComponent(
+                                edgeId,
+                                api.type.ComponentType.BASE_EDGE
+                            )
+                            baseEdges[#baseEdges-1] = baseEdge1
+                            if _isTrackEdgeContiguousTo2(baseEdge1) then
+                                print('twelve')
+                                if _isTrackEdgesSameTypeAs2(edge1Id) then print('thirteen') return edgeIds end
+                                print('fourteen')
+                                return false
+                            end
+
+                            break
+                        end
+                    end
+                end
+            end
+
+            return false
+        end
+
+        local node0Results = _getEdgesBetween('node0')
+        print('node0results =')
+        debugPrint(node0Results)
+        if node0Results then return node0Results end
+
+        local node1Results = _getEdgesBetween('node1')
+        print('node1results =')
+        debugPrint(node1Results)
+        if node1Results then return node1Results end
+
+        return {}
+    end,
+
+    getTrackEdgesBetweenBROKEN = function(edge1Id, edge2Id)
+        print('edge1Id =')
+        debugPrint(edge1Id)
+        print('edge2Id =')
+        debugPrint(edge2Id)
+        local edge1IdTyped = api.type.EdgeId.new()
+        edge1IdTyped.entity = edge1Id
+        local edge2IdTyped = api.type.EdgeId.new()
+        edge2IdTyped.entity = edge2Id
+        print('edge1IdTyped =')
+        debugPrint(edge1IdTyped)
+        print('edge2IdTyped =')
+        debugPrint(edge2IdTyped)
+        local edgeIdDir1 = api.type.EdgeIdDirAndLength.new(edge1IdTyped, true, 10)
+        -- local edgeIdDir2 = api.type.EdgeIdDirAndLength.new(edge2IdTyped, true, 10)
+        print('edgeIdDir1 =')
+        debugPrint(edgeIdDir1)
+        local baseEdge1 = api.engine.getComponent(
+            edge1Id,
+            api.type.ComponentType.BASE_EDGE
+        )
+        local baseEdge2 = api.engine.getComponent(
+            edge2Id,
+            api.type.ComponentType.BASE_EDGE
+        )
+        print('baseEdge1 =')
+        debugPrint(baseEdge1)
+        print('baseEdge2 =')
+        debugPrint(baseEdge2)
+        local node1Typed = api.type.NodeId.new()
+        node1Typed.entity = baseEdge2.node0
+        local node2Typed = api.type.NodeId.new()
+        node2Typed.entity = baseEdge2.node1
+
+        print('edgeIdDir1 =')
+        debugPrint(edgeIdDir1)
+        print('node1Typed =')
+        debugPrint(node1Typed)
+        print('node2Typed =')
+        debugPrint(node2Typed)
+        -- LOLLO TODO this dumps without useful messages
+        local path = api.engine.util.pathfinding.findPath(
+            { edgeIdDir1 },
+            { node1Typed },
+            {
+                api.type.enum.TransportMode.TRAIN,
+                api.type.enum.TransportMode.ELECTRIC_TRAIN
+            },
+            500.0
+        )
+        print('path =')
+        debugPrint(path)
+        return {}
+    end,
+
     getLastBuiltEdge = function(entity2tn)
         local nodeIds = {}
         for k, _ in pairs(entity2tn) do
@@ -137,7 +293,7 @@ local _utils = {
     end,
 
     getOuterNodes = function(contiguousEdgeIds, trackType)
-        local _hasOnlyOneEdgeOfType1 = function(nodeId, map, trackType)
+        local _hasOnlyOneEdgeOfType1 = function(nodeId, map)
             if type(nodeId) ~= 'number' or nodeId < 1 or not(trackType) then return false end
 
             local edgeIds = map[nodeId] -- userdata
@@ -167,21 +323,19 @@ local _utils = {
         local _map = api.engine.system.streetSystem.getNode2SegmentMap()
         local _baseEdgeFirst = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
         local _baseEdgeLast = api.engine.getComponent(contiguousEdgeIds[#contiguousEdgeIds], api.type.ComponentType.BASE_EDGE)
-        if _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node0, _map, trackType) then
+        if _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node0, _map) then
             results[#results+1] = _baseEdgeFirst.node0
-        elseif _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node1, _map, trackType) then
+        elseif _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node1, _map) then
             results[#results+1] = _baseEdgeFirst.node1
         end
-        if _hasOnlyOneEdgeOfType1(_baseEdgeLast.node0, _map, trackType) then
+        if _hasOnlyOneEdgeOfType1(_baseEdgeLast.node0, _map) then
             results[#results+1] = _baseEdgeLast.node0
-        elseif _hasOnlyOneEdgeOfType1(_baseEdgeLast.node1, _map, trackType) then
+        elseif _hasOnlyOneEdgeOfType1(_baseEdgeLast.node1, _map) then
             results[#results+1] = _baseEdgeLast.node1
         end
 
         return results
     end,
-
-
 
     getWaypointId = function(edgeObjects, refModelId)
         local result = nil
@@ -334,7 +488,7 @@ local _utils = {
         return type(id) == 'number' and id > 0
     end
 }
-_utils.getNearbyEdgeObjectsWithModelId = function(transf, refModelId)
+_utils.getNearbyEdgeObjectIdsWithModelId = function(transf, refModelId)
     local results = {}
 
     local nearbyEdgeIds = edgeUtils.getNearestEdgeIds(transf, _searchRadius)
@@ -786,10 +940,14 @@ function data()
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
                                     )
+                                    local nearbyEdgeIdsWithPlatformWaypoint = _utils.getNearbyEdgeObjectIdsWithModelId(transf, platformWaypointModelId)
+                                    local nearbyEdgeIdsWithTrackWaypoint1 = _utils.getNearbyEdgeObjectIdsWithModelId(transf, trackWaypoint1ModelId)
+                                    local nearbyEdgeIdsWithTrackWaypoint2 = _utils.getNearbyEdgeObjectIdsWithModelId(transf, trackWaypoint2ModelId)
+
                                     if param.proposal.proposal.addedSegments[1].trackEdge.trackType ~= platformTrackType
-                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, platformWaypointModelId) > 1
-                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, trackWaypoint1ModelId) < 1
-                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, trackWaypoint2ModelId) < 1
+                                    or #nearbyEdgeIdsWithPlatformWaypoint > 1
+                                    or #nearbyEdgeIdsWithTrackWaypoint1 < 1
+                                    or #nearbyEdgeIdsWithTrackWaypoint2 < 1
                                     then
                                         -- waypoint built outside platform or another waypoint exists nearby,
                                         -- on no track waypoints built yet
@@ -798,64 +956,83 @@ function data()
                                             transf = transf,
                                             waypointId = waypointId,
                                         })
-                                    else
-                                        -- waypoint built on platform and no other waypoints nearby
-                                        -- LOLLO TODO:
-                                        -- find all consecutive edges of the same type
-                                        -- sort them from first to last
-                                        local continuousEdges = _utils.getContiguousEdges(
-                                            lastBuiltEdge.id,
-                                            platformTrackType
-                                        )
-                                        print('contiguous edges =')
-                                        debugPrint(continuousEdges)
-                                        print('# contiguous edges =')
-                                        debugPrint(#continuousEdges)
-                                        print('type of contiguous edges =')
-                                        debugPrint(type(continuousEdges))
-                                        print('contiguous edges[1] =')
-                                        debugPrint(continuousEdges[1])
-                                        print('contiguous edges[last] =')
-                                        debugPrint(continuousEdges[#continuousEdges])
-
-                                        local outerNodes = _utils.getOuterNodes(continuousEdges, platformTrackType)
-                                        print('outerNodes =')
-                                        debugPrint(outerNodes)
-
-                                        -- left side: find the 2 tracks (real tracks, not platform tracks) nearest to the platform start and end
-                                        -- repeat on the right side
-                                        -- for now, identify them with the red and green pins instead!
-                                        -- if at least one normal track was found:
-                                            -- raise an event
-                                            -- the worker thread will:
-                                            -- split the tracks near the ends of the platform (left and / or right)
-                                            -- destroy all the tracks between the splits
-                                            -- add a construction with:
-                                                -- rail edges replacing the destroyed tracks
-                                                -- many small models with straight person paths and terminals { personNode, personEdge, vehicleEdge }
-                                                -- terminals with vehicleNodeOverride
-                                            -- destroy the waypoint
-                                            -- WHAT IF there is already a waypoint on the same table of platforms?
-                                            -- WHAT IF the same track has already been split by another platform, or by the same?
-                                            -- WHAT IF the user adds or removes an adjacent piece of platform?
-                                                -- catch it and check if the station needs expanding
-                                            -- WHAT IF the user removes a piece of platform inbetween?
-                                                -- Homer Simpson: remove the station or make it on one end only
-                                            -- WHAT IF the user destroys the construction?
-                                                -- replace the edges with normal pieces of track
-                                            -- WHAT IF more than 1 of my special waypoints is built? Delete the last one!
-                                        -- else
-                                            -- raise an event
-                                            -- the worker thread will:
-                                            -- destroy the waypoint
-                                        -- endif
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.BUILD_STATION_REQUESTED, {
-                                            edgeId = lastBuiltEdge.id,
-                                            transf = transf,
-                                            waypointId = waypointId,
-                                        })
-                                        -- LOLLO TODO the worker thread must destroy the waypoint
                                     end
+                                    -- waypoint built on platform and two track waypoints built nearby
+                                    -- find all consecutive track edges of the same type
+                                    -- sort them from first to last
+                                    print('nearbyEdgesWithTrackWaypoint1 =')
+                                    debugPrint(nearbyEdgeIdsWithTrackWaypoint1)
+                                    print('nearbyEdgesWithTrackWaypoint2 =')
+                                    debugPrint(nearbyEdgeIdsWithTrackWaypoint2)
+
+                                    local continuousTrackEdges = _utils.getTrackEdgesBetween(
+                                        api.engine.system.streetSystem.getEdgeForEdgeObject(nearbyEdgeIdsWithTrackWaypoint1[1]),
+                                        api.engine.system.streetSystem.getEdgeForEdgeObject(nearbyEdgeIdsWithTrackWaypoint2[1])
+                                    )
+                                    print('contiguous track edges =')
+                                    debugPrint(continuousTrackEdges)
+                                    print('# contiguous track edges =')
+                                    debugPrint(#continuousTrackEdges)
+                                    print('type of contiguous track edges =')
+                                    debugPrint(type(continuousTrackEdges))
+                                    print('contiguous track edges[1] =')
+                                    debugPrint(continuousTrackEdges[1])
+                                    print('contiguous track edges[last] =')
+                                    debugPrint(continuousTrackEdges[#continuousTrackEdges])
+                                    -- find all consecutive platform edges of the same type
+                                    -- sort them from first to last
+                                    local continuousPlatformEdges = _utils.getContiguousEdges(
+                                        lastBuiltEdge.id,
+                                        platformTrackType
+                                    )
+                                    print('contiguous platform edges =')
+                                    debugPrint(continuousPlatformEdges)
+                                    print('# contiguous platform edges =')
+                                    debugPrint(#continuousPlatformEdges)
+                                    print('type of contiguous platform edges =')
+                                    debugPrint(type(continuousPlatformEdges))
+                                    print('contiguous platform edges[1] =')
+                                    debugPrint(continuousPlatformEdges[1])
+                                    print('contiguous platform edges[last] =')
+                                    debugPrint(continuousPlatformEdges[#continuousPlatformEdges])
+
+                                    local outerNodes = _utils.getOuterNodes(continuousPlatformEdges, platformTrackType)
+                                    print('outerNodes =')
+                                    debugPrint(outerNodes)
+
+                                    -- left side: find the 2 tracks (real tracks, not platform tracks) nearest to the platform start and end
+                                    -- repeat on the right side
+                                    -- for now, identify them with the red and green pins instead!
+                                    -- if at least one normal track was found:
+                                        -- raise an event
+                                        -- the worker thread will:
+                                        -- split the tracks near the ends of the platform (left and / or right)
+                                        -- destroy all the tracks between the splits
+                                        -- add a construction with:
+                                            -- rail edges replacing the destroyed tracks
+                                            -- many small models with straight person paths and terminals { personNode, personEdge, vehicleEdge }
+                                            -- terminals with vehicleNodeOverride
+                                        -- destroy the waypoint
+                                        -- WHAT IF there is already a waypoint on the same table of platforms?
+                                        -- WHAT IF the same track has already been split by another platform, or by the same?
+                                        -- WHAT IF the user adds or removes an adjacent piece of platform?
+                                            -- catch it and check if the station needs expanding
+                                        -- WHAT IF the user removes a piece of platform inbetween?
+                                            -- Homer Simpson: remove the station or make it on one end only
+                                        -- WHAT IF the user destroys the construction?
+                                            -- replace the edges with normal pieces of track
+                                        -- WHAT IF more than 1 of my special waypoints is built? Delete the last one!
+                                    -- else
+                                        -- raise an event
+                                        -- the worker thread will:
+                                        -- destroy the waypoint
+                                    -- endif
+                                    game.interface.sendScriptEvent(_eventId, _eventNames.BUILD_STATION_REQUESTED, {
+                                        edgeId = lastBuiltEdge.id,
+                                        transf = transf,
+                                        waypointId = waypointId,
+                                    })
+                                    -- LOLLO TODO the worker thread must destroy the waypoint
                                     -- LOLLO TODO if there are previous waypoints,
                                     -- bar building a waypoint not connected to a previous waypoint
                                 elseif param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint1ModelId then
@@ -874,7 +1051,7 @@ function data()
                                     )
 
                                     if param.proposal.proposal.addedSegments[1].trackEdge.trackType == platformTrackType
-                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, trackWaypoint1ModelId) > 1
+                                    or #_utils.getNearbyEdgeObjectIdsWithModelId(transf, trackWaypoint1ModelId) > 1
                                     then
                                         game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdge.id,
@@ -904,7 +1081,7 @@ function data()
                                     )
 
                                     if param.proposal.proposal.addedSegments[1].trackEdge.trackType == platformTrackType
-                                    or #_utils.getNearbyEdgeObjectsWithModelId(transf, trackWaypoint2ModelId) > 1
+                                    or #_utils.getNearbyEdgeObjectIdsWithModelId(transf, trackWaypoint2ModelId) > 1
                                     then
                                         game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_2_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdge.id,
