@@ -979,6 +979,13 @@ function data()
                                     debugPrint(continuousTrackEdges[1])
                                     print('contiguous track edges[last] =')
                                     debugPrint(continuousTrackEdges[#continuousTrackEdges])
+                                    if #continuousTrackEdges < 1 then
+                                        game.interface.sendScriptEvent(_eventId, _eventNames.PLATFORM_WAYPOINT_BULLDOZE_REQUESTED, {
+                                            edgeId = lastBuiltEdge.id,
+                                            transf = transf,
+                                            waypointId = waypointId,
+                                        })
+                                    end
                                     -- find all consecutive platform edges of the same type
                                     -- sort them from first to last
                                     local continuousPlatformEdges = _utils.getContiguousEdges(
@@ -995,6 +1002,13 @@ function data()
                                     debugPrint(continuousPlatformEdges[1])
                                     print('contiguous platform edges[last] =')
                                     debugPrint(continuousPlatformEdges[#continuousPlatformEdges])
+                                    if #continuousPlatformEdges < 1 then
+                                        game.interface.sendScriptEvent(_eventId, _eventNames.PLATFORM_WAYPOINT_BULLDOZE_REQUESTED, {
+                                            edgeId = lastBuiltEdge.id,
+                                            transf = transf,
+                                            waypointId = waypointId,
+                                        })
+                                    end
 
                                     local outerNodes = _utils.getOuterNodes(continuousPlatformEdges, platformTrackType)
                                     print('outerNodes =')
