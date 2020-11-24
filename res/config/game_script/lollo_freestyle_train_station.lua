@@ -84,7 +84,104 @@ local _utils = {
         return results
     end,
 
-    getTrackEdgesBetween = function(_edge1Id, _edge2Id)
+    getLastBuiltEdge = function(entity2tn)
+        local nodeIds = {}
+        for k, _ in pairs(entity2tn) do
+            local entity = game.interface.getEntity(k)
+            if entity.type == 'BASE_NODE' then nodeIds[#nodeIds+1] = entity.id end
+        end
+        if #nodeIds ~= 2 then return nil end
+
+        for k, _ in pairs(entity2tn) do
+            local entity = game.interface.getEntity(k)
+            if entity.type == 'BASE_EDGE'
+            and ((entity.node0 == nodeIds[1] and entity.node1 == nodeIds[2])
+            or (entity.node0 == nodeIds[2] and entity.node1 == nodeIds[1])) then
+                local extraEdgeData = api.engine.getComponent(entity.id, api.type.ComponentType.BASE_EDGE)
+                return {
+                    id = entity.id,
+                    objects = extraEdgeData.objects
+                }
+            end
+        end
+
+        return nil
+    end,
+
+    getObjectPosition = function(objectId)
+        -- print('getObjectPosition starting')
+        if type(objectId) ~= 'number' or objectId < 0 then return nil end
+
+        local modelInstanceList = api.engine.getComponent(objectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
+        if not(modelInstanceList) then return nil end
+
+        local fatInstances = modelInstanceList.fatInstances
+        if not(fatInstances) or not(fatInstances[1]) or not(fatInstances[1].transf) or not(fatInstances[1].transf.cols) then return nil end
+
+        local objectTransf = transfUtilUG.new(
+            fatInstances[1].transf:cols(0),
+            fatInstances[1].transf:cols(1),
+            fatInstances[1].transf:cols(2),
+            fatInstances[1].transf:cols(3)
+        )
+        -- print('fatInstances[1]', fatInstances[1] and true)
+        -- print('fatInstances[2]', fatInstances[2] and true) -- always nil
+        -- print('fatInstances[3]', fatInstances[3] and true) -- always nil
+        -- print('objectTransf =')
+        -- debugPrint(objectTransf)
+        return {
+            [1] = objectTransf[13],
+            [2] = objectTransf[14],
+            [3] = objectTransf[15]
+        }
+    end,
+
+    getOuterNodes = function(contiguousEdgeIds, trackType)
+        local _hasOnlyOneEdgeOfType1 = function(nodeId, map)
+            if type(nodeId) ~= 'number' or nodeId < 1 or not(trackType) then return false end
+
+            local edgeIds = map[nodeId] -- userdata
+            if not(edgeIds) or #edgeIds < 2 then return true end
+
+            local counter = 0
+            for _, edgeId in pairs(edgeIds) do -- cannot use edgeIds[index] here
+                local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                if baseEdgeTrack ~= nil and baseEdgeTrack.trackType == trackType then
+                    counter = counter + 1
+                end
+            end
+
+            return counter < 2
+        end
+
+        print('one')
+        if type(contiguousEdgeIds) ~= 'table' or #contiguousEdgeIds < 1 then return {} end
+        print('two')
+        if #contiguousEdgeIds == 1 then
+            local _baseEdge = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
+            print('three')
+            return { _baseEdge.node0, _baseEdge.node1 }
+        end
+
+        local results = {}
+        local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+        local _baseEdgeFirst = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
+        local _baseEdgeLast = api.engine.getComponent(contiguousEdgeIds[#contiguousEdgeIds], api.type.ComponentType.BASE_EDGE)
+        if _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node0, _map) then
+            results[#results+1] = _baseEdgeFirst.node0
+        elseif _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node1, _map) then
+            results[#results+1] = _baseEdgeFirst.node1
+        end
+        if _hasOnlyOneEdgeOfType1(_baseEdgeLast.node0, _map) then
+            results[#results+1] = _baseEdgeLast.node0
+        elseif _hasOnlyOneEdgeOfType1(_baseEdgeLast.node1, _map) then
+            results[#results+1] = _baseEdgeLast.node1
+        end
+
+        return results
+    end,
+
+    getTrackEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
         print('one')
         if type(_edge1Id) ~= 'number' or _edge1Id < 1 then return {} end
         if type(_edge2Id) ~= 'number' or _edge2Id < 1 then return {} end
@@ -185,7 +282,7 @@ local _utils = {
         return {}
     end,
 
-    getTrackEdgesBetweenBROKEN = function(edge1Id, edge2Id)
+    getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
         print('edge1Id =')
         debugPrint(edge1Id)
         print('edge2Id =')
@@ -238,103 +335,6 @@ local _utils = {
         print('path =')
         debugPrint(path)
         return {}
-    end,
-
-    getLastBuiltEdge = function(entity2tn)
-        local nodeIds = {}
-        for k, _ in pairs(entity2tn) do
-            local entity = game.interface.getEntity(k)
-            if entity.type == 'BASE_NODE' then nodeIds[#nodeIds+1] = entity.id end
-        end
-        if #nodeIds ~= 2 then return nil end
-
-        for k, _ in pairs(entity2tn) do
-            local entity = game.interface.getEntity(k)
-            if entity.type == 'BASE_EDGE'
-            and ((entity.node0 == nodeIds[1] and entity.node1 == nodeIds[2])
-            or (entity.node0 == nodeIds[2] and entity.node1 == nodeIds[1])) then
-                local extraEdgeData = api.engine.getComponent(entity.id, api.type.ComponentType.BASE_EDGE)
-                return {
-                    id = entity.id,
-                    objects = extraEdgeData.objects
-                }
-            end
-        end
-
-        return nil
-    end,
-
-    getObjectPosition = function(objectId)
-        -- print('getObjectPosition starting')
-        if type(objectId) ~= 'number' or objectId < 0 then return nil end
-
-        local modelInstanceList = api.engine.getComponent(objectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
-        if not(modelInstanceList) then return nil end
-
-        local fatInstances = modelInstanceList.fatInstances
-        if not(fatInstances) or not(fatInstances[1]) or not(fatInstances[1].transf) or not(fatInstances[1].transf.cols) then return nil end
-
-        local objectTransf = transfUtilUG.new(
-            fatInstances[1].transf:cols(0),
-            fatInstances[1].transf:cols(1),
-            fatInstances[1].transf:cols(2),
-            fatInstances[1].transf:cols(3)
-        )
-        -- print('fatInstances[1]', fatInstances[1] and true)
-        -- print('fatInstances[2]', fatInstances[2] and true) -- always nil
-        -- print('fatInstances[3]', fatInstances[3] and true) -- always nil
-        -- print('objectTransf =')
-        -- debugPrint(objectTransf)
-        return {
-            [1] = objectTransf[13],
-            [2] = objectTransf[14],
-            [3] = objectTransf[15]
-        }
-    end,
-
-    getOuterNodes = function(contiguousEdgeIds, trackType)
-        local _hasOnlyOneEdgeOfType1 = function(nodeId, map)
-            if type(nodeId) ~= 'number' or nodeId < 1 or not(trackType) then return false end
-
-            local edgeIds = map[nodeId] -- userdata
-            if not(edgeIds) or #edgeIds < 2 then return true end
-
-            local counter = 0
-            for _, edgeId in pairs(edgeIds) do -- cannot use edgeIds[index] here
-                local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                if baseEdgeTrack ~= nil and baseEdgeTrack.trackType == trackType then
-                    counter = counter + 1
-                end
-            end
-
-            return counter < 2
-        end
-
-        print('one')
-        if type(contiguousEdgeIds) ~= 'table' or #contiguousEdgeIds < 1 then return {} end
-        print('two')
-        if #contiguousEdgeIds == 1 then
-            local _baseEdge = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
-            print('three')
-            return { _baseEdge.node0, _baseEdge.node1 }
-        end
-
-        local results = {}
-        local _map = api.engine.system.streetSystem.getNode2SegmentMap()
-        local _baseEdgeFirst = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
-        local _baseEdgeLast = api.engine.getComponent(contiguousEdgeIds[#contiguousEdgeIds], api.type.ComponentType.BASE_EDGE)
-        if _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node0, _map) then
-            results[#results+1] = _baseEdgeFirst.node0
-        elseif _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node1, _map) then
-            results[#results+1] = _baseEdgeFirst.node1
-        end
-        if _hasOnlyOneEdgeOfType1(_baseEdgeLast.node0, _map) then
-            results[#results+1] = _baseEdgeLast.node0
-        elseif _hasOnlyOneEdgeOfType1(_baseEdgeLast.node1, _map) then
-            results[#results+1] = _baseEdgeLast.node1
-        end
-
-        return results
     end,
 
     getWaypointId = function(edgeObjects, refModelId)
@@ -509,6 +509,80 @@ _utils.getNearbyEdgeObjectIdsWithModelId = function(transf, refModelId)
     print('getNearbyEdgeObjectsWithModelId is about to return')
     debugPrint(results)
     return results
+end
+_utils.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
+    print('ONE')
+    if type(_node1Id) ~= 'number' or _node1Id < 1 then return {} end
+    if type(_node2Id) ~= 'number' or _node2Id < 1 then return {} end
+    print('TWO')
+    if _node1Id == _node2Id then return {} end
+    print('THREE')
+
+    local adjacentEdge1Ids = {}
+    local adjacentEdge2Ids = {}
+    local _fetchAdjacentEdges = function()
+        local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+        local adjacentEdge1IdsUserdata = _map[_node1Id] -- userdata
+        local adjacentEdge2IdsUserdata = _map[_node2Id] -- userdata
+        if not(adjacentEdge1IdsUserdata) then
+            print('FOUR')
+            return false
+        else
+            for _, edgeId in pairs(adjacentEdge1IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
+                adjacentEdge1Ids[#adjacentEdge1Ids+1] = edgeId
+            end
+            print('FIVE')
+        end
+        if not(adjacentEdge2IdsUserdata) then
+            print('SIX')
+            return false
+        else
+            for _, edgeId in pairs(adjacentEdge2IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
+                adjacentEdge2Ids[#adjacentEdge2Ids+1] = edgeId
+            end
+            print('SEVEN')
+        end
+
+        return true
+    end
+
+    _fetchAdjacentEdges()
+    if #adjacentEdge1Ids < 1 or #adjacentEdge2Ids < 1 then print('EIGHT') return {} end
+
+    if #adjacentEdge1Ids == 1 and #adjacentEdge2Ids == 1 then
+        if adjacentEdge1Ids[1] == adjacentEdge2Ids[1] then
+            print('NINE')
+            return { adjacentEdge1Ids[1] }
+        else
+            print('TEN')
+            return {}
+        end
+    end
+
+    local trackEdgeIdsBetweenEdgeIds = _utils.getTrackEdgeIdsBetweenEdgeIds(adjacentEdge1Ids[1], adjacentEdge2Ids[1])
+    -- remove edges adjacent to but not between node1 and node2
+    local isExit = false
+    while not(isExit) do
+        if #trackEdgeIdsBetweenEdgeIds > 1 and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[2]) then
+            print('ELEVEN')
+            table.remove(trackEdgeIdsBetweenEdgeIds, 1)
+        else
+            print('TWELVE')
+            isExit = true
+        end
+    end
+    isExit = false
+    while not(isExit) do
+        if #trackEdgeIdsBetweenEdgeIds > 1 and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
+            print('THIRTEEN')
+            table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
+        else
+            print('FOURTEEN')
+            isExit = true
+        end
+    end
+
+    return trackEdgeIdsBetweenEdgeIds
 end
 
 local _actions = {
@@ -965,7 +1039,7 @@ function data()
                                     print('nearbyEdgesWithTrackWaypoint2 =')
                                     debugPrint(nearbyEdgeIdsWithTrackWaypoint2)
 
-                                    local continuousTrackEdges = _utils.getTrackEdgesBetween(
+                                    local continuousTrackEdges = _utils.getTrackEdgeIdsBetweenEdgeIds(
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(nearbyEdgeIdsWithTrackWaypoint1[1]),
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(nearbyEdgeIdsWithTrackWaypoint2[1])
                                     )
