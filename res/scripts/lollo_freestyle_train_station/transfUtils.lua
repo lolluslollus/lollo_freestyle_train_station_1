@@ -130,4 +130,13 @@ results.getVec123Transformed = function(vec123, transf)
     }
 end
 
+results.position2Transf = function(position)
+    return {
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        position[1], position[2], position[3], 1
+    }
+end
+
 return results
