@@ -770,7 +770,7 @@ local _actions = {
         )
     end,
 
-    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, param)
+    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventParam)
         if not(_utils.isValidId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
 
         local node0TangentLength = edgeUtils.getVectorLength({
@@ -904,13 +904,13 @@ print('WOWO')
                 -- print('LOLLO freestyle train station callback returned success = ')
                 print('command callback firing for split')
                 print(success)
-                if success then
+                if success and successEventName then
                     print('about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName, -- _eventNames.TRACK_WAYPOINT_1_SPLIT_SUCCEEDED,
-                        arrayUtils.cloneOmittingFields(param)
+                        arrayUtils.cloneOmittingFields(successEventParam or {})
                     ))
             -- print('about to send second command')
                     -- game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_SUCCEEDED, arrayUtils.cloneOmittingFields(param))
