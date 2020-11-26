@@ -130,8 +130,10 @@ helper.getNearestEdgeId = function(transf)
     end
 end
 
-helper.getNearestEdgeIds = function(transf, searchRadius)
+helper.getNearestObjectIds = function(transf, searchRadius, componentType)
     if type(transf) ~= 'table' then return nil end
+
+    if not(componentType) then componentType = api.type.ComponentType.BASE_EDGE end
 
     local _position = transfUtils.getVec123Transformed({0, 0, 0}, transf)
     local _searchRadius = searchRadius or 0.5
@@ -146,8 +148,8 @@ helper.getNearestEdgeIds = function(transf, searchRadius)
         -- debugPrint(boundingVolume)
         if not(entity) then return end
 
-        if not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE)) then return end
-        -- print('the entity is a BASE_EDGE')
+        if not(api.engine.getComponent(entity, componentType)) then return end
+        -- print('the entity has the right component type')
 
         baseEdgeIds[#baseEdgeIds+1] = entity
     end
