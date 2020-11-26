@@ -658,6 +658,18 @@ _utils.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
 end
 
 local _actions = {
+    buildStation = function(edgeLists, transf)
+        -- LOLLO TODO you cannot use a param to store the edge lists,
+        -- but maybe you can put it it a file and store the file name in a param,
+        -- or maybe some really dirty hack such as a param list with 999 values,
+        -- and each station gets its file, up to 999 stations?
+        -- Try calling upgradeFn first, that should trigger updateFn,
+        -- but which pams can U pass? Only the params!
+        -- Those could contain modules tho, which could be our edges.
+        -- To avoid complexity, try passing some random value into param.fileName
+        -- and see what updateFn receives.
+    end,
+
     bulldozeConstruction = function(constructionId)
         -- print('constructionId =', constructionId)
         if not(_utils.isValidId(constructionId)) then return end
@@ -1010,8 +1022,9 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(res, success)
-                -- print('LOLLO freestyle train station: split callback returned res = ')
-                -- debugPrint(res)
+-- LOLLO TODO check carefully if there is res.entities and what it contains
+                print('LOLLO freestyle train station: split callback returned res = ')
+                debugPrint(res)
                 --for _, v in pairs(res.entities) do print(v) end
                 -- print('LOLLO freestyle train station callback returned success = ')
                 print('command callback firing for split')
@@ -1203,6 +1216,7 @@ function data()
                 print('BUILD_STATION_REQUESTED caught, params =')
                 debugPrint(params)
                 -- LOLLO TODO build the construction
+                _actions.buildStation(params.edgeLists, params.platformWaypointTransf)
             end
             -- print('param.constructionEntityId =', param.constructionEntityId or 'NIL')
             -- if name == 'lorryStationBuilt' then
@@ -1253,7 +1267,6 @@ function data()
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
                                     )
-                                    -- local platformWaypointTransf = transfUtils.position2Transf(_utils.getObjectPosition(newWaypointId))
                                     local nearbyPlatformWaypointIds = _utils.getNearbyEdgeObjectIds(platformWaypointTransf, platformWaypointModelId)
                                     local nearbyTrackWaypoint1Ids = _utils.getNearbyEdgeObjectIds(platformWaypointTransf, trackWaypoint1ModelId)
                                     local nearbyTrackWaypoint2Ids = _utils.getNearbyEdgeObjectIds(platformWaypointTransf, trackWaypoint2ModelId)
@@ -1363,6 +1376,7 @@ function data()
                                     game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, {
                                         -- edgeId = lastBuiltEdge.id,
                                         platformWaypointId = newWaypointId,
+                                        platformWaypointTransf = platformWaypointTransf,
                                         trackWaypoint1Id = nearbyTrackWaypoint1Ids[1],
                                         trackWaypoint1Position = _utils.getObjectPosition(nearbyTrackWaypoint1Ids[1]),
                                         trackWaypoint2Id = nearbyTrackWaypoint2Ids[1],
