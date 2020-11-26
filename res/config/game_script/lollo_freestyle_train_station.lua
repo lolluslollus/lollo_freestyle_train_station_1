@@ -770,7 +770,7 @@ local _actions = {
         )
     end,
 
-    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventParam)
+    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventParams)
         if not(_utils.isValidId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
 
         local node0TangentLength = edgeUtils.getVectorLength({
@@ -846,7 +846,7 @@ local _actions = {
         newEdge1.comp.typeIndex = oldEdge.typeIndex
         newEdge1.playerOwned = playerOwned
         newEdge1.trackEdge = oldEdgeTrack
-print('WOWO')
+
         if type(oldEdge.objects) == 'table' and #oldEdge.objects > 1 then
             local edge0Objects = {}
             local edge1Objects = {}
@@ -898,8 +898,9 @@ print('WOWO')
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(res, success)
-                -- print('LOLLO freestyle train station callback returned res = ')
-                -- debugPrint(res)
+                print('LOLLO freestyle train station: split callback returned res = ')
+                debugPrint(res)
+                -- LOLLO TODO if res contains the node id, pass it on into the successEventParams
                 --for _, v in pairs(res.entities) do print(v) end
                 -- print('LOLLO freestyle train station callback returned success = ')
                 print('command callback firing for split')
@@ -910,7 +911,7 @@ print('WOWO')
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName, -- _eventNames.TRACK_WAYPOINT_1_SPLIT_SUCCEEDED,
-                        arrayUtils.cloneOmittingFields(successEventParam or {})
+                        arrayUtils.cloneOmittingFields(successEventParams or {})
                     ))
             -- print('about to send second command')
                     -- game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_SUCCEEDED, arrayUtils.cloneOmittingFields(param))
@@ -928,50 +929,54 @@ function data()
     return {
         ini = function()
         end,
-        handleEvent = function(src, id, name, param)
+        handleEvent = function(src, id, name, params)
             if (id ~= _eventId) then return end
             -- if type(param) ~= 'table' or type(param.constructionEntityId) ~= 'number' or param.constructionEntityId < 0 then return end
 
             print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'param =')
-            debugPrint(param)
+            debugPrint(params)
             -- handleEvent firing, src =	lollo_freestyle_train_station.lua	id =	__lolloFreestyleTrainStation__	name =	waypointBuilt	param =
 
             if name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED
             then
                 print('bulldoze requested caught, waypointId =')
-                debugPrint(param.waypointId)
+                debugPrint(params.waypointId)
                 print('edgeId =')
-                debugPrint(param.edgeId)
+                debugPrint(params.edgeId)
                 -- game.interface.bulldoze(param.waypointId) -- dumps
-                if param.edgeId and param.waypointId then
-                    _actions.replageEdgeWithSameRemovingObject(param.edgeId, param.waypointId)
+                if params.edgeId and params.waypointId then
+                    _actions.replageEdgeWithSameRemovingObject(params.edgeId, params.waypointId)
                 end
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 -- local sampleParam = {
-                --     edgeId = lastBuiltEdge.id,
-                --     platformWaypointId = newWaypointId,
-                --     trackWaypoint1Id = trackWaypoint1Ids[1],
-                --     trackWaypoint2Id = trackWaypoint2Ids[1],
+                --     platformWaypointId,
+                --     trackWaypoint1Id,
+                --     trackWaypoint1Position,
+                --     trackWaypoint2Id,
+                --     trackWaypoint2Position
                 -- }
 
-                -- LOLLO TODO make splits at track flags
                 -- LOLLO TODO find out tracks between track flags
                 -- LOLLO TODO write away the track params
                 -- LOLLO TODO write away the platform params
                 -- LOLLO TODO bulldoze those tracks
                 -- build station basing on those params
                 print('name =', name)
-                if not(_utils.isValidId(param.platformWaypointId))
-                or not(_utils.isValidId(param.trackWaypoint1Id))
-                or not(_utils.isValidId(param.trackWaypoint2Id)) then return end
-                local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(param.trackWaypoint1Id)
+                if not(_utils.isValidId(params.platformWaypointId))
+                or not(_utils.isValidId(params.trackWaypoint1Id))
+                or not(_utils.isValidId(params.trackWaypoint2Id))
+                or type(params.trackWaypoint1Position) ~= 'table' or #params.trackWaypoint1Position ~= 3
+                or type(params.trackWaypoint2Position) ~= 'table' or #params.trackWaypoint2Position ~= 3
+                then return end
+
+                local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(params.trackWaypoint1Id)
                 if not(_utils.isValidId(edgeId)) then return end
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
                 if not(baseEdge) then return end
                 local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
                 local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                 if not(node0) or not(node1) then return end
-                local trackWaypointPosition = _utils.getObjectPosition(param.trackWaypoint1Id)
+                local trackWaypointPosition = _utils.getObjectPosition(params.trackWaypoint1Id)
                 local nodeBetween = edgeUtils.getNodeBetween(
                     node0.position,
                     baseEdge.tangent0,
@@ -992,19 +997,23 @@ function data()
                     node1.position,
                     baseEdge.tangent1,
                     nodeBetween,
-                    param.trackWaypoint1Id,
+                    params.trackWaypoint1Id,
                     _eventNames.TRACK_WAYPOINT_1_SPLIT_SUCCEEDED,
-                    param
+                    params
                 )
             elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_SUCCEEDED then
                 print('name =', name)
                 print('param =')
-                debugPrint(param)
+                debugPrint(params)
 
-                if not(_utils.isValidId(param.platformWaypointId))
-                -- or not(_utils.isValidId(param.trackWaypoint1Id))
-                or not(_utils.isValidId(param.trackWaypoint2Id)) then return end
-                local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(param.trackWaypoint2Id)
+                if not(_utils.isValidId(params.platformWaypointId))
+                -- or not(_utils.isValidId(params.trackWaypoint1Id))
+                or not(_utils.isValidId(params.trackWaypoint2Id))
+                or type(params.trackWaypoint1Position) ~= 'table' or #params.trackWaypoint1Position ~= 3
+                or type(params.trackWaypoint2Position) ~= 'table' or #params.trackWaypoint2Position ~= 3
+                then return end
+
+                local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(params.trackWaypoint2Id)
                 print('edgeId =')
                 debugPrint(edgeId)
 
@@ -1017,7 +1026,7 @@ function data()
                 local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
                 local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                 if not(node0) or not(node1) then return end
-                local trackWaypointPosition = _utils.getObjectPosition(param.trackWaypoint2Id)
+                local trackWaypointPosition = _utils.getObjectPosition(params.trackWaypoint2Id)
                 -- print('trackWaypointPosition =')
                 -- debugPrint(trackWaypointPosition)
                 local nodeBetween = edgeUtils.getNodeBetween(
@@ -1032,7 +1041,6 @@ function data()
                         z = trackWaypointPosition[3],
                     }
                 )
-                print('UUU')
                 _actions.splitEdgeRemovingObject(
                     edgeId,
                     node0.position,
@@ -1040,19 +1048,23 @@ function data()
                     node1.position,
                     baseEdge.tangent1,
                     nodeBetween,
-                    param.trackWaypoint2Id,
+                    params.trackWaypoint2Id,
                     _eventNames.TRACK_WAYPOINT_2_SPLIT_SUCCEEDED,
-                    param
+                    params
                 )
             elseif name == _eventNames.TRACK_WAYPOINT_2_SPLIT_SUCCEEDED then
                 print('name =', name)
                 print('param =')
-                debugPrint(param)
+                debugPrint(params)
 
-                if not(_utils.isValidId(param.platformWaypointId))
-                -- or not(_utils.isValidId(param.trackWaypoint1Id))
-                -- or not(_utils.isValidId(param.trackWaypoint2Id))
+                if not(_utils.isValidId(params.platformWaypointId))
+                -- or not(_utils.isValidId(params.trackWaypoint1Id))
+                -- or not(_utils.isValidId(params.trackWaypoint2Id))
+                or type(params.trackWaypoint1Position) ~= 'table' or #params.trackWaypoint1Position ~= 3
+                or type(params.trackWaypoint2Position) ~= 'table' or #params.trackWaypoint2Position ~= 3
                 then return end
+
+                -- LOLLO TODO figure out the node ids
                 -- LOLLO TODO make a note of the tracks between the nodes
                 -- LOLLO TODO bulldoze the tracks
                 -- LOLLO TODO build the construction
@@ -1216,7 +1228,9 @@ function data()
                                         -- edgeId = lastBuiltEdge.id,
                                         platformWaypointId = newWaypointId,
                                         trackWaypoint1Id = nearbyTrackWaypoint1Ids[1],
+                                        trackWaypoint1Position = _utils.getObjectPosition(nearbyTrackWaypoint1Ids[1]),
                                         trackWaypoint2Id = nearbyTrackWaypoint2Ids[1],
+                                        trackWaypoint2Position = _utils.getObjectPosition(nearbyTrackWaypoint2Ids[1]),
                                     })
                                     -- LOLLO TODO the worker thread must destroy the waypoint
                                     -- LOLLO TODO if there are previous waypoints,
