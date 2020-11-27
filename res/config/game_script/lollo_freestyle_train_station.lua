@@ -319,6 +319,8 @@ local _actions = {
 
         print('buildStation starting, transf =')
         debugPrint(transf)
+        print('platformWaypointId =')
+        debugPrint(platformWaypointId)
         print('trackEdgeLists =')
         debugPrint(trackEdgeLists)
         print('platformEdges =')
