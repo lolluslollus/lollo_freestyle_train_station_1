@@ -256,12 +256,19 @@ function data()
 			print('result.edgeLists =')
 			debugPrint(result.edgeLists)
 
-			result.terminateConstructionHook = function()
-				print('starting terminateConstructionHook')
+			print('game =')
+			if game ~= nil then
+				print('game is there')
+				if game.interface ~= nil then
+					print('game.interface is there too')
+				else
+					print('game.interface is NIL')
+				end
+			else
+				print('NIL')
 			end
---[[
-			result.terminateConstructionHookBAK = function()
-				-- this fires after the user has added a module
+--[[ 			result.terminateConstructionHook = function()
+				-- this fires after the user has added a module, so we must call it explicitly in the non-modular station.
 				-- print('LOLLO starting terminateConstructionHook')
 				-- print('LOLLO result.models =')
 				-- debugPrint(result.models)
@@ -282,11 +289,11 @@ function data()
 
 				result.stations = {
 					{
-						tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
+						tag = 1, -- in the stock station, this is 0 for cargo and 1 for passengers
 						terminals = { } -- 0 is the position of the linked terminal group, in base 0
 					}
 				}
-				result.terminalGroups = {}
+				-- result.terminalGroups = {}
 				local vehicleEdgeModelIndexBase0_Counter = 0
 				-- for _, vehicleEdge in pairs(lorryBayModelIndexesBase0) do
 				for _, vehicleEdgeModelIndex in pairs(vehicleEdgeModelIndexesBase0) do
@@ -359,8 +366,7 @@ function data()
 				-- debugPrint(result.stations)
 				-- print('LOLLO result.terminalGroups = ')
 				-- debugPrint(result.terminalGroups)
-			end
-]]
+			end ]]
 			return result
 		end,
 --[[ 		preProcessFn = function(modules, change, three)
