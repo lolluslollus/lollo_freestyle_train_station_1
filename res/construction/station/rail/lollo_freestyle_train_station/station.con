@@ -1,3 +1,4 @@
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeHelper')
 local transf = require 'transf'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -21,15 +22,15 @@ function data()
 		-- },
 		autoRemovable = false,
 		skipCollision = true, -- we need this to change the street type when reconfiguring
-		params = {
-            {
-                key = 'fileName',
-                name = 'File Name',
-                values = {
-                    'dummy',
-                },
-                defaultIndex = 0
-            }
+		params = { -- keep it empty or it will crash coz it won't find the params, which I pass when building the construction
+            -- {
+            --     key = 'fileName',
+            --     name = 'File Name',
+            --     values = {
+            --         'dummy',
+            --     },
+            --     defaultIndex = 0
+            -- }
         },
 		updateFn = function(params)
 			print('updateFn starting, params =')
@@ -185,16 +186,71 @@ function data()
 						type = tel.trackTypeName,
 						catenary = tel.catenary
 					},
+					snapNodes = {},
 					tag2Nodes = {},
 					type = 'TRACK'
 				}
 
+				if i == 1 then
+					newEdgeList.freeNodes = { 0 }
+					newEdgeList.snapNodes = { 0 }
+				elseif i == #params.trackEdgeLists then
+					newEdgeList.freeNodes = { 1 }
+					newEdgeList.snapNodes = { 1 }
+				end
+
 				-- LOLLO TODO the edges don't snap to the neighbours
-				if i == 1 then newEdgeList.snapNodes = { 0 }
-				elseif i == #params.trackEdgeLists then newEdgeList.snapNodes = { 1 }
-				else newEdgeList.snapNodes = {} end
+				-- add a tiny edge at the beginning, to make tracks snap to those outside the construction
+				-- this works well in theory, but it does not help snapping
+--[[ 				if i == 1 then
+					local firstEdgeList = {
+						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
+						freeNodes = { 0, 1 },
+						params = {
+							type = tel.trackTypeName,
+							catenary = tel.catenary
+						},
+						snapNodes = { 0 },
+						tag2Nodes = {},
+						type = 'TRACK'
+					}
+					firstEdgeList.edges[1][2] = edgeUtils.getVectorNormalised(newEdgeList.edges[1][2])
+					firstEdgeList.edges[1][1] = {
+						newEdgeList.edges[1][1][1] - firstEdgeList.edges[1][2][1],
+						newEdgeList.edges[1][1][2] - firstEdgeList.edges[1][2][2],
+						newEdgeList.edges[1][1][3] - firstEdgeList.edges[1][2][3],
+					}
+					firstEdgeList.edges[2][2] = edgeUtils.getVectorNormalised(newEdgeList.edges[1][2])
+					firstEdgeList.edges[2][1] = arrayUtils.cloneDeepOmittingFields(newEdgeList.edges[1][1])
+					table.insert(result.edgeLists, 1, firstEdgeList)
+				end ]]
 
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
+
+				-- add a tiny edge at the end, to make tracks snap to those outside the construction
+				-- this works well in theory, but it does not help snapping
+--[[ 				if i == #params.trackEdgeLists then
+					local lastEdgeList = {
+						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
+						freeNodes = { 0, 1 },
+						params = {
+							type = tel.trackTypeName,
+							catenary = tel.catenary
+						},
+						snapNodes = { 1 },
+						tag2Nodes = {},
+						type = 'TRACK'
+					}
+					lastEdgeList.edges[1][2] = edgeUtils.getVectorNormalised(newEdgeList.edges[2][2])
+					lastEdgeList.edges[1][1] = arrayUtils.cloneDeepOmittingFields(newEdgeList.edges[2][1])
+					lastEdgeList.edges[2][2] = edgeUtils.getVectorNormalised(newEdgeList.edges[2][2])
+					lastEdgeList.edges[2][1] = {
+						newEdgeList.edges[2][1][1] + lastEdgeList.edges[2][2][1],
+						newEdgeList.edges[2][1][2] + lastEdgeList.edges[2][2][2],
+						newEdgeList.edges[2][1][3] + lastEdgeList.edges[2][2][3],
+					}
+					table.insert(result.edgeLists, lastEdgeList)
+				end ]]
 			end
 			print('result.edgeLists =')
 			debugPrint(result.edgeLists)

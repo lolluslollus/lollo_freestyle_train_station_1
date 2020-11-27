@@ -42,6 +42,27 @@ helper.getVectorLength = function(xyz)
     return math.sqrt(x * x + y * y + z * z)
 end
 
+helper.getVectorNormalised = function(xyz)
+    if type(xyz) ~= 'table' then return nil end
+
+    local length = helper.getVectorLength(xyz)
+    if length == 0 then return nil end
+
+    if xyz.x ~= nil and xyz.y ~= nil and xyz.z ~= nil then
+        return {
+            x = xyz.x / length,
+            y = xyz.y / length,
+            z = xyz.z / length
+        }
+    else
+        return {
+            xyz[1] / length,
+            xyz[2] / length,
+            xyz[3] / length
+        }
+    end
+end
+
 helper.getNearbyEntities = function(transf)
     if type(transf) ~= 'table' then return {} end
 

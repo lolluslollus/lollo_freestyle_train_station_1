@@ -396,7 +396,7 @@ local _actions = {
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
                 -- print('LOLLO _bulldozeConstruction result = ')
                 -- debugPrint(result)
@@ -442,7 +442,7 @@ local _actions = {
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
                 -- print('LOLLO freestyle train station: removeTracks callback returned result = ')
                 -- debugPrint(result)
@@ -517,7 +517,7 @@ local _actions = {
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, false),
+            api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
                 -- print('LOLLO result = ')
                 -- debugPrint(result)
@@ -568,7 +568,7 @@ local _actions = {
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, false),
+            api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
                 -- print('LOLLO result = ')
                 -- debugPrint(result)
