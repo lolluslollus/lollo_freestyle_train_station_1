@@ -201,6 +201,7 @@ function data()
 
 				-- LOLLO TODO the edges don't snap to the neighbours
 				-- add a tiny edge at the beginning, to make tracks snap to those outside the construction
+				-- LOLLO TODO instead of making more edges, try shortening the 0 and N edge and see if they snap.
 				-- this works well in theory, but it does not help snapping
 --[[ 				if i == 1 then
 					local firstEdgeList = {
