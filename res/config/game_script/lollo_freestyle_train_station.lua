@@ -336,6 +336,7 @@ local _actions = {
             trackEdgeLists = trackEdgeLists
         }
         -- local newStaTransf = transfUtils.mul(sta.transf, transfUtils.getInverseTransf(leadingTransf))
+        -- first, try subtracting myTransf[13], 14 and 15 from the edge x, y, and zs.
         newConstruction.transf = api.type.Mat4f.new(
             api.type.Vec4f.new(transf[1], transf[2], transf[3], transf[4]),
             api.type.Vec4f.new(transf[5], transf[6], transf[7], transf[8]),
