@@ -172,10 +172,9 @@ function data()
 				terrainAlignmentLists = {},
 			}
 
-			print('#params.trackEdgeLists =', #params.trackEdgeLists)
-			-- LOLLO TODO the transf is no good, the tracks get built in crazy places.
-			-- For starters, the points are not rotated, while they should
 			local inverseTransf = transfUtils.getInverseTransf(params.myTransf)
+			print('inverseTransf =')
+			debugPrint(inverseTransf)
 			-- for _, tel in pairs(params.trackEdgeLists) do
 			for i = 1, #params.trackEdgeLists do
 				local tel = params.trackEdgeLists[i]
@@ -190,14 +189,15 @@ function data()
 					type = 'TRACK'
 				}
 
+				-- LOLLO TODO the edges don't snap to the neighbours
 				if i == 1 then newEdgeList.snapNodes = { 0 }
 				elseif i == #params.trackEdgeLists then newEdgeList.snapNodes = { 1 }
 				else newEdgeList.snapNodes = {} end
 
-				print('newEdgeList =')
-				debugPrint(newEdgeList)
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 			end
+			print('result.edgeLists =')
+			debugPrint(result.edgeLists)
 
 			result.terminateConstructionHook = function()
 				print('starting terminateConstructionHook')
