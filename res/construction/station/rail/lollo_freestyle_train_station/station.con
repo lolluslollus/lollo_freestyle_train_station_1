@@ -1,4 +1,6 @@
+local edgeUtils = require('lollo_freestyle_train_station.edgeHelper')
 local transf = require 'transf'
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local vec3 = require 'vec3'
 
 
@@ -110,7 +112,7 @@ function data()
 			  trackEdgeLists = {
 				{
 				  catenary = true,
-				  edgeList = {
+				  posTanX2 = {
 					{
 					  { -1016.0612182617, -1724.4984130859, 12.625776290894, },
 					  { 43.891380310059, 27.93595123291, -2.9827115535736, },
@@ -121,12 +123,13 @@ function data()
 					},
 				  },
 				  trackType = 0,
+				  trackTypeName = "high_speed.lua",
 				  type = 0,
 				  typeIndex = -1,
 				},
 				{
 				  catenary = true,
-				  edgeList = {
+				  posTanX2 = {
 					{
 					  { -985.90667724609, -1682.0408935547, 10.668236732483, },
 					  { 13.101428031921, 44.691135406494, -0.8276606798172, },
@@ -137,36 +140,20 @@ function data()
 					},
 				  },
 				  trackType = 0,
+				  trackTypeName = "high_speed.lua",
 				  type = 0,
 				  typeIndex = -1,
 				},
 			  },
 			}
-            -- LOLLO NOTE I cannot call the api from here, sigh.
 
-            local function makeEmptyTrack(type, catenary)
-                return {
-                    type = "TRACK",
-                    params = {
-                        type =  type,
-                        catenary = catenary,
-                    },
-                    edges = { },
-                    snapNodes = { },
-                    tag2nodes = { },
-                }
-            end
+            -- LOLLO NOTE I cannot call the api from here, sigh.
 			local result = {
 				colliders = {},
 				-- coord2terminalInfo = {},
                 cost = 1000,
                 -- demangleId = slotHelpers.demangleId,
-                edgeLists = {
-                    makeEmptyTrack("standard.lua", false),
-                    makeEmptyTrack("standard.lua", true),
-                    makeEmptyTrack("high_speed.lua", false),
-                    makeEmptyTrack("high_speed.lua", true),
-                },
+                edgeLists = {},
                 groundFaces = {},
                 -- mangleId = slotHelpers.mangleId,
 				models = {
@@ -183,18 +170,38 @@ function data()
 				stations = {},
 				terminalGroups = {},
 				terrainAlignmentLists = {},
-            }
---[[             local function AddTrack(i, s, e)
-                for j = s,e do
-                    local id = GetId(trackTag, nil, i, j)
-                    if params.catenary == 0 and params.trackType == 0 then result[id] = "station/rail/lollo_freestyle_train_station/platform_track.module"
-                    elseif params.catenary == 0 and params.trackType == 1 then result[id] = "station/rail/lollo_freestyle_train_station/platform_high_speed_track.module"
-                    elseif params.catenary == 1 and params.trackType == 0 then result[id] = "station/rail/lollo_freestyle_train_station/platform_track_catenary.module"
-                    elseif params.catenary == 1 and params.trackType == 1 then result[id] = "station/rail/lollo_freestyle_train_station/platform_high_speed_track_catenary.module"
-                    end
-                end
-            end
- ]]
+			}
+
+			print('#params.trackEdgeLists =', #params.trackEdgeLists)
+			-- LOLLO TODO the transf is no good, the tracks get built in crazy places.
+			-- For starters, the points are not rotated, while they should
+			local inverseTransf = transfUtils.getInverseTransf(params.myTransf)
+			-- for _, tel in pairs(params.trackEdgeLists) do
+			for i = 1, #params.trackEdgeLists do
+				local tel = params.trackEdgeLists[i]
+				local newEdgeList = {
+					edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
+					freeNodes = {},
+					params = {
+						type = tel.trackTypeName,
+						catenary = tel.catenary
+					},
+					tag2Nodes = {},
+					type = 'TRACK'
+				}
+
+				if i == 1 then newEdgeList.snapNodes = { 0 }
+				elseif i == #params.trackEdgeLists then newEdgeList.snapNodes = { 1 }
+				else newEdgeList.snapNodes = {} end
+
+				print('newEdgeList =')
+				debugPrint(newEdgeList)
+				result.edgeLists[#result.edgeLists+1] = newEdgeList
+			end
+
+			result.terminateConstructionHook = function()
+				print('starting terminateConstructionHook')
+			end
 --[[
 			result.terminateConstructionHookBAK = function()
 				-- this fires after the user has added a module

@@ -1,6 +1,6 @@
 local matrixUtils = require('lollo_freestyle_train_station.matrix')
 
-local results = {}
+local utils = {}
 
 local _getMatrix = function(transf)
     return {
@@ -52,7 +52,7 @@ local _getTransf = function(mtx)
     }
 end
 
-results.flipXYZ = function(m)
+utils.flipXYZ = function(m)
     return {
         -m[1],
         -m[2],
@@ -73,7 +73,7 @@ results.flipXYZ = function(m)
     }
 end
 
-results.mul = function(m1, m2)
+utils.mul = function(m1, m2)
     local m = function(line, col)
         local l = (line - 1) * 4
         return m1[l + 1] * m2[col + 0] + m1[l + 2] * m2[col + 4] + m1[l + 3] * m2[col + 8] + m1[l + 4] * m2[col + 12]
@@ -98,7 +98,7 @@ results.mul = function(m1, m2)
     }
 end
 
-results.getInverseTransf = function(transf)
+utils.getInverseTransf = function(transf)
     local matrix = _getMatrix(transf)
     local invertedMatrix = matrixUtils.invert(matrix)
     return _getTransf(invertedMatrix)
@@ -114,7 +114,7 @@ end
 -- end
 
 -- what coor does, and it makes more sense
-results.getVecTransformed = function(vecXYZ, transf)
+utils.getVecTransformed = function(vecXYZ, transf)
     return {
         x = vecXYZ.x * transf[1] + vecXYZ.y * transf[5] + vecXYZ.z * transf[9] + transf[13],
         y = vecXYZ.x * transf[2] + vecXYZ.y * transf[6] + vecXYZ.z * transf[10] + transf[14],
@@ -122,7 +122,7 @@ results.getVecTransformed = function(vecXYZ, transf)
     }
 end
 
-results.getVec123Transformed = function(vec123, transf)
+utils.getVec123Transformed = function(vec123, transf)
     return {
         vec123[1] * transf[1] + vec123[2] * transf[5] + vec123[3] * transf[9] + transf[13],
         vec123[1] * transf[2] + vec123[2] * transf[6] + vec123[3] * transf[10] + transf[14],
@@ -130,7 +130,40 @@ results.getVec123Transformed = function(vec123, transf)
     }
 end
 
-results.position2Transf = function(position)
+utils.getPosTanX2Transformed = function(posTanX2, transf)
+    -- LOLLO TODO also the points need rotating
+    local point1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
+    local point2 = {posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3]}
+    local tan1 = {posTanX2[1][2][1], posTanX2[1][2][2], posTanX2[1][2][3]}
+    local tan2 = {posTanX2[2][2][1], posTanX2[2][2][2], posTanX2[2][2][3]}
+
+    local traslTransf = {
+        1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        transf[13], transf[14], transf[15], 1
+    }
+    local rotateTransf = {
+        transf[1], transf[2], transf[3], transf[4],
+        transf[5], transf[6], transf[7], transf[8],
+        transf[9], transf[10], transf[11], transf[12],
+        0, 0, 0, 1
+    }
+
+    local result = {
+        {
+            utils.getVec123Transformed(point1, traslTransf),
+            utils.getVec123Transformed(tan1, rotateTransf)
+        },
+        {
+            utils.getVec123Transformed(point2, traslTransf),
+            utils.getVec123Transformed(tan2, rotateTransf)
+        }
+    }
+    return result
+end
+
+utils.position2Transf = function(position)
     return {
         1, 0, 0, 0,
         0, 1, 0, 0,
@@ -139,4 +172,4 @@ results.position2Transf = function(position)
     }
 end
 
-return results
+return utils

@@ -38,7 +38,7 @@ local _utils = {
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
             local result = {
                 catenary = baseEdgeTrack.catenary,
-                edgeList = {
+                posTanX2 = {
                     {
                         {
                             baseNode0.position.x,
@@ -65,6 +65,7 @@ local _utils = {
                     }
                 },
                 trackType = baseEdgeTrack.trackType,
+                trackTypeName = api.res.trackTypeRep.getName(baseEdgeTrack.trackType),
                 type = baseEdge.type,
                 typeIndex = baseEdge.typeIndex,
             }
