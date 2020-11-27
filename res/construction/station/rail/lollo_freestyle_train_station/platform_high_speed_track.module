@@ -1,0 +1,45 @@
+local transf = require "transf"
+local vec3 = require "vec3"
+local modulesutil = require "modulesutil"
+
+function data()
+
+return { 
+	availability = {
+		yearFrom = 1925,
+		yearTo = 0,
+	},
+	cost = {
+		price = 30000,
+	},
+	category = {
+		categories = { "tracks", },
+	},
+	description = {
+		name = _("Lollo High-speed tracks"),
+		description = _("Specialized tracks for higher speeds."),
+		icon = "ui/construction/station/rail/modular_station/high_speed.tga"
+	},
+	-- buildMode = "MULTI",
+	type = "track",
+	order = {
+		value = 350,
+	},
+	metadata = {
+		track = true,
+	},
+	
+    updateFn = function(result, transform, tag, slotId, addModuleFn, params)
+        -- LOLLO TODO add something to result.edgeLists
+	end,
+	
+	getModelsFn = function()
+		
+		local result = {
+		}
+		
+		return result
+	end
+}
+
+end

@@ -1,15 +1,14 @@
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transf = require 'transf'
 local vec3 = require 'vec3'
 
 
 function data()
-	-- print('old con, params are set =')
-	-- debugPrint(moduleHelpers.getParams())
 	return {
-		type = 'STREET_STATION_CARGO',
+		type = 'RAIL_STATION',
 		description = {
-			name = _("Roadside lorry bay"),
-			description = _("Roadside lorry loading / unloading bay."),
+			name = _("Lollo Freestyle Train Station"),
+			description = _("Lollo Freestyle Train Station."),
 		},
 		availability = {
 			yearFrom = 1925, -- -1,
@@ -34,13 +33,33 @@ function data()
 		updateFn = function(params)
 			print('updateFn starting, params =')
 			debugPrint(params)
-			-- LOLLO NOTE I cannot call the api from here, sigh.
+            -- LOLLO NOTE I cannot call the api from here, sigh.
+
+            local function makeEmptyTrack(type, catenary)
+                return {
+                    type = "TRACK",
+                    params = {
+                        type =  type,
+                        catenary = catenary,
+                    },
+                    edges = { },
+                    snapNodes = { },
+                    tag2nodes = { },
+                }
+            end
 			local result = {
 				colliders = {},
 				-- coord2terminalInfo = {},
-				cost = 1000,
-				edgeLists = {},
-				groundFaces = {},
+                cost = 1000,
+                demangleId = slotHelpers.demangleId,
+                edgeLists = {
+                    makeEmptyTrack("standard.lua", false),
+                    makeEmptyTrack("standard.lua", true),
+                    makeEmptyTrack("high_speed.lua", false),
+                    makeEmptyTrack("high_speed.lua", true),
+                },
+                groundFaces = {},
+                mangleId = slotHelpers.mangleId,
 				models = {
 					{
 						id = 'lollo_freestyle_train_station/icon/blue.mdl',
@@ -49,11 +68,24 @@ function data()
                             0, 0, 1, 0,
                             0, 0, 0, 1},
 					},
-				},
+                },
+                slotConfig = {},
+                slots = {},
 				stations = {},
 				terminalGroups = {},
 				terrainAlignmentLists = {},
-			}
+            }
+--[[             local function AddTrack(i, s, e)
+                for j = s,e do
+                    local id = GetId(trackTag, nil, i, j)
+                    if params.catenary == 0 and params.trackType == 0 then result[id] = "station/rail/lollo_freestyle_train_station/platform_track.module"
+                    elseif params.catenary == 0 and params.trackType == 1 then result[id] = "station/rail/lollo_freestyle_train_station/platform_high_speed_track.module"
+                    elseif params.catenary == 1 and params.trackType == 0 then result[id] = "station/rail/lollo_freestyle_train_station/platform_track_catenary.module"
+                    elseif params.catenary == 1 and params.trackType == 1 then result[id] = "station/rail/lollo_freestyle_train_station/platform_high_speed_track_catenary.module"
+                    end
+                end
+            end
+ ]]
 --[[
 			result.terminateConstructionHookBAK = function()
 				-- this fires after the user has added a module
@@ -188,12 +220,52 @@ function data()
 			-- end
 			return modules
         end, ]]
-		upgradeFn = function(_)
-            print('LOLLO upgradeFn') -- never fires
-            -- LOLLO NOTE the game wants this function to be defined, even if it returns an empty table.
-            -- If you leave it out, adding and removing tram tracks won't work.
-            -- (Bus lanes don't work anyway.)
-            return {}
+        upgradeFn = function(params)
+            print('LOLLO upgradeFn')
+            local modules = {}
+            
+            local SwapModule = function(slotId, from, to)
+                if params.modules[slotId] and params.modules[slotId].name == from then
+                    table.insert(modules, {slotId, to})
+                    return true
+                end
+                return false
+            end
+            local SwapRow = function(slotId, from, to)
+                local slotId2 = slotId
+                while SwapModule(slotId2, from, to) do 
+                    slotId2 = slotId2 + 10
+                end
+                slotId2 = slotId
+                while SwapModule(slotId2, from, to) do 
+                    slotId2 = slotId2 - 10
+                end
+            end
+            
+            if params.modules[params.slotId] == nil then return {} end
+            
+            if params.catenaryToggle == 1 then 
+                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track.module",
+                    "station/rail/modular_station/platform_high_speed_track_catenary.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_track.module",
+                    "station/rail/modular_station/platform_track_catenary.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track_catenary.module", 
+                    "station/rail/modular_station/platform_high_speed_track.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_track_catenary.module", 
+                    "station/rail/modular_station/platform_track.module")
+            end
+            if params.trackTypeToggle == 1 then 
+                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track.module",
+                    "station/rail/modular_station/platform_track.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_track.module",
+                    "station/rail/modular_station/platform_high_speed_track.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track_catenary.module",
+                    "station/rail/modular_station/platform_track_catenary.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_track_catenary.module",
+                    "station/rail/modular_station/platform_high_speed_track_catenary.module")
+            end
+        
+            return modules
         end,
 	}
 end
