@@ -335,6 +335,7 @@ local _actions = {
             seed = 123e4, -- we need this to avoid dumps TODO see if we need a dynamic value when building multiple stations
             trackEdgeLists = trackEdgeLists
         }
+        -- local newStaTransf = transfUtils.mul(sta.transf, transfUtils.getInverseTransf(leadingTransf))
         newConstruction.transf = api.type.Mat4f.new(
             api.type.Vec4f.new(transf[1], transf[2], transf[3], transf[4]),
             api.type.Vec4f.new(transf[5], transf[6], transf[7], transf[8]),
