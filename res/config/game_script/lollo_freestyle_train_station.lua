@@ -656,28 +656,116 @@ _utils.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
 
     return trackEdgeIdsBetweenEdgeIds
 end
+_utils.getProposal2ReplaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
+    -- replaces a track segment with an identical one, without destroying the buildings
+    if not(_utils.isValidId(oldEdgeId)) then return false end
+
+    local oldEdge = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE)
+    local oldEdgeTrack = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+    -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
+    if oldEdge == nil or oldEdgeTrack == nil then return false end
+
+    local newEdge = api.type.SegmentAndEntity.new()
+    newEdge.entity = -1
+    newEdge.type = _newEdgeType
+    -- newEdge.comp = oldEdge -- no good enough if I want to remove objects, the api moans
+    newEdge.comp.node0 = oldEdge.node0
+    newEdge.comp.node1 = oldEdge.node1
+    newEdge.comp.tangent0 = oldEdge.tangent0
+    newEdge.comp.tangent1 = oldEdge.tangent1
+    newEdge.comp.type = oldEdge.type -- respect bridge or tunnel
+    newEdge.comp.typeIndex = oldEdge.typeIndex -- respect bridge or tunnel
+    newEdge.playerOwned = api.engine.getComponent(oldEdgeId, api.type.ComponentType.PLAYER_OWNED)
+    newEdge.trackEdge = oldEdgeTrack
+
+    if _utils.isValidId(objectIdToRemove) then
+        local edgeObjects = {}
+        for _, edgeObj in pairs(oldEdge.objects) do
+            if edgeObj[1] ~= objectIdToRemove then
+                table.insert(edgeObjects, { edgeObj[1], edgeObj[2] })
+            end
+        end
+        if #edgeObjects > 0 then
+            newEdge.comp.objects = edgeObjects -- LOLLO NOTE cannot insert directly into edge0.comp.objects
+            print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects =')
+            debugPrint(newEdge.comp.objects)
+        else
+            print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
+        end
+    else
+        newEdge.comp.objects = oldEdge.comp.objects
+        print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good')
+    end
+
+    local proposal = api.type.SimpleProposal.new()
+    proposal.streetProposal.edgesToRemove[1] = oldEdgeId
+    proposal.streetProposal.edgesToAdd[1] = newEdge
+    if _utils.isValidId(objectIdToRemove) then
+        proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
+    end
+
+    return proposal
+end
 
 local _actions = {
-    buildStation = function(transf, trackEdgeLists, platformEdges)
-        -- LOLLO TODO you cannot use a param to store the edge lists,
-        -- but maybe you can put it it a file and store the file name in a param,
-        -- or maybe some really dirty hack such as a param list with 999 values,
-        -- and each station gets its file, up to 999 stations?
-        -- Try calling upgradeFn first, that should trigger updateFn,
-        -- but which pams can U pass? Only the params!
-        -- Those could contain modules tho, which could be our edges.
-        -- To avoid complexity, try passing some random value into param.fileName
-        -- and see what updateFn receives, first of all.
-        -- params.modules look doable, too: no need for a dedicated file for each station.
+    buildStation = function(platformWaypointId, transf, trackEdgeLists, platformEdges)
+        -- a modular station and params.modules look doable, too.
         -- then, you can do:
         -- for slotId, m in pairs(params.modules) do
         --     local moduParams = m.params
         --     local moduTransf = m.transf
         -- end
+        -- Even easier: pass the required data in the parameters, it works!
+
+        print('buildStation starting, transf =')
+        debugPrint(transf)
+        print('trackEdgeLists =')
+        debugPrint(trackEdgeLists)
+        print('platformEdges =')
+        debugPrint(platformEdges)
+
+        local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
+        -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/modular_station.con'
+        newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/station.con'
+        newConstruction.params = {
+            myTransf = arrayUtils.cloneDeepOmittingFields(transf),
+            platformEdges = platformEdges,
+            seed = 123e4, -- we need this to avoid dumps TODO see if we need a dynamic value when building multiple stations
+            trackEdgeLists = trackEdgeLists
+        }
+        newConstruction.transf = api.type.Mat4f.new(
+            api.type.Vec4f.new(transf[1], transf[2], transf[3], transf[4]),
+            api.type.Vec4f.new(transf[5], transf[6], transf[7], transf[8]),
+            api.type.Vec4f.new(transf[9], transf[10], transf[11], transf[12]),
+            api.type.Vec4f.new(transf[13], transf[14], transf[15], transf[16])
+        )
+        newConstruction.name = 'construction name'
+        newConstruction.playerEntity = api.engine.util.getPlayer()
 
         local proposal = api.type.SimpleProposal.new()
-        local fileName = 'station/rail/lollo_freestyle_train_station/modular_station.con'
+        proposal.constructionsToAdd[1] = newConstruction
 
+        -- remove edge object
+        local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
+        local proposal2 = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(platformEdgeId, platformWaypointId)
+        if not(proposal2) then return end
+
+        proposal.streetProposal = proposal2.streetProposal
+
+        local context = api.type.Context:new()
+        context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        context.cleanupStreetGraph = true -- default is false
+        context.gatherBuildings = true -- default is false
+        context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer()
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                print('build station callback, success =', success)
+                -- debugPrint(result)
+            end
+        )
     end,
 
     bulldozeConstruction = function(constructionId)
@@ -696,14 +784,20 @@ local _actions = {
         -- proposal.constructionsToRemove[1] = constructionId -- fails to add
         -- proposal.constructionsToRemove:add(constructionId) -- fails to add
 
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, nil, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-            function(res, success)
-                -- print('LOLLO _bulldozeConstruction res = ')
-                -- debugPrint(res)
-                --for _, v in pairs(res.entities) do print(v) end
-                -- print('LOLLO _bulldozeConstruction success = ')
-                -- debugPrint(success)
+            api.cmd.make.buildProposal(proposal, context, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                -- print('LOLLO _bulldozeConstruction result = ')
+                -- debugPrint(result)
+                --for _, v in pairs(result.entities) do print(v) end
+                print('LOLLO _bulldozeConstruction success = ')
+                debugPrint(success)
             end
         )
     end,
@@ -736,12 +830,18 @@ local _actions = {
         print('proposal.streetProposal.edgesToRemove =')
         debugPrint(proposal.streetProposal.edgesToRemove)
 
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-            function(res, success)
-                -- print('LOLLO freestyle train station: removeTracks callback returned res = ')
-                -- debugPrint(res)
-                --for _, v in pairs(res.entities) do print(v) end
+            api.cmd.make.buildProposal(proposal, context, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                -- print('LOLLO freestyle train station: removeTracks callback returned result = ')
+                -- debugPrint(result)
+                --for _, v in pairs(result.entities) do print(v) end
                 -- print('LOLLO freestyle train station: removeTracks callback returned success = ')
                 print('command callback firing for removeTracks')
                 print(success)
@@ -758,53 +858,11 @@ local _actions = {
         )
     end,
 
-    replageEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
+    replaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
         -- replaces a track segment with an identical one, without destroying the buildings
-        if not(_utils.isValidId(oldEdgeId)) then return end
+        local proposal = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
+        if not(proposal) then return end
 
-        local oldEdge = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE)
-        local oldEdgeTrack = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-        -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
-        if oldEdge == nil or oldEdgeTrack == nil then return end
-
-        local newEdge = api.type.SegmentAndEntity.new()
-        newEdge.entity = -1
-        newEdge.type = _newEdgeType
-        -- newEdge.comp = oldEdge -- no good enough if I want to remove objects, the api moans
-        newEdge.comp.node0 = oldEdge.node0
-        newEdge.comp.node1 = oldEdge.node1
-        newEdge.comp.tangent0 = oldEdge.tangent0
-        newEdge.comp.tangent1 = oldEdge.tangent1
-        newEdge.comp.type = oldEdge.type -- respect bridge or tunnel
-        newEdge.comp.typeIndex = oldEdge.typeIndex -- respect bridge or tunnel
-        newEdge.playerOwned = api.engine.getComponent(oldEdgeId, api.type.ComponentType.PLAYER_OWNED)
-        newEdge.trackEdge = oldEdgeTrack
-
-        if _utils.isValidId(objectIdToRemove) then
-            local edgeObjects = {}
-            for _, edgeObj in pairs(oldEdge.objects) do
-                if edgeObj[1] ~= objectIdToRemove then
-                    table.insert(edgeObjects, { edgeObj[1], edgeObj[2] })
-                end
-            end
-            if #edgeObjects > 0 then
-                newEdge.comp.objects = edgeObjects -- LOLLO NOTE cannot insert directly into edge0.comp.objects
-                print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects =')
-                debugPrint(newEdge.comp.objects)
-            else
-                print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
-            end
-        else
-            newEdge.comp.objects = oldEdge.comp.objects
-            print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good')
-        end
-
-        local proposal = api.type.SimpleProposal.new()
-        proposal.streetProposal.edgesToRemove[1] = oldEdgeId
-        proposal.streetProposal.edgesToAdd[1] = newEdge
-        if _utils.isValidId(objectIdToRemove) then
-            proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
-        end
         --[[ local sampleNewEdge =
         {
         entity = -1,
@@ -847,12 +905,18 @@ local _actions = {
         },
         } ]]
 
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, nil, false),
-            function(res, success)
-                -- print('LOLLO res = ')
-                -- debugPrint(res)
-                --for _, v in pairs(res.entities) do print(v) end
+            api.cmd.make.buildProposal(proposal, context, false),
+            function(result, success)
+                -- print('LOLLO result = ')
+                -- debugPrint(result)
+                --for _, v in pairs(result.entities) do print(v) end
                 -- print('LOLLO success = ')
                 debugPrint(success)
             end
@@ -892,14 +956,19 @@ local _actions = {
         proposal.streetProposal.edgesToRemove[1] = oldEdgeId
         proposal.streetProposal.edgesToAdd[1] = newEdge
 
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, nil, false),
-            function(res, success)
-                -- print('LOLLO res = ')
-                -- debugPrint(res)
-                --for _, v in pairs(res.entities) do print(v) end
-                -- print('LOLLO _replaceEdgeWithStreetType success = ')
-                -- debugPrint(success)
+            api.cmd.make.buildProposal(proposal, context, false),
+            function(result, success)
+                -- print('LOLLO result = ')
+                -- debugPrint(result)
+                print('LOLLO _replaceEdgeWithStreetType success = ')
+                debugPrint(success)
             end
         )
     end,
@@ -1030,17 +1099,16 @@ local _actions = {
         context.player = api.engine.util.getPlayer() -- default is -1
 
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, false), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-            function(res, success)
--- LOLLO TODO check carefully if there is res.entities and what it contains
-                print('LOLLO freestyle train station: split callback returned res = ')
-                debugPrint(res)
-                --for _, v in pairs(res.entities) do print(v) end
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                -- print('LOLLO freestyle train station: split callback returned result = ')
+                -- debugPrint(result)
+                --for _, v in pairs(result.entities) do print(v) end
                 -- print('LOLLO freestyle train station callback returned success = ')
                 print('command callback firing for split')
                 print(success)
                 if success and successEventName then
-                    local addedNodePosition = res.proposal.proposal.addedNodes[1].comp.position
+                    local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     print('addedNodePosition =')
                     debugPrint(addedNodePosition)
 
@@ -1071,8 +1139,11 @@ local _actions = {
     end,
 }
 
-local function _isBuildingFreestyleTrainStation(param)
+local function _isBuildingModularStation(param)
     return _utils.isBuildingConstructionWithFileName(param, 'station/rail/lollo_freestyle_train_station/modular_station.con')
+end
+local function _isBuildingStation(param)
+    return _utils.isBuildingConstructionWithFileName(param, 'station/rail/lollo_freestyle_train_station/station.con')
 end
 
 -- LOLLO TODO build both track waypoints, then two ordinary waypoints between them, then the platform waypoint on the platform:
@@ -1097,7 +1168,7 @@ function data()
                 debugPrint(params.edgeId)
                 -- game.interface.bulldoze(param.waypointId) -- dumps
                 if params.edgeId and params.waypointId then
-                    _actions.replageEdgeWithSameRemovingObject(params.edgeId, params.waypointId)
+                    _actions.replaceEdgeWithSameRemovingObject(params.edgeId, params.waypointId)
                 end
             elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
                 -- local sampleParam = {
@@ -1226,7 +1297,7 @@ function data()
                 print('BUILD_STATION_REQUESTED caught, params =')
                 debugPrint(params)
                 -- LOLLO TODO build the construction
-                _actions.buildStation(params.platformWaypointTransf, params.edgeLists, params.platformEdges)
+                _actions.buildStation(params.platformWaypointId, params.platformWaypointTransf, params.edgeLists, params.platformEdges)
             end
             -- print('param.constructionEntityId =', param.constructionEntityId or 'NIL')
             -- if name == 'lorryStationBuilt' then
