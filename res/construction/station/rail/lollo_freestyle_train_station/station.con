@@ -13,8 +13,8 @@ function data()
 			description = _("Lollo Freestyle Train Station."),
 		},
 		availability = {
-			yearFrom = 1925, -- -1,
-			yearTo = 0, -- -1, -- 0
+			yearFrom = -1, -- 1925, -- -1,
+			yearTo = -1, -- -1, -- 0
 		},
 		order = 5005,
 		-- soundConfig = {
@@ -176,7 +176,6 @@ function data()
 			local inverseTransf = transfUtils.getInverseTransf(params.myTransf)
 			print('inverseTransf =')
 			debugPrint(inverseTransf)
-			-- for _, tel in pairs(params.trackEdgeLists) do
 			for i = 1, #params.trackEdgeLists do
 				local tel = params.trackEdgeLists[i]
 				local newEdgeList = {
@@ -192,66 +191,20 @@ function data()
 				}
 
 				if i == 1 then
-					newEdgeList.freeNodes = { 0 }
-					newEdgeList.snapNodes = { 0 }
-				elseif i == #params.trackEdgeLists then
-					newEdgeList.freeNodes = { 1 }
-					newEdgeList.snapNodes = { 1 }
+					-- newEdgeList.freeNodes = { 0 }
+					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
+				end
+				if i == #params.trackEdgeLists then
+					-- newEdgeList.freeNodes = { 1 }
+					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
 				end
 
 				-- LOLLO TODO the edges don't snap to the neighbours
-				-- add a tiny edge at the beginning, to make tracks snap to those outside the construction
-				-- LOLLO TODO instead of making more edges, try shortening the 0 and N edge and see if they snap.
-				-- this works well in theory, but it does not help snapping
---[[ 				if i == 1 then
-					local firstEdgeList = {
-						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
-						freeNodes = { 0, 1 },
-						params = {
-							type = tel.trackTypeName,
-							catenary = tel.catenary
-						},
-						snapNodes = { 0 },
-						tag2Nodes = {},
-						type = 'TRACK'
-					}
-					firstEdgeList.edges[1][2] = edgeUtils.getVectorNormalised(newEdgeList.edges[1][2])
-					firstEdgeList.edges[1][1] = {
-						newEdgeList.edges[1][1][1] - firstEdgeList.edges[1][2][1],
-						newEdgeList.edges[1][1][2] - firstEdgeList.edges[1][2][2],
-						newEdgeList.edges[1][1][3] - firstEdgeList.edges[1][2][3],
-					}
-					firstEdgeList.edges[2][2] = edgeUtils.getVectorNormalised(newEdgeList.edges[1][2])
-					firstEdgeList.edges[2][1] = arrayUtils.cloneDeepOmittingFields(newEdgeList.edges[1][1])
-					table.insert(result.edgeLists, 1, firstEdgeList)
-				end ]]
+				-- I tried adding a tiny edge at the beginning, to make tracks snap to those outside the construction
+				-- Instead of making more edges, I also tried shortening the 0 and N edge and see if they snap.
+				-- this does not help: adjacent tracks must be snapped by hand
 
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
-
-				-- add a tiny edge at the end, to make tracks snap to those outside the construction
-				-- this works well in theory, but it does not help snapping
---[[ 				if i == #params.trackEdgeLists then
-					local lastEdgeList = {
-						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
-						freeNodes = { 0, 1 },
-						params = {
-							type = tel.trackTypeName,
-							catenary = tel.catenary
-						},
-						snapNodes = { 1 },
-						tag2Nodes = {},
-						type = 'TRACK'
-					}
-					lastEdgeList.edges[1][2] = edgeUtils.getVectorNormalised(newEdgeList.edges[2][2])
-					lastEdgeList.edges[1][1] = arrayUtils.cloneDeepOmittingFields(newEdgeList.edges[2][1])
-					lastEdgeList.edges[2][2] = edgeUtils.getVectorNormalised(newEdgeList.edges[2][2])
-					lastEdgeList.edges[2][1] = {
-						newEdgeList.edges[2][1][1] + lastEdgeList.edges[2][2][1],
-						newEdgeList.edges[2][1][2] + lastEdgeList.edges[2][2][2],
-						newEdgeList.edges[2][1][3] + lastEdgeList.edges[2][2][3],
-					}
-					table.insert(result.edgeLists, lastEdgeList)
-				end ]]
 			end
 			print('result.edgeLists =')
 			debugPrint(result.edgeLists)
@@ -402,7 +355,7 @@ function data()
         upgradeFn = function(params)
             print('LOLLO upgradeFn')
             local modules = {}
-            
+
             local SwapModule = function(slotId, from, to)
                 if params.modules[slotId] and params.modules[slotId].name == from then
                     table.insert(modules, {slotId, to})
@@ -420,9 +373,9 @@ function data()
                     slotId2 = slotId2 - 10
                 end
             end
-            
+
             if params.modules[params.slotId] == nil then return {} end
-            
+
             if params.catenaryToggle == 1 then 
                 SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track.module",
                     "station/rail/modular_station/platform_high_speed_track_catenary.module")
@@ -443,7 +396,7 @@ function data()
                 SwapRow(params.slotId, "station/rail/modular_station/platform_track_catenary.module",
                     "station/rail/modular_station/platform_high_speed_track_catenary.module")
             end
-        
+
             return modules
         end,
 	}
