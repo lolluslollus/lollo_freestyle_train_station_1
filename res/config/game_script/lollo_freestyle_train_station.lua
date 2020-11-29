@@ -457,7 +457,7 @@ local _utils = {
 }
 
 local _actions = {
-    buildStation = function(platformWaypointId, transf, trackEdgeLists, platformEdges)
+    buildStation = function(params)
         -- a modular station and params.modules look doable, too.
         -- then, you can do:
         -- for slotId, m in pairs(params.modules) do
@@ -466,20 +466,21 @@ local _actions = {
         -- end
         -- Even easier: pass the required data in the parameters, it works!
 
-        print('buildStation starting, transf =')
-        debugPrint(transf)
-        print('platformWaypointId =')
-        debugPrint(platformWaypointId)
-        print('trackEdgeLists =')
-        debugPrint(trackEdgeLists)
-        print('platformEdges =')
-        debugPrint(platformEdges)
+        local platformWaypointId = params.platformWaypointId
+        local conTransf = params.platformWaypointTransf
+        local trackEdgeLists = params.edgeLists
+        local platformEdges = params.platformEdges
 
+        print('buildStation starting, params =')
+        debugPrint(params)
+-- LOLLO TODO make sure that params.node1Id and params.node2Id are the same as the
+-- terminal nodes of the tracks outside the station. If not, there is a bug somewhere,
+-- which could be the cause of the non-snapping
         local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
         -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/modular_station.con'
         newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/station.con'
         newConstruction.params = {
-            myTransf = arrayUtils.cloneDeepOmittingFields(transf),
+            myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdges = platformEdges,
             seed = 123e4, -- we need this to avoid dumps
             trackEdgeLists = trackEdgeLists
@@ -487,10 +488,10 @@ local _actions = {
         -- local newStaTransf = transfUtils.mul(sta.transf, transfUtils.getInverseTransf(leadingTransf))
         -- first, try subtracting myTransf[13], 14 and 15 from the edge x, y, and zs.
         newConstruction.transf = api.type.Mat4f.new(
-            api.type.Vec4f.new(transf[1], transf[2], transf[3], transf[4]),
-            api.type.Vec4f.new(transf[5], transf[6], transf[7], transf[8]),
-            api.type.Vec4f.new(transf[9], transf[10], transf[11], transf[12]),
-            api.type.Vec4f.new(transf[13], transf[14], transf[15], transf[16])
+            api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
+            api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
+            api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
+            api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
         )
         newConstruction.name = 'construction name'
         newConstruction.playerEntity = api.engine.util.getPlayer()
@@ -604,7 +605,7 @@ local _actions = {
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName,
-                        arrayUtils.cloneOmittingFields(successEventParams or {})
+                        arrayUtils.cloneDeepOmittingFields(successEventParams or {})
                     ))
                 end
             end
@@ -873,7 +874,7 @@ local _actions = {
                     print('addedNodeIds =')
                     debugPrint(addedNodeIds)
 
-                    local eventParams = arrayUtils.cloneOmittingFields(successEventParams or {})
+                    local eventParams = arrayUtils.cloneDeepOmittingFields(successEventParams)
                     if successEventName == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
                         eventParams.node1Id = addedNodeIds[1]
                     elseif successEventName == _eventNames.TRACK_BULLDOZE_REQUESTED then
@@ -916,8 +917,7 @@ function data()
             debugPrint(params)
             -- handleEvent firing, src =	lollo_freestyle_train_station.lua	id =	__lolloFreestyleTrainStation__	name =	waypointBuilt	param =
 
-            if name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED
-            then
+            if name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
                 print('bulldoze requested caught, waypointId =')
                 debugPrint(params.waypointId)
                 print('edgeId =')
@@ -964,7 +964,7 @@ function data()
                     nodeBetween,
                     params.trackWaypoint1Id,
                     _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED,
-                    params
+                    arrayUtils.cloneDeepOmittingFields(params)
                 )
             elseif name == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
                 if not(edgeUtils.isValidId(params.platformWaypointId))
@@ -988,8 +988,6 @@ function data()
                 local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                 if not(node0) or not(node1) then return end
                 local trackWaypointPosition = edgeUtils.getObjectPosition(params.trackWaypoint2Id)
-                -- print('trackWaypointPosition =')
-                -- debugPrint(trackWaypointPosition)
                 local nodeBetween = edgeUtils.getNodeBetween(
                     node0.position,
                     baseEdge.tangent0,
@@ -1011,7 +1009,7 @@ function data()
                     nodeBetween,
                     params.trackWaypoint2Id,
                     _eventNames.TRACK_BULLDOZE_REQUESTED,
-                    params
+                    arrayUtils.cloneDeepOmittingFields(params)
                 )
             elseif name == _eventNames.TRACK_BULLDOZE_REQUESTED then
                 if not(edgeUtils.isValidId(params.platformWaypointId))
@@ -1031,7 +1029,7 @@ function data()
                 print('edgeLists =')
                 debugPrint(edgeLists)
 
-                local eventParams = arrayUtils.cloneOmittingFields(params)
+                local eventParams = arrayUtils.cloneDeepOmittingFields(params)
                 eventParams.edgeLists = edgeLists
                 _actions.removeTracks(
                     edgeIdsBetweenNodeIds,
@@ -1041,7 +1039,7 @@ function data()
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 print('BUILD_STATION_REQUESTED caught, params =')
                 debugPrint(params)
-                _actions.buildStation(params.platformWaypointId, params.platformWaypointTransf, params.edgeLists, params.platformEdges)
+                _actions.buildStation(arrayUtils.cloneDeepOmittingFields(params))
             end
         end,
         guiHandleEvent = function(id, name, param)
