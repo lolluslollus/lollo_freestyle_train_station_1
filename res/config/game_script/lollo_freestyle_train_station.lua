@@ -127,7 +127,7 @@ local _utils = {
 
         local cutMetres1, cutMetres2 = _removeShortEnds()
         if cutMetres1 < _metresToCut then
-            -- LOLLO TODO getPointbetween would be more elegant, this is just a test
+            -- getPointbetween would be more elegant, this is just a test
             local posTanX2 = edgeIdsProperties[1].posTanX2
             local point1 = posTanX2[1][1]
             local point2 = posTanX2[2][1]
@@ -144,7 +144,7 @@ local _utils = {
             edgeIdsProperties[1].posTanX2[1][1] = newPoint1
         end
         if cutMetres2 < _metresToCut then
-            -- LOLLO TODO getPointbetween would be more elegant, this is just a test
+            -- getPointbetween would be more elegant, this is just a test
             local posTanX2 = edgeIdsProperties[#edgeIdsProperties].posTanX2
             local point1 = posTanX2[1][1]
             local point2 = posTanX2[2][1]
@@ -481,7 +481,7 @@ local _actions = {
         newConstruction.params = {
             myTransf = arrayUtils.cloneDeepOmittingFields(transf),
             platformEdges = platformEdges,
-            seed = 123e4, -- we need this to avoid dumps TODO see if we need a dynamic value when building multiple stations
+            seed = 123e4, -- we need this to avoid dumps
             trackEdgeLists = trackEdgeLists
         }
         -- local newStaTransf = transfUtils.mul(sta.transf, transfUtils.getInverseTransf(leadingTransf))
@@ -508,7 +508,7 @@ local _actions = {
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- true gives smoother z, default is false
         context.cleanupStreetGraph = true -- default is false
-        context.gatherBuildings = true -- default is false
+        context.gatherBuildings = false -- default is false
         context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer()
 
@@ -539,7 +539,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
@@ -585,7 +585,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
@@ -660,7 +660,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
@@ -711,7 +711,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
@@ -846,7 +846,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
@@ -899,6 +899,9 @@ local function _isBuildingStation(param)
     return _utils.isBuildingConstructionWithFileName(param, 'station/rail/lollo_freestyle_train_station/station.con')
 end
 
+-- LOLLO TODO build a long station with a few track edges, place both track waypoints, then the platform waypoint on the platform:
+-- not all the tracks get demolished and rebuilt as station edges, which is wrong.
+
 -- LOLLO TODO build both track waypoints, then two ordinary waypoints between them, then the platform waypoint on the platform:
 -- not all the tracks get demolished, which is wrong.
 function data()
@@ -924,19 +927,6 @@ function data()
                     _actions.replaceEdgeWithSameRemovingObject(params.edgeId, params.waypointId)
                 end
             elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
-                -- local sampleParam = {
-                --     platformWaypointId,
-                --     trackWaypoint1Id,
-                --     trackWaypoint1Position,
-                --     trackWaypoint2Id,
-                --     trackWaypoint2Position
-                -- }
-
-                -- LOLLO TODO find out tracks between track flags
-                -- LOLLO TODO write away the track params
-                -- LOLLO TODO write away the platform params
-                -- LOLLO TODO bulldoze those tracks
-                -- build station basing on those params
                 if not(edgeUtils.isValidId(params.platformWaypointId))
                 or not(edgeUtils.isValidId(params.trackWaypoint1Id))
                 or not(edgeUtils.isValidId(params.trackWaypoint2Id))
@@ -1051,16 +1041,8 @@ function data()
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 print('BUILD_STATION_REQUESTED caught, params =')
                 debugPrint(params)
-                -- LOLLO TODO build the construction
                 _actions.buildStation(params.platformWaypointId, params.platformWaypointTransf, params.edgeLists, params.platformEdges)
             end
-            -- print('param.constructionEntityId =', param.constructionEntityId or 'NIL')
-            -- if name == 'lorryStationBuilt' then
-            --     _replaceStationWithSnapNodes(param.constructionEntityId)
-            -- elseif name == 'lorryStationSelected' then
-            --     _replaceStationWithStreetType_(param.constructionEntityId)
-            -- end
-            -- LOLLO TODO remove waypoint
         end,
         guiHandleEvent = function(id, name, param)
             -- LOLLO NOTE param can have different types, even boolean, depending on the event id and name
