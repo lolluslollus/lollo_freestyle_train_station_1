@@ -220,6 +220,13 @@ function data()
 			else
 				print('NIL')
 			end
+
+			print('api =')
+			if api ~= nil then
+                print('api is there')
+            else
+                print('NIL')
+            end
 --[[ 			result.terminateConstructionHook = function()
 				-- this fires after the user has added a module, so we must call it explicitly in the non-modular station.
 				-- print('LOLLO starting terminateConstructionHook')
