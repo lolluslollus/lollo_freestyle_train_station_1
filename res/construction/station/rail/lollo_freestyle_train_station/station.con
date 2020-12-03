@@ -196,7 +196,7 @@ function data()
 				end
 				if i == #params.trackEdgeLists then
 					-- newEdgeList.freeNodes = { 1 }
-					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = #newEdgeList.edges *2 - 1
+					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
 				end
 
 				-- LOLLO TODO the edges don't snap to the neighbours
