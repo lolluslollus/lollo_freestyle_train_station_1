@@ -223,14 +223,14 @@ local _utils = {
         return edgeIdsProperties
     end,
 
-    getNearbyEdgeObjectIds = function(transf, refModelId)
+    getAllEdgeObjectsWithModelId = function(transf, refModelId)
         local results = {}
-        local nearbyEdgeIds = edgeUtils.getNearestObjectIds(transf, _searchRadius, api.type.ComponentType.BASE_EDGE)
+        local nearbyEdgeIds = edgeUtils.getNearestObjectIds(transf, 99999, api.type.ComponentType.BASE_EDGE)
         -- print('nearbyEdgeIds =')
         -- debugPrint(nearbyEdgeIds)
         for _, edgeId in pairs(nearbyEdgeIds) do
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge ~= nil and baseEdge.objects then
+            if baseEdge ~= nil and baseEdge.objects ~= nil then
                 local edgeObjectIds = edgeUtils.getEdgeObjectsWithModelId(baseEdge.objects, refModelId)
                 for _, edgeObjectId in pairs(edgeObjectIds) do
                     arrayUtils.addUnique(results, edgeObjectId)
@@ -238,7 +238,7 @@ local _utils = {
             end
         end
 
-        print('getNearbyEdgeObjectsWithModelId is about to return')
+        print('getAllEdgeObjectsWithModelId is about to return')
         debugPrint(results)
         return results
     end,
@@ -975,13 +975,13 @@ function data()
                 then return end
 
                 local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(params.trackWaypoint2Id)
-                print('edgeId =')
-                debugPrint(edgeId)
+                -- print('edgeId =')
+                -- debugPrint(edgeId)
 
                 if not(edgeUtils.isValidId(edgeId)) then return end
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                print('baseEdge =')
-                debugPrint(baseEdge)
+                -- print('baseEdge =')
+                -- debugPrint(baseEdge)
 
                 if not(baseEdge) then return end
                 local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
@@ -1022,7 +1022,7 @@ function data()
                 local edgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(params.node1Id, params.node2Id)
                 print('edgeIdsBetweenNodeIds =')
                 debugPrint(edgeIdsBetweenNodeIds)
-
+if true then return end -- LOLLO TODO remove when done testing
                 -- local edgeLists = _utils.getEdgeIdsPropertiesCropped(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
                 -- local edgeLists = _utils.getEdgeIdsPropertiesExtended(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
                 local edgeLists = _utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds)
@@ -1083,14 +1083,14 @@ function data()
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
                                     )
-                                    local nearbyPlatformWaypointIds = _utils.getNearbyEdgeObjectIds(platformWaypointTransf, platformWaypointModelId)
-                                    local nearbyTrackWaypoint1Ids = _utils.getNearbyEdgeObjectIds(platformWaypointTransf, trackWaypoint1ModelId)
-                                    local nearbyTrackWaypoint2Ids = _utils.getNearbyEdgeObjectIds(platformWaypointTransf, trackWaypoint2ModelId)
+                                    local allPlatformWaypointIds = _utils.getAllEdgeObjectsWithModelId(platformWaypointTransf, platformWaypointModelId)
+                                    local allTrackWaypoint1Ids = _utils.getAllEdgeObjectsWithModelId(platformWaypointTransf, trackWaypoint1ModelId)
+                                    local allTrackWaypoint2Ids = _utils.getAllEdgeObjectsWithModelId(platformWaypointTransf, trackWaypoint2ModelId)
 
                                     if param.proposal.proposal.addedSegments[1].trackEdge.trackType ~= platformTrackType
-                                    or #nearbyPlatformWaypointIds > 1
-                                    or #nearbyTrackWaypoint1Ids < 1
-                                    or #nearbyTrackWaypoint2Ids < 1
+                                    or #allPlatformWaypointIds > 1
+                                    or #allTrackWaypoint1Ids < 1
+                                    or #allTrackWaypoint2Ids < 1
                                     then
                                         -- waypoint built outside platform or another waypoint exists nearby,
                                         -- on no track waypoints built yet
@@ -1105,25 +1105,25 @@ function data()
                                     -- find all consecutive track edges of the same type
                                     -- sort them from first to last
                                     print('nearbyTrackWaypoint1Ids =')
-                                    debugPrint(nearbyTrackWaypoint1Ids)
+                                    debugPrint(allTrackWaypoint1Ids)
                                     print('nearbyTrackWaypoint2Ids =')
-                                    debugPrint(nearbyTrackWaypoint2Ids)
+                                    debugPrint(allTrackWaypoint2Ids)
 
-                                    local continuousTrackEdges = edgeUtils.track.getEdgeIdsBetweenEdgeIds(
-                                        api.engine.system.streetSystem.getEdgeForEdgeObject(nearbyTrackWaypoint1Ids[1]),
-                                        api.engine.system.streetSystem.getEdgeForEdgeObject(nearbyTrackWaypoint2Ids[1])
+                                    local contiguousTrackEdges = edgeUtils.track.getEdgeIdsBetweenEdgeIds(
+                                        api.engine.system.streetSystem.getEdgeForEdgeObject(allTrackWaypoint1Ids[1]),
+                                        api.engine.system.streetSystem.getEdgeForEdgeObject(allTrackWaypoint2Ids[1])
                                     )
                                     print('contiguous track edges =')
-                                    debugPrint(continuousTrackEdges)
+                                    debugPrint(contiguousTrackEdges)
                                     print('# contiguous track edges =')
-                                    debugPrint(#continuousTrackEdges)
+                                    debugPrint(#contiguousTrackEdges)
                                     print('type of contiguous track edges =')
-                                    debugPrint(type(continuousTrackEdges))
+                                    debugPrint(type(contiguousTrackEdges))
                                     print('contiguous track edges[1] =')
-                                    debugPrint(continuousTrackEdges[1])
+                                    debugPrint(contiguousTrackEdges[1])
                                     print('contiguous track edges[last] =')
-                                    debugPrint(continuousTrackEdges[#continuousTrackEdges])
-                                    if #continuousTrackEdges < 1 then
+                                    debugPrint(contiguousTrackEdges[#contiguousTrackEdges])
+                                    if #contiguousTrackEdges < 1 then
                                         -- track waypoints built on unconnected tracks
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdge.id,
@@ -1194,10 +1194,10 @@ function data()
                                         platformEdges = contiguousPlatformEdges,
                                         platformWaypointId = newWaypointId,
                                         platformWaypointTransf = platformWaypointTransf,
-                                        trackWaypoint1Id = nearbyTrackWaypoint1Ids[1],
-                                        trackWaypoint1Position = edgeUtils.getObjectPosition(nearbyTrackWaypoint1Ids[1]),
-                                        trackWaypoint2Id = nearbyTrackWaypoint2Ids[1],
-                                        trackWaypoint2Position = edgeUtils.getObjectPosition(nearbyTrackWaypoint2Ids[1]),
+                                        trackWaypoint1Id = allTrackWaypoint1Ids[1],
+                                        trackWaypoint1Position = edgeUtils.getObjectPosition(allTrackWaypoint1Ids[1]),
+                                        trackWaypoint2Id = allTrackWaypoint2Ids[1],
+                                        trackWaypoint2Position = edgeUtils.getObjectPosition(allTrackWaypoint2Ids[1]),
                                     })
                                 elseif param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint1ModelId then
                                     print('LOLLO track waypoint 1 built!')
@@ -1215,7 +1215,7 @@ function data()
                                     )
 
                                     if param.proposal.proposal.addedSegments[1].trackEdge.trackType == platformTrackType
-                                    or #_utils.getNearbyEdgeObjectIds(transf, trackWaypoint1ModelId) > 1
+                                    or #_utils.getAllEdgeObjectsWithModelId(transf, trackWaypoint1ModelId) > 1
                                     -- LOLLO TODO bulldoze if track waypoint 2 is around and not connected
                                     then
                                         -- built on platform
@@ -1242,7 +1242,7 @@ function data()
                                     )
 
                                     if param.proposal.proposal.addedSegments[1].trackEdge.trackType == platformTrackType
-                                    or #_utils.getNearbyEdgeObjectIds(transf, trackWaypoint2ModelId) > 1
+                                    or #_utils.getAllEdgeObjectsWithModelId(transf, trackWaypoint2ModelId) > 1
                                     -- LOLLO TODO bulldoze if track waypoint 1 is around and not connected
                                     then
                                         -- built on platform
