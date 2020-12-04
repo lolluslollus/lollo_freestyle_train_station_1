@@ -880,7 +880,6 @@ local _actions = {
                     elseif successEventName == _eventNames.TRACK_BULLDOZE_REQUESTED then
                         eventParams.node2Id = addedNodeIds[1]
                     end
-                    print('about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -1022,7 +1021,6 @@ function data()
                 local edgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(params.node1Id, params.node2Id)
                 print('edgeIdsBetweenNodeIds =')
                 debugPrint(edgeIdsBetweenNodeIds)
-if true then return end -- LOLLO TODO remove when done testing
                 -- local edgeLists = _utils.getEdgeIdsPropertiesCropped(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
                 -- local edgeLists = _utils.getEdgeIdsPropertiesExtended(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
                 local edgeLists = _utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds)

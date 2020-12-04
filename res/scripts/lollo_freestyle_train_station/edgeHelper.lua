@@ -533,9 +533,8 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
     local _map = api.engine.system.streetSystem.getNode2SegmentMap()
     local _getEdgesBetween1and2 = function(node0Or1FieldName)
         local baseEdge1 = _baseEdge1
-        local baseEdges = { _baseEdge1, _baseEdge2 }
         local edge1Id = _edge1Id
-        local edgeIds = { _edge1Id, _edge2Id }
+        local edgeIds = { _edge1Id }
         local counter = 0
         while counter < 20 do
             counter = counter + 1
@@ -545,40 +544,35 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
             print('nodeId =')
             debugPrint(nodeId)
             local adjacentEdgeIds = _map[nodeId] -- userdata
-            if adjacentEdgeIds == nil then -- we don't deal with intersections for now
+            if adjacentEdgeIds == nil then
                 print('nine')
                 return false
-            else
-                local isFound = false
-                for _, edgeId in pairs(adjacentEdgeIds) do -- cannot use adjacentEdgeIds[index] here, it's fucking userdata
-                    print('ten')
-                    if edgeId ~= edge1Id then
-                        print('eleven')
-                        isFound = true
-                        edge1Id = edgeId
-                        table.insert(edgeIds, #edgeIds - 1, edge1Id)
-                        baseEdge1 = api.engine.getComponent(
-                            edgeId,
-                            api.type.ComponentType.BASE_EDGE
-                        )
-                        table.insert(baseEdges, #baseEdges - 1, baseEdge1)
-                        if _isTrackEdgeContiguousTo2(baseEdge1) then
-                            print('twelve')
-                            -- if _isTrackEdgesSameTypeAs2(edge1Id) then
-                                -- print('thirteen half')
-                                return edgeIds
-                            -- end
-                            -- print('fourteen')
-                            -- return false
-                        end
-
-                        break
+            end
+            local isFound = false
+            -- we don't deal with intersections for now
+            for _, edgeId in pairs(adjacentEdgeIds) do -- cannot use adjacentEdgeIds[index] here, it's fucking userdata
+                print('ten')
+                if edgeId ~= edge1Id then
+                    print('eleven')
+                    isFound = true
+                    edge1Id = edgeId
+                    edgeIds[#edgeIds+1] = edge1Id
+                    baseEdge1 = api.engine.getComponent(
+                        edgeId,
+                        api.type.ComponentType.BASE_EDGE
+                    )
+                    if _isTrackEdgeContiguousTo2(baseEdge1) then
+                        print('twelve')
+                        edgeIds[#edgeIds+1] = _edge2Id
+                        return edgeIds
                     end
+
+                    break
                 end
-                if not(isFound) then
-                    print('thirteen')
-                    return false
-                end
+            end
+            if not(isFound) then
+                print('thirteen')
+                return false
             end
         end
 
