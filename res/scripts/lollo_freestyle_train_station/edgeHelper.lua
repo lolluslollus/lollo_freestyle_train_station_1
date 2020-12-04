@@ -489,6 +489,7 @@ helper.track.getContiguousEdges = function(edgeId, trackType)
 end
 
 helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
+    -- the output is sorted by sequence, from edge1 to edge2
     print('one')
     if type(_edge1Id) ~= 'number' or _edge1Id < 1 then return {} end
     if type(_edge2Id) ~= 'number' or _edge2Id < 1 then return {} end
