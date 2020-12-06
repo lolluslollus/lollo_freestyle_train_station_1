@@ -24,6 +24,7 @@ local _eventNames = {
     WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
 }
 
+local _metresToAddOrCut = 3
 local _newEdgeType = 1 -- 0 = ROAD, 1 = RAIL
 local _searchRadius = 500
 local _utils = {
@@ -76,11 +77,10 @@ local _utils = {
     end,
 
     getEdgeIdsPropertiesCropped = function(edgeIdsProperties)
-        -- this works, but the tracks still resuse to snap
+        -- this works, but the tracks still refuse to snap
         print('edgeIdsProperties BEFORE CROPPING =')
         debugPrint(edgeIdsProperties)
 
-        local _metresToCut = 1
         local function _removeShortEnds()
             local cutMetres1 = 0
             local isExit = false
@@ -93,7 +93,7 @@ local _utils = {
                     edgeProperties.posTanX2[1][1][2] - edgeProperties.posTanX2[2][1][2],
                     edgeProperties.posTanX2[1][1][3] - edgeProperties.posTanX2[2][1][3]
                 })
-                if length < (_metresToCut - cutMetres1) then
+                if length < (_metresToAddOrCut - cutMetres1) then
                     table.remove(edgeIdsProperties, i)
                     cutMetres1 = cutMetres1 + length
                     i = i - 1
@@ -113,7 +113,7 @@ local _utils = {
                     edgeProperties.posTanX2[1][1][2] - edgeProperties.posTanX2[2][1][2],
                     edgeProperties.posTanX2[1][1][3] - edgeProperties.posTanX2[2][1][3]
                 })
-                if length < (_metresToCut - cutMetres2) then
+                if length < (_metresToAddOrCut - cutMetres2) then
                     table.remove(edgeIdsProperties, i)
                     cutMetres2 = cutMetres2 + length
                     i = i + 1
@@ -126,37 +126,39 @@ local _utils = {
         end
 
         local cutMetres1, cutMetres2 = _removeShortEnds()
-        if cutMetres1 < _metresToCut then
+        if cutMetres1 < _metresToAddOrCut then
             -- getPointbetween would be more elegant, this is just a test
             local posTanX2 = edgeIdsProperties[1].posTanX2
             local point1 = posTanX2[1][1]
             local point2 = posTanX2[2][1]
+            local tan1 = posTanX2[1][2]
             local length = edgeUtils.getVectorLength({
                 point1[1] - point2[1],
                 point1[2] - point2[2],
                 point1[3] - point2[3]
             })
             local newPoint1 = {
-                point1[1] + (point2[1] - point1[1]) * (_metresToCut - cutMetres1) / length,
-                point1[2] + (point2[2] - point1[2]) * (_metresToCut - cutMetres1) / length,
-                point1[3] + (point2[3] - point1[3]) * (_metresToCut - cutMetres1) / length
+                point1[1] + tan1[1] * (_metresToAddOrCut - cutMetres1) / length,
+                point1[2] + tan1[2] * (_metresToAddOrCut - cutMetres1) / length,
+                point1[3] + tan1[3] * (_metresToAddOrCut - cutMetres1) / length
             }
             edgeIdsProperties[1].posTanX2[1][1] = newPoint1
         end
-        if cutMetres2 < _metresToCut then
+        if cutMetres2 < _metresToAddOrCut then
             -- getPointbetween would be more elegant, this is just a test
             local posTanX2 = edgeIdsProperties[#edgeIdsProperties].posTanX2
             local point1 = posTanX2[1][1]
             local point2 = posTanX2[2][1]
+            local tan2 = posTanX2[2][2]
             local length = edgeUtils.getVectorLength({
                 point1[1] - point2[1],
                 point1[2] - point2[2],
                 point1[3] - point2[3]
             })
             local newPoint2 = {
-                point2[1] - (point2[1] - point1[1]) * (_metresToCut - cutMetres2) / length,
-                point2[2] - (point2[2] - point1[2]) * (_metresToCut - cutMetres2) / length,
-                point2[3] - (point2[3] - point1[3]) * (_metresToCut - cutMetres2) / length
+                point2[1] - tan2[1] * (_metresToAddOrCut - cutMetres2) / length,
+                point2[2] - tan2[2] * (_metresToAddOrCut - cutMetres2) / length,
+                point2[3] - tan2[3] * (_metresToAddOrCut - cutMetres2) / length
             }
             edgeIdsProperties[#edgeIdsProperties].posTanX2[2][1] = newPoint2
         end
@@ -167,56 +169,47 @@ local _utils = {
     end,
 
     getEdgeIdsPropertiesExtended = function(edgeIdsProperties)
+        -- this works, but the tracks still refuse to snap
         print('edgeIdsProperties BEFORE EXTENDING =')
         debugPrint(edgeIdsProperties)
 
-        local _metresToAdd = 1
-
-        local firstPosTanX2 = edgeIdsProperties[1].posTanX2
-        local firstPoint1 = firstPosTanX2[1][1]
-        local firstPoint2 = firstPosTanX2[2][1]
-        local firstLength = edgeUtils.getVectorLength({
-            firstPoint1[1] - firstPoint2[1],
-            firstPoint1[2] - firstPoint2[2],
-            firstPoint1[3] - firstPoint2[3]
-        })
-
-        local newFirstPosTanX2 = {{{}, {}}, {{}, {}}}
-        newFirstPosTanX2[1][2] = edgeUtils.getVectorNormalised(firstPosTanX2[1][2])
-        newFirstPosTanX2[1][1] = {
-            firstPoint1[1] - (firstPoint2[1] - firstPoint1[1]) * _metresToAdd / firstLength,
-            firstPoint1[2] - (firstPoint2[2] - firstPoint1[2]) * _metresToAdd / firstLength,
-            firstPoint1[3] - (firstPoint2[3] - firstPoint1[3]) * _metresToAdd / firstLength,
-        }
-        newFirstPosTanX2[2][2] = edgeUtils.getVectorNormalised(firstPosTanX2[1][2])
-        newFirstPosTanX2[2][1] = arrayUtils.cloneDeepOmittingFields(firstPosTanX2[1][1])
-
-        local newFirstEdgeProperties = arrayUtils.cloneDeepOmittingFields(edgeIdsProperties[1], {'posTanX2'})
-        newFirstEdgeProperties.posTanX2 = newFirstPosTanX2
-        table.insert(edgeIdsProperties, 1, newFirstEdgeProperties)
-
-        local lastPosTanX2 = edgeIdsProperties[#edgeIdsProperties].posTanX2
-        local lastPoint1 = lastPosTanX2[1][1]
-        local lastPoint2 = lastPosTanX2[2][1]
-        local lastLength = edgeUtils.getVectorLength({
-            lastPoint1[1] - lastPoint2[1],
-            lastPoint1[2] - lastPoint2[2],
-            lastPoint1[3] - lastPoint2[3]
-        })
-
-        local newLastPosTanX2 = {{{}, {}}, {{}, {}}}
-        newLastPosTanX2[1][2] = edgeUtils.getVectorNormalised(lastPosTanX2[2][2])
-        newLastPosTanX2[1][1] = arrayUtils.cloneDeepOmittingFields(lastPosTanX2[2][1])
-        newLastPosTanX2[2][2] = edgeUtils.getVectorNormalised(lastPosTanX2[2][2])
-        newLastPosTanX2[2][1] = {
-            lastPoint2[1] + (lastPoint2[1] - lastPoint1[1]) * _metresToAdd / lastLength,
-            lastPoint2[2] + (lastPoint2[2] - lastPoint1[2]) * _metresToAdd / lastLength,
-            lastPoint2[3] + (lastPoint2[3] - lastPoint1[3]) * _metresToAdd / lastLength,
-        }
-
-        local newLastEdgeProperties = arrayUtils.cloneDeepOmittingFields(edgeIdsProperties[#edgeIdsProperties], {'posTanX2'})
-        newLastEdgeProperties.posTanX2 = newLastPosTanX2
-        table.insert(edgeIdsProperties, newLastEdgeProperties)
+        local addedMetres1, addedMetres2 = 0, 0
+        if addedMetres1 < _metresToAddOrCut then
+            -- getPointbetween would be more elegant, this is just a test
+            local posTanX2 = edgeIdsProperties[1].posTanX2
+            local point1 = posTanX2[1][1]
+            local point2 = posTanX2[2][1]
+            local tan1 = posTanX2[1][2]
+            local length = edgeUtils.getVectorLength({
+                point1[1] - point2[1],
+                point1[2] - point2[2],
+                point1[3] - point2[3]
+            })
+            local newPoint1 = {
+                point1[1] - tan1[1] * (_metresToAddOrCut - addedMetres1) / length,
+                point1[2] - tan1[2] * (_metresToAddOrCut - addedMetres1) / length,
+                point1[3] - tan1[3] * (_metresToAddOrCut - addedMetres1) / length
+            }
+            edgeIdsProperties[1].posTanX2[1][1] = newPoint1
+        end
+        if addedMetres2 < _metresToAddOrCut then
+            -- getPointbetween would be more elegant, this is just a test
+            local posTanX2 = edgeIdsProperties[#edgeIdsProperties].posTanX2
+            local point1 = posTanX2[1][1]
+            local point2 = posTanX2[2][1]
+            local tan2 = posTanX2[2][2]
+            local length = edgeUtils.getVectorLength({
+                point1[1] - point2[1],
+                point1[2] - point2[2],
+                point1[3] - point2[3]
+            })
+            local newPoint2 = {
+                point2[1] + tan2[1] * (_metresToAddOrCut - addedMetres2) / length,
+                point2[2] + tan2[2] * (_metresToAddOrCut - addedMetres2) / length,
+                point2[3] + tan2[3] * (_metresToAddOrCut - addedMetres2) / length
+            }
+            edgeIdsProperties[#edgeIdsProperties].posTanX2[2][1] = newPoint2
+        end
 
         print('edgeIdsProperties AFTER EXTENDING =')
         debugPrint(edgeIdsProperties)
@@ -473,7 +466,7 @@ local _actions = {
 
         print('buildStation starting, params =')
         debugPrint(params)
--- LOLLO TODO make sure that params.node1Id and params.node2Id are the same as the
+-- LOLLO TODO make sure that the heights of params.node1Id and params.node2Id are the same as the
 -- terminal nodes of the tracks outside the station. If not, there is a bug somewhere,
 -- which could be the cause of the non-snapping
         local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
@@ -485,8 +478,6 @@ local _actions = {
             seed = 123e4, -- we need this to avoid dumps
             trackEdgeLists = trackEdgeLists
         }
-        -- local newStaTransf = transfUtils.mul(sta.transf, transfUtils.getInverseTransf(leadingTransf))
-        -- first, try subtracting myTransf[13], 14 and 15 from the edge x, y, and zs.
         newConstruction.transf = api.type.Mat4f.new(
             api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
             api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
@@ -1023,6 +1014,11 @@ function data()
                 debugPrint(edgeIdsBetweenNodeIds)
                 -- local edgeLists = _utils.getEdgeIdsPropertiesCropped(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
                 -- local edgeLists = _utils.getEdgeIdsPropertiesExtended(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
+                -- local edgeLists = _utils.getEdgeIdsPropertiesExtended(
+                --     _utils.getEdgeIdsPropertiesCropped(
+                --        _utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds)
+                --     )
+                -- )
                 local edgeLists = _utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds)
                 print('edgeLists =')
                 debugPrint(edgeLists)
