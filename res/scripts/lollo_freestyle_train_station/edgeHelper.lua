@@ -353,6 +353,7 @@ helper.getEdgeObjectsWithModelId = function(edgeObjects, refModelId)
 end
 
 helper.getLastBuiltEdge = function(entity2tn)
+    -- LOLLO TODO this should come from UG!
     local nodeIds = {}
     for id, _ in pairs(entity2tn) do
         if api.engine.getComponent(id, api.type.ComponentType.BASE_NODE) ~= nil then nodeIds[#nodeIds+1] = id end

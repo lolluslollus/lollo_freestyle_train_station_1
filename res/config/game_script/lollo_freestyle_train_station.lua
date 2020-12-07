@@ -851,6 +851,7 @@ local _actions = {
                 print('command callback firing for split')
                 print(success)
                 if success and successEventName then
+                    -- LOLLO TODO this should come from UG!
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     print('addedNodePosition =')
                     debugPrint(addedNodePosition)
