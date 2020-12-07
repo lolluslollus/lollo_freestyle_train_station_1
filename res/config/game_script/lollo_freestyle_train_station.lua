@@ -459,10 +459,11 @@ local _actions = {
         -- end
         -- Even easier: pass the required data in the parameters, it works!
 
+        local platformEdgeLists = params.platformEdgeLists
         local platformWaypointId = params.platformWaypointId
         local conTransf = params.platformWaypointTransf
-        local trackEdgeLists = params.edgeLists
-        local platformEdges = params.platformEdges
+        local trackEdgeLists = params.trackEdgeLists
+        -- local platformEdgeIds = params.platformEdgeIds
 
         print('buildStation starting, params =')
         debugPrint(params)
@@ -471,7 +472,7 @@ local _actions = {
         newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/station.con'
         newConstruction.params = {
             myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
-            platformEdges = platformEdges,
+            platformEdgeLists = platformEdgeLists,
             seed = 123e4, -- we need this to avoid dumps
             trackEdgeLists = trackEdgeLists
         }
@@ -1001,24 +1002,29 @@ function data()
                 or type(params.trackWaypoint2Position) ~= 'table' or #params.trackWaypoint2Position ~= 3
                 then return end
 
-                local edgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(params.node1Id, params.node2Id)
-                print('edgeIdsBetweenNodeIds =')
-                debugPrint(edgeIdsBetweenNodeIds)
-                -- local edgeLists = _utils.getEdgeIdsPropertiesCropped(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
-                -- local edgeLists = _utils.getEdgeIdsPropertiesExtended(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
-                -- local edgeLists = _utils.getEdgeIdsPropertiesExtended(
+                local trackEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(params.node1Id, params.node2Id)
+                print('trackEdgeIdsBetweenNodeIds =')
+                debugPrint(trackEdgeIdsBetweenNodeIds)
+                -- local trackEdgeLists = _utils.getEdgeIdsPropertiesCropped(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
+                -- local trackEdgeLists = _utils.getEdgeIdsPropertiesExtended(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
+                -- local trackEdgeLists = _utils.getEdgeIdsPropertiesExtended(
                 --     _utils.getEdgeIdsPropertiesCropped(
                 --        _utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds)
                 --     )
                 -- )
-                local edgeLists = _utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds)
-                print('edgeLists =')
-                debugPrint(edgeLists)
+                local trackEdgeLists = _utils.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
+                print('trackEdgeLists =')
+                debugPrint(trackEdgeLists)
+
+                local platformEdgeLists = _utils.getEdgeIdsProperties(params.platformEdgeIds)
+                print('platformEdgeLists =')
+                debugPrint(platformEdgeLists)
 
                 local eventParams = arrayUtils.cloneDeepOmittingFields(params)
-                eventParams.edgeLists = edgeLists
+                eventParams.platformEdgeLists = platformEdgeLists
+                eventParams.trackEdgeLists = trackEdgeLists
                 _actions.removeTracks(
-                    edgeIdsBetweenNodeIds,
+                    trackEdgeIdsBetweenNodeIds,
                     _eventNames.BUILD_STATION_REQUESTED,
                     eventParams
                 )
@@ -1177,7 +1183,7 @@ function data()
                                     -- endif
                                     game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, {
                                         -- edgeId = lastBuiltEdge.id,
-                                        platformEdges = contiguousPlatformEdges,
+                                        platformEdgeIds = contiguousPlatformEdges,
                                         platformWaypointId = newWaypointId,
                                         platformWaypointTransf = platformWaypointTransf,
                                         trackWaypoint1Id = allTrackWaypoint1Ids[1],

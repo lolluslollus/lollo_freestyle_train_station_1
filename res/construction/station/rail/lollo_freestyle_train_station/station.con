@@ -21,7 +21,7 @@ function data()
 		-- 	soundSet = { name = "lollo_lorry_bay" }
 		-- },
 		autoRemovable = false,
-		-- skipCollision = true, -- we need this to change the street type when reconfiguring
+		skipCollision = true, -- we need this to change the street type when reconfiguring
 		params = { -- keep it empty or it will crash coz it won't find the params, which I pass when building the construction
             -- {
             --     key = 'fileName',
@@ -39,7 +39,7 @@ function data()
 			local sampleParams =
 			{
 			  myTransf = { 0.46245205402374, 0.88664430379868, 0, 0, -0.88664430379868, 0.46245205402374, 0, 0, 0, 0, 1, 0, -987.02911376953, -1698.1489257813, 11.531784057617, 1, },
-			  platformEdges = { 25291, 24152, 25282, },
+			  platformEdgeIds = { 25291, 24152, 25282, },
 			  seed = 1230000,
 			  state = {
 				groups = {
@@ -191,11 +191,11 @@ function data()
 				}
 
 				if i == 1 then
-					-- newEdgeList.freeNodes = { 0 }
+					newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
 					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
 				end
 				if i == #params.trackEdgeLists then
-					-- newEdgeList.freeNodes = { 1 }
+					newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
 					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
 				end
 
@@ -207,8 +207,42 @@ function data()
 
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 			end
-			print('result.edgeLists =')
-			debugPrint(result.edgeLists)
+print('result.edgeLists =')
+debugPrint(result.edgeLists)
+
+			-- this is only a test to see if the transformation was ok. They match beautifully!
+			-- if #result.edgeLists > 0 then
+			-- 	local firstPosTanX2 = result.edgeLists[1].edges
+			-- 	print('firstPosTanX2 =')
+			-- 	debugPrint(firstPosTanX2)
+			-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
+			-- 	print('retransformed first edge =')
+			-- 	debugPrint(retransformedFirstEdge)
+			-- end
+
+			for i = 1, #params.platformEdgeLists do
+				local pel = params.platformEdgeLists[i]
+				local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf)
+print('platformPosTanX2 =')
+debugPrint(platformPosTanX2)
+				local length = edgeUtils.getVectorLength({
+					platformPosTanX2[1][1][1] - platformPosTanX2[2][1][1],
+					platformPosTanX2[1][1][2] - platformPosTanX2[2][1][2],
+					platformPosTanX2[1][1][3] - platformPosTanX2[2][1][3],
+				})
+				result.models[#result.models+1] = {
+					id = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
+					tag = 'platformTag',
+					transf = {
+						length, 0, 0, 0,
+						0, length, 0, 0,
+						0, 0, 1, 0,
+						platformPosTanX2[1][1][1], platformPosTanX2[1][1][2], platformPosTanX2[1][1][3], 1
+					}
+				}
+			end
+print('result.models =')
+debugPrint(result.models)
 
 			print('game =')
 			if game ~= nil then
