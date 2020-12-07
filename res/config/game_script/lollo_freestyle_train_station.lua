@@ -1249,6 +1249,9 @@ function data()
                                     end
                                 end
                             end
+                        elseif id == 'streetBuilder' then
+                            -- LOLLO TODO if a platform track with catenary was plopped, rebuild it without.
+                            -- This will make things look better.
                         end
                     end,
                     _myErrorHandler
