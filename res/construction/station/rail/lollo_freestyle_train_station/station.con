@@ -202,6 +202,7 @@ function data()
 				-- LOLLO TODO the edges don't snap to the neighbours
 				-- I tried adding a tiny edge at the beginning, to make tracks snap to those outside the construction
 				-- Instead of making more edges, I also tried shortening the 0 and N edge and see if they snap.
+				-- I also tried both things together, to no avail.
 				-- this does not help: adjacent tracks must be snapped by hand
 
 				result.edgeLists[#result.edgeLists+1] = newEdgeList

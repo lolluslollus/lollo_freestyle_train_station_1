@@ -466,9 +466,6 @@ local _actions = {
 
         print('buildStation starting, params =')
         debugPrint(params)
--- LOLLO TODO make sure that the heights of params.node1Id and params.node2Id are the same as the
--- terminal nodes of the tracks outside the station. If not, there is a bug somewhere,
--- which could be the cause of the non-snapping
         local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
         -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/modular_station.con'
         newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/station.con'
@@ -890,11 +887,6 @@ local function _isBuildingStation(param)
     return _utils.isBuildingConstructionWithFileName(param, 'station/rail/lollo_freestyle_train_station/station.con')
 end
 
--- LOLLO TODO build a long station with a few track edges, place both track waypoints, then the platform waypoint on the platform:
--- not all the tracks get demolished and rebuilt as station edges, which is wrong.
-
--- LOLLO TODO build both track waypoints, then two ordinary waypoints between them, then the platform waypoint on the platform:
--- not all the tracks get demolished, which is wrong.
 function data()
     return {
         ini = function()

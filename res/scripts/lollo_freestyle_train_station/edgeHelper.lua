@@ -530,7 +530,6 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
         -- return {}
     end
 
-    -- LOLLO TODO test this function from here on, we don't know how good it is
     local _map = api.engine.system.streetSystem.getNode2SegmentMap()
     local _getEdgesBetween1and2 = function(node0Or1FieldName)
         local baseEdge1 = _baseEdge1
