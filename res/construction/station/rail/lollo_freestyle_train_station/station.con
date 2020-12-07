@@ -160,6 +160,7 @@ function data()
 				models = {
 					{
 						id = 'lollo_freestyle_train_station/icon/blue.mdl',
+						tag = 'stationTag',
                         transf = {1, 0, 0, 0,
                             0, 1, 0, 0,
                             0, 0, 1, 0,
@@ -261,75 +262,40 @@ debugPrint(result.models)
                 print('api is there')
             else
                 print('NIL')
-            end
---[[ 			result.terminateConstructionHook = function()
-				-- this fires after the user has added a module, so we must call it explicitly in the non-modular station.
-				-- print('LOLLO starting terminateConstructionHook')
-				-- print('LOLLO result.models =')
-				-- debugPrint(result.models)
-				-- local cargoAreaModelIndexesBase0 = slotUtils.getCargoAreaModelIndexesBase0(result.models)
-				local allCargoAreaModelIndexesBase0 = slotUtils.getCargoAreaModelIndexesBase0Simple(result.models)
-				local allCargoLinkIndexesBase0 = slotUtils.getCargoLinksModelIndexesBase0Simple(result.models)
-				-- print('LOLLO cargoAreaModelIndexesBase0 =')
-				-- debugPrint(cargoAreaModelIndexesBase0)
-				-- print('LOLLO allCargoAreaModelIndexesBase0 =')
-				-- debugPrint(allCargoAreaModelIndexesBase0)
-				-- LOLLO TODO in future, if you add more lorry bays, only take the non-adjacent ones
-				local lorryBayModelIndexesBase0 = slotUtils.getLorryBayModelIndexesBase0(result.models)
-				local vehicleEdgeModelIndexesBase0 = slotUtils.getVehicleEdgeModelIndexesBase0(result.models)
-				-- print('LOLLO lorryBayModelIndexesBase0 =')
-				-- debugPrint(lorryBayModelIndexesBase0)
-				-- print('LOLLO vehicleEdgeModelIndexesBase0 =')
-				-- debugPrint(vehicleEdgeModelIndexesBase0)
+			end
+
+			local _terminateConstructionHook = function()
+				local allCargoAreaModelIndexesBase0 = {}
+				for i = 1, #result.models do
+					if result.models[i].tag == 'platformTag' then
+						allCargoAreaModelIndexesBase0[#allCargoAreaModelIndexesBase0+1] = i - 1
+					end
+				end
 
 				result.stations = {
 					{
-						tag = 1, -- in the stock station, this is 0 for cargo and 1 for passengers
+						tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
 						terminals = { } -- 0 is the position of the linked terminal group, in base 0
 					}
 				}
-				-- result.terminalGroups = {}
-				local vehicleEdgeModelIndexBase0_Counter = 0
-				-- for _, vehicleEdge in pairs(lorryBayModelIndexesBase0) do
-				for _, vehicleEdgeModelIndex in pairs(vehicleEdgeModelIndexesBase0) do
-					table.insert(
-						result.terminalGroups,
-						{
-							tag = vehicleEdgeModelIndexBase0_Counter,
-							terminals = {
-								{ vehicleEdgeModelIndex, 0 }
-							}
-						}
-					)
 
-					-- local adjacentCargoAreas = slotUtils.getAdjacentValues(cargoAreaModelIndexesBase0, vehicleEdge.x, vehicleEdge.y)
-					-- print('LOLLO adjacentCargoAreas = ')
-					-- debugPrint(adjacentCargoAreas)
-					-- for _, v in pairs(adjacentCargoAreas) do
-					-- 	table.insert(result.terminalGroups[#result.terminalGroups].terminals, {v, 0})
-					-- end
+				table.insert(
+					result.terminalGroups,
+					{
+						tag = 0,
+						terminals = {
+							{ 0, 0 }
+						},
+						vehicleNodeOverride = #result.edgeLists - 1
+					}
+				)
 
-					for _, modelIndex in pairs(lorryBayModelIndexesBase0) do
-						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
-					end
-
-					for _, modelIndex in pairs(allCargoAreaModelIndexesBase0) do
-						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
-					end
-
-					-- LOLLO NOTE the following is required to make the links visible.
-					-- Missing this, their lanes will work but their models won't be displayed.
-					for _, modelIndex in pairs(allCargoLinkIndexesBase0) do
-						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
-					end
-
-					table.insert(result.stations[1].terminals, vehicleEdgeModelIndexBase0_Counter)
-					vehicleEdgeModelIndexBase0_Counter = vehicleEdgeModelIndexBase0_Counter + 1
+				for _, modelIndex in pairs(allCargoAreaModelIndexesBase0) do
+					table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
 				end
 
-				-- for lorryBayCounter = 1, tagCounterBase0 do
-				-- 	table.insert(result.stations[1].terminals, lorryBayCounter - 1)
-				-- end
+				table.insert(result.stations[1].terminals, 0)
+
 				-- avoid dump when configuring
 				if #(result.stations[1].terminals) == 0 then
 					table.insert(result.stations[1].terminals, 0)
@@ -361,7 +327,9 @@ debugPrint(result.models)
 				-- debugPrint(result.stations)
 				-- print('LOLLO result.terminalGroups = ')
 				-- debugPrint(result.terminalGroups)
-			end ]]
+			end
+			_terminateConstructionHook()
+
 			return result
 		end,
 --[[ 		preProcessFn = function(modules, change, three)
