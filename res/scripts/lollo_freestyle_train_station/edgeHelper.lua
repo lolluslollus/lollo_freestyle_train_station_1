@@ -427,7 +427,7 @@ helper.getLastBuiltEdgeId = function(entity2tn, addedSegment)
     return nil
 end
 
-helper.getNodeIdsBetweenEdgeIds = function(edgeIds)
+helper.getNodeIdsBetweenEdgeIds = function(edgeIds, isAddOuterNodes)
     if type(edgeIds) ~= 'table' then return {} end
 
     local allNodeIds = {}
@@ -435,10 +435,10 @@ helper.getNodeIdsBetweenEdgeIds = function(edgeIds)
     for _, edgeId in pairs(edgeIds) do
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
         if baseEdge ~= nil then
-            if arrayUtils.arrayHasValue(allNodeIds, baseEdge.node0) then
+            if isAddOuterNodes or arrayUtils.arrayHasValue(allNodeIds, baseEdge.node0) then
                 arrayUtils.addUnique(sharedNodeIds, baseEdge.node0)
             end
-            if arrayUtils.arrayHasValue(allNodeIds, baseEdge.node1) then
+            if isAddOuterNodes or arrayUtils.arrayHasValue(allNodeIds, baseEdge.node1) then
                 arrayUtils.addUnique(sharedNodeIds, baseEdge.node1)
             end
             allNodeIds[#allNodeIds+1] = baseEdge.node0
