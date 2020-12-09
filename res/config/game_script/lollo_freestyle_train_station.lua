@@ -846,6 +846,7 @@ local _actions = {
                 print(success)
                 if success and successEventName then
                     -- LOLLO TODO this should come from UG!
+                    -- LOLLO TODO try reading the node ids from the added edges instead.
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     print('addedNodePosition =')
                     debugPrint(addedNodePosition)
@@ -1008,7 +1009,7 @@ function data()
                 --     )
                 -- )
                 local trackEdgeLists = _utils.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
-                print('trackEdgeLists =')
+                print('track bulldoze requested, trackEdgeLists =')
                 debugPrint(trackEdgeLists)
 
                 local platformEdgeLists = _utils.getEdgeIdsProperties(params.platformEdgeIds)
@@ -1056,6 +1057,7 @@ function data()
                                 -- LOLLO NOTE as I added an edge object, I have NOT split the edge
                                 if param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == platformWaypointModelId then
                                     print('LOLLO platform waypoint built!')
+                                    -- LOLLO TODO ask UG: can't we have the waypointId in param.result?
                                     local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(param.data.entity2tn, param.proposal.proposal.addedSegments[1])
                                     if not(edgeUtils.isValidId(lastBuiltEdgeId)) then return end
 
@@ -1108,18 +1110,10 @@ function data()
                                     )
                                     print('contiguous track edges =')
                                     debugPrint(contiguousTrackEdges)
-                                    print('# contiguous track edges =')
-                                    debugPrint(#contiguousTrackEdges)
-                                    print('type of contiguous track edges =')
-                                    debugPrint(type(contiguousTrackEdges))
-                                    print('contiguous track edges[1] =')
-                                    debugPrint(contiguousTrackEdges[1])
-                                    print('contiguous track edges[last] =')
-                                    debugPrint(contiguousTrackEdges[#contiguousTrackEdges])
                                     if #contiguousTrackEdges < 1 then
                                         -- track waypoints built on unconnected tracks
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdge.id,
+                                            edgeId = lastBuiltEdgeId,
                                             transf = platformWaypointTransf,
                                             waypointId = newWaypointId,
                                         })
@@ -1128,23 +1122,15 @@ function data()
                                     -- find all consecutive platform edges of the same type
                                     -- sort them from first to last
                                     local contiguousPlatformEdges = edgeUtils.track.getContiguousEdges(
-                                        lastBuiltEdge.id,
+                                        lastBuiltEdgeId,
                                         platformTrackType
                                     )
                                     print('contiguous platform edges =')
                                     debugPrint(contiguousPlatformEdges)
-                                    print('# contiguous platform edges =')
-                                    debugPrint(#contiguousPlatformEdges)
-                                    print('type of contiguous platform edges =')
-                                    debugPrint(type(contiguousPlatformEdges))
-                                    print('contiguous platform edges[1] =')
-                                    debugPrint(contiguousPlatformEdges[1])
-                                    print('contiguous platform edges[last] =')
-                                    debugPrint(contiguousPlatformEdges[#contiguousPlatformEdges])
                                     if #contiguousPlatformEdges < 1 then
                                         -- no platform edges
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdge.id,
+                                            edgeId = lastBuiltEdgeId,
                                             transf = platformWaypointTransf,
                                             waypointId = newWaypointId,
                                         })
@@ -1182,8 +1168,8 @@ function data()
                                         -- the worker thread will:
                                         -- destroy the waypoint
                                     -- endif
+
                                     game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, {
-                                        -- edgeId = lastBuiltEdge.id,
                                         platformEdgeIds = contiguousPlatformEdges,
                                         platformWaypointId = newWaypointId,
                                         platformWaypointTransf = platformWaypointTransf,

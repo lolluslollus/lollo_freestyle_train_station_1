@@ -224,8 +224,6 @@ debugPrint(result.edgeLists)
 			for i = 1, #params.platformEdgeLists do
 				local pel = params.platformEdgeLists[i]
 				local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf)
-print('platformPosTanX2 =')
-debugPrint(platformPosTanX2)
 				local length = edgeUtils.getVectorLength({
 					platformPosTanX2[1][1][1] - platformPosTanX2[2][1][1],
 					platformPosTanX2[1][1][2] - platformPosTanX2[2][1][2],
@@ -242,8 +240,6 @@ debugPrint(platformPosTanX2)
 					}
 				}
 			end
-print('result.models =')
-debugPrint(result.models)
 
 			print('game =')
 			if game ~= nil then
@@ -329,6 +325,9 @@ debugPrint(result.models)
 				-- debugPrint(result.terminalGroups)
 			end
 			_terminateConstructionHook()
+
+print('result =')
+debugPrint(result)
 
 			return result
 		end,

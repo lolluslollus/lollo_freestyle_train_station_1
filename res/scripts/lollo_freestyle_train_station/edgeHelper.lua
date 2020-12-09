@@ -635,7 +635,9 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
     local node0Results = _getEdgesBetween1and2('node0')
     print('node0results =')
     debugPrint(node0Results)
-    if node0Results then return node0Results end
+    if node0Results then
+        return arrayUtils.getReversed(node0Results)
+    end
 
     local node1Results = _getEdgesBetween1and2('node1')
     print('node1results =')
@@ -685,7 +687,7 @@ helper.track.getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
     debugPrint(node1Typed)
     print('node2Typed =')
     debugPrint(node2Typed)
-    -- LOLLO TODO this dumps without useful messages
+    -- LOLLO TODO this dumps without useful messages: ask UG
     local path = api.engine.util.pathfinding.findPath(
         { edgeIdDir1 },
         { node1Typed },
