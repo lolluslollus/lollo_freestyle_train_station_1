@@ -181,6 +181,8 @@ function data()
 				local tel = params.trackEdgeLists[i]
 				local newEdgeList = {
 					edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
+					edgeType = tel.edgeType,
+					edgeTypeName = tel.edgeTypeName,
 					freeNodes = {},
 					params = {
 						type = tel.trackTypeName,
@@ -190,10 +192,6 @@ function data()
 					tag2Nodes = {},
 					type = 'TRACK'
 				}
-
-				-- add tunnel or bridge if set
-				if tel.edgeType ~= nil then newEdgeList.edgeType = tel.edgeType end
-				if tel.edgeTypeName ~= nil then newEdgeList.edgeTypeName = tel.edgeTypeName end
 
 				if i == 1 then
 					newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
@@ -232,6 +230,8 @@ debugPrint(result.edgeLists)
 
 				local newEdgeList = {
 					edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf),
+					edgeType = pel.edgeType,
+					edgeTypeName = pel.edgeTypeName,
 					freeNodes = {},
 					params = {
 						type = pel.trackTypeName,
@@ -241,9 +241,6 @@ debugPrint(result.edgeLists)
 					tag2Nodes = {},
 					type = 'TRACK'
 				}
-				-- add tunnel or bridge if set
-				if pel.edgeType ~= nil then newEdgeList.edgeType = pel.edgeType end
-				if pel.edgeTypeName ~= nil then newEdgeList.edgeTypeName = pel.edgeTypeName end
 
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 
