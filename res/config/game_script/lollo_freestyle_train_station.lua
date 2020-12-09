@@ -35,7 +35,6 @@ local _utils = {
             return baseEdgeType == 1 and 'BRIDGE' or (baseEdgeType == 2 and 'TUNNEL' or nil)
         end
         local _getEdgeTypeName = function(baseEdgeType, baseEdgeTypeIndex)
-            -- LOLLO TODO check this
             if baseEdgeType == 1 then -- bridge
                 return api.res.bridgeTypeRep.getName(baseEdgeTypeIndex)
             elseif baseEdgeType == 2 then -- tunnel
