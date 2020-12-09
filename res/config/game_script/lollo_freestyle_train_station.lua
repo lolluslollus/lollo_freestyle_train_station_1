@@ -684,12 +684,6 @@ local _actions = {
         newEdge.playerOwned = api.engine.getComponent(oldEdgeId, api.type.ComponentType.PLAYER_OWNED)
         newEdge.trackEdge = oldEdgeTrack
         newEdge.trackEdge.trackType = newTrackTypeId
-        -- add / remove tram tracks upgrade if the new street type explicitly wants so
-        -- if streetUtils.transportModes.isTramRightBarred(newStreetTypeId) then
-        --     newEdge.trackEdge.tramTrackType = 0
-        -- elseif streetUtils.getIsStreetAllTramTracks((api.res.streetTypeRep.get(newStreetTypeId) or {}).laneConfigs) then
-        --     newEdge.trackEdge.tramTrackType = 2
-        -- end
 
         -- leave if nothing changed
         if newEdge.trackEdge.trackType == oldEdgeTrack.trackType
@@ -1062,7 +1056,13 @@ function data()
                                 -- LOLLO NOTE as I added an edge object, I have NOT split the edge
                                 if param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == platformWaypointModelId then
                                     print('LOLLO platform waypoint built!')
-                                    local lastBuiltEdge = edgeUtils.getLastBuiltEdge(param.data.entity2tn)
+                                    local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(param.data.entity2tn, param.proposal.proposal.addedSegments[1])
+                                    if not(edgeUtils.isValidId(lastBuiltEdgeId)) then return end
+
+                                    local lastBuiltEdge = api.engine.getComponent(
+                                        lastBuiltEdgeId,
+                                        api.type.ComponentType.BASE_EDGE
+                                    )
                                     if not(lastBuiltEdge) then return end
 
                                     local newWaypointId = edgeUtils.getEdgeObjectsWithModelId(lastBuiltEdge.objects, platformWaypointModelId)[1]
@@ -1088,7 +1088,7 @@ function data()
                                         -- waypoint built outside platform or another waypoint exists nearby,
                                         -- on no track waypoints built yet
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdge.id,
+                                            edgeId = lastBuiltEdgeId,
                                             transf = platformWaypointTransf,
                                             waypointId = newWaypointId,
                                         })
@@ -1194,7 +1194,13 @@ function data()
                                     })
                                 elseif param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint1ModelId then
                                     print('LOLLO track waypoint 1 built!')
-                                    local lastBuiltEdge = edgeUtils.getLastBuiltEdge(param.data.entity2tn)
+                                    local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(param.data.entity2tn, param.proposal.proposal.addedSegments[1])
+                                    if not(edgeUtils.isValidId(lastBuiltEdgeId)) then return end
+
+                                    local lastBuiltEdge = api.engine.getComponent(
+                                        lastBuiltEdgeId,
+                                        api.type.ComponentType.BASE_EDGE
+                                    )
                                     if not(lastBuiltEdge) then return end
 
                                     local waypointId = edgeUtils.getEdgeObjectsWithModelId(lastBuiltEdge.objects, trackWaypoint1ModelId)[1]
@@ -1213,15 +1219,21 @@ function data()
                                     then
                                         -- built on platform
                                         -- or another one exists nearby
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdge.id,
+                                        game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                            edgeId = lastBuiltEdgeId,
                                             transf = transf,
                                             waypointId = waypointId,
                                         })
                                     end
                                 elseif param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint2ModelId then
                                     print('LOLLO track waypoint 2 built!')
-                                    local lastBuiltEdge = edgeUtils.getLastBuiltEdge(param.data.entity2tn)
+                                    local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(param.data.entity2tn, param.proposal.proposal.addedSegments[1])
+                                    if not(edgeUtils.isValidId(lastBuiltEdgeId)) then return end
+
+                                    local lastBuiltEdge = api.engine.getComponent(
+                                        lastBuiltEdgeId,
+                                        api.type.ComponentType.BASE_EDGE
+                                    )
                                     if not(lastBuiltEdge) then return end
 
                                     local waypointId = edgeUtils.getEdgeObjectsWithModelId(lastBuiltEdge.objects, trackWaypoint2ModelId)[1]
@@ -1240,8 +1252,8 @@ function data()
                                     then
                                         -- built on platform
                                         -- or another one exists nearby
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdge.id,
+                                        game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                            edgeId = lastBuiltEdgeId,
                                             transf = transf,
                                             waypointId = waypointId,
                                         })

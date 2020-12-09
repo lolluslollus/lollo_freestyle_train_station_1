@@ -352,26 +352,75 @@ helper.getEdgeObjectsWithModelId = function(edgeObjects, refModelId)
     return results
 end
 
-helper.getLastBuiltEdge = function(entity2tn)
-    -- LOLLO TODO this should come from UG!
-    local nodeIds = {}
-    for id, _ in pairs(entity2tn) do
-        if api.engine.getComponent(id, api.type.ComponentType.BASE_NODE) ~= nil then nodeIds[#nodeIds+1] = id end
-    end
-    if #nodeIds ~= 2 then return nil end
+helper.getLastBuiltEdgeId = function(entity2tn, addedSegment)
+    -- these variables are all userdata but I can use pairs on entity2tn.
+    -- the game does not populate result here, so I have to go through this.
+    -- TODO tell UG to add this
+    if not(entity2tn) or not(addedSegment) or not(addedSegment.comp)
+    or not(addedSegment.comp.tangent0) or not(addedSegment.comp.node0) or not(addedSegment.comp.node1)
+    then return nil end
 
-    for id, _ in pairs(entity2tn) do
-        local baseEdge = api.engine.getComponent(id, api.type.ComponentType.BASE_EDGE)
-        if baseEdge ~= nil
-        and ((baseEdge.node0 == nodeIds[1] and baseEdge.node1 == nodeIds[2])
-        or (baseEdge.node0 == nodeIds[2] and baseEdge.node1 == nodeIds[1])) then
-            return {
-                id = id,
-                objects = baseEdge.objects
-            }
+    if helper.isValidId(addedSegment.entity) then return addedSegment.entity end -- sometimes the entity is known
+
+    -- LOLLO TODO further down, I check the nodes (and the tangents) to compare proposed edges
+    -- (where the id is unknown) with entity2tn edges (which include nodes and neighbouring edges without saying which is which).
+    -- However, when adding a train waypoint, the nodes in entity2tn[id].edges[i].conns[j].entity do not match:
+    -- one is correct and the other is the edge itself. => Tell UG
+    -- for now, we check the map:
+    local edgeIds = {}
+    local _map0 = api.engine.system.streetSystem.getNode2SegmentMap()[addedSegment.comp.node0]
+    local _map1 = api.engine.system.streetSystem.getNode2SegmentMap()[addedSegment.comp.node1]
+    for _, edgeId0 in pairs(_map0) do
+        for _, edgeId1 in pairs(_map1) do
+            if edgeId0 == edgeId1 then
+                arrayUtils.addUnique(edgeIds, edgeId0)
+            end
         end
     end
+    if #edgeIds == 1 then return edgeIds[1] end
 
+    for segmentId, segment in pairs(entity2tn) do
+        -- the api calls them edges but they are actually lanes, and the segments are actually edges.
+        -- print('segment =')
+        -- debugPrint(segment)
+        if segment and segment.edges then
+            for i = 1, #segment.edges do
+                local edge = segment.edges[i]
+                if edge and edge.conns and edge.conns[1] and edge.conns[2]
+                and edge.geometry and edge.geometry.params and edge.geometry.params.tangent and edge.geometry.tangent then
+                    local node0Id = edge.conns[1].entity
+                    local node1Id = edge.conns[2].entity
+                    -- print('node0Id =', node0Id)
+                    -- print('node1Id =', node1Id)
+                    if node0Id ~= node1Id then -- some "edges" are like that, they are in fact nodes
+                        if (node0Id == addedSegment.comp.node0 and node1Id == addedSegment.comp.node1)
+                        or (node0Id == addedSegment.comp.node1 and node1Id == addedSegment.comp.node0) then
+                            if (edge.geometry.params.tangent.x == addedSegment.comp.tangent0.x
+                            and edge.geometry.params.tangent.y == addedSegment.comp.tangent0.y
+                            and edge.geometry.tangent.x == addedSegment.comp.tangent0.z)
+                            -- or (edge.geometry.params.tangent.x == addedSegment.comp.tangent1.x
+                            -- and edge.geometry.params.tangent.y == addedSegment.comp.tangent1.y
+                            -- and edge.geometry.tangent.y == addedSegment.comp.tangent1.z)
+                            then
+                                return segmentId
+                            else
+                                -- print('segmentId not found A')
+                                -- print('addedSegment =')
+                                -- debugPrint(addedSegment)
+                                -- print('entity2tn =')
+                                -- debugPrint(entity2tn)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    -- print('segmentId not found B')
+    -- print('addedSegment =')
+    -- debugPrint(addedSegment)
+    -- print('entity2tn =')
+    -- debugPrint(entity2tn)
     return nil
 end
 
@@ -399,7 +448,7 @@ end
 
 helper.getObjectPosition = function(objectId)
     print('getObjectPosition starting')
-    if type(objectId) ~= 'number' or objectId < 0 then return nil end
+    if not(helper.isValidId(objectId)) then return nil end
 
     local modelInstanceList = api.engine.getComponent(objectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
     if not(modelInstanceList) then return nil end
