@@ -208,6 +208,8 @@ helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betwe
         position1.y - position0.y,
         0.0
     })
+    if node01DistanceXY == 0 then return nil end
+
     local x20Shift = type(betweenPosition) ~= 'table'
         and
             0.5
@@ -216,7 +218,7 @@ helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betwe
                 betweenPosition.x - position0.x,
                 betweenPosition.y - position0.y,
                 -- betweenPosition.z - position0.z
-                -- 0.0
+                0.0
             }) / node01DistanceXY)
     -- print('x20Shift =', x20Shift or 'NIL')
     -- shift everything around betweenPosition to avoid large numbers being summed and subtracted
@@ -254,10 +256,10 @@ helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betwe
     -- This factor keeps the curve in shape, but it must have the right sign. Beyond that, I can reject or bodge.
     -- Also, tangents have a discontinuity at +/- PI/2: bodging could get tricky
     -- AN idea could be: replace the equation with the large tangent with one based on the position the user clicked.
-    local tan0I = math.tan(ypsilon0I)
-    if math.abs(tan0I) > _maxTangent then return nil end
-    local tan1I = math.tan(ypsilon1I)
-    if math.abs(tan1I) > _maxTangent then return nil end
+    local tanY0I = math.tan(ypsilon0I)
+    if math.abs(tanY0I) > _maxTangent then return nil end
+    local tanY1I = math.tan(ypsilon1I)
+    if math.abs(tanY1I) > _maxTangent then return nil end
 
     -- Now I solve the system for y:
     -- a + b x0' + c x0'^2 + d x0'^3 = y0'
@@ -269,8 +271,8 @@ helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betwe
         {
             {y0I},
             {y0I},
-            {tan0I},
-            {tan1I}
+            {tanY0I},
+            {tanY1I}
         }
     )
     local aY = abcdY[1][1]
