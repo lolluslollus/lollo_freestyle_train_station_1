@@ -1,4 +1,5 @@
 function data()
+    local _cargoNodeZ = 0.3
     return {
         boundingInfo = {
             bbMax = { 40, 2.75, 0.79999995231628, },
@@ -36,72 +37,37 @@ function data()
             },
         },
         metadata = {
-            --[[
-            transportNetworkProvider = {
-                -- LOLLO NOTE
-                -- copied from tn_passenger_wait_area.mdl.
-                -- together with cargo_wait_area.mdl, it is the ONLY model that sets the vehicleNode
-                -- When building, vehicleNode is replaced with vehicleNodeOverride 
-                laneLists = {
-                    {
-                        nodes = {
-                            {
-                                { 0, 20, 0.80000001192093, },
-                                { 0, -13, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, 7, 0.80000001192093, },
-                                { 0, -13, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, 7, 0.80000001192093, },
-                                { 0, -7, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, 0, 0.80000001192093, },
-                                { 0, -7, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, 0, 0.80000001192093, },
-                                { 0, -7, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, -7, 0.80000001192093, },
-                                { 0, -7, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, -7, 0.80000001192093, },
-                                { 0, -13, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, -20, 0.80000001192093, },
-                                { 0, -13, 0, },
-                                2.4000000953674,
-                            },
-                        },
-                        speedLimit = 20,
-                        transportModes = { "PERSON", },
-                    },
-                },
-                runways = {
-                },
-                terminals = {
-                    {
-                        order = 0,
-                        personEdges = { 0, 1, 2, 3},
-                        personNodes = { 1, },
-                        vehicleNode = 0,
-                    },
-                },
-            },
-             ]]
+            -- LOLLO NOTE transportNetworkProvider nhere has no effect, LOLLO TODO ask UG if this would be possible
+            -- transportNetworkProvider = {
+            --     laneLists = {
+            --         {
+            --             linkable = true, -- false, --true,
+            --             nodes = {
+            --                 {
+            --                     { 0, 0, _cargoNodeZ },
+            --                     { 1, 0, 0 },
+            --                     3,
+            --                 },
+            --                 {
+            --                     { 1, 0, _cargoNodeZ },
+            --                     { 1, 0, 0 },
+            --                     3,
+            --                 },
+            --             },
+            --             transportModes = { 'CARGO', },
+            --             speedLimit = 30,
+            --         },
+            --     },
+            --     runways = { },
+            --     terminals = {
+            --         {
+            --             -- order = 0,
+            --             personEdges = { 0 },
+            --             personNodes = { 0, 1 },
+            --             -- vehicleNode = -1, -- 0,
+            --         },
+            --     },
+            -- },
         },
         version = 1,
     }

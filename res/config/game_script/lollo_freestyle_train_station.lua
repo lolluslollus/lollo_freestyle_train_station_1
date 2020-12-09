@@ -489,11 +489,11 @@ local _actions = {
         proposal.constructionsToAdd[1] = newConstruction
 
         -- remove edge object
-        local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
-        local proposal2 = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(platformEdgeId, platformWaypointId)
-        if not(proposal2) then return end
+        -- local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
+        -- local proposal2 = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(platformEdgeId, platformWaypointId)
+        -- if not(proposal2) then return end
 
-        proposal.streetProposal = proposal2.streetProposal
+        -- proposal.streetProposal = proposal2.streetProposal
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- true gives smoother z, default is false
@@ -545,33 +545,50 @@ local _actions = {
         )
     end,
 
-    removeTracks = function(edgeIds, successEventName, successEventParams)
-        print('removeTracks atarting, edgeIds =')
-        debugPrint(edgeIds)
-        print('successEventName =')
-        debugPrint(successEventName)
-        print('successEventParams =')
-        debugPrint(successEventParams)
+    removeTracks = function(successEventName, successEventParams)
+        print('removeTracks starting')
+        -- print('successEventName =')
+        -- debugPrint(successEventName)
+        -- print('successEventParams =')
+        -- debugPrint(successEventParams)
+        local allEdgeIds = {}
+        arrayUtils.concatValues(allEdgeIds, successEventParams.trackEdgeIds)
+        arrayUtils.concatValues(allEdgeIds, successEventParams.platformEdgeIds)
+        -- print('allEdgeIds =')
+        -- debugPrint(allEdgeIds)
 
         local proposal = api.type.SimpleProposal.new()
-        for i = 1, #edgeIds do
-            local baseEdge = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE)
-            if baseEdge then
-                proposal.streetProposal.edgesToRemove[i] = edgeIds[i]
-                -- LOLLO TODO check this
-                if baseEdge.objects then
-                    for j = 1, #baseEdge.objects do
-                        proposal.streetProposal.edgeObjectsToRemove[#proposal.streetProposal.edgeObjectsToRemove+1] = baseEdge.objects[j][1]
+        -- for i = 1, #allEdgeIds do
+        for _, edgeId in pairs(allEdgeIds) do
+            if edgeId then
+                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                if baseEdge then
+                    proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
+                    if baseEdge.objects then
+                        for j = 1, #baseEdge.objects do
+                            proposal.streetProposal.edgeObjectsToRemove[#proposal.streetProposal.edgeObjectsToRemove+1] = baseEdge.objects[j][1]
+                        end
                     end
                 end
             end
         end
-        local sharedNodeIds = edgeUtils.getNodeIdsBetweenEdgeIds(edgeIds)
+        -- print('proposal.streetProposal.edgeObjectsToRemove =')
+        -- debugPrint(proposal.streetProposal.edgeObjectsToRemove)
+
+        local sharedNodeIds = {}
+        arrayUtils.concatValues(
+            sharedNodeIds,
+            edgeUtils.getNodeIdsBetweenEdgeIds(successEventParams.trackEdgeIds)
+        )
+        arrayUtils.concatValues(
+            sharedNodeIds,
+            edgeUtils.getNodeIdsBetweenEdgeIds(successEventParams.platformEdgeIds, true)
+        )
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
-        print('proposal.streetProposal.edgesToRemove =')
-        debugPrint(proposal.streetProposal.edgesToRemove)
+        -- print('proposal.streetProposal.nodesToRemove =')
+        -- debugPrint(proposal.streetProposal.nodesToRemove)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -582,14 +599,11 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                -- print('LOLLO freestyle train station: removeTracks callback returned result = ')
-                -- debugPrint(result)
-                --for _, v in pairs(result.entities) do print(v) end
-                -- print('LOLLO freestyle train station: removeTracks callback returned success = ')
                 print('command callback firing for removeTracks')
                 print(success)
+                -- debugPrint(result)
                 if success and successEventName then
-                    print('about to send command')
+                    print('removeTracks callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -1018,9 +1032,10 @@ function data()
 
                 local eventParams = arrayUtils.cloneDeepOmittingFields(params)
                 eventParams.platformEdgeLists = platformEdgeLists
+                eventParams.trackEdgeIds = trackEdgeIdsBetweenNodeIds
                 eventParams.trackEdgeLists = trackEdgeLists
+
                 _actions.removeTracks(
-                    trackEdgeIdsBetweenNodeIds,
                     _eventNames.BUILD_STATION_REQUESTED,
                     eventParams
                 )
@@ -1039,6 +1054,7 @@ function data()
                         -- debugPrint(param)
                         if id == 'bulldozer' then
                             -- debugPrint(param)
+                            -- LOLLO TODO rebuild the tracks after bulldozing a station
                         elseif id == 'streetTerminalBuilder' then
                             if param and param.proposal and param.proposal.proposal
                             and param.proposal.proposal.edgeObjectsToAdd

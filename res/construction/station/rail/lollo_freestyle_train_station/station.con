@@ -213,7 +213,7 @@ function data()
 print('result.edgeLists =')
 debugPrint(result.edgeLists)
 
-			-- this is only a test to see if the transformation was ok. They match beautifully!
+			-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
 			-- if #result.edgeLists > 0 then
 			-- 	local firstPosTanX2 = result.edgeLists[1].edges
 			-- 	print('firstPosTanX2 =')
@@ -225,6 +225,20 @@ debugPrint(result.edgeLists)
 
 			for i = 1, #params.platformEdgeLists do
 				local pel = params.platformEdgeLists[i]
+
+				local newEdgeList = {
+					edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf),
+					freeNodes = {},
+					params = {
+						type = pel.trackTypeName,
+						catenary = false --pel.catenary
+					},
+					snapNodes = {},
+					tag2Nodes = {},
+					type = 'TRACK'
+				}
+				result.edgeLists[#result.edgeLists+1] = newEdgeList
+
 				local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf)
 				local length = edgeUtils.getVectorLength({
 					platformPosTanX2[1][1][1] - platformPosTanX2[2][1][1],
@@ -287,7 +301,7 @@ debugPrint(result.edgeLists)
 						-- LOLLO TODO ask UG if they can make a parameter similar to the following,
 						-- to override personEdges and personNodes.
 						-- This way, I won't be bound to using a model to assign a waiting area.
-						vehicleNodeOverride = #result.edgeLists - 1
+						vehicleNodeOverride = #params.trackEdgeLists - 1 --#result.edgeLists - 1
 					}
 				)
 
