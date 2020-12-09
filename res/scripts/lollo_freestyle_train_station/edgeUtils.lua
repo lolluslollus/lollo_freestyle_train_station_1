@@ -168,7 +168,7 @@ helper.getNearestObjectIds = function(transf, searchRadius, componentType)
         api.type.Vec3f.new(_position[1] - _searchRadius, _position[2] - _searchRadius, -9999),
         api.type.Vec3f.new(_position[1] + _searchRadius, _position[2] + _searchRadius, 9999)
     )
-    local baseEdgeIds = {}
+    local results = {}
     local callback0 = function(entity, boundingVolume)
         -- print('callback0 found entity', entity)
         -- print('boundingVolume =')
@@ -178,11 +178,11 @@ helper.getNearestObjectIds = function(transf, searchRadius, componentType)
         if not(api.engine.getComponent(entity, componentType)) then return end
         -- print('the entity has the right component type')
 
-        baseEdgeIds[#baseEdgeIds+1] = entity
+        results[#results+1] = entity
     end
     api.engine.system.octreeSystem.findIntersectingEntities(_box0, callback0)
 
-    return baseEdgeIds
+    return results
 end
 
 local function sign(num1)
