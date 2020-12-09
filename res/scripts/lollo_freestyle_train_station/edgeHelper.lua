@@ -356,11 +356,14 @@ helper.getLastBuiltEdgeId = function(entity2tn, addedSegment)
     -- these variables are all userdata but I can use pairs on entity2tn.
     -- the game does not populate result here, so I have to go through this.
     -- TODO tell UG to add this
-    if not(entity2tn) or not(addedSegment) or not(addedSegment.comp)
-    or not(addedSegment.comp.tangent0) or not(addedSegment.comp.node0) or not(addedSegment.comp.node1)
-    then return nil end
+    if not(entity2tn) or not(addedSegment) then return nil end
 
-    if helper.isValidId(addedSegment.entity) then return addedSegment.entity end -- sometimes the entity is known
+    -- sometimes the entity is known
+    if helper.isValidId(addedSegment.entity) then return addedSegment.entity end
+
+    if not(addedSegment.comp) or not(addedSegment.comp.tangent0)
+    or not(addedSegment.comp.node0) or not(addedSegment.comp.node1)
+    then return nil end
 
     -- LOLLO TODO further down, I check the nodes (and the tangents) to compare proposed edges
     -- (where the id is unknown) with entity2tn edges (which include nodes and neighbouring edges without saying which is which).
