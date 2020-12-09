@@ -216,8 +216,18 @@ local _utils = {
         return edgeIdsProperties
     end,
 
-    getEdgeModels = function(edgeIds)
+    getEdgesModels = function(edgeIds)
 -- LOLLO TODO get the models used to display the edges
+        local _getEdgeModels = function(edgeId)
+            -- this returns a table of strips
+            local strips = api.engine.system.baseParallelStripSystem.getStrips(edgeId)
+            -- LOT_LIST tells me things about the terrain
+            local edgeLotLists = api.engine.getComponent(edgeId, api.type.ComponentType.LOT_LIST)
+            local stripsLotLists = api.engine.getComponent(strips[1], api.type.ComponentType.LOT_LIST)
+            -- ideally, I would use:
+            local models = api.engine.getComponent(edgeId, api.type.ComponentType.MODEL_INSTANCE_LIST)
+            -- however, it returns nil, LOLLO TODO ask UG
+        end
     end,
 
     getAllEdgeObjectsWithModelId = function(transf, refModelId)
@@ -1034,7 +1044,7 @@ function data()
                 print('platformEdgeLists =')
                 debugPrint(platformEdgeLists)
 
-                local platformModels = _utils.getEdgeModels(params.platformEdgeIds)
+                local platformModels = _utils.getEdgesModels(params.platformEdgeIds)
 
                 local eventParams = arrayUtils.cloneDeepOmittingFields(params)
                 eventParams.platformEdgeLists = platformEdgeLists
