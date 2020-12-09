@@ -205,6 +205,8 @@ function data()
 				-- Instead of making more edges, I also tried shortening the 0 and N edge and see if they snap.
 				-- I also tried both things together, to no avail.
 				-- this does not help: adjacent tracks must be snapped by hand
+				-- ask UG how to get these edges to snap; or better,
+				-- ask them how to build this station without going through the construction.con file
 
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 			end
