@@ -196,12 +196,12 @@ end
 helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betweenPosition)
     if not(position0) or not(position1) or not(tangent0) or not(tangent1) then return nil end
 
-    local node01Distance = helper.getVectorLength({
-        position1.x - position0.x,
-        position1.y - position0.y,
-        position1.z - position0.z
-    })
-    if node01Distance == 0 then return nil end
+    -- local node01Distance = helper.getVectorLength({
+    --     position1.x - position0.x,
+    --     position1.y - position0.y,
+    --     position1.z - position0.z
+    -- })
+    -- if node01Distance == 0 then return nil end
 
     local node01DistanceXY = helper.getVectorLength({
         position1.x - position0.x,
@@ -217,7 +217,7 @@ helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betwe
                 betweenPosition.y - position0.y,
                 -- betweenPosition.z - position0.z
                 -- 0.0
-            }) / node01Distance)
+            }) / node01DistanceXY)
     -- print('x20Shift =', x20Shift or 'NIL')
     -- shift everything around betweenPosition to avoid large numbers being summed and subtracted
     local x0 = position0.x - betweenPosition.x
