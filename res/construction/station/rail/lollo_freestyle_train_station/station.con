@@ -1,6 +1,6 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
-local transf = require 'transf'
+local transfUtilUG = require 'transf'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local vec3 = require 'vec3'
 
@@ -248,12 +248,15 @@ debugPrint(result.edgeLists)
 				result.models[#result.models+1] = {
 					id = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
 					tag = 'platformTag',
-					transf = {
-						length, 0, 0, 0,
-						0, length, 0, 0,
-						0, 0, 1, 0,
-						platformPosTanX2[1][1][1], platformPosTanX2[1][1][2], platformPosTanX2[1][1][3], 1
-					}
+					transf = transfUtilUG.mul(
+                        {
+                            length, 0, 0, 0,
+                            0, length, 0, 0,
+                            0, 0, 1, 0,
+                            platformPosTanX2[1][1][1], platformPosTanX2[1][1][2], platformPosTanX2[1][1][3], 1
+                        },
+                        transfUtilUG.rotZ(math.atan2(platformPosTanX2[1][2][2], platformPosTanX2[1][2][1]))
+                    )
 				}
 			end
 
