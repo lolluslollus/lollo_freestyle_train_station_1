@@ -1,5 +1,5 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
-local edgeUtils = require('lollo_freestyle_train_station.edgeHelper')
+local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilUG = require('transf')
 
@@ -214,6 +214,10 @@ local _utils = {
         print('edgeIdsProperties AFTER EXTENDING =')
         debugPrint(edgeIdsProperties)
         return edgeIdsProperties
+    end,
+
+    getEdgeModels = function(edgeIds)
+-- LOLLO TODO get the models used to display the edges
     end,
 
     getAllEdgeObjectsWithModelId = function(transf, refModelId)
@@ -680,7 +684,7 @@ local _actions = {
         )
     end,
 
-    replaceEdgeWithTrackType = function(oldEdgeId, newTrackTypeId)
+--[[     replaceEdgeWithTrackType = function(oldEdgeId, newTrackTypeId)
         -- replaces the track without destroying the buildings
         if not(edgeUtils.isValidId(oldEdgeId))
         or not(edgeUtils.isValidId(newTrackTypeId)) then return end
@@ -722,7 +726,7 @@ local _actions = {
                 debugPrint(success)
             end
         )
-    end,
+    end, ]]
 
     splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventParams)
         if not(edgeUtils.isValidId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
@@ -1030,11 +1034,14 @@ function data()
                 print('platformEdgeLists =')
                 debugPrint(platformEdgeLists)
 
+                local platformModels = _utils.getEdgeModels(params.platformEdgeIds)
+
                 local eventParams = arrayUtils.cloneDeepOmittingFields(params)
                 eventParams.platformEdgeLists = platformEdgeLists
                 eventParams.trackEdgeIds = trackEdgeIdsBetweenNodeIds
                 eventParams.trackEdgeLists = trackEdgeLists
 
+                -- if true then return end -- LOLLO TODO remove after testing
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,
                     eventParams

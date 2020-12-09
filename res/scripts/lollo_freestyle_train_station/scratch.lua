@@ -1,6 +1,6 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
-local edgeUtils = require('lollo_freestyle_train_station.edgeHelper')
+local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local aaa = { 1, 2, 3, 4}
 table.remove(aaa, 2)
 
