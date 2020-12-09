@@ -191,6 +191,10 @@ function data()
 					type = 'TRACK'
 				}
 
+				-- add tunnel or bridge if set
+				if tel.edgeType ~= nil then newEdgeList.edgeType = tel.edgeType end
+				if tel.edgeTypeName ~= nil then newEdgeList.edgeTypeName = tel.edgeTypeName end
+
 				if i == 1 then
 					newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
 					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
@@ -237,6 +241,10 @@ debugPrint(result.edgeLists)
 					tag2Nodes = {},
 					type = 'TRACK'
 				}
+				-- add tunnel or bridge if set
+				if pel.edgeType ~= nil then newEdgeList.edgeType = pel.edgeType end
+				if pel.edgeTypeName ~= nil then newEdgeList.edgeTypeName = pel.edgeTypeName end
+
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 
 				local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf)

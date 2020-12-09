@@ -31,6 +31,20 @@ local _utils = {
     getEdgeIdsProperties = function(edgeIds)
         if type(edgeIds) ~= 'table' then return {} end
 
+        local _getEdgeType = function(baseEdgeType)
+            return baseEdgeType == 1 and 'BRIDGE' or (baseEdgeType == 2 and 'TUNNEL' or nil)
+        end
+        local _getEdgeTypeName = function(baseEdgeType, baseEdgeTypeIndex)
+            -- LOLLO TODO check this
+            if baseEdgeType == 1 then -- bridge
+                return api.res.bridgeTypeRep.getName(baseEdgeTypeIndex)
+            elseif baseEdgeType == 2 then -- tunnel
+                return api.res.tunnelTypeRep.getName(baseEdgeTypeIndex)
+            else
+                return nil
+            end
+        end
+
         local results = {}
         for i = 1, #edgeIds do
             local baseEdge = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE)
@@ -67,8 +81,10 @@ local _utils = {
                 },
                 trackType = baseEdgeTrack.trackType,
                 trackTypeName = api.res.trackTypeRep.getName(baseEdgeTrack.trackType),
-                type = baseEdge.type,
-                typeIndex = baseEdge.typeIndex,
+                type = baseEdge.type, -- 0 on ground, 1 bridge, 2 tunnel
+                edgeType = _getEdgeType(baseEdge.type), -- same as above but in a format constructions understand
+                typeIndex = baseEdge.typeIndex, -- -1 on ground, 0 tunnel / cement bridge, 1 steel bridge, 2 stone bridge, 3 suspension bridge
+                edgeTypeName = _getEdgeTypeName(baseEdge.type, baseEdge.typeIndex), -- same as above but in a format constructions understand
             }
             results[#results+1] = result
         end
