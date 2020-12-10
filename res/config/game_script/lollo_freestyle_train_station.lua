@@ -724,16 +724,16 @@ local _actions = {
     end,
 
     rebuildTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds)
-        -- LOLLO TODO fix this function
         print('rebuildTracks starting')
-        print('trackEdgeLists =') debugPrint(trackEdgeLists)
-        print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
+        -- print('trackEdgeLists =') debugPrint(trackEdgeLists)
+        -- print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
 
         if type(neighbourNodeIds) ~= 'table' or #neighbourNodeIds ~= 2 then return end
 
         local _baseNode1 = api.engine.getComponent(neighbourNodeIds[1], api.type.ComponentType.BASE_NODE)
         local _baseNode2 = api.engine.getComponent(neighbourNodeIds[2], api.type.ComponentType.BASE_NODE)
         local nNewEntities = 0
+        local newNodes = {}
         local proposal = api.type.SimpleProposal.new()
 
         local _addNode = function(position)
@@ -748,6 +748,15 @@ local _actions = {
             then
                 return neighbourNodeIds[2]
             else
+                for _, newNode in pairs(newNodes) do
+                    if edgeUtils.isNumVeryClose(position[1], newNode.position[1])
+                    and edgeUtils.isNumVeryClose(position[2], newNode.position[2])
+                    and edgeUtils.isNumVeryClose(position[3], newNode.position[3])
+                    then
+                        return newNode.id
+                    end
+                end
+
                 local newNode = api.type.NodeAndEntity.new()
                 nNewEntities = nNewEntities - 1
                 newNode.entity = nNewEntities
@@ -755,6 +764,15 @@ local _actions = {
                 newNode.comp.position.y = position[2]
                 newNode.comp.position.z = position[3]
                 proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+
+                newNodes[#newNodes+1] = {
+                    id = nNewEntities,
+                    position = {
+                        position[1],
+                        position[2],
+                        position[3],
+                    }
+                }
                 return nNewEntities
             end
         end
