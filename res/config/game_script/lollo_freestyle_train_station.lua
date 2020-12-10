@@ -32,7 +32,7 @@ local _metresToAddOrCut = 3
 local _newEdgeType = 1 -- 0 = ROAD, 1 = RAIL
 local _searchRadius = 500
 local _utils = {
-    getStationEndNodes = function(node1Id, node2Id, stationConstructionId)
+    getStationEndNodes = function(neighbourNode1Id, neighbourNode2Id, stationConstructionId)
         local conData = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
         if not(conData) or not(stringUtils.stringEndsWith(conData.fileName, 'lollo_freestyle_train_station/station.con')) then
             return {}
@@ -65,7 +65,7 @@ local _utils = {
             node2Id = nil,
         }
 
-        local _baseNode1 = api.engine.getComponent(node1Id, api.type.ComponentType.BASE_NODE)
+        local _baseNode1 = api.engine.getComponent(neighbourNode1Id, api.type.ComponentType.BASE_NODE)
         local baseNode1 = api.engine.getComponent(endNodeIds[1], api.type.ComponentType.BASE_NODE)
         if edgeUtils.isNumVeryClose(baseNode1.position.x, _baseNode1.position.x)
         and edgeUtils.isNumVeryClose(baseNode1.position.y, _baseNode1.position.y)
@@ -74,7 +74,7 @@ local _utils = {
             result.node1Id = endNodeIds[1]
         end
 
-        local _baseNode2 = api.engine.getComponent(node2Id, api.type.ComponentType.BASE_NODE)
+        local _baseNode2 = api.engine.getComponent(neighbourNode2Id, api.type.ComponentType.BASE_NODE)
         local baseNode2 = api.engine.getComponent(endNodeIds[2], api.type.ComponentType.BASE_NODE)
         if edgeUtils.isNumVeryClose(baseNode2.position.x, _baseNode2.position.x)
         and edgeUtils.isNumVeryClose(baseNode2.position.y, _baseNode2.position.y)
@@ -538,7 +538,7 @@ local _utils = {
 }
 
 local _actions = {
-    buildSnappyTracks = function(connectedEdgeIds, node1Id, node2Id, stationEndNodes)
+    buildSnappyTracks = function(neighbourEdgeIds, neighbourNodeIds, stationEndNodeIds)
         -- LOLLO NOTE after building the station, never mind how well you placed it,
         -- its end nodes won't snap to the adjacent roads.
         -- AltGr + L will show a red dot, and here is the catch: there are indeed
@@ -546,11 +546,9 @@ local _actions = {
         -- Here, I remove the neighbour track (edge and node) and replace it
         -- with an identical track, which snaps to the station end node instead.
         print('buildSnappyTracks starting')
-        print('connectedEdgeIds =')
-        debugPrint(connectedEdgeIds)
-        print('node1Id =', node1Id, 'node2Id =', node2Id)
-        print('stationEndNodes =')
-        debugPrint(stationEndNodes)
+        print('neighbourEdgeIds =') debugPrint(neighbourEdgeIds)
+        print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
+        print('stationEndNodes =') debugPrint(stationEndNodeIds)
 
         local proposal = api.type.SimpleProposal.new()
 
@@ -561,18 +559,18 @@ local _actions = {
             newSegment.entity = nNewEntities
 
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge.node0 == node1Id then
-                newSegment.comp.node0 = stationEndNodes.node1Id
-            elseif baseEdge.node0 == node2Id then
-                newSegment.comp.node0 = stationEndNodes.node2Id
+            if baseEdge.node0 == neighbourNodeIds.node1Id then
+                newSegment.comp.node0 = stationEndNodeIds.node1Id
+            elseif baseEdge.node0 == neighbourNodeIds.node2Id then
+                newSegment.comp.node0 = stationEndNodeIds.node2Id
             else
                 newSegment.comp.node0 = baseEdge.node0
             end
 
-            if baseEdge.node1 == node1Id then
-                newSegment.comp.node1 = stationEndNodes.node1Id
-            elseif baseEdge.node1 == node2Id then
-                newSegment.comp.node1 = stationEndNodes.node2Id
+            if baseEdge.node1 == neighbourNodeIds.node1Id then
+                newSegment.comp.node1 = stationEndNodeIds.node1Id
+            elseif baseEdge.node1 == neighbourNodeIds.node2Id then
+                newSegment.comp.node1 = stationEndNodeIds.node2Id
             else
                 newSegment.comp.node1 = baseEdge.node1
             end
@@ -596,12 +594,12 @@ local _actions = {
             proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
         end
 
-        for i = 1, #connectedEdgeIds do
-            _replaceSegment(connectedEdgeIds[i])
+        for i = 1, #neighbourEdgeIds do
+            _replaceSegment(neighbourEdgeIds[i])
         end
 
-        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = node1Id
-        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = node2Id
+        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = neighbourNodeIds.node1Id
+        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = neighbourNodeIds.node2Id
     -- local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
         -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/snappy_track.con'
         -- newConstruction.params = {
@@ -645,7 +643,7 @@ local _actions = {
         -- Even easier: pass the required data in the parameters, it works!
 
         local platformEdgeLists = params.platformEdgeLists
-        local platformWaypointId = params.platformWaypointId
+        -- local platformWaypointId = params.platformWaypointId
         local conTransf = params.platformWaypointTransf
         local trackEdgeLists = params.trackEdgeLists
         -- local platformEdgeIds = params.platformEdgeIds
@@ -657,8 +655,8 @@ local _actions = {
         newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/station.con'
         newConstruction.params = {
             myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
-            node1Id = params.node1Id,
-            node2Id = params.node2Id,
+            -- node1Id = params.node1Id,
+            -- node2Id = params.node2Id,
             platformEdgeLists = platformEdgeLists,
             seed = 123e4, -- we need this to avoid dumps
             trackEdgeLists = trackEdgeLists
@@ -710,15 +708,11 @@ local _actions = {
         )
     end,
 
-    buildTracks = function(trackEdgeLists, platformEdgeLists, node1Id, node2Id)
+    rebuildTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds)
         -- LOLLO TODO fix this function
-        print('buildTracks starting')
-        print('trackEdgeLists =')
-        debugPrint(trackEdgeLists)
-        print('node1Id =')
-        debugPrint(node1Id)
-        print('node2Id =')
-        debugPrint(node2Id)
+        print('rebuildTracks starting')
+        print('trackEdgeLists =') debugPrint(trackEdgeLists)
+        print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
         local proposal = api.type.SimpleProposal.new()
 
         local nNewEntities = 0
@@ -738,12 +732,12 @@ local _actions = {
             nNewEntities = nNewEntities - 1
             newSegment.entity = nNewEntities
             if nTrackEdgeList == 1 then
-                newSegment.comp.node0 = node1Id
+                newSegment.comp.node0 = neighbourNodeIds.node1Id
             else
                 newSegment.comp.node0 = _addNode(trackEdgeList.posTanX2[1][1])
             end
             if nTrackEdgeList == #trackEdgeLists then
-                newSegment.comp.node1 = node2Id
+                newSegment.comp.node1 = neighbourNodeIds.node2Id
             else
                 newSegment.comp.node1 = _addNode(trackEdgeList.posTanX2[1][2])
             end
@@ -763,44 +757,6 @@ local _actions = {
             newSegment.trackEdge.catenary = trackEdgeList.catenary
 
             proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
-
-            local sampleNewSegment ={
-                entity = -1,
-                comp = {
-                    node0 = -1,
-                    node1 = -1,
-                    tangent0 = {
-                        x = 0,
-                        y = 0,
-                        z = 0,
-                    },
-                    tangent1 = {
-                        x = 0,
-                        y = 0,
-                        z = 0,
-                    },
-                    type = 0,
-                    typeIndex = -1,
-                    objects = { },
-                },
-                type = -1,
-                params = {
-                    trackType = -1,
-                    catenary = false,
-                },
-                playerOwned = nil,
-                streetEdge = {
-                    streetType = -1,
-                    hasBus = false,
-                    tramTrackType = 0,
-                    precedenceNode0 = 2,
-                    precedenceNode1 = 2,
-                },
-                trackEdge = {
-                    trackType = -1,
-                    catenary = false,
-                },
-            }
         end
 
         for i = 1, #trackEdgeLists do
@@ -1320,8 +1276,10 @@ function data()
             elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
                 _actions.buildSnappyTracks(
                     edgeUtils.getConnectedEdgeIds({params.node1Id, params.node2Id}),
-                    params.node1Id,
-                    params.node2Id,
+                    {
+                        node1Id = params.node1Id,
+                        node2Id = params.node2Id
+                    },
                     _utils.getStationEndNodes(
                         params.node1Id,
                         params.node2Id,
@@ -1329,11 +1287,13 @@ function data()
                     )
                 )
             elseif name == _eventNames.REBUILD_TRACKS_REQUESTED then
-                _actions.buildTracks(
+                _actions.rebuildTracks(
                     params.constructionParams.trackEdgeLists,
                     params.constructionParams.platformEdgeLists,
-                    params.constructionParams.node1Id,
-                    params.constructionParams.node2Id
+                    {
+                        node1Id = params.constructionParams.node1Id,
+                        node2Id = params.constructionParams.node2Id
+                    }
                 )
             end
         end,
