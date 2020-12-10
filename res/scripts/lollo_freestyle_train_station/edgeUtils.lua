@@ -699,8 +699,38 @@ helper.track.getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
         },
         500.0
     )
+    -- online example: Find a path from two edges of the street entity 170679 to the nodes of the street entity 171540:
     print('path =')
     debugPrint(path)
+
+    -- local e1 = api.type.EdgeId.new(170679, 0)
+    -- local e2 = api.type.EdgeId.new(170679, 1)
+    -- local n1 = api.type.NodeId.new(171540, 0)
+    -- local n2 = api.type.NodeId.new(171540, 1)
+    -- local n3 = api.type.NodeId.new(171540, 2)
+    -- local n4 = api.type.NodeId.new(171540, 3)
+    local e1 = api.type.EdgeId.new(edge1Id, 0)
+    local e2 = api.type.EdgeId.new(edge1Id, 1)
+    local n1 = api.type.NodeId.new(edge2Id, 0)
+    local n2 = api.type.NodeId.new(edge2Id, 1)
+    -- local n3 = api.type.NodeId.new(edge2Id, 2)
+    -- local n4 = api.type.NodeId.new(edge2Id, 3)
+
+-- g = api.engine.getComponent(171540, api.type.ComponentType.TRANSPORT_NETWORK)
+
+    local z = api.engine.util.pathfinding.findPath(
+        {
+            api.type.EdgeIdDirAndLength.new(e1, true, .0),
+            api.type.EdgeIdDirAndLength.new(e2, true, .0),
+        },
+        {
+            n1, n2 --, n3, n4
+        },
+        {},
+        1000
+    )
+    print('z =')
+    debugPrint(z)
     return {}
 end
 

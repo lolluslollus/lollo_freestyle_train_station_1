@@ -189,16 +189,16 @@ function data()
 						catenary = tel.catenary
 					},
 					snapNodes = {},
-					tag2Nodes = {},
+					-- tag2Nodes = {}, -- LOLLO TODO what is this? Maybe something to help snapping? Ask UG
 					type = 'TRACK'
 				}
 
 				if i == 1 then
-					newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
+					-- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
 					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
 				end
 				if i == #params.trackEdgeLists then
-					newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
+					-- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
 					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
 				end
 
@@ -238,7 +238,7 @@ debugPrint(result.edgeLists)
 						catenary = false --pel.catenary
 					},
 					snapNodes = {},
-					tag2Nodes = {},
+					-- tag2Nodes = {},
 					type = 'TRACK'
 				}
 

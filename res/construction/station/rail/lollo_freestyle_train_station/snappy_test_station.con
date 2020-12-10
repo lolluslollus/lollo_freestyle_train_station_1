@@ -1,0 +1,156 @@
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local transfUtilUG = require 'transf'
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local vec3 = require 'vec3'
+
+
+function data()
+	return {
+		type = 'RAIL_STATION',
+		description = {
+			name = _("Lollo Snappy Test Train Station"),
+			description = _("Lollo Snappy Test Train Station."),
+		},
+		availability = {
+			yearFrom = 0, -- 1925, -- -1,
+			yearTo = 0, -- -1, -- 0
+		},
+		order = 5005,
+		-- soundConfig = {
+		-- 	soundSet = { name = "lollo_lorry_bay" }
+		-- },
+		autoRemovable = false,
+		skipCollision = true, -- we need this to change the street type when reconfiguring
+		params = { -- keep it empty or it will crash coz it won't find the params, which I pass when building the construction
+            -- {
+            --     key = 'fileName',
+            --     name = 'File Name',
+            --     values = {
+            --         'dummy',
+            --     },
+            --     defaultIndex = 0
+            -- }
+        },
+		updateFn = function(params)
+			local result = {
+				colliders = {},
+				-- coord2terminalInfo = {},
+                cost = 1000,
+                -- demangleId = slotHelpers.demangleId,
+                edgeLists = {
+					{
+						edges = {
+							{
+								{-10, 10, 0},
+								{20, 0, 0}
+							},
+							{
+								{10, 10, 0},
+								{20, 0, 0}
+							},
+						},
+						freeNodes = { },
+						params = {
+							type = "standard.lua",
+							catenary = false
+						},
+						snapNodes = { 0, 1 },
+						-- tag2Nodes = {},
+						type = 'TRACK'
+					},
+					{
+						edges = {
+							{
+								{ -19.1, .0, .0 },
+								{ -20.0, .0, .0 }
+							},  -- node 0
+							{
+								{ -39.1, .0, .0 },
+								{ -20.0, .0, .0 }
+							},  -- node 1 (snap node)
+						},
+						freeNodes = {},
+						params = {
+						  	type = "standard.lua",
+						  	catenary = true
+						},
+						-- edgeType = "BRIDGE",                          -- optional
+						-- edgeTypeName = "cement.lua",                  -- optional
+						snapNodes = { 0, 1 },  -- node 1 is allowed to snap to other edges of the same type
+						type = "TRACK",
+					}
+				},
+                groundFaces = {},
+                -- mangleId = slotHelpers.mangleId,
+				models = {
+					{
+						id = 'lollo_freestyle_train_station/icon/blue.mdl',
+						tag = 'stationTag',
+                        transf = {1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1},
+					},
+                },
+                -- slotConfig = {},
+                -- slots = {},
+				stations = {},
+				terminalGroups = {},
+				terrainAlignmentLists = {},
+			}
+
+print('snappy result =')
+debugPrint(result)
+
+			return result
+		end,
+        upgradeFn = function(params)
+            print('LOLLO upgradeFn')
+            local modules = {}
+
+            local SwapModule = function(slotId, from, to)
+                if params.modules[slotId] and params.modules[slotId].name == from then
+                    table.insert(modules, {slotId, to})
+                    return true
+                end
+                return false
+            end
+            local SwapRow = function(slotId, from, to)
+                local slotId2 = slotId
+                while SwapModule(slotId2, from, to) do 
+                    slotId2 = slotId2 + 10
+                end
+                slotId2 = slotId
+                while SwapModule(slotId2, from, to) do 
+                    slotId2 = slotId2 - 10
+                end
+            end
+
+            if params.modules[params.slotId] == nil then return {} end
+
+            if params.catenaryToggle == 1 then 
+                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track.module",
+                    "station/rail/modular_station/platform_high_speed_track_catenary.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_track.module",
+                    "station/rail/modular_station/platform_track_catenary.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track_catenary.module", 
+                    "station/rail/modular_station/platform_high_speed_track.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_track_catenary.module", 
+                    "station/rail/modular_station/platform_track.module")
+            end
+            if params.trackTypeToggle == 1 then 
+                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track.module",
+                    "station/rail/modular_station/platform_track.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_track.module",
+                    "station/rail/modular_station/platform_high_speed_track.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track_catenary.module",
+                    "station/rail/modular_station/platform_track_catenary.module")
+                SwapRow(params.slotId, "station/rail/modular_station/platform_track_catenary.module",
+                    "station/rail/modular_station/platform_high_speed_track_catenary.module")
+            end
+
+            return modules
+        end,
+	}
+end

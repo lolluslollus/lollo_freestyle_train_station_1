@@ -14,6 +14,7 @@ local constructionParamsBak = nil -- {myTransf, platformEdgeLists, trackEdgeList
 local _eventId = '__lolloFreestyleTrainStation__'
 local _eventNames = {
     BUILD_STATION_REQUESTED = 'platformWaypointBuiltOnPlatform',
+    REBUILD_TRACKS_REQUESTED = 'rebuildTracksRequested',
     TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
     -- TRACK_WAYPOINT_1_BUILT_ON_TRACK = 'trackWaypoint1BuiltOnTrack',
     TRACK_WAYPOINT_1_SPLIT_FAILED = 'trackWaypoint1SplitFailed',
@@ -234,7 +235,7 @@ local _utils = {
     end,
 
     getEdgesModels = function(edgeIds)
--- LOLLO TODO get the models used to display the edges
+        -- LOLLO TODO get the models used to display the edges
         local _getEdgeModels = function(edgeId)
             -- this returns a table of strips
             local strips = api.engine.system.baseParallelStripSystem.getStrips(edgeId)
@@ -446,7 +447,7 @@ local _utils = {
         newEdge.comp.tangent0 = oldEdge.tangent0
         newEdge.comp.tangent1 = oldEdge.tangent1
         newEdge.comp.type = oldEdge.type -- respect bridge or tunnel
-        newEdge.comp.typeIndex = oldEdge.typeIndex -- respect bridge or tunnel
+        newEdge.comp.typeIndex = oldEdge.typeIndex -- respect type of bridge or tunnel
         newEdge.playerOwned = api.engine.getComponent(oldEdgeId, api.type.ComponentType.PLAYER_OWNED)
         newEdge.trackEdge = oldEdgeTrack
 
@@ -503,6 +504,8 @@ local _actions = {
         newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/station.con'
         newConstruction.params = {
             myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
+            node1Id = params.node1Id,
+            node2Id = params.node2Id,
             platformEdgeLists = platformEdgeLists,
             seed = 123e4, -- we need this to avoid dumps
             trackEdgeLists = trackEdgeLists
@@ -538,6 +541,120 @@ local _actions = {
             function(result, success)
                 print('build station callback, success =', success)
                 -- debugPrint(result)
+            end
+        )
+    end,
+
+    buildTracks = function(trackEdgeLists, platformEdgeLists, node1Id, node2Id)
+        -- LOLLO TODO fix this function
+        print('buildTracks starting')
+        print('trackEdgeLists =')
+        debugPrint(trackEdgeLists)
+        print('node1Id =')
+        debugPrint(node1Id)
+        print('node2Id =')
+        debugPrint(node2Id)
+        local proposal = api.type.SimpleProposal.new()
+
+        local nNewEntities = 0
+        local _addNode = function(position)
+            local newNode = api.type.NodeAndEntity.new()
+            nNewEntities = nNewEntities - 1
+            newNode.entity = nNewEntities
+            newNode.comp.position.x = position[1]
+            newNode.comp.position.y = position[2]
+            newNode.comp.position.z = position[3]
+
+            proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+            return newNode.entity
+        end
+        local _addSegment = function(trackEdgeList, nTrackEdgeList)
+            local newSegment = api.type.SegmentAndEntity.new()
+            nNewEntities = nNewEntities - 1
+            newSegment.entity = nNewEntities
+            if nTrackEdgeList == 1 then
+                newSegment.comp.node0 = node1Id
+            else
+                newSegment.comp.node0 = _addNode(trackEdgeList.posTanX2[1][1])
+            end
+            if nTrackEdgeList == #trackEdgeLists then
+                newSegment.comp.node1 = node2Id
+            else
+                newSegment.comp.node1 = _addNode(trackEdgeList.posTanX2[1][2])
+            end
+            newSegment.comp.tangent0.x = trackEdgeList.posTanX2[1][2][1]
+            newSegment.comp.tangent0.y = trackEdgeList.posTanX2[1][2][2]
+            newSegment.comp.tangent0.z = trackEdgeList.posTanX2[1][2][3]
+            newSegment.comp.tangent1.x = trackEdgeList.posTanX2[2][2][1]
+            newSegment.comp.tangent1.y = trackEdgeList.posTanX2[2][2][2]
+            newSegment.comp.tangent1.z = trackEdgeList.posTanX2[2][2][3]
+            newSegment.comp.type = trackEdgeList.type
+            newSegment.comp.typeIndex = trackEdgeList.typeIndex
+            -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+            newSegment.type = _newEdgeType
+            -- me may need:
+            -- newSegment.trackEdge = api.type.BaseEdgeTrack.new()
+            newSegment.trackEdge.trackType = trackEdgeList.trackType
+            newSegment.trackEdge.catenary = trackEdgeList.catenary
+
+            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+
+            local sampleNewSegment ={
+                entity = -1,
+                comp = {
+                    node0 = -1,
+                    node1 = -1,
+                    tangent0 = {
+                        x = 0,
+                        y = 0,
+                        z = 0,
+                    },
+                    tangent1 = {
+                        x = 0,
+                        y = 0,
+                        z = 0,
+                    },
+                    type = 0,
+                    typeIndex = -1,
+                    objects = { },
+                },
+                type = -1,
+                params = {
+                    trackType = -1,
+                    catenary = false,
+                },
+                playerOwned = nil,
+                streetEdge = {
+                    streetType = -1,
+                    hasBus = false,
+                    tramTrackType = 0,
+                    precedenceNode0 = 2,
+                    precedenceNode1 = 2,
+                },
+                trackEdge = {
+                    trackType = -1,
+                    catenary = false,
+                },
+            }
+        end
+
+        for i = 1, #trackEdgeLists do
+            _addSegment(trackEdgeLists[i], i)
+        end
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        -- context.player = api.engine.util.getPlayer() -- default is -1
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true),
+            function(result, success)
+                -- print('LOLLO result = ')
+                -- debugPrint(result)
+                print('LOLLO build tracks success = ')
+                debugPrint(success)
             end
         )
     end,
@@ -710,50 +827,6 @@ local _actions = {
             end
         )
     end,
-
---[[     replaceEdgeWithTrackType = function(oldEdgeId, newTrackTypeId)
-        -- replaces the track without destroying the buildings
-        if not(edgeUtils.isValidId(oldEdgeId))
-        or not(edgeUtils.isValidId(newTrackTypeId)) then return end
-
-        local oldEdge = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE)
-        local oldEdgeTrack = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-        -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
-        if oldEdge == nil or oldEdgeTrack == nil then return end
-
-        local newEdge = api.type.SegmentAndEntity.new()
-        newEdge.entity = -1
-        newEdge.type = _newEdgeType
-        newEdge.comp = oldEdge
-        -- newEdge.playerOwned = {player = api.engine.util.getPlayer()}
-        newEdge.playerOwned = api.engine.getComponent(oldEdgeId, api.type.ComponentType.PLAYER_OWNED)
-        newEdge.trackEdge = oldEdgeTrack
-        newEdge.trackEdge.trackType = newTrackTypeId
-
-        -- leave if nothing changed
-        if newEdge.trackEdge.trackType == oldEdgeTrack.trackType
-        and newEdge.trackEdge.tramTrackType == oldEdgeTrack.tramTrackType then return end
-
-        local proposal = api.type.SimpleProposal.new()
-        proposal.streetProposal.edgesToRemove[1] = oldEdgeId
-        proposal.streetProposal.edgesToAdd[1] = newEdge
-
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
-        -- context.gatherBuildings = true  -- default is false
-        -- context.gatherFields = true -- default is true
-        context.player = api.engine.util.getPlayer() -- default is -1
-        api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, true),
-            function(result, success)
-                -- print('LOLLO result = ')
-                -- debugPrint(result)
-                print('LOLLO _replaceEdgeWithStreetType success = ')
-                debugPrint(success)
-            end
-        )
-    end, ]]
 
     splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventParams)
         if not(edgeUtils.isValidId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
@@ -1061,7 +1134,7 @@ function data()
                 print('platformEdgeLists =')
                 debugPrint(platformEdgeLists)
 
-                local platformModels = _utils.getEdgesModels(params.platformEdgeIds)
+                -- local platformModels = _utils.getEdgesModels(params.platformEdgeIds)
 
                 local eventParams = arrayUtils.cloneDeepOmittingFields(params)
                 eventParams.platformEdgeLists = platformEdgeLists
@@ -1074,9 +1147,16 @@ function data()
                     eventParams
                 )
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
-                print('BUILD_STATION_REQUESTED caught, params =')
-                debugPrint(params)
+                -- print('BUILD_STATION_REQUESTED caught, params =')
+                -- debugPrint(params)
                 _actions.buildStation(arrayUtils.cloneDeepOmittingFields(params))
+            elseif name == _eventNames.REBUILD_TRACKS_REQUESTED then
+                _actions.buildTracks(
+                    params.constructionParams.trackEdgeLists,
+                    params.constructionParams.platformEdgeLists,
+                    params.constructionParams.node1Id,
+                    params.constructionParams.node2Id
+                )
             end
         end,
         guiHandleEvent = function(id, name, param)
@@ -1119,10 +1199,12 @@ function data()
                             for _, constructionId in pairs(param.proposal.toRemove) do -- 26328
                                 print('about to bulldoze construction', constructionId)
                                 if constructionParamsBak.constructionId == constructionId then
-                                    print('bulldozing a freestyle station, conParamsBak exists and is')
-                                    debugPrint(constructionParamsBak)
-                                    -- LOLLO TODO rebuild the tracks after bulldozing a station
-                                    break
+                                    print('bulldozing a freestyle station, conParamsBak exists and has type', type(constructionParamsBak))
+                                    -- debugPrint(constructionParamsBak)
+                                    game.interface.sendScriptEvent(_eventId, _eventNames.REBUILD_TRACKS_REQUESTED, {
+                                        constructionParams = constructionParamsBak,
+                                    })
+                                    return
                                 else
                                     print('bulldozing something else than', constructionParamsBak.constructionId)
                                 end
