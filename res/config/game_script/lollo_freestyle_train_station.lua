@@ -655,8 +655,10 @@ local _actions = {
         newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/station.con'
         newConstruction.params = {
             myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
-            -- node1Id = params.node1Id,
-            -- node2Id = params.node2Id,
+            neighbourNodeIds = {
+                node1Id = params.neighbourNodeIds.node1Id,
+                node2Id = params.neighbourNodeIds.node2Id,
+            },
             platformEdgeLists = platformEdgeLists,
             seed = 123e4, -- we need this to avoid dumps
             trackEdgeLists = trackEdgeLists
@@ -1099,10 +1101,11 @@ local _actions = {
                     debugPrint(addedNodeIds)
 
                     local eventParams = arrayUtils.cloneDeepOmittingFields(successEventParams)
+                    if not(eventParams.neighbourNodeIds) then eventParams.neighbourNodeIds = {} end
                     if successEventName == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
-                        eventParams.node1Id = addedNodeIds[1]
+                        eventParams.neighbourNodeIds.node1Id = addedNodeIds[1]
                     elseif successEventName == _eventNames.TRACK_BULLDOZE_REQUESTED then
-                        eventParams.node2Id = addedNodeIds[1]
+                        eventParams.neighbourNodeIds.node2Id = addedNodeIds[1]
                     end
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1186,7 +1189,7 @@ function data()
                 )
             elseif name == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
                 if not(edgeUtils.isValidId(params.platformWaypointId))
-                or not(edgeUtils.isValidId(params.node1Id))
+                or not(edgeUtils.isValidId(params.neighbourNodeIds.node1Id))
                 or not(edgeUtils.isValidId(params.trackWaypoint2Id))
                 or type(params.trackWaypoint1Position) ~= 'table' or #params.trackWaypoint1Position ~= 3
                 or type(params.trackWaypoint2Position) ~= 'table' or #params.trackWaypoint2Position ~= 3
@@ -1231,13 +1234,16 @@ function data()
                 )
             elseif name == _eventNames.TRACK_BULLDOZE_REQUESTED then
                 if not(edgeUtils.isValidId(params.platformWaypointId))
-                or not(edgeUtils.isValidId(params.node1Id))
-                or not(edgeUtils.isValidId(params.node2Id))
+                or not(edgeUtils.isValidId(params.neighbourNodeIds.node1Id))
+                or not(edgeUtils.isValidId(params.neighbourNodeIds.node2Id))
                 or type(params.trackWaypoint1Position) ~= 'table' or #params.trackWaypoint1Position ~= 3
                 or type(params.trackWaypoint2Position) ~= 'table' or #params.trackWaypoint2Position ~= 3
                 then return end
 
-                local trackEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(params.node1Id, params.node2Id)
+                local trackEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(
+                    params.neighbourNodeIds.node1Id,
+                    params.neighbourNodeIds.node2Id
+                )
                 print('trackEdgeIdsBetweenNodeIds =')
                 debugPrint(trackEdgeIdsBetweenNodeIds)
                 -- local trackEdgeLists = _utils.getEdgeIdsPropertiesCropped(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
@@ -1275,14 +1281,19 @@ function data()
                 )
             elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
                 _actions.buildSnappyTracks(
-                    edgeUtils.getConnectedEdgeIds({params.node1Id, params.node2Id}),
+                    edgeUtils.getConnectedEdgeIds(
+                        {
+                            params.neighbourNodeIds.node1Id,
+                            params.neighbourNodeIds.node2Id
+                        }
+                    ),
                     {
-                        node1Id = params.node1Id,
-                        node2Id = params.node2Id
+                        node1Id = params.neighbourNodeIds.node1Id,
+                        node2Id = params.neighbourNodeIds.node2Id
                     },
                     _utils.getStationEndNodes(
-                        params.node1Id,
-                        params.node2Id,
+                        params.neighbourNodeIds.node1Id,
+                        params.neighbourNodeIds.node2Id,
                         params.stationConstructionId
                     )
                 )
@@ -1290,10 +1301,7 @@ function data()
                 _actions.rebuildTracks(
                     params.constructionParams.trackEdgeLists,
                     params.constructionParams.platformEdgeLists,
-                    {
-                        node1Id = params.constructionParams.node1Id,
-                        node2Id = params.constructionParams.node2Id
-                    }
+                    params.constructionParams.neighbourNodeIds
                 )
             end
         end,

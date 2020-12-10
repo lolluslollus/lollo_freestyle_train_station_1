@@ -211,14 +211,12 @@ print('result.edgeLists =')
 debugPrint(result.edgeLists)
 
 			-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
-			-- if #result.edgeLists > 0 then
-			-- 	local firstPosTanX2 = result.edgeLists[1].edges
-			-- 	print('firstPosTanX2 =')
-			-- 	debugPrint(firstPosTanX2)
-			-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
-			-- 	print('retransformed first edge =')
-			-- 	debugPrint(retransformedFirstEdge)
-			-- end
+			if #result.edgeLists > 0 then
+				local firstPosTanX2 = result.edgeLists[1].edges
+				print('firstPosTanX2 =') debugPrint(firstPosTanX2)
+				local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
+				print('retransformed first edge =') debugPrint(retransformedFirstEdge)
+			end
 
 			for i = 1, #params.platformEdgeLists do
 				local pel = params.platformEdgeLists[i]
@@ -299,7 +297,7 @@ debugPrint(result.edgeLists)
 					{
 						tag = 0,
 						terminals = {
-							{ 0, 0 }
+							-- { 0, 0 }
 						},
 						-- LOLLO TODO ask UG if they can make a parameter similar to the following,
 						-- to override personEdges and personNodes.
@@ -330,7 +328,7 @@ debugPrint(result.edgeLists)
 				-- stock result.terminalGroups =
 				-- {
 				-- 	{
-				-- 		tag = -1, -- possibly useless, try to keep the m all different tho
+				-- 		tag = -1, -- possibly useless, try to keep them all different tho
 				-- 		terminals = {
 				-- 			{ 22, 0 }, -- 22 is the position of a model with a terminal, in base 0
 				-- 			{ 25, 0 }, -- 0 is always 0 in the stock station, it is something like a terminal number
