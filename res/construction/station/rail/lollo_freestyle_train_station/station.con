@@ -207,16 +207,14 @@ function data()
 
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 			end
-print('result.edgeLists =')
-debugPrint(result.edgeLists)
 
 			-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
-			if #result.edgeLists > 0 then
-				local firstPosTanX2 = result.edgeLists[1].edges
-				print('firstPosTanX2 =') debugPrint(firstPosTanX2)
-				local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
-				print('retransformed first edge =') debugPrint(retransformedFirstEdge)
-			end
+			-- if #result.edgeLists > 0 then
+			-- 	local firstPosTanX2 = result.edgeLists[1].edges
+			-- 	print('firstPosTanX2 =') debugPrint(firstPosTanX2)
+			-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
+			-- 	print('retransformed first edge =') debugPrint(retransformedFirstEdge)
+			-- end
 
 			for i = 1, #params.platformEdgeLists do
 				local pel = params.platformEdgeLists[i]
