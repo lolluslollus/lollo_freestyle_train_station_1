@@ -1,5 +1,6 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilUG = require('transf')
 
@@ -9,6 +10,7 @@ local function _myErrorHandler(err)
     print('lollo freestyle train station ERROR: ', err)
 end
 
+local constructionParamsBak = nil -- {myTransf, platformEdgeLists, trackEdgeLists}
 local _eventId = '__lolloFreestyleTrainStation__'
 local _eventNames = {
     BUILD_STATION_REQUESTED = 'platformWaypointBuiltOnPlatform',
@@ -1079,14 +1081,52 @@ function data()
         end,
         guiHandleEvent = function(id, name, param)
             -- LOLLO NOTE param can have different types, even boolean, depending on the event id and name
-            if name == 'builder.apply' then
+            -- print('guiHandleEvent caught id =', id, 'name =', name)
+            -- about to bulldoze a freestyle station: write away its params so you can rebuild its tracks later
+            if id == 'bulldozer' and name == 'builder.proposalCreate' then
+                xpcall(
+                    function()
+                        if not(param.proposal.toRemove) then return end
+
+                        for _, constructionId in pairs(param.proposal.toRemove) do
+                            local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+                            if con ~= nil then
+                                if type(con.fileName) == 'string' and stringUtils.stringEndsWith(
+                                    con.fileName,
+                                    'lollo_freestyle_train_station/station.con'
+                                ) then
+                                    constructionParamsBak = arrayUtils.cloneDeepOmittingFields(con.params, {'seed'}, true)
+                                    constructionParamsBak.constructionId = constructionId
+                                    break
+                                end
+                            end
+                        end
+                    end,
+                    _myErrorHandler
+                )
+            elseif name == 'builder.apply' then
                 xpcall(
                     function()
                         print('guiHandleEvent caught id =', id, 'name =', name, 'param =')
-                        -- debugPrint(param)
                         if id == 'bulldozer' then
-                            -- debugPrint(param)
-                            -- LOLLO TODO rebuild the tracks after bulldozing a station
+                            -- now it's too late to read the station params:
+                            -- if you are bulldozing the station you backed up before,
+                            -- read its tracks from the backup and rebuild them.
+                            -- Otherwise, do nothing.
+
+                            if constructionParamsBak == nil then print('conParamsBak is nil') return end
+
+                            for _, constructionId in pairs(param.proposal.toRemove) do -- 26328
+                                print('about to bulldoze construction', constructionId)
+                                if constructionParamsBak.constructionId == constructionId then
+                                    print('bulldozing a freestyle station, conParamsBak exists and is')
+                                    debugPrint(constructionParamsBak)
+                                    -- LOLLO TODO rebuild the tracks after bulldozing a station
+                                    break
+                                else
+                                    print('bulldozing something else than', constructionParamsBak.constructionId)
+                                end
+                            end
                         elseif id == 'streetTerminalBuilder' then
                             if param and param.proposal and param.proposal.proposal
                             and param.proposal.proposal.edgeObjectsToAdd

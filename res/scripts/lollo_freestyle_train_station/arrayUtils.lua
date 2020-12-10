@@ -24,9 +24,9 @@ arrayUtils.map = function(arr, func)
     return results
 end
 
-arrayUtils.cloneDeepOmittingFields = function(tab, fields2Omit)
+arrayUtils.cloneDeepOmittingFields = function(tab, fields2Omit, isTryUserdata)
     local results = {}
-    if type(tab) ~= 'table' then return results end
+    if type(tab) ~= 'table' and not(type(tab) == 'userdata' and isTryUserdata) then return results end
 
     if type(fields2Omit) ~= 'table' then fields2Omit = {} end
 
@@ -42,9 +42,9 @@ arrayUtils.cloneDeepOmittingFields = function(tab, fields2Omit)
     return results
 end
 
-arrayUtils.cloneOmittingFields = function(tab, fields2Omit)
+arrayUtils.cloneOmittingFields = function(tab, fields2Omit, isTryUserdata)
     local results = {}
-    if type(tab) ~= 'table' then return results end
+    if type(tab) ~= 'table' and not(type(tab) == 'userdata' and isTryUserdata) then return results end
 
     if type(fields2Omit) ~= 'table' then fields2Omit = {} end
 
