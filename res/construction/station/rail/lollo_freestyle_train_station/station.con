@@ -189,7 +189,7 @@ function data()
 						catenary = tel.catenary
 					},
 					snapNodes = {},
-					-- tag2Nodes = {}, -- LOLLO TODO what is this? Maybe something to help snapping? Ask UG
+					-- tag2Nodes = {},
 					type = 'TRACK'
 				}
 
@@ -202,13 +202,8 @@ function data()
 					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
 				end
 
-				-- LOLLO TODO the edges don't snap to the neighbours
-				-- I tried adding a tiny edge at the beginning, to make tracks snap to those outside the construction
-				-- Instead of making more edges, I also tried shortening the 0 and N edge and see if they snap.
-				-- I also tried both things together, to no avail.
-				-- this does not help: adjacent tracks must be snapped by hand
-				-- ask UG how to get these edges to snap; or better,
-				-- ask them how to build this station without going through the construction.con file
+				-- LOLLO NOTE the edges don't snap to the neighbours
+				-- unless you rebuild those neighbours, by hand or by script
 
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 			end

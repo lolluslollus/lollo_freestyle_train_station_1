@@ -13,6 +13,7 @@ end
 local constructionParamsBak = nil -- {myTransf, platformEdgeLists, trackEdgeLists}
 local _eventId = '__lolloFreestyleTrainStation__'
 local _eventNames = {
+    BUILD_SNAPPY_TRACKS_REQUESTED = 'buildSNappyTracksRequested',
     BUILD_STATION_REQUESTED = 'platformWaypointBuiltOnPlatform',
     REBUILD_TRACKS_REQUESTED = 'rebuildTracksRequested',
     TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
@@ -31,6 +32,60 @@ local _metresToAddOrCut = 3
 local _newEdgeType = 1 -- 0 = ROAD, 1 = RAIL
 local _searchRadius = 500
 local _utils = {
+    getStationEndNodes = function(node1Id, node2Id, stationConstructionId)
+        local conData = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+        if not(conData) or not(stringUtils.stringEndsWith(conData.fileName, 'lollo_freestyle_train_station/station.con')) then
+            return {}
+        end
+
+        local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
+        local endNodeIds = {}
+        for _, edgeId in pairs(conData.frozenEdges) do
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+            local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+            if baseEdge ~= nil and baseEdgeTrack ~= nil and baseEdgeTrack.trackType ~= _platformTrackType then
+                if not(arrayUtils.arrayHasValue(conData.frozenNodes, baseEdge.node0)) then
+                    endNodeIds[#endNodeIds+1] = baseEdge.node0
+                end
+                if not(arrayUtils.arrayHasValue(conData.frozenNodes, baseEdge.node1)) then
+                    endNodeIds[#endNodeIds+1] = baseEdge.node1
+                end
+            end
+        end
+
+        if #endNodeIds < 1 then return {} end
+        -- if #endNodeIds == 1 then return endNodeIds end
+        if #endNodeIds > 2 then
+            print('found', #endNodeIds, 'free nodes in station construction', stationConstructionId)
+            return {}
+        end
+
+        local result = {
+            node1Id = nil,
+            node2Id = nil,
+        }
+
+        local _baseNode1 = api.engine.getComponent(node1Id, api.type.ComponentType.BASE_NODE)
+        local baseNode1 = api.engine.getComponent(endNodeIds[1], api.type.ComponentType.BASE_NODE)
+        if edgeUtils.isNumVeryClose(baseNode1.position.x, _baseNode1.position.x)
+        and edgeUtils.isNumVeryClose(baseNode1.position.y, _baseNode1.position.y)
+        and edgeUtils.isNumVeryClose(baseNode1.position.z, _baseNode1.position.z)
+        then
+            result.node1Id = endNodeIds[1]
+        end
+
+        local _baseNode2 = api.engine.getComponent(node2Id, api.type.ComponentType.BASE_NODE)
+        local baseNode2 = api.engine.getComponent(endNodeIds[2], api.type.ComponentType.BASE_NODE)
+        if edgeUtils.isNumVeryClose(baseNode2.position.x, _baseNode2.position.x)
+        and edgeUtils.isNumVeryClose(baseNode2.position.y, _baseNode2.position.y)
+        and edgeUtils.isNumVeryClose(baseNode2.position.z, _baseNode2.position.z)
+        then
+            result.node2Id = endNodeIds[2]
+        end
+
+        return result
+    end,
+
     getEdgeIdsProperties = function(edgeIds)
         if type(edgeIds) ~= 'table' then return {} end
 
@@ -55,6 +110,7 @@ local _utils = {
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
             local result = {
                 catenary = baseEdgeTrack.catenary,
+                edgeId = edgeIds[i],
                 posTanX2 = {
                     {
                         {
@@ -482,7 +538,104 @@ local _utils = {
 }
 
 local _actions = {
-    buildStation = function(params)
+    buildSnappyTracks = function(connectedEdgeIds, node1Id, node2Id, stationEndNodes)
+        -- LOLLO NOTE after building the station, never mind how well you placed it,
+        -- its end nodes won't snap to the adjacent roads.
+        -- AltGr + L will show a red dot, and here is the catch: there are indeed
+        -- two separate nodes in the same place, at each station end.
+        -- Here, I remove the neighbour track (edge and node) and replace it
+        -- with an identical track, which snaps to the station end node instead.
+        print('buildSnappyTracks starting')
+        print('connectedEdgeIds =')
+        debugPrint(connectedEdgeIds)
+        print('node1Id =', node1Id, 'node2Id =', node2Id)
+        print('stationEndNodes =')
+        debugPrint(stationEndNodes)
+
+        local proposal = api.type.SimpleProposal.new()
+
+        local nNewEntities = 0
+        local _replaceSegment = function(edgeId)
+            local newSegment = api.type.SegmentAndEntity.new()
+            nNewEntities = nNewEntities - 1
+            newSegment.entity = nNewEntities
+
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+            if baseEdge.node0 == node1Id then
+                newSegment.comp.node0 = stationEndNodes.node1Id
+            elseif baseEdge.node0 == node2Id then
+                newSegment.comp.node0 = stationEndNodes.node2Id
+            else
+                newSegment.comp.node0 = baseEdge.node0
+            end
+
+            if baseEdge.node1 == node1Id then
+                newSegment.comp.node1 = stationEndNodes.node1Id
+            elseif baseEdge.node1 == node2Id then
+                newSegment.comp.node1 = stationEndNodes.node2Id
+            else
+                newSegment.comp.node1 = baseEdge.node1
+            end
+
+            newSegment.comp.tangent0.x = baseEdge.tangent0.x
+            newSegment.comp.tangent0.y = baseEdge.tangent0.y
+            newSegment.comp.tangent0.z = baseEdge.tangent0.z
+            newSegment.comp.tangent1.x = baseEdge.tangent1.x
+            newSegment.comp.tangent1.y = baseEdge.tangent1.y
+            newSegment.comp.tangent1.z = baseEdge.tangent1.z
+            newSegment.comp.type = baseEdge.type
+            newSegment.comp.typeIndex = baseEdge.typeIndex
+            newSegment.comp.objects = baseEdge.objects
+            -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+            newSegment.type = _newEdgeType
+            local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+            newSegment.trackEdge.trackType = baseEdgeTrack.trackType
+            newSegment.trackEdge.catenary = baseEdgeTrack.catenary
+
+            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+            proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
+        end
+
+        for i = 1, #connectedEdgeIds do
+            _replaceSegment(connectedEdgeIds[i])
+        end
+
+        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = node1Id
+        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = node2Id
+    -- local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
+        -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/snappy_track.con'
+        -- newConstruction.params = {
+        --     seed = 924e4, -- we need this to avoid dumps
+        --     trackEdgeLists = connectedEdges
+        -- }
+        -- newConstruction.transf = api.type.Mat4f.new(
+        --     api.type.Vec4f.new(1, 0, 0, 0),
+        --     api.type.Vec4f.new(0, 1, 0, 0),
+        --     api.type.Vec4f.new(0, 0, 1, 0),
+        --     api.type.Vec4f.new(0, 0, 0, 1)
+        -- )
+        -- newConstruction.name = 'snappy track construction name'
+
+        -- local proposal = api.type.SimpleProposal.new()
+        -- proposal.constructionsToAdd[1] = newConstruction
+
+        -- local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = false -- default is false
+        -- context.gatherFields = true -- default is true
+        -- context.player = api.engine.util.getPlayer()
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, nil, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                print('buildSnappyTracks callback, success =', success)
+                -- debugPrint(result)
+            end
+        )
+    end,
+
+    buildStation = function(successEventName, params)
         -- a modular station and params.modules look doable, too.
         -- then, you can do:
         -- for slotId, m in pairs(params.modules) do
@@ -541,6 +694,18 @@ local _actions = {
             function(result, success)
                 print('build station callback, success =', success)
                 -- debugPrint(result)
+                if success and successEventName then
+                    local eventParams = arrayUtils.cloneDeepOmittingFields(params)
+                    eventParams.stationConstructionId = result.resultEntities[1]
+                    print('eventParams.stationConstructionId =', eventParams.stationConstructionId)
+                    print('buildStation callback is about to send command')
+                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                        string.sub(debug.getinfo(1, 'S').source, 1),
+                        _eventId,
+                        successEventName,
+                        eventParams
+                    ))
+                end
             end
         )
     end,
@@ -1141,7 +1306,6 @@ function data()
                 eventParams.trackEdgeIds = trackEdgeIdsBetweenNodeIds
                 eventParams.trackEdgeLists = trackEdgeLists
 
-                -- if true then return end -- LOLLO TODO remove after testing
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,
                     eventParams
@@ -1149,7 +1313,21 @@ function data()
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 -- print('BUILD_STATION_REQUESTED caught, params =')
                 -- debugPrint(params)
-                _actions.buildStation(arrayUtils.cloneDeepOmittingFields(params))
+                _actions.buildStation(
+                    _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED,
+                    arrayUtils.cloneDeepOmittingFields(params)
+                )
+            elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
+                _actions.buildSnappyTracks(
+                    edgeUtils.getConnectedEdgeIds({params.node1Id, params.node2Id}),
+                    params.node1Id,
+                    params.node2Id,
+                    _utils.getStationEndNodes(
+                        params.node1Id,
+                        params.node2Id,
+                        params.stationConstructionId
+                    )
+                )
             elseif name == _eventNames.REBUILD_TRACKS_REQUESTED then
                 _actions.buildTracks(
                     params.constructionParams.trackEdgeLists,
@@ -1218,7 +1396,7 @@ function data()
                                 local platformWaypointModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_platform_waypoint.mdl')
                                 local trackWaypoint1ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_1.mdl')
                                 local trackWaypoint2ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_2.mdl')
-                                local platformTrackType = api.res.trackTypeRep.find('platform.lua')
+                                local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
 
                                 -- if not param.result or not param.result[1] then
                                 --     return
@@ -1252,7 +1430,7 @@ function data()
                                     local allTrackWaypoint1Ids = _utils.getAllEdgeObjectsWithModelId(platformWaypointTransf, trackWaypoint1ModelId)
                                     local allTrackWaypoint2Ids = _utils.getAllEdgeObjectsWithModelId(platformWaypointTransf, trackWaypoint2ModelId)
 
-                                    if param.proposal.proposal.addedSegments[1].trackEdge.trackType ~= platformTrackType
+                                    if param.proposal.proposal.addedSegments[1].trackEdge.trackType ~= _platformTrackType
                                     or #allPlatformWaypointIds > 1
                                     or #allTrackWaypoint1Ids < 1
                                     or #allTrackWaypoint2Ids < 1
@@ -1293,7 +1471,7 @@ function data()
                                     -- sort them from first to last
                                     local contiguousPlatformEdges = edgeUtils.track.getContiguousEdges(
                                         lastBuiltEdgeId,
-                                        platformTrackType
+                                        _platformTrackType
                                     )
                                     print('contiguous platform edges =')
                                     debugPrint(contiguousPlatformEdges)
@@ -1307,7 +1485,7 @@ function data()
                                         return
                                     end
 
-                                    local outerNodes = _utils.getOuterNodes(contiguousPlatformEdges, platformTrackType)
+                                    local outerNodes = _utils.getOuterNodes(contiguousPlatformEdges, _platformTrackType)
                                     print('outerNodes =')
                                     debugPrint(outerNodes)
 
@@ -1369,7 +1547,7 @@ function data()
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
                                     )
 
-                                    if param.proposal.proposal.addedSegments[1].trackEdge.trackType == platformTrackType
+                                    if param.proposal.proposal.addedSegments[1].trackEdge.trackType == _platformTrackType
                                     or #_utils.getAllEdgeObjectsWithModelId(transf, trackWaypoint1ModelId) > 1
                                     -- LOLLO TODO bulldoze if track waypoint 2 is around and not connected
                                     then
@@ -1402,7 +1580,7 @@ function data()
                                         param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
                                     )
 
-                                    if param.proposal.proposal.addedSegments[1].trackEdge.trackType == platformTrackType
+                                    if param.proposal.proposal.addedSegments[1].trackEdge.trackType == _platformTrackType
                                     or #_utils.getAllEdgeObjectsWithModelId(transf, trackWaypoint2ModelId) > 1
                                     -- LOLLO TODO bulldoze if track waypoint 1 is around and not connected
                                     then

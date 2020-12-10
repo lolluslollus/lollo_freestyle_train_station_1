@@ -479,6 +479,36 @@ helper.getObjectPosition = function(objectId)
     }
 end
 
+helper.getConnectedEdgeIds = function(nodeIds)
+    print('getConnectedEdgeIds starting')
+    if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
+
+    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local results = {}
+
+    for _, nodeId in pairs(nodeIds) do
+        local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
+        if connectedEdgeIdsUserdata ~= nil then
+            for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
+                arrayUtils.addUnique(results, edgeId)
+            end
+        end
+    end
+
+    print('getConnectedEdgeIds is about to return')
+    debugPrint(results)
+    return results
+end
+
+helper.isNumVeryClose = function(num1, num2, roundingFactor)
+    if not(roundingFactor) then roundingFactor = 1000.0 end
+    if type(num1) ~= 'number' or type(num2) ~= 'number' then return false end
+
+    local roundedNum1 = math.ceil(num1 * roundingFactor)
+    local roundedNum2 = math.ceil(num2 * roundingFactor)
+    return roundedNum1 == roundedNum2
+end
+
 helper.track = {}
 helper.track.getContiguousEdges = function(edgeId, trackType)
     local _calcContiguousEdges = function(firstEdgeId, firstNodeId, map, isInsertFirst, results)
@@ -699,7 +729,8 @@ helper.track.getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
         },
         500.0
     )
-    -- online example: Find a path from two edges of the street entity 170679 to the nodes of the street entity 171540:
+    -- online example (outdated and generally useless):
+    -- Find a path from two edges of the street entity 170679 to the nodes of the street entity 171540:
     print('path =')
     debugPrint(path)
 
@@ -756,6 +787,7 @@ helper.track.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
             return false
         else
             for _, edgeId in pairs(adjacentEdge1IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
+                -- arrayUtils.addUnique(adjacentEdge1Ids, edgeId)
                 adjacentEdge1Ids[#adjacentEdge1Ids+1] = edgeId
             end
             print('FIVE')
@@ -765,6 +797,7 @@ helper.track.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
             return false
         else
             for _, edgeId in pairs(adjacentEdge2IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
+                -- arrayUtils.addUnique(adjacentEdge2Ids, edgeId)
                 adjacentEdge2Ids[#adjacentEdge2Ids+1] = edgeId
             end
             print('SEVEN')
