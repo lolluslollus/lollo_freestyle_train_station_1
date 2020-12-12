@@ -203,8 +203,8 @@ function data()
 				end
 
 				-- LOLLO NOTE the edges don't snap to the neighbours
-				-- unless you rebuild those neighbours, by hand or by script
-
+				-- unless you rebuild those neighbours, by hand or by script,
+				-- and make them snap to the station own nodes.
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 			end
 
@@ -236,23 +236,30 @@ function data()
 				result.edgeLists[#result.edgeLists+1] = newEdgeList
 
 				local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf)
-				local length = edgeUtils.getVectorLength({
-					platformPosTanX2[1][1][1] - platformPosTanX2[2][1][1],
-					platformPosTanX2[1][1][2] - platformPosTanX2[2][1][2],
-					platformPosTanX2[1][1][3] - platformPosTanX2[2][1][3],
-				})
+				-- first point: 0, 0, 0 => platformPosTanX2[1][1]
+				-- transf[13] = platformPosTanX2[1][1][1]
+				-- transf[14] = platformPosTanX2[1][1][2]
+				-- transf[15] = platformPosTanX2[1][1][3]
+				-- second point: 1, 0, 0 => platformPosTanX2[2][1]
+				-- transf[1] + transf[13] = platformPosTanX2[2][1][1]
+				-- transf[2] + transf[14] = platformPosTanX2[2][1][2]
+				-- transf[3] + transf[15] = platformPosTanX2[2][1][3]
+				local waitingAreaTransf = {
+					platformPosTanX2[2][1][1] - platformPosTanX2[1][1][1],
+					platformPosTanX2[2][1][2] - platformPosTanX2[1][1][2],
+					platformPosTanX2[2][1][3] - platformPosTanX2[1][1][3],
+					0,
+					0, 1, 0, 0,
+					0, 0, 1, 0,
+					platformPosTanX2[1][1][1],
+					platformPosTanX2[1][1][2],
+					platformPosTanX2[1][1][3],
+					1
+				}
 				result.models[#result.models+1] = {
 					id = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
-					tag = 'platformTag',
-					transf = transfUtilUG.mul(
-                        {
-                            length, 0, 0, 0,
-                            0, length, 0, 0,
-                            0, 0, 1, 0,
-                            platformPosTanX2[1][1][1], platformPosTanX2[1][1][2], platformPosTanX2[1][1][3], 1
-                        },
-                        transfUtilUG.rotZ(math.atan2(platformPosTanX2[1][2][2], platformPosTanX2[1][2][1]))
-                    )
+					tag = 'waitingAreaTag',
+					transf = waitingAreaTransf
 				}
 			end
 
@@ -278,7 +285,7 @@ function data()
 			local _terminateConstructionHook = function()
 				local allCargoAreaModelIndexesBase0 = {}
 				for i = 1, #result.models do
-					if result.models[i].tag == 'platformTag' then
+					if result.models[i].tag == 'waitingAreaTag' then
 						allCargoAreaModelIndexesBase0[#allCargoAreaModelIndexesBase0+1] = i - 1
 					end
 				end
