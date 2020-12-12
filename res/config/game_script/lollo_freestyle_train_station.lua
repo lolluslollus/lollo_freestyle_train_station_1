@@ -274,7 +274,8 @@ print('conData =') debugPrint(conData)
     end,
 
     getEdgesModels = function(edgeIds)
-        -- LOLLO TODO get the models used to display the edges
+        -- LOLLO TODO try and get the models used to display the edges.
+        -- I already have a fallback in place, but it'd be interesting anyway.
         local _getEdgeModels = function(edgeId)
             -- this returns a table of strips
             local strips = api.engine.system.baseParallelStripSystem.getStrips(edgeId)
@@ -1122,6 +1123,7 @@ local _actions = {
                 if success and successEventName then
                     -- LOLLO TODO this should come from UG!
                     -- LOLLO TODO try reading the node ids from the added edges instead.
+                    print('result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     print('addedNodePosition =')
                     debugPrint(addedNodePosition)
@@ -1277,22 +1279,14 @@ function data()
                     params.neighbourNodeIds.node1Id,
                     params.neighbourNodeIds.node2Id
                 )
-                print('trackEdgeIdsBetweenNodeIds =')
-                debugPrint(trackEdgeIdsBetweenNodeIds)
-                -- local trackEdgeLists = _utils.getEdgeIdsPropertiesCropped(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
-                -- local trackEdgeLists = _utils.getEdgeIdsPropertiesExtended(_utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds))
-                -- local trackEdgeLists = _utils.getEdgeIdsPropertiesExtended(
-                --     _utils.getEdgeIdsPropertiesCropped(
-                --        _utils.getEdgeIdsProperties(edgeIdsBetweenNodeIds)
-                --     )
-                -- )
+                -- print('trackEdgeIdsBetweenNodeIds =')
+                -- debugPrint(trackEdgeIdsBetweenNodeIds)
+
                 local trackEdgeLists = _utils.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
-                print('track bulldoze requested, trackEdgeLists =')
-                debugPrint(trackEdgeLists)
+                -- print('track bulldoze requested, trackEdgeLists =') debugPrint(trackEdgeLists)
 
                 local platformEdgeLists = _utils.getEdgeIdsProperties(params.platformEdgeIds)
-                print('platformEdgeLists =')
-                debugPrint(platformEdgeLists)
+                -- print('platformEdgeLists =') debugPrint(platformEdgeLists)
 
                 -- local platformModels = _utils.getEdgesModels(params.platformEdgeIds)
 
@@ -1305,6 +1299,7 @@ function data()
                     _eventNames.BUILD_STATION_REQUESTED,
                     eventParams
                 )
+                -- LOLLO TODO split the platform in short chunks
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 -- print('BUILD_STATION_REQUESTED caught, params =')
                 -- debugPrint(params)
