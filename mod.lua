@@ -4,8 +4,8 @@ function data()
             minorVersion = 0,
             severityAdd = 'NONE',
             severityRemove = 'WARNING',
-            name = _('_NAME'),
-            description = _('_DESC'),
+            name = _('NAME'),
+            description = _('DESC'),
             tags = {
                 'Train Station'
             },

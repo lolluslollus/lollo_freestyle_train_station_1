@@ -76,6 +76,18 @@ arrayUtils.concatKeysValues = function(table1, table2)
     end
 end
 
+arrayUtils.getFirst = function(tab)
+    if tab == nil or #tab == nil then return nil end
+
+    return tab[1]
+end
+
+arrayUtils.getLast = function(tab)
+    if tab == nil or #tab == nil then return nil end
+
+    return tab[#tab]
+end
+
 arrayUtils.sort = function(table0, elementName, asc)
     if type(table0) ~= 'table' then
         return table0
