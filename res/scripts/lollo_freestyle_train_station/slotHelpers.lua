@@ -17,14 +17,14 @@ helpers.demangleId = function(slotId)
     local baseId = _getBaseId()
     if not baseId then return false, false, false end
 
-    local nTrack = math.floor((slotId - baseId) / _constants.nTrackMultiplier)
-    local nTrackEdge = math.floor(slotId - baseId - nTrack * _constants.nTrackMultiplier)
+    local nTerminal = math.floor((slotId - baseId) / _constants.nTerminalMultiplier)
+    local nTrackEdge = math.floor(slotId - baseId - nTerminal * _constants.nTerminalMultiplier)
 
-    return nTrack, nTrackEdge, baseId
+    return nTerminal, nTrackEdge, baseId
 end
 
-helpers.mangleId = function(nTrack, nTrackEdge, baseId)
-    return baseId + nTrack * _constants.nTrackMultiplier + nTrackEdge
+helpers.mangleId = function(nTerminal, nTrackEdge, baseId)
+    return baseId + nTerminal * _constants.nTerminalMultiplier + nTrackEdge
 end
 
 return helpers

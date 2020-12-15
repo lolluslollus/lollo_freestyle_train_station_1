@@ -1,5 +1,8 @@
+local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
+local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local transfUtilUG = require 'transf'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local vec3 = require 'vec3'
@@ -17,9 +20,9 @@ function data()
 			yearTo = -1, -- -1, -- 0
 		},
 		order = 5005,
-		-- soundConfig = {
-		-- 	soundSet = { name = "lollo_lorry_bay" }
-		-- },
+		soundConfig = {
+			soundSet = { name = "station_cargo_old" }
+		},
 		autoRemovable = false,
 		skipCollision = true, -- we need this to change the street type when reconfiguring
 		params = { -- keep it empty or it will crash coz it won't find the params, which I pass when building the construction
@@ -35,6 +38,8 @@ function data()
 		updateFn = function(params)
 			print('updateFn starting, params =')
 			debugPrint(params)
+
+			if not params.modules then params.modules = {} end
 
 			local sampleParams =
 			{
@@ -153,10 +158,10 @@ function data()
 				colliders = {},
 				-- coord2terminalInfo = {},
                 cost = 1000,
-                -- demangleId = slotHelpers.demangleId,
+                demangleId = slotHelpers.demangleId,
                 edgeLists = {},
                 groundFaces = {},
-                -- mangleId = slotHelpers.mangleId,
+                mangleId = slotHelpers.mangleId,
 				models = {
 					{
 						id = 'lollo_freestyle_train_station/icon/blue.mdl',
@@ -168,99 +173,116 @@ function data()
 					},
                 },
                 -- slotConfig = {},
-                -- slots = {},
+                slots = {},
 				stations = {},
 				terminalGroups = {},
 				terrainAlignmentLists = {},
 			}
 
-			local inverseTransf = transfUtils.getInverseTransf(params.myTransf)
-			print('inverseTransf =')
-			debugPrint(inverseTransf)
-			for i = 1, #params.trackEdgeLists do
-				local tel = params.trackEdgeLists[i]
-				local newEdgeList = {
-					edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
-					edgeType = tel.edgeType,
-					edgeTypeName = tel.edgeTypeName,
-					freeNodes = {},
-					params = {
-						type = tel.trackTypeName,
-						catenary = tel.catenary
-					},
-					snapNodes = {},
-					-- tag2Nodes = {},
-					type = 'TRACK'
-				}
+			for t = 1, #params.terminals do
+				-- print('adding stuff for terminal t =', t)
+				-- add terminal slots
+				table.insert(result.slots, {
+					-- height = 1,
+					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
+					-- shape 0 1 2 3
+					-- shape = 3,
+					spacing = _constants.trackSpacing,
+					-- transf = _constants.idTransf,
+					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2, 2, 0, 1},
+					type = _constants.terminalModuleType,
+				})
 
-				if i == 1 then
-					-- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
-					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
+				local inverseTransf = transfUtils.getInverseTransf(params.terminals[t].myTransf)
+				print('inverseTransf =')
+				debugPrint(inverseTransf)
+				-- add track edges
+				for i = 1, #params.terminals[t].trackEdgeLists do
+					local tel = params.terminals[t].trackEdgeLists[i]
+					local newEdgeList = {
+						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
+						edgeType = tel.edgeType,
+						edgeTypeName = tel.edgeTypeName,
+						freeNodes = {},
+						params = {
+							type = tel.trackTypeName,
+							catenary = tel.catenary
+						},
+						snapNodes = {},
+						-- tag2Nodes = {},
+						type = 'TRACK'
+					}
+
+					if i == 1 then
+						-- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
+						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
+					end
+					if i == #params.terminals[t].trackEdgeLists then
+						-- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
+						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
+					end
+
+					-- LOLLO NOTE the edges don't snap to the neighbours
+					-- unless you rebuild those neighbours, by hand or by script,
+					-- and make them snap to the station own nodes.
+					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
-				if i == #params.trackEdgeLists then
-					-- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
-					newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
+
+				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
+				-- if #result.edgeLists > 0 then
+				-- 	local firstPosTanX2 = result.edgeLists[1].edges
+				-- 	print('firstPosTanX2 =') debugPrint(firstPosTanX2)
+				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
+				-- 	print('retransformed first edge =') debugPrint(retransformedFirstEdge)
+				-- end
+				-- add platform edges and waiting areas
+				for i = 1, #params.terminals[t].platformEdgeLists do
+					local pel = params.terminals[t].platformEdgeLists[i]
+
+					local newEdgeList = {
+						edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf),
+						edgeType = pel.edgeType,
+						edgeTypeName = pel.edgeTypeName,
+						freeNodes = {},
+						params = {
+							type = pel.trackTypeName,
+							catenary = false --pel.catenary
+						},
+						snapNodes = {},
+						-- tag2Nodes = {},
+						type = 'TRACK'
+					}
+
+					result.edgeLists[#result.edgeLists+1] = newEdgeList
+
+					local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf)
+					-- solve this system:
+					-- first point: 0, 0, 0 => platformPosTanX2[1][1]
+					-- transf[13] = platformPosTanX2[1][1][1]
+					-- transf[14] = platformPosTanX2[1][1][2]
+					-- transf[15] = platformPosTanX2[1][1][3]
+					-- second point: 1, 0, 0 => platformPosTanX2[2][1]
+					-- transf[1] + transf[13] = platformPosTanX2[2][1][1]
+					-- transf[2] + transf[14] = platformPosTanX2[2][1][2]
+					-- transf[3] + transf[15] = platformPosTanX2[2][1][3]
+					local waitingAreaTransf = {
+						platformPosTanX2[2][1][1] - platformPosTanX2[1][1][1],
+						platformPosTanX2[2][1][2] - platformPosTanX2[1][1][2],
+						platformPosTanX2[2][1][3] - platformPosTanX2[1][1][3],
+						0,
+						0, 1, 0, 0,
+						0, 0, 1, 0,
+						platformPosTanX2[1][1][1],
+						platformPosTanX2[1][1][2],
+						platformPosTanX2[1][1][3],
+						1
+					}
+					result.models[#result.models+1] = {
+						id = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
+						tag = _constants.waitingAreaTagRoot .. tostring(t),
+						transf = waitingAreaTransf
+					}
 				end
-
-				-- LOLLO NOTE the edges don't snap to the neighbours
-				-- unless you rebuild those neighbours, by hand or by script,
-				-- and make them snap to the station own nodes.
-				result.edgeLists[#result.edgeLists+1] = newEdgeList
-			end
-
-			-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
-			-- if #result.edgeLists > 0 then
-			-- 	local firstPosTanX2 = result.edgeLists[1].edges
-			-- 	print('firstPosTanX2 =') debugPrint(firstPosTanX2)
-			-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
-			-- 	print('retransformed first edge =') debugPrint(retransformedFirstEdge)
-			-- end
-
-			for i = 1, #params.platformEdgeLists do
-				local pel = params.platformEdgeLists[i]
-
-				local newEdgeList = {
-					edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf),
-					edgeType = pel.edgeType,
-					edgeTypeName = pel.edgeTypeName,
-					freeNodes = {},
-					params = {
-						type = pel.trackTypeName,
-						catenary = false --pel.catenary
-					},
-					snapNodes = {},
-					-- tag2Nodes = {},
-					type = 'TRACK'
-				}
-
-				result.edgeLists[#result.edgeLists+1] = newEdgeList
-
-				local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf)
-				-- first point: 0, 0, 0 => platformPosTanX2[1][1]
-				-- transf[13] = platformPosTanX2[1][1][1]
-				-- transf[14] = platformPosTanX2[1][1][2]
-				-- transf[15] = platformPosTanX2[1][1][3]
-				-- second point: 1, 0, 0 => platformPosTanX2[2][1]
-				-- transf[1] + transf[13] = platformPosTanX2[2][1][1]
-				-- transf[2] + transf[14] = platformPosTanX2[2][1][2]
-				-- transf[3] + transf[15] = platformPosTanX2[2][1][3]
-				local waitingAreaTransf = {
-					platformPosTanX2[2][1][1] - platformPosTanX2[1][1][1],
-					platformPosTanX2[2][1][2] - platformPosTanX2[1][1][2],
-					platformPosTanX2[2][1][3] - platformPosTanX2[1][1][3],
-					0,
-					0, 1, 0, 0,
-					0, 0, 1, 0,
-					platformPosTanX2[1][1][1],
-					platformPosTanX2[1][1][2],
-					platformPosTanX2[1][1][3],
-					1
-				}
-				result.models[#result.models+1] = {
-					id = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
-					tag = 'waitingAreaTag',
-					transf = waitingAreaTransf
-				}
 			end
 
 			print('game =')
@@ -282,14 +304,9 @@ function data()
                 print('NIL')
 			end
 
-			local _terminateConstructionHook = function()
-				local allCargoAreaModelIndexesBase0 = {}
-				for i = 1, #result.models do
-					if result.models[i].tag == 'waitingAreaTag' then
-						allCargoAreaModelIndexesBase0[#allCargoAreaModelIndexesBase0+1] = i - 1
-					end
-				end
-
+			result.terminateConstructionHook = function()
+				print('terminateConstructionHook starting')
+				-- LOLLO TODO try making a station with mixed cargo and passengers
 				result.stations = {
 					{
 						tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
@@ -297,31 +314,41 @@ function data()
 					}
 				}
 
-				table.insert(
-					result.terminalGroups,
-					{
-						tag = 0,
-						terminals = {
-							-- { 0, 0 }
-						},
-						-- LOLLO TODO ask UG if they can make a parameter similar to the following,
-						-- to override personEdges and personNodes.
-						-- This way, I won't be bound to using a model to assign a waiting area.
-						vehicleNodeOverride = #params.trackEdgeLists - 1 --#result.edgeLists - 1
-					}
-				)
+				for t = 1, #params.terminals do
+					table.insert(
+						result.terminalGroups,
+						{
+							tag = t - 1,
+							terminals = {
+								-- { 0, 0 }
+							},
+							-- LOLLO TODO ask UG if they can make a parameter similar to the following,
+							-- to override personEdges and personNodes.
+							-- This way, I won't be bound to using a model to assign a waiting area.
+							vehicleNodeOverride = #params.terminals[t].trackEdgeLists - 1
+						}
+					)
 
-				for _, modelIndex in pairs(allCargoAreaModelIndexesBase0) do
-					table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
+					local waitingAreaModelIndexesBase0 = {}
+					for i = 1, #result.models do
+						local tag = result.models[i].tag
+						if not(stringUtils.isNullOrEmptyString(tag))
+						and stringUtils.stringStartsWith(tag, _constants.waitingAreaTagRoot)
+						and stringUtils.stringEndsWith(tag, tostring(t))
+						then
+							waitingAreaModelIndexesBase0[#waitingAreaModelIndexesBase0+1] = i - 1
+						end
+					end
+					for _, modelIndex in pairs(waitingAreaModelIndexesBase0) do
+						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
+					end
+					table.insert(result.stations[1].terminals, t - 1)
 				end
-
-				table.insert(result.stations[1].terminals, 0)
 
 				-- avoid dump when configuring
 				if #(result.stations[1].terminals) == 0 then
 					table.insert(result.stations[1].terminals, 0)
 				end
-
 				-- it should output something like (this example has one terminal made of two adjacent bits)
 				-- stock result.stations =
 				-- 	{
@@ -349,20 +376,17 @@ function data()
 				-- print('LOLLO result.terminalGroups = ')
 				-- debugPrint(result.terminalGroups)
 			end
-			_terminateConstructionHook()
+			-- _terminateConstructionHook()
 
-print('result =')
-debugPrint(result)
+			print('freestyleTrainStation result =') debugPrint(result)
 
 			return result
 		end,
---[[ 		preProcessFn = function(modules, change, three)
+ 		preProcessFn = function(modules, change, three)
 			-- this fires when the user adds or removes a module
-			-- print('LOLLO preProcessFn')
-			-- print('modules =')
-			-- debugPrint(modules)
-			-- print('change =')
-			-- debugPrint(change)
+			print('LOLLO preProcessFn')
+			print('modules =') debugPrint(modules)
+			print('change =') debugPrint(change)
 			-- default behaviour
 			if change.added then
 				modules[change.slotId] = change.module
@@ -385,7 +409,7 @@ debugPrint(result)
 			-- 	modules[change.slotId] = nil
 			-- end
 			return modules
-        end, ]]
+        end,
         upgradeFn = function(params)
             print('LOLLO upgradeFn')
             local modules = {}
