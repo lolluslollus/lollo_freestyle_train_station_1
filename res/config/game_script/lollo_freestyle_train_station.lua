@@ -572,7 +572,13 @@ local _utils = {
         newEdge.comp.type = oldEdge.type -- respect bridge or tunnel
         newEdge.comp.typeIndex = oldEdge.typeIndex -- respect type of bridge or tunnel
         newEdge.playerOwned = api.engine.getComponent(oldEdgeId, api.type.ComponentType.PLAYER_OWNED)
+
+        if oldEdgeTrack == nil then return false end
+
         newEdge.trackEdge = oldEdgeTrack
+        if oldEdgeTrack.trackType == api.res.trackTypeRep.find('platform.lua') then
+            newEdge.trackEdge.catenary = false
+        end
 
         if edgeUtils.isValidId(objectIdToRemove) then
             local edgeObjects = {}
@@ -589,8 +595,8 @@ local _utils = {
                 print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
             end
         else
-            newEdge.comp.objects = oldEdge.comp.objects
-            print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good')
+            print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is') debugPrint(objectIdToRemove)
+            newEdge.comp.objects = oldEdge.objects
         end
 
         local proposal = api.type.SimpleProposal.new()
@@ -1005,7 +1011,7 @@ local _actions = {
     end,
 
     replaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
-        if not(edgeUtils.isValidId(oldEdgeId)) or not(edgeUtils.isValidId(objectIdToRemove)) then return end
+        if not(edgeUtils.isValidId(oldEdgeId)) then return end
         -- replaces a track segment with an identical one, without destroying the buildings
         local proposal = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
         if not(proposal) then return end
@@ -1063,9 +1069,7 @@ local _actions = {
             function(result, success)
                 -- print('LOLLO result = ')
                 -- debugPrint(result)
-                --for _, v in pairs(result.entities) do print(v) end
-                -- print('LOLLO success = ')
-                debugPrint(success)
+                print('LOLLO replaceEdgeWithSameRemovingObject success = ') debugPrint(success)
             end
         )
     end,
@@ -1207,6 +1211,8 @@ local _actions = {
                 if success and successEventName then
                     -- LOLLO TODO this should come from UG!
                     -- LOLLO TODO try reading the node ids from the added edges instead.
+                    -- no good, there may be a new edge using an old node!
+                    print('result =') debugPrint(result)
                     print('result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     print('addedNodePosition =')
@@ -1620,41 +1626,46 @@ function data()
                                     handleTrackWaypointBuilt(trackWaypoint2ModelId)
                                 end
                             end
-                        elseif id == 'streetBuilder' or id == 'streetTrackModifier' then
+                        elseif id == 'trackBuilder' or id == 'streetTrackModifier' then
                             -- I get here in 3 cases:
-                            -- 1) a new track is built (id = streetBuilder)
+                            -- 1) a new track is built (id = trackBuilder)
                             -- 2) an existing track is changed to a different type (id = streetTrackModifier)
                             -- 3) an existing track is changed with the upgrade tool (id = streetTrackModifier)
 
-                            -- LOLLO TODO if a platform track with catenary was plopped, rebuild it without.
-                            -- This will make things look better.
-
-                            -- the user has built or updated a piece of platform-track with a track waypoint:
-                            -- remove the track waypoint
+                            -- the user has built or updated a piece of platform-track:
+                            -- if there is a track waypoint, remove it, ie rebuild the platform-track without
+                            -- otherwise, if the catenary is true, rebuild the platform-track without
+                            -- note that this can affect multiple edges at once.
                             if not(param) or not(param.proposal) or not(param.proposal.proposal)
                             or not(param.proposal.proposal.addedSegments) or not(param.proposal.proposal.addedSegments[1])
                             or not(param.data) or not(param.data.entity2tn) then return end
-
-                            local addedSegments = param.proposal.proposal.addedSegments
-                            -- print('param.proposal.proposal =') debugPrint(param.proposal.proposal)
 
                             local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
                             local _trackWaypoint1ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_1.mdl')
                             local _trackWaypoint2ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_2.mdl')
 
                             local removeTrackWaypointsEventParams = {}
-                            for _, addedSegment in pairs(addedSegments) do
+                            for _, addedSegment in pairs(param.proposal.proposal.addedSegments) do
                                 if addedSegment and addedSegment.trackEdge
                                 and addedSegment.trackEdge.trackType == _platformTrackType
                                 and addedSegment.comp.objects then
                                     local edgeObjectsToRemoveIds = edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypoint1ModelId)
                                     arrayUtils.concatKeysValues(edgeObjectsToRemoveIds, edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypoint2ModelId))
-                                    for _, waypointId in pairs(edgeObjectsToRemoveIds) do
+                                    if #edgeObjectsToRemoveIds > 0 then
+                                        for _, waypointId in pairs(edgeObjectsToRemoveIds) do
+                                            removeTrackWaypointsEventParams[#removeTrackWaypointsEventParams+1] = {
+                                                edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(waypointId),
+                                                waypointId = waypointId,
+                                            }
+                                        end
+                                    else
                                         removeTrackWaypointsEventParams[#removeTrackWaypointsEventParams+1] = {
-                                            edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(waypointId),
-                                            waypointId = waypointId,
+                                            edgeId = edgeUtils.getLastBuiltEdgeId(param.data.entity2tn, addedSegment),
+                                            waypointId = nil,
                                         }
                                     end
+                                else
+                                    print('addedSegment =') debugPrint(addedSegment)
                                 end
                             end
                             for i = 1, #removeTrackWaypointsEventParams do
