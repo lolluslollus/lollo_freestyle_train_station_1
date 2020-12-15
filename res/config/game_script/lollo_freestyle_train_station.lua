@@ -122,8 +122,8 @@ local _utils = {
         if not(conData) or not(stringUtils.stringEndsWith(conData.fileName, 'lollo_freestyle_train_station/station.con')) then
             return {}
         end
-print('one')
-print('conData =') debugPrint(conData)
+        print('one')
+        print('conData =') debugPrint(conData)
         local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
         local endNodeIds = {}
         for _, edgeId in pairs(conData.frozenEdges) do
@@ -379,7 +379,7 @@ print('conData =') debugPrint(conData)
         for _, edgeId in pairs(nearbyEdgeIds) do
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
             if baseEdge ~= nil and baseEdge.objects ~= nil then
-                local edgeObjectIds = edgeUtils.getEdgeObjectsWithModelId(baseEdge.objects, refModelId)
+                local edgeObjectIds = edgeUtils.getEdgeObjectsIdsWithModelId(baseEdge.objects, refModelId)
                 for _, edgeObjectId in pairs(edgeObjectIds) do
                     arrayUtils.addUnique(results, edgeObjectId)
                 end
@@ -1005,6 +1005,7 @@ local _actions = {
     end,
 
     replaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
+        if not(edgeUtils.isValidId(oldEdgeId)) or not(edgeUtils.isValidId(objectIdToRemove)) then return end
         -- replaces a track segment with an identical one, without destroying the buildings
         local proposal = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
         if not(proposal) then return end
@@ -1257,14 +1258,10 @@ function data()
             debugPrint(params)
 
             if name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
-                print('bulldoze requested caught, waypointId =')
-                debugPrint(params.waypointId)
-                print('edgeId =')
-                debugPrint(params.edgeId)
+                print('bulldoze requested caught, waypointId =') debugPrint(params.waypointId)
+                print('edgeId =') debugPrint(params.edgeId)
                 -- game.interface.bulldoze(param.waypointId) -- dumps
-                if params.edgeId and params.waypointId then
-                    _actions.replaceEdgeWithSameRemovingObject(params.edgeId, params.waypointId)
-                end
+                _actions.replaceEdgeWithSameRemovingObject(params.edgeId, params.waypointId)
             elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
                 if not(edgeUtils.isValidId(params.platformWaypointId))
                 or not(edgeUtils.isValidId(params.trackWaypoint1Id))
@@ -1420,10 +1417,10 @@ function data()
         guiHandleEvent = function(id, name, param)
             -- LOLLO NOTE param can have different types, even boolean, depending on the event id and name
             -- print('guiHandleEvent caught id =', id, 'name =', name)
-            -- about to bulldoze a freestyle station: write away its params so you can rebuild its tracks later
-            if id == 'bulldozer' and name == 'builder.proposalCreate' then
-                xpcall(
-                    function()
+            xpcall(
+                function()
+                    -- about to bulldoze a freestyle station: write away its params so you can rebuild its tracks later
+                    if name == 'builder.proposalCreate' and id == 'bulldozer' then
                         if not(param.proposal.toRemove) then return end
 
                         for _, constructionId in pairs(param.proposal.toRemove) do
@@ -1440,13 +1437,8 @@ function data()
                                 end
                             end
                         end
-                    end,
-                    _myErrorHandler
-                )
-            elseif name == 'builder.apply' then
-                xpcall(
-                    function()
-                        print('guiHandleEvent caught id =', id, 'name =', name, 'param =')
+                    elseif name == 'builder.apply' then
+                        -- print('guiHandleEvent caught id =', id, 'name =', name, 'param =')
                         if id == 'bulldozer' then
                             -- now it's too late to read the station params:
                             -- if you are bulldozing the station you backed up before,
@@ -1469,6 +1461,7 @@ function data()
                                 end
                             end
                         elseif id == 'streetTerminalBuilder' then
+                            -- waypoint, traffic light, my own waypoints built
                             if param and param.proposal and param.proposal.proposal
                             and param.proposal.proposal.edgeObjectsToAdd
                             and param.proposal.proposal.edgeObjectsToAdd[1]
@@ -1490,21 +1483,13 @@ function data()
                                     )
                                     if not(lastBuiltEdge) then return false end
 
-                                    local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsWithModelId(lastBuiltEdge.objects, trackWaypointModelId))
+                                    local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltEdge.objects, trackWaypointModelId))
                                     if not(newWaypointId) then return false end
-
-                                    local transf = transfUtilUG.new(
-                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),
-                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(1),
-                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),
-                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
-                                    )
 
                                     if param.proposal.proposal.addedSegments[1].trackEdge.trackType == _platformTrackType then
                                         _guiUtils.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
-                                            transf = transf,
                                             waypointId = newWaypointId,
                                         })
                                         return false
@@ -1514,7 +1499,6 @@ function data()
                                             _guiUtils.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIds)
                                             game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                                 edgeId = lastBuiltEdgeId,
-                                                transf = transf,
                                                 waypointId = newWaypointId ~= similarObjectsIds[1] and newWaypointId or similarObjectsIds[2],
                                             })
                                             return false
@@ -1523,6 +1507,7 @@ function data()
 
                                     return true
                                 end
+                                print('param.result =') debugPrint(param.result)
                                 -- if not param.result or not param.result[1] then
                                 --     return
                                 -- end
@@ -1540,15 +1525,9 @@ function data()
                                     )
                                     if not(lastBuiltEdge) then return end
 
-                                    local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsWithModelId(lastBuiltEdge.objects, platformWaypointModelId))
+                                    local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltEdge.objects, platformWaypointModelId))
                                     if not(newWaypointId) then return end
 
-                                    local platformWaypointTransf = transfUtilUG.new(
-                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),
-                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(1),
-                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),
-                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
-                                    )
                                     local allPlatformWaypointIds = _utils.getAllEdgeObjectsWithModelId(platformWaypointModelId)
                                     local allTrackWaypoint1Ids = _utils.getAllEdgeObjectsWithModelId(trackWaypoint1ModelId)
                                     local allTrackWaypoint2Ids = _utils.getAllEdgeObjectsWithModelId(trackWaypoint2ModelId)
@@ -1557,7 +1536,6 @@ function data()
                                         _guiUtils.showWarningWindowWithGoto(_('PlatformWaypointBuiltOnTrack'))
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
-                                            transf = platformWaypointTransf,
                                             waypointId = newWaypointId,
                                         })
                                         return
@@ -1565,7 +1543,6 @@ function data()
                                         _guiUtils.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, allPlatformWaypointIds)
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
-                                            transf = platformWaypointTransf,
                                             waypointId = newWaypointId,
                                         })
                                         return
@@ -1573,7 +1550,6 @@ function data()
                                         _guiUtils.showWarningWindowWithGoto(_('TrackWaypointsMissing'))
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
-                                            transf = platformWaypointTransf,
                                             waypointId = newWaypointId,
                                         })
                                         return
@@ -1596,7 +1572,6 @@ function data()
                                         _guiUtils.showWarningWindowWithGoto(_('TrackWaypointsNotConnected'), allTrackWaypoint1Ids[1], allTrackWaypoint2Ids)
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
-                                            transf = platformWaypointTransf,
                                             waypointId = newWaypointId,
                                         })
                                         return
@@ -1614,7 +1589,6 @@ function data()
                                         print('ERROR: contiguousPlatformEdges not found, this should never happen')
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
-                                            transf = platformWaypointTransf,
                                             waypointId = newWaypointId,
                                         })
                                         return
@@ -1625,6 +1599,12 @@ function data()
                                     print('outerNodes =')
                                     debugPrint(outerNodes)
 
+                                    local platformWaypointTransf = transfUtilUG.new(
+                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),
+                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(1),
+                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),
+                                        param.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
+                                    )
                                     game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, {
                                         platformEdgeIds = contiguousPlatformEdges,
                                         platformWaypointId = newWaypointId,
@@ -1640,16 +1620,58 @@ function data()
                                     handleTrackWaypointBuilt(trackWaypoint2ModelId)
                                 end
                             end
-                        elseif id == 'streetBuilder' then
+                        elseif id == 'streetBuilder' or id == 'streetTrackModifier' then
+                            -- I get here in 3 cases:
+                            -- 1) a new track is built (id = streetBuilder)
+                            -- 2) an existing track is changed to a different type (id = streetTrackModifier)
+                            -- 3) an existing track is changed with the upgrade tool (id = streetTrackModifier)
+
                             -- LOLLO TODO if a platform track with catenary was plopped, rebuild it without.
                             -- This will make things look better.
-                            -- LOLLO TODO build or update a piece of platform-track with a track waypoint:
+
+                            -- the user has built or updated a piece of platform-track with a track waypoint:
                             -- remove the track waypoint
+                            if not(param) or not(param.proposal) or not(param.proposal.proposal)
+                            or not(param.proposal.proposal.addedSegments) or not(param.proposal.proposal.addedSegments[1])
+                            or not(param.data) or not(param.data.entity2tn) then return end
+
+                            local addedSegments = param.proposal.proposal.addedSegments
+                            -- print('param.proposal.proposal =') debugPrint(param.proposal.proposal)
+
+                            local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
+                            local _trackWaypoint1ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_1.mdl')
+                            local _trackWaypoint2ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_2.mdl')
+
+                            local removeTrackWaypointsEventParams = {}
+                            for _, addedSegment in pairs(addedSegments) do
+                                if addedSegment and addedSegment.trackEdge
+                                and addedSegment.trackEdge.trackType == _platformTrackType
+                                and addedSegment.comp.objects then
+                                    local edgeObjectsToRemoveIds = edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypoint1ModelId)
+                                    arrayUtils.concatKeysValues(edgeObjectsToRemoveIds, edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypoint2ModelId))
+                                    for _, waypointId in pairs(edgeObjectsToRemoveIds) do
+                                        removeTrackWaypointsEventParams[#removeTrackWaypointsEventParams+1] = {
+                                            edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(waypointId),
+                                            waypointId = waypointId,
+                                        }
+                                    end
+                                end
+                            end
+                            for i = 1, #removeTrackWaypointsEventParams do
+                                game.interface.sendScriptEvent(
+                                    _eventId,
+                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                    {
+                                        edgeId = removeTrackWaypointsEventParams[i].edgeId,
+                                        waypointId = removeTrackWaypointsEventParams[i].waypointId,
+                                    }
+                                )
+                            end
                         end
-                    end,
-                    _myErrorHandler
-                )
-            end
+                    end
+                end,
+                _myErrorHandler
+            )
         end,
         update = function()
         end,

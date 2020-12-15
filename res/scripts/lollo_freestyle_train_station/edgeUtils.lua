@@ -338,7 +338,7 @@ helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betwe
     return nodeBetween
 end
 
-helper.getEdgeObjectsWithModelId = function(edgeObjects, refModelId)
+helper.getEdgeObjectsIdsWithModelId = function(edgeObjects, refModelId)
     local results = {}
     if type(edgeObjects) ~= 'table' or not(helper.isValidId(refModelId)) then return results end
 
