@@ -16,6 +16,9 @@ local aaaInverted = { 1, 0, 0, 0,
 local edgeIds = {111, 222, 333, 444}
 local edgeIdsReversed = arrayUtils.sort(edgeIds, nil, false)
 
+local seed = math.randomseed(123)
+local rnd = math.random(123, 999)
+
 local dummy = 123
 
 --  id = 24148,

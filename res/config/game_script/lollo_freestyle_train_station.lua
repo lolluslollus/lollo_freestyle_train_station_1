@@ -802,15 +802,20 @@ local _actions = {
             newConstruction.playerEntity = api.engine.util.getPlayer()
         else
             print('type(oldCon.params) =', type(oldCon.params))
+            print('type(oldCon.params.seed) =') debugPrint(type(oldCon.params.seed))
             print('oldCon.params.seed =') debugPrint(oldCon.params.seed)
             print('oldCon.params.modules =') debugPrint(oldCon.params.modules)
             -- math.randomseed(oldCon.params.seed)
             local newParams = {
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
                 neighbourNodeIds = params_neighbourNodeIds,
-                seed = oldCon.params.seed + 1,
+                -- seed = oldCon.params.seed + 1,
                 -- seed = oldCon.params.seed + 1000,
-                -- seed = 123e4, -- we need this to avoid dumps
+                -- seed = 123e4, -- same as when I build first time
+                -- seed = 123e4 + 456e4,
+                -- seed = 234e5,
+                -- seed = math.random(oldCon.params.seed, oldCon.params.seed + 1000),
+                seed = nil,
                 terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
             }
             print('lollo010, newParams =') debugPrint(newParams)
@@ -823,10 +828,15 @@ local _actions = {
         end
 
         local proposal = api.type.SimpleProposal.new()
+        print('lollo070')
         proposal.constructionsToAdd[1] = newConstruction
+        print('lollo080')
         if edgeUtils.isValidId(args.join2StationId) then
+            print('lollo081')
             proposal.constructionsToRemove = { args.join2StationId }
+            print('lollo082')
         end
+        print('lollo090') -- it gets here no problem
 
         -- remove edge object
         -- local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
