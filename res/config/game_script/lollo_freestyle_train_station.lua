@@ -119,6 +119,18 @@ local _guiUtils = {
     end
 }
 local _utils = {
+    getNearbyFreestyleStations = function(transf, searchRadius)
+        if type(transf) ~= 'table' then return {} end
+
+        local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
+        local results = game.interface.getEntities(
+            {pos = squareCentrePosition, radius = searchRadius},
+            {type = "CONSTRUCTION", includeData = true, fileName = _constants.stationConFileNameLong}
+        )
+
+        return results
+    end,
+
     getStationEndNodesUnsorted = function(con, nTerminal)
         print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
         -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
@@ -1598,7 +1610,7 @@ function data()
 
                                     return true
                                 end
-                                print('args.result =') debugPrint(args.result)
+                                print('waypointbuilt, args.result =') debugPrint(args.result)
                                 -- if not args.result or not args.result[1] then
                                 --     return
                                 -- end
@@ -1696,6 +1708,12 @@ function data()
                                         args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),
                                         args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
                                     )
+
+                                    -- TODO get nearby freestyle stations;
+                                    -- if any, send out a new param to say, join this new station with it
+                                    local nearbyFreestyleStations = _utils.getNearbyFreestyleStations(platformWaypointTransf, 500)
+                                    print('nearbyFreestyleStations =') debugPrint(nearbyFreestyleStations)
+
                                     game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, {
                                         platformEdgeIds = contiguousPlatformEdges,
                                         platformWaypointId = newWaypointId,
