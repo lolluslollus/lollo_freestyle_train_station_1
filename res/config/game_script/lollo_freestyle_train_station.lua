@@ -752,50 +752,81 @@ local _actions = {
         )
     end,
 
-    buildSingleTerminalStation = function(successEventName, args)
+    buildStation = function(successEventName, args)
         local conTransf = args.platformWaypointTransf
 
-        print('buildSingleTerminalStation starting, args =')
+        print('buildStation starting, args =')
+        local oldCon = edgeUtils.isValidId(args.join2StationId)
+        and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
+        or nil
         -- debugPrint(args)
         local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
         -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/modular_station.con'
         newConstruction.fileName = _constants.stationConFileNameLong
-        newConstruction.params = {
-            modules = {
-                [slotHelpers.mangleId(1, 0, _constants.idBases.terminalSlotId)] = {
-                    metadata = {
-                        cargo = true,
-                    },
-                    name = _constants.terminalModuleFileName,
-                    updateScript = {
-                        fileName = '',
-                        params = { },
-                    },
-                    variant = 0,
-                }
+
+        local params_newModuleKey = slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId)
+        local params_newModuleValue = {
+            metadata = {
+                cargo = true,
             },
-            neighbourNodeIds = {
-                node1Id = args.neighbourNodeIds.node1Id,
-                node2Id = args.neighbourNodeIds.node2Id,
+            name = _constants.terminalModuleFileName,
+            updateScript = {
+                fileName = '',
+                params = { },
             },
-            seed = 123e4, -- we need this to avoid dumps
-            terminals = {{
-                myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
-                platformEdgeLists = args.platformEdgeList,
-                trackEdgeLists = args.trackEdgeList
-            }},
+            variant = 0,
         }
-        newConstruction.transf = api.type.Mat4f.new(
-            api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
-            api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
-            api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
-            api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
-        )
-        newConstruction.name = 'construction name'
-        newConstruction.playerEntity = api.engine.util.getPlayer()
+        local params_neighbourNodeIds = {
+            node1Id = args.neighbourNodeIds.node1Id,
+            node2Id = args.neighbourNodeIds.node2Id,
+        }
+        local params_newTerminal = {
+            myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
+            platformEdgeLists = args.platformEdgeList,
+            trackEdgeLists = args.trackEdgeList
+        }
+        if oldCon == nil then
+            newConstruction.params = {
+                modules = { [params_newModuleKey] = params_newModuleValue },
+                neighbourNodeIds = params_neighbourNodeIds,
+                seed = 123e4, -- we need this to avoid dumps
+                terminals = { params_newTerminal },
+            }
+            newConstruction.transf = api.type.Mat4f.new(
+                api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
+                api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
+                api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
+                api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
+            )
+            newConstruction.name = 'construction name'
+            newConstruction.playerEntity = api.engine.util.getPlayer()
+        else
+            print('type(oldCon.params) =', type(oldCon.params))
+            print('oldCon.params.seed =') debugPrint(oldCon.params.seed)
+            print('oldCon.params.modules =') debugPrint(oldCon.params.modules)
+            -- math.randomseed(oldCon.params.seed)
+            local newParams = {
+                modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
+                neighbourNodeIds = params_neighbourNodeIds,
+                seed = oldCon.params.seed + 1,
+                -- seed = oldCon.params.seed + 1000,
+                -- seed = 123e4, -- we need this to avoid dumps
+                terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
+            }
+            print('lollo010, newParams =') debugPrint(newParams)
+            newParams.modules[params_newModuleKey] = params_newModuleValue
+            print('lollo020')
+            newParams.terminals[#newParams.terminals+1] = params_newTerminal
+            print('lollo050')
+            newConstruction.transf = oldCon.transf
+            print('lollo060, newParams =') debugPrint(newParams)
+        end
 
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newConstruction
+        if edgeUtils.isValidId(args.join2StationId) then
+            proposal.constructionsToRemove = { args.join2StationId }
+        end
 
         -- remove edge object
         -- local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
@@ -820,7 +851,7 @@ local _actions = {
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
                     eventArgs.stationConstructionId = result.resultEntities[1]
                     print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
-                    print('buildSingleTerminalStation callback is about to send command')
+                    print('buildStation callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -1400,7 +1431,12 @@ function data()
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
                 eventArgs.nTerminal = 1
-                _actions.buildSingleTerminalStation(
+                if edgeUtils.isValidId(eventArgs.join2StationId) then
+                    local con = api.engine.getComponent(eventArgs.join2StationId, api.type.ComponentType.CONSTRUCTION)
+                    if con ~= nil then eventArgs.nTerminal = #con.params.terminals + 1 end
+                end
+                print('eventArgs.nTerminal =', eventArgs.nTerminal)
+                _actions.buildStation(
                     _eventNames.BUILD_SNAPPY_TRACKS_4_1_TERMINAL_REQUESTED,
                     eventArgs
                 )
@@ -1447,7 +1483,8 @@ function data()
                                 constructionDataBak = {
                                     constructionId = constructionId,
                                     endNodesUnsorted = _utils.getAllStationEndNodesUnsorted(constructionId),
-                                    params = arrayUtils.cloneDeepOmittingFields(con.params, {'seed'}, true)
+                                    -- params = arrayUtils.cloneDeepOmittingFields(con.params, {'seed'}, true)
+                                    params = arrayUtils.cloneDeepOmittingFields(con.params, nil, true)
                                 }
                                 break
                             end
