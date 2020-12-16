@@ -1484,15 +1484,32 @@ function data()
                                                 if not(isFound) then removedSlotIds[#removedSlotIds+1] = oldSlotId end
                                             end
                                             print('removedSlotIds =') debugPrint(removedSlotIds)
-                                            game.interface.sendScriptEvent(_eventId, _eventNames.REMOVE_TERMINAL_REQUESTED, {
-                                                constructionData = constructionDataBak,
-                                                removedSlotIds = removedSlotIds
-                                            })
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.REMOVE_TERMINAL_REQUESTED,
+                                                {
+                                                    constructionData = constructionDataBak,
+                                                    removedSlotIds = removedSlotIds
+                                                }
+                                            ))
+                                            -- game.interface.sendScriptEvent(_eventId, _eventNames.REMOVE_TERMINAL_REQUESTED, {
+                                            --     constructionData = constructionDataBak,
+                                            --     removedSlotIds = removedSlotIds
+                                            -- })
                                         else
                                             -- bulldozing the whole station
-                                            game.interface.sendScriptEvent(_eventId, _eventNames.REBUILD_ALL_TRACKS_REQUESTED, {
-                                                constructionData = constructionDataBak,
-                                            })
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.REBUILD_ALL_TRACKS_REQUESTED,
+                                                {
+                                                    constructionData = constructionDataBak,
+                                                }
+                                            ))
+                                            -- game.interface.sendScriptEvent(_eventId, _eventNames.REBUILD_ALL_TRACKS_REQUESTED, {
+                                            --     constructionData = constructionDataBak,
+                                            -- })
                                         end
                                     end
                                     return
@@ -1528,19 +1545,37 @@ function data()
 
                                     if args.proposal.proposal.addedSegments[1].trackEdge.trackType == _platformTrackType then
                                         guiHelpers.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdgeId,
-                                            waypointId = newWaypointId,
-                                        })
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                            {
+                                                edgeId = lastBuiltEdgeId,
+                                                waypointId = newWaypointId,
+                                            }
+                                        ))
+                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                        --     edgeId = lastBuiltEdgeId,
+                                        --     waypointId = newWaypointId,
+                                        -- })
                                         return false
                                     else
                                         local similarObjectsIds = _utils.getAllEdgeObjectsWithModelId(trackWaypointModelId)
                                         if #similarObjectsIds > 1 then
                                             guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIds)
-                                            game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                                edgeId = lastBuiltEdgeId,
-                                                waypointId = newWaypointId ~= similarObjectsIds[1] and newWaypointId or similarObjectsIds[2],
-                                            })
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                {
+                                                    edgeId = lastBuiltEdgeId,
+                                                    waypointId = newWaypointId ~= similarObjectsIds[1] and newWaypointId or similarObjectsIds[2],
+                                                }
+                                            ))
+                                            -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                            --     edgeId = lastBuiltEdgeId,
+                                            --     waypointId = newWaypointId ~= similarObjectsIds[1] and newWaypointId or similarObjectsIds[2],
+                                            -- })
                                             return false
                                         end
                                     end
@@ -1574,24 +1609,51 @@ function data()
 
                                     if args.proposal.proposal.addedSegments[1].trackEdge.trackType ~= _platformTrackType then
                                         guiHelpers.showWarningWindowWithGoto(_('PlatformWaypointBuiltOnTrack'))
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdgeId,
-                                            waypointId = newWaypointId,
-                                        })
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                            {
+                                                edgeId = lastBuiltEdgeId,
+                                                waypointId = newWaypointId,
+                                            }
+                                        ))
+                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                        --     edgeId = lastBuiltEdgeId,
+                                        --     waypointId = newWaypointId,
+                                        -- })
                                         return
                                     elseif #allPlatformWaypointIds > 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, allPlatformWaypointIds)
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdgeId,
-                                            waypointId = newWaypointId,
-                                        })
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                            {
+                                                edgeId = lastBuiltEdgeId,
+                                                waypointId = newWaypointId,
+                                            }
+                                        ))
+                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                        --     edgeId = lastBuiltEdgeId,
+                                        --     waypointId = newWaypointId,
+                                        -- })
                                         return
                                     elseif #allTrackWaypoint1Ids < 1 or #allTrackWaypoint2Ids < 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('TrackWaypointsMissing'))
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdgeId,
-                                            waypointId = newWaypointId,
-                                        })
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                            {
+                                                edgeId = lastBuiltEdgeId,
+                                                waypointId = newWaypointId,
+                                            }
+                                        ))
+                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                        --     edgeId = lastBuiltEdgeId,
+                                        --     waypointId = newWaypointId,
+                                        -- })
                                         return
                                     end
                                     -- waypoint built on platform and two track waypoints built nearby
@@ -1610,10 +1672,19 @@ function data()
                                     debugPrint(contiguousTrackEdges)
                                     if #contiguousTrackEdges < 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('TrackWaypointsNotConnected'), allTrackWaypoint1Ids[1], allTrackWaypoint2Ids)
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdgeId,
-                                            waypointId = newWaypointId,
-                                        })
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                            {
+                                                edgeId = lastBuiltEdgeId,
+                                                waypointId = newWaypointId,
+                                            }
+                                        ))
+                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                        --     edgeId = lastBuiltEdgeId,
+                                        --     waypointId = newWaypointId,
+                                        -- })
                                         return
                                     end
                                     -- find all consecutive platform edges of the same type
@@ -1627,10 +1698,19 @@ function data()
                                     if #contiguousPlatformEdges < 1 then
                                         -- no platform edges
                                         print('ERROR: contiguousPlatformEdges not found, this should never happen')
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            edgeId = lastBuiltEdgeId,
-                                            waypointId = newWaypointId,
-                                        })
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                            {
+                                                edgeId = lastBuiltEdgeId,
+                                                waypointId = newWaypointId,
+                                            }
+                                        ))
+                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
+                                        --     edgeId = lastBuiltEdgeId,
+                                        --     waypointId = newWaypointId,
+                                        -- })
                                         return
                                     end
 
@@ -1666,7 +1746,13 @@ function data()
                                             eventArgs
                                         )
                                     else
-                                        game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, eventArgs)
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
+                                            eventArgs
+                                        ))
+                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, eventArgs)
                                     end
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint1ModelId then
                                     handleTrackWaypointBuilt(trackWaypoint1ModelId)
@@ -1717,14 +1803,23 @@ function data()
                                 end
                             end
                             for i = 1, #removeTrackWaypointsEventArgs do
-                                game.interface.sendScriptEvent(
+                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                    string.sub(debug.getinfo(1, 'S').source, 1),
                                     _eventId,
                                     _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
                                     {
                                         edgeId = removeTrackWaypointsEventArgs[i].edgeId,
                                         waypointId = removeTrackWaypointsEventArgs[i].waypointId,
                                     }
-                                )
+                                ))
+                                -- game.interface.sendScriptEvent(
+                                --     _eventId,
+                                --     _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                --     {
+                                --         edgeId = removeTrackWaypointsEventArgs[i].edgeId,
+                                --         waypointId = removeTrackWaypointsEventArgs[i].waypointId,
+                                --     }
+                                -- )
                             end
                         end
                     end
