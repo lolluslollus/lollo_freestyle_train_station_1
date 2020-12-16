@@ -810,8 +810,10 @@ local _actions = {
             local newParams = {
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
                 neighbourNodeIds = params_neighbourNodeIds,
+                -- LOLLO TODO all these attempts fail with ..\..\src\Lib\model_construction\ConstructionRep.cpp:632: auto __cdecl ConstructionRep::Add::<lambda_a3a201d0a3a0fcfd709d311d815a4fbd>::operator ()(const struct lua::Table &) const: Assertion `params.GetPtr("seed")' failed.
                 -- seed = oldCon.params.seed,
-                seed = oldCon.params.seed + 1,
+                -- seed = oldCon.params.seed + 1,
+                seed = oldCon.params.seed - 1,
                 -- seed = oldCon.params.seed + 2,
                 -- seed = oldCon.params.seed + 1000,
                 -- seed = 123e4, -- same as when I build first time
@@ -819,6 +821,7 @@ local _actions = {
                 -- seed = 234e5,
                 -- seed = math.random(oldCon.params.seed, oldCon.params.seed + 1000),
                 -- seed = nil,
+                -- no seed at all
                 terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
             }
             print('lollo010, newParams =') debugPrint(newParams)
