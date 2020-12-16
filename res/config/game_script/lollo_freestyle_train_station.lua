@@ -130,44 +130,44 @@ local _utils = {
         local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
         local endNodeIds = {}
         for _, edgeId in pairs(con.frozenEdges) do
-            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge ~= nil then
-                local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                for _, edgeInT in pairs(con.params.terminals[nTerminal].trackEdgeLists) do
-                    if edgeInT ~= nil and ((
-                        edgeInT.posTanX2[1][1][1] == baseNode0.position.x
-                        and edgeInT.posTanX2[1][1][2] == baseNode0.position.y
-                        and edgeInT.posTanX2[1][1][3] == baseNode0.position.z
-                        and edgeInT.posTanX2[2][1][1] == baseNode1.position.x
-                        and edgeInT.posTanX2[2][1][2] == baseNode1.position.y
-                        and edgeInT.posTanX2[2][1][3] == baseNode1.position.z
-                    ) or (
-                        edgeInT.posTanX2[1][1][1] == baseNode1.position.x
-                        and edgeInT.posTanX2[1][1][2] == baseNode1.position.y
-                        and edgeInT.posTanX2[1][1][3] == baseNode1.position.z
-                        and edgeInT.posTanX2[2][1][1] == baseNode0.position.x
-                        and edgeInT.posTanX2[2][1][2] == baseNode0.position.y
-                        and edgeInT.posTanX2[2][1][3] == baseNode0.position.z
-                    )) then
-                        local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                        if baseEdgeTrack ~= nil and baseEdgeTrack.trackType ~= _platformTrackType then
-                            if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node0)) then
-                                endNodeIds[#endNodeIds+1] = baseEdge.node0
+            if edgeUtils.isValidId(edgeId) then
+                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                if baseEdge ~= nil then
+                    local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+                    local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+                    for _, edgeInTerminal in pairs(con.params.terminals[nTerminal].trackEdgeLists) do
+                        if edgeInTerminal ~= nil and ((
+                            edgeInTerminal.posTanX2[1][1][1] == baseNode0.position.x
+                            and edgeInTerminal.posTanX2[1][1][2] == baseNode0.position.y
+                            and edgeInTerminal.posTanX2[1][1][3] == baseNode0.position.z
+                            and edgeInTerminal.posTanX2[2][1][1] == baseNode1.position.x
+                            and edgeInTerminal.posTanX2[2][1][2] == baseNode1.position.y
+                            and edgeInTerminal.posTanX2[2][1][3] == baseNode1.position.z
+                        ) or (
+                            edgeInTerminal.posTanX2[1][1][1] == baseNode1.position.x
+                            and edgeInTerminal.posTanX2[1][1][2] == baseNode1.position.y
+                            and edgeInTerminal.posTanX2[1][1][3] == baseNode1.position.z
+                            and edgeInTerminal.posTanX2[2][1][1] == baseNode0.position.x
+                            and edgeInTerminal.posTanX2[2][1][2] == baseNode0.position.y
+                            and edgeInTerminal.posTanX2[2][1][3] == baseNode0.position.z
+                        )) then
+                            local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                            if baseEdgeTrack ~= nil and baseEdgeTrack.trackType ~= _platformTrackType then
+                                if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node0)) then
+                                    endNodeIds[#endNodeIds+1] = baseEdge.node0
+                                end
+                                if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node1)) then
+                                    endNodeIds[#endNodeIds+1] = baseEdge.node1
+                                end
                             end
-                            if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node1)) then
-                                endNodeIds[#endNodeIds+1] = baseEdge.node1
-                            end
+                            break
                         end
-                        break
                     end
                 end
             end
         end
 
-        if #endNodeIds < 1 then return {} end
-        -- if #endNodeIds == 1 then return endNodeIds end
-        if #endNodeIds > 2 then
+        if #endNodeIds ~= 2 then
             print('found', #endNodeIds, 'free nodes in station construction')
             return {}
         end
