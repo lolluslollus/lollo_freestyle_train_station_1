@@ -4,6 +4,7 @@ local guiHelpers = require('lollo_freestyle_train_station.guiHelpers')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
+local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilUG = require('transf')
 
@@ -16,7 +17,7 @@ end
 local constructionDataBak = nil
 local _eventId = '__lolloFreestyleTrainStation__'
 local _eventNames = {
-    BUILD_SNAPPY_TRACKS_4_1_TERMINAL_REQUESTED = 'buildSNappyTracks41TerminalRequested',
+    BUILD_SNAPPY_TRACKS_4_1_TERMINAL_REQUESTED = 'buildSnappyTracks41TerminalRequested',
     BUILD_STATION_REQUESTED = 'buildStationRequested',
     REBUILD_ALL_TRACKS_REQUESTED = 'rebuildAllTracksRequested',
     REBUILD_1_TERMINAL_TRACKS_REQUESTED = 'rebuild1TerminalTracksRequested',
@@ -69,14 +70,13 @@ local _utils = {
     end,
 
     getStationEndNodesUnsorted = function(con, nTerminal)
-        print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
+        -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
+        -- print('con =') debugPrint(con)
         -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-        -- print('con =') debugPrint(conData)
-        if not(con) or not(stringUtils.stringEndsWith(con.fileName, _constants.stationConFileNameShort)) then
+        if not(con) or con.fileName ~= _constants.stationConFileNameLong then
             return {}
         end
-        -- print('one')
-        local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
+
         local endNodeIds = {}
         for _, frozenEdgeId in pairs(con.frozenEdges) do
             if edgeUtils.isValidId(frozenEdgeId) then
@@ -101,7 +101,7 @@ local _utils = {
                             and edgeInTerminal.posTanX2[2][1][3] == baseNode0.position.z
                         )) then
                             local baseEdgeTrack = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                            if baseEdgeTrack ~= nil and baseEdgeTrack.trackType ~= _platformTrackType then
+                            if baseEdgeTrack ~= nil and not(trackUtils.isPlatform(baseEdgeTrack.trackType)) then
                                 if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node0)) then
                                     endNodeIds[#endNodeIds+1] = baseEdge.node0
                                 end
@@ -551,7 +551,7 @@ local _utils = {
         if oldEdgeTrack == nil then return false end
 
         newEdge.trackEdge = oldEdgeTrack
-        if oldEdgeTrack.trackType == api.res.trackTypeRep.find('platform.lua') then
+        if trackUtils.isPlatform(oldEdgeTrack.trackType) then
             newEdge.trackEdge.catenary = false
         end
 
@@ -591,7 +591,7 @@ _utils.getAllStationEndNodesUnsorted = function(stationConstructionId)
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
-    if not(con) or not(stringUtils.stringEndsWith(con.fileName, _constants.stationConFileNameShort)) then
+    if not(con) or con.fileName ~= _constants.stationConFileNameLong then
         return {}
     end
 
@@ -603,47 +603,60 @@ _utils.getAllStationEndNodesUnsorted = function(stationConstructionId)
     return results
 end
 
-_utils.getStationEndNodesSorted = function(neighbourNode1Id, neighbourNode2Id, stationConstructionId, nTerminal)
-    if not(edgeUtils.isValidId(stationConstructionId)) then return {} end
+_utils.getStationEndNodesTyped = function(neighbourNode1Id, neighbourNode2Id, stationConstructionId, nTerminal)
+    if not(edgeUtils.isValidId(stationConstructionId)) then
+        print('getStationEndNodesTyped invalid stationConstructionId') debugPrint(stationConstructionId)
+        return nil
+    end
 
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
-    if not(con) or not(stringUtils.stringEndsWith(con.fileName, _constants.stationConFileNameShort)) then
-        return {}
+    if not(con) or con.fileName ~= _constants.stationConFileNameLong then
+        print('getStationEndNodesTyped con.fileName =') debugPrint(con.fileName)
+        return nil
     end
 
     local endNodeIds = _utils.getStationEndNodesUnsorted(con, nTerminal)
-    if #endNodeIds ~= 2 then return {} end
+    print('getStationEndNodesTyped endNodeIds =') debugPrint(endNodeIds)
+    if #endNodeIds ~= 2 then return nil end
 
     local result = {
-        node1Id = nil,
-        node2Id = nil,
+        neighbourNodeIds = {
+            node1Id = neighbourNode1Id,
+            node2Id = neighbourNode2Id,
+        },
+        stationEndNodeIds = {
+            node1Id = nil,
+            node2Id = nil,
+        }
     }
 
-    local baseNode1_Neighbour = api.engine.getComponent(neighbourNode1Id, api.type.ComponentType.BASE_NODE)
-    local baseNode1_Station = api.engine.getComponent(endNodeIds[1], api.type.ComponentType.BASE_NODE)
-    if edgeUtils.isNumVeryClose(baseNode1_Station.position.x, baseNode1_Neighbour.position.x)
-    and edgeUtils.isNumVeryClose(baseNode1_Station.position.y, baseNode1_Neighbour.position.y)
-    and edgeUtils.isNumVeryClose(baseNode1_Station.position.z, baseNode1_Neighbour.position.z)
-    then
-        result.node1Id = endNodeIds[1]
+    local neighbourNodeId1 = api.engine.getComponent(neighbourNode1Id, api.type.ComponentType.BASE_NODE)
+    local stationEndNodeId1 = api.engine.getComponent(endNodeIds[1], api.type.ComponentType.BASE_NODE)
+    local neighbourNodeId2 = api.engine.getComponent(neighbourNode2Id, api.type.ComponentType.BASE_NODE)
+    local stationEndNodeId2 = api.engine.getComponent(endNodeIds[2], api.type.ComponentType.BASE_NODE)
+    if edgeUtils.isXYZVeryClose(stationEndNodeId1.position, neighbourNodeId1.position) then
+        result.stationEndNodeIds.node1Id = endNodeIds[1]
+    elseif edgeUtils.isXYZVeryClose(stationEndNodeId2.position, neighbourNodeId1.position) then
+        result.stationEndNodeIds.node1Id = endNodeIds[2]
+    else
+        return nil
+    end
+    if edgeUtils.isXYZVeryClose(stationEndNodeId1.position, neighbourNodeId2.position) then
+        result.stationEndNodeIds.node2Id = endNodeIds[1]
+    elseif edgeUtils.isXYZVeryClose(stationEndNodeId2.position, neighbourNodeId2.position) then
+        result.stationEndNodeIds.node2Id = endNodeIds[2]
+    else
+        return nil
     end
 
-    local baseNode2_Neighbour = api.engine.getComponent(neighbourNode2Id, api.type.ComponentType.BASE_NODE)
-    local baseNode2_Station = api.engine.getComponent(endNodeIds[2], api.type.ComponentType.BASE_NODE)
-    if edgeUtils.isNumVeryClose(baseNode2_Station.position.x, baseNode2_Neighbour.position.x)
-    and edgeUtils.isNumVeryClose(baseNode2_Station.position.y, baseNode2_Neighbour.position.y)
-    and edgeUtils.isNumVeryClose(baseNode2_Station.position.z, baseNode2_Neighbour.position.z)
-    then
-        result.node2Id = endNodeIds[2]
-    end
-
+    print('getStationEndNodesTyped result =') debugPrint(result)
     return result
 end
 
 local _actions = {
-    buildSnappyTracks = function(neighbourEdgeIds, neighbourNodeIds, stationEndNodeIds)
+    buildSnappyTracks = function(neighbourEdgeIds, nodeIds)
         -- LOLLO NOTE after building the station, never mind how well you placed it,
         -- its end nodes won't snap to the adjacent roads.
         -- AltGr + L will show a red dot, and here is the catch: there are indeed
@@ -652,8 +665,9 @@ local _actions = {
         -- with an identical track, which snaps to the station end node instead.
         print('buildSnappyTracks starting')
         print('neighbourEdgeIds =') debugPrint(neighbourEdgeIds)
-        print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
-        print('stationEndNodes =') debugPrint(stationEndNodeIds)
+        print('nodeIds.neighbourNodeIds =') debugPrint(nodeIds.neighbourNodeIds)
+        print('nodeIds.stationEndNodeIds =') debugPrint(nodeIds.stationEndNodeIds)
+        if nodeIds == nil then return end
 
         local proposal = api.type.SimpleProposal.new()
 
@@ -664,18 +678,18 @@ local _actions = {
             newSegment.entity = nNewEntities
 
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge.node0 == neighbourNodeIds.node1Id then
-                newSegment.comp.node0 = stationEndNodeIds.node1Id
-            elseif baseEdge.node0 == neighbourNodeIds.node2Id then
-                newSegment.comp.node0 = stationEndNodeIds.node2Id
+            if baseEdge.node0 == nodeIds.neighbourNodeIds.node1Id then
+                newSegment.comp.node0 = nodeIds.stationEndNodeIds.node1Id
+            elseif baseEdge.node0 == nodeIds.neighbourNodeIds.node2Id then
+                newSegment.comp.node0 = nodeIds.stationEndNodeIds.node2Id
             else
                 newSegment.comp.node0 = baseEdge.node0
             end
 
-            if baseEdge.node1 == neighbourNodeIds.node1Id then
-                newSegment.comp.node1 = stationEndNodeIds.node1Id
-            elseif baseEdge.node1 == neighbourNodeIds.node2Id then
-                newSegment.comp.node1 = stationEndNodeIds.node2Id
+            if baseEdge.node1 == nodeIds.neighbourNodeIds.node1Id then
+                newSegment.comp.node1 = nodeIds.stationEndNodeIds.node1Id
+            elseif baseEdge.node1 == nodeIds.neighbourNodeIds.node2Id then
+                newSegment.comp.node1 = nodeIds.stationEndNodeIds.node2Id
             else
                 newSegment.comp.node1 = baseEdge.node1
             end
@@ -703,8 +717,8 @@ local _actions = {
             _replaceSegment(neighbourEdgeIds[i])
         end
 
-        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = neighbourNodeIds.node1Id
-        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = neighbourNodeIds.node2Id
+        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeIds.neighbourNodeIds.node1Id
+        proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeIds.neighbourNodeIds.node2Id
         -- local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
         -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/snappy_track.con'
         -- newConstruction.params = {
@@ -1246,9 +1260,6 @@ local _actions = {
     end,
 }
 
-local function _isBuildingModularStation(param)
-    return _utils.isBuildingConstructionWithFileName(param, 'station/rail/lollo_freestyle_train_station/modular_station.con')
-end
 local function _isBuildingStation(param)
     return _utils.isBuildingConstructionWithFileName(param, _constants.stationConFileNameLong)
 end
@@ -1401,11 +1412,7 @@ function data()
                             args.neighbourNodeIds.node2Id
                         }
                     ),
-                    {
-                        node1Id = args.neighbourNodeIds.node1Id,
-                        node2Id = args.neighbourNodeIds.node2Id
-                    },
-                    _utils.getStationEndNodesSorted(
+                    _utils.getStationEndNodesTyped(
                         args.neighbourNodeIds.node1Id,
                         args.neighbourNodeIds.node2Id,
                         args.stationConstructionId,
@@ -1436,16 +1443,13 @@ function data()
 
                         for _, constructionId in pairs(args.proposal.toRemove) do
                             local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
-                            if con ~= nil and type(con.fileName) == 'string' and stringUtils.stringEndsWith(
-                                    con.fileName,
-                                    _constants.stationConFileNameShort
-                                ) then
-                                    constructionDataBak = {
-                                        constructionId = constructionId,
-                                        endNodesUnsorted = _utils.getAllStationEndNodesUnsorted(constructionId),
-                                        params = arrayUtils.cloneDeepOmittingFields(con.params, {'seed'}, true)
-                                    }
-                                    break
+                            if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileNameLong then
+                                constructionDataBak = {
+                                    constructionId = constructionId,
+                                    endNodesUnsorted = _utils.getAllStationEndNodesUnsorted(constructionId),
+                                    params = arrayUtils.cloneDeepOmittingFields(con.params, {'seed'}, true)
+                                }
+                                break
                             end
                         end
                     elseif name == 'builder.apply' then
@@ -1524,10 +1528,9 @@ function data()
                             and args.proposal.proposal.edgeObjectsToAdd[1]
                             and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
                             then
-                                local platformWaypointModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_platform_waypoint.mdl')
-                                local trackWaypoint1ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_1.mdl')
-                                local trackWaypoint2ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_2.mdl')
-                                local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
+                                local platformWaypointModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_platform_waypoint.mdl')
+                                local trackWaypoint1ModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_track_waypoint_1.mdl')
+                                local trackWaypoint2ModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_track_waypoint_2.mdl')
 
                                 local handleTrackWaypointBuilt = function(trackWaypointModelId)
                                     print('LOLLO track waypoint', trackWaypoint1ModelId, 'built!')
@@ -1543,7 +1546,7 @@ function data()
                                     local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltEdge.objects, trackWaypointModelId))
                                     if not(newWaypointId) then return false end
 
-                                    if args.proposal.proposal.addedSegments[1].trackEdge.trackType == _platformTrackType then
+                                    if trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType) then
                                         guiHelpers.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1607,7 +1610,7 @@ function data()
                                     local allTrackWaypoint1Ids = _utils.getAllEdgeObjectsWithModelId(trackWaypoint1ModelId)
                                     local allTrackWaypoint2Ids = _utils.getAllEdgeObjectsWithModelId(trackWaypoint2ModelId)
 
-                                    if args.proposal.proposal.addedSegments[1].trackEdge.trackType ~= _platformTrackType then
+                                    if not(trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType)) then
                                         guiHelpers.showWarningWindowWithGoto(_('PlatformWaypointBuiltOnTrack'))
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1691,7 +1694,7 @@ function data()
                                     -- sort them from first to last
                                     local contiguousPlatformEdges = edgeUtils.track.getContiguousEdges(
                                         lastBuiltEdgeId,
-                                        _platformTrackType
+                                        trackUtils.getAllPlatformTrackTypes()
                                     )
                                     print('contiguous platform edges =')
                                     debugPrint(contiguousPlatformEdges)
@@ -1713,11 +1716,6 @@ function data()
                                         -- })
                                         return
                                     end
-
-                                    -- this is just for testing
-                                    local outerNodes = _utils.getOuterNodes(contiguousPlatformEdges, _platformTrackType)
-                                    print('outerNodes =')
-                                    debugPrint(outerNodes)
 
                                     local platformWaypointTransf = transfUtilUG.new(
                                         args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),
@@ -1774,14 +1772,13 @@ function data()
                             or not(args.proposal.proposal.addedSegments) or not(args.proposal.proposal.addedSegments[1])
                             or not(args.data) or not(args.data.entity2tn) then return end
 
-                            local _platformTrackType = api.res.trackTypeRep.find('platform.lua')
-                            local _trackWaypoint1ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_1.mdl')
-                            local _trackWaypoint2ModelId = api.res.modelRep.find('railroad/lollo_freestyle_train_station/lollo_track_waypoint_2.mdl')
+                            local _trackWaypoint1ModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_track_waypoint_1.mdl')
+                            local _trackWaypoint2ModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_track_waypoint_2.mdl')
 
                             local removeTrackWaypointsEventArgs = {}
                             for _, addedSegment in pairs(args.proposal.proposal.addedSegments) do
                                 if addedSegment and addedSegment.trackEdge
-                                and addedSegment.trackEdge.trackType == _platformTrackType
+                                and trackUtils.isPlatform(addedSegment.trackEdge.trackType)
                                 and addedSegment.comp.objects then
                                     local edgeObjectsToRemoveIds = edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypoint1ModelId)
                                     arrayUtils.concatKeysValues(edgeObjectsToRemoveIds, edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypoint2ModelId))

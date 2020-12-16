@@ -1,0 +1,26 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = { 0.1, 0.1, 0.1, },
+            bbMin = { 0, 0, 0, },
+        },
+        collider = {
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            type = "NONE",
+        },
+        lods = {
+            {
+                node = {
+                    children = { },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000, --2815.9614257813,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+    end

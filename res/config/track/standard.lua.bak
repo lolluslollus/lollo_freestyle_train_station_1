@@ -1,7 +1,7 @@
 function data()
 	local t = { }
 
-	t.name = _("Lollo platform tracks")
+	t.name = _("Standard tracks")
 	t.desc = _("Standard tracks with limited speed capabilities.")
 
 	t.yearFrom = 0
@@ -56,30 +56,24 @@ function data()
 	t.tunnelWallMaterial = "track/tunnel_rail_ug.mtl"
 	t.tunnelHullMaterial = "track/tunnel_hull.mtl"
 
-	-- LOLLO TODO fix the following
 	t.catenaryPoleModel = "railroad/power_pole_us_2.mdl"
 	t.catenaryMultiPoleModel = "railroad/power_pole_us_1_pole.mdl"
 	t.catenaryMultiGirderModel = "railroad/power_pole_us_1a_repeat.mdl"
 	t.catenaryMultiInnerPoleModel = "railroad/power_pole_us_1b_pole2.mdl"
 
-	-- LOLLO TODO fix the following
 	t.bumperModel = "railroad/bumper.mdl"
 	t.switchSignalModel = "railroad/switch_box.mdl"
 
-	-- LOLLO TODO fix the following
 	t.fillGroundTex = "ballast_fill.lua"
-
-	-- LOLLO TODO fix the following
 	t.borderGroundTex = "ballast.lua"
 	
-    -- t.railModel ="railroad/tracks/single_rail.mdl"
-    t.railModel = 'lollo_freestyle_train_station/platform_2m.mdl'
-	-- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
+	t.railModel ="railroad/tracks/single_rail.mdl"
+	t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
 	t.trackStraightModel = {
-		'lollo_freestyle_train_station/platform_2m_base.mdl', --"railroad/tracks/2m_base.mdl",
-		'lollo_freestyle_train_station/platform_4m_base.mdl', --"railroad/tracks/4m_base.mdl",
-		'lollo_freestyle_train_station/platform_8m_base.mdl', --"railroad/tracks/8m_base.mdl",
-		'lollo_freestyle_train_station/platform_16m_base.mdl', --"railroad/tracks/16m_base.mdl",
+		"railroad/tracks/2m_base.mdl",
+		"railroad/tracks/4m_base.mdl",
+		"railroad/tracks/8m_base.mdl",
+		"railroad/tracks/16m_base.mdl",
 	}
 
 	t.cost = 75.0

@@ -83,7 +83,7 @@ local function swap(num1, num2)
     num1 = num2
     num2 = swapTemp
 end
-
+-- LOLLO TODO move this into helper.street.getNearestEdgeId
 helper.getNearestEdgeId = function(transf)
     if type(transf) ~= 'table' then return nil end
 
@@ -534,8 +534,30 @@ helper.isNumVeryClose = function(num1, num2, roundingFactor)
     return roundedNum1 == roundedNum2
 end
 
+helper.isXYZVeryClose = function(xyz1, xyz2, roundingFactor)
+    if not(roundingFactor) then roundingFactor = 1000.0 end
+    if (type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata')
+    or (type(xyz2) ~= 'table' and type(xyz2) ~= 'userdata')
+    or type(xyz1.x) ~= 'number' or type(xyz1.y) ~= 'number' or type(xyz1.z) ~= 'number'
+    or type(xyz2.x) ~= 'number' or type(xyz2.y) ~= 'number' or type(xyz2.z) ~= 'number'
+    then return false end
+
+    local roundedXYZ1 = {
+        x = math.ceil(xyz1.x * roundingFactor),
+        y = math.ceil(xyz1.y * roundingFactor),
+        z = math.ceil(xyz1.z * roundingFactor),
+    }
+    local roundedXYZ2 = {
+        x = math.ceil(xyz2.x * roundingFactor),
+        y = math.ceil(xyz2.y * roundingFactor),
+        z = math.ceil(xyz2.z * roundingFactor),
+    }
+
+    return roundedXYZ1.x == roundedXYZ2.x and roundedXYZ1.y == roundedXYZ2.y and roundedXYZ1.z == roundedXYZ2.z
+end
+
 helper.track = {}
-helper.track.getContiguousEdges = function(edgeId, trackType)
+helper.track.getContiguousEdges = function(edgeId, acceptedTrackTypes)
     local _calcContiguousEdges = function(firstEdgeId, firstNodeId, map, isInsertFirst, results)
         local refEdgeId = firstEdgeId
         local refNodeId = firstNodeId
@@ -552,7 +574,7 @@ helper.track.getContiguousEdges = function(edgeId, trackType)
                         local baseEdgeTrack = api.engine.getComponent(_edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
                         -- print('baseEdgeTrack =')
                         -- debugPrint(baseEdgeTrack)
-                        if not(baseEdgeTrack) or baseEdgeTrack.trackType ~= trackType then
+                        if not(baseEdgeTrack) or not(arrayUtils.arrayHasValue(acceptedTrackTypes, baseEdgeTrack.trackType)) then
                             isExit = true
                             break
                         else
@@ -582,10 +604,10 @@ helper.track.getContiguousEdges = function(edgeId, trackType)
     -- print('track type =')
     -- debugPrint(trackType)
 
-    if not(edgeId) or not(trackType) then return {} end
+    if not(edgeId) or acceptedTrackTypes == nil or #acceptedTrackTypes == 0 then return {} end
 
     local _baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-    if not(_baseEdgeTrack) or _baseEdgeTrack.trackType ~= trackType then return {} end
+    if not(_baseEdgeTrack) or not(arrayUtils.arrayHasValue(acceptedTrackTypes, _baseEdgeTrack.trackType)) then return {} end
 
     local _baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
     local _edgeId = edgeId

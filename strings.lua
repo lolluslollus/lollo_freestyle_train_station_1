@@ -9,6 +9,8 @@ function data()
 			["GoThere"] = "Go there",
 			["Join"] = "Join",
 			["NoJoin"] = "Do not join",
+			["CargoPlatformTracksName"] = "Cargo Platforms",
+			["CargoPlatformTracksDesc"] = "Cargo Platforms to Be Laid as Tracks",
 			["PlatformWaypointBuiltOnTrack"] = "You can only build platform waypoints on platforms",
 			["StationPickerWindowTitle"] = "Pick a station to join",
 			["TrackWaypointBuiltOnPlatform"] = "You can only build track waypoints on tracks",
