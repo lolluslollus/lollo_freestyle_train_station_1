@@ -56,15 +56,20 @@ function data()
 	t.tunnelWallMaterial = "track/tunnel_rail_ug.mtl"
 	t.tunnelHullMaterial = "track/tunnel_hull.mtl"
 
-	-- t.catenaryPoleModel = "railroad/power_pole_us_2.mdl"
-	-- t.catenaryMultiPoleModel = "railroad/power_pole_us_1_pole.mdl"
-	-- t.catenaryMultiGirderModel = "railroad/power_pole_us_1a_repeat.mdl"
-	-- t.catenaryMultiInnerPoleModel = "railroad/power_pole_us_1b_pole2.mdl"
+	-- LOLLO TODO fix the following
+	t.catenaryPoleModel = "railroad/power_pole_us_2.mdl"
+	t.catenaryMultiPoleModel = "railroad/power_pole_us_1_pole.mdl"
+	t.catenaryMultiGirderModel = "railroad/power_pole_us_1a_repeat.mdl"
+	t.catenaryMultiInnerPoleModel = "railroad/power_pole_us_1b_pole2.mdl"
 
-	-- t.bumperModel = "railroad/bumper.mdl"
-	-- t.switchSignalModel = "railroad/switch_box.mdl"
+	-- LOLLO TODO fix the following
+	t.bumperModel = "railroad/bumper.mdl"
+	t.switchSignalModel = "railroad/switch_box.mdl"
 
-	-- t.fillGroundTex = "ballast_fill.lua"
+	-- LOLLO TODO fix the following
+	t.fillGroundTex = "ballast_fill.lua"
+
+	-- LOLLO TODO fix the following
 	t.borderGroundTex = "ballast.lua"
 	
     -- t.railModel ="railroad/tracks/single_rail.mdl"
