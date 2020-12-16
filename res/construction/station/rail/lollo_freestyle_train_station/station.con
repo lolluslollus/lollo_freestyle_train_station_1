@@ -325,6 +325,9 @@ function data()
 							-- LOLLO TODO ask UG if they can make a parameter similar to the following,
 							-- to override personEdges and personNodes.
 							-- This way, I won't be bound to using a model to assign a waiting area.
+							-- LOLLO NOTE there can be 1 terminal 4 1 vehicle node,
+							-- n terminals 4 1 person edge,
+							-- n terminals 4 1 person node
 							vehicleNodeOverride = #params.terminals[t].trackEdgeLists - 1
 						}
 					)

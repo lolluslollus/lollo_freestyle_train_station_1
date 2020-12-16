@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local guiHelpers = require('lollo_freestyle_train_station.guiHelpers')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
@@ -35,99 +36,35 @@ local _eventNames = {
 local _idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 local _metresToAddOrCut = 3
 local _newEdgeType = 1 -- 0 = ROAD, 1 = RAIL
-local _texts = {
-    goBackText = _('GoBack'),
-    goThereText = _('GoThere') -- cannot put this directly inside the loop for some reason
-}
 -- local _searchRadius = 500
 
-local _guiWindowId = 'lollo_freestyle_station_warning_window'
-local _guiUtils = {
-    showWarningWindowWithGoto = function(text, wrongObjectId, similarObjectsIds)
-        local layout = api.gui.layout.BoxLayout.new('VERTICAL')
-        local window = api.gui.util.getById(_guiWindowId)
-        if window == nil then
-            window = api.gui.comp.Window.new(_('WarningWindowTitle'), layout)
-            window:setId(_guiWindowId)
-        else
-            window:setContent(layout)
-            window:setVisible(true, false)
-        end
-
-        layout:addItem(api.gui.comp.TextView.new(text))
-
-        local function addGotoOtherObjectsButtons()
-            if type(similarObjectsIds) ~= 'table' then return end
-
-            local wrongObjectIdTolerant = wrongObjectId
-            if not(edgeUtils.isValidId(wrongObjectIdTolerant)) then wrongObjectIdTolerant = -1 end
-
-            for _, otherObjectId in pairs(similarObjectsIds) do
-                if otherObjectId ~= wrongObjectIdTolerant then
-                    local otherObjectPosition = edgeUtils.getObjectPosition(otherObjectId)
-                    if otherObjectPosition ~= nil then
-                        local buttonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
-                        buttonLayout:addItem(api.gui.comp.ImageView.new('ui/design/window-content/locate_small.tga'))
-                        buttonLayout:addItem(api.gui.comp.TextView.new(_texts.goThereText))
-                        local button = api.gui.comp.Button.new(buttonLayout, true)
-                        button:onClick(
-                            function()
-                                -- LOLLO TODO this dumps, ask UG to fix it
-                                -- api.gui.util.CameraController:setCameraData(
-                                --     api.type.Vec2f.new(otherObjectPosition[1], otherObjectPosition[2]),
-                                --     100, 0, 0
-                                -- )
-                                -- x, y, distance, angleInRad, pitchInRad
-                                game.gui.setCamera({otherObjectPosition[1], otherObjectPosition[2], 100, 0, 0})
-                            end
-                        )
-                        layout:addItem(button)
-                    end
-                end
-            end
-        end
-        local function addGoBackToWrongObjectButton()
-            if not(edgeUtils.isValidId(wrongObjectId)) then return end
-
-            local wrongObjectPosition = edgeUtils.getObjectPosition(wrongObjectId)
-            if wrongObjectPosition ~= nil then
-                local buttonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
-                buttonLayout:addItem(api.gui.comp.ImageView.new('ui/design/window-content/arrow_style1_left.tga'))
-                buttonLayout:addItem(api.gui.comp.TextView.new(_texts.goBackText))
-                local button = api.gui.comp.Button.new(buttonLayout, true)
-                button:onClick(
-                    function()
-                        -- LOLLO TODO this dumps, ask UG to fix it
-                        -- api.gui.util.CameraController:setCameraData(
-                        --     api.type.Vec2f.new(wrongObjectPosition[1], wrongObjectPosition[2]),
-                        --     100, 0, 0
-                        -- )
-                        -- x, y, distance, angleInRad, pitchInRad
-                        game.gui.setCamera({wrongObjectPosition[1], wrongObjectPosition[2], 100, 0, 0})
-                    end
-                )
-                layout:addItem(button)
-            end
-        end
-        addGotoOtherObjectsButtons()
-        addGoBackToWrongObjectButton()
-
-        window:setHighlighted(true)
-        local position = api.gui.util.getMouseScreenPos()
-        window:setPosition(position.x, position.y)
-        window:addHideOnCloseHandler()
-    end
-}
 local _utils = {
-    getNearbyFreestyleStations = function(transf, searchRadius)
+    getNearbyFreestyleStationsList = function(transf, searchRadius)
         if type(transf) ~= 'table' then return {} end
 
         local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
-        local results = game.interface.getEntities(
+        local cons = game.interface.getEntities(
             {pos = squareCentrePosition, radius = searchRadius},
             {type = "CONSTRUCTION", includeData = true, fileName = _constants.stationConFileNameLong}
         )
+        -- #cons returns 0 coz it's not a list
+        local results = {}
+        for _, con in pairs(cons) do
+            local staGroups = {}
+            for _, staId in pairs(con.stations) do
+                local staGroupId = api.engine.system.stationGroupSystem.getStationGroup(staId)
+                local staGroupName = api.engine.getComponent(staGroupId, api.type.ComponentType.NAME)
+                staGroups[staGroupId] = staGroupName and staGroupName.name or ''
+                con.uiName = staGroupName and staGroupName.name or ''
+            end
+            -- LOLLO TODO 1 con can have N stations, but they all belong to the same group. Right?
+            -- If so, staGroups will always have 1 item only
+            con.stationGroups = staGroups
+            results[#results+1] = con
+        end
 
+        -- print('# nearby freestyle stations = ', #results)
+        -- print('nearby freestyle stations = ') debugPrint(results)
         return results
     end,
 
@@ -1590,7 +1527,7 @@ function data()
                                     if not(newWaypointId) then return false end
 
                                     if args.proposal.proposal.addedSegments[1].trackEdge.trackType == _platformTrackType then
-                                        _guiUtils.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
+                                        guiHelpers.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
                                             waypointId = newWaypointId,
@@ -1599,7 +1536,7 @@ function data()
                                     else
                                         local similarObjectsIds = _utils.getAllEdgeObjectsWithModelId(trackWaypointModelId)
                                         if #similarObjectsIds > 1 then
-                                            _guiUtils.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIds)
+                                            guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIds)
                                             game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                                 edgeId = lastBuiltEdgeId,
                                                 waypointId = newWaypointId ~= similarObjectsIds[1] and newWaypointId or similarObjectsIds[2],
@@ -1636,21 +1573,21 @@ function data()
                                     local allTrackWaypoint2Ids = _utils.getAllEdgeObjectsWithModelId(trackWaypoint2ModelId)
 
                                     if args.proposal.proposal.addedSegments[1].trackEdge.trackType ~= _platformTrackType then
-                                        _guiUtils.showWarningWindowWithGoto(_('PlatformWaypointBuiltOnTrack'))
+                                        guiHelpers.showWarningWindowWithGoto(_('PlatformWaypointBuiltOnTrack'))
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
                                             waypointId = newWaypointId,
                                         })
                                         return
                                     elseif #allPlatformWaypointIds > 1 then
-                                        _guiUtils.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, allPlatformWaypointIds)
+                                        guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, allPlatformWaypointIds)
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
                                             waypointId = newWaypointId,
                                         })
                                         return
                                     elseif #allTrackWaypoint1Ids < 1 or #allTrackWaypoint2Ids < 1 then
-                                        _guiUtils.showWarningWindowWithGoto(_('TrackWaypointsMissing'))
+                                        guiHelpers.showWarningWindowWithGoto(_('TrackWaypointsMissing'))
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
                                             waypointId = newWaypointId,
@@ -1672,7 +1609,7 @@ function data()
                                     print('contiguous track edges =')
                                     debugPrint(contiguousTrackEdges)
                                     if #contiguousTrackEdges < 1 then
-                                        _guiUtils.showWarningWindowWithGoto(_('TrackWaypointsNotConnected'), allTrackWaypoint1Ids[1], allTrackWaypoint2Ids)
+                                        guiHelpers.showWarningWindowWithGoto(_('TrackWaypointsNotConnected'), allTrackWaypoint1Ids[1], allTrackWaypoint2Ids)
                                         game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
                                             edgeId = lastBuiltEdgeId,
                                             waypointId = newWaypointId,
@@ -1709,12 +1646,7 @@ function data()
                                         args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
                                     )
 
-                                    -- TODO get nearby freestyle stations;
-                                    -- if any, send out a new param to say, join this new station with it
-                                    local nearbyFreestyleStations = _utils.getNearbyFreestyleStations(platformWaypointTransf, 500)
-                                    print('nearbyFreestyleStations =') debugPrint(nearbyFreestyleStations)
-
-                                    game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, {
+                                    local eventArgs = {
                                         platformEdgeIds = contiguousPlatformEdges,
                                         platformWaypointId = newWaypointId,
                                         platformWaypointTransf = platformWaypointTransf,
@@ -1722,7 +1654,20 @@ function data()
                                         trackWaypoint1Position = edgeUtils.getObjectPosition(allTrackWaypoint1Ids[1]),
                                         trackWaypoint2Id = allTrackWaypoint2Ids[1],
                                         trackWaypoint2Position = edgeUtils.getObjectPosition(allTrackWaypoint2Ids[1]),
-                                    })
+                                    }
+                                    -- TODO get nearby freestyle stations;
+                                    -- if any, send out a new param "join2StationId" to say, join this new station with it
+                                    local nearbyFreestyleStations = _utils.getNearbyFreestyleStationsList(platformWaypointTransf, 500)
+                                    if #nearbyFreestyleStations > 0 then
+                                        guiHelpers.showNearbyStationPicker(
+                                            nearbyFreestyleStations,
+                                            _eventId,
+                                            _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
+                                            eventArgs
+                                        )
+                                    else
+                                        game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, eventArgs)
+                                    end
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint1ModelId then
                                     handleTrackWaypointBuilt(trackWaypoint1ModelId)
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint2ModelId then

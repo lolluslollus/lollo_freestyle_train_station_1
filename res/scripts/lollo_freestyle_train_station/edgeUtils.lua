@@ -193,6 +193,31 @@ local function sign(num1)
     return -1
 end
 
+-- LOLLO TODO try another simpler implementation,
+-- based on api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
+-- It returns a list of edges, each with:
+-- geometry = {
+--     params = {
+--       pos = {
+--         x = -1088.1900634766,
+--         y = -1178.9484863281,
+--       },
+--       tangent = {
+--         x = 65.523628234863,
+--         y = 23.809280395508,
+--       },
+--     },
+--     tangent = {
+--       x = 0,
+--       y = 0,
+--     },
+--     height = {
+--       x = 6.9427075386047,
+--       y = 6.9427075386047,
+--     },
+--     length = 69.715339660645,
+--     width = 3,
+--   },
 helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betweenPosition)
     if not(position0) or not(position1) or not(tangent0) or not(tangent1) then return nil end
 
