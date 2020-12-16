@@ -789,7 +789,8 @@ local _actions = {
             newConstruction.params = {
                 modules = { [params_newModuleKey] = params_newModuleValue },
                 neighbourNodeIds = params_neighbourNodeIds,
-                seed = 123e4, -- we need this to avoid dumps
+                -- seed = 123e4, -- we need this to avoid dumps
+                seed = 123,
                 terminals = { params_newTerminal },
             }
             newConstruction.transf = api.type.Mat4f.new(
@@ -809,13 +810,15 @@ local _actions = {
             local newParams = {
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
                 neighbourNodeIds = params_neighbourNodeIds,
-                -- seed = oldCon.params.seed + 1,
+                -- seed = oldCon.params.seed,
+                seed = oldCon.params.seed + 1,
+                -- seed = oldCon.params.seed + 2,
                 -- seed = oldCon.params.seed + 1000,
                 -- seed = 123e4, -- same as when I build first time
                 -- seed = 123e4 + 456e4,
                 -- seed = 234e5,
                 -- seed = math.random(oldCon.params.seed, oldCon.params.seed + 1000),
-                seed = nil,
+                -- seed = nil,
                 terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
             }
             print('lollo010, newParams =') debugPrint(newParams)

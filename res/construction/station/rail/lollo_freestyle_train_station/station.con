@@ -39,6 +39,8 @@ function data()
 			print('updateFn starting, params =')
 			debugPrint(params)
 
+			-- math.randomseed(params.seed)
+
 			if not params.modules then params.modules = {} end
 
 			local sampleParams =
