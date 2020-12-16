@@ -15,10 +15,10 @@ end
 local constructionDataBak = nil
 local _eventId = '__lolloFreestyleTrainStation__'
 local _eventNames = {
-    BUILD_SNAPPY_TRACKS_REQUESTED = 'buildSNappyTracksRequested',
-    BUILD_STATION_REQUESTED = 'platformWaypointBuiltOnPlatform',
+    BUILD_SNAPPY_TRACKS_4_1_TERMINAL_REQUESTED = 'buildSNappyTracks41TerminalRequested',
+    BUILD_STATION_REQUESTED = 'buildStationRequested',
     REBUILD_ALL_TRACKS_REQUESTED = 'rebuildAllTracksRequested',
-    REBUILD_SINGLE_TERMINAL_TRACKS_REQUESTED = 'rebuildSingleTerminalTracksRequested',
+    REBUILD_1_TERMINAL_TRACKS_REQUESTED = 'rebuild1TerminalTracksRequested',
     REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
     TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
     -- TRACK_WAYPOINT_1_BUILT_ON_TRACK = 'trackWaypoint1BuiltOnTrack',
@@ -119,9 +119,8 @@ local _guiUtils = {
     end
 }
 local _utils = {
-    getStationEndNodesUnsorted = function(stationConstructionId, nTerminal)
-        print('getStationEndNodesUnsorted starting, stationConstructionId =', stationConstructionId, 'nTerminal =', nTerminal)
-        local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+    getStationEndNodesUnsorted = function(con, nTerminal)
+        print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
         -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
         -- print('con =') debugPrint(conData)
         if not(con) or not(stringUtils.stringEndsWith(con.fileName, _constants.stationConFileNameShort)) then
@@ -169,7 +168,7 @@ local _utils = {
         if #endNodeIds < 1 then return {} end
         -- if #endNodeIds == 1 then return endNodeIds end
         if #endNodeIds > 2 then
-            print('found', #endNodeIds, 'free nodes in station construction', stationConstructionId)
+            print('found', #endNodeIds, 'free nodes in station construction')
             return {}
         end
 
@@ -638,6 +637,8 @@ local _utils = {
 }
 
 _utils.getAllStationEndNodesUnsorted = function(stationConstructionId)
+    if not(edgeUtils.isValidId(stationConstructionId)) then return {} end
+
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
@@ -647,14 +648,23 @@ _utils.getAllStationEndNodesUnsorted = function(stationConstructionId)
 
     local results = {}
     for i = 1, #con.params.terminals do
-        results[#results+1] = _utils.getStationEndNodesUnsorted(stationConstructionId, i)
+        results[#results+1] = _utils.getStationEndNodesUnsorted(con, i)
     end
 
     return results
 end
 
 _utils.getStationEndNodesSorted = function(neighbourNode1Id, neighbourNode2Id, stationConstructionId, nTerminal)
-    local endNodeIds = _utils.getStationEndNodesUnsorted(stationConstructionId, nTerminal)
+    if not(edgeUtils.isValidId(stationConstructionId)) then return {} end
+
+    local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
+    -- print('con =') debugPrint(conData)
+    if not(con) or not(stringUtils.stringEndsWith(con.fileName, _constants.stationConFileNameShort)) then
+        return {}
+    end
+
+    local endNodeIds = _utils.getStationEndNodesUnsorted(con, nTerminal)
     if #endNodeIds ~= 2 then return {} end
 
     local result = {
@@ -844,15 +854,15 @@ local _actions = {
                 print('build station callback, success =', success)
                 -- debugPrint(result)
                 if success and successEventName then
-                    local eventParams = arrayUtils.cloneDeepOmittingFields(args)
-                    eventParams.stationConstructionId = result.resultEntities[1]
-                    print('eventParams.stationConstructionId =', eventParams.stationConstructionId)
+                    local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
+                    eventArgs.stationConstructionId = result.resultEntities[1]
+                    print('eventParams.stationConstructionId =', eventArgs.stationConstructionId)
                     print('buildSingleTerminalStation callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName,
-                        eventParams
+                        eventArgs
                     ))
                 end
             end
@@ -1435,10 +1445,10 @@ function data()
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
                 eventArgs.nTerminal = 1
                 _actions.buildSingleTerminalStation(
-                    _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED,
+                    _eventNames.BUILD_SNAPPY_TRACKS_4_1_TERMINAL_REQUESTED,
                     eventArgs
                 )
-            elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
+            elseif name == _eventNames.BUILD_SNAPPY_TRACKS_4_1_TERMINAL_REQUESTED then
                 _actions.buildSnappyTracks(
                     edgeUtils.getConnectedEdgeIds(
                         {
