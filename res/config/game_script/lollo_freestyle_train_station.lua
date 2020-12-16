@@ -684,20 +684,20 @@ _utils.getStationEndNodesSorted = function(neighbourNode1Id, neighbourNode2Id, s
         node2Id = nil,
     }
 
-    local _baseNode1 = api.engine.getComponent(neighbourNode1Id, api.type.ComponentType.BASE_NODE)
-    local baseNode1 = api.engine.getComponent(endNodeIds[1], api.type.ComponentType.BASE_NODE)
-    if edgeUtils.isNumVeryClose(baseNode1.position.x, _baseNode1.position.x)
-    and edgeUtils.isNumVeryClose(baseNode1.position.y, _baseNode1.position.y)
-    and edgeUtils.isNumVeryClose(baseNode1.position.z, _baseNode1.position.z)
+    local baseNode1_Neighbour = api.engine.getComponent(neighbourNode1Id, api.type.ComponentType.BASE_NODE)
+    local baseNode1_Station = api.engine.getComponent(endNodeIds[1], api.type.ComponentType.BASE_NODE)
+    if edgeUtils.isNumVeryClose(baseNode1_Station.position.x, baseNode1_Neighbour.position.x)
+    and edgeUtils.isNumVeryClose(baseNode1_Station.position.y, baseNode1_Neighbour.position.y)
+    and edgeUtils.isNumVeryClose(baseNode1_Station.position.z, baseNode1_Neighbour.position.z)
     then
         result.node1Id = endNodeIds[1]
     end
 
-    local _baseNode2 = api.engine.getComponent(neighbourNode2Id, api.type.ComponentType.BASE_NODE)
-    local baseNode2 = api.engine.getComponent(endNodeIds[2], api.type.ComponentType.BASE_NODE)
-    if edgeUtils.isNumVeryClose(baseNode2.position.x, _baseNode2.position.x)
-    and edgeUtils.isNumVeryClose(baseNode2.position.y, _baseNode2.position.y)
-    and edgeUtils.isNumVeryClose(baseNode2.position.z, _baseNode2.position.z)
+    local baseNode2_Neighbour = api.engine.getComponent(neighbourNode2Id, api.type.ComponentType.BASE_NODE)
+    local baseNode2_Station = api.engine.getComponent(endNodeIds[2], api.type.ComponentType.BASE_NODE)
+    if edgeUtils.isNumVeryClose(baseNode2_Station.position.x, baseNode2_Neighbour.position.x)
+    and edgeUtils.isNumVeryClose(baseNode2_Station.position.y, baseNode2_Neighbour.position.y)
+    and edgeUtils.isNumVeryClose(baseNode2_Station.position.z, baseNode2_Neighbour.position.z)
     then
         result.node2Id = endNodeIds[2]
     end
