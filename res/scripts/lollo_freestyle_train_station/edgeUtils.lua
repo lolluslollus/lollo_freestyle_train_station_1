@@ -87,79 +87,6 @@ local function swap(num1, num2)
     num1 = num2
     num2 = swapTemp
 end
--- LOLLO TODO move this into helper.street.getNearestEdgeId
-helper.getNearestEdgeId = function(transf)
-    if type(transf) ~= 'table' then return nil end
-
-    local _position = transfUtils.getVec123Transformed({0, 0, 0}, transf)
-    local _searchRadius = 0.5
-    local _box0 = api.type.Box3.new(
-        api.type.Vec3f.new(_position[1] - _searchRadius, _position[2] - _searchRadius, -9999),
-        api.type.Vec3f.new(_position[1] + _searchRadius, _position[2] + _searchRadius, 9999)
-    )
-    local baseEdgeIds = {}
-    local callback0 = function(entity, boundingVolume)
-        -- print('callback0 found entity', entity)
-        -- print('boundingVolume =')
-        -- debugPrint(boundingVolume)
-        if not(entity) then return end
-
-        if not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE)) then return end
-        -- print('the entity is a BASE_EDGE')
-
-        baseEdgeIds[#baseEdgeIds+1] = entity
-    end
-    api.engine.system.octreeSystem.findIntersectingEntities(_box0, callback0)
-
-    if #baseEdgeIds == 0 then
-        return nil
-    elseif #baseEdgeIds == 1 then
-        return baseEdgeIds[1]
-    else
-        -- print('multiple base edges found')
-        -- choose one edge and return its id
-        for i = 1, #baseEdgeIds do
-            local baseEdge = api.engine.getComponent(baseEdgeIds[i], api.type.ComponentType.BASE_EDGE)
-            local baseEdgeStreet = api.engine.getComponent(baseEdgeIds[i], api.type.ComponentType.BASE_EDGE_STREET)
-            if baseEdge ~= nil and baseEdgeStreet ~= nil then -- false when there is a modded road that underwent a breaking change
-                local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                local streetTypeProperties = api.res.streetTypeRep.get(baseEdgeStreet.streetType)
-                local halfStreetWidth = (streetTypeProperties.streetWidth or 0) * 0.5 + (streetTypeProperties.sidewalkWidth or 0)
-                local alpha = math.atan2(node1.position.y - node0.position.y, node1.position.x - node0.position.x)
-                local xPlus = - math.sin(alpha) * halfStreetWidth
-                local yPlus = math.cos(alpha) * halfStreetWidth
-                local vertices = {
-                    [1] = {
-                        x = node0.position.x - xPlus,
-                        y = node0.position.y - yPlus
-                    },
-                    [2] = {
-                        x = node0.position.x + xPlus,
-                        y = node0.position.y + yPlus
-                    },
-                    [3] = {
-                        x = node1.position.x + xPlus,
-                        y = node1.position.y + yPlus
-                    },
-                    [4] = {
-                        x = node1.position.x - xPlus,
-                        y = node1.position.y - yPlus
-                    },
-                }
-                -- check if the _position falls within the quadrangle approximating the edge
-                -- LOLLO NOTE I could get a more accurate polygon (not necessarily a quadrangle!) getIsPointWithin
-                -- api.engine.getComponent(entity, api.type.ComponentType.LOT_LIST)
-                -- but it returns nothing with bridges and tunnels
-                if quadrangleUtils.getIsPointWithin(quadrangleUtils.getVerticesSortedClockwise(vertices), _position) then
-                    return baseEdgeIds[i]
-                end
-            end
-        end
-        -- print('falling back')
-        return baseEdgeIds[1] -- fallback
-    end
-end
 
 helper.getNearestObjectIds = function(transf, searchRadius, componentType)
     if type(transf) ~= 'table' then return nil end
@@ -560,6 +487,80 @@ helper.isXYZVeryClose = function(xyz1, xyz2, roundingFactor)
     }
 
     return roundedXYZ1.x == roundedXYZ2.x and roundedXYZ1.y == roundedXYZ2.y and roundedXYZ1.z == roundedXYZ2.z
+end
+
+helper.street = {}
+helper.street.getNearestEdgeId = function(transf)
+    if type(transf) ~= 'table' then return nil end
+
+    local _position = transfUtils.getVec123Transformed({0, 0, 0}, transf)
+    local _searchRadius = 0.5
+    local _box0 = api.type.Box3.new(
+        api.type.Vec3f.new(_position[1] - _searchRadius, _position[2] - _searchRadius, -9999),
+        api.type.Vec3f.new(_position[1] + _searchRadius, _position[2] + _searchRadius, 9999)
+    )
+    local baseEdgeIds = {}
+    local callback0 = function(entity, boundingVolume)
+        -- print('callback0 found entity', entity)
+        -- print('boundingVolume =')
+        -- debugPrint(boundingVolume)
+        if not(entity) then return end
+
+        if not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE)) then return end
+        -- print('the entity is a BASE_EDGE')
+
+        baseEdgeIds[#baseEdgeIds+1] = entity
+    end
+    api.engine.system.octreeSystem.findIntersectingEntities(_box0, callback0)
+
+    if #baseEdgeIds == 0 then
+        return nil
+    elseif #baseEdgeIds == 1 then
+        return baseEdgeIds[1]
+    else
+        -- print('multiple base edges found')
+        -- choose one edge and return its id
+        for i = 1, #baseEdgeIds do
+            local baseEdge = api.engine.getComponent(baseEdgeIds[i], api.type.ComponentType.BASE_EDGE)
+            local baseEdgeStreet = api.engine.getComponent(baseEdgeIds[i], api.type.ComponentType.BASE_EDGE_STREET)
+            if baseEdge ~= nil and baseEdgeStreet ~= nil then -- false when there is a modded road that underwent a breaking change
+                local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+                local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+                local streetTypeProperties = api.res.streetTypeRep.get(baseEdgeStreet.streetType)
+                local halfStreetWidth = (streetTypeProperties.streetWidth or 0) * 0.5 + (streetTypeProperties.sidewalkWidth or 0)
+                local alpha = math.atan2(node1.position.y - node0.position.y, node1.position.x - node0.position.x)
+                local xPlus = - math.sin(alpha) * halfStreetWidth
+                local yPlus = math.cos(alpha) * halfStreetWidth
+                local vertices = {
+                    [1] = {
+                        x = node0.position.x - xPlus,
+                        y = node0.position.y - yPlus
+                    },
+                    [2] = {
+                        x = node0.position.x + xPlus,
+                        y = node0.position.y + yPlus
+                    },
+                    [3] = {
+                        x = node1.position.x + xPlus,
+                        y = node1.position.y + yPlus
+                    },
+                    [4] = {
+                        x = node1.position.x - xPlus,
+                        y = node1.position.y - yPlus
+                    },
+                }
+                -- check if the _position falls within the quadrangle approximating the edge
+                -- LOLLO NOTE I could get a more accurate polygon (not necessarily a quadrangle!) getIsPointWithin
+                -- api.engine.getComponent(entity, api.type.ComponentType.LOT_LIST)
+                -- but it returns nothing with bridges and tunnels
+                if quadrangleUtils.getIsPointWithin(quadrangleUtils.getVerticesSortedClockwise(vertices), _position) then
+                    return baseEdgeIds[i]
+                end
+            end
+        end
+        -- print('falling back')
+        return baseEdgeIds[1] -- fallback
+    end
 end
 
 helper.track = {}
