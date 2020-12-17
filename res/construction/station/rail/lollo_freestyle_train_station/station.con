@@ -181,6 +181,7 @@ function data()
 				terrainAlignmentLists = {},
 			}
 
+			local vehicleNodes = {}
 			-- the coordinates in terminals are absolute
 			local refTransf = params.terminals[1].myTransf
 			local inverseRefTransf = transfUtils.getInverseTransf(refTransf)
@@ -234,6 +235,7 @@ function data()
 					-- and make them snap to the station own nodes.
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
+				vehicleNodes[t] = #result.edgeLists * 2 - 2
 
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
 				-- if #result.edgeLists > 0 then
@@ -311,7 +313,9 @@ function data()
                 print('NIL')
 			end
 
-			-- TODO fix crash when building short stations, it happens in the following
+			-- TODO fix crash when joining stations, it happens in the following, terminals are invalid
+			-- vehicleNodeOverride was wrong (it is the same for both terminal groups)
+			-- now, I have fixed but I still get InvalidTerminals
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible
@@ -336,7 +340,8 @@ function data()
 							-- LOLLO NOTE there can be 1 terminal 4 1 vehicle node,
 							-- n terminals 4 1 person edge,
 							-- n terminals 4 1 person node
-							vehicleNodeOverride = #params.terminals[t].trackEdgeLists - 1
+							-- vehicleNodeOverride = #params.terminals[t].trackEdgeLists - 1
+							vehicleNodeOverride = vehicleNodes[t]
 						}
 					)
 
