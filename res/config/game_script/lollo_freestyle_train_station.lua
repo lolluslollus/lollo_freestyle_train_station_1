@@ -666,6 +666,9 @@ local _actions = {
         print('buildSnappyTracks starting')
         print('neighbourEdgeIds =') debugPrint(neighbourEdgeIds)
         -- TODO fix error when building new stations, nodeIds may arrive nil:
+        -- instead of writing the neighbour edges or nodes into the station params,
+        -- make an efficient routine to read them when needed.
+        -- to do so, when you are about to delete, make a note of the frozen nodes and edges
         print('nodeIds =') debugPrint(nodeIds)
         if nodeIds == nil then return end
 
