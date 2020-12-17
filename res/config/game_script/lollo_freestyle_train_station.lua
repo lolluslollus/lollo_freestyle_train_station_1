@@ -619,8 +619,8 @@ _utils.getStationEndEntitiesTyped = function(stationConstructionId)
                 node2Id = endNodeIds4T[2],
             },
             stationEndNodePositions = {
-                node1Position = { x = node1Position.x, y = node1Position.y, z = node1Position.z },
-                node2Position = { x = node2Position.x, y = node2Position.y, z = node2Position.z },
+                node1 = { x = node1Position.x, y = node1Position.y, z = node1Position.z },
+                node2 = { x = node2Position.x, y = node2Position.y, z = node2Position.z },
             }
         }
 
@@ -645,6 +645,21 @@ _utils.getStationEndEntitiesTyped = function(stationConstructionId)
     end
 
     -- print('getStationEndEntitiesTyped result =') debugPrint(result)
+    return result
+end
+
+_utils.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
+    if endEntities4T == nil then return nil end
+
+    local result = {
+        node1 = edgeUtils.getNearestObjectIds(
+            transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
+        ),
+        node2 = edgeUtils.getNearestObjectIds(
+            transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
+        )
+    }
+
     return result
 end
 
@@ -922,31 +937,37 @@ local _actions = {
         )
     end,
 
-    rebuildTracks = function(trackEdgeLists, platformEdgeLists, endEntities)
-        -- LOLLO TODO make this function deal with the new, smarter endEntities
+    rebuildTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds)
         print('rebuildTracks starting')
         print('trackEdgeLists =') debugPrint(trackEdgeLists)
-        print('endEntities =') debugPrint(endEntities)
-        if endEntities == nil then return end
+        print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
+        if neighbourNodeIds == nil then return end
 
         local proposal = api.type.SimpleProposal.new()
 
-        local _baseNode1 = api.engine.getComponent(endEntities.neighbourNodeIds.node1Id, api.type.ComponentType.BASE_NODE)
-        local _baseNode2 = api.engine.getComponent(endEntities.neighbourNodeIds.node2Id, api.type.ComponentType.BASE_NODE)
+        -- there may be no neighbour nodes, if the station was built in a certain fashion
+        local _baseNode1 = edgeUtils.isValidAndExistingId(neighbourNodeIds.node1)
+        and api.engine.getComponent(neighbourNodeIds.node1, api.type.ComponentType.BASE_NODE)
+        or nil
+        local _baseNode2 = edgeUtils.isValidAndExistingId(neighbourNodeIds.node2)
+        and api.engine.getComponent(neighbourNodeIds.node2, api.type.ComponentType.BASE_NODE)
+        or nil
         local nNewEntities = 0
         local newNodes = {}
 
         local _addNode = function(position)
-            if edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x)
+            if _baseNode1 ~= nil
+            and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x)
             and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y)
             and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z)
             then
-                return endEntities.neighbourNodeIds.node1Id
-            elseif edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x)
+                return neighbourNodeIds.node1
+            elseif _baseNode2 ~= nil
+            and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x)
             and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y)
             and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z)
             then
-                return endEntities.neighbourNodeIds.node2Id
+                return neighbourNodeIds.node2
             else
                 for _, newNode in pairs(newNodes) do
                     if edgeUtils.isNumVeryClose(position[1], newNode.position[1])
@@ -992,8 +1013,6 @@ local _actions = {
             newSegment.comp.typeIndex = trackEdgeList.typeIndex
             -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
             newSegment.type = _newEdgeType
-            -- me may need:
-            -- newSegment.trackEdge = api.type.BaseEdgeTrack.new()
             newSegment.trackEdge.trackType = trackEdgeList.trackType
             newSegment.trackEdge.catenary = trackEdgeList.catenary
 
@@ -1454,7 +1473,6 @@ function data()
                     true
                 )
             elseif name == _eventNames.TRACK_BULLDOZE_REQUESTED then
-                -- LOLLO TODO do not rely on neighbourNodeIds after this event was caught, but calculate them on the spot instead
                 if not(edgeUtils.isValidId(args.platformWaypointId))
                 or args.splitNodeIds == nil
                 or not(edgeUtils.isValidAndExistingId(args.splitNodeIds.node1Id))
@@ -1545,7 +1563,7 @@ function data()
                         args.constructionData.params.terminals[t].trackEdgeLists,
                         args.constructionData.params.terminals[t].platformEdgeLists,
                         -- args.constructionData.endNodesUnsorted[t]
-                        args.constructionData.endEntities[t]
+                        _utils.getBulldozedStationNeighbourNodeIds(args.constructionData.endEntities[t])
                     )
                 end
             end

@@ -15,5 +15,8 @@
         "data",
         "api",
         "debugPrint"
+    ],
+    "Lua.diagnostics.disable": [
+        "unused-local"
     ]
 }
