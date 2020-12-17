@@ -1251,7 +1251,7 @@ local _actions = {
                     -- no good, there may be a new edge using an old node!
                     -- But check how many nodes are actually added. If it si only 1, fine;
                     -- otherwise, we need a better way to check the new node
-                    print('split callback result =') debugPrint(result)
+                    -- print('split callback result =') debugPrint(result)
                     print('split callback result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     print('addedNodePosition =') debugPrint(addedNodePosition)
@@ -1609,11 +1609,8 @@ function data()
 
                                     return true
                                 end
-                                print('waypointbuilt, args.result =') debugPrint(args.result)
-                                -- if not args.result or not args.result[1] then
-                                --     return
-                                -- end
-
+                                -- LOLLO TODO this is empty, ask UG to fix this
+                                print('waypoint built, args.result =') debugPrint(args.result)
                                 -- LOLLO NOTE as I added an edge object, I have NOT split the edge
                                 if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == platformWaypointModelId then
                                     print('LOLLO platform waypoint built!')

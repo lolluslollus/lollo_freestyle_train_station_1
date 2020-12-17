@@ -372,12 +372,14 @@ helper.getEdgeObjectsIdsWithModelId = function(edgeObjects, refModelId)
     if type(edgeObjects) ~= 'table' or not(helper.isValidId(refModelId)) then return results end
 
     for i = 1, #edgeObjects do
-        local modelInstanceList = api.engine.getComponent(edgeObjects[i][1], api.type.ComponentType.MODEL_INSTANCE_LIST)
-        if modelInstanceList
-        and modelInstanceList.fatInstances
-        and modelInstanceList.fatInstances[1]
-        and modelInstanceList.fatInstances[1].modelId == refModelId then
-            results[#results+1] = edgeObjects[i][1]
+        if helper.isValidAndExistingId(edgeObjects[i][1]) then
+            local modelInstanceList = api.engine.getComponent(edgeObjects[i][1], api.type.ComponentType.MODEL_INSTANCE_LIST)
+            if modelInstanceList ~= nil
+            and modelInstanceList.fatInstances
+            and modelInstanceList.fatInstances[1]
+            and modelInstanceList.fatInstances[1].modelId == refModelId then
+                results[#results+1] = edgeObjects[i][1]
+            end
         end
     end
     return results
