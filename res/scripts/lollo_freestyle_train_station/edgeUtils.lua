@@ -34,6 +34,10 @@ helper.isValidId = function(id)
     return type(id) == 'number' and id > 0
 end
 
+helper.isValidAndExistingId = function(id)
+    return helper.isValidId(id) and api.engine.entityExists(id)
+end
+
 helper.getVectorLength = function(xyz)
     if type(xyz) ~= 'table' then return nil end
     local x = xyz.x or xyz[1] or 0.0

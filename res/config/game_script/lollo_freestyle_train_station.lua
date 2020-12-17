@@ -79,7 +79,7 @@ local _utils = {
 
         local endNodeIds = {}
         for _, frozenEdgeId in pairs(con.frozenEdges) do
-            if edgeUtils.isValidId(frozenEdgeId) then
+            if edgeUtils.isValidAndExistingId(frozenEdgeId) then
                 local baseEdge = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE)
                 if baseEdge ~= nil then
                     local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
@@ -369,7 +369,7 @@ local _utils = {
     getOuterNodes = function(contiguousEdgeIds, trackType)
         -- only for testing
         local _hasOnlyOneEdgeOfType1 = function(nodeId, map)
-            if not(edgeUtils.isValidId(nodeId)) or not(trackType) then return false end
+            if not(edgeUtils.isValidAndExistingId(nodeId)) or not(trackType) then return false end
 
             local edgeIds = map[nodeId] -- userdata
             if not(edgeIds) or #edgeIds < 2 then return true end
@@ -529,7 +529,7 @@ local _utils = {
 
     getProposal2ReplaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
         -- replaces a track segment with an identical one, without destroying the buildings
-        if not(edgeUtils.isValidId(oldEdgeId)) then return false end
+        if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return false end
 
         local oldEdge = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE)
         local oldEdgeTrack = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
@@ -555,7 +555,7 @@ local _utils = {
             newEdge.trackEdge.catenary = false
         end
 
-        if edgeUtils.isValidId(objectIdToRemove) then
+        if edgeUtils.isValidAndExistingId(objectIdToRemove) then
             local edgeObjects = {}
             for _, edgeObj in pairs(oldEdge.objects) do
                 if edgeObj[1] ~= objectIdToRemove then
@@ -577,7 +577,7 @@ local _utils = {
         local proposal = api.type.SimpleProposal.new()
         proposal.streetProposal.edgesToRemove[1] = oldEdgeId
         proposal.streetProposal.edgesToAdd[1] = newEdge
-        if edgeUtils.isValidId(objectIdToRemove) then
+        if edgeUtils.isValidAndExistingId(objectIdToRemove) then
             proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
         end
 
@@ -586,7 +586,7 @@ local _utils = {
 }
 
 _utils.getAllStationEndNodesUnsorted = function(stationConstructionId)
-    if not(edgeUtils.isValidId(stationConstructionId)) then return {} end
+    if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then return {} end
 
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
@@ -604,7 +604,7 @@ _utils.getAllStationEndNodesUnsorted = function(stationConstructionId)
 end
 
 _utils.getStationEndNodesTyped = function(neighbourNode1Id, neighbourNode2Id, stationConstructionId, nTerminal)
-    if not(edgeUtils.isValidId(stationConstructionId)) then
+    if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         print('getStationEndNodesTyped invalid stationConstructionId') debugPrint(stationConstructionId)
         return nil
     end
@@ -756,7 +756,7 @@ local _actions = {
         local conTransf = args.platformWaypointTransf
 
         print('buildStation starting, args =')
-        local oldCon = edgeUtils.isValidId(args.join2StationId)
+        local oldCon = edgeUtils.isValidAndExistingId(args.join2StationId)
         and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
         or nil
         -- debugPrint(args)
@@ -790,7 +790,8 @@ local _actions = {
                 modules = { [params_newModuleKey] = params_newModuleValue },
                 neighbourNodeIds = params_neighbourNodeIds,
                 -- seed = 123e4, -- we need this to avoid dumps
-                seed = 123,
+                -- seed = 123,
+                seed = math.abs(math.ceil(conTransf[13] * 1000)),
                 terminals = { params_newTerminal },
             }
             newConstruction.transf = api.type.Mat4f.new(
@@ -800,8 +801,8 @@ local _actions = {
                 api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
             )
             newConstruction.name = 'construction name'
-            newConstruction.playerEntity = api.engine.util.getPlayer()
         else
+            print('oldCon.transf =', oldCon.transf)
             print('type(oldCon.params) =', type(oldCon.params))
             print('type(oldCon.params.seed) =') debugPrint(type(oldCon.params.seed))
             print('oldCon.params.seed =') debugPrint(oldCon.params.seed)
@@ -812,8 +813,8 @@ local _actions = {
                 neighbourNodeIds = params_neighbourNodeIds,
                 -- LOLLO TODO all these attempts fail with ..\..\src\Lib\model_construction\ConstructionRep.cpp:632: auto __cdecl ConstructionRep::Add::<lambda_a3a201d0a3a0fcfd709d311d815a4fbd>::operator ()(const struct lua::Table &) const: Assertion `params.GetPtr("seed")' failed.
                 -- seed = oldCon.params.seed,
-                -- seed = oldCon.params.seed + 1,
-                seed = oldCon.params.seed - 1,
+                seed = oldCon.params.seed + 1,
+                -- seed = oldCon.params.seed - 1,
                 -- seed = oldCon.params.seed + 2,
                 -- seed = oldCon.params.seed + 1000,
                 -- seed = 123e4, -- same as when I build first time
@@ -830,17 +831,24 @@ local _actions = {
             newParams.terminals[#newParams.terminals+1] = params_newTerminal
             print('lollo050')
             newConstruction.transf = oldCon.transf
+            print('lollo058, newConstruction.transf =') debugPrint(newConstruction.transf)
             print('lollo060, newParams =') debugPrint(newParams)
         end
+        newConstruction.playerEntity = api.engine.util.getPlayer()
+        print('lollo061')
 
         local proposal = api.type.SimpleProposal.new()
         print('lollo070')
         proposal.constructionsToAdd[1] = newConstruction
         print('lollo080')
-        if edgeUtils.isValidId(args.join2StationId) then
+        if edgeUtils.isValidAndExistingId(args.join2StationId) then
             print('lollo081')
             proposal.constructionsToRemove = { args.join2StationId }
             print('lollo082')
+            proposal.old2new = {
+                [args.join2StationId] = 0,
+            }
+            print('lollo084')
         end
         print('lollo090') -- it gets here no problem
 
@@ -974,7 +982,7 @@ local _actions = {
 
     bulldozeConstruction = function(constructionId)
         -- print('constructionId =', constructionId)
-        if not(edgeUtils.isValidId(constructionId)) then return end
+        if not(edgeUtils.isValidAndExistingId(constructionId)) then return end
 
         local oldConstruction = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
         -- print('oldConstruction =')
@@ -1017,7 +1025,7 @@ local _actions = {
 
         local proposal = api.type.SimpleProposal.new()
         for _, edgeId in pairs(allEdgeIds) do
-            if edgeUtils.isValidId(edgeId) then
+            if edgeUtils.isValidAndExistingId(edgeId) then
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
                 if baseEdge then
                     proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
@@ -1073,7 +1081,7 @@ local _actions = {
     end,
 
     replaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
-        if not(edgeUtils.isValidId(oldEdgeId)) then return end
+        if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
         -- replaces a track segment with an identical one, without destroying the buildings
         local proposal = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
         if not(proposal) then return end
@@ -1137,7 +1145,7 @@ local _actions = {
     end,
 
     splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventArgs)
-        if not(edgeUtils.isValidId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
+        if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
 
         local node0TangentLength = edgeUtils.getVectorLength({
             tangent0.x,
@@ -1328,14 +1336,14 @@ function data()
                 _actions.replaceEdgeWithSameRemovingObject(args.edgeId, args.waypointId)
             elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
                 if not(edgeUtils.isValidId(args.platformWaypointId))
-                or not(edgeUtils.isValidId(args.trackWaypoint1Id))
+                or not(edgeUtils.isValidAndExistingId(args.trackWaypoint1Id))
                 or not(edgeUtils.isValidId(args.trackWaypoint2Id))
                 or type(args.trackWaypoint1Position) ~= 'table' or #args.trackWaypoint1Position ~= 3
                 or type(args.trackWaypoint2Position) ~= 'table' or #args.trackWaypoint2Position ~= 3
                 then return end
 
                 local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.trackWaypoint1Id)
-                if not(edgeUtils.isValidId(edgeId)) then return end
+                if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
                 if not(baseEdge) then return end
                 local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
@@ -1369,19 +1377,15 @@ function data()
             elseif name == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
                 if not(edgeUtils.isValidId(args.platformWaypointId))
                 or not(edgeUtils.isValidId(args.neighbourNodeIds.node1Id))
-                or not(edgeUtils.isValidId(args.trackWaypoint2Id))
+                or not(edgeUtils.isValidAndExistingId(args.trackWaypoint2Id))
                 or type(args.trackWaypoint1Position) ~= 'table' or #args.trackWaypoint1Position ~= 3
                 or type(args.trackWaypoint2Position) ~= 'table' or #args.trackWaypoint2Position ~= 3
                 then return end
 
                 local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.trackWaypoint2Id)
-                -- print('edgeId =')
-                -- debugPrint(edgeId)
-                if not(edgeUtils.isValidId(edgeId)) then return end
+                if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
 
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                -- print('baseEdge =')
-                -- debugPrint(baseEdge)
                 if not(baseEdge) then return end
 
                 local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
@@ -1413,8 +1417,8 @@ function data()
                 )
             elseif name == _eventNames.TRACK_BULLDOZE_REQUESTED then
                 if not(edgeUtils.isValidId(args.platformWaypointId))
-                or not(edgeUtils.isValidId(args.neighbourNodeIds.node1Id))
-                or not(edgeUtils.isValidId(args.neighbourNodeIds.node2Id))
+                or not(edgeUtils.isValidAndExistingId(args.neighbourNodeIds.node1Id))
+                or not(edgeUtils.isValidAndExistingId(args.neighbourNodeIds.node2Id))
                 or type(args.trackWaypoint1Position) ~= 'table' or #args.trackWaypoint1Position ~= 3
                 or type(args.trackWaypoint2Position) ~= 'table' or #args.trackWaypoint2Position ~= 3
                 then return end
@@ -1447,7 +1451,7 @@ function data()
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
                 eventArgs.nTerminal = 1
-                if edgeUtils.isValidId(eventArgs.join2StationId) then
+                if edgeUtils.isValidAndExistingId(eventArgs.join2StationId) then
                     local con = api.engine.getComponent(eventArgs.join2StationId, api.type.ComponentType.CONSTRUCTION)
                     if con ~= nil then eventArgs.nTerminal = #con.params.terminals + 1 end
                 end
@@ -1588,7 +1592,7 @@ function data()
                                 local handleTrackWaypointBuilt = function(trackWaypointModelId)
                                     print('LOLLO track waypoint', trackWaypoint1ModelId, 'built!')
                                     local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, args.proposal.proposal.addedSegments[1])
-                                    if not(edgeUtils.isValidId(lastBuiltEdgeId)) then return false end
+                                    if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then return false end
 
                                     local lastBuiltEdge = api.engine.getComponent(
                                         lastBuiltEdgeId,
@@ -1648,7 +1652,7 @@ function data()
                                     print('LOLLO platform waypoint built!')
                                     -- LOLLO TODO ask UG: can't we have the waypointId in args.result?
                                     local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, args.proposal.proposal.addedSegments[1])
-                                    if not(edgeUtils.isValidId(lastBuiltEdgeId)) then return end
+                                    if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then return end
 
                                     local lastBuiltEdge = api.engine.getComponent(
                                         lastBuiltEdgeId,
