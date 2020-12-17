@@ -601,20 +601,29 @@ _utils.getStationEndEntitiesTyped = function(stationConstructionId)
         local endNodeIds4T = _utils.getStationEndNodeIdsUnsorted(con, t)
         if #endNodeIds4T ~= 2 then print('ERROR: getStationEndEntitiesTyped cannnot find the end nodes of station', stationConstructionId) return nil end
 
+        -- I cannot clone these, for some reason: it dumps
+        local node1Position = api.engine.getComponent(endNodeIds4T[1], api.type.ComponentType.BASE_NODE).position, nil, true
+        local node2Position = api.engine.getComponent(endNodeIds4T[2], api.type.ComponentType.BASE_NODE).position, nil, true
         result[t] = {
-            neighbourEdgeIds = {
+            -- these are empty or nil if the station has been snapped to its neighbours
+            disjointNeighbourEdgeIds = {
                 edge1Ids = {},
                 edge2Ids = {}
             },
-            neighbourNodeIds = {
+            disjointNeighbourNodeIds = {
                 node1Id = nil,
                 node2Id = nil,
             },
             stationEndNodeIds = {
                 node1Id = endNodeIds4T[1],
                 node2Id = endNodeIds4T[2],
+            },
+            stationEndNodePositions = {
+                node1Position = { x = node1Position.x, y = node1Position.y, z = node1Position.z },
+                node2Position = { x = node2Position.x, y = node2Position.y, z = node2Position.z },
             }
         }
+
         for i = 1, 2 do
             local nearbyNodeIds = edgeUtils.getNearestObjectIds(
                 transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T[i], api.type.ComponentType.BASE_NODE).position),
@@ -623,19 +632,19 @@ _utils.getStationEndEntitiesTyped = function(stationConstructionId)
             )
             for _, nearbyNodeId in pairs(nearbyNodeIds) do
                 if nearbyNodeId ~= endNodeIds4T[i] then
-                    if i == 1 then result[t].neighbourNodeIds.node1Id = nearbyNodeId
-                    else result[t].neighbourNodeIds.node2Id = nearbyNodeId
+                    if i == 1 then result[t].disjointNeighbourNodeIds.node1Id = nearbyNodeId
+                    else result[t].disjointNeighbourNodeIds.node2Id = nearbyNodeId
                     end
                     break
                 end
             end
         end
 
-        result[t].neighbourEdgeIds.edge1Ids = edgeUtils.getConnectedEdgeIds({result[t].neighbourNodeIds.node1Id})
-        result[t].neighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].neighbourNodeIds.node2Id})
+        result[t].disjointNeighbourEdgeIds.edge1Ids = edgeUtils.getConnectedEdgeIds({result[t].disjointNeighbourNodeIds.node1Id})
+        result[t].disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].disjointNeighbourNodeIds.node2Id})
     end
 
-    print('getStationEndEntitiesTyped result =') debugPrint(result)
+    -- print('getStationEndEntitiesTyped result =') debugPrint(result)
     return result
 end
 
@@ -652,7 +661,6 @@ local _actions = {
         if endEntities == nil then return end
 
         local proposal = api.type.SimpleProposal.new()
-
         local nNewEntities = 0
 
         local _replaceSegment = function(edgeId, endEntities4T)
@@ -661,17 +669,17 @@ local _actions = {
             newSegment.entity = nNewEntities
 
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge.node0 == endEntities4T.neighbourNodeIds.node1Id then
+            if baseEdge.node0 == endEntities4T.disjointNeighbourNodeIds.node1Id then
                 newSegment.comp.node0 = endEntities4T.stationEndNodeIds.node1Id
-            elseif baseEdge.node0 == endEntities4T.neighbourNodeIds.node2Id then
+            elseif baseEdge.node0 == endEntities4T.disjointNeighbourNodeIds.node2Id then
                 newSegment.comp.node0 = endEntities4T.stationEndNodeIds.node2Id
             else
                 newSegment.comp.node0 = baseEdge.node0
             end
 
-            if baseEdge.node1 == endEntities4T.neighbourNodeIds.node1Id then
+            if baseEdge.node1 == endEntities4T.disjointNeighbourNodeIds.node1Id then
                 newSegment.comp.node1 = endEntities4T.stationEndNodeIds.node1Id
-            elseif baseEdge.node1 == endEntities4T.neighbourNodeIds.node2Id then
+            elseif baseEdge.node1 == endEntities4T.disjointNeighbourNodeIds.node2Id then
                 newSegment.comp.node1 = endEntities4T.stationEndNodeIds.node2Id
             else
                 newSegment.comp.node1 = baseEdge.node1
@@ -698,15 +706,15 @@ local _actions = {
 
         for _, endEntities4T in pairs(endEntities) do
             -- for each terminal
-            for i = 1, #endEntities4T.neighbourEdgeIds.edge1Ids do
-                _replaceSegment(endEntities4T.neighbourEdgeIds.edge1Ids[i], endEntities4T)
+            for i = 1, #endEntities4T.disjointNeighbourEdgeIds.edge1Ids do
+                _replaceSegment(endEntities4T.disjointNeighbourEdgeIds.edge1Ids[i], endEntities4T)
             end
-            for i = 1, #endEntities4T.neighbourEdgeIds.edge2Ids do
-                _replaceSegment(endEntities4T.neighbourEdgeIds.edge2Ids[i], endEntities4T)
+            for i = 1, #endEntities4T.disjointNeighbourEdgeIds.edge2Ids do
+                _replaceSegment(endEntities4T.disjointNeighbourEdgeIds.edge2Ids[i], endEntities4T)
             end
 
-            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.neighbourNodeIds.node1Id
-            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.neighbourNodeIds.node2Id
+            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.disjointNeighbourNodeIds.node1Id
+            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.disjointNeighbourNodeIds.node2Id
         end
 
         -- local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
@@ -914,17 +922,17 @@ local _actions = {
         )
     end,
 
-    rebuildTracks = function(trackEdgeLists, platformEdgeList, neighbourNodeIds)
+    rebuildTracks = function(trackEdgeLists, platformEdgeLists, endEntities)
+        -- LOLLO TODO make this function deal with the new, smarter endEntities
         print('rebuildTracks starting')
-        -- print('trackEdgeList =') debugPrint(trackEdgeList)
-        -- print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
-
-        if type(neighbourNodeIds) ~= 'table' or #neighbourNodeIds ~= 2 then return end
+        print('trackEdgeLists =') debugPrint(trackEdgeLists)
+        print('endEntities =') debugPrint(endEntities)
+        if endEntities == nil then return end
 
         local proposal = api.type.SimpleProposal.new()
 
-        local _baseNode1 = api.engine.getComponent(neighbourNodeIds[1], api.type.ComponentType.BASE_NODE)
-        local _baseNode2 = api.engine.getComponent(neighbourNodeIds[2], api.type.ComponentType.BASE_NODE)
+        local _baseNode1 = api.engine.getComponent(endEntities.neighbourNodeIds.node1Id, api.type.ComponentType.BASE_NODE)
+        local _baseNode2 = api.engine.getComponent(endEntities.neighbourNodeIds.node2Id, api.type.ComponentType.BASE_NODE)
         local nNewEntities = 0
         local newNodes = {}
 
@@ -933,12 +941,12 @@ local _actions = {
             and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y)
             and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z)
             then
-                return neighbourNodeIds[1]
+                return endEntities.neighbourNodeIds.node1Id
             elseif edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x)
             and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y)
             and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z)
             then
-                return neighbourNodeIds[2]
+                return endEntities.neighbourNodeIds.node2Id
             else
                 for _, newNode in pairs(newNodes) do
                     if edgeUtils.isNumVeryClose(position[1], newNode.position[1])
@@ -1532,8 +1540,6 @@ function data()
             elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
                 _actions.removeTerminal(args.constructionData, args.slotIdsToRemove, _eventNames.REBUILD_TRACKS_REQUESTED)
             elseif name == _eventNames.REBUILD_TRACKS_REQUESTED then
-                -- LOLLO TODO move the loop inside _actions.rebuildTracks
-                -- and make it deal with the new, smarter endEntities
                 for t = 1, #args.constructionData.params.terminals do
                     _actions.rebuildTracks(
                         args.constructionData.params.terminals[t].trackEdgeLists,
@@ -1571,8 +1577,7 @@ function data()
                             -- now it's too late to read the station params:
                             -- if you are bulldozing the station you backed up before,
                             -- read its tracks from the backup and rebuild them.
-                            -- Otherwise, do nothing.
-
+                            -- Otherwise, do nothing (it should never happen).
                             if constructionDataBak == nil then print('conParamsBak is nil') return end
 
                             for _, constructionId in pairs(args.proposal.toRemove) do
@@ -1581,48 +1586,44 @@ function data()
                                     print('bulldozing a freestyle station, conParamsBak exists and has type', type(constructionDataBak))
                                     -- print('args = ') debugPrint(args)
                                     -- print('constructionDataBak =') debugPrint(constructionDataBak)
-                                    local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
-                                    -- print('constructionParams new =') debugPrint(con)
-
-                                    if con ~= nil and con.params ~= nil and con.params.modules ~= nil
-                                    and constructionDataBak ~= nil and constructionDataBak.params ~= nil and constructionDataBak.params.modules ~= nil then
-                                        if args.result ~= nil and args.result[1] == constructionId
-                                        and #constructionDataBak.params.terminals > 1 then
-                                            -- bulldozing a station module AND there are more terminals left
-                                            local slotIdsToRemove = {}
-                                            for oldSlotId, _ in pairs(constructionDataBak.params.modules) do
-                                                local isFound = false
-                                                for newSlotId, _ in pairs(con.params.modules) do
-                                                    if newSlotId == oldSlotId then
-                                                        isFound = true
-                                                        break
-                                                    end
+                                    if edgeUtils.isValidAndExistingId(constructionId) and #constructionDataBak.params.terminals > 1 then
+                                        -- bulldozing a station module AND there are more terminals left
+                                        -- LOLLO TODO if the user is bulldozing a module, which is NOT the terminal, leave instead.
+                                        local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+                                        local slotIdsToRemove = {}
+                                        for oldSlotId, _ in pairs(constructionDataBak.params.modules) do
+                                            local isFound = false
+                                            for newSlotId, _ in pairs(con.params.modules) do
+                                                if newSlotId == oldSlotId then
+                                                    isFound = true
+                                                    break
                                                 end
-                                                if not(isFound) then slotIdsToRemove[#slotIdsToRemove+1] = oldSlotId end
                                             end
-                                            print('slotIdsToRemove =') debugPrint(slotIdsToRemove)
-                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                string.sub(debug.getinfo(1, 'S').source, 1),
-                                                _eventId,
-                                                _eventNames.REMOVE_TERMINAL_REQUESTED,
-                                                {
-                                                    constructionData = constructionDataBak,
-                                                    slotIdsToRemove = slotIdsToRemove
-                                                }
-                                            ))
-                                        else
-                                            -- bulldozing the whole station
-                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                string.sub(debug.getinfo(1, 'S').source, 1),
-                                                _eventId,
-                                                _eventNames.REBUILD_TRACKS_REQUESTED,
-                                                {
-                                                    constructionData = constructionDataBak,
-                                                }
-                                            ))
+                                            if not(isFound) then slotIdsToRemove[#slotIdsToRemove+1] = oldSlotId end
                                         end
+                                        print('slotIdsToRemove =') debugPrint(slotIdsToRemove)
+                                        if #slotIdsToRemove < 1 then print('ERROR station was bulldozed but no slot ids to remove were found') return end
+
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.REMOVE_TERMINAL_REQUESTED,
+                                            {
+                                                constructionData = constructionDataBak,
+                                                slotIdsToRemove = slotIdsToRemove
+                                            }
+                                        ))
+                                    else
+                                        -- bulldozing the whole station
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.REBUILD_TRACKS_REQUESTED,
+                                            {
+                                                constructionData = constructionDataBak,
+                                            }
+                                        ))
                                     end
-                                    return
                                 else
                                     print('bulldozing something else than', constructionDataBak.constructionId)
                                 end

@@ -445,7 +445,7 @@ helper.getObjectPosition = function(objectId)
 end
 
 helper.getConnectedEdgeIds = function(nodeIds)
-    print('getConnectedEdgeIds starting')
+    -- print('getConnectedEdgeIds starting')
     if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
 
     local _map = api.engine.system.streetSystem.getNode2SegmentMap()
@@ -462,7 +462,7 @@ helper.getConnectedEdgeIds = function(nodeIds)
         end
     end
 
-    print('getConnectedEdgeIds is about to return') debugPrint(results)
+    -- print('getConnectedEdgeIds is about to return') debugPrint(results)
     return results
 end
 
