@@ -345,7 +345,7 @@ function data()
 						local tag = result.models[i].tag
 						if not(stringUtils.isNullOrEmptyString(tag))
 						and stringUtils.stringStartsWith(tag, _constants.waitingAreaTagRoot)
-						and stringUtils.stringEndsWith(tag, tostring(t))
+						and string.gsub(tag, _constants.waitingAreaTagRoot, '') == tostring(t)
 						then
 							waitingAreaModelIndexesBase0[#waitingAreaModelIndexesBase0+1] = i - 1
 						end

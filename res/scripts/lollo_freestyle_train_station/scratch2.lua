@@ -19,6 +19,10 @@ local edgeIdsReversed = arrayUtils.sort(edgeIds, nil, false)
 local seed = math.randomseed(123)
 local rnd = math.random(123, 999)
 
+local root = 'aaa_'
+local a2 = 'aaa_2'
+local a3 = 'aaa_3'
+local tail = string.gsub(a2, root, '')
 local dummy = 123
 
 --  id = 24148,
