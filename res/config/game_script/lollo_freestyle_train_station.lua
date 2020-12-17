@@ -760,9 +760,9 @@ local _actions = {
         and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
         or nil
         -- debugPrint(args)
-        local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
+        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/modular_station.con'
-        newConstruction.fileName = _constants.stationConFileNameLong
+        newCon.fileName = _constants.stationConFileNameLong
 
         local params_newModuleKey = slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId)
         local params_newModuleValue = {
@@ -786,7 +786,7 @@ local _actions = {
             trackEdgeLists = args.trackEdgeList
         }
         if oldCon == nil then
-            newConstruction.params = {
+            newCon.params = {
                 modules = { [params_newModuleKey] = params_newModuleValue },
                 neighbourNodeIds = params_neighbourNodeIds,
                 -- seed = 123e4, -- we need this to avoid dumps
@@ -794,13 +794,13 @@ local _actions = {
                 seed = math.abs(math.ceil(conTransf[13] * 1000)),
                 terminals = { params_newTerminal },
             }
-            newConstruction.transf = api.type.Mat4f.new(
+            newCon.transf = api.type.Mat4f.new(
                 api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
                 api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
                 api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
                 api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
             )
-            newConstruction.name = 'construction name'
+            newCon.name = 'construction name'
         else
             print('oldCon.transf =', oldCon.transf)
             print('type(oldCon.params) =', type(oldCon.params))
@@ -830,16 +830,16 @@ local _actions = {
             print('lollo020')
             newParams.terminals[#newParams.terminals+1] = params_newTerminal
             print('lollo050')
-            newConstruction.transf = oldCon.transf
-            print('lollo058, newConstruction.transf =') debugPrint(newConstruction.transf)
+            newCon.transf = oldCon.transf
+            print('lollo058, newConstruction.transf =') debugPrint(newCon.transf)
             print('lollo060, newParams =') debugPrint(newParams)
         end
-        newConstruction.playerEntity = api.engine.util.getPlayer()
+        newCon.playerEntity = api.engine.util.getPlayer()
         print('lollo061')
 
         local proposal = api.type.SimpleProposal.new()
         print('lollo070')
-        proposal.constructionsToAdd[1] = newConstruction
+        proposal.constructionsToAdd[1] = newCon
         print('lollo080')
         if edgeUtils.isValidAndExistingId(args.join2StationId) then
             print('lollo081')
