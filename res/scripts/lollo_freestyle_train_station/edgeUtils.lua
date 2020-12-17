@@ -149,6 +149,7 @@ end
 --     length = 69.715339660645,
 --     width = 3,
 --   },
+
 helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betweenPosition)
     if not(position0) or not(position1) or not(tangent0) or not(tangent1) then return nil end
 
@@ -459,8 +460,7 @@ helper.getConnectedEdgeIds = function(nodeIds)
         end
     end
 
-    print('getConnectedEdgeIds is about to return')
-    debugPrint(results)
+    print('getConnectedEdgeIds is about to return') debugPrint(results)
     return results
 end
 
@@ -813,7 +813,7 @@ helper.track.getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
     -- local n3 = api.type.NodeId.new(edge2Id, 2)
     -- local n4 = api.type.NodeId.new(edge2Id, 3)
 
--- g = api.engine.getComponent(171540, api.type.ComponentType.TRANSPORT_NETWORK)
+    -- g = api.engine.getComponent(171540, api.type.ComponentType.TRANSPORT_NETWORK)
 
     local z = api.engine.util.pathfinding.findPath(
         {
