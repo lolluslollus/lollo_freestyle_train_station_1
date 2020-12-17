@@ -759,9 +759,7 @@ local _actions = {
         local oldCon = edgeUtils.isValidAndExistingId(args.join2StationId)
         and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
         or nil
-        -- debugPrint(args)
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/modular_station.con'
         newCon.fileName = _constants.stationConFileNameLong
 
         local params_newModuleKey = slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId)
@@ -789,7 +787,6 @@ local _actions = {
             newCon.params = {
                 modules = { [params_newModuleKey] = params_newModuleValue },
                 neighbourNodeIds = params_neighbourNodeIds,
-                -- seed = 123e4, -- we need this to avoid dumps
                 -- seed = 123,
                 seed = math.abs(math.ceil(conTransf[13] * 1000)),
                 terminals = { params_newTerminal },
@@ -802,55 +799,28 @@ local _actions = {
             )
             newCon.name = 'construction name'
         else
-            print('oldCon.transf =', oldCon.transf)
-            print('type(oldCon.params) =', type(oldCon.params))
-            print('type(oldCon.params.seed) =') debugPrint(type(oldCon.params.seed))
-            print('oldCon.params.seed =') debugPrint(oldCon.params.seed)
-            print('oldCon.params.modules =') debugPrint(oldCon.params.modules)
-            -- math.randomseed(oldCon.params.seed)
             local newParams = {
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
                 neighbourNodeIds = params_neighbourNodeIds,
-                -- LOLLO TODO all these attempts fail with ..\..\src\Lib\model_construction\ConstructionRep.cpp:632: auto __cdecl ConstructionRep::Add::<lambda_a3a201d0a3a0fcfd709d311d815a4fbd>::operator ()(const struct lua::Table &) const: Assertion `params.GetPtr("seed")' failed.
                 -- seed = oldCon.params.seed,
                 seed = oldCon.params.seed + 1,
-                -- seed = oldCon.params.seed - 1,
-                -- seed = oldCon.params.seed + 2,
-                -- seed = oldCon.params.seed + 1000,
-                -- seed = 123e4, -- same as when I build first time
-                -- seed = 123e4 + 456e4,
-                -- seed = 234e5,
-                -- seed = math.random(oldCon.params.seed, oldCon.params.seed + 1000),
-                -- seed = nil,
-                -- no seed at all
                 terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
             }
-            print('lollo010, newParams =') debugPrint(newParams)
             newParams.modules[params_newModuleKey] = params_newModuleValue
-            print('lollo020')
             newParams.terminals[#newParams.terminals+1] = params_newTerminal
-            print('lollo050')
+            newCon.params = newParams
             newCon.transf = oldCon.transf
-            print('lollo058, newConstruction.transf =') debugPrint(newCon.transf)
-            print('lollo060, newParams =') debugPrint(newParams)
         end
         newCon.playerEntity = api.engine.util.getPlayer()
-        print('lollo061')
 
         local proposal = api.type.SimpleProposal.new()
-        print('lollo070')
         proposal.constructionsToAdd[1] = newCon
-        print('lollo080')
         if edgeUtils.isValidAndExistingId(args.join2StationId) then
-            print('lollo081')
             proposal.constructionsToRemove = { args.join2StationId }
-            print('lollo082')
             proposal.old2new = {
                 [args.join2StationId] = 0,
             }
-            print('lollo084')
         end
-        print('lollo090') -- it gets here no problem
 
         -- remove edge object
         -- local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
