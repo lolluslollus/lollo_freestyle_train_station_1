@@ -166,16 +166,22 @@ helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betwe
     })
     if node01DistanceXY == 0 then return nil end
 
-    local x20Shift = type(betweenPosition) ~= 'table'
-        and
-            0.5
-        or
-            (helper.getVectorLength({
-                betweenPosition.x - position0.x,
-                betweenPosition.y - position0.y,
-                -- betweenPosition.z - position0.z
-                0.0
-            }) / node01DistanceXY)
+    if type(betweenPosition) ~= 'table' then
+        betweenPosition = {
+            x = (position0.x + position1.x) * 0.5,
+            y = (position0.y + position1.y) * 0.5,
+            z = (position0.z + position1.z) * 0.5,
+        }
+    end
+
+    local x20Shift = helper.getVectorLength(
+        {
+            betweenPosition.x - position0.x,
+            betweenPosition.y - position0.y,
+            -- betweenPosition.z - position0.z
+            0.0
+        }
+    ) / node01DistanceXY
     -- print('x20Shift =', x20Shift or 'NIL')
     -- shift everything around betweenPosition to avoid large numbers being summed and subtracted
     local x0 = position0.x - betweenPosition.x
@@ -663,7 +669,13 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
     if _isTrackEdgeContiguousTo2(_baseEdge1) then
         -- if _isTrackEdgesSameTypeAs2(_edge1Id) then
             print('six')
-            return { _edge1Id, _edge2Id }
+            if _baseEdge1.node1 == _baseEdge2.node0 then
+                print('six point one')
+                return { _edge1Id, _edge2Id }
+            else
+                print('six point two')
+                return { _edge2Id, _edge1Id }
+            end
         -- end
         -- print('seven')
         -- return {}
