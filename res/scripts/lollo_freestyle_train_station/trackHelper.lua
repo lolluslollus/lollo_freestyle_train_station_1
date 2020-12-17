@@ -2,6 +2,8 @@ local _constants = require('lollo_freestyle_train_station.constants')
 
 local helper = {
     isPlatform = function(trackTypeIndex)
+        if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return false end
+
         local trackType = api.res.trackTypeRep.get(trackTypeIndex)
         if trackType == nil then return false end
 

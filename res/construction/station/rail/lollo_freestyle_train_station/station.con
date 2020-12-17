@@ -188,7 +188,6 @@ function data()
 			print('inverseRefTransf =')
 			debugPrint(inverseRefTransf)
 			for t = 1, #params.terminals do
-				-- print('adding stuff for terminal t =', t)
 				-- add terminal slots
 				local inverseMyTransf = transfUtils.getInverseTransf(params.terminals[t].myTransf)
 				table.insert(result.slots, {
@@ -198,10 +197,9 @@ function data()
 					-- shape = 3,
 					spacing = _constants.trackSpacing,
 					-- transf = _constants.idTransf,
-					-- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2, 2, 0, 1},
-					transf = transfUtils.mul(
-						transfUtils.mul(inverseMyTransf, refTransf),
-						{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2, 2, 0, 1}
+					transf = transfUtilUG.mul(
+						transfUtilUG.mul(inverseMyTransf, refTransf),
+						_constants.idTransf
 					),
 					type = _constants.terminalModuleType,
 				})

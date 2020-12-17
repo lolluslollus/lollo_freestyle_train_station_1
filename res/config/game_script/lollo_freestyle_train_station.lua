@@ -71,7 +71,7 @@ local _utils = {
 
     getStationEndNodesUnsorted = function(con, nTerminal)
         -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
-        print('getStationEndNodesUnsorted, con =') debugPrint(con)
+        -- print('getStationEndNodesUnsorted, con =') debugPrint(con)
         -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
         if not(con) or con.fileName ~= _constants.stationConFileNameLong then
             return {}
@@ -545,15 +545,12 @@ local _utils = {
         newEdge.comp.type = oldEdge.type -- respect bridge or tunnel
         newEdge.comp.typeIndex = oldEdge.typeIndex -- respect type of bridge or tunnel
         newEdge.playerOwned = api.engine.getComponent(oldEdgeId, api.type.ComponentType.PLAYER_OWNED)
-
-        if oldEdgeTrack == nil then return false end
-
         newEdge.trackEdge = oldEdgeTrack
         if trackUtils.isPlatform(oldEdgeTrack.trackType) then
             newEdge.trackEdge.catenary = false
         end
 
-        if edgeUtils.isValidAndExistingId(objectIdToRemove) then
+        if edgeUtils.isValidId(objectIdToRemove) then
             local edgeObjects = {}
             for _, edgeObj in pairs(oldEdge.objects) do
                 if edgeObj[1] ~= objectIdToRemove then
@@ -843,6 +840,112 @@ local _actions = {
                     eventArgs.stationConstructionId = result.resultEntities[1]
                     print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
                     print('buildStation callback is about to send command')
+                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                        string.sub(debug.getinfo(1, 'S').source, 1),
+                        _eventId,
+                        successEventName,
+                        eventArgs
+                    ))
+                end
+            end
+        )
+    end,
+
+    removeTerminal = function(successEventName, args)
+        local conTransf = args.platformWaypointTransf
+
+        print('removeTerminal starting, args =')
+        -- TODO this is copied from buildStation, make it properly
+        local oldCon = edgeUtils.isValidAndExistingId(args.join2StationId)
+        and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
+        or nil
+        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+        newCon.fileName = _constants.stationConFileNameLong
+
+        local params_newModuleKey = slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId)
+        local params_newModuleValue = {
+            metadata = {
+                cargo = true,
+            },
+            name = _constants.terminalModuleFileName,
+            updateScript = {
+                fileName = '',
+                params = { },
+            },
+            variant = 0,
+        }
+        -- local params_neighbourNodeIds = {
+        --     node1Id = args.neighbourNodeIds.node1Id,
+        --     node2Id = args.neighbourNodeIds.node2Id,
+        -- }
+        local params_newTerminal = {
+            myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
+            platformEdgeLists = args.platformEdgeList,
+            trackEdgeLists = args.trackEdgeList
+        }
+        if oldCon == nil then
+            newCon.params = {
+                modules = { [params_newModuleKey] = params_newModuleValue },
+                -- neighbourNodeIds = params_neighbourNodeIds,
+                -- seed = 123,
+                seed = math.abs(math.ceil(conTransf[13] * 1000)),
+                terminals = { params_newTerminal },
+            }
+            newCon.transf = api.type.Mat4f.new(
+                api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
+                api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
+                api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
+                api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
+            )
+            newCon.name = 'construction name'
+        else
+            local newParams = {
+                modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
+                -- neighbourNodeIds = params_neighbourNodeIds,
+                -- seed = oldCon.params.seed,
+                seed = oldCon.params.seed + 1,
+                terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
+            }
+            newParams.modules[params_newModuleKey] = params_newModuleValue
+            newParams.terminals[#newParams.terminals+1] = params_newTerminal
+            newCon.params = newParams
+            newCon.transf = oldCon.transf
+        end
+        newCon.playerEntity = api.engine.util.getPlayer()
+
+        local proposal = api.type.SimpleProposal.new()
+        proposal.constructionsToAdd[1] = newCon
+        if edgeUtils.isValidAndExistingId(args.join2StationId) then
+            proposal.constructionsToRemove = { args.join2StationId }
+            proposal.old2new = {
+                [args.join2StationId] = 0,
+            }
+        end
+
+        -- remove edge object
+        -- local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
+        -- local proposal2 = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(platformEdgeId, platformWaypointId)
+        -- if not(proposal2) then return end
+
+        -- proposal.streetProposal = proposal2.streetProposal
+
+        local context = api.type.Context:new()
+        context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        context.cleanupStreetGraph = true -- default is false
+        context.gatherBuildings = false -- default is false
+        context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer()
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                print('removeTerminal callback, success =', success)
+                -- debugPrint(result)
+                if success and successEventName then
+                    local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
+                    eventArgs.stationConstructionId = result.resultEntities[1]
+                    print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
+                    print('removeTerminal callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -1299,8 +1402,6 @@ function data()
             debugPrint(args)
 
             if name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
-                print('bulldoze requested caught, waypointId =') debugPrint(args.waypointId)
-                print('edgeId =') debugPrint(args.edgeId)
                 -- game.interface.bulldoze(args.waypointId) -- dumps
                 _actions.replaceEdgeWithSameRemovingObject(args.edgeId, args.waypointId)
             elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
@@ -1484,8 +1585,7 @@ function data()
                     )
                 )
             elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
-                -- TODO rebuild the station without the given terminal
-                -- and then rebuild its tracks
+                -- _actions.removeTerminal(_eventNames.REBUILD_1_TERMINAL_TRACKS_REQUESTED, args)
             elseif name == _eventNames.REBUILD_ALL_TRACKS_REQUESTED then
                 for i = 1, #args.constructionData.params.terminals do
                     _actions.rebuildTracks(
@@ -1541,7 +1641,7 @@ function data()
                                         if args.result ~= nil and args.result[1] == constructionId
                                         and #constructionDataBak.params.terminals > 1 then
                                             -- bulldozing a station module AND there are more terminals left
-                                            local removedSlotIds = {}
+                                            local slotIdsToRemove = {}
                                             for oldSlotId, _ in pairs(constructionDataBak.params.modules) do
                                                 local isFound = false
                                                 for newSlotId, _ in pairs(con.params.modules) do
@@ -1550,22 +1650,18 @@ function data()
                                                         break
                                                     end
                                                 end
-                                                if not(isFound) then removedSlotIds[#removedSlotIds+1] = oldSlotId end
+                                                if not(isFound) then slotIdsToRemove[#slotIdsToRemove+1] = oldSlotId end
                                             end
-                                            print('removedSlotIds =') debugPrint(removedSlotIds)
+                                            print('slotIdsToRemove =') debugPrint(slotIdsToRemove)
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                                 _eventId,
                                                 _eventNames.REMOVE_TERMINAL_REQUESTED,
                                                 {
                                                     constructionData = constructionDataBak,
-                                                    removedSlotIds = removedSlotIds
+                                                    slotIdsToRemove = slotIdsToRemove
                                                 }
                                             ))
-                                            -- game.interface.sendScriptEvent(_eventId, _eventNames.REMOVE_TERMINAL_REQUESTED, {
-                                            --     constructionData = constructionDataBak,
-                                            --     removedSlotIds = removedSlotIds
-                                            -- })
                                         else
                                             -- bulldozing the whole station
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -1576,9 +1672,6 @@ function data()
                                                     constructionData = constructionDataBak,
                                                 }
                                             ))
-                                            -- game.interface.sendScriptEvent(_eventId, _eventNames.REBUILD_ALL_TRACKS_REQUESTED, {
-                                            --     constructionData = constructionDataBak,
-                                            -- })
                                         end
                                     end
                                     return
@@ -1622,10 +1715,6 @@ function data()
                                                 waypointId = newWaypointId,
                                             }
                                         ))
-                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                        --     edgeId = lastBuiltEdgeId,
-                                        --     waypointId = newWaypointId,
-                                        -- })
                                         return false
                                     else
                                         local similarObjectsIds = _utils.getAllEdgeObjectsWithModelId(trackWaypointModelId)
@@ -1640,10 +1729,6 @@ function data()
                                                     waypointId = newWaypointId ~= similarObjectsIds[1] and newWaypointId or similarObjectsIds[2],
                                                 }
                                             ))
-                                            -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                            --     edgeId = lastBuiltEdgeId,
-                                            --     waypointId = newWaypointId ~= similarObjectsIds[1] and newWaypointId or similarObjectsIds[2],
-                                            -- })
                                             return false
                                         end
                                     end
@@ -1683,10 +1768,6 @@ function data()
                                                 waypointId = newWaypointId,
                                             }
                                         ))
-                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                        --     edgeId = lastBuiltEdgeId,
-                                        --     waypointId = newWaypointId,
-                                        -- })
                                         return
                                     elseif #allPlatformWaypointIds > 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, allPlatformWaypointIds)
@@ -1699,10 +1780,6 @@ function data()
                                                 waypointId = newWaypointId,
                                             }
                                         ))
-                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                        --     edgeId = lastBuiltEdgeId,
-                                        --     waypointId = newWaypointId,
-                                        -- })
                                         return
                                     elseif #allTrackWaypoint1Ids < 1 or #allTrackWaypoint2Ids < 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('TrackWaypointsMissing'))
@@ -1715,10 +1792,6 @@ function data()
                                                 waypointId = newWaypointId,
                                             }
                                         ))
-                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                        --     edgeId = lastBuiltEdgeId,
-                                        --     waypointId = newWaypointId,
-                                        -- })
                                         return
                                     end
                                     -- waypoint built on platform and two track waypoints built nearby
@@ -1746,10 +1819,6 @@ function data()
                                                 waypointId = newWaypointId,
                                             }
                                         ))
-                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                        --     edgeId = lastBuiltEdgeId,
-                                        --     waypointId = newWaypointId,
-                                        -- })
                                         return
                                     end
                                     -- find all consecutive platform edges of the same type
@@ -1772,10 +1841,6 @@ function data()
                                                 waypointId = newWaypointId,
                                             }
                                         ))
-                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.WAYPOINT_BULLDOZE_REQUESTED, {
-                                        --     edgeId = lastBuiltEdgeId,
-                                        --     waypointId = newWaypointId,
-                                        -- })
                                         return
                                     end
 
@@ -1812,7 +1877,6 @@ function data()
                                             _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
                                             eventArgs
                                         ))
-                                        -- game.interface.sendScriptEvent(_eventId, _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED, eventArgs)
                                     end
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint1ModelId then
                                     handleTrackWaypointBuilt(trackWaypoint1ModelId)
@@ -1871,14 +1935,6 @@ function data()
                                         waypointId = removeTrackWaypointsEventArgs[i].waypointId,
                                     }
                                 ))
-                                -- game.interface.sendScriptEvent(
-                                --     _eventId,
-                                --     _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                --     {
-                                --         edgeId = removeTrackWaypointsEventArgs[i].edgeId,
-                                --         waypointId = removeTrackWaypointsEventArgs[i].waypointId,
-                                --     }
-                                -- )
                             end
                         end
                     end
