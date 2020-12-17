@@ -1032,8 +1032,7 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                print('command callback firing for removeTracks')
-                print(success)
+                print('command callback firing for removeTracks, success =', success)
                 -- debugPrint(result)
                 if success and successEventName then
                     print('removeTracks callback is about to send command')
@@ -1112,7 +1111,7 @@ local _actions = {
         )
     end,
 
-    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventArgs)
+    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventArgs, isUpdateArgs)
         if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
 
         local node0TangentLength = edgeUtils.getVectorLength({
@@ -1190,6 +1189,7 @@ local _actions = {
         newEdge1.trackEdge = oldEdgeTrack
 
         if type(oldEdge.objects) == 'table' and #oldEdge.objects > 1 then
+            print('splitting: edge objects found')
             local edge0Objects = {}
             local edge1Objects = {}
             for _, edgeObj in pairs(oldEdge.objects) do
@@ -1223,12 +1223,11 @@ local _actions = {
         proposal.streetProposal.edgesToAdd[1] = newEdge0
         proposal.streetProposal.edgesToAdd[2] = newEdge1
         proposal.streetProposal.edgesToRemove[1] = wholeEdgeId
-        if objectIdToRemove then
+        if edgeUtils.isValidAndExistingId(objectIdToRemove) then
             proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
         end
         proposal.streetProposal.nodesToAdd[1] = newNodeBetween
-        -- print('split proposal =')
-        -- debugPrint(proposal)
+        print('split proposal =') debugPrint(proposal)
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -1251,8 +1250,10 @@ local _actions = {
                     -- no good, there may be a new edge using an old node!
                     -- But check how many nodes are actually added. If it si only 1, fine;
                     -- otherwise, we need a better way to check the new node
+                    -- it looks fine, fortunately
                     -- print('split callback result =') debugPrint(result)
                     print('split callback result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
+                    print('#result.proposal.proposal.addedNodes =', #result.proposal.proposal.addedNodes)
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     print('addedNodePosition =') debugPrint(addedNodePosition)
 
@@ -1264,11 +1265,13 @@ local _actions = {
                     print('addedNodeIds =') debugPrint(addedNodeIds)
 
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
-                    if not(eventArgs.neighbourNodeIds) then eventArgs.neighbourNodeIds = {} end
-                    if successEventName == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
-                        eventArgs.neighbourNodeIds.node1Id = addedNodeIds[1]
-                    elseif successEventName == _eventNames.TRACK_BULLDOZE_REQUESTED then
-                        eventArgs.neighbourNodeIds.node2Id = addedNodeIds[1]
+                    if isUpdateArgs then
+                        if eventArgs.neighbourNodeIds == nil then eventArgs.neighbourNodeIds = {} end
+                        if successEventName == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
+                            eventArgs.neighbourNodeIds.node1Id = addedNodeIds[1]
+                        elseif successEventName == _eventNames.TRACK_BULLDOZE_REQUESTED then
+                            eventArgs.neighbourNodeIds.node2Id = addedNodeIds[1]
+                        end
                     end
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1339,7 +1342,8 @@ function data()
                     nodeBetween,
                     args.trackWaypoint1Id,
                     _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED,
-                    arrayUtils.cloneDeepOmittingFields(args)
+                    arrayUtils.cloneDeepOmittingFields(args),
+                    true
                 )
             elseif name == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
                 if not(edgeUtils.isValidId(args.platformWaypointId))
@@ -1380,7 +1384,8 @@ function data()
                     nodeBetween,
                     args.trackWaypoint2Id,
                     _eventNames.TRACK_BULLDOZE_REQUESTED,
-                    arrayUtils.cloneDeepOmittingFields(args)
+                    arrayUtils.cloneDeepOmittingFields(args),
+                    true
                 )
             elseif name == _eventNames.TRACK_BULLDOZE_REQUESTED then
                 if not(edgeUtils.isValidId(args.platformWaypointId))
@@ -1394,11 +1399,48 @@ function data()
                     args.neighbourNodeIds.node1Id,
                     args.neighbourNodeIds.node2Id
                 )
-                -- print('trackEdgeIdsBetweenNodeIds =')
-                -- debugPrint(trackEdgeIdsBetweenNodeIds)
+                print('trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
+                if #trackEdgeIdsBetweenNodeIds == 0 then
+                    -- TODO issue a warning and destroy platform waypoint
+                    print('no track edges found')
+                    return
+                end
+                if #trackEdgeIdsBetweenNodeIds == 1 then
+                    print('only one track edge, going to split it')
+                    local edgeId = trackEdgeIdsBetweenNodeIds[1]
+                    if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
+
+                    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                    if not(baseEdge) then return end
+
+                    local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+                    local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+                    if not(node0) or not(node1) then return end
+
+                    local nodeBetween = edgeUtils.getNodeBetween(
+                        node0.position,
+                        baseEdge.tangent0,
+                        node1.position,
+                        baseEdge.tangent1
+                    )
+                    _actions.splitEdgeRemovingObject(
+                        edgeId,
+                        node0.position,
+                        baseEdge.tangent0,
+                        node1.position,
+                        baseEdge.tangent1,
+                        nodeBetween,
+                        nil,
+                        _eventNames.TRACK_BULLDOZE_REQUESTED,
+                        arrayUtils.cloneDeepOmittingFields(args),
+                        false
+                    )
+                    return
+                end
+                print('at least two track edges found')
 
                 local trackEdgeList = _utils.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
-                -- print('track bulldoze requested, trackEdgeList =') debugPrint(trackEdgeList)
+                print('track bulldoze requested, trackEdgeList =') debugPrint(trackEdgeList)
 
                 local platformEdgeList = _utils.getEdgeIdsProperties(args.platformEdgeIds)
                 -- print('platformEdgeList =') debugPrint(platformEdgeList)
@@ -1754,7 +1796,7 @@ function data()
                                         trackWaypoint2Id = allTrackWaypoint2Ids[1],
                                         trackWaypoint2Position = edgeUtils.getObjectPosition(allTrackWaypoint2Ids[1]),
                                     }
-                                    -- TODO get nearby freestyle stations;
+                                    -- get nearby freestyle stations;
                                     -- if any, send out a new param "join2StationId" to say, join this new station with it
                                     local nearbyFreestyleStations = _utils.getNearbyFreestyleStationsList(platformWaypointTransf, 500)
                                     if #nearbyFreestyleStations > 0 then

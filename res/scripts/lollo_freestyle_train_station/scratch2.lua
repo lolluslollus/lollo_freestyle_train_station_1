@@ -23,6 +23,9 @@ local root = 'aaa_'
 local a2 = 'aaa_2'
 local a3 = 'aaa_3'
 local tail = string.gsub(a2, root, '')
+
+local kkk = not(nil)
+
 local dummy = 123
 
 --  id = 24148,

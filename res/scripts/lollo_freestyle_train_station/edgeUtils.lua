@@ -836,8 +836,8 @@ helper.track.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     print('node1Id =', _node1Id)
     print('node2Id =', _node2Id)
     print('ONE')
-    if type(_node1Id) ~= 'number' or _node1Id < 1 then return {} end
-    if type(_node2Id) ~= 'number' or _node2Id < 1 then return {} end
+    if not(helper.isValidAndExistingId(_node1Id)) then return {} end
+    if not(helper.isValidAndExistingId(_node2Id)) then return {} end
     print('TWO')
     if _node1Id == _node2Id then return {} end
     print('THREE')
@@ -879,21 +879,34 @@ helper.track.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
         if adjacentEdge1Ids[1] == adjacentEdge2Ids[1] then
             print('NINE')
             return { adjacentEdge1Ids[1] }
-        -- else
-        --     print('TEN')
+        else
+            print('TEN')
         --     return {}
         end
     end
 
     local trackEdgeIdsBetweenEdgeIds = helper.track.getEdgeIdsBetweenEdgeIds(adjacentEdge1Ids[1], adjacentEdge2Ids[1])
-    print('trackEdgeIdsBetweenEdgeIds =')
-    debugPrint(trackEdgeIdsBetweenEdgeIds)
+    print('trackEdgeIdsBetweenEdgeIds =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    -- print('adjacentEdge1Ids =') debugPrint(adjacentEdge1Ids)
+    -- print('adjacentEdge2Ids =') debugPrint(adjacentEdge2Ids)
     -- remove edges adjacent to but outside node1 and node2
+
+    -- for _, edgeId in pairs(trackEdgeIdsBetweenEdgeIds) do
+    --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    --     print('base edge = ', edgeId) debugPrint(baseEdge)
+    -- end
+
     local isExit = false
     while not(isExit) do
         if #trackEdgeIdsBetweenEdgeIds > 1
+        and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[1])
         and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[2]) then
             print('ELEVEN')
+            table.remove(trackEdgeIdsBetweenEdgeIds, 1)
+        elseif #trackEdgeIdsBetweenEdgeIds > 1
+        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[1])
+        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[2]) then
+            print('ELEVEN HALF')
             table.remove(trackEdgeIdsBetweenEdgeIds, 1)
         else
             print('TWELVE')
@@ -903,8 +916,14 @@ helper.track.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     isExit = false
     while not(isExit) do
         if #trackEdgeIdsBetweenEdgeIds > 1
-        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
+        and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
+        and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
             print('THIRTEEN')
+            table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
+        elseif #trackEdgeIdsBetweenEdgeIds > 1
+        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
+        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
+            print('THIRTEEN HALF')
             table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
         else
             print('FOURTEEN')
@@ -912,6 +931,10 @@ helper.track.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
         end
     end
 
+    -- for _, edgeId in pairs(trackEdgeIdsBetweenEdgeIds) do
+    --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    --     print('base edge = ', edgeId) debugPrint(baseEdge)
+    -- end
     return trackEdgeIdsBetweenEdgeIds
 end
 

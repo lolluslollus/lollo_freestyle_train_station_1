@@ -311,7 +311,7 @@ function data()
                 print('NIL')
 			end
 
-			-- TODO fix crash when joining stations, it happens in the following
+			-- TODO fix crash when building short stations, it happens in the following
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible
@@ -350,15 +350,25 @@ function data()
 							waitingAreaModelIndexesBase0[#waitingAreaModelIndexesBase0+1] = i - 1
 						end
 					end
+					print('result.models =') debugPrint(result.models)
+					print('waitingAreaModelIndexesBase0 =') debugPrint(waitingAreaModelIndexesBase0)
+					print('result.terminalGroups before the loop =') debugPrint(result.terminalGroups)
 					for _, modelIndex in pairs(waitingAreaModelIndexesBase0) do
-						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
+						-- print('modelIndex =') debugPrint(modelIndex)
+						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, t - 1})
+						-- print('result.terminalGroups inside the loop =') debugPrint(result.terminalGroups)
 					end
+					print('result.terminalGroups after the loop =') debugPrint(result.terminalGroups)
+
 					table.insert(result.stations[1].terminals, t - 1)
+					print('result.stations =') debugPrint(result.stations)
 				end
 
 				-- avoid dump when configuring
 				if #(result.stations[1].terminals) == 0 then
+					print('avoiding dump when configuring')
 					table.insert(result.stations[1].terminals, 0)
+					print('result.stations =') debugPrint(result.stations)
 				end
 				-- it should output something like (this example has one terminal made of two adjacent bits)
 				-- stock result.stations =
@@ -379,9 +389,8 @@ function data()
 				-- 	}
 				-- }
 
-				-- print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
-				-- print('LOLLO result.models = ')
-				-- debugPrint(result.models)
+				print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
+				print('LOLLO result = ') debugPrint(result)
 				-- print('LOLLO result.stations = ')
 				-- debugPrint(result.stations)
 				-- print('LOLLO result.terminalGroups = ')
