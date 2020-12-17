@@ -664,9 +664,6 @@ local _actions = {
         print('buildSnappyTracks starting')
         print('neighbourEdgeIds =') debugPrint(neighbourEdgeIds)
         -- TODO fix error when building new stations, nodeIds may arrive nil:
-        -- instead of writing the neighbour edges or nodes into the station params,
-        -- make an efficient routine to read them when needed.
-        -- to do so, when you are about to delete a station, make a note of the frozen nodes and edges
         print('nodeIds =') debugPrint(nodeIds)
         if nodeIds == nil then return end
 
@@ -775,10 +772,10 @@ local _actions = {
             },
             variant = 0,
         }
-        local params_neighbourNodeIds = {
-            node1Id = args.neighbourNodeIds.node1Id,
-            node2Id = args.neighbourNodeIds.node2Id,
-        }
+        -- local params_neighbourNodeIds = {
+        --     node1Id = args.neighbourNodeIds.node1Id,
+        --     node2Id = args.neighbourNodeIds.node2Id,
+        -- }
         local params_newTerminal = {
             myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
@@ -787,7 +784,7 @@ local _actions = {
         if oldCon == nil then
             newCon.params = {
                 modules = { [params_newModuleKey] = params_newModuleValue },
-                neighbourNodeIds = params_neighbourNodeIds,
+                -- neighbourNodeIds = params_neighbourNodeIds,
                 -- seed = 123,
                 seed = math.abs(math.ceil(conTransf[13] * 1000)),
                 terminals = { params_newTerminal },
@@ -802,7 +799,7 @@ local _actions = {
         else
             local newParams = {
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
-                neighbourNodeIds = params_neighbourNodeIds,
+                -- neighbourNodeIds = params_neighbourNodeIds,
                 -- seed = oldCon.params.seed,
                 seed = oldCon.params.seed + 1,
                 terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
@@ -1247,25 +1244,24 @@ local _actions = {
                 -- debugPrint(result)
                 --for _, v in pairs(result.entities) do print(v) end
                 -- print('LOLLO freestyle train station callback returned success = ')
-                print('command callback firing for split')
-                print(success)
+                print('command callback firing for split, success =', success)
                 if success and successEventName then
                     -- LOLLO TODO this should come from UG!
                     -- LOLLO TODO try reading the node ids from the added edges instead.
                     -- no good, there may be a new edge using an old node!
-                    print('result =') debugPrint(result)
-                    print('result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
+                    -- But check how many nodes are actually added. If it si only 1, fine;
+                    -- otherwise, we need a better way to check the new node
+                    print('split callback result =') debugPrint(result)
+                    print('split callback result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
-                    print('addedNodePosition =')
-                    debugPrint(addedNodePosition)
+                    print('addedNodePosition =') debugPrint(addedNodePosition)
 
                     local addedNodeIds = edgeUtils.getNearestObjectIds(
                         transfUtils.position2Transf(addedNodePosition),
                         0,
                         api.type.ComponentType.BASE_NODE
                     )
-                    print('addedNodeIds =')
-                    debugPrint(addedNodeIds)
+                    print('addedNodeIds =') debugPrint(addedNodeIds)
 
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                     if not(eventArgs.neighbourNodeIds) then eventArgs.neighbourNodeIds = {} end
