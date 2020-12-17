@@ -325,7 +325,7 @@ helper.getLastBuiltEdgeId = function(entity2tn, addedSegment)
     if not(entity2tn) or not(addedSegment) then return nil end
 
     -- sometimes the entity is known
-    if helper.isValidId(addedSegment.entity) then return addedSegment.entity end
+    if helper.isValidAndExistingId(addedSegment.entity) then return addedSegment.entity end
 
     if not(addedSegment.comp) or not(addedSegment.comp.tangent0)
     or not(addedSegment.comp.node0) or not(addedSegment.comp.node1)
@@ -417,7 +417,7 @@ end
 
 helper.getObjectPosition = function(objectId)
     print('getObjectPosition starting')
-    if not(helper.isValidId(objectId)) then return nil end
+    if not(helper.isValidAndExistingId(objectId)) then return nil end
 
     local modelInstanceList = api.engine.getComponent(objectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
     if not(modelInstanceList) then return nil end
