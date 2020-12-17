@@ -452,10 +452,12 @@ helper.getConnectedEdgeIds = function(nodeIds)
     local results = {}
 
     for _, nodeId in pairs(nodeIds) do
-        local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
-        if connectedEdgeIdsUserdata ~= nil then
-            for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
-                arrayUtils.addUnique(results, edgeId)
+        if helper.isValidAndExistingId(nodeId) then
+            local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
+            if connectedEdgeIdsUserdata ~= nil then
+                for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
+                    arrayUtils.addUnique(results, edgeId)
+                end
             end
         end
     end

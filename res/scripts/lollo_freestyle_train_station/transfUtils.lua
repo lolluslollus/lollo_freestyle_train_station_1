@@ -162,7 +162,7 @@ utils.position2Transf = function(position)
         1, 0, 0, 0,
         0, 1, 0, 0,
         0, 0, 1, 0,
-        position[1], position[2], position[3], 1
+        position[1] or position.x, position[2] or position.y, position[3] or position.z, 1
     }
 end
 
