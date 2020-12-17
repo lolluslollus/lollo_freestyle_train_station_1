@@ -89,7 +89,7 @@ local function swap(num1, num2)
 end
 
 helper.getNearestObjectIds = function(transf, searchRadius, componentType)
-    if type(transf) ~= 'table' then return nil end
+    if type(transf) ~= 'table' then return {} end
 
     if not(componentType) then componentType = api.type.ComponentType.BASE_EDGE end
 
@@ -104,9 +104,9 @@ helper.getNearestObjectIds = function(transf, searchRadius, componentType)
         -- print('callback0 found entity', entity)
         -- print('boundingVolume =')
         -- debugPrint(boundingVolume)
-        if not(entity) then return end
+        if not(entity) then return {} end
 
-        if not(api.engine.getComponent(entity, componentType)) then return end
+        if not(api.engine.getComponent(entity, componentType)) then return {} end
         -- print('the entity has the right component type')
 
         results[#results+1] = entity

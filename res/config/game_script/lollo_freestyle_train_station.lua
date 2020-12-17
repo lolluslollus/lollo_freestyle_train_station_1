@@ -534,6 +534,8 @@ local _utils = {
             newEdge.trackEdge.catenary = false
         end
 
+        print('edgeUtils.isValidId(objectIdToRemove) =', edgeUtils.isValidId(objectIdToRemove))
+        print('edgeUtils.isValidAndExistingId(objectIdToRemove) =', edgeUtils.isValidAndExistingId(objectIdToRemove))
         if edgeUtils.isValidId(objectIdToRemove) then
             local edgeObjects = {}
             for _, edgeObj in pairs(oldEdge.objects) do
@@ -551,6 +553,11 @@ local _utils = {
         else
             print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is') debugPrint(objectIdToRemove)
             newEdge.comp.objects = oldEdge.objects
+        end
+
+        print('newEdge.comp.objects:')
+        for key, value in pairs(newEdge.comp.objects) do
+            print('key =', key) debugPrint(value)
         end
 
         local proposal = api.type.SimpleProposal.new()
@@ -649,17 +656,19 @@ _utils.getStationEndEntitiesTyped = function(stationConstructionId)
 end
 
 _utils.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
+    print('getBulldozedStationNeighbourNodeIds starting')
     if endEntities4T == nil then return nil end
 
     local result = {
         node1 = edgeUtils.getNearestObjectIds(
             transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
-        ),
+        )[1],
         node2 = edgeUtils.getNearestObjectIds(
             transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
-        )
+        )[1]
     }
 
+    print('getBulldozedStationNeighbourNodeIds about to return') debugPrint(result)
     return result
 end
 
@@ -941,32 +950,47 @@ local _actions = {
         print('rebuildTracks starting')
         print('trackEdgeLists =') debugPrint(trackEdgeLists)
         print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
-        if neighbourNodeIds == nil then return end
+        if trackEdgeLists == nil or neighbourNodeIds == nil then return end
 
         local proposal = api.type.SimpleProposal.new()
 
         -- there may be no neighbour nodes, if the station was built in a certain fashion
-        local _baseNode1 = edgeUtils.isValidAndExistingId(neighbourNodeIds.node1)
+        local _baseNode1 = api.engine.entityExists(neighbourNodeIds.node1)
         and api.engine.getComponent(neighbourNodeIds.node1, api.type.ComponentType.BASE_NODE)
         or nil
-        local _baseNode2 = edgeUtils.isValidAndExistingId(neighbourNodeIds.node2)
+        print('_baseNode1 =') debugPrint(_baseNode1)
+        local _baseNode2 = api.engine.entityExists(neighbourNodeIds.node2)
         and api.engine.getComponent(neighbourNodeIds.node2, api.type.ComponentType.BASE_NODE)
         or nil
+        print('_baseNode2 =') debugPrint(_baseNode2)
         local nNewEntities = 0
         local newNodes = {}
 
         local _addNode = function(position)
+            print('adding node, position =') debugPrint(position)
+            if _baseNode1 ~= nil then
+                print('_baseNode1.position =') debugPrint(_baseNode1.position)
+            else
+                print('_baseNode1 is nil')
+            end
+            if _baseNode2 ~= nil then
+                print('_baseNode2.position =') debugPrint(_baseNode2.position)
+            else
+                print('_baseNode2 is NIL')
+            end
             if _baseNode1 ~= nil
             and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x)
             and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y)
             and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z)
             then
+                print('fifteen')
                 return neighbourNodeIds.node1
             elseif _baseNode2 ~= nil
             and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x)
             and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y)
             and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z)
             then
+                print('sixteen')
                 return neighbourNodeIds.node2
             else
                 for _, newNode in pairs(newNodes) do
@@ -974,10 +998,12 @@ local _actions = {
                     and edgeUtils.isNumVeryClose(position[2], newNode.position[2])
                     and edgeUtils.isNumVeryClose(position[3], newNode.position[3])
                     then
+                        print('eighteen')
                         return newNode.id
                     end
                 end
 
+                print('twenty')
                 local newNode = api.type.NodeAndEntity.new()
                 nNewEntities = nNewEntities - 1
                 newNode.entity = nNewEntities
@@ -1023,13 +1049,14 @@ local _actions = {
             _addSegment(trackEdgeList)
         end
 
-        print('proposal =') debugPrint(proposal)
+        print('rebuildTracks proposal =') debugPrint(proposal)
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, nil, true),
             function(result, success)
                 -- print('LOLLO result = ')
                 -- debugPrint(result)
                 print('LOLLO rebuildTracks success = ', success)
+                print('LOLLO rebuildTracks result = ', result)
             end
         )
     end,
