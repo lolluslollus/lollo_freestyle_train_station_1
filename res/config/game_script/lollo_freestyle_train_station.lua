@@ -71,7 +71,7 @@ local _utils = {
 
     getStationEndNodesUnsorted = function(con, nTerminal)
         -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
-        -- print('con =') debugPrint(con)
+        print('getStationEndNodesUnsorted, con =') debugPrint(con)
         -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
         if not(con) or con.fileName ~= _constants.stationConFileNameLong then
             return {}
@@ -665,8 +665,8 @@ local _actions = {
         -- with an identical track, which snaps to the station end node instead.
         print('buildSnappyTracks starting')
         print('neighbourEdgeIds =') debugPrint(neighbourEdgeIds)
-        print('nodeIds.neighbourNodeIds =') debugPrint(nodeIds.neighbourNodeIds)
-        print('nodeIds.stationEndNodeIds =') debugPrint(nodeIds.stationEndNodeIds)
+        -- TODO fix error when building new stations, nodeIds may arrive nil:
+        print('nodeIds =') debugPrint(nodeIds)
         if nodeIds == nil then return end
 
         local proposal = api.type.SimpleProposal.new()

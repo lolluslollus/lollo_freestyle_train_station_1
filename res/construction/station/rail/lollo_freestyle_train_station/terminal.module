@@ -36,7 +36,7 @@ return {
 
 		print('LOLLO terminal module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('LOLLO result =') debugPrint(result)
-
+		print('transform =') debugPrint(transform)
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
 		result.models[#result.models + 1] = {
 			id = _constants.terminalModelFileName,

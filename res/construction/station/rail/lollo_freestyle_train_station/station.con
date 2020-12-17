@@ -181,9 +181,15 @@ function data()
 				terrainAlignmentLists = {},
 			}
 
+			-- the coordinates in terminals are absolute
+			local refTransf = params.terminals[1].myTransf
+			local inverseRefTransf = transfUtils.getInverseTransf(refTransf)
+			print('inverseRefTransf =')
+			debugPrint(inverseRefTransf)
 			for t = 1, #params.terminals do
 				-- print('adding stuff for terminal t =', t)
 				-- add terminal slots
+				local inverseMyTransf = transfUtils.getInverseTransf(params.terminals[t].myTransf)
 				table.insert(result.slots, {
 					-- height = 1,
 					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
@@ -191,18 +197,19 @@ function data()
 					-- shape = 3,
 					spacing = _constants.trackSpacing,
 					-- transf = _constants.idTransf,
-					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2, 2, 0, 1},
+					-- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2, 2, 0, 1},
+					transf = transfUtils.mul(
+						transfUtils.mul(inverseMyTransf, refTransf),
+						{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2, 2, 0, 1}
+					),
 					type = _constants.terminalModuleType,
 				})
 
-				local inverseTransf = transfUtils.getInverseTransf(params.terminals[t].myTransf)
-				print('inverseTransf =')
-				debugPrint(inverseTransf)
 				-- add track edges
 				for i = 1, #params.terminals[t].trackEdgeLists do
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local newEdgeList = {
-						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseTransf),
+						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseRefTransf),
 						edgeType = tel.edgeType,
 						edgeTypeName = tel.edgeTypeName,
 						freeNodes = {},
@@ -216,11 +223,9 @@ function data()
 					}
 
 					if i == 1 then
-						-- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
 						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
 					end
 					if i == #params.terminals[t].trackEdgeLists then
-						-- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
 						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
 					end
 
@@ -242,7 +247,7 @@ function data()
 					local pel = params.terminals[t].platformEdgeLists[i]
 
 					local newEdgeList = {
-						edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf),
+						edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseRefTransf),
 						edgeType = pel.edgeType,
 						edgeTypeName = pel.edgeTypeName,
 						freeNodes = {},
@@ -257,7 +262,7 @@ function data()
 
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 
-					local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseTransf)
+					local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseRefTransf)
 					-- solve this system:
 					-- first point: 0, 0, 0 => platformPosTanX2[1][1]
 					-- transf[13] = platformPosTanX2[1][1][1]
@@ -306,9 +311,10 @@ function data()
                 print('NIL')
 			end
 
+			-- TODO fix crash when joining stations, it happens in the following
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
-				-- LOLLO TODO try making a station with mixed cargo and passengers
+				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible
 				result.stations = {
 					{
 						tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
