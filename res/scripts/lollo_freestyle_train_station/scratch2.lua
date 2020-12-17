@@ -25,6 +25,11 @@ local a3 = 'aaa_3'
 local tail = string.gsub(a2, root, '')
 
 local kkk = not(nil)
+local indexedList = {
+    [1010] = 'aaa',
+    [1011] = 'bbb',
+}
+indexedList[1010] = nil
 
 local dummy = 123
 

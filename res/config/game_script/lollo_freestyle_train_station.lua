@@ -835,7 +835,7 @@ local _actions = {
             function(result, success)
                 print('build station callback, success =', success)
                 -- debugPrint(result)
-                if success and successEventName then
+                if success and successEventName ~= nil then
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
                     eventArgs.stationConstructionId = result.resultEntities[1]
                     print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
@@ -851,83 +851,45 @@ local _actions = {
         )
     end,
 
-    removeTerminal = function(successEventName, args)
-        local conTransf = args.platformWaypointTransf
+    removeTerminal = function(constructionData, slotIdsToRemove, successEventName)
+        print('removeTerminal starting, constructionData.constructionId =', constructionData.constructionId)
 
-        print('removeTerminal starting, args =')
-        -- TODO this is copied from buildStation, make it properly
-        local oldCon = edgeUtils.isValidAndExistingId(args.join2StationId)
-        and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
+        local oldCon = edgeUtils.isValidAndExistingId(constructionData.constructionId)
+        and api.engine.getComponent(constructionData.constructionId, api.type.ComponentType.CONSTRUCTION)
         or nil
+
+        print('oldCon =') debugPrint(oldCon)
+        if oldCon == nil then return end
+
+        if type(slotIdsToRemove) ~= 'table' or #slotIdsToRemove < 1 then return end
+
+        local slotIdToRemove = slotIdsToRemove[1]
+        print('slotIdToRemove =') debugPrint(slotIdToRemove)
+        local nTerminalToRemove, _, _ = slotHelpers.demangleId(slotIdToRemove)
+        print('nTerminalToRemove =') debugPrint(nTerminalToRemove)
+
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileNameLong
 
-        local params_newModuleKey = slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId)
-        local params_newModuleValue = {
-            metadata = {
-                cargo = true,
-            },
-            name = _constants.terminalModuleFileName,
-            updateScript = {
-                fileName = '',
-                params = { },
-            },
-            variant = 0,
+        local newParams = {
+            modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
+            -- seed = oldCon.params.seed,
+            seed = oldCon.params.seed + 1,
+            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
         }
-        -- local params_neighbourNodeIds = {
-        --     node1Id = args.neighbourNodeIds.node1Id,
-        --     node2Id = args.neighbourNodeIds.node2Id,
-        -- }
-        local params_newTerminal = {
-            myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
-            platformEdgeLists = args.platformEdgeList,
-            trackEdgeLists = args.trackEdgeList
-        }
-        if oldCon == nil then
-            newCon.params = {
-                modules = { [params_newModuleKey] = params_newModuleValue },
-                -- neighbourNodeIds = params_neighbourNodeIds,
-                -- seed = 123,
-                seed = math.abs(math.ceil(conTransf[13] * 1000)),
-                terminals = { params_newTerminal },
-            }
-            newCon.transf = api.type.Mat4f.new(
-                api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
-                api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
-                api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
-                api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
-            )
-            newCon.name = 'construction name'
-        else
-            local newParams = {
-                modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
-                -- neighbourNodeIds = params_neighbourNodeIds,
-                -- seed = oldCon.params.seed,
-                seed = oldCon.params.seed + 1,
-                terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
-            }
-            newParams.modules[params_newModuleKey] = params_newModuleValue
-            newParams.terminals[#newParams.terminals+1] = params_newTerminal
-            newCon.params = newParams
-            newCon.transf = oldCon.transf
-        end
+        newParams.modules[slotIdToRemove] = nil -- redundant, the game does it already
+        table.remove(newParams.terminals, nTerminalToRemove)
+        newCon.params = newParams
+        newCon.transf = oldCon.transf
         newCon.playerEntity = api.engine.util.getPlayer()
 
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
-        if edgeUtils.isValidAndExistingId(args.join2StationId) then
-            proposal.constructionsToRemove = { args.join2StationId }
-            proposal.old2new = {
-                [args.join2StationId] = 0,
-            }
-        end
 
-        -- remove edge object
-        -- local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
-        -- local proposal2 = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(platformEdgeId, platformWaypointId)
-        -- if not(proposal2) then return end
-
-        -- proposal.streetProposal = proposal2.streetProposal
+        proposal.constructionsToRemove = { constructionData.constructionId }
+        proposal.old2new = {
+            [constructionData.constructionId] = 0,
+        }
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- true gives smoother z, default is false
@@ -941,8 +903,9 @@ local _actions = {
             function(result, success)
                 print('removeTerminal callback, success =', success)
                 -- debugPrint(result)
-                if success and successEventName then
-                    local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
+                if success and successEventName ~= nil then
+                    -- TODO send out info on rebuilding the track
+                    local eventArgs = { }
                     eventArgs.stationConstructionId = result.resultEntities[1]
                     print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
                     print('removeTerminal callback is about to send command')
@@ -1136,7 +1099,7 @@ local _actions = {
             function(result, success)
                 print('command callback firing for removeTracks, success =', success)
                 -- debugPrint(result)
-                if success and successEventName then
+                if success and successEventName ~= nil then
                     print('removeTracks callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1346,7 +1309,7 @@ local _actions = {
                 --for _, v in pairs(result.entities) do print(v) end
                 -- print('LOLLO freestyle train station callback returned success = ')
                 print('command callback firing for split, success =', success)
-                if success and successEventName then
+                if success and successEventName ~= nil then
                     -- LOLLO TODO this should come from UG!
                     -- LOLLO TODO try reading the node ids from the added edges instead.
                     -- no good, there may be a new edge using an old node!
@@ -1585,7 +1548,7 @@ function data()
                     )
                 )
             elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
-                -- _actions.removeTerminal(_eventNames.REBUILD_1_TERMINAL_TRACKS_REQUESTED, args)
+                _actions.removeTerminal(args.constructionData, args.slotIdsToRemove, _eventNames.REBUILD_1_TERMINAL_TRACKS_REQUESTED)
             elseif name == _eventNames.REBUILD_ALL_TRACKS_REQUESTED then
                 for i = 1, #args.constructionData.params.terminals do
                     _actions.rebuildTracks(
