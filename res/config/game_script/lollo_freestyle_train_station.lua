@@ -81,7 +81,8 @@ local _utils = {
         for _, frozenEdgeId in pairs(con.frozenEdges) do
             if edgeUtils.isValidAndExistingId(frozenEdgeId) then
                 local baseEdge = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE)
-                if baseEdge ~= nil then
+                local baseEdgeTrack = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                if baseEdge ~= nil and baseEdgeTrack ~= nil and not(trackUtils.isPlatform(baseEdgeTrack.trackType)) then
                     local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
                     local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                     for _, edgeInTerminal in pairs(con.params.terminals[nTerminal].trackEdgeLists) do
@@ -100,14 +101,11 @@ local _utils = {
                             and edgeInTerminal.posTanX2[2][1][2] == baseNode0.position.y
                             and edgeInTerminal.posTanX2[2][1][3] == baseNode0.position.z
                         )) then
-                            local baseEdgeTrack = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                            if baseEdgeTrack ~= nil and not(trackUtils.isPlatform(baseEdgeTrack.trackType)) then
-                                if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node0)) then
-                                    endNodeIds[#endNodeIds+1] = baseEdge.node0
-                                end
-                                if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node1)) then
-                                    endNodeIds[#endNodeIds+1] = baseEdge.node1
-                                end
+                            if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node0)) then
+                                endNodeIds[#endNodeIds+1] = baseEdge.node0
+                            end
+                            if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node1)) then
+                                endNodeIds[#endNodeIds+1] = baseEdge.node1
                             end
                             break
                         end
