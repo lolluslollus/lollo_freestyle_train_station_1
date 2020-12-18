@@ -1723,9 +1723,9 @@ function data()
                                         ))
                                         return false
                                     else
-                                        local similarObjectsIds = _utils.getAllEdgeObjectsWithModelId(trackWaypointModelId)
-                                        if #similarObjectsIds > 1 then
-                                            guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIds)
+                                        local similarObjectsIdsInAnyEdges = _utils.getAllEdgeObjectsWithModelId(trackWaypointModelId)
+                                        if #similarObjectsIdsInAnyEdges > 1 then
+                                            guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIdsInAnyEdges)
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                                 _eventId,
