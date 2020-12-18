@@ -130,10 +130,10 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
         if type(similarObjectsIds) ~= 'table' then return end
 
         local wrongObjectIdTolerant = wrongObjectId
-        if not(edgeUtils.isValidId(wrongObjectIdTolerant)) then wrongObjectIdTolerant = -1 end
+        if not(edgeUtils.isValidAndExistingId(wrongObjectIdTolerant)) then wrongObjectIdTolerant = -1 end
 
         for _, otherObjectId in pairs(similarObjectsIds) do
-            if otherObjectId ~= wrongObjectIdTolerant then
+            if otherObjectId ~= wrongObjectIdTolerant and edgeUtils.isValidAndExistingId(otherObjectId) then
                 local otherObjectPosition = edgeUtils.getObjectPosition(otherObjectId)
                 if otherObjectPosition ~= nil then
                     local buttonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
@@ -158,7 +158,7 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
         end
     end
     local function addGoBackToWrongObjectButton()
-        if not(edgeUtils.isValidId(wrongObjectId)) then return end
+        if not(edgeUtils.isValidAndExistingId(wrongObjectId)) then return end
 
         local wrongObjectPosition = edgeUtils.getObjectPosition(wrongObjectId)
         if wrongObjectPosition ~= nil then

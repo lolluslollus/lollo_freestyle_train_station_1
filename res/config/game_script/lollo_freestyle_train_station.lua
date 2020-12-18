@@ -534,8 +534,8 @@ local _utils = {
             newEdge.trackEdge.catenary = false
         end
 
-        print('edgeUtils.isValidId(objectIdToRemove) =', edgeUtils.isValidId(objectIdToRemove))
-        print('edgeUtils.isValidAndExistingId(objectIdToRemove) =', edgeUtils.isValidAndExistingId(objectIdToRemove))
+        -- print('edgeUtils.isValidId(objectIdToRemove) =', edgeUtils.isValidId(objectIdToRemove))
+        -- print('edgeUtils.isValidAndExistingId(objectIdToRemove) =', edgeUtils.isValidAndExistingId(objectIdToRemove))
         if edgeUtils.isValidId(objectIdToRemove) then
             local edgeObjects = {}
             for _, edgeObj in pairs(oldEdge.objects) do
@@ -658,6 +658,15 @@ end
 _utils.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
     print('getBulldozedStationNeighbourNodeIds starting')
     if endEntities4T == nil then return nil end
+
+    -- print('candidates for node 1 =')
+    -- debugPrint(edgeUtils.getNearestObjectIds(
+    --     transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
+    -- ))
+    -- print('candidates for node 2 =')
+    -- debugPrint(edgeUtils.getNearestObjectIds(
+    --     transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
+    -- ))
 
     local result = {
         node1 = edgeUtils.getNearestObjectIds(
@@ -1161,11 +1170,14 @@ local _actions = {
     end,
 
     replaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
+        print('replaceEdgeWithSameRemovingObject starting')
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
+        print('replaceEdgeWithSameRemovingObject found, the old edge id is valid')
         -- replaces a track segment with an identical one, without destroying the buildings
         local proposal = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
         if not(proposal) then return end
-
+        print('replaceEdgeWithSameRemovingObject likes the proposal')
+        -- debugPrint(proposal)
         --[[ local sampleNewEdge =
         {
         entity = -1,
@@ -1685,7 +1697,7 @@ function data()
                                 local trackWaypoint2ModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_track_waypoint_2.mdl')
 
                                 local handleTrackWaypointBuilt = function(trackWaypointModelId)
-                                    print('LOLLO track waypoint', trackWaypoint1ModelId, 'built!')
+                                    print('LOLLO track waypoint with modelId', trackWaypoint1ModelId, 'built!')
                                     local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, args.proposal.proposal.addedSegments[1])
                                     if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then return false end
 
@@ -1720,7 +1732,7 @@ function data()
                                                 _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
                                                 {
                                                     edgeId = lastBuiltEdgeId,
-                                                    waypointId = newWaypointId ~= similarObjectsIds[1] and newWaypointId or similarObjectsIds[2],
+                                                    waypointId = newWaypointId
                                                 }
                                             ))
                                             return false
