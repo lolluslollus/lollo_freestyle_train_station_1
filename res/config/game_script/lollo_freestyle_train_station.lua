@@ -881,25 +881,29 @@ local _actions = {
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileNameLong
 
-        -- LOLLO TODO after deleting terminal N, you must rename all the slots of the higher terminals one nTerminal lower
         local newParams = {
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
             seed = oldCon.params.seed + 1,
             terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
         }
-        local slotIdsToRemove = {}
-        for slotId, _ in pairs(newParams.modules) do
-            local nTerminal, _, _ = slotHelpers.demangleId(slotId)
-            if nTerminal == nTerminalToRemove then
-                slotIdsToRemove[#slotIdsToRemove+1] = slotId
+
+        local newModules = {}
+        for slotId, modu in pairs(newParams.modules) do
+            local nTerminal, nTrackEdge, baseId = slotHelpers.demangleId(slotId)
+            if nTerminal < nTerminalToRemove then
+                newModules[slotId] = modu
+            elseif nTerminal == nTerminalToRemove then
+            else
+                local newSlotId = slotHelpers.mangleId(nTerminal - 1, nTrackEdge, baseId)
+                newModules[newSlotId] = modu
             end
         end
-        for slotId, _ in pairs(slotIdsToRemove) do
-            newParams.modules[slotId] = nil
-        end
+        newParams.modules = newModules
+
         local removedTerminal = newParams.terminals[nTerminalToRemove]
         table.remove(newParams.terminals, nTerminalToRemove)
+
         newCon.params = newParams
         newCon.transf = oldCon.transf
         newCon.playerEntity = api.engine.util.getPlayer()

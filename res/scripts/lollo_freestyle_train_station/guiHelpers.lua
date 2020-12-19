@@ -142,7 +142,7 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
                     local button = api.gui.comp.Button.new(buttonLayout, true)
                     button:onClick(
                         function()
-                            -- LOLLO TODO this dumps, ask UG to fix it
+                            -- UG TODO this dumps, ask UG to fix it
                             -- api.gui.util.CameraController:setCameraData(
                             --     api.type.Vec2f.new(otherObjectPosition[1], otherObjectPosition[2]),
                             --     100, 0, 0
@@ -168,7 +168,7 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
             local button = api.gui.comp.Button.new(buttonLayout, true)
             button:onClick(
                 function()
-                    -- LOLLO TODO this dumps, ask UG to fix it
+                    -- UG TODO this dumps, ask UG to fix it
                     -- api.gui.util.CameraController:setCameraData(
                     --     api.type.Vec2f.new(wrongObjectPosition[1], wrongObjectPosition[2]),
                     --     100, 0, 0

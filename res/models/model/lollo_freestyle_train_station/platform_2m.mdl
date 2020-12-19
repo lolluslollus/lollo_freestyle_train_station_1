@@ -37,7 +37,7 @@ function data()
             },
         },
         metadata = {
-            -- LOLLO NOTE transportNetworkProvider nhere has no effect, LOLLO TODO ask UG if this would be possible
+            -- LOLLO NOTE transportNetworkProvider nhere has no effect, UG TODO ask UG if this would be possible
             -- transportNetworkProvider = {
             --     laneLists = {
             --         {

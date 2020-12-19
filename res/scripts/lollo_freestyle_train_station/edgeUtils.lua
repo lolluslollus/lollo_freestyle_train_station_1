@@ -322,7 +322,7 @@ end
 helper.getLastBuiltEdgeId = function(entity2tn, addedSegment)
     -- these variables are all userdata but I can use pairs on entity2tn.
     -- the game does not populate result here, so I have to go through this.
-    -- TODO ask UG to add this themselves
+    -- UG TODO ask UG to add this themselves
     if not(entity2tn) or not(addedSegment) then return nil end
 
     -- sometimes the entity is known
