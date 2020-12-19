@@ -795,6 +795,7 @@ local _actions = {
         }
         if oldCon == nil then
             newCon.params = {
+                mainTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
                 modules = { [params_newModuleKey] = params_newModuleValue },
                 -- seed = 123,
                 seed = math.abs(math.ceil(conTransf[13] * 1000)),
@@ -809,8 +810,8 @@ local _actions = {
             -- newCon.name = 'construction name'
         else
             local newParams = {
+                mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
-                -- seed = oldCon.params.seed,
                 seed = oldCon.params.seed + 1,
                 terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
             }
@@ -881,8 +882,8 @@ local _actions = {
         newCon.fileName = _constants.stationConFileNameLong
 
         local newParams = {
+            mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
-            -- seed = oldCon.params.seed,
             seed = oldCon.params.seed + 1,
             terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
         }

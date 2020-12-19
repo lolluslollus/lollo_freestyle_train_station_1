@@ -182,13 +182,14 @@ function data()
 			}
 
 			local vehicleNodes = {}
-			-- the coordinates in terminals are absolute
-			local refTransf = params.terminals[1].myTransf
-			local inverseRefTransf = transfUtils.getInverseTransf(refTransf)
-			print('inverseRefTransf =')
-			debugPrint(inverseRefTransf)
+			-- LOLLO NOTE the coordinates in terminals are absolute
+			local mainTransf = params.mainTransf
+			local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+			print('inverseMainTransf =')
+			debugPrint(inverseMainTransf)
 			for t = 1, #params.terminals do
 				-- add terminal slots
+				-- LOLLO TODO after deleting terminal N, you must rename all the slots of the higher terminals one nTerminal lower
 				local inverseMyTransf = transfUtils.getInverseTransf(params.terminals[t].myTransf)
 				table.insert(result.slots, {
 					-- height = 1,
@@ -198,7 +199,7 @@ function data()
 					spacing = _constants.trackSpacing,
 					-- transf = _constants.idTransf,
 					transf = transfUtilUG.mul(
-						transfUtilUG.mul(inverseMyTransf, refTransf),
+						transfUtilUG.mul(inverseMyTransf, mainTransf),
 						_constants.idTransf
 					),
 					type = _constants.terminalModuleType,
@@ -208,7 +209,7 @@ function data()
 				for i = 1, #params.terminals[t].trackEdgeLists do
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local newEdgeList = {
-						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseRefTransf),
+						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf),
 						edgeType = tel.edgeType,
 						edgeTypeName = tel.edgeTypeName,
 						freeNodes = {},
@@ -247,7 +248,7 @@ function data()
 					local pel = params.terminals[t].platformEdgeLists[i]
 
 					local newEdgeList = {
-						edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseRefTransf),
+						edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseMainTransf),
 						edgeType = pel.edgeType,
 						edgeTypeName = pel.edgeTypeName,
 						freeNodes = {},
@@ -262,7 +263,7 @@ function data()
 
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 
-					local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseRefTransf)
+					local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseMainTransf)
 					-- solve this system:
 					-- first point: 0, 0, 0 => platformPosTanX2[1][1]
 					-- transf[13] = platformPosTanX2[1][1][1]
