@@ -402,22 +402,18 @@ local _utils = {
         }
         -- print('LOLLO attempting to place edge object with position =')
         -- debugPrint(edgeObjPosition)
-        -- print('wholeEdge.node0pos =')
-        -- debugPrint(node0pos)
-        -- print('nodeBetween.position =')
-        -- debugPrint(nodeBetween.position)
-        -- print('nodeBetween.tangent =')
-        -- debugPrint(nodeBetween.tangent)
-        -- print('wholeEdge.node1pos =')
-        -- debugPrint(node1pos)
+        -- print('wholeEdge.node0pos =') debugPrint(node0pos)
+        -- print('nodeBetween.position =') debugPrint(nodeBetween.position)
+        -- print('nodeBetween.tangent =') debugPrint(nodeBetween.tangent)
+        -- print('wholeEdge.node1pos =') debugPrint(node1pos)
         -- first estimator
         -- local nodeBetween_Node0_Distance = edgeUtils.getVectorLength({
-        --     nodeBetween.position[1] - node0pos[1],
-        --     nodeBetween.position[2] - node0pos[2]
+        --     nodeBetween.position.x - node0pos[1],
+        --     nodeBetween.position.y - node0pos[2]
         -- })
         -- local nodeBetween_Node1_Distance = edgeUtils.getVectorLength({
-        --     nodeBetween.position[1] - node1pos[1],
-        --     nodeBetween.position[2] - node1pos[2]
+        --     nodeBetween.position.x - node1pos[1],
+        --     nodeBetween.position.y - node1pos[2]
         -- })
         -- local edgeObj_Node0_Distance = edgeUtils.getVectorLength({
         --     edgeObjPosition[1] - node0pos[1],
@@ -439,15 +435,15 @@ local _utils = {
         local node1_assignTo = nil
         -- at nodeBetween, I can draw the normal to the road:
         -- y = a + bx
-        -- the angle is alpha = atan2(nodeBetween.tangent[2], nodeBetween.tangent[1]) + PI / 2
+        -- the angle is alpha = atan2(nodeBetween.tangent.y, nodeBetween.tangent.x) + PI / 2
         -- so b = math.tan(alpha)
         -- a = y - bx
-        -- so a = nodeBetween.position[2] - b * nodeBetween.position[1]
+        -- so a = nodeBetween.position.y - b * nodeBetween.position.x
         -- points under this line will go one way, the others the other way
-        local alpha = math.atan2(nodeBetween.tangent[2], nodeBetween.tangent[1]) + math.pi * 0.5
+        local alpha = math.atan2(nodeBetween.tangent.y, nodeBetween.tangent.x) + math.pi * 0.5
         local b = math.tan(alpha)
         if math.abs(b) < 1e+06 then
-            local a = nodeBetween.position[2] - b * nodeBetween.position[1]
+            local a = nodeBetween.position.y - b * nodeBetween.position.x
             if a + b * edgeObjPosition[1] > edgeObjPosition[2] then -- edgeObj is below the line
                 edgeObjPosition_assignTo = 0
             else
@@ -466,17 +462,17 @@ local _utils = {
         -- if b grows too much, I lose precision, so I approximate it with the y axis
         else
             -- print('alpha =', alpha, 'b =', b)
-            if edgeObjPosition[1] > nodeBetween.position[1] then
+            if edgeObjPosition[1] > nodeBetween.position.x then
                 edgeObjPosition_assignTo = 0
             else
                 edgeObjPosition_assignTo = 1
             end
-            if node0pos[1] > nodeBetween.position[1] then
+            if node0pos[1] > nodeBetween.position.x then
                 node0_assignTo = 0
             else
                 node0_assignTo = 1
             end
-            if node1pos[1] > nodeBetween.position[1] then
+            if node1pos[1] > nodeBetween.position.x then
                 node1_assignTo = 0
             else
                 node1_assignTo = 1
@@ -1251,16 +1247,6 @@ local _actions = {
             tangent1.y,
             tangent1.z
         })
-        local edge0Length = edgeUtils.getVectorLength({
-            nodeBetween.position[1] - position0.x,
-            nodeBetween.position[2] - position0.y,
-            nodeBetween.position[3] - position0.z
-        })
-        local edge1Length = edgeUtils.getVectorLength({
-            nodeBetween.position[1] - position1.x,
-            nodeBetween.position[2] - position1.y,
-            nodeBetween.position[3] - position1.z
-        })
 
         local oldEdge = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE)
         local oldEdgeTrack = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
@@ -1273,7 +1259,7 @@ local _actions = {
 
         local newNodeBetween = api.type.NodeAndEntity.new()
         newNodeBetween.entity = -3
-        newNodeBetween.comp.position = api.type.Vec3f.new(nodeBetween.position[1], nodeBetween.position[2], nodeBetween.position[3])
+        newNodeBetween.comp.position = api.type.Vec3f.new(nodeBetween.position.x, nodeBetween.position.y, nodeBetween.position.z)
 
         local newEdge0 = api.type.SegmentAndEntity.new()
         newEdge0.entity = -1
@@ -1281,14 +1267,14 @@ local _actions = {
         newEdge0.comp.node0 = oldEdge.node0
         newEdge0.comp.node1 = -3
         newEdge0.comp.tangent0 = api.type.Vec3f.new(
-            tangent0.x * edge0Length / node0TangentLength,
-            tangent0.y * edge0Length / node0TangentLength,
-            tangent0.z * edge0Length / node0TangentLength
+            tangent0.x * nodeBetween.length0 / node0TangentLength,
+            tangent0.y * nodeBetween.length0 / node0TangentLength,
+            tangent0.z * nodeBetween.length0 / node0TangentLength
         )
         newEdge0.comp.tangent1 = api.type.Vec3f.new(
-            nodeBetween.tangent[1] * edge0Length,
-            nodeBetween.tangent[2] * edge0Length,
-            nodeBetween.tangent[3] * edge0Length
+            nodeBetween.tangent.x * nodeBetween.length0,
+            nodeBetween.tangent.y * nodeBetween.length0,
+            nodeBetween.tangent.z * nodeBetween.length0
         )
         newEdge0.comp.type = oldEdge.type -- respect bridge or tunnel
         newEdge0.comp.typeIndex = oldEdge.typeIndex -- respect bridge or tunnel
@@ -1301,14 +1287,14 @@ local _actions = {
         newEdge1.comp.node0 = -3
         newEdge1.comp.node1 = oldEdge.node1
         newEdge1.comp.tangent0 = api.type.Vec3f.new(
-            nodeBetween.tangent[1] * edge1Length,
-            nodeBetween.tangent[2] * edge1Length,
-            nodeBetween.tangent[3] * edge1Length
+            nodeBetween.tangent.x * nodeBetween.length1,
+            nodeBetween.tangent.y * nodeBetween.length1,
+            nodeBetween.tangent.z * nodeBetween.length1
         )
         newEdge1.comp.tangent1 = api.type.Vec3f.new(
-            tangent1.x * edge1Length / node1TangentLength,
-            tangent1.y * edge1Length / node1TangentLength,
-            tangent1.z * edge1Length / node1TangentLength
+            tangent1.x * nodeBetween.length1 / node1TangentLength,
+            tangent1.y * nodeBetween.length1 / node1TangentLength,
+            tangent1.z * nodeBetween.length1 / node1TangentLength
         )
         newEdge1.comp.type = oldEdge.type
         newEdge1.comp.typeIndex = oldEdge.typeIndex
@@ -1447,11 +1433,9 @@ function data()
                 local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                 if not(node0) or not(node1) then return end
                 local trackWaypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint1Id)
-                local nodeBetween = edgeUtils.getNodeBetween(
-                    node0.position,
-                    baseEdge.tangent0,
-                    node1.position,
-                    baseEdge.tangent1,
+                -- LOLLO TODO see if you get the exact percentage shift from entity2tn
+                local nodeBetween = edgeUtils.getNodeBetweenByPosition(
+                    edgeId,
                     -- LOLLO NOTE position and transf are always very similar
                     {
                         x = trackWaypointPosition[1],
@@ -1489,11 +1473,9 @@ function data()
                 local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                 if not(node0) or not(node1) then return end
                 local trackWaypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint2Id)
-                local nodeBetween = edgeUtils.getNodeBetween(
-                    node0.position,
-                    baseEdge.tangent0,
-                    node1.position,
-                    baseEdge.tangent1,
+                -- LOLLO TODO see if you get the exact percentage shift from entity2tn
+                local nodeBetween = edgeUtils.getNodeBetweenByPosition(
+                    edgeId,
                     -- LOLLO NOTE position and transf are always very similar
                     {
                         x = trackWaypointPosition[1],
@@ -1544,12 +1526,7 @@ function data()
                     local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                     if not(node0) or not(node1) then return end
 
-                    local nodeBetween = edgeUtils.getNodeBetween(
-                        node0.position,
-                        baseEdge.tangent0,
-                        node1.position,
-                        baseEdge.tangent1
-                    )
+                    local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, 0.5)
                     _actions.splitEdgeRemovingObject(
                         edgeId,
                         node0.position,

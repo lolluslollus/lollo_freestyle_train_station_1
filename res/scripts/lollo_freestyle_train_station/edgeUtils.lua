@@ -124,33 +124,157 @@ local function sign(num1)
     return -1
 end
 
--- LOLLO TODO try another simpler implementation,
--- based on api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
--- It returns a list of edges, each with:
--- geometry = {
---     params = {
---       pos = {
---         x = -1088.1900634766,
---         y = -1178.9484863281,
---       },
---       tangent = {
---         x = 65.523628234863,
---         y = 23.809280395508,
---       },
---     },
---     tangent = {
---       x = 0,
---       y = 0,
---     },
---     height = {
---       x = 6.9427075386047,
---       y = 6.9427075386047,
---     },
---     length = 69.715339660645,
---     width = 3,
---   },
+helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, length)
+    -- these should be identical, but they are not really so, so we average them
+    local length0 = helper.getVectorLength({
+        x = baseEdge.tangent0.x,
+        y = baseEdge.tangent0.y,
+        z = baseEdge.tangent0.z,
+    })
+    local length1 = helper.getVectorLength({
+        x = baseEdge.tangent1.x,
+        y = baseEdge.tangent1.y,
+        z = baseEdge.tangent1.z,
+    })
+    local length = (length0 + length1) * 0.5
+    if type(length) ~= 'number' or length <= 0 then return nil end
 
-helper.getNodeBetween = function(position0, tangent0, position1, tangent1, betweenPosition)
+    print('_getNodeBetween starting, shift021 =', shift021, 'length =', length)
+    print('baseEdge =') debugPrint(baseEdge)
+    print('baseNode0 =') debugPrint(baseNode0)
+    print('baseNode1 =') debugPrint(baseNode1)
+    -- Now I solve the system for x:
+    -- a + b l0 + c l0^2 + d l0^3 = posX0
+    -- a + b l1 + c l1^2 + d l1^3 = posX1
+    -- b + 2 c l0 + 3 d l0^2 = tanX0 / length
+    -- b + 2 c l1 + 3 d l1^2 = tanX1 / length
+    local aX = baseNode0.position.x
+    local bX = baseEdge.tangent0.x / length
+    -- I am left with:
+    -- a + b l1 + c l1^2 + d l1^3 = posX1
+    -- b + 2 c l1 + 3 d l1^2 = tanX1 / length
+    -- =>
+    -- c l1^2 + d l1^3 = posX1 - a - b l1
+    -- 2 c l1 + 3 d l1^2 = tanX1 / length - b
+    -- =>
+    -- c length^2 + d length^3 = posX1 - a - b length
+    -- 2 c length + 3 d length^2 = tanX1 / length - b
+    -- =>
+    -- 2 c length^2 + 2 d length^3 = 2 posX1 - 2 a - 2 b length
+    -- 2 c length^2 + 3 d length^3 = tanX1 - b length
+    -- =>
+    -- d length^3 = tanX1 - b length - 2 posX1 + 2 a + 2 b length
+    -- =>
+    -- d length^3 = tanX1 - 2 posX1 + 2 a + b length
+    -- =>
+    -- d = (tanX1 - 2 posX1 + 2 a + b length) / length^3
+    local dX = (baseEdge.tangent1.x - 2 * baseNode1.position.x + 2 * aX + bX * length) / length / length / length
+    -- =>
+    -- c length^2 + d length^3 = posX1 - a - b length
+    -- =>
+    -- c length^2 = posX1 - a - b length - d length^3
+    -- =>
+    -- c = posX1 / length^2 - a / length^2 - b / length - d length
+    local cX = (baseNode1.position.x - aX) / length / length - bX / length - dX * length
+
+    local testX = aX + bX * length + cX * length * length + dX * length * length * length
+    -- print(testX, 'should be', baseNode1.position.x)
+    if not(helper.isNumVeryClose(testX, baseNode1.position.x)) then return nil end
+
+    local aY = baseNode0.position.y
+    local bY = baseEdge.tangent0.y / length
+    local dY = (baseEdge.tangent1.y - 2 * baseNode1.position.y + 2 * aY + bY * length) / length / length / length
+    local cY = (baseNode1.position.y - aY) / length / length - bY / length - dY * length
+
+    local testY = aY + bY * length + cY * length * length + dY * length * length * length
+    print(testY, 'should be', baseNode1.position.y)
+    if not(helper.isNumVeryClose(testY, baseNode1.position.y)) then return nil end
+
+    local aZ = baseNode0.position.z
+    local bZ = baseEdge.tangent0.z / length
+    local dZ = (baseEdge.tangent1.z - 2 * baseNode1.position.z + 2 * aZ + bZ * length) / length / length / length
+    local cZ = (baseNode1.position.z - aZ) / length / length - bZ / length - dZ * length
+
+    local testZ = aZ + bZ * length + cZ * length * length + dZ * length * length * length
+    print(testZ, 'should be', baseNode1.position.z)
+    if not(helper.isNumVeryClose(testZ, baseNode1.position.z)) then return nil end
+
+    local lMid = shift021 * length
+    local result = {
+        length0 = length * shift021,
+        length1 = length * (1 - shift021),
+        position = {
+            x = aX + bX * lMid + cX * lMid * lMid + dX * lMid * lMid * lMid,
+            y = aY + bY * lMid + cY * lMid * lMid + dY * lMid * lMid * lMid,
+            z = aZ + bZ * lMid + cZ * lMid * lMid + dZ * lMid * lMid * lMid
+        },
+        -- LOLLO NOTE these are real derivatives, they are normalised by construction
+        tangent = {
+            x = bX + 2 * cX * lMid + 3 * dX * lMid * lMid,
+            y = bY + 2 * cY * lMid + 3 * dY * lMid * lMid,
+            z = bZ + 2 * cZ * lMid + 3 * dZ * lMid * lMid,
+        }
+    }
+    -- print('getNodeBetween result =') debugPrint(result)
+    return result
+end
+
+helper.getNodeBetweenByPercentageShift = function(edgeId, shift021)
+    if not(helper.isValidAndExistingId(edgeId)) then return nil end
+
+    if type(shift021) ~= 'number' or shift021 < 0 or shift021 > 1 then shift021 = 0.5 end
+
+    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    if baseEdge == nil then return nil end
+
+    local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+    local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+    if baseNode0 == nil or baseNode1 == nil then return nil end
+
+    local length = math.sqrt(baseEdge.tangent0.x * baseEdge.tangent1.x + baseEdge.tangent0.y * baseEdge.tangent1.y + baseEdge.tangent0.z * baseEdge.tangent1.z)
+    if length <= 0 then return nil end
+
+    -- local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
+    -- if tn == nil then return nil end
+
+    return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, shift021) --, tn.edges[1].geometry.length)
+end
+
+helper.getNodeBetweenByPosition = function(edgeId, position)
+    if not(helper.isValidAndExistingId(edgeId)) then return nil end
+
+    if position == nil or (position[1] == nil and position.x == nil) or (position[2] == nil and position.y == nil) or (position[3] == nil and position.z == nil)
+    then return nil end
+
+    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    if baseEdge == nil then return nil end
+
+    local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+    local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+    if baseNode0 == nil or baseNode1 == nil then return nil end
+
+    local length0 = helper.getVectorLength({
+        x = (position[1] or position.x) - baseNode0.position.x,
+        y = (position[2] or position.y) - baseNode0.position.y,
+        z = (position[3] or position.z) - baseNode0.position.z,
+    })
+    local length1 = helper.getVectorLength({
+        x = (position[1] or position.x) - baseNode1.position.x,
+        y = (position[2] or position.y) - baseNode1.position.y,
+        z = (position[3] or position.z) - baseNode1.position.z,
+    })
+
+    -- print('length0 =', length0)
+    -- print('length1 =', length1)
+    -- print('length0 / (length0 + length1) =', length0 / (length0 + length1))
+
+    -- local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
+    -- if tn == nil then return nil end
+
+    return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, length0 / (length0 + length1)) --, tn.edges[1].geometry.length)
+end
+
+helper.getNodeBetweenOLD = function(position0, tangent0, position1, tangent1, betweenPosition)
     if not(position0) or not(position1) or not(tangent0) or not(tangent1) then return nil end
 
     -- local node01Distance = helper.getVectorLength({
