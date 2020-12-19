@@ -396,34 +396,34 @@ function data()
 
 			return result
 		end,
- 		preProcessFn = function(modules, change, three)
-			-- this fires when the user adds or removes a module
-			print('LOLLO preProcessFn')
-			print('modules =') debugPrint(modules)
-			print('change =') debugPrint(change)
-			-- default behaviour
-			if change.added then
-				modules[change.slotId] = change.module
-			else
-				modules[change.slotId] = nil
-			end
-			-- airport behaviour
-			-- if change.added then
-			-- 	if change.slotId == landingSlotId + 1 then
-			-- 		modules[landingSlotId + 0] = nil
-			-- 	elseif change.slotId == landingSlotId + 0 then
-			-- 		modules[landingSlotId + 1] = nil
-			-- 	elseif change.slotId == landingSlotId + 2 then
-			-- 		modules[landingSlotId + 3] = nil
-			-- 	elseif change.slotId == landingSlotId + 3 then
-			-- 		modules[landingSlotId + 2] = nil
-			-- 	end
-			-- 	modules[change.slotId] = change.module
-			-- else
-			-- 	modules[change.slotId] = nil
-			-- end
-			return modules
-        end,
+ 		-- preProcessFn = function(modules, change, three)
+		-- 	-- this fires when the user adds or removes a module
+		-- 	print('LOLLO preProcessFn')
+		-- 	print('modules =') debugPrint(modules)
+		-- 	print('change =') debugPrint(change)
+		-- 	-- default behaviour
+		-- 	if change.added then
+		-- 		modules[change.slotId] = change.module
+		-- 	else
+		-- 		modules[change.slotId] = nil
+		-- 	end
+		-- 	-- airport behaviour
+		-- 	-- if change.added then
+		-- 	-- 	if change.slotId == landingSlotId + 1 then
+		-- 	-- 		modules[landingSlotId + 0] = nil
+		-- 	-- 	elseif change.slotId == landingSlotId + 0 then
+		-- 	-- 		modules[landingSlotId + 1] = nil
+		-- 	-- 	elseif change.slotId == landingSlotId + 2 then
+		-- 	-- 		modules[landingSlotId + 3] = nil
+		-- 	-- 	elseif change.slotId == landingSlotId + 3 then
+		-- 	-- 		modules[landingSlotId + 2] = nil
+		-- 	-- 	end
+		-- 	-- 	modules[change.slotId] = change.module
+		-- 	-- else
+		-- 	-- 	modules[change.slotId] = nil
+		-- 	-- end
+		-- 	return modules
+        -- end,
         upgradeFn = function(params)
             print('LOLLO upgradeFn')
             local modules = {}

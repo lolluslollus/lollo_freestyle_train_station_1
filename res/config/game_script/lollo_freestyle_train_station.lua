@@ -896,7 +896,7 @@ local _actions = {
         for slotId, _ in pairs(slotIdsToRemove) do
             newParams.modules[slotId] = nil
         end
-        local removedTrackEdgeLists = newParams.terminals[nTerminalToRemove]
+        local removedTerminal = newParams.terminals[nTerminalToRemove]
         table.remove(newParams.terminals, nTerminalToRemove)
         newCon.params = newParams
         newCon.transf = oldCon.transf
@@ -923,10 +923,9 @@ local _actions = {
                 print('removeTerminal callback, success =', success)
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
-                    -- TODO send out info on rebuilding the track
                     local eventArgs = {
                         endEntities = arrayUtils.cloneDeepOmittingFields(constructionData.endEntities[nTerminalToRemove]),
-                        removedTrackEdgeLists = { removedTrackEdgeLists },
+                        removedTerminal = removedTerminal,
                         stationConstructionId = result.resultEntities[1]
                     }
                     print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
@@ -1045,7 +1044,8 @@ local _actions = {
             _addSegment(trackEdgeList)
         end
 
-        print('rebuildTracks proposal =') debugPrint(proposal)
+        -- print('rebuildTracks proposal =') debugPrint(proposal)
+
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, nil, true),
             function(result, success)
@@ -1582,11 +1582,15 @@ function data()
             elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
                 _actions.buildSnappyTracks(_utils.getStationEndEntitiesTyped(args.stationConstructionId))
             elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
+                -- LOLLO TODO this rebuilds the station, so you must rebuild all the snappy tracks
                 _actions.removeTerminal(args.constructionData, args.nTerminalToRemove, _eventNames.REBUILD_1_TRACK_REQUESTED)
             elseif name == _eventNames.REBUILD_1_TRACK_REQUESTED then
-                -- LOLLO TODO check parameters
+                if type(args.removedTerminal) ~= 'table' or type(args.removedTerminal.trackEdgeLists) ~= 'table' then
+                    print('ERROR: args.removedTerminal.trackEdgeLists not available')
+                    return
+                end
                 _actions.rebuildTracks(
-                    args.removedTrackEdgeLists,
+                    args.removedTerminal.trackEdgeLists,
                     nil,
                     _utils.getBulldozedStationNeighbourNodeIds(args.endEntities)
                 )
