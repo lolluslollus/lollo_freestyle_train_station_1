@@ -941,7 +941,7 @@ local _actions = {
         )
     end,
 
-    rebuildTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds)
+    rebuildTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
         print('rebuildTracks starting')
         print('trackEdgeLists =') debugPrint(trackEdgeLists)
         print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
@@ -1052,7 +1052,16 @@ local _actions = {
                 -- print('LOLLO result = ')
                 -- debugPrint(result)
                 print('LOLLO rebuildTracks success = ', success)
-                print('LOLLO rebuildTracks result = ', result)
+                if success and successEventName ~= nil then
+                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                        string.sub(debug.getinfo(1, 'S').source, 1),
+                        _eventId,
+                        successEventName,
+                        {
+                            stationConstructionId = stationConstructionId
+                        }
+                    ))
+                end
             end
         )
     end,
@@ -1579,20 +1588,31 @@ function data()
                     _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED,
                     eventArgs
                 )
-            elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
-                _actions.buildSnappyTracks(_utils.getStationEndEntitiesTyped(args.stationConstructionId))
             elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
-                -- LOLLO TODO this rebuilds the station, so you must rebuild all the snappy tracks
                 _actions.removeTerminal(args.constructionData, args.nTerminalToRemove, _eventNames.REBUILD_1_TRACK_REQUESTED)
             elseif name == _eventNames.REBUILD_1_TRACK_REQUESTED then
                 if type(args.removedTerminal) ~= 'table' or type(args.removedTerminal.trackEdgeLists) ~= 'table' then
                     print('ERROR: args.removedTerminal.trackEdgeLists not available')
                     return
                 end
+                if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
+                    print('ERROR: args.stationConstructionId not valid')
+                    return
+                end
                 _actions.rebuildTracks(
                     args.removedTerminal.trackEdgeLists,
                     nil,
-                    _utils.getBulldozedStationNeighbourNodeIds(args.endEntities)
+                    _utils.getBulldozedStationNeighbourNodeIds(args.endEntities),
+                    args.stationConstructionId,
+                    _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED
+                )
+            elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
+                if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
+                    print('ERROR: args.stationConstructionId not valid')
+                    return
+                end
+                _actions.buildSnappyTracks(
+                    _utils.getStationEndEntitiesTyped(args.stationConstructionId)
                 )
             elseif name == _eventNames.REBUILD_ALL_TRACKS_REQUESTED then
                 for t = 1, #args.constructionData.params.terminals do
