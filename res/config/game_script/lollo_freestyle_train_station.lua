@@ -881,6 +881,7 @@ local _actions = {
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileNameLong
 
+        -- LOLLO TODO after deleting terminal N, you must rename all the slots of the higher terminals one nTerminal lower
         local newParams = {
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),

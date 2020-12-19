@@ -189,7 +189,6 @@ function data()
 			debugPrint(inverseMainTransf)
 			for t = 1, #params.terminals do
 				-- add terminal slots
-				-- LOLLO TODO after deleting terminal N, you must rename all the slots of the higher terminals one nTerminal lower
 				local inverseMyTransf = transfUtils.getInverseTransf(params.terminals[t].myTransf)
 				table.insert(result.slots, {
 					-- height = 1,
