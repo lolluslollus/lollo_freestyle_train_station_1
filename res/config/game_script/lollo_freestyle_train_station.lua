@@ -3,6 +3,7 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local guiHelpers = require('lollo_freestyle_train_station.guiHelpers')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
+local stationHelpers = require('lollo_freestyle_train_station.stationHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -33,632 +34,6 @@ local _eventNames = {
     -- TRACK_WAYPOINT_2_SPLIT_SUCCEEDED = 'trackWaypoint2SplitSucceeded',
     WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
 }
-
-local _idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
-local _metresToAddOrCut = 3
-local _newEdgeType = 1 -- 0 = ROAD, 1 = RAIL
--- local _searchRadius = 500
-
-local _utils = {
-    getNearbyFreestyleStationsList = function(transf, searchRadius)
-        if type(transf) ~= 'table' then return {} end
-
-        local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
-        local cons = game.interface.getEntities(
-            {pos = squareCentrePosition, radius = searchRadius},
-            {type = "CONSTRUCTION", includeData = true, fileName = _constants.stationConFileNameLong}
-        )
-        -- #cons returns 0 coz it's not a list
-        local results = {}
-        for _, con in pairs(cons) do
-            local staGroups = {}
-            for _, staId in pairs(con.stations) do
-                local staGroupId = api.engine.system.stationGroupSystem.getStationGroup(staId)
-                local staGroupName = api.engine.getComponent(staGroupId, api.type.ComponentType.NAME)
-                staGroups[staGroupId] = staGroupName and staGroupName.name or ''
-                con.uiName = staGroupName and staGroupName.name or ''
-            end
-            -- LOLLO TODO 1 con can have N stations, but they all belong to the same group. Right?
-            -- If so, staGroups will always have 1 item only
-            con.stationGroups = staGroups
-            results[#results+1] = con
-        end
-
-        -- print('# nearby freestyle stations = ', #results)
-        -- print('nearby freestyle stations = ') debugPrint(results)
-        return results
-    end,
-
-    getStationEndNodeIdsUnsorted = function(con, nTerminal)
-        -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
-        -- print('getStationEndNodesUnsorted, con =') debugPrint(con)
-        -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-        if not(con) or con.fileName ~= _constants.stationConFileNameLong then
-            return {}
-        end
-
-        local endNodeIds = {}
-        for _, frozenEdgeId in pairs(con.frozenEdges) do
-            if edgeUtils.isValidAndExistingId(frozenEdgeId) then
-                local baseEdge = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE)
-                local baseEdgeTrack = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                if baseEdge ~= nil and baseEdgeTrack ~= nil and not(trackUtils.isPlatform(baseEdgeTrack.trackType)) then
-                    local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                    local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                    for _, edgeInTerminal in pairs(con.params.terminals[nTerminal].trackEdgeLists) do
-                        if edgeInTerminal ~= nil and ((
-                            edgeInTerminal.posTanX2[1][1][1] == baseNode0.position.x
-                            and edgeInTerminal.posTanX2[1][1][2] == baseNode0.position.y
-                            and edgeInTerminal.posTanX2[1][1][3] == baseNode0.position.z
-                            and edgeInTerminal.posTanX2[2][1][1] == baseNode1.position.x
-                            and edgeInTerminal.posTanX2[2][1][2] == baseNode1.position.y
-                            and edgeInTerminal.posTanX2[2][1][3] == baseNode1.position.z
-                        ) or (
-                            edgeInTerminal.posTanX2[1][1][1] == baseNode1.position.x
-                            and edgeInTerminal.posTanX2[1][1][2] == baseNode1.position.y
-                            and edgeInTerminal.posTanX2[1][1][3] == baseNode1.position.z
-                            and edgeInTerminal.posTanX2[2][1][1] == baseNode0.position.x
-                            and edgeInTerminal.posTanX2[2][1][2] == baseNode0.position.y
-                            and edgeInTerminal.posTanX2[2][1][3] == baseNode0.position.z
-                        )) then
-                            if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node0)) then
-                                endNodeIds[#endNodeIds+1] = baseEdge.node0
-                            end
-                            if not(arrayUtils.arrayHasValue(con.frozenNodes, baseEdge.node1)) then
-                                endNodeIds[#endNodeIds+1] = baseEdge.node1
-                            end
-                            break
-                        end
-                    end
-                end
-            end
-        end
-
-        if #endNodeIds ~= 2 then
-            print('found', #endNodeIds, 'free nodes in station construction')
-            return {}
-        end
-
-        return {
-            endNodeIds[1],
-            endNodeIds[2]
-        }
-    end,
-
-    getEdgeIdsProperties = function(edgeIds)
-        if type(edgeIds) ~= 'table' then return {} end
-
-        local _getEdgeType = function(baseEdgeType)
-            return baseEdgeType == 1 and 'BRIDGE' or (baseEdgeType == 2 and 'TUNNEL' or nil)
-        end
-        local _getEdgeTypeName = function(baseEdgeType, baseEdgeTypeIndex)
-            if baseEdgeType == 1 then -- bridge
-                return api.res.bridgeTypeRep.getName(baseEdgeTypeIndex)
-            elseif baseEdgeType == 2 then -- tunnel
-                return api.res.tunnelTypeRep.getName(baseEdgeTypeIndex)
-            else
-                return nil
-            end
-        end
-
-        local results = {}
-        for i = 1, #edgeIds do
-            local baseEdge = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE)
-            local baseEdgeTrack = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE_TRACK)
-            local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-            local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-            local result = {
-                catenary = baseEdgeTrack.catenary,
-                -- edgeId = edgeIds[i],
-                posTanX2 = {
-                    {
-                        {
-                            baseNode0.position.x,
-                            baseNode0.position.y,
-                            baseNode0.position.z,
-                        },
-                        {
-                            baseEdge.tangent0.x,
-                            baseEdge.tangent0.y,
-                            baseEdge.tangent0.z,
-                        }
-                    },
-                    {
-                        {
-                            baseNode1.position.x,
-                            baseNode1.position.y,
-                            baseNode1.position.z,
-                        },
-                        {
-                            baseEdge.tangent1.x,
-                            baseEdge.tangent1.y,
-                            baseEdge.tangent1.z,
-                        }
-                    }
-                },
-                trackType = baseEdgeTrack.trackType,
-                trackTypeName = api.res.trackTypeRep.getName(baseEdgeTrack.trackType),
-                type = baseEdge.type, -- 0 on ground, 1 bridge, 2 tunnel
-                edgeType = _getEdgeType(baseEdge.type), -- same as above but in a format constructions understand
-                typeIndex = baseEdge.typeIndex, -- -1 on ground, 0 tunnel / cement bridge, 1 steel bridge, 2 stone bridge, 3 suspension bridge
-                edgeTypeName = _getEdgeTypeName(baseEdge.type, baseEdge.typeIndex), -- same as above but in a format constructions understand
-            }
-            results[#results+1] = result
-        end
-
-        return results
-    end,
-
-    getEdgeIdsPropertiesCropped = function(edgeIdsProperties)
-        -- this works, but the tracks still refuse to snap
-        print('edgeIdsProperties BEFORE CROPPING =')
-        debugPrint(edgeIdsProperties)
-
-        local function _removeShortEnds()
-            local cutMetres1 = 0
-            local isExit = false
-            local i = 0
-            while not(isExit) do
-                i = i + 1
-                local edgeProperties = edgeIdsProperties[i]
-                local length = edgeUtils.getVectorLength({
-                    edgeProperties.posTanX2[1][1][1] - edgeProperties.posTanX2[2][1][1],
-                    edgeProperties.posTanX2[1][1][2] - edgeProperties.posTanX2[2][1][2],
-                    edgeProperties.posTanX2[1][1][3] - edgeProperties.posTanX2[2][1][3]
-                })
-                if length < (_metresToAddOrCut - cutMetres1) then
-                    table.remove(edgeIdsProperties, i)
-                    cutMetres1 = cutMetres1 + length
-                    i = i - 1
-                else
-                    isExit = true
-                end
-            end
-
-            local cutMetres2 = 0
-            isExit = false
-            i = #edgeIdsProperties + 1
-            while not(isExit) do
-                i = i - 1
-                local edgeProperties = edgeIdsProperties[i]
-                local length = edgeUtils.getVectorLength({
-                    edgeProperties.posTanX2[1][1][1] - edgeProperties.posTanX2[2][1][1],
-                    edgeProperties.posTanX2[1][1][2] - edgeProperties.posTanX2[2][1][2],
-                    edgeProperties.posTanX2[1][1][3] - edgeProperties.posTanX2[2][1][3]
-                })
-                if length < (_metresToAddOrCut - cutMetres2) then
-                    table.remove(edgeIdsProperties, i)
-                    cutMetres2 = cutMetres2 + length
-                    i = i + 1
-                else
-                    isExit = true
-                end
-            end
-
-            return cutMetres1, cutMetres2
-        end
-
-        local cutMetres1, cutMetres2 = _removeShortEnds()
-        if cutMetres1 < _metresToAddOrCut then
-            -- getPointbetween would be more elegant, this is just a test
-            local posTanX2 = edgeIdsProperties[1].posTanX2
-            local point1 = posTanX2[1][1]
-            local point2 = posTanX2[2][1]
-            local tan1 = posTanX2[1][2]
-            local length = edgeUtils.getVectorLength({
-                point1[1] - point2[1],
-                point1[2] - point2[2],
-                point1[3] - point2[3]
-            })
-            local newPoint1 = {
-                point1[1] + tan1[1] * (_metresToAddOrCut - cutMetres1) / length,
-                point1[2] + tan1[2] * (_metresToAddOrCut - cutMetres1) / length,
-                point1[3] + tan1[3] * (_metresToAddOrCut - cutMetres1) / length
-            }
-            edgeIdsProperties[1].posTanX2[1][1] = newPoint1
-        end
-        if cutMetres2 < _metresToAddOrCut then
-            -- getPointbetween would be more elegant, this is just a test
-            local posTanX2 = edgeIdsProperties[#edgeIdsProperties].posTanX2
-            local point1 = posTanX2[1][1]
-            local point2 = posTanX2[2][1]
-            local tan2 = posTanX2[2][2]
-            local length = edgeUtils.getVectorLength({
-                point1[1] - point2[1],
-                point1[2] - point2[2],
-                point1[3] - point2[3]
-            })
-            local newPoint2 = {
-                point2[1] - tan2[1] * (_metresToAddOrCut - cutMetres2) / length,
-                point2[2] - tan2[2] * (_metresToAddOrCut - cutMetres2) / length,
-                point2[3] - tan2[3] * (_metresToAddOrCut - cutMetres2) / length
-            }
-            edgeIdsProperties[#edgeIdsProperties].posTanX2[2][1] = newPoint2
-        end
-
-        print('edgeIdsProperties AFTER CROPPING =')
-        debugPrint(edgeIdsProperties)
-        return edgeIdsProperties
-    end,
-
-    getEdgeIdsPropertiesExtended = function(edgeIdsProperties)
-        -- this works, but the tracks still refuse to snap
-        print('edgeIdsProperties BEFORE EXTENDING =')
-        debugPrint(edgeIdsProperties)
-
-        local addedMetres1, addedMetres2 = 0, 0
-        if addedMetres1 < _metresToAddOrCut then
-            -- getPointbetween would be more elegant, this is just a test
-            local posTanX2 = edgeIdsProperties[1].posTanX2
-            local point1 = posTanX2[1][1]
-            local point2 = posTanX2[2][1]
-            local tan1 = posTanX2[1][2]
-            local length = edgeUtils.getVectorLength({
-                point1[1] - point2[1],
-                point1[2] - point2[2],
-                point1[3] - point2[3]
-            })
-            local newPoint1 = {
-                point1[1] - tan1[1] * (_metresToAddOrCut - addedMetres1) / length,
-                point1[2] - tan1[2] * (_metresToAddOrCut - addedMetres1) / length,
-                point1[3] - tan1[3] * (_metresToAddOrCut - addedMetres1) / length
-            }
-            edgeIdsProperties[1].posTanX2[1][1] = newPoint1
-        end
-        if addedMetres2 < _metresToAddOrCut then
-            -- getPointbetween would be more elegant, this is just a test
-            local posTanX2 = edgeIdsProperties[#edgeIdsProperties].posTanX2
-            local point1 = posTanX2[1][1]
-            local point2 = posTanX2[2][1]
-            local tan2 = posTanX2[2][2]
-            local length = edgeUtils.getVectorLength({
-                point1[1] - point2[1],
-                point1[2] - point2[2],
-                point1[3] - point2[3]
-            })
-            local newPoint2 = {
-                point2[1] + tan2[1] * (_metresToAddOrCut - addedMetres2) / length,
-                point2[2] + tan2[2] * (_metresToAddOrCut - addedMetres2) / length,
-                point2[3] + tan2[3] * (_metresToAddOrCut - addedMetres2) / length
-            }
-            edgeIdsProperties[#edgeIdsProperties].posTanX2[2][1] = newPoint2
-        end
-
-        print('edgeIdsProperties AFTER EXTENDING =')
-        debugPrint(edgeIdsProperties)
-        return edgeIdsProperties
-    end,
-
-    getAllEdgeObjectsWithModelId = function(refModelId)
-        local results = {}
-        local nearbyEdgeIds = edgeUtils.getNearestObjectIds(_idTransf, 99999, api.type.ComponentType.BASE_EDGE)
-        -- print('nearbyEdgeIds =')
-        -- debugPrint(nearbyEdgeIds)
-        for _, edgeId in pairs(nearbyEdgeIds) do
-            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge ~= nil and baseEdge.objects ~= nil then
-                local edgeObjectIds = edgeUtils.getEdgeObjectsIdsWithModelId(baseEdge.objects, refModelId)
-                for _, edgeObjectId in pairs(edgeObjectIds) do
-                    arrayUtils.addUnique(results, edgeObjectId)
-                end
-            end
-        end
-
-        print('getAllEdgeObjectsWithModelId is about to return')
-        debugPrint(results)
-        return results
-    end,
-
-    getOuterNodes = function(contiguousEdgeIds, trackType)
-        -- only for testing
-        local _hasOnlyOneEdgeOfType1 = function(nodeId, map)
-            if not(edgeUtils.isValidAndExistingId(nodeId)) or not(trackType) then return false end
-
-            local edgeIds = map[nodeId] -- userdata
-            if not(edgeIds) or #edgeIds < 2 then return true end
-
-            local counter = 0
-            for _, edgeId in pairs(edgeIds) do -- cannot use edgeIds[index] here
-                local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                if baseEdgeTrack ~= nil and baseEdgeTrack.trackType == trackType then
-                    counter = counter + 1
-                end
-            end
-
-            return counter < 2
-        end
-
-        print('one')
-        if type(contiguousEdgeIds) ~= 'table' or #contiguousEdgeIds < 1 then return {} end
-        print('two')
-        if #contiguousEdgeIds == 1 then
-            local _baseEdge = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
-            print('three')
-            return { _baseEdge.node0, _baseEdge.node1 }
-        end
-
-        local results = {}
-        local _map = api.engine.system.streetSystem.getNode2SegmentMap()
-        local _baseEdgeFirst = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
-        local _baseEdgeLast = api.engine.getComponent(contiguousEdgeIds[#contiguousEdgeIds], api.type.ComponentType.BASE_EDGE)
-        if _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node0, _map) then
-            results[#results+1] = _baseEdgeFirst.node0
-        elseif _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node1, _map) then
-            results[#results+1] = _baseEdgeFirst.node1
-        end
-        if _hasOnlyOneEdgeOfType1(_baseEdgeLast.node0, _map) then
-            results[#results+1] = _baseEdgeLast.node0
-        elseif _hasOnlyOneEdgeOfType1(_baseEdgeLast.node1, _map) then
-            results[#results+1] = _baseEdgeLast.node1
-        end
-
-        return results
-    end,
-
-    getWhichEdgeGetsEdgeObjectAfterSplit = function(edgeObjPosition, node0pos, node1pos, nodeBetween)
-        local result = {
-            -- assignToFirstEstimate = nil,
-            assignToSecondEstimate = nil,
-        }
-        -- print('LOLLO attempting to place edge object with position =')
-        -- debugPrint(edgeObjPosition)
-        -- print('wholeEdge.node0pos =') debugPrint(node0pos)
-        -- print('nodeBetween.position =') debugPrint(nodeBetween.position)
-        -- print('nodeBetween.tangent =') debugPrint(nodeBetween.tangent)
-        -- print('wholeEdge.node1pos =') debugPrint(node1pos)
-        -- first estimator
-        -- local nodeBetween_Node0_Distance = edgeUtils.getVectorLength({
-        --     nodeBetween.position.x - node0pos[1],
-        --     nodeBetween.position.y - node0pos[2]
-        -- })
-        -- local nodeBetween_Node1_Distance = edgeUtils.getVectorLength({
-        --     nodeBetween.position.x - node1pos[1],
-        --     nodeBetween.position.y - node1pos[2]
-        -- })
-        -- local edgeObj_Node0_Distance = edgeUtils.getVectorLength({
-        --     edgeObjPosition[1] - node0pos[1],
-        --     edgeObjPosition[2] - node0pos[2]
-        -- })
-        -- local edgeObj_Node1_Distance = edgeUtils.getVectorLength({
-        --     edgeObjPosition[1] - node1pos[1],
-        --     edgeObjPosition[2] - node1pos[2]
-        -- })
-        -- if edgeObj_Node0_Distance < nodeBetween_Node0_Distance then
-        --     result.assignToFirstEstimate = 0
-        -- elseif edgeObj_Node1_Distance < nodeBetween_Node1_Distance then
-        --     result.assignToFirstEstimate = 1
-        -- end
-
-        -- second estimator
-        local edgeObjPosition_assignTo = nil
-        local node0_assignTo = nil
-        local node1_assignTo = nil
-        -- at nodeBetween, I can draw the normal to the road:
-        -- y = a + bx
-        -- the angle is alpha = atan2(nodeBetween.tangent.y, nodeBetween.tangent.x) + PI / 2
-        -- so b = math.tan(alpha)
-        -- a = y - bx
-        -- so a = nodeBetween.position.y - b * nodeBetween.position.x
-        -- points under this line will go one way, the others the other way
-        local alpha = math.atan2(nodeBetween.tangent.y, nodeBetween.tangent.x) + math.pi * 0.5
-        local b = math.tan(alpha)
-        if math.abs(b) < 1e+06 then
-            local a = nodeBetween.position.y - b * nodeBetween.position.x
-            if a + b * edgeObjPosition[1] > edgeObjPosition[2] then -- edgeObj is below the line
-                edgeObjPosition_assignTo = 0
-            else
-                edgeObjPosition_assignTo = 1
-            end
-            if a + b * node0pos[1] > node0pos[2] then -- wholeEdge.node0pos is below the line
-                node0_assignTo = 0
-            else
-                node0_assignTo = 1
-            end
-            if a + b * node1pos[1] > node1pos[2] then -- wholeEdge.node1pos is below the line
-                node1_assignTo = 0
-            else
-                node1_assignTo = 1
-            end
-        -- if b grows too much, I lose precision, so I approximate it with the y axis
-        else
-            -- print('alpha =', alpha, 'b =', b)
-            if edgeObjPosition[1] > nodeBetween.position.x then
-                edgeObjPosition_assignTo = 0
-            else
-                edgeObjPosition_assignTo = 1
-            end
-            if node0pos[1] > nodeBetween.position.x then
-                node0_assignTo = 0
-            else
-                node0_assignTo = 1
-            end
-            if node1pos[1] > nodeBetween.position.x then
-                node1_assignTo = 0
-            else
-                node1_assignTo = 1
-            end
-        end
-
-        if edgeObjPosition_assignTo == node0_assignTo then
-            result.assignToSecondEstimate = 0
-        elseif edgeObjPosition_assignTo == node1_assignTo then
-            result.assignToSecondEstimate = 1
-        end
-
-        -- print('LOLLO assignment =')
-        -- debugPrint(result)
-        return result
-    end,
-
-    isBuildingConstructionWithFileName = function(param, fileName)
-        local toAdd =
-            type(param) == 'table' and type(param.proposal) == 'userdata' and type(param.proposal.toAdd) == 'userdata' and
-            param.proposal.toAdd
-
-        if toAdd and #toAdd > 0 then
-            for i = 1, #toAdd do
-                if toAdd[i].fileName == fileName then
-                    return true
-                end
-            end
-        end
-
-        return false
-    end,
-
-    getProposal2ReplaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
-        -- replaces a track segment with an identical one, without destroying the buildings
-        if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return false end
-
-        local oldEdge = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE)
-        local oldEdgeTrack = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-        -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
-        if oldEdge == nil or oldEdgeTrack == nil then return false end
-
-        local newEdge = api.type.SegmentAndEntity.new()
-        newEdge.entity = -1
-        newEdge.type = _newEdgeType
-        -- newEdge.comp = oldEdge -- no good enough if I want to remove objects, the api moans
-        newEdge.comp.node0 = oldEdge.node0
-        newEdge.comp.node1 = oldEdge.node1
-        newEdge.comp.tangent0 = oldEdge.tangent0
-        newEdge.comp.tangent1 = oldEdge.tangent1
-        newEdge.comp.type = oldEdge.type -- respect bridge or tunnel
-        newEdge.comp.typeIndex = oldEdge.typeIndex -- respect type of bridge or tunnel
-        newEdge.playerOwned = api.engine.getComponent(oldEdgeId, api.type.ComponentType.PLAYER_OWNED)
-        newEdge.trackEdge = oldEdgeTrack
-        if trackUtils.isPlatform(oldEdgeTrack.trackType) then
-            newEdge.trackEdge.catenary = false
-        end
-
-        -- print('edgeUtils.isValidId(objectIdToRemove) =', edgeUtils.isValidId(objectIdToRemove))
-        -- print('edgeUtils.isValidAndExistingId(objectIdToRemove) =', edgeUtils.isValidAndExistingId(objectIdToRemove))
-        if edgeUtils.isValidId(objectIdToRemove) then
-            local edgeObjects = {}
-            for _, edgeObj in pairs(oldEdge.objects) do
-                if edgeObj[1] ~= objectIdToRemove then
-                    table.insert(edgeObjects, { edgeObj[1], edgeObj[2] })
-                end
-            end
-            if #edgeObjects > 0 then
-                newEdge.comp.objects = edgeObjects -- LOLLO NOTE cannot insert directly into edge0.comp.objects
-                print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects =')
-                debugPrint(newEdge.comp.objects)
-            else
-                print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
-            end
-        else
-            print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is') debugPrint(objectIdToRemove)
-            newEdge.comp.objects = oldEdge.objects
-        end
-
-        print('newEdge.comp.objects:')
-        for key, value in pairs(newEdge.comp.objects) do
-            print('key =', key) debugPrint(value)
-        end
-
-        local proposal = api.type.SimpleProposal.new()
-        proposal.streetProposal.edgesToRemove[1] = oldEdgeId
-        proposal.streetProposal.edgesToAdd[1] = newEdge
-        if edgeUtils.isValidAndExistingId(objectIdToRemove) then
-            proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
-        end
-
-        return proposal
-    end,
-}
-
-_utils.getStationEndEntitiesTyped = function(stationConstructionId)
-    if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        print('ERROR: getStationEndEntitiesTyped invalid stationConstructionId') debugPrint(stationConstructionId)
-        return nil
-    end
-
-    local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
-    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- print('con =') debugPrint(conData)
-    if not(con) or con.fileName ~= _constants.stationConFileNameLong then
-        print('ERROR: getStationEndEntitiesTyped con.fileName =') debugPrint(con.fileName)
-        return nil
-    end
-
-    local result = {}
-    for t = 1, #con.params.terminals do
-        local endNodeIds4T = _utils.getStationEndNodeIdsUnsorted(con, t)
-        if #endNodeIds4T ~= 2 then print('ERROR: getStationEndEntitiesTyped cannnot find the end nodes of station', stationConstructionId) return nil end
-
-        -- I cannot clone these, for some reason: it dumps
-        local node1Position = api.engine.getComponent(endNodeIds4T[1], api.type.ComponentType.BASE_NODE).position, nil, true
-        local node2Position = api.engine.getComponent(endNodeIds4T[2], api.type.ComponentType.BASE_NODE).position, nil, true
-        result[t] = {
-            -- these are empty or nil if the station has been snapped to its neighbours
-            disjointNeighbourEdgeIds = {
-                edge1Ids = {},
-                edge2Ids = {}
-            },
-            disjointNeighbourNodeIds = {
-                node1Id = nil,
-                node2Id = nil,
-            },
-            stationEndNodeIds = {
-                node1Id = endNodeIds4T[1],
-                node2Id = endNodeIds4T[2],
-            },
-            stationEndNodePositions = {
-                node1 = { x = node1Position.x, y = node1Position.y, z = node1Position.z },
-                node2 = { x = node2Position.x, y = node2Position.y, z = node2Position.z },
-            }
-        }
-
-        for i = 1, 2 do
-            local nearbyNodeIds = edgeUtils.getNearestObjectIds(
-                transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T[i], api.type.ComponentType.BASE_NODE).position),
-                0.001,
-                api.type.ComponentType.BASE_NODE
-            )
-            for _, nearbyNodeId in pairs(nearbyNodeIds) do
-                if nearbyNodeId ~= endNodeIds4T[i] then
-                    if i == 1 then result[t].disjointNeighbourNodeIds.node1Id = nearbyNodeId
-                    else result[t].disjointNeighbourNodeIds.node2Id = nearbyNodeId
-                    end
-                    break
-                end
-            end
-        end
-
-        result[t].disjointNeighbourEdgeIds.edge1Ids = edgeUtils.getConnectedEdgeIds({result[t].disjointNeighbourNodeIds.node1Id})
-        result[t].disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].disjointNeighbourNodeIds.node2Id})
-    end
-
-    -- print('getStationEndEntitiesTyped result =') debugPrint(result)
-    return result
-end
-
-_utils.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
-    print('getBulldozedStationNeighbourNodeIds starting')
-    if endEntities4T == nil then return nil end
-
-    -- print('candidates for node 1 =')
-    -- debugPrint(edgeUtils.getNearestObjectIds(
-    --     transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
-    -- ))
-    -- print('candidates for node 2 =')
-    -- debugPrint(edgeUtils.getNearestObjectIds(
-    --     transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
-    -- ))
-
-    local result = {
-        node1 = edgeUtils.getNearestObjectIds(
-            transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
-        )[1],
-        node2 = edgeUtils.getNearestObjectIds(
-            transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
-        )[1]
-    }
-
-    print('getBulldozedStationNeighbourNodeIds about to return') debugPrint(result)
-    return result
-end
 
 local _actions = {
     buildSnappyTracks = function(endEntities)
@@ -707,7 +82,7 @@ local _actions = {
             newSegment.comp.typeIndex = baseEdge.typeIndex
             newSegment.comp.objects = baseEdge.objects
             -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-            newSegment.type = _newEdgeType
+            newSegment.type = _constants.railEdgeType
             local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
             newSegment.trackEdge.trackType = baseEdgeTrack.trackType
             newSegment.trackEdge.catenary = baseEdgeTrack.catenary
@@ -789,6 +164,7 @@ local _actions = {
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList
         }
+
         if oldCon == nil then
             newCon.params = {
                 mainTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
@@ -829,7 +205,7 @@ local _actions = {
 
         -- remove edge object
         -- local platformEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointId)
-        -- local proposal2 = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(platformEdgeId, platformWaypointId)
+        -- local proposal2 = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(platformEdgeId, platformWaypointId)
         -- if not(proposal2) then return end
 
         -- proposal.streetProposal = proposal2.streetProposal
@@ -1035,7 +411,7 @@ local _actions = {
             newSegment.comp.type = trackEdgeList.type
             newSegment.comp.typeIndex = trackEdgeList.typeIndex
             -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-            newSegment.type = _newEdgeType
+            newSegment.type = _constants.railEdgeType
             newSegment.trackEdge.trackType = trackEdgeList.trackType
             newSegment.trackEdge.catenary = trackEdgeList.catenary
 
@@ -1172,7 +548,7 @@ local _actions = {
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
         print('replaceEdgeWithSameRemovingObject found, the old edge id is valid')
         -- replaces a track segment with an identical one, without destroying the buildings
-        local proposal = _utils.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
+        local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
         if not(proposal) then return end
         print('replaceEdgeWithSameRemovingObject likes the proposal')
         -- debugPrint(proposal)
@@ -1263,7 +639,7 @@ local _actions = {
 
         local newEdge0 = api.type.SegmentAndEntity.new()
         newEdge0.entity = -1
-        newEdge0.type = _newEdgeType
+        newEdge0.type = _constants.railEdgeType
         newEdge0.comp.node0 = oldEdge.node0
         newEdge0.comp.node1 = -3
         newEdge0.comp.tangent0 = api.type.Vec3f.new(
@@ -1283,7 +659,7 @@ local _actions = {
 
         local newEdge1 = api.type.SegmentAndEntity.new()
         newEdge1.entity = -2
-        newEdge1.type = _newEdgeType
+        newEdge1.type = _constants.railEdgeType
         newEdge1.comp.node0 = -3
         newEdge1.comp.node1 = oldEdge.node1
         newEdge1.comp.tangent0 = api.type.Vec3f.new(
@@ -1313,7 +689,7 @@ local _actions = {
                     print('edgeObjPosition =')
                     debugPrint(edgeObjPosition)
                     if type(edgeObjPosition) ~= 'table' then return end -- change nothing and leave
-                    local assignment = _utils.getWhichEdgeGetsEdgeObjectAfterSplit(
+                    local assignment = stationHelpers.getWhichEdgeGetsEdgeObjectAfterSplit(
                         edgeObjPosition,
                         {position0.x, position0.y, position0.z},
                         {position1.x, position1.y, position1.z},
@@ -1401,7 +777,7 @@ local _actions = {
 }
 
 local function _isBuildingStation(param)
-    return _utils.isBuildingConstructionWithFileName(param, _constants.stationConFileNameLong)
+    return stationHelpers.isBuildingConstructionWithFileName(param, _constants.stationConFileNameLong)
 end
 
 function data()
@@ -1543,10 +919,10 @@ function data()
                 end
                 print('at least two track edges found')
 
-                local trackEdgeList = _utils.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
+                local trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, trackEdgeList =') debugPrint(trackEdgeList)
 
-                local platformEdgeList = _utils.getEdgeIdsProperties(args.platformEdgeIds)
+                local platformEdgeList = stationHelpers.getEdgeIdsProperties(args.platformEdgeIds)
                 -- print('platformEdgeList =') debugPrint(platformEdgeList)
 
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'platformWaypointId', 'splitNodeIds', 'trackWaypoint1Id', 'trackWaypoint2Id', })
@@ -1585,7 +961,7 @@ function data()
                 _actions.rebuildTracks(
                     args.removedTerminal.trackEdgeLists,
                     nil,
-                    _utils.getBulldozedStationNeighbourNodeIds(args.endEntities),
+                    stationHelpers.getBulldozedStationNeighbourNodeIds(args.endEntities),
                     args.stationConstructionId,
                     _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED
                 )
@@ -1595,14 +971,14 @@ function data()
                     return
                 end
                 _actions.buildSnappyTracks(
-                    _utils.getStationEndEntitiesTyped(args.stationConstructionId)
+                    stationHelpers.getStationEndEntitiesTyped(args.stationConstructionId)
                 )
             elseif name == _eventNames.REBUILD_ALL_TRACKS_REQUESTED then
                 for t = 1, #args.constructionData.params.terminals do
                     _actions.rebuildTracks(
                         args.constructionData.params.terminals[t].trackEdgeLists,
                         args.constructionData.params.terminals[t].platformEdgeLists,
-                        _utils.getBulldozedStationNeighbourNodeIds(args.constructionData.endEntities[t])
+                        stationHelpers.getBulldozedStationNeighbourNodeIds(args.constructionData.endEntities[t])
                     )
                 end
             end
@@ -1621,7 +997,7 @@ function data()
                             if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileNameLong then
                                 constructionDataBak = {
                                     constructionId = constructionId,
-                                    endEntities = _utils.getStationEndEntitiesTyped(constructionId),
+                                    endEntities = stationHelpers.getStationEndEntitiesTyped(constructionId),
                                     params = arrayUtils.cloneDeepOmittingFields(con.params, nil, true)
                                 }
                                 break
@@ -1734,7 +1110,7 @@ function data()
                                         ))
                                         return false
                                     else
-                                        local similarObjectsIdsInAnyEdges = _utils.getAllEdgeObjectsWithModelId(trackWaypointModelId)
+                                        local similarObjectsIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(trackWaypointModelId)
                                         if #similarObjectsIdsInAnyEdges > 1 then
                                             guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIdsInAnyEdges)
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -1769,9 +1145,9 @@ function data()
                                     local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltEdge.objects, platformWaypointModelId))
                                     if not(newWaypointId) then return end
 
-                                    local allPlatformWaypointIds = _utils.getAllEdgeObjectsWithModelId(platformWaypointModelId)
-                                    local allTrackWaypoint1Ids = _utils.getAllEdgeObjectsWithModelId(trackWaypoint1ModelId)
-                                    local allTrackWaypoint2Ids = _utils.getAllEdgeObjectsWithModelId(trackWaypoint2ModelId)
+                                    local allPlatformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(platformWaypointModelId)
+                                    local allTrackWaypoint1Ids = stationHelpers.getAllEdgeObjectsWithModelId(trackWaypoint1ModelId)
+                                    local allTrackWaypoint2Ids = stationHelpers.getAllEdgeObjectsWithModelId(trackWaypoint2ModelId)
 
                                     if not(trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType)) then
                                         guiHelpers.showWarningWindowWithGoto(_('PlatformWaypointBuiltOnTrack'))
@@ -1878,7 +1254,7 @@ function data()
                                     }
                                     -- get nearby freestyle stations;
                                     -- if any, send out a new param "join2StationId" to say, join this new station with it
-                                    local nearbyFreestyleStations = _utils.getNearbyFreestyleStationsList(platformWaypointTransf, 500)
+                                    local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointTransf, 500)
                                     if #nearbyFreestyleStations > 0 then
                                         guiHelpers.showNearbyStationPicker(
                                             nearbyFreestyleStations,

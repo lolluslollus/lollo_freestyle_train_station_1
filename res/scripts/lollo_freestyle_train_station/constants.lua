@@ -2,6 +2,7 @@ local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 
 local constants = {
     cargoPlatformTracksCategory = 'cargo-platform-tracks',
+    railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     nTerminalMultiplier = 1000,
     nTracksMax = 10,
     stationConFileNameLong = 'station/rail/lollo_freestyle_train_station/station.con',
