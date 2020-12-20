@@ -23,9 +23,10 @@ function data()
                             transf = { 0.11, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 1, 0, -2, 0, 0, 1, },
                         },
                         -- {
-                        --     materials = {'asset/icon/asset_icon_mark.mtl'},
-                        --     mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
-                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 20, 0.8, 1}
+                        --     materials = { "track/rail.mtl", },
+                        --     mesh = "railroad/tracks/single_rail/track_single_rail_lod0.msh",
+                        --     name = "track_single_rail",
+                        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                         -- },
                     },
                     name = "RootNode",

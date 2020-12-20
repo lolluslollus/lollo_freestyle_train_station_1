@@ -19,12 +19,13 @@ function data()
                             materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
                             mesh = "station/rail/era_c/perron_5/perron_5_lod0.msh",
                             name = "perron_5",
-                            transf = { 0.11, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 1, 0, -2, 0, 0, 1, },
+                            transf = { 0.05, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 1, 0, -1, 0, 0, 1, },
                         },
                         -- {
-                        --     materials = {'asset/icon/asset_icon_mark.mtl'},
-                        --     mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
-                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 20, 0.8, 1}
+                        --     materials = { "track/rail.mtl", "track/sleeper.mtl", },
+                        --     mesh = "railroad/tracks/2m_base/2m_base_lod0.msh",
+                        --     name = "2m_base",
+                        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                         -- },
                     },
                     name = "RootNode",

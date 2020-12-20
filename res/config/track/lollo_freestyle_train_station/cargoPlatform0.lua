@@ -59,10 +59,10 @@ function data()
 	t.tunnelWallMaterial = "track/tunnel_rail_ug.mtl"
 	t.tunnelHullMaterial = "track/tunnel_hull.mtl"
 
-	t.catenaryPoleModel = "lollo_freestyle_train_station/track/empty.mdl" -- "railroad/power_pole_us_2.mdl"
-	t.catenaryMultiPoleModel = "lollo_freestyle_train_station/track/empty.mdl" -- "railroad/power_pole_us_1_pole.mdl"
-	t.catenaryMultiGirderModel = "lollo_freestyle_train_station/track/empty.mdl" -- "railroad/power_pole_us_1a_repeat.mdl"
-	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/track/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
+	t.catenaryPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_2.mdl"
+	t.catenaryMultiPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1_pole.mdl"
+	t.catenaryMultiGirderModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1a_repeat.mdl"
+	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
 	-- t.bumperModel = "railroad/bumper.mdl"
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
@@ -71,13 +71,14 @@ function data()
 	t.borderGroundTex = "none.lua" -- "ballast.lua"
 	
     -- t.railModel ="railroad/tracks/single_rail.mdl"
-    t.railModel = 'lollo_freestyle_train_station/platform_2m.mdl'
-	-- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
+    t.railModel = 'lollo_freestyle_train_station/railroad/track/platform_2m.mdl'
+    -- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
+	t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
 	t.trackStraightModel = {
-		'lollo_freestyle_train_station/platform_2m_base.mdl', --"railroad/tracks/2m_base.mdl",
-		'lollo_freestyle_train_station/platform_4m_base.mdl', --"railroad/tracks/4m_base.mdl",
-		'lollo_freestyle_train_station/platform_8m_base.mdl', --"railroad/tracks/8m_base.mdl",
-		'lollo_freestyle_train_station/platform_16m_base.mdl', --"railroad/tracks/16m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/platform_2m_base.mdl', --"railroad/tracks/2m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/platform_4m_base.mdl', --"railroad/tracks/4m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/platform_8m_base.mdl', --"railroad/tracks/8m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/platform_16m_base.mdl', --"railroad/tracks/16m_base.mdl",
 	}
 
 	t.maintenanceCost = 0.0   -- [$/m/M] per meter and month
