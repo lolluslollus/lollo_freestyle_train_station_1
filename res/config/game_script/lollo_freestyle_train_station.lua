@@ -162,7 +162,8 @@ local _actions = {
         local params_newTerminal = {
             myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
-            trackEdgeLists = args.trackEdgeList
+            trackEdgeLists = args.trackEdgeList,
+            waitingAreaPositions = args.waitingAreaPositions
         }
 
         if oldCon == nil then
@@ -179,7 +180,7 @@ local _actions = {
                 api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
                 api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
             )
-            -- newCon.name = 'construction name'
+            -- newCon.name = 'construction name' -- LOLLO TODO assign a proper name
         else
             local newParams = {
                 mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
@@ -612,6 +613,7 @@ local _actions = {
 
     splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventArgs, isUpdateArgs)
         if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
+        -- LOLLO TODO deal with splitters at the edges: nodeBetween.length0 == 0 or nodeBetween.length1 == 0
 
         local node0TangentLength = edgeUtils.getVectorLength({
             tangent0.x,
@@ -725,6 +727,7 @@ local _actions = {
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
 
+        print('split proposal =') debugPrint(proposal)
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
@@ -922,19 +925,16 @@ function data()
                 local trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, trackEdgeList =') debugPrint(trackEdgeList)
 
-                local platformEdgeList = stationHelpers.getEdgeIdsProperties(args.platformEdgeIds)
-                -- print('platformEdgeList =') debugPrint(platformEdgeList)
-
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'platformWaypointId', 'splitNodeIds', 'trackWaypoint1Id', 'trackWaypoint2Id', })
-                eventArgs.platformEdgeList = platformEdgeList
+                eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(args.platformEdgeIds)
                 eventArgs.trackEdgeIds = trackEdgeIdsBetweenNodeIds
                 eventArgs.trackEdgeList = trackEdgeList
+                eventArgs.waitingAreaPositions = stationHelpers.getWaitingAreaPositions(args.platformEdgeIds)
 
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,
                     eventArgs
                 )
-                -- LOLLO TODO split the platform in short chunks
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
                 eventArgs.nTerminal = 1

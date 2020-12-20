@@ -220,6 +220,130 @@ local helpers = {
         return results
     end,
 
+    getWaitingAreaPositions = function(platformEdgeIds)
+        print('getWaitingAreaPositions starting')
+        if type(platformEdgeIds) ~= 'table' then return {} end
+
+        local results = {}
+        for _, edgeId in pairs(platformEdgeIds) do
+            if edgeUtils.isValidAndExistingId(edgeId) then
+                local edgeLength = edgeUtils.getEdgeLength(edgeId)
+                local nModelsInEdge = math.ceil(edgeLength / _constants.maxWaitingAreaEdgeLength)
+                local baseEdge =  api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+                local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+
+                local edgeResults = {}
+                local previousNodeBetween = nil
+                for i = 1, nModelsInEdge do
+                    print('i == ', i)
+                    local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, i / nModelsInEdge)
+                    print('nodeBetween =') debugPrint(nodeBetween)
+                    if nodeBetween == nil then
+                        print('ERROR: nodeBetween not found')
+                        return {}
+                    else
+                        if i == 1 then
+                            edgeResults[#edgeResults+1] = {
+                                posTanX2 = {
+                                    {
+                                        {
+                                            baseNode0.position.x,
+                                            baseNode0.position.y,
+                                            baseNode0.position.z,
+                                        },
+                                        {
+                                            baseEdge.tangent0.x * nodeBetween.length0 / edgeLength,
+                                            baseEdge.tangent0.y * nodeBetween.length0 / edgeLength,
+                                            baseEdge.tangent0.z * nodeBetween.length0 / edgeLength,
+                                        }
+                                    },
+                                    {
+                                        {
+                                            nodeBetween.position.x,
+                                            nodeBetween.position.y,
+                                            nodeBetween.position.z,
+                                        },
+                                        {
+                                            nodeBetween.tangent.x * nodeBetween.length0,
+                                            nodeBetween.tangent.y * nodeBetween.length0,
+                                            nodeBetween.tangent.z * nodeBetween.length0,
+                                        }
+                                    },
+                                }
+                            }
+                        elseif i == nModelsInEdge then
+                            edgeResults[#edgeResults+1] = {
+                                posTanX2 = {
+                                    {
+                                        {
+                                            previousNodeBetween.position.x,
+                                            previousNodeBetween.position.y,
+                                            previousNodeBetween.position.z,
+                                        },
+                                        {
+                                            previousNodeBetween.tangent.x * previousNodeBetween.length1,
+                                            previousNodeBetween.tangent.y * previousNodeBetween.length1,
+                                            previousNodeBetween.tangent.z * previousNodeBetween.length1,
+                                        }
+                                    },
+                                    {
+                                        {
+                                            baseNode1.position.x,
+                                            baseNode1.position.y,
+                                            baseNode1.position.z,
+                                        },
+                                        {
+                                            baseEdge.tangent1.x * nodeBetween.length0 / edgeLength,
+                                            baseEdge.tangent1.y * nodeBetween.length0 / edgeLength,
+                                            baseEdge.tangent1.z * nodeBetween.length0 / edgeLength,
+                                        }
+                                    },
+                                }
+                            }
+                        else
+                            edgeResults[#edgeResults+1] = {
+                                posTanX2 = {
+                                    {
+                                        {
+                                            previousNodeBetween.position.x,
+                                            previousNodeBetween.position.y,
+                                            previousNodeBetween.position.z,
+                                        },
+                                        {
+                                            previousNodeBetween.tangent.x * previousNodeBetween.length1,
+                                            previousNodeBetween.tangent.y * previousNodeBetween.length1,
+                                            previousNodeBetween.tangent.z * previousNodeBetween.length1,
+                                        }
+                                    },
+                                    {
+                                        {
+                                            nodeBetween.position.x,
+                                            nodeBetween.position.y,
+                                            nodeBetween.position.z,
+                                        },
+                                        {
+                                            nodeBetween.tangent.x * nodeBetween.length0,
+                                            nodeBetween.tangent.y * nodeBetween.length0,
+                                            nodeBetween.tangent.z * nodeBetween.length0,
+                                        }
+                                    },
+                                }
+                            }
+                        end
+                    end
+                    previousNodeBetween = nodeBetween
+                end
+
+                for _, value in pairs(edgeResults) do
+                    results[#results+1] = value
+                end
+            end
+        end
+
+        return results
+    end,
+
     getWhichEdgeGetsEdgeObjectAfterSplit = function(edgeObjPosition, node0pos, node1pos, nodeBetween)
         local result = {
             -- assignToFirstEstimate = nil,

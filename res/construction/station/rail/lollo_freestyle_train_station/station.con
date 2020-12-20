@@ -242,7 +242,8 @@ function data()
 				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
 				-- 	print('retransformed first edge =') debugPrint(retransformedFirstEdge)
 				-- end
-				-- add platform edges and waiting areas
+
+				-- add platform edges
 				for i = 1, #params.terminals[t].platformEdgeLists do
 					local pel = params.terminals[t].platformEdgeLists[i]
 
@@ -261,8 +262,13 @@ function data()
 					}
 
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
+				end
 
-					local platformPosTanX2 = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseMainTransf)
+				-- add waiting areas
+				for i = 1, #params.terminals[t].waitingAreaPositions do
+					local wap = params.terminals[t].waitingAreaPositions[i]
+
+					local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 					-- solve this system:
 					-- first point: 0, 0, 0 => platformPosTanX2[1][1]
 					-- transf[13] = platformPosTanX2[1][1][1]

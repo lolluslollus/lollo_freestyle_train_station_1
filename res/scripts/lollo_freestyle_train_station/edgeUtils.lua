@@ -139,10 +139,10 @@ helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, 
     local length = (length0 + length1) * 0.5
     if type(length) ~= 'number' or length <= 0 then return nil end
 
-    print('_getNodeBetween starting, shift021 =', shift021, 'length =', length)
-    print('baseEdge =') debugPrint(baseEdge)
-    print('baseNode0 =') debugPrint(baseNode0)
-    print('baseNode1 =') debugPrint(baseNode1)
+    -- print('_getNodeBetween starting, shift021 =', shift021, 'length =', length)
+    -- print('baseEdge =') debugPrint(baseEdge)
+    -- print('baseNode0 =') debugPrint(baseNode0)
+    -- print('baseNode1 =') debugPrint(baseNode1)
     -- Now I solve the system for x:
     -- a + b l0 + c l0^2 + d l0^3 = posX0
     -- a + b l1 + c l1^2 + d l1^3 = posX1
@@ -187,7 +187,7 @@ helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, 
     local cY = (baseNode1.position.y - aY) / length / length - bY / length - dY * length
 
     local testY = aY + bY * length + cY * length * length + dY * length * length * length
-    print(testY, 'should be', baseNode1.position.y)
+    -- print(testY, 'should be', baseNode1.position.y)
     if not(helper.isNumVeryClose(testY, baseNode1.position.y)) then return nil end
 
     local aZ = baseNode0.position.z
@@ -196,7 +196,7 @@ helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, 
     local cZ = (baseNode1.position.z - aZ) / length / length - bZ / length - dZ * length
 
     local testZ = aZ + bZ * length + cZ * length * length + dZ * length * length * length
-    print(testZ, 'should be', baseNode1.position.z)
+    -- print(testZ, 'should be', baseNode1.position.z)
     if not(helper.isNumVeryClose(testZ, baseNode1.position.z)) then return nil end
 
     local lMid = shift021 * length
@@ -217,6 +217,15 @@ helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, 
     }
     -- print('getNodeBetween result =') debugPrint(result)
     return result
+end
+
+helper.getEdgeLength = function(edgeId)
+    if not(helper.isValidAndExistingId(edgeId)) then return nil end
+
+    local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
+    if tn == nil or tn.edges == nil or tn.edges[1] == nil or tn.edges[1].geometry == nil then return nil end
+
+    return tn.edges[1].geometry.length
 end
 
 helper.getNodeBetweenByPercentageShift = function(edgeId, shift021)
@@ -456,7 +465,7 @@ helper.getLastBuiltEdgeId = function(entity2tn, addedSegment)
     or not(addedSegment.comp.node0) or not(addedSegment.comp.node1)
     then return nil end
 
-    -- LOLLO TODO further down, I check the nodes (and the tangents) to compare proposed edges
+    -- UG TODO further down, I check the nodes (and the tangents) to compare proposed edges
     -- (where the id is unknown) with entity2tn edges (which include nodes and neighbouring edges without saying which is which).
     -- However, when adding a train waypoint, the nodes in entity2tn[id].edges[i].conns[j].entity do not match:
     -- one is correct and the other is the edge itself. => Tell UG
@@ -911,7 +920,7 @@ helper.track.getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
     debugPrint(node1Typed)
     print('node2Typed =')
     debugPrint(node2Typed)
-    -- LOLLO TODO this dumps without useful messages: ask UG
+    -- UG TODO this dumps without useful messages: ask UG
     local path = api.engine.util.pathfinding.findPath(
         { edgeIdDir1 },
         { node1Typed },
