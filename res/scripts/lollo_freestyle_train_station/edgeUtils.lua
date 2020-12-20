@@ -39,7 +39,7 @@ helper.isValidAndExistingId = function(id)
 end
 
 helper.getVectorLength = function(xyz)
-    if type(xyz) ~= 'table' then return nil end
+    if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
     local x = xyz.x or xyz[1] or 0.0
     local y = xyz.y or xyz[2] or 0.0
     local z = xyz.z or xyz[3] or 0.0
@@ -47,7 +47,7 @@ helper.getVectorLength = function(xyz)
 end
 
 helper.getVectorNormalised = function(xyz)
-    if type(xyz) ~= 'table' then return nil end
+    if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
 
     local length = helper.getVectorLength(xyz)
     if length == 0 then return nil end
@@ -122,6 +122,22 @@ local function sign(num1)
     if num1 == 0 then return 0 end
     if num1 > 0 then return 1 end
     return -1
+end
+
+helper.getEdgeLength = function(edgeId)
+    if not(helper.isValidAndExistingId(edgeId)) then return nil end
+
+    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    if baseEdge == nil then return nil end
+
+    -- these should be identical, but they are not really so, so we average them
+    return (helper.getVectorLength(baseEdge.tangent0) + helper.getVectorLength(baseEdge.tangent1)) * 0.5
+
+    -- this returns funny results
+    -- local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
+    -- if tn == nil or tn.edges == nil or tn.edges[1] == nil or tn.edges[1].geometry == nil then return nil end
+
+    -- return tn.edges[1].geometry.length
 end
 
 helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, length)
@@ -219,15 +235,6 @@ helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, 
     return result
 end
 
-helper.getEdgeLength = function(edgeId)
-    if not(helper.isValidAndExistingId(edgeId)) then return nil end
-
-    local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
-    if tn == nil or tn.edges == nil or tn.edges[1] == nil or tn.edges[1].geometry == nil then return nil end
-
-    return tn.edges[1].geometry.length
-end
-
 helper.getNodeBetweenByPercentageShift = function(edgeId, shift021)
     if not(helper.isValidAndExistingId(edgeId)) then return nil end
 
@@ -240,11 +247,7 @@ helper.getNodeBetweenByPercentageShift = function(edgeId, shift021)
     local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
     if baseNode0 == nil or baseNode1 == nil then return nil end
 
-    local length = math.sqrt(baseEdge.tangent0.x * baseEdge.tangent1.x + baseEdge.tangent0.y * baseEdge.tangent1.y + baseEdge.tangent0.z * baseEdge.tangent1.z)
-    if length <= 0 then return nil end
-
-    -- local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
-    -- if tn == nil then return nil end
+    -- if helper.getEdgeLength(edgeId) <= 0 then return nil end
 
     return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, shift021) --, tn.edges[1].geometry.length)
 end

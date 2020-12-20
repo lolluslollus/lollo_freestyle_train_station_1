@@ -604,8 +604,7 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
-                -- print('LOLLO result = ')
-                -- debugPrint(result)
+                -- print('LOLLO replaceEdgeWithSameRemovingObject result = ') debugPrint(result)
                 print('LOLLO replaceEdgeWithSameRemovingObject success = ') debugPrint(success)
             end
         )
@@ -613,7 +612,52 @@ local _actions = {
 
     splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventArgs, isUpdateArgs)
         if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
-        -- LOLLO TODO deal with splitters at the edges: nodeBetween.length0 == 0 or nodeBetween.length1 == 0
+
+        local oldBaseEdge = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE)
+        local oldBaseEdgeTrack = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+        -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
+        if oldBaseEdge == nil or oldBaseEdgeTrack == nil then return end
+
+        local context = api.type.Context:new()
+        context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
+
+        -- the split may occur at the end of an edge - in theory, but I could not make it happen in practise.
+        if nodeBetween.length0 == 0 or nodeBetween.length1 == 0 then
+            -- LOLLO TODO check this, it seems to never happen
+            print('nodeBetween is at the end of an edge; nodeBetween =') debugPrint(nodeBetween)
+            local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(wholeEdgeId, objectIdToRemove)
+            if not(proposal) then return end
+
+            api.cmd.sendCommand(
+                api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                function(result, success)
+                    print('command callback firing for split, success =', success)
+                    if success and successEventName ~= nil then
+                        local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
+                        if isUpdateArgs then
+                            local splitNodeId = nodeBetween.length0 == 0 and oldBaseEdge.node0 or oldBaseEdge.node1
+                            if eventArgs.splitNodeIds == nil then eventArgs.splitNodeIds = {} end
+                            if successEventName == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
+                                eventArgs.splitNodeIds.node1Id = splitNodeId
+                            elseif successEventName == _eventNames.TRACK_BULLDOZE_REQUESTED then
+                                eventArgs.splitNodeIds.node2Id = splitNodeId
+                            end
+                        end
+                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                            string.sub(debug.getinfo(1, 'S').source, 1),
+                            _eventId,
+                            successEventName,
+                            eventArgs
+                        ))
+                    end
+                end
+            )
+            return
+        end
 
         local node0TangentLength = edgeUtils.getVectorLength({
             tangent0.x,
@@ -626,11 +670,6 @@ local _actions = {
             tangent1.z
         })
 
-        local oldEdge = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE)
-        local oldEdgeTrack = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-        -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
-        if oldEdge == nil or oldEdgeTrack == nil then return end
-
         -- local playerOwned = api.type.PlayerOwned.new()
         -- playerOwned.player = api.engine.util.getPlayer()
         local playerOwned = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.PLAYER_OWNED)
@@ -642,7 +681,7 @@ local _actions = {
         local newEdge0 = api.type.SegmentAndEntity.new()
         newEdge0.entity = -1
         newEdge0.type = _constants.railEdgeType
-        newEdge0.comp.node0 = oldEdge.node0
+        newEdge0.comp.node0 = oldBaseEdge.node0
         newEdge0.comp.node1 = -3
         newEdge0.comp.tangent0 = api.type.Vec3f.new(
             tangent0.x * nodeBetween.length0 / node0TangentLength,
@@ -654,16 +693,16 @@ local _actions = {
             nodeBetween.tangent.y * nodeBetween.length0,
             nodeBetween.tangent.z * nodeBetween.length0
         )
-        newEdge0.comp.type = oldEdge.type -- respect bridge or tunnel
-        newEdge0.comp.typeIndex = oldEdge.typeIndex -- respect bridge or tunnel
+        newEdge0.comp.type = oldBaseEdge.type -- respect bridge or tunnel
+        newEdge0.comp.typeIndex = oldBaseEdge.typeIndex -- respect bridge or tunnel
         newEdge0.playerOwned = playerOwned
-        newEdge0.trackEdge = oldEdgeTrack
+        newEdge0.trackEdge = oldBaseEdgeTrack
 
         local newEdge1 = api.type.SegmentAndEntity.new()
         newEdge1.entity = -2
         newEdge1.type = _constants.railEdgeType
         newEdge1.comp.node0 = -3
-        newEdge1.comp.node1 = oldEdge.node1
+        newEdge1.comp.node1 = oldBaseEdge.node1
         newEdge1.comp.tangent0 = api.type.Vec3f.new(
             nodeBetween.tangent.x * nodeBetween.length1,
             nodeBetween.tangent.y * nodeBetween.length1,
@@ -674,16 +713,16 @@ local _actions = {
             tangent1.y * nodeBetween.length1 / node1TangentLength,
             tangent1.z * nodeBetween.length1 / node1TangentLength
         )
-        newEdge1.comp.type = oldEdge.type
-        newEdge1.comp.typeIndex = oldEdge.typeIndex
+        newEdge1.comp.type = oldBaseEdge.type
+        newEdge1.comp.typeIndex = oldBaseEdge.typeIndex
         newEdge1.playerOwned = playerOwned
-        newEdge1.trackEdge = oldEdgeTrack
+        newEdge1.trackEdge = oldBaseEdgeTrack
 
-        if type(oldEdge.objects) == 'table' and #oldEdge.objects > 1 then
+        if type(oldBaseEdge.objects) == 'table' and #oldBaseEdge.objects > 1 then
             print('splitting: edge objects found')
             local edge0Objects = {}
             local edge1Objects = {}
-            for _, edgeObj in pairs(oldEdge.objects) do
+            for _, edgeObj in pairs(oldBaseEdge.objects) do
                 print('edgeObj =')
                 debugPrint(edgeObj)
                 if edgeObj[1] ~= objectIdToRemove then
@@ -719,13 +758,6 @@ local _actions = {
         end
         proposal.streetProposal.nodesToAdd[1] = newNodeBetween
         -- print('split proposal =') debugPrint(proposal)
-
-        local context = api.type.Context:new()
-        context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
-        -- context.gatherBuildings = true  -- default is false
-        -- context.gatherFields = true -- default is true
-        context.player = api.engine.util.getPlayer() -- default is -1
 
         print('split proposal =') debugPrint(proposal)
         api.cmd.sendCommand(
