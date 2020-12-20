@@ -249,7 +249,7 @@ helper.getNodeBetweenByPercentageShift = function(edgeId, shift021)
 
     -- if helper.getEdgeLength(edgeId) <= 0 then return nil end
 
-    return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, shift021) --, tn.edges[1].geometry.length)
+    return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, shift021)
 end
 
 helper.getNodeBetweenByPosition = function(edgeId, position)
@@ -283,7 +283,7 @@ helper.getNodeBetweenByPosition = function(edgeId, position)
     -- local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
     -- if tn == nil then return nil end
 
-    return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, length0 / (length0 + length1)) --, tn.edges[1].geometry.length)
+    return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, length0 / (length0 + length1))
 end
 
 helper.getNodeBetweenOLD = function(position0, tangent0, position1, tangent1, betweenPosition)
