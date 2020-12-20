@@ -291,7 +291,7 @@ function data()
 						1
 					}
 					result.models[#result.models+1] = {
-						id = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
+						id = #params.terminals[t].isCargo and _constants.cargoWaitingAreaModelId or _constants.passengersWaitingAreaModelId,
 						tag = _constants.waitingAreaTagRoot .. tostring(t),
 						transf = waitingAreaTransf
 					}
@@ -319,7 +319,8 @@ function data()
 
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
-				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible
+                -- LOLLO NOTE stations with mixed cargo and passengers seem impossible
+                -- LOLLO TODO add passenger terminals
 				result.stations = {
 					{
 						tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
@@ -431,6 +432,9 @@ function data()
 		-- 	return modules
         -- end,
         upgradeFn = function(params)
+            -- LOLLO TODO allow upgrading tracks.
+            -- this sample is from the modular station, which puts edges in modules.
+            -- I don't coz they are curved, so see what I can do.
             print('LOLLO upgradeFn')
             local modules = {}
 

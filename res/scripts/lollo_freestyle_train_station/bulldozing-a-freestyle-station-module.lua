@@ -1694,7 +1694,7 @@ local param =
         },
         hasCargoPlatform = false,
         transf = {
-          cols = <function>,
+        --   cols = <function>,
         },
         frozenNodes = {
           [1] = 0,

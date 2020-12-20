@@ -31,6 +31,18 @@ local indexedList = {
 }
 indexedList[1010] = nil
 
+local list1 = { 1919, 1920, 1921 }
+local list2 = { 1922, 1923, 1924 }
+local listAll = list1
+arrayUtils.concatValues(listAll, list2)
+
+local one = nil
+local two = 2
+local oneOrTwo = one or two
+
+local what = arrayUtils.getLast({})
+local what = arrayUtils.getFirst({})
+
 local dummy = 123
 
 --  id = 24148,

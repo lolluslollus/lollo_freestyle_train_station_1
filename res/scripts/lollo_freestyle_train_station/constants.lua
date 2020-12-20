@@ -1,7 +1,7 @@
 local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 
 local constants = {
-    cargoPlatformTracksCategory = 'cargo-platform-tracks',
+    platformTracksCategory = 'platform-tracks',
     maxWaitingAreaEdgeLength = 5,
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     nTerminalMultiplier = 1000,
@@ -12,6 +12,12 @@ local constants = {
     terminalModelFileName = 'lollo_freestyle_train_station/icon/red_short.mdl',
     terminalModelTag = 'freestyleTrainStationTerminal',
     terminalModuleFileName = 'station/rail/lollo_freestyle_train_station/terminal.module',
+    trackWaypoint1ModelId = 'lollo_freestyle_train_station/railroad/lollo_track_waypoint_1.mdl',
+    trackWaypoint2ModelId = 'lollo_freestyle_train_station/railroad/lollo_track_waypoint_2.mdl',
+    cargoPlatformWaypointModelId = 'lollo_freestyle_train_station/railroad/cargo_platform_waypoint.mdl',
+    passengersPlatformWaypointModelId = 'lollo_freestyle_train_station/railroad/passengers_platform_waypoint.mdl',
+    cargoWaitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
+    passengersWaitingAreaModelId = 'lollo_freestyle_train_station/passengers_waiting_area.mdl',
     waitingAreaTagRoot = 'waitingArea_',
 	trackSpacing = {5, 5, 5, 5}, -- the smaller, the less the risk of collision. Too small, problems removing the module.
 	idBases = {

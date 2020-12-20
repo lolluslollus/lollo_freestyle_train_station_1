@@ -16,7 +16,7 @@ return {
 		price = 0,
 	},
 	category = {
-		categories = { "cargo", },
+		-- categories = { "cargo", },
 	},
 	description = {
 		name = _("Terminal"),
@@ -24,7 +24,7 @@ return {
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = {
-		cargo = true,
+		-- cargo = true,
 	},
 	order = {
 		value = 1,

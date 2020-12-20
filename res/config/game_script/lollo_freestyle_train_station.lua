@@ -144,13 +144,14 @@ local _actions = {
         local oldCon = edgeUtils.isValidAndExistingId(args.join2StationId)
         and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
         or nil
+
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileNameLong
 
         local params_newModuleKey = slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId)
         local params_newModuleValue = {
             metadata = {
-                cargo = true,
+                -- cargo = true,
             },
             name = _constants.terminalModuleFileName,
             updateScript = {
@@ -160,6 +161,7 @@ local _actions = {
             variant = 0,
         }
         local params_newTerminal = {
+            isCargo = args.isCargo,
             myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
@@ -1111,9 +1113,10 @@ function data()
                             and args.proposal.proposal.edgeObjectsToAdd[1]
                             and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
                             then
-                                local platformWaypointModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_platform_waypoint.mdl')
-                                local trackWaypoint1ModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_track_waypoint_1.mdl')
-                                local trackWaypoint2ModelId = api.res.modelRep.find('lollo_freestyle_train_station/railroad/lollo_track_waypoint_2.mdl')
+                                local cargoPlatformWaypointModelId = api.res.modelRep.find(_constants.cargoPlatformWaypointModelId)
+                                local passengersPlatformWaypointModelId = api.res.modelRep.find(_constants.passengersPlatformWaypointModelId)
+                                local trackWaypoint1ModelId = api.res.modelRep.find(_constants.trackWaypoint1ModelId)
+                                local trackWaypoint2ModelId = api.res.modelRep.find(_constants.trackWaypoint2ModelId)
 
                                 local handleTrackWaypointBuilt = function(trackWaypointModelId)
                                     print('LOLLO track waypoint with modelId', trackWaypoint1ModelId, 'built!')
@@ -1163,7 +1166,8 @@ function data()
                                 -- UG TODO this is empty, ask UG to fix this: can't we have the waypointId in args.result?
                                 -- print('waypoint built, args.result =') debugPrint(args.result)
                                 -- LOLLO NOTE as I added an edge object, I have NOT split the edge
-                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == platformWaypointModelId then
+                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == cargoPlatformWaypointModelId
+                                or args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == passengersPlatformWaypointModelId then
                                     print('LOLLO platform waypoint built!')
                                     local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, args.proposal.proposal.addedSegments[1])
                                     if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then return end
@@ -1174,10 +1178,16 @@ function data()
                                     )
                                     if not(lastBuiltEdge) then return end
 
-                                    local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltEdge.objects, platformWaypointModelId))
+                                    local isCargo = true
+                                    local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltEdge.objects, cargoPlatformWaypointModelId))
+                                    if newWaypointId == nil then
+                                        newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltEdge.objects, passengersPlatformWaypointModelId))
+                                        isCargo = false
+                                    end
                                     if not(newWaypointId) then return end
 
-                                    local allPlatformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(platformWaypointModelId)
+                                    local allPlatformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(cargoPlatformWaypointModelId)
+                                    arrayUtils.concatValues(allPlatformWaypointIds, stationHelpers.getAllEdgeObjectsWithModelId(passengersPlatformWaypointModelId))
                                     local allTrackWaypoint1Ids = stationHelpers.getAllEdgeObjectsWithModelId(trackWaypoint1ModelId)
                                     local allTrackWaypoint2Ids = stationHelpers.getAllEdgeObjectsWithModelId(trackWaypoint2ModelId)
 
@@ -1276,6 +1286,7 @@ function data()
                                     )
 
                                     local eventArgs = {
+                                        isCargo = isCargo,
                                         platformEdgeIds = contiguousPlatformEdges,
                                         platformWaypointId = newWaypointId,
                                         platformWaypointTransf = platformWaypointTransf,

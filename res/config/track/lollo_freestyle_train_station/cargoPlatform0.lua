@@ -5,7 +5,7 @@ function data()
 
 	t.name = _("CargoPlatformTracksName")
 	t.desc = _("CargoPlatformTracksDesc")
-	t.categories  = { _constants.cargoPlatformTracksCategory }
+	t.categories  = { _constants.platformTracksCategory }
 
 	t.yearFrom = 0
 	t.yearTo = 0
