@@ -19,7 +19,7 @@ function data()
                             materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
                             mesh = "station/rail/era_c/perron_5/perron_5_lod0.msh",
                             name = "perron_5",
-                            transf = { 0.05, 0, 0, 0, 0, 0.3, 0, 0, 0, 0, 1, 0, -1, 0, 0, 1, },
+                            transf = { 0.05, 0, 0, 0, 0, 0.6, 0, 0, 0, 0, 1, 0, -1, 0, 0, 1, },
                         },
                         -- {
                         --     materials = { "track/rail.mtl", "track/sleeper.mtl", },
