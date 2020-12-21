@@ -31,20 +31,28 @@ return {
 	order = {
 		value = 1,
 	},
-	type = _constants.terminalModuleType,
+	type = _constants.cargoTerminalModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
 		print('LOLLO terminal module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('LOLLO result =') debugPrint(result)
-		print('slotTransf =') debugPrint(slotTransf)
+		print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
 		-- print('params =') debugPrint(params)
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
 
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+
+		-- LOLLO only for testing
+		-- result.models[#result.models + 1] = {
+		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = _constants.terminalModelTag
+		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
 		for i = 3, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalDecoStep do
@@ -59,7 +67,7 @@ return {
 				-- id = 'station/rail/asset/cargo_name_board.mdl', -- _constants.terminalModelFileName,
 				id = 'lollo_freestyle_train_station/cargo_name_board.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(slotTransf, transf),
+				transf = transf,
 				tag = _constants.terminalModelTag
 			}
 		end
@@ -75,7 +83,7 @@ return {
 				-- id = 'station/rail/asset/cargo_name_board.mdl', -- _constants.terminalModelFileName,
 				id = 'station/rail/asset/cargo_lamps.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(slotTransf, transf),
+				transf = transf,
 				tag = _constants.terminalModelTag
 			}
 		end
@@ -91,7 +99,7 @@ return {
 				-- id = 'station/rail/asset/cargo_name_board.mdl', -- _constants.terminalModelFileName,
 				id = 'station/rail/asset/cargo_speakers.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(slotTransf, transf),
+				transf = transf,
 				tag = _constants.terminalModelTag
 			}
 		end

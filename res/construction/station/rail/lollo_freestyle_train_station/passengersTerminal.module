@@ -31,20 +31,28 @@ return {
 	order = {
 		value = 1,
 	},
-	type = _constants.terminalModuleType,
+	type = _constants.passengersTerminalModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
 		print('LOLLO terminal module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('LOLLO result =') debugPrint(result)
-		print('slotTransf =') debugPrint(slotTransf)
+		print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
 		-- print('params =') debugPrint(params)
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
 
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+
+		-- LOLLO only for testing
+		-- result.models[#result.models + 1] = {
+		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = _constants.terminalModelTag
+		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local yShift = 1
@@ -60,13 +68,13 @@ return {
 				-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
 				id = 'lollo_freestyle_train_station/asset/era_c_station_name.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transfUtilsUG.mul(slotTransf, transf), { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 3, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 3, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			result.models[#result.models + 1] = {
 				id = 'station/rail/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transfUtilsUG.mul(slotTransf, transf), { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			yShift = - yShift
@@ -82,7 +90,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transfUtilsUG.mul(slotTransf, transf), { 0, -yShift, 0, 0,  yShift, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 3.5, 1 }),
+				transf = transfUtilsUG.mul(transf, { 0, -yShift, 0, 0,  yShift, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 3.5, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			-- the model index must be in base 0 !
@@ -90,7 +98,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'station/rail/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transfUtilsUG.mul(slotTransf, transf), { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			yShift = - yShift
@@ -107,14 +115,14 @@ return {
 				-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transfUtilsUG.mul(slotTransf, transf), { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.7, yShift, 0.7, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.7, yShift, 0.7, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			result.models[#result.models + 1] = {
 				-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 				id = 'lollo_freestyle_train_station/asset/partenze.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transfUtilsUG.mul(slotTransf, transf), { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7, yShift, 0.7, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7, yShift, 0.7, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			yShift = - yShift

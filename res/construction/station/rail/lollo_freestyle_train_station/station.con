@@ -81,7 +81,18 @@ function data()
                             0, 0, 0, 1},
 					},
                 },
-                -- slotConfig = {},
+				slotConfig = {
+					[_constants.cargoTerminalModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
+					[_constants.passengersTerminalModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					}
+				},
                 slots = {},
 				stations = {},
 				terminalGroups = {},
@@ -101,17 +112,6 @@ function data()
 			for t = 1, #params.terminals do
 				local isCargoTerminal = params.terminals[t].isCargo
 				if isCargoTerminal then terminateConstructionHookInfo.isAnyCargoTerminal = true else terminateConstructionHookInfo.isAnyPassengersTerminal = true end
-
-				-- add terminal slots
-				table.insert(result.slots, {
-					-- height = 1,
-					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
-					-- shape 0 1 2 3
-					-- shape = 3,
-					spacing = _constants.trackSpacing,
-					transf = _constants.idTransf,
-					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengersTerminalModuleType,
-				})
 
 				-- add track edges
 				for i = 1, #params.terminals[t].trackEdgeLists do
@@ -184,6 +184,23 @@ function data()
 						)
 					}
 				end
+
+				-- add terminal slots
+				local midTransf = moduleHelpers.getWaitingAreaTransf(
+					params.terminals[t].waitingAreaPositions[math.ceil(#params.terminals[t].waitingAreaPositions * 0.5)],
+					inverseMainTransf
+				)
+				-- print('midTransf = ') debugPrint(midTransf)
+				table.insert(result.slots, {
+					height = 10,
+					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
+					-- shape 0 1 2 3
+					shape = 3,
+					spacing = _constants.trackSpacing,
+					-- transf = _constants.idTransf,
+					transf = midTransf,
+					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengersTerminalModuleType,
+				})
 			end
 
 			result.terminateConstructionHook = function()
