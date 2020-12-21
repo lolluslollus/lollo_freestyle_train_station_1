@@ -55,7 +55,7 @@ return {
 		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
-		for i = 3, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalDecoStep do
+		for i = 3, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)
@@ -71,7 +71,7 @@ return {
 				tag = _constants.terminalModelTag
 			}
 		end
-		for i = 2, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalDecoStep do
+		for i = 2, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)
@@ -87,7 +87,7 @@ return {
 				tag = _constants.terminalModelTag
 			}
 		end
-		for i = 4, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalDecoStep do
+		for i = 4, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)

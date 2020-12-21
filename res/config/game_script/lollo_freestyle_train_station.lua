@@ -154,7 +154,7 @@ local _actions = {
             metadata = {
                 -- cargo = true,
             },
-            name = args.isCargo and _constants.cargoTerminalModuleFileName or _constants.passengersTerminalModuleFileName,
+            name = args.isCargo and _constants.cargoTerminalModuleFileName or _constants.passengerTerminalModuleFileName,
             updateScript = {
                 fileName = '',
                 params = { },
@@ -931,7 +931,7 @@ function data()
                 )
                 print('trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
                 if #trackEdgeIdsBetweenNodeIds == 0 then
-                    -- LOLLO TODO issue a warning and destroy platform waypoint
+                    -- LOLLO TODO issue a warning and destroy platform waypoint; but does this ever happen?
                     print('no track edges found')
                     return
                 end

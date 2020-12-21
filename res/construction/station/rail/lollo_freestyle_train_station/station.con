@@ -87,7 +87,7 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
-					[_constants.passengersTerminalModuleType] = {
+					[_constants.passengerTerminalModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
@@ -101,7 +101,7 @@ function data()
 
 			local terminateConstructionHookInfo = {
 				isAnyCargoTerminal = false,
-				isAnyPassengersTerminal = false,
+				isAnyPassengerTerminal = false,
 				vehicleNodes = {}
 			}
 			-- LOLLO NOTE the coordinates in terminals are absolute
@@ -111,7 +111,7 @@ function data()
 
 			for t = 1, #params.terminals do
 				local isCargoTerminal = params.terminals[t].isCargo
-				if isCargoTerminal then terminateConstructionHookInfo.isAnyCargoTerminal = true else terminateConstructionHookInfo.isAnyPassengersTerminal = true end
+				if isCargoTerminal then terminateConstructionHookInfo.isAnyCargoTerminal = true else terminateConstructionHookInfo.isAnyPassengerTerminal = true end
 
 				-- add track edges
 				for i = 1, #params.terminals[t].trackEdgeLists do
@@ -199,7 +199,7 @@ function data()
 					spacing = _constants.trackSpacing,
 					-- transf = _constants.idTransf,
 					transf = midTransf,
-					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengersTerminalModuleType,
+					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 				})
 			end
 
@@ -215,7 +215,7 @@ function data()
 						terminals = { } -- 0 is the position of the linked terminal group, in base 0
 					}
 				end
-				if terminateConstructionHookInfo.isAnyPassengersTerminal then
+				if terminateConstructionHookInfo.isAnyPassengerTerminal then
 					result.stations[#result.stations+1] = {
 						tag = 1, -- in the stock station, this is 0 for cargo and 1 for passengers
 						terminals = { } -- 0 is the position of the linked terminal group, in base 0

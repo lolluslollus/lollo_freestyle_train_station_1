@@ -31,7 +31,7 @@ return {
 	order = {
 		value = 1,
 	},
-	type = _constants.passengersTerminalModuleType,
+	type = _constants.passengerTerminalModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
@@ -56,7 +56,7 @@ return {
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local yShift = 1
-		for i = 3, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalDecoStep do
+		for i = 3, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)
@@ -79,7 +79,7 @@ return {
 			}
 			yShift = - yShift
 		end
-		for i = 2, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalDecoStep do
+		for i = 2, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)
@@ -103,7 +103,7 @@ return {
 			}
 			yShift = - yShift
 		end
-		for i = 4, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalDecoStep do
+		for i = 4, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)
