@@ -94,10 +94,35 @@ guiHelpers.showNearbyStationPicker = function(cons, eventId, eventName, eventArg
         )
         layout:addItem(button)
     end
+    local function addGoBackToWrongObjectButton()
+        if not(edgeUtils.isValidAndExistingId(eventArgs.platformWaypointId)) then return end
+
+        local newObjectPosition = edgeUtils.getObjectPosition(eventArgs.platformWaypointId)
+        if newObjectPosition ~= nil then
+            local buttonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
+            buttonLayout:addItem(api.gui.comp.ImageView.new('ui/design/window-content/arrow_style1_left.tga'))
+            buttonLayout:addItem(api.gui.comp.TextView.new(_texts.goBack))
+            local button = api.gui.comp.Button.new(buttonLayout, true)
+            button:onClick(
+                function()
+                    -- UG TODO this dumps, ask UG to fix it
+                    -- api.gui.util.CameraController:setCameraData(
+                    --     api.type.Vec2f.new(wrongObjectPosition[1], wrongObjectPosition[2]),
+                    --     100, 0, 0
+                    -- )
+                    -- x, y, distance, angleInRad, pitchInRad
+                    guiHelpers.moveCamera(newObjectPosition)
+                    -- game.gui.setCamera({wrongObjectPosition[1], wrongObjectPosition[2], 100, 0, 0})
+                end
+            )
+            layout:addItem(button)
+        end
+    end
     addJoinButtons()
     addNoJoinButton()
+    addGoBackToWrongObjectButton()
 
-    window:setHighlighted(true)
+    -- window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
     window:setPosition(position.x, position.y)
     window:onClose(
@@ -188,6 +213,17 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
     local position = api.gui.util.getMouseScreenPos()
     window:setPosition(position.x, position.y)
     window:addHideOnCloseHandler()
+end
+
+guiHelpers.hideAllWarnings = function()
+    local window = api.gui.util.getById(_stationPickerWindowId)
+    if window ~= nil then
+        window:setVisible(false, false)
+    end
+    window = api.gui.util.getById(_warningWindowId)
+    if window ~= nil then
+        window:setVisible(false, false)
+    end
 end
 
 return guiHelpers

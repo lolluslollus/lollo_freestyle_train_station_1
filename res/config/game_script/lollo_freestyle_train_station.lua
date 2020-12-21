@@ -1034,6 +1034,7 @@ function data()
                 function()
                     -- about to bulldoze a freestyle station: write away its params so you can rebuild its tracks later
                     if name == 'builder.proposalCreate' and id == 'bulldozer' then
+                        guiHelpers.hideAllWarnings()
                         if not(args.proposal.toRemove) then return end
 
                         for _, constructionId in pairs(args.proposal.toRemove) do
@@ -1048,6 +1049,7 @@ function data()
                             end
                         end
                     elseif name == 'builder.apply' then
+                        guiHelpers.hideAllWarnings()
                         -- print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
                         if id == 'bulldozer' then
                             -- now it's too late to read the station params:
