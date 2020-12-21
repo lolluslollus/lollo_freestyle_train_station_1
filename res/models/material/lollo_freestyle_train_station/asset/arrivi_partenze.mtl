@@ -1,0 +1,85 @@
+function data()
+    return {
+        order = 0,
+        params = {
+            albedo_scale = {
+                albedoScale = { 1, 1, 1, },
+            },
+            color_blend = {
+                albedoScales = { 1, },
+                colors = { },
+            },
+            dirt_rust = {
+                age = 0,
+                dirtColor = { 0.5, 0.5, 0.5, },
+                dirtOpacity = 0.5,
+                dirtScale = 1,
+                rustColor = { 0.5, 0.5, 0.5, },
+                rustOpacity = 0.5,
+                rustScale = 1,
+            },
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            map_albedo = {
+                -- fileName = "models/station/road/streetstation/streetstation_001_albedo_opacity.dds",
+                fileName = "lollo_freestyle_train_station/asset/arrivi_partenze_albedo_opacity_bc3.dds",
+                type = "TWOD",
+            },
+            map_cblend_dirt_rust = {
+                fileName = "models/station/road/streetstation/streetstation_001_cblend_dirt_rust.dds",
+                type = "TWOD",
+            },
+            map_dirt = {
+                fileName = "models/vehicle/dirt_albedo.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_dirt_normal = {
+                fileName = "models/vehicle/dirt_normal.dds",
+                redGreen = true,
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_metal_gloss_ao = {
+                fileName = "models/station/road/streetstation/streetstation_001_metal_gloss_ao.dds",
+                type = "TWOD",
+            },
+            map_normal = {
+                fileName = "models/station/road/streetstation/streetstation_001_normal.dds",
+                redGreen = true,
+                type = "TWOD",
+            },
+            map_rust = {
+                fileName = "models/vehicle/rust_albedo.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_rust_normal = {
+                fileName = "models/vehicle/rust_normal.dds",
+                redGreen = true,
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            normal_scale = {
+                normalScale = 1,
+            },
+            polygon_offset = {
+                factor = 0,
+                forceDepthWrite = false,
+                units = 0,
+            },
+            two_sided = {
+                flipNormal = false,
+                twoSided = false,
+            },
+        },
+        type = "PHYSICAL_NRML_MAP_CBLEND_DIRT",
+    }
+    end
+    

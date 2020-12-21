@@ -45,7 +45,7 @@ local _actions = {
         -- Here, I remove the neighbour track (edge and node) and replace it
         -- with an identical track, which snaps to the station end node instead.
         print('buildSnappyTracks starting')
-        print('endEntities =') debugPrint(endEntities)
+        -- print('endEntities =') debugPrint(endEntities)
         if endEntities == nil then return end
 
         local proposal = api.type.SimpleProposal.new()
@@ -154,7 +154,7 @@ local _actions = {
             metadata = {
                 -- cargo = true,
             },
-            name = _constants.terminalModuleFileName,
+            name = args.isCargo and _constants.cargoTerminalModuleFileName or _constants.passengersTerminalModuleFileName,
             updateScript = {
                 fileName = '',
                 params = { },
@@ -639,7 +639,7 @@ local _actions = {
         -- the split may occur at the end of an edge - in theory, but I could not make it happen in practise.
         if nodeBetween.length0 == 0 or nodeBetween.length1 == 0 then
             -- LOLLO TODO check this, it seems to never happen
-            print('nodeBetween is at the end of an edge; nodeBetween =') debugPrint(nodeBetween)
+            print('WARNING: nodeBetween is at the end of an edge; nodeBetween =') debugPrint(nodeBetween)
             local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(wholeEdgeId, objectIdToRemove)
             if not(proposal) then return end
 
@@ -1249,6 +1249,8 @@ function data()
                                         ))
                                         return
                                     end
+                                    -- LOLLO TODO if any platform nodes are joints between more than 2 platform-tracks,
+                                    -- bar building or only build up to the node.
                                     -- waypoint built on platform and two track waypoints built nearby
                                     -- find all consecutive track edges of the same type
                                     -- sort them from first to last

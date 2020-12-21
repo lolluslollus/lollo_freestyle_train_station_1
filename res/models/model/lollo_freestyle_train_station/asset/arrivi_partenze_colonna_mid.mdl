@@ -1,0 +1,69 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = { 0.67344397306442, 0.67344397306442, 4.1281161308289, },
+            bbMin = { -0.67344397306442, -0.67344397306442, 0, },
+        },
+        collider = {
+            params = { },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            type = "MESH",
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            animations = {
+                                forever = {
+                                    forward = true,
+                                    params = {
+                                        keyframes = {
+                                            {
+                                                rot = { 0, 0, 0, },
+                                                time = 0,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                            {
+                                                rot = { 90, 0, 0, },
+                                                time = 10000,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                            {
+                                                rot = { 180, 0, 0, },
+                                                time = 20000,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                            {
+                                                rot = { 270, 0, 0, },
+                                                time = 30000,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                            {
+                                                rot = { 360, 0, 0, },
+                                                time = 40000,
+                                                transl = { 0, 0, 0, },
+                                            },
+                                        },
+                                        origin = { 0, 0, 0, },
+                                    },
+                                    type = "KEYFRAME",
+                                },
+                            },
+                            materials = { "asset/arrivi_partenze.mtl", },
+                            mesh = "station/road/streetstation/lod_0_com_round_mid_1.msh",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 440,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+    end
+    

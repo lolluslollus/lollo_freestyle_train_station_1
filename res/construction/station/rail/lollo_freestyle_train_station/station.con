@@ -68,7 +68,8 @@ function data()
                 cost = 1000,
                 demangleId = slotHelpers.demangleId,
                 edgeLists = {},
-                groundFaces = {},
+				groundFaces = {},
+				labelText = {},
                 mangleId = slotHelpers.mangleId,
 				models = {
 					{
@@ -109,7 +110,7 @@ function data()
 					-- shape = 3,
 					spacing = _constants.trackSpacing,
 					transf = _constants.idTransf,
-					type = _constants.terminalModuleType,
+					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengersTerminalModuleType,
 				})
 
 				-- add track edges

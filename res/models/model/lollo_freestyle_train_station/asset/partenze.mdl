@@ -1,0 +1,33 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = { 0.61946099996567, 0.055555999279022, 2.0956211090088, },
+            bbMin = { -0.61946099996567, -0.055555999279022, 0, },
+        },
+        collider = {
+            params = { },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            type = "MESH",
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
+                            mesh = "station/road/streetstation/lod_0_com_small_new_2.msh",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 320,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+    end
+    
