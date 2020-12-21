@@ -310,15 +310,16 @@ function data()
 		-- 	-- end
 		-- 	return modules
         -- end,
-        upgradeFn = function(params)
+        upgradeFn = function(args, one)
             -- LOLLO TODO allow upgrading tracks.
             -- this sample is from the modular station, which puts edges in modules.
             -- I don't coz they are curved, so see what I can do.
-            print('LOLLO upgradeFn')
+			print('LOLLO upgradeFn starting, args =') debugPrint(args)
+			print('one = ') debugPrint(one)
             local modules = {}
 
             local SwapModule = function(slotId, from, to)
-                if params.modules[slotId] and params.modules[slotId].name == from then
+                if args.modules[slotId] and args.modules[slotId].name == from then
                     table.insert(modules, {slotId, to})
                     return true
                 end
@@ -335,26 +336,26 @@ function data()
                 end
             end
 
-            if params.modules[params.slotId] == nil then return {} end
+            if args.modules[args.slotId] == nil then return {} end
 
-            if params.catenaryToggle == 1 then 
-                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track.module",
+            if args.catenaryToggle == 1 then 
+                SwapRow(args.slotId, "station/rail/modular_station/platform_high_speed_track.module",
                     "station/rail/modular_station/platform_high_speed_track_catenary.module")
-                SwapRow(params.slotId, "station/rail/modular_station/platform_track.module",
+                SwapRow(args.slotId, "station/rail/modular_station/platform_track.module",
                     "station/rail/modular_station/platform_track_catenary.module")
-                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track_catenary.module", 
+                SwapRow(args.slotId, "station/rail/modular_station/platform_high_speed_track_catenary.module", 
                     "station/rail/modular_station/platform_high_speed_track.module")
-                SwapRow(params.slotId, "station/rail/modular_station/platform_track_catenary.module", 
+                SwapRow(args.slotId, "station/rail/modular_station/platform_track_catenary.module", 
                     "station/rail/modular_station/platform_track.module")
             end
-            if params.trackTypeToggle == 1 then 
-                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track.module",
+            if args.trackTypeToggle == 1 then 
+                SwapRow(args.slotId, "station/rail/modular_station/platform_high_speed_track.module",
                     "station/rail/modular_station/platform_track.module")
-                SwapRow(params.slotId, "station/rail/modular_station/platform_track.module",
+                SwapRow(args.slotId, "station/rail/modular_station/platform_track.module",
                     "station/rail/modular_station/platform_high_speed_track.module")
-                SwapRow(params.slotId, "station/rail/modular_station/platform_high_speed_track_catenary.module",
+                SwapRow(args.slotId, "station/rail/modular_station/platform_high_speed_track_catenary.module",
                     "station/rail/modular_station/platform_track_catenary.module")
-                SwapRow(params.slotId, "station/rail/modular_station/platform_track_catenary.module",
+                SwapRow(args.slotId, "station/rail/modular_station/platform_track_catenary.module",
                     "station/rail/modular_station/platform_high_speed_track_catenary.module")
             end
 

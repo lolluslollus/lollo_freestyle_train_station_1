@@ -12,7 +12,7 @@ function data()
 
 	t.shapeWidth = 4.0
 	t.shapeStep = 4.0
-	t.shapeSleeperStep = 8.0 / 12.0
+	t.shapeSleeperStep = 0.2 -- 8.0 / 12.0
 
 	t.ballastHeight = .3
 	t.ballastCutOff = .1
@@ -32,11 +32,11 @@ function data()
     t.embankmentSlopeLow = 0.75
     t.embankmentSlopeHigh = 2.5
 
-	t.catenaryBase = 5.917 + t.railBase + t.railHeight -- [m] base height of the cable over ground level
-	t.catenaryHeight = 1.35 -- [m] height of the support cable at the poles
-	t.catenaryPoleDistance = 32.0 -- [m] target distance between poles
-	t.catenaryMaxPoleDistanceFactor = 2.0
-	t.catenaryMinPoleDistanceFactor = 0.8
+	t.catenaryBase = 0 -- 5.917 + t.railBase + t.railHeight -- [m] base height of the cable over ground level
+	t.catenaryHeight = 0 -- 1.35 -- [m] height of the support cable at the poles
+	t.catenaryPoleDistance = 999 -- 32.0 -- [m] target distance between poles
+	t.catenaryMaxPoleDistanceFactor = 999 -- 2.0
+	t.catenaryMinPoleDistanceFactor = 999 -- 0.8
 
 	t.trackDistance = 5.0 -- [m] distance between track centers when dragging parallel tracks
 
@@ -65,15 +65,18 @@ function data()
 	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
 	-- t.bumperModel = "railroad/bumper.mdl"
+	t.bumperModel = 'lollo_freestyle_train_station/railroad/track/end.mdl'
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
 	t.fillGroundTex = "none.lua" -- "ballast_fill.lua"
 	t.borderGroundTex = "none.lua" -- "ballast.lua"
 	
     -- t.railModel ="railroad/tracks/single_rail.mdl"
-    t.railModel = 'lollo_freestyle_train_station/railroad/track/platform_2m.mdl'
+	-- t.railModel = 'lollo_freestyle_train_station/railroad/track/platform_2m.mdl'
+	t.railModel = "lollo_freestyle_train_station/empty.mdl"
     -- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
-	t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
+	-- t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
+	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/sleeper.mdl"
 	t.trackStraightModel = {
 		'lollo_freestyle_train_station/railroad/track/platform_2m_base.mdl', --"railroad/tracks/2m_base.mdl",
 		'lollo_freestyle_train_station/railroad/track/platform_4m_base.mdl', --"railroad/tracks/4m_base.mdl",

@@ -15,6 +15,7 @@ function data()
         lods = {
             {
                 node = {
+                    -- LOLLO NOTE the game puts 2 rails next to each other, with the same orientation: they both face the same way right and left.
                     children = {
                         {
                             materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
@@ -22,6 +23,11 @@ function data()
                             name = "perron_5",
                             transf = { 0.105, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, -2, 0, 0, 1, },
                         },
+                        -- {
+                        --     materials = {'asset/icon/asset_icon_mark.mtl'},
+                        --     mesh = 'asset/icon/lod_0_icon_pointer.msh',
+                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.5, 0, 0, 2, 0.8, 1}
+                        -- },
                         -- {
                         --     materials = { "track/rail.mtl", },
                         --     mesh = "railroad/tracks/single_rail/track_single_rail_lod0.msh",
