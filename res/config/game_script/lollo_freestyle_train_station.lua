@@ -20,6 +20,7 @@ local _eventId = '__lolloFreestyleTrainStation__'
 local _eventNames = {
     BUILD_SNAPPY_TRACKS_REQUESTED = 'buildSnappyTracksRequested',
     BUILD_STATION_REQUESTED = 'buildStationRequested',
+    BULLDOZE_STATION_REQUESTED = 'bulldozeStationRequested',
     REBUILD_ALL_TRACKS_REQUESTED = 'rebuildAllTracksRequested',
     REBUILD_1_TRACK_REQUESTED = 'rebuild1TrackRequested',
     REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
@@ -447,14 +448,15 @@ local _actions = {
         )
     end,
 
-    bulldozeConstruction = function(constructionId)
-        -- print('constructionId =', constructionId)
+    bulldozeStation = function(constructionData, successEventName)
+        if constructionData == nil then return end
+        local constructionId = constructionData.constructionId
+
         if not(edgeUtils.isValidAndExistingId(constructionId)) then return end
 
-        local oldConstruction = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
-        -- print('oldConstruction =')
-        -- debugPrint(oldConstruction)
-        if not(oldConstruction) or not(oldConstruction.params) then return end
+        local oldCon = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+        -- print('oldCon =') debugPrint(oldCon)
+        if not(oldCon) or not(oldCon.params) then return end
 
         local proposal = api.type.SimpleProposal.new()
         -- LOLLO NOTE there are asymmetries how different tables are handled.
@@ -472,11 +474,18 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                -- print('LOLLO _bulldozeConstruction result = ')
-                -- debugPrint(result)
-                --for _, v in pairs(result.entities) do print(v) end
-                print('LOLLO _bulldozeConstruction success = ')
-                debugPrint(success)
+                print('LOLLO bulldozeStation success = ', success)
+                -- print('LOLLO bulldozeStation result = ') debugPrint(result)
+                if success and successEventName ~= nil then
+                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                        string.sub(debug.getinfo(1, 'S').source, 1),
+                        _eventId,
+                        successEventName,
+                        {
+                            constructionData = arrayUtils.cloneDeepOmittingFields(constructionData)
+                        }
+                    ))
+                end
             end
         )
     end,
@@ -1006,6 +1015,8 @@ function data()
                 _actions.buildSnappyTracks(
                     stationHelpers.getStationEndEntitiesTyped(args.stationConstructionId)
                 )
+            elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
+                _actions.bulldozeStation(args.constructionData, _eventNames.REBUILD_ALL_TRACKS_REQUESTED)
             elseif name == _eventNames.REBUILD_ALL_TRACKS_REQUESTED then
                 for t = 1, #args.constructionData.params.terminals do
                     _actions.rebuildTracks(
@@ -1091,9 +1102,18 @@ function data()
                                                 nTerminalToRemove = nTerminalsToRemove[1]
                                             }
                                         ))
+                                    elseif edgeUtils.isValidAndExistingId(constructionId) and #constructionDataBak.params.terminals == 1 then
+                                        -- the user has removed the last terminal: bulldoze the whole station
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.BULLDOZE_STATION_REQUESTED,
+                                            {
+                                                constructionData = constructionDataBak,
+                                            }
+                                        ))
                                     else
-                                        -- LOLLO TODO when removing the last terminal, destroy the whole station
-                                        -- bulldozed the whole station
+                                        -- the whole station was bulldozed
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),
                                             _eventId,

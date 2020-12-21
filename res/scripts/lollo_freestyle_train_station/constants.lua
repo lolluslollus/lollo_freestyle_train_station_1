@@ -3,6 +3,7 @@ local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 local constants = {
     platformTracksCategory = 'platform-tracks',
     maxWaitingAreaEdgeLength = 5,
+    terminalDecoStep = 3,
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     nTerminalMultiplier = 1000,
     nTracksMax = 10,
@@ -12,7 +13,6 @@ local constants = {
     terminalModelFileName = 'lollo_freestyle_train_station/icon/red_short.mdl',
     terminalModelTag = 'freestyleTrainStationTerminal',
     terminalModuleFileName = 'station/rail/lollo_freestyle_train_station/terminal.module',
-    terminalDecoStep = 3,
     trackWaypoint1ModelId = 'lollo_freestyle_train_station/railroad/lollo_track_waypoint_1.mdl',
     trackWaypoint2ModelId = 'lollo_freestyle_train_station/railroad/lollo_track_waypoint_2.mdl',
     cargoPlatformWaypointModelId = 'lollo_freestyle_train_station/railroad/cargo_platform_waypoint.mdl',
