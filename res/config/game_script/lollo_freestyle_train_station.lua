@@ -761,7 +761,6 @@ local _actions = {
         proposal.streetProposal.nodesToAdd[1] = newNodeBetween
         -- print('split proposal =') debugPrint(proposal)
 
-        print('split proposal =') debugPrint(proposal)
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)

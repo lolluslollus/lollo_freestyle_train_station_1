@@ -43,6 +43,10 @@ local oneOrTwo = one or two
 local what = arrayUtils.getLast({})
 local what = arrayUtils.getFirst({})
 
+local aka = ''
+local akn = tonumber(aka)
+local akk = tonumber(nil)
+
 local dummy = 123
 
 --  id = 24148,

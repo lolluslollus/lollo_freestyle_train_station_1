@@ -181,13 +181,19 @@ function data()
 				terrainAlignmentLists = {},
 			}
 
-			local vehicleNodes = {}
+			local terminateConstructionHookInfo = {
+				isAnyCargoTerminal = false,
+				isAnyPassengersTerminal = false,
+				vehicleNodes = {}
+			}
 			-- LOLLO NOTE the coordinates in terminals are absolute
 			local mainTransf = params.mainTransf
 			local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 			print('inverseMainTransf =')
 			debugPrint(inverseMainTransf)
 			for t = 1, #params.terminals do
+				local isCargoTerminal = params.terminals[t].isCargo
+				if isCargoTerminal then terminateConstructionHookInfo.isAnyCargoTerminal = true else terminateConstructionHookInfo.isAnyPassengersTerminal = true end
 				-- add terminal slots
 				local inverseMyTransf = transfUtils.getInverseTransf(params.terminals[t].myTransf)
 				table.insert(result.slots, {
@@ -228,12 +234,12 @@ function data()
 						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
 					end
 
-					-- LOLLO NOTE the edges don't snap to the neighbours
+					-- LOLLO NOTE the edges won't snap to the neighbours
 					-- unless you rebuild those neighbours, by hand or by script,
 					-- and make them snap to the station own nodes.
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
-				vehicleNodes[t] = #result.edgeLists * 2 - 2
+				terminateConstructionHookInfo.vehicleNodes[t] = #result.edgeLists * 2 - 2
 
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
 				-- if #result.edgeLists > 0 then
@@ -291,8 +297,8 @@ function data()
 						1
 					}
 					result.models[#result.models+1] = {
-						id = #params.terminals[t].isCargo and _constants.cargoWaitingAreaModelId or _constants.passengersWaitingAreaModelId,
-						tag = _constants.waitingAreaTagRoot .. tostring(t),
+						id = isCargoTerminal and _constants.cargoWaitingAreaModelId or _constants.passengersWaitingAreaModelId,
+						tag = slotHelpers.mangleModelTag(t, isCargoTerminal),
 						transf = waitingAreaTransf
 					}
 				end
@@ -319,16 +325,23 @@ function data()
 
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
-                -- LOLLO NOTE stations with mixed cargo and passengers seem impossible
-                -- LOLLO TODO add passenger terminals
-				result.stations = {
-					{
+				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible
+				result.stations = { }
+				if terminateConstructionHookInfo.isAnyCargoTerminal then
+					result.stations[#result.stations+1] = {
 						tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
 						terminals = { } -- 0 is the position of the linked terminal group, in base 0
 					}
-				}
+				end
+				if terminateConstructionHookInfo.isAnyPassengersTerminal then
+					result.stations[#result.stations+1] = {
+						tag = 1, -- in the stock station, this is 0 for cargo and 1 for passengers
+						terminals = { } -- 0 is the position of the linked terminal group, in base 0
+					}
+				end
 
 				for t = 1, #params.terminals do
+					local isCargoTerminal = params.terminals[t].isCargo
 					table.insert(
 						result.terminalGroups,
 						{
@@ -343,17 +356,13 @@ function data()
 							-- n terminals 4 1 person edge,
 							-- n terminals 4 1 person node
 							-- vehicleNodeOverride = #params.terminals[t].trackEdgeLists - 1
-							vehicleNodeOverride = vehicleNodes[t]
+							vehicleNodeOverride = terminateConstructionHookInfo.vehicleNodes[t]
 						}
 					)
 
 					local waitingAreaModelIndexesBase0 = {}
 					for i = 1, #result.models do
-						local tag = result.models[i].tag
-						if not(stringUtils.isNullOrEmptyString(tag))
-						and stringUtils.stringStartsWith(tag, _constants.waitingAreaTagRoot)
-						and string.gsub(tag, _constants.waitingAreaTagRoot, '') == tostring(t)
-						then
+						if slotHelpers.getTerminalFromModelTag(result.models[i].tag) == t then
 							waitingAreaModelIndexesBase0[#waitingAreaModelIndexesBase0+1] = i - 1
 						end
 					end
@@ -362,15 +371,16 @@ function data()
 						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
 					end
 
-					table.insert(result.stations[1].terminals, t - 1)
+					local stationIndex = arrayUtils.findIndex(result.stations, 'tag', isCargoTerminal and 0 or 1)
+					table.insert(result.stations[stationIndex].terminals, t - 1)
 				end
 
 				-- avoid dump when configuring
-				if #(result.stations[1].terminals) == 0 then
-					print('avoiding dump when configuring')
-					table.insert(result.stations[1].terminals, 0)
-					print('result.stations =') debugPrint(result.stations)
-				end
+				-- if #(result.stations[1].terminals) == 0 then
+				-- 	print('avoiding dump when configuring')
+				-- 	table.insert(result.stations[1].terminals, 0)
+				-- 	print('result.stations =') debugPrint(result.stations)
+				-- end
 				-- it should output something like (this example has one terminal made of two adjacent bits)
 				-- stock result.stations =
 				-- 	{
@@ -392,10 +402,8 @@ function data()
 
 				print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
 				-- print('LOLLO result = ') debugPrint(result)
-				-- print('LOLLO result.stations = ')
-				-- debugPrint(result.stations)
-				-- print('LOLLO result.terminalGroups = ')
-				-- debugPrint(result.terminalGroups)
+				-- print('LOLLO result.stations = ') debugPrint(result.stations)
+				-- print('LOLLO result.terminalGroups = ') debugPrint(result.terminalGroups)
 			end
 			-- _terminateConstructionHook()
 

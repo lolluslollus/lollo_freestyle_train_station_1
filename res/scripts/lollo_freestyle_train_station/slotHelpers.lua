@@ -1,4 +1,5 @@
 local _constants = require('lollo_freestyle_train_station/constants')
+local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local helpers = {}
 
 helpers.demangleId = function(slotId)
@@ -25,6 +26,26 @@ end
 
 helpers.mangleId = function(nTerminal, nTrackEdge, baseId)
     return baseId + nTerminal * _constants.nTerminalMultiplier + nTrackEdge
+end
+
+helpers.getTerminalFromModelTag = function(modelTag)
+    if stringUtils.isNullOrEmptyString(modelTag) then return nil end
+
+    if stringUtils.stringStartsWith(modelTag, _constants.cargoWaitingAreaTagRoot) then
+        return tonumber(string.gsub(modelTag, _constants.cargoWaitingAreaTagRoot, ''), 10) -- tonumber(a, base) returns nil if a is no valid number
+    elseif stringUtils.stringStartsWith(modelTag, _constants.passengersWaitingAreaTagRoot) then
+        return tonumber(string.gsub(modelTag, _constants.passengersWaitingAreaTagRoot, ''), 10)
+    end
+
+    return nil
+end
+
+helpers.mangleModelTag = function(nTerminal, isCargo)
+    if isCargo then
+        return _constants.cargoWaitingAreaTagRoot .. tostring(nTerminal)
+    else
+        return _constants.passengersWaitingAreaTagRoot .. tostring(nTerminal)
+    end
 end
 
 return helpers
