@@ -1,5 +1,5 @@
 function data()
-    local _cargoNodeZ = 0.3
+    local _cargoNodeZ = 0.4 -- LOLLO NOTE this is critical: 0.5 or 0.6 will crash coz it will be at the same height as the platform-track
     return {
         boundingInfo = {
             bbMax = { 0.1, 0.1, 5 },
