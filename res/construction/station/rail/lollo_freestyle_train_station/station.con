@@ -192,7 +192,7 @@ function data()
 				)
 				-- print('midTransf = ') debugPrint(midTransf)
 				table.insert(result.slots, {
-					height = 10,
+					height = 0.5,
 					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
 					-- shape 0 1 2 3
 					shape = 3,
