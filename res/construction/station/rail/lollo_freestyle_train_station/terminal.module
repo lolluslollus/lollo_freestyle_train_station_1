@@ -32,13 +32,13 @@ return {
 		value = 1,
 	},
 	type = _constants.terminalModuleType,
-	updateFn = function(result, transform, tag, slotId, addModelFn, params, callback)
+	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
 		print('LOLLO terminal module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('LOLLO result =') debugPrint(result)
-		print('transform =') debugPrint(transform)
+		print('slotTransf =') debugPrint(slotTransf)
 		-- print('params =') debugPrint(params)
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
@@ -48,17 +48,25 @@ return {
 
 		-- LOLLO TODO instead of this peg, display a lot of platform signs, like with the waiting areas
 		for i = 1, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalDecoStep do
-			print('i =', i)
-			local transf = moduleHelpers.getTerminalDecoTransf(
-				params.terminals[nTerminal].waitingAreaPositions[i],
-				inverseMainTransf
-			)
+			-- print('i =', i)
+			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
+			-- print('wap = ') debugPrint(wap)
+			local edge = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+			-- print('edge =') debugPrint(edge)
+			local transf = moduleHelpers.getTerminalDecoTransf(edge)
+			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
 				id = _constants.terminalModelFileName,
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, transform),
+				transf = transfUtilsUG.mul(slotTransf, transf),
 				tag = _constants.terminalModelTag
 			}
+			-- result.models[#result.models + 1] = {
+			-- 	id = _constants.terminalModelFileName,
+			-- 	slotId = slotId,
+			-- 	transf = transfUtilsUG.mul({1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  3, 0, 0, 1}, transf),
+			-- 	tag = _constants.terminalModelTag
+			-- }
 		end
 
 		-- local face = {
@@ -67,7 +75,7 @@ return {
 		-- 	{7, 7, 0, 1},
 		-- 	{7, -7, 0, 1},
 		-- }
-		-- modulesutil.TransformFaces(transform, face)
+		-- modulesutil.TransformFaces(slotTransf, face)
 		-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
 		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face)
 	end,

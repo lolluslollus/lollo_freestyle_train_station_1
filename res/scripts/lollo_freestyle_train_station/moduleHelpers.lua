@@ -71,9 +71,9 @@ helpers.getCollider = function(sidewalkWidth, model)
 end
 
 helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
-    print('wap =') debugPrint(wap)
+    -- print('wap =') debugPrint(wap)
     local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-    print('platformPosTanX2 =') debugPrint(platformPosTanX2)
+    -- print('platformPosTanX2 =') debugPrint(platformPosTanX2)
     -- solve this system:
     -- first point: 0, 0, 0 => platformPosTanX2[1][1]
     -- transf[13] = platformPosTanX2[1][1][1]
@@ -99,30 +99,21 @@ helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
     return waitingAreaTransf
 end
 
-helpers.getTerminalDecoTransf = function(wap, inverseMainTransf)
-    print('wap.posTanX2 =') debugPrint(wap.posTanX2)
-    local normalisedPosTanX2 = {
+helpers.getTerminalDecoTransf = function(edge)
+    -- print('getTerminalDecoTransf starting, edge =') debugPrint(edge)
+    local pos1 = edge[1][1]
+    local pos2 = edge[2][1]
+    local newTransf = transfUtilsUG.rotZTransl(
+        math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
         {
-            {}, {},
-        },
-        {
-            {}, {},
+            x = pos1[1],
+            y = pos1[2],
+            z = pos1[3],
         }
-    }
-    -- average for better accuracy
-    local length = ( edgeUtils.getVectorLength(wap.posTanX2[1][2]) + edgeUtils.getVectorLength(wap.posTanX2[2][2]) ) * 0.5
-    print('length =', length)
+    )
 
-    normalisedPosTanX2[1][1] = arrayUtils.cloneDeepOmittingFields(wap.posTanX2[1][1])
-    normalisedPosTanX2[2][1][1] = wap.posTanX2[1][1][1] + (wap.posTanX2[2][1][1] - wap.posTanX2[1][1][1]) / length
-    normalisedPosTanX2[2][1][2] = wap.posTanX2[1][1][2] + (wap.posTanX2[2][1][2] - wap.posTanX2[1][1][2]) / length
-    normalisedPosTanX2[2][1][3] = wap.posTanX2[1][1][3] + (wap.posTanX2[2][1][3] - wap.posTanX2[1][1][3]) / length
-    normalisedPosTanX2[1][2] = edgeUtils.getVectorNormalised(wap.posTanX2[1][2])
-    normalisedPosTanX2[2][2] = edgeUtils.getVectorNormalised(wap.posTanX2[2][2])
-
-    print('normalisedPosTanX2 =') debugPrint(normalisedPosTanX2)
-
-    return helpers.getWaitingAreaTransf({posTanX2 = normalisedPosTanX2}, inverseMainTransf)
+    -- print('newTransf =') debugPrint(newTransf)
+    return newTransf
 end
 
 return helpers
