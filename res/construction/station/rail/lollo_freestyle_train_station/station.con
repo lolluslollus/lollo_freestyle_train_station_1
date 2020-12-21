@@ -39,123 +39,28 @@ function data()
 			print('updateFn starting, params =')
 			debugPrint(params)
 
-			-- math.randomseed(params.seed)
+			-- if not params.modules then params.modules = {} end
 
-			if not params.modules then params.modules = {} end
+			-- LOLLO NOTE I cannot call the api from here, sigh.
+			print('game =')
+			if game ~= nil then
+				print('game is there')
+				if game.interface ~= nil then
+					print('game.interface is there too')
+				else
+					print('game.interface is NIL')
+				end
+			else
+				print('NIL')
+			end
 
-			local sampleParams =
-			{
-			  myTransf = { 0.46245205402374, 0.88664430379868, 0, 0, -0.88664430379868, 0.46245205402374, 0, 0, 0, 0, 1, 0, -987.02911376953, -1698.1489257813, 11.531784057617, 1, },
-			  platformEdgeIds = { 25291, 24152, 25282, },
-			  seed = 1230000,
-			  state = {
-				groups = {
-				  random_large_tree = { "tree/european_linden.mdl", "tree/scots_pine.mdl", "tree/sugar_maple.mdl", },
-				  random_large_tree_town = { "tree/european_linden.mdl", "tree/sugar_maple.mdl", },
-				  random_medium_tree = { "tree/red_delicious_apple.mdl", "tree/shingle_oak.mdl", },
-				  random_medium_tree_airport = { "tree/shingle_oak.mdl", },
-				  random_medium_tree_town = { "tree/red_delicious_apple.mdl", "tree/shingle_oak.mdl", },
-				  random_shrub = { "tree/azalea.mdl", "tree/common_hazel.mdl", "tree/elderberry.mdl", },
-				  random_shrub_airport = { "tree/azalea.mdl", "tree/elderberry.mdl", },
-				  random_shrub_town = { "tree/azalea.mdl", "tree/elderberry.mdl", },
-				  random_shrub_town_fence = { "tree/azalea.mdl", },
-				  random_small_tree = { "tree/azalea.mdl", "tree/common_hazel.mdl", "tree/elderberry.mdl", },
-				  random_small_tree_town = { "tree/azalea.mdl", "tree/elderberry.mdl", },
-				},
-				track = {
-				  ballastCutOff = 0.10000000149012,
-				  ballastHeight = 0.30000001192093,
-				  ballastMaterial = "track/ballast.mtl",
-				  borderGroundTex = "ballast.lua",
-				  bumperModel = "railroad/bumper.mdl",
-				  catenaryBase = 6.4470000267029,
-				  catenaryHeight = 1.3500000238419,
-				  catenaryMaterial = "track/catenary.mtl",
-				  catenaryMaxPoleDistance = 2,
-				  catenaryMinPoleDistance = 0.80000001192093,
-				  catenaryMultiGirderModel = "railroad/power_pole_us_1a_repeat.mdl",
-				  catenaryMultiInnerPoleModel = "railroad/power_pole_us_1b_pole2.mdl",
-				  catenaryMultiPoleModel = "railroad/power_pole_us_1_pole.mdl",
-				  catenaryPoleDistance = 32,
-				  catenaryPoleModel = "railroad/power_pole_us_2.mdl",
-				  cost = 75,
-				  desc = "Standard tracks with limited speed capabilities.",
-				  fillGroundTex = "ballast_fill.lua",
-				  icon = "ui/tracks/standard.tga",
-				  maxSlope = 0.11999999731779,
-				  maxSlopeBuild = 0.075000002980232,
-				  maxSlopeShape = 0.15000000596046,
-				  minCurveRadius = 44,
-				  minCurveRadiusBuild = 60,
-				  name = "Standard tracks",
-				  railBase = 0.37999999523163,
-				  railCutOff = 0.019999999552965,
-				  railHeight = 0.15000000596046,
-				  railMaterial = "track/rail.mtl",
-				  railModel = "railroad/tracks/single_rail.mdl",
-				  railTrackWidth = 1.4349999427795,
-				  railWidth = 0.070000000298023,
-				  shapeSleeperStep = 0.66666668653488,
-				  shapeStep = 4,
-				  shapeWidth = 4,
-				  sleeperBase = 0.30000001192093,
-				  sleeperCutOff = 0.019999999552965,
-				  sleeperHeight = 0.079999998211861,
-				  sleeperLength = 0.25999999046326,
-				  sleeperMaterial = "track/sleeper.mtl",
-				  sleeperModel = "railroad/tracks/single_sleeper_base.mdl",
-				  sleeperWidth = 2.5999999046326,
-				  slopeBuildSteps = 2,
-				  speedCoeffs = { 0.85000002384186, 30, 0.60000002384186, },
-				  speedLimit = 33.333332061768,
-				  switchSignalModel = "railroad/switch_box.mdl",
-				  trackDistance = 5,
-				  trackStraightModel = { "railroad/tracks/2m_base.mdl", "railroad/tracks/4m_base.mdl", "railroad/tracks/8m_base.mdl", "railroad/tracks/16m_base.mdl", },
-				  tunnelHullMaterial = "track/tunnel_hull.mtl",
-				  tunnelWallMaterial = "track/tunnel_rail_ug.mtl",
-				  yearFrom = 0,
-				  yearTo = 0,
-				},
-			  },
-			  trackEdgeLists = {
-				{
-				  catenary = true,
-				  posTanX2 = {
-					{
-					  { -1016.0612182617, -1724.4984130859, 12.625776290894, },
-					  { 43.891380310059, 27.93595123291, -2.9827115535736, },
-					},
-					{
-					  { -985.90667724609, -1682.0408935547, 10.668236732483, },
-					  { 14.657909393311, 50.000553131104, -0.92598873376846, },
-					},
-				  },
-				  trackType = 0,
-				  trackTypeName = "high_speed.lua",
-				  type = 0,
-				  typeIndex = -1,
-				},
-				{
-				  catenary = true,
-				  posTanX2 = {
-					{
-					  { -985.90667724609, -1682.0408935547, 10.668236732483, },
-					  { 13.101428031921, 44.691135406494, -0.8276606798172, },
-					},
-					{
-					  { -986.13043212891, -1635.4637451172, 10.286678314209, },
-					  { -15.766356468201, 43.829719543457, -0.088118009269238, },
-					},
-				  },
-				  trackType = 0,
-				  trackTypeName = "high_speed.lua",
-				  type = 0,
-				  typeIndex = -1,
-				},
-			  },
-			}
+			print('api =')
+			if api ~= nil then
+                print('api is there')
+            else
+                print('NIL')
+			end
 
-            -- LOLLO NOTE I cannot call the api from here, sigh.
 			local result = {
 				colliders = {},
 				-- coord2terminalInfo = {},
@@ -304,28 +209,11 @@ function data()
 				end
 			end
 
-			print('game =')
-			if game ~= nil then
-				print('game is there')
-				if game.interface ~= nil then
-					print('game.interface is there too')
-				else
-					print('game.interface is NIL')
-				end
-			else
-				print('NIL')
-			end
-
-			print('api =')
-			if api ~= nil then
-                print('api is there')
-            else
-                print('NIL')
-			end
-
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
-				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible
+				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
+				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
+				-- that point at this.
 				result.stations = { }
 				if terminateConstructionHookInfo.isAnyCargoTerminal then
 					result.stations[#result.stations+1] = {
