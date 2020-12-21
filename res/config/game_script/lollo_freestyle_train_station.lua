@@ -162,7 +162,7 @@ local _actions = {
         }
         local params_newTerminal = {
             isCargo = args.isCargo,
-            myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
+            -- myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
             waitingAreaPositions = args.waitingAreaPositions
@@ -1049,6 +1049,7 @@ function data()
                                 print('about to bulldoze construction', constructionId)
                                 if constructionDataBak.constructionId == constructionId then
                                     print('bulldozing a freestyle station, conParamsBak exists and has type', type(constructionDataBak))
+                                    print('#constructionDataBak.params.terminals =', #constructionDataBak.params.terminals)
                                     -- print('args = ') debugPrint(args)
                                     -- print('constructionDataBak =') debugPrint(constructionDataBak)
                                     if edgeUtils.isValidAndExistingId(constructionId) and #constructionDataBak.params.terminals > 1 then
@@ -1091,6 +1092,7 @@ function data()
                                             }
                                         ))
                                     else
+                                        -- LOLLO TODO when removing the last terminal, destroy the whole station
                                         -- bulldozed the whole station
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),

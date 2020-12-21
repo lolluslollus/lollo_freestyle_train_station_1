@@ -94,24 +94,51 @@ function data()
 			-- LOLLO NOTE the coordinates in terminals are absolute
 			local mainTransf = params.mainTransf
 			local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
-			print('inverseMainTransf =')
-			debugPrint(inverseMainTransf)
+			print('inverseMainTransf =') debugPrint(inverseMainTransf)
+
+			local function _getWaitingAreaTransf(t, wapIndex)
+				local wap = params.terminals[t].waitingAreaPositions[wapIndex]
+				local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+				-- solve this system:
+				-- first point: 0, 0, 0 => platformPosTanX2[1][1]
+				-- transf[13] = platformPosTanX2[1][1][1]
+				-- transf[14] = platformPosTanX2[1][1][2]
+				-- transf[15] = platformPosTanX2[1][1][3]
+				-- second point: 1, 0, 0 => platformPosTanX2[2][1]
+				-- transf[1] + transf[13] = platformPosTanX2[2][1][1]
+				-- transf[2] + transf[14] = platformPosTanX2[2][1][2]
+				-- transf[3] + transf[15] = platformPosTanX2[2][1][3]
+				local waitingAreaTransf = {
+					platformPosTanX2[2][1][1] - platformPosTanX2[1][1][1],
+					platformPosTanX2[2][1][2] - platformPosTanX2[1][1][2],
+					platformPosTanX2[2][1][3] - platformPosTanX2[1][1][3],
+					0,
+					0, 1, 0, 0,
+					0, 0, 1, 0,
+					platformPosTanX2[1][1][1],
+					platformPosTanX2[1][1][2],
+					platformPosTanX2[1][1][3],
+					1
+				}
+				return waitingAreaTransf
+			end
+
 			for t = 1, #params.terminals do
 				local isCargoTerminal = params.terminals[t].isCargo
 				if isCargoTerminal then terminateConstructionHookInfo.isAnyCargoTerminal = true else terminateConstructionHookInfo.isAnyPassengersTerminal = true end
+
 				-- add terminal slots
-				local inverseMyTransf = transfUtils.getInverseTransf(params.terminals[t].myTransf)
+				local transf5 = _getWaitingAreaTransf(t, math.ceil(#params.terminals[t].waitingAreaPositions * 0.5))
+				print('terminal module transf ALT 5 =') debugPrint(transf5)
+
 				table.insert(result.slots, {
 					-- height = 1,
 					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
 					-- shape 0 1 2 3
 					-- shape = 3,
 					spacing = _constants.trackSpacing,
-					-- transf = _constants.idTransf,
-					transf = transfUtilUG.mul(
-						transfUtilUG.mul(inverseMyTransf, mainTransf),
-						_constants.idTransf
-					),
+					transf = transf5,
+					-- LOLLO TODO instead of this peg, display a lot of platform signs, like with the waiting areas
 					type = _constants.terminalModuleType,
 				})
 
@@ -177,34 +204,10 @@ function data()
 
 				-- add waiting areas
 				for i = 1, #params.terminals[t].waitingAreaPositions do
-					local wap = params.terminals[t].waitingAreaPositions[i]
-
-					local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-					-- solve this system:
-					-- first point: 0, 0, 0 => platformPosTanX2[1][1]
-					-- transf[13] = platformPosTanX2[1][1][1]
-					-- transf[14] = platformPosTanX2[1][1][2]
-					-- transf[15] = platformPosTanX2[1][1][3]
-					-- second point: 1, 0, 0 => platformPosTanX2[2][1]
-					-- transf[1] + transf[13] = platformPosTanX2[2][1][1]
-					-- transf[2] + transf[14] = platformPosTanX2[2][1][2]
-					-- transf[3] + transf[15] = platformPosTanX2[2][1][3]
-					local waitingAreaTransf = {
-						platformPosTanX2[2][1][1] - platformPosTanX2[1][1][1],
-						platformPosTanX2[2][1][2] - platformPosTanX2[1][1][2],
-						platformPosTanX2[2][1][3] - platformPosTanX2[1][1][3],
-						0,
-						0, 1, 0, 0,
-						0, 0, 1, 0,
-						platformPosTanX2[1][1][1],
-						platformPosTanX2[1][1][2],
-						platformPosTanX2[1][1][3],
-						1
-					}
 					result.models[#result.models+1] = {
 						id = isCargoTerminal and _constants.cargoWaitingAreaModelId or _constants.passengersWaitingAreaModelId,
 						tag = slotHelpers.mangleModelTag(t, isCargoTerminal),
-						transf = waitingAreaTransf
+						transf = _getWaitingAreaTransf(t, i)
 					}
 				end
 			end
@@ -248,13 +251,18 @@ function data()
 						}
 					)
 
-					local waitingAreaModelIndexesBase0 = {}
+					local modelIndexesBase0 = {}
 					for i = 1, #result.models do
 						if slotHelpers.getTerminalFromModelTag(result.models[i].tag) == t then
-							waitingAreaModelIndexesBase0[#waitingAreaModelIndexesBase0+1] = i - 1
+							modelIndexesBase0[#modelIndexesBase0+1] = i - 1
+						-- elseif result.models[i].slotId ~= nil then
+						-- 	local nTerminal, _, _ = slotHelpers.demangleId(result.models[i].slotId)
+						-- 	if nTerminal == t then
+						-- 		modelIndexesBase0[#modelIndexesBase0+1] = i - 1
+						-- 	end
 						end
 					end
-					for _, modelIndex in pairs(waitingAreaModelIndexesBase0) do
+					for _, modelIndex in pairs(modelIndexesBase0) do
 						-- table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, t - 1}) -- NO!
 						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
 					end
@@ -291,6 +299,7 @@ function data()
 				print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
 				-- print('LOLLO result = ') debugPrint(result)
 				-- print('LOLLO result.stations = ') debugPrint(result.stations)
+				-- print('LOLLO result.models = ') debugPrint(result.models)
 				-- print('LOLLO result.terminalGroups = ') debugPrint(result.terminalGroups)
 			end
 			-- _terminateConstructionHook()

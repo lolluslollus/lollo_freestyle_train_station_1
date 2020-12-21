@@ -13,6 +13,16 @@ local aaaInverted = { 1, 0, 0, 0,
 0, 0, 1, 0,
 -10, 0, 0, 1}
 
+local mainTransf = { -0.96921515464783, -0.24621538817883, 0, 0, 0.24621538817883, -0.96921515464783, 0, 0, 0, 0, 1, 0, -2769.6831054688, -1132.5921630859, 18.883646011353, 1, }
+
+local myTransf = { -0.96921503543854, -0.24621585011482, 0, 0, 0.24621585011482, -0.96921503543854, 0, 0, 0, 0, 1, 0, -2790.322265625, -1132.6765136719, 18.892417907715, 1, }
+
+local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+local inverseMyTransf = transfUtils.getInverseTransf(myTransf)
+
+local newTransf = transfUtils.mul(mainTransf, inverseMyTransf)
+
+
 local edgeIds = {111, 222, 333, 444}
 local edgeIdsReversed = arrayUtils.sort(edgeIds, nil, false)
 

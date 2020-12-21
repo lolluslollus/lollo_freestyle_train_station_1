@@ -74,7 +74,7 @@ utils.flipXYZ = function(m)
 end
 
 utils.mul = function(m1, m2)
-    -- returns the product of two 4x4 matrices
+    -- returns the product of two 1x16 vectors
     local m = function(line, col)
         local l = (line - 1) * 4
         return m1[l + 1] * m2[col + 0] + m1[l + 2] * m2[col + 4] + m1[l + 3] * m2[col + 8] + m1[l + 4] * m2[col + 12]

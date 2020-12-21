@@ -40,7 +40,7 @@ function data()
             cost = {
                 price = 0
             },
-            autoRemovable = true,
+            autoRemovable = false,
             skipCollision = true,
             skipCollisionCheck = true
         },
