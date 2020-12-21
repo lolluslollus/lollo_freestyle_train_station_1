@@ -1,6 +1,7 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local transfUtilUG = require 'transf'
@@ -96,49 +97,18 @@ function data()
 			local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 			print('inverseMainTransf =') debugPrint(inverseMainTransf)
 
-			local function _getWaitingAreaTransf(t, wapIndex)
-				local wap = params.terminals[t].waitingAreaPositions[wapIndex]
-				local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-				-- solve this system:
-				-- first point: 0, 0, 0 => platformPosTanX2[1][1]
-				-- transf[13] = platformPosTanX2[1][1][1]
-				-- transf[14] = platformPosTanX2[1][1][2]
-				-- transf[15] = platformPosTanX2[1][1][3]
-				-- second point: 1, 0, 0 => platformPosTanX2[2][1]
-				-- transf[1] + transf[13] = platformPosTanX2[2][1][1]
-				-- transf[2] + transf[14] = platformPosTanX2[2][1][2]
-				-- transf[3] + transf[15] = platformPosTanX2[2][1][3]
-				local waitingAreaTransf = {
-					platformPosTanX2[2][1][1] - platformPosTanX2[1][1][1],
-					platformPosTanX2[2][1][2] - platformPosTanX2[1][1][2],
-					platformPosTanX2[2][1][3] - platformPosTanX2[1][1][3],
-					0,
-					0, 1, 0, 0,
-					0, 0, 1, 0,
-					platformPosTanX2[1][1][1],
-					platformPosTanX2[1][1][2],
-					platformPosTanX2[1][1][3],
-					1
-				}
-				return waitingAreaTransf
-			end
-
 			for t = 1, #params.terminals do
 				local isCargoTerminal = params.terminals[t].isCargo
 				if isCargoTerminal then terminateConstructionHookInfo.isAnyCargoTerminal = true else terminateConstructionHookInfo.isAnyPassengersTerminal = true end
 
 				-- add terminal slots
-				local transf5 = _getWaitingAreaTransf(t, math.ceil(#params.terminals[t].waitingAreaPositions * 0.5))
-				print('terminal module transf ALT 5 =') debugPrint(transf5)
-
 				table.insert(result.slots, {
 					-- height = 1,
 					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
 					-- shape 0 1 2 3
 					-- shape = 3,
 					spacing = _constants.trackSpacing,
-					transf = transf5,
-					-- LOLLO TODO instead of this peg, display a lot of platform signs, like with the waiting areas
+					transf = _constants.idTransf,
 					type = _constants.terminalModuleType,
 				})
 
@@ -207,7 +177,10 @@ function data()
 					result.models[#result.models+1] = {
 						id = isCargoTerminal and _constants.cargoWaitingAreaModelId or _constants.passengersWaitingAreaModelId,
 						tag = slotHelpers.mangleModelTag(t, isCargoTerminal),
-						transf = _getWaitingAreaTransf(t, i)
+						transf = moduleHelpers.getWaitingAreaTransf(
+							params.terminals[t].waitingAreaPositions[i],
+							inverseMainTransf
+						)
 					}
 				end
 			end
@@ -277,6 +250,7 @@ function data()
 				-- 	table.insert(result.stations[1].terminals, 0)
 				-- 	print('result.stations =') debugPrint(result.stations)
 				-- end
+
 				-- it should output something like (this example has one terminal made of two adjacent bits)
 				-- stock result.stations =
 				-- 	{

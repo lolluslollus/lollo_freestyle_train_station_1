@@ -1,6 +1,9 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local slotUtils = require('lollo_freestyle_train_station.slotHelpers')
-local transf = require 'transf'
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require 'transf'
+
 
 local helpers = {}
 
@@ -43,7 +46,7 @@ helpers.getCollider = function(sidewalkWidth, model)
 	local result = nil
 	if sidewalkWidth < 3.8 then
 		if slotUtils.getIsStreetside(model.tag) then
-			local transfRes = transf.mul(
+			local transfRes = transfUtilsUG.mul(
 				model.transf,
 				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, sidewalkWidth * 0.5, 0, 1 }
 			)
@@ -67,5 +70,59 @@ helpers.getCollider = function(sidewalkWidth, model)
 	return result
 end
 
+helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
+    print('wap =') debugPrint(wap)
+    local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+    print('platformPosTanX2 =') debugPrint(platformPosTanX2)
+    -- solve this system:
+    -- first point: 0, 0, 0 => platformPosTanX2[1][1]
+    -- transf[13] = platformPosTanX2[1][1][1]
+    -- transf[14] = platformPosTanX2[1][1][2]
+    -- transf[15] = platformPosTanX2[1][1][3]
+    -- second point: 1, 0, 0 => platformPosTanX2[2][1]
+    -- transf[1] + transf[13] = platformPosTanX2[2][1][1]
+    -- transf[2] + transf[14] = platformPosTanX2[2][1][2]
+    -- transf[3] + transf[15] = platformPosTanX2[2][1][3]
+    local waitingAreaTransf = {
+        platformPosTanX2[2][1][1] - platformPosTanX2[1][1][1],
+        platformPosTanX2[2][1][2] - platformPosTanX2[1][1][2],
+        platformPosTanX2[2][1][3] - platformPosTanX2[1][1][3],
+        0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        platformPosTanX2[1][1][1],
+        platformPosTanX2[1][1][2],
+        platformPosTanX2[1][1][3],
+        1
+    }
+    print('waitingAreaTransf =') debugPrint(waitingAreaTransf)
+    return waitingAreaTransf
+end
+
+helpers.getTerminalDecoTransf = function(wap, inverseMainTransf)
+    print('wap.posTanX2 =') debugPrint(wap.posTanX2)
+    local normalisedPosTanX2 = {
+        {
+            {}, {},
+        },
+        {
+            {}, {},
+        }
+    }
+    -- average for better accuracy
+    local length = ( edgeUtils.getVectorLength(wap.posTanX2[1][2]) + edgeUtils.getVectorLength(wap.posTanX2[2][2]) ) * 0.5
+    print('length =', length)
+
+    normalisedPosTanX2[1][1] = arrayUtils.cloneDeepOmittingFields(wap.posTanX2[1][1])
+    normalisedPosTanX2[2][1][1] = wap.posTanX2[1][1][1] + (wap.posTanX2[2][1][1] - wap.posTanX2[1][1][1]) / length
+    normalisedPosTanX2[2][1][2] = wap.posTanX2[1][1][2] + (wap.posTanX2[2][1][2] - wap.posTanX2[1][1][2]) / length
+    normalisedPosTanX2[2][1][3] = wap.posTanX2[1][1][3] + (wap.posTanX2[2][1][3] - wap.posTanX2[1][1][3]) / length
+    normalisedPosTanX2[1][2] = edgeUtils.getVectorNormalised(wap.posTanX2[1][2])
+    normalisedPosTanX2[2][2] = edgeUtils.getVectorNormalised(wap.posTanX2[2][2])
+
+    print('normalisedPosTanX2 =') debugPrint(normalisedPosTanX2)
+
+    return helpers.getWaitingAreaTransf({posTanX2 = normalisedPosTanX2}, inverseMainTransf)
+end
 
 return helpers
