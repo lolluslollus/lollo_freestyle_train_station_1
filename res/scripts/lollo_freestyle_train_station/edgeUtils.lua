@@ -2,7 +2,7 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local matrixUtils = require('lollo_freestyle_train_station.matrix')
 local quadrangleUtils = require('lollo_freestyle_train_station.quadrangleUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
-local transfUtilUG = require('transf')
+local transfUtilsUG = require('transf')
 
 if math.atan2 == nil then
     math.atan2 = function(dy, dx)
@@ -562,7 +562,7 @@ helper.getObjectPosition = function(objectId)
     local fatInstances = modelInstanceList.fatInstances
     if not(fatInstances) or not(fatInstances[1]) or not(fatInstances[1].transf) or not(fatInstances[1].transf.cols) then return nil end
 
-    local objectTransf = transfUtilUG.new(
+    local objectTransf = transfUtilsUG.new(
         fatInstances[1].transf:cols(0),
         fatInstances[1].transf:cols(1),
         fatInstances[1].transf:cols(2),

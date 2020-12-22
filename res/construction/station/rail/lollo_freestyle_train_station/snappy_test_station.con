@@ -1,6 +1,6 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
-local transfUtilUG = require 'transf'
+local transfUtilsUG = require 'transf'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local vec3 = require 'vec3'
 

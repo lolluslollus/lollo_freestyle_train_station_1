@@ -7,7 +7,7 @@ local stationHelpers = require('lollo_freestyle_train_station.stationHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
-local transfUtilUG = require('transf')
+local transfUtilsUG = require('transf')
 
 -- local state = nil -- LOLLO NOTE you can only update the state from the worker thread
 
@@ -1303,7 +1303,7 @@ function data()
                                         return
                                     end
 
-                                    local platformWaypointTransf = transfUtilUG.new(
+                                    local platformWaypointTransf = transfUtilsUG.new(
                                         args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),
                                         args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(1),
                                         args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),

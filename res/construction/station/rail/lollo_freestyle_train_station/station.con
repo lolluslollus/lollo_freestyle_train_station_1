@@ -4,7 +4,7 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
-local transfUtilUG = require 'transf'
+local transfUtilsUG = require 'transf'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local vec3 = require 'vec3'
 
@@ -37,6 +37,26 @@ function data()
             -- }
         },
 		updateFn = function(params)
+			local getUnderpassTransf = function(posTanX2)
+				-- print('getUnderpassTransf starting, posTanX2 =') debugPrint(posTanX2)
+				local pos1 = posTanX2[1][1]
+				local pos2 = posTanX2[2][1]
+				local newTransf = transfUtilsUG.rotZYXTransl(
+					{
+						x = 0,
+						y = -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
+						z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
+					},
+					{
+						x = (pos1[1] + pos2[1]) * 0.5,
+						y = (pos1[2] + pos2[2]) * 0.5,
+						z = (pos1[3] + pos2[3]) * 0.5,
+					}
+				)
+				-- print('newTransf =') debugPrint(newTransf)
+				return newTransf
+			end
+
 			print('updateFn starting, params =')
 			-- debugPrint(params)
 			debugPrint(params.modules)
@@ -221,7 +241,7 @@ function data()
 							-- shape 0 1 2 3
 							shape = 3,
 							spacing = _constants.underpassSpacing,
-							transf = transfUtilUG.mul(moduleHelpers.getUnderpassTransf(posTanX2), {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5, 1}),
+							transf = transfUtilsUG.mul(getUnderpassTransf(posTanX2), {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5, 1}),
 							type = _constants.underpassModuleType,
 						})
 					end
