@@ -35,14 +35,18 @@ helpers.getTerminalFromModelTag = function(modelTag)
         return tonumber(string.gsub(modelTag, _constants.cargoWaitingAreaTagRoot, ''), 10) -- tonumber(a, base) returns nil if a is no valid number
     elseif stringUtils.stringStartsWith(modelTag, _constants.passengersWaitingAreaTagRoot) then
         return tonumber(string.gsub(modelTag, _constants.passengersWaitingAreaTagRoot, ''), 10)
+    elseif stringUtils.stringStartsWith(modelTag, _constants.passengersWaitingAreaUnderpassTagRoot) then
+        return tonumber(string.gsub(modelTag, _constants.passengersWaitingAreaUnderpassTagRoot, ''), 10)
     end
 
     return nil
 end
 
-helpers.mangleModelTag = function(nTerminal, isCargo)
+helpers.mangleModelTag = function(nTerminal, isCargo, isUnderpass)
     if isCargo then
         return _constants.cargoWaitingAreaTagRoot .. tostring(nTerminal)
+    elseif isUnderpass then
+        return _constants.passengersWaitingAreaUnderpassTagRoot .. tostring(nTerminal)
     else
         return _constants.passengersWaitingAreaTagRoot .. tostring(nTerminal)
     end

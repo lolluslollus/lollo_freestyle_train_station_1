@@ -37,78 +37,6 @@ function data()
             -- }
         },
 		updateFn = function(params)
-			local getUnderpassTransf = function(posTanX2)
-				print('getUnderpassTransf starting, posTanX2 =') debugPrint(posTanX2)
-				local pos1 = posTanX2[1][1]
-				local pos2 = posTanX2[2][1]
-				-- local newTransf1 = transfUtilsUG.rotZYXTransl(
-				-- 	{
-				-- 		x = 0,
-				-- 		y = -math.atan(pos2[3] - pos1[3], pos2[1] - pos1[1]),
-				-- 		z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-				-- 	},
-				-- 	{
-				-- 		x = (pos1[1] + pos2[1]) * 0.5,
-				-- 		y = (pos1[2] + pos2[2]) * 0.5,
-				-- 		z = (pos1[3] + pos2[3]) * 0.5,
-				-- 	}
-				-- )
-				-- print('newTransf 1 =') debugPrint(newTransf1)
-				local newTransf2 = transfUtilsUG.rotZTransl(
-					math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-					-- {
-					-- 	x = pos1[1],
-					-- 	y = pos1[2],
-					-- 	z = pos1[3] + 1,
-					-- }
-					{
-						x = (pos1[1] + pos2[1]) * 0.5,
-						y = (pos1[2] + pos2[2]) * 0.5,
-						z = (pos1[3] + pos2[3]) * 0.5 + 1,
-					}
-				)
-				if true then return newTransf2 end
-				print('newTransf 2 =') debugPrint(newTransf2)
-
-				-- print('angle on Y axis (deg) with atan =') debugPrint(math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1])) * 180 / math.pi)
-				-- print('angle on Y axis (deg) with atan2 =') debugPrint(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]) * 180 / math.pi)
-				-- print('rotY =') debugPrint(transfUtilsUG.rotY(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])))
-
-				-- if true then return newTransf2 end
-
-				-- LOLLO TODO this is wrong. The log shows:
---[[
- 				getUnderpassTransf starting, posTanX2 =
-				{
-					{
-						{ 112.94583432614, 52.74210043538, -1.839821820744, },
-						{ -4.2869175992319, -2.3746321067699, 0.092825916435686, },
-					},
-					{
-						{ 108.64070527488, 50.402910568881, -1.7481150535168, },
-						{ -4.3231888201262, -2.3036847898209, 0.090554455586243, },
-					},
-				}
-				newTransf 1 =
-				{ -0.99977319498448, -0, 0.021296915047328, 0, 0.010167700978762, -0.87867196030975, 0.47731771811051, 0, 0.018713002093186, 0.47742600072202, 0.87847267310215, 0, 110.79326980051, 51.57250550213, -1.7939684371304, 1, }
-				newTransf 2 =
-				{ -0.87867196030975, -0.47742600072202, 0, 0, 0.47742600072202, -0.87867196030975, 0, 0, 0, 0, 1, 0, 112.94583432614, 52.74210043538, 0.16017817925604, 1, }
-				angle on Y axis (deg) =
-				178.77968439184
- ]]
-				-- local angle = -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])
-				-- while angle > math.pi * 0.5 do angle = angle - math.pi end
-				-- while angle < -math.pi * 0.5 do angle = angle + math.pi end
-				local angle = math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1]))
-				print('angle around Y axis, deg =', angle * 180 / math.pi)
-				local newTransf3 = transfUtilsUG.mul(
-					newTransf2,
-					transfUtilsUG.rotY(angle)
-				)
-				print('newTransf 3 =') debugPrint(newTransf3)
-				return newTransf3
-			end
-
 			print('updateFn starting, params =')
 			-- debugPrint(params)
 			debugPrint(params.modules)
@@ -265,10 +193,11 @@ function data()
 					end
 				else
 					for i = 1, #params.terminals[t].waitingAreaPositions do
-						local slotId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
+						local underpassSlotId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
+						local isUnderpass = params.modules[underpassSlotId] ~= nil
 						result.models[#result.models+1] = {
-							id = params.modules[slotId] == nil and _constants.passengersWaitingAreaModelId or _constants.passengersWaitingAreaUnderpassModelId,
-							tag = slotHelpers.mangleModelTag(t, false),
+							id = isUnderpass and _constants.passengersWaitingAreaUnderpassModelId or _constants.passengersWaitingAreaModelId,
+							tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
 							transf = moduleHelpers.getWaitingAreaTransf(
 								params.terminals[t].waitingAreaPositions[i],
 								inverseMainTransf
@@ -295,7 +224,6 @@ function data()
 				})
 
 				-- add underpass slots
-				-- LOLLO TODO link the underpasses: 1 underground 2 overground
 				-- To make the paths clean, replace one waiting area with an underpass.
 				-- LOLLO TODO fix the transf, it rotates too much around the Y axis
 				if not(isCargoTerminal) then
@@ -308,7 +236,7 @@ function data()
 							-- shape 0 1 2 3
 							-- shape = 3,
 							spacing = _constants.underpassSpacing,
-							transf = getUnderpassTransf(posTanX2),
+							transf = moduleHelpers.getUnderpassTransf(posTanX2),
 							type = _constants.underpassModuleType,
 						})
 					end
@@ -373,6 +301,8 @@ function data()
 					local stationIndex = arrayUtils.findIndex(result.stations, 'tag', isCargoTerminal and 0 or 1)
 					table.insert(result.stations[stationIndex].terminals, t - 1)
 				end
+
+				-- LOLLO TODO link the underpasses underground
 
 				-- avoid dump when configuring
 				-- if #(result.stations[1].terminals) == 0 then

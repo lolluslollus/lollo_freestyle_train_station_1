@@ -1,0 +1,69 @@
+local leftTransf = {0.6, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1.0, 0, 0, 1.2, - 1.5, 1}
+local rightTransf = {0.6, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1.0, 0, 0, -1.2, -1.5, 1}
+
+function data()
+    return {
+        boundingInfo = {
+            bbMax = {1.0, 1.0, 3.0},
+            bbMin = {-1.0, -1.0, 0}
+        },
+        -- LOLLO NOTE the collider here seems to have no effect.
+        -- We already get it in elevated_stairs.module, so never mind
+        collider = {
+            params = {
+                halfExtents = {1.0, 1.0, 1.5}
+            },
+            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1.5, 1},
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = { "industry/oil_refinery/era_a/wall_2.mtl", },
+                            -- materials = {'lollo_freestyle_train_station/wall_white.mtl'},
+                            --materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
+                            --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", },
+                            mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
+                            name = 'oil_refinery_wall_large',
+                            transf = leftTransf
+                        },
+                        {
+                            materials = { "industry/oil_refinery/era_a/wall_2.mtl", },
+                            -- materials = {'lollo_freestyle_train_station/wall_white.mtl'},
+                            --materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
+                            --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", },
+                            mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
+                            name = 'oil_refinery_wall_large',
+                            transf = rightTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000
+            },
+        },
+        metadata = {
+            -- labelList = {
+            --     labels = {
+            --         {
+            --             alignment = 'CENTER',
+            --             alphaMode = 'BLEND',
+            --             childId = 'RootNode',
+            --             fitting = 'SCALE',
+            --             nLines = 1,
+            --             size = {5.2, .6},
+            --             transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -5.333, .23, 1},
+            --             type = 'STATION_NAME',
+            --             verticalAlignment = 'CENTER'
+            --         }
+            --     }
+            -- },
+        },
+        version = 1
+    }
+end

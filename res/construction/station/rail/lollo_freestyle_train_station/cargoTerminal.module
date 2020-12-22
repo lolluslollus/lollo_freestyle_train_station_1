@@ -65,7 +65,7 @@ return {
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
 				-- id = 'station/rail/asset/cargo_name_board.mdl', -- _constants.terminalModelFileName,
-				id = 'lollo_freestyle_train_station/cargo_name_board.mdl',
+				id = 'lollo_freestyle_train_station/asset/cargo_name_board.mdl',
 				slotId = slotId,
 				transf = transf,
 				tag = _constants.terminalModelTag
