@@ -41,32 +41,33 @@ function data()
 				print('getUnderpassTransf starting, posTanX2 =') debugPrint(posTanX2)
 				local pos1 = posTanX2[1][1]
 				local pos2 = posTanX2[2][1]
-				local newTransf1 = transfUtilsUG.rotZYXTransl(
-					{
-						x = 0,
-						y = -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
-						z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-					},
+				-- local newTransf1 = transfUtilsUG.rotZYXTransl(
+				-- 	{
+				-- 		x = 0,
+				-- 		y = -math.atan(pos2[3] - pos1[3], pos2[1] - pos1[1]),
+				-- 		z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
+				-- 	},
+				-- 	{
+				-- 		x = (pos1[1] + pos2[1]) * 0.5,
+				-- 		y = (pos1[2] + pos2[2]) * 0.5,
+				-- 		z = (pos1[3] + pos2[3]) * 0.5,
+				-- 	}
+				-- )
+				-- print('newTransf 1 =') debugPrint(newTransf1)
+				local newTransf2 = transfUtilsUG.rotZTransl(
+					math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
+					-- {
+					-- 	x = pos1[1],
+					-- 	y = pos1[2],
+					-- 	z = pos1[3] + 1,
+					-- }
 					{
 						x = (pos1[1] + pos2[1]) * 0.5,
 						y = (pos1[2] + pos2[2]) * 0.5,
-						z = (pos1[3] + pos2[3]) * 0.5,
+						z = (pos1[3] + pos2[3]) * 0.5 + 1,
 					}
 				)
-				print('newTransf 1 =') debugPrint(newTransf1)
-				local newTransf2 = transfUtilsUG.rotZTransl(
-					math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-					{
-						x = pos1[1],
-						y = pos1[2],
-						z = pos1[3] + 2,
-					}
-					-- {
-					-- 	x = (pos1[1] + pos2[1]) * 0.5,
-					-- 	y = (pos1[2] + pos2[2]) * 0.5,
-					-- 	z = (pos1[3] + pos2[3]) * 0.5 + 1,
-					-- }
-				)
+				if true then return newTransf2 end
 				print('newTransf 2 =') debugPrint(newTransf2)
 
 				-- print('angle on Y axis (deg) with atan =') debugPrint(math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1])) * 180 / math.pi)
@@ -98,8 +99,8 @@ function data()
 				-- local angle = -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])
 				-- while angle > math.pi * 0.5 do angle = angle - math.pi end
 				-- while angle < -math.pi * 0.5 do angle = angle + math.pi end
-				local angle = -math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1]))
-				print('angle around Y axis, deg =', angle)
+				local angle = math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1]))
+				print('angle around Y axis, deg =', angle * 180 / math.pi)
 				local newTransf3 = transfUtilsUG.mul(
 					newTransf2,
 					transfUtilsUG.rotY(angle)
@@ -112,7 +113,7 @@ function data()
 			-- debugPrint(params)
 			debugPrint(params.modules)
 
-			-- if not params.modules then params.modules = {} end
+			if not params.modules then params.modules = {} end
 
 			-- LOLLO NOTE I cannot call the api from here, sigh.
 			print('game =')
@@ -251,15 +252,29 @@ function data()
 				end
 
 				-- add waiting areas
-				for i = 1, #params.terminals[t].waitingAreaPositions do
-					result.models[#result.models+1] = {
-						id = isCargoTerminal and _constants.cargoWaitingAreaModelId or _constants.passengersWaitingAreaModelId,
-						tag = slotHelpers.mangleModelTag(t, isCargoTerminal),
-						transf = moduleHelpers.getWaitingAreaTransf(
-							params.terminals[t].waitingAreaPositions[i],
-							inverseMainTransf
-						)
-					}
+				if isCargoTerminal then
+					for i = 1, #params.terminals[t].waitingAreaPositions do
+						result.models[#result.models+1] = {
+							id = _constants.cargoWaitingAreaModelId,
+							tag = slotHelpers.mangleModelTag(t, true),
+							transf = moduleHelpers.getWaitingAreaTransf(
+								params.terminals[t].waitingAreaPositions[i],
+								inverseMainTransf
+							)
+						}
+					end
+				else
+					for i = 1, #params.terminals[t].waitingAreaPositions do
+						local slotId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
+						result.models[#result.models+1] = {
+							id = params.modules[slotId] == nil and _constants.passengersWaitingAreaModelId or _constants.passengersWaitingAreaUnderpassModelId,
+							tag = slotHelpers.mangleModelTag(t, false),
+							transf = moduleHelpers.getWaitingAreaTransf(
+								params.terminals[t].waitingAreaPositions[i],
+								inverseMainTransf
+							)
+						}
+					end
 				end
 
 				-- add terminal slots

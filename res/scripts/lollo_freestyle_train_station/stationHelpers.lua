@@ -220,16 +220,17 @@ local helpers = {
         return results
     end,
 
-    getWaitingAreaPositions = function(platformEdgeIds)
+    getWaitingAreaPositions = function(platformEdgeIds, isCargo)
         -- print('getWaitingAreaPositions starting')
         if type(platformEdgeIds) ~= 'table' then return {} end
 
+        local maxEdgeLength = isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength
         local results = {}
         for _, platformEdgeId in pairs(platformEdgeIds) do
             if edgeUtils.isValidAndExistingId(platformEdgeId) then
                 local edgeLength = edgeUtils.getEdgeLength(platformEdgeId)
                 -- print('edgeLength =') debugPrint(edgeLength)
-                local nModelsInEdge = math.ceil(edgeLength / _constants.maxWaitingAreaEdgeLength)
+                local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
                 -- print('nModelsInEdge =') debugPrint(nModelsInEdge)
                 local basePlatformEdge =  api.engine.getComponent(platformEdgeId, api.type.ComponentType.BASE_EDGE)
                 local basePlatformNode0 = api.engine.getComponent(basePlatformEdge.node0, api.type.ComponentType.BASE_NODE)

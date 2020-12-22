@@ -42,7 +42,7 @@ function data()
                             },
                         },
                         transportModes = { 'PERSON', },
-                        speedLimit = 30,
+                        speedLimit = 20,
                     },
                 },
                 runways = { },

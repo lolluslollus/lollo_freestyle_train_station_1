@@ -971,7 +971,7 @@ function data()
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(args.platformEdgeIds)
                 eventArgs.trackEdgeIds = trackEdgeIdsBetweenNodeIds
                 eventArgs.trackEdgeList = trackEdgeList
-                eventArgs.waitingAreaPositions = stationHelpers.getWaitingAreaPositions(args.platformEdgeIds)
+                eventArgs.waitingAreaPositions = stationHelpers.getWaitingAreaPositions(args.platformEdgeIds, args.isCargo)
 
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,
@@ -1381,8 +1381,8 @@ function data()
                                             waypointId = nil,
                                         }
                                     end
-                                else
-                                    print('addedSegment =') debugPrint(addedSegment)
+                                -- else
+                                    -- print('addedSegment =') debugPrint(addedSegment)
                                 end
                             end
                             for i = 1, #removeTrackWaypointsEventArgs do
