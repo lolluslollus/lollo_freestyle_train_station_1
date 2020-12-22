@@ -18,9 +18,9 @@ function data()
                         {
                             materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
                             -- mesh = "station/rail/era_c/perron_5/perron_5_lod0.msh",
-                            mesh = 'lollo_freestyle_train_station/lollo_era_c_passenger_platform_2m.msh',
+                            mesh = 'lollo_freestyle_train_station/lollo_era_c_passenger_platform_1m.msh',
                             -- name = "perron_5",
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 1, },
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.5, 0, 0, 1, },
                         },
                         -- {
                         --     materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},
