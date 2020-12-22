@@ -69,15 +69,40 @@ function data()
 				)
 				print('newTransf 2 =') debugPrint(newTransf2)
 
-				print('angle on Y axis (deg) =') debugPrint(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]) * 180 / math.pi)
-				print('rotY =') debugPrint(transfUtilsUG.rotY(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])))
+				-- print('angle on Y axis (deg) with atan =') debugPrint(math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1])) * 180 / math.pi)
+				-- print('angle on Y axis (deg) with atan2 =') debugPrint(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]) * 180 / math.pi)
+				-- print('rotY =') debugPrint(transfUtilsUG.rotY(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])))
 
-				if true then return newTransf2 end
+				-- if true then return newTransf2 end
 
-				-- LOLLO TODO this is wrong
+				-- LOLLO TODO this is wrong. The log shows:
+--[[
+ 				getUnderpassTransf starting, posTanX2 =
+				{
+					{
+						{ 112.94583432614, 52.74210043538, -1.839821820744, },
+						{ -4.2869175992319, -2.3746321067699, 0.092825916435686, },
+					},
+					{
+						{ 108.64070527488, 50.402910568881, -1.7481150535168, },
+						{ -4.3231888201262, -2.3036847898209, 0.090554455586243, },
+					},
+				}
+				newTransf 1 =
+				{ -0.99977319498448, -0, 0.021296915047328, 0, 0.010167700978762, -0.87867196030975, 0.47731771811051, 0, 0.018713002093186, 0.47742600072202, 0.87847267310215, 0, 110.79326980051, 51.57250550213, -1.7939684371304, 1, }
+				newTransf 2 =
+				{ -0.87867196030975, -0.47742600072202, 0, 0, 0.47742600072202, -0.87867196030975, 0, 0, 0, 0, 1, 0, 112.94583432614, 52.74210043538, 0.16017817925604, 1, }
+				angle on Y axis (deg) =
+				178.77968439184
+ ]]
+				-- local angle = -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])
+				-- while angle > math.pi * 0.5 do angle = angle - math.pi end
+				-- while angle < -math.pi * 0.5 do angle = angle + math.pi end
+				local angle = -math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1]))
+				print('angle around Y axis, deg =', angle)
 				local newTransf3 = transfUtilsUG.mul(
 					newTransf2,
-					transfUtilsUG.rotY(-math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]))
+					transfUtilsUG.rotY(angle)
 				)
 				print('newTransf 3 =') debugPrint(newTransf3)
 				return newTransf3
@@ -256,7 +281,8 @@ function data()
 
 				-- add underpass slots
 				-- LOLLO TODO link the underpasses: 1 underground 2 overground
-				-- LOLLO TODO fix the transf
+				-- To make the paths clean, replace one waiting area with an underpass.
+				-- LOLLO TODO fix the transf, it rotates too much around the Y axis
 				if not(isCargoTerminal) then
 					for i = 2, #params.terminals[t].waitingAreaPositions - 1, 4 do
 						local wap = params.terminals[t].waitingAreaPositions[i]
