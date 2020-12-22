@@ -38,7 +38,8 @@ function data()
         },
 		updateFn = function(params)
 			print('updateFn starting, params =')
-			debugPrint(params)
+			-- debugPrint(params)
+			debugPrint(params.modules)
 
 			-- if not params.modules then params.modules = {} end
 
@@ -92,7 +93,7 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
-					[_constants.underpassTerminalModuleType] = {
+					[_constants.underpassModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
@@ -197,7 +198,7 @@ function data()
 				)
 				-- print('midTransf = ') debugPrint(midTransf)
 				table.insert(result.slots, {
-					height = 0.5,
+					-- height = 0.6,
 					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
 					-- shape 0 1 2 3
 					shape = 3,
@@ -207,20 +208,25 @@ function data()
 					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 				})
 
-				-- underpass modules TODO they are not added
+				-- add underpass slots
+				-- LOLLO TODO link the underpasses: 1 underground 2 overground
+				-- LOLLO TODO fix the transf
 				if not(isCargoTerminal) then
-					table.insert(result.slots, {
-						height = 0.5,
-						id = result.mangleId(t, 0, _constants.idBases.underpassSlotId),
-						-- shape 0 1 2 3
-						shape = 3,
-						spacing = _constants.trackSpacing,
-						-- transf = _constants.idTransf,
-						transf = midTransf,
-						type = _constants.underpassTerminalModuleType,
-					})
+					for i = 2, #params.terminals[t].waitingAreaPositions - 1, 4 do
+						local wap = params.terminals[t].waitingAreaPositions[i]
+						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+						table.insert(result.slots, {
+							-- height = 1,
+							id = result.mangleId(t, i, _constants.idBases.underpassSlotId),
+							-- shape 0 1 2 3
+							shape = 3,
+							spacing = _constants.underpassSpacing,
+							transf = transfUtilUG.mul(moduleHelpers.getUnderpassTransf(posTanX2), {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5, 1}),
+							type = _constants.underpassModuleType,
+						})
+					end
 				end
-			end
+			end -- loop over terminals
 
 			result.terminateConstructionHook = function()
 				-- print('terminateConstructionHook starting')
@@ -315,8 +321,7 @@ function data()
 			end
 			-- _terminateConstructionHook()
 
-			-- print('freestyleTrainStation result =') debugPrint(result)
-
+			print('freestyleTrainStation result =') debugPrint(result)
 			return result
 		end,
  		-- preProcessFn = function(modules, change, three)

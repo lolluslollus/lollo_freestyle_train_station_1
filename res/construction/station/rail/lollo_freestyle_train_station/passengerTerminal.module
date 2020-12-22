@@ -60,9 +60,9 @@ return {
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)
-			local edge = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-			-- print('edge =') debugPrint(edge)
-			local transf = moduleHelpers.getTerminalDecoTransf(edge)
+			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+			-- print('posTanX2 =') debugPrint(posTanX2)
+			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
 				-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
@@ -83,9 +83,9 @@ return {
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)
-			local edge = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-			-- print('edge =') debugPrint(edge)
-			local transf = moduleHelpers.getTerminalDecoTransf(edge)
+			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+			-- print('posTanX2 =') debugPrint(posTanX2)
+			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl',
@@ -107,9 +107,9 @@ return {
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
 			-- print('wap = ') debugPrint(wap)
-			local edge = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-			-- print('edge =') debugPrint(edge)
-			local transf = moduleHelpers.getTerminalDecoTransf(edge)
+			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+			-- print('posTanX2 =') debugPrint(posTanX2)
+			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
 				-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',

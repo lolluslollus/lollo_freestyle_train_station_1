@@ -95,16 +95,37 @@ helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
         platformPosTanX2[1][1][3],
         1
     }
-    print('waitingAreaTransf =') debugPrint(waitingAreaTransf)
+    -- print('waitingAreaTransf =') debugPrint(waitingAreaTransf)
     return waitingAreaTransf
 end
 
-helpers.getTerminalDecoTransf = function(edge)
-    -- print('getTerminalDecoTransf starting, edge =') debugPrint(edge)
-    local pos1 = edge[1][1]
-    local pos2 = edge[2][1]
+helpers.getTerminalDecoTransf = function(posTanX2)
+    -- print('getTerminalDecoTransf starting, posTanX2 =') debugPrint(posTanX2)
+    local pos1 = posTanX2[1][1]
+    local pos2 = posTanX2[2][1]
     local newTransf = transfUtilsUG.rotZTransl(
         math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
+        {
+            x = pos1[1],
+            y = pos1[2],
+            z = pos1[3],
+        }
+    )
+
+    -- print('newTransf =') debugPrint(newTransf)
+    return newTransf
+end
+
+helpers.getUnderpassTransf = function(posTanX2)
+    -- print('getUnderpassTransf starting, posTanX2 =') debugPrint(posTanX2)
+    local pos1 = posTanX2[1][1]
+    local pos2 = posTanX2[2][1]
+    local newTransf = transfUtilsUG.rotZYXTransl(
+        {
+            x = 0,
+            y = -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
+            z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
+        },
         {
             x = pos1[1],
             y = pos1[2],

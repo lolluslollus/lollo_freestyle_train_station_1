@@ -31,14 +31,14 @@ return {
 	order = {
 		value = 1,
 	},
-	type = _constants.underpassTerminalModuleType,
+	type = _constants.underpassModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
 		print('LOLLO underpass module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('LOLLO result =') debugPrint(result)
-		print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
+		print('slotTransf =') debugPrint(slotTransf)
 		-- print('params =') debugPrint(params)
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
@@ -55,30 +55,13 @@ return {
 		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
-		local yShift = 1
-		for i = 3, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
-			-- print('i =', i)
-			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
-			-- print('wap = ') debugPrint(wap)
-			local edge = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-			-- print('edge =') debugPrint(edge)
-			local transf = moduleHelpers.getTerminalDecoTransf(edge)
-			-- print('transf =') debugPrint(transf)
-			result.models[#result.models + 1] = {
-				-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
-				id = 'lollo_freestyle_train_station/asset/era_c_station_name.mdl',
-				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 3, 1 }),
-				tag = _constants.terminalModelTag
-			}
-			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/era_c_perron_pillar.mdl',
-				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
-				tag = _constants.terminalModelTag
-			}
-			yShift = - yShift
-		end
+		result.models[#result.models + 1] = {
+			-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
+			id = _constants.underpassModelFileName,
+			slotId = slotId,
+			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
+			tag = _constants.underpassModelTag
+		}
 
 		-- local face = {
 		-- 	{-7, -7, 0, 1},
