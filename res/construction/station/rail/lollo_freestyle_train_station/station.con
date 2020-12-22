@@ -25,7 +25,7 @@ function data()
 			soundSet = { name = "station_cargo_old" }
 		},
 		autoRemovable = false,
-		skipCollision = true, -- we need this to change the street type when reconfiguring
+		skipCollision = true, -- we need this when reconfiguring
 		params = { -- keep it empty or it will crash coz it won't find the params, which I pass when building the construction
             -- {
             --     key = 'fileName',
@@ -38,10 +38,10 @@ function data()
         },
 		updateFn = function(params)
 			local getUnderpassTransf = function(posTanX2)
-				-- print('getUnderpassTransf starting, posTanX2 =') debugPrint(posTanX2)
+				print('getUnderpassTransf starting, posTanX2 =') debugPrint(posTanX2)
 				local pos1 = posTanX2[1][1]
 				local pos2 = posTanX2[2][1]
-				local newTransf = transfUtilsUG.rotZYXTransl(
+				local newTransf1 = transfUtilsUG.rotZYXTransl(
 					{
 						x = 0,
 						y = -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
@@ -53,8 +53,34 @@ function data()
 						z = (pos1[3] + pos2[3]) * 0.5,
 					}
 				)
-				-- print('newTransf =') debugPrint(newTransf)
-				return newTransf
+				print('newTransf 1 =') debugPrint(newTransf1)
+				local newTransf2 = transfUtilsUG.rotZTransl(
+					math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
+					{
+						x = pos1[1],
+						y = pos1[2],
+						z = pos1[3] + 2,
+					}
+					-- {
+					-- 	x = (pos1[1] + pos2[1]) * 0.5,
+					-- 	y = (pos1[2] + pos2[2]) * 0.5,
+					-- 	z = (pos1[3] + pos2[3]) * 0.5 + 1,
+					-- }
+				)
+				print('newTransf 2 =') debugPrint(newTransf2)
+
+				print('angle on Y axis (deg) =') debugPrint(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]) * 180 / math.pi)
+				print('rotY =') debugPrint(transfUtilsUG.rotY(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])))
+
+				if true then return newTransf2 end
+
+				-- LOLLO TODO this is wrong
+				local newTransf3 = transfUtilsUG.mul(
+					newTransf2,
+					transfUtilsUG.rotY(-math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]))
+				)
+				print('newTransf 3 =') debugPrint(newTransf3)
+				return newTransf3
 			end
 
 			print('updateFn starting, params =')
@@ -239,9 +265,9 @@ function data()
 							-- height = 1,
 							id = result.mangleId(t, i, _constants.idBases.underpassSlotId),
 							-- shape 0 1 2 3
-							shape = 3,
+							-- shape = 3,
 							spacing = _constants.underpassSpacing,
-							transf = transfUtilsUG.mul(getUnderpassTransf(posTanX2), {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5, 1}),
+							transf = getUnderpassTransf(posTanX2),
 							type = _constants.underpassModuleType,
 						})
 					end
