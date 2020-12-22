@@ -332,11 +332,11 @@ local _actions = {
         local proposal = api.type.SimpleProposal.new()
 
         -- there may be no neighbour nodes, if the station was built in a certain fashion
-        local _baseNode1 = api.engine.entityExists(neighbourNodeIds.node1)
+        local _baseNode1 = edgeUtils.isValidAndExistingId(neighbourNodeIds.node1)
         and api.engine.getComponent(neighbourNodeIds.node1, api.type.ComponentType.BASE_NODE)
         or nil
         print('_baseNode1 =') debugPrint(_baseNode1)
-        local _baseNode2 = api.engine.entityExists(neighbourNodeIds.node2)
+        local _baseNode2 = edgeUtils.isValidAndExistingId(neighbourNodeIds.node2)
         and api.engine.getComponent(neighbourNodeIds.node2, api.type.ComponentType.BASE_NODE)
         or nil
         print('_baseNode2 =') debugPrint(_baseNode2)
