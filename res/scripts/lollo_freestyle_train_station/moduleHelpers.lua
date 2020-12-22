@@ -74,7 +74,7 @@ helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
     -- print('wap =') debugPrint(wap)
     local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
     -- print('platformPosTanX2 =') debugPrint(platformPosTanX2)
-    -- solve this system:
+    -- using transfUtils.getVecTransformed(), solve this system:
     -- first point: 0, 0, 0 => platformPosTanX2[1][1]
     -- transf[13] = platformPosTanX2[1][1][1]
     -- transf[14] = platformPosTanX2[1][1][2]
@@ -95,6 +95,7 @@ helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
         platformPosTanX2[1][1][3],
         1
     }
+    -- LOLLO TODO try a better transf, this one works but skews the model
     -- print('waitingAreaTransf =') debugPrint(waitingAreaTransf)
     return waitingAreaTransf
 end
