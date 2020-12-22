@@ -1,0 +1,104 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+-- local modulesutil = require "modulesutil"
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+local vec3 = require "vec3"
+
+
+function data()
+
+return {
+	availability = {
+		yearFrom = 0,
+		yearTo = 0
+	},
+	cost = {
+		price = 0,
+	},
+	category = {
+		-- categories = { "cargo", },
+	},
+	description = {
+		name = _("Underpass"),
+		description = _("Underpass"),
+		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+	},
+	metadata = {
+		-- cargo = true,
+	},
+	order = {
+		value = 1,
+	},
+	type = _constants.underpassTerminalModuleType,
+	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
+		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+		if not nTerminal or not baseId then return end
+
+		print('LOLLO underpass module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
+		-- print('LOLLO result =') debugPrint(result)
+		print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
+		-- print('params =') debugPrint(params)
+		-- params are the station params
+		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
+
+		local mainTransf = params.mainTransf
+		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+
+		-- LOLLO only for testing
+		-- result.models[#result.models + 1] = {
+		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = _constants.terminalModelTag
+		-- }
+
+		-- start from 3 to avoid deco peeping out of the platform
+		local yShift = 1
+		for i = 3, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
+			-- print('i =', i)
+			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
+			-- print('wap = ') debugPrint(wap)
+			local edge = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+			-- print('edge =') debugPrint(edge)
+			local transf = moduleHelpers.getTerminalDecoTransf(edge)
+			-- print('transf =') debugPrint(transf)
+			result.models[#result.models + 1] = {
+				-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
+				id = 'lollo_freestyle_train_station/asset/era_c_station_name.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 3, 1 }),
+				tag = _constants.terminalModelTag
+			}
+			result.models[#result.models + 1] = {
+				id = 'station/rail/asset/era_c_perron_pillar.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
+				tag = _constants.terminalModelTag
+			}
+			yShift = - yShift
+		end
+
+		-- local face = {
+		-- 	{-7, -7, 0, 1},
+		-- 	{-7, 7, 0, 1},
+		-- 	{7, 7, 0, 1},
+		-- 	{7, -7, 0, 1},
+		-- }
+		-- modulesutil.TransformFaces(slotTransf, face)
+		-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
+		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face)
+	end,
+
+	getModelsFn = function(params)
+		return {
+			{
+				id = _constants.underpassModelFileName,
+				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
+			},
+		}
+	end
+}
+
+end

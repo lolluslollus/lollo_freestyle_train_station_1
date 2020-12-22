@@ -11,8 +11,10 @@ local constants = {
     stationConFileNameShort = 'lollo_freestyle_train_station/station.con',
     cargoTerminalModuleType = 'freestyleTrainStationCargoTerminal',
     passengerTerminalModuleType = 'freestyleTrainStationPassengerTerminal',
+    underpassTerminalModuleType = 'freestyleTrainStationUnderpass',
     terminalModelFileName = 'lollo_freestyle_train_station/icon/red_short.mdl',
     terminalModelTag = 'freestyleTrainStationTerminal',
+    underpassModelFileName = 'lollo_freestyle_train_station/era_c_underpass_alone.mdl',
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
     passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module',
     trackWaypoint1ModelId = 'lollo_freestyle_train_station/railroad/lollo_track_waypoint_1.mdl',
@@ -28,6 +30,7 @@ local constants = {
         terminalSlotId = 100000,
         trackSlotId = 200000,
         passengerPlatformSlotId = 300000,
+        underpassSlotId = 400000,
     },
     idTransf = {
         1, 0, 0, 0,

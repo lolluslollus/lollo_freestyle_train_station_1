@@ -91,6 +91,11 @@ function data()
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
+					},
+					[_constants.underpassTerminalModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
 					}
 				},
                 slots = {},
@@ -107,7 +112,7 @@ function data()
 			-- LOLLO NOTE the coordinates in terminals are absolute
 			local mainTransf = params.mainTransf
 			local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
-			print('inverseMainTransf =') debugPrint(inverseMainTransf)
+			-- print('inverseMainTransf =') debugPrint(inverseMainTransf)
 
 			for t = 1, #params.terminals do
 				local isCargoTerminal = params.terminals[t].isCargo
@@ -201,10 +206,24 @@ function data()
 					transf = midTransf,
 					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 				})
+
+				-- underpass modules TODO they are not added
+				if not(isCargoTerminal) then
+					table.insert(result.slots, {
+						height = 0.5,
+						id = result.mangleId(t, 0, _constants.idBases.underpassSlotId),
+						-- shape 0 1 2 3
+						shape = 3,
+						spacing = _constants.trackSpacing,
+						-- transf = _constants.idTransf,
+						transf = midTransf,
+						type = _constants.underpassTerminalModuleType,
+					})
+				end
 			end
 
 			result.terminateConstructionHook = function()
-				print('terminateConstructionHook starting')
+				-- print('terminateConstructionHook starting')
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
 				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
 				-- that point at this.
@@ -288,7 +307,7 @@ function data()
 				-- 	}
 				-- }
 
-				print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
+				-- print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
 				-- print('LOLLO result = ') debugPrint(result)
 				-- print('LOLLO result.stations = ') debugPrint(result.stations)
 				-- print('LOLLO result.models = ') debugPrint(result.models)

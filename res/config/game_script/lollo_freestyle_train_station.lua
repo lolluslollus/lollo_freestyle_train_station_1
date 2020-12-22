@@ -965,7 +965,7 @@ function data()
                 print('at least two track edges found')
 
                 local trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
-                print('track bulldoze requested, trackEdgeList =') debugPrint(trackEdgeList)
+                -- print('track bulldoze requested, trackEdgeList =') debugPrint(trackEdgeList)
 
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'platformWaypointId', 'splitNodeIds', 'trackWaypoint1Id', 'trackWaypoint2Id', })
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(args.platformEdgeIds)
