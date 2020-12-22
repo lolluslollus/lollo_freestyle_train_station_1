@@ -194,12 +194,16 @@ function data()
 					end
 				else
 					for i = 1, #params.terminals[t].waitingAreaPositions do
-						local underpassSlotId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
-						local isUnderpass = params.modules[underpassSlotId] ~= nil
+						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 						local transf = moduleHelpers.getWaitingAreaTransf(
 							params.terminals[t].waitingAreaPositions[i],
 							inverseMainTransf
 						)
+						-- LOLLO TODO the passenger waiting area with underpass has a central lane
+						-- that goes underground, this is fine.
+						-- It also has two side lanes overground, which may get badly skewed by the transformation.
+						-- Use separate lanes instead, based on 'lollo_freestyle_train_station/passengers_lane.mdl' and 'lollo_freestyle_train_station/passengers_waiting_area.mdl'
+						-- transform them with moduleHelpers.getUnitaryLaneTransf()
 						result.models[#result.models+1] = {
 							id = isUnderpass and _constants.passengersWaitingAreaUnderpassModelId or _constants.passengersWaitingAreaModelId,
 							tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
@@ -210,11 +214,11 @@ function data()
 								transf,
 								{ 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassHalfLengthM, 0, _constants.laneZ - _constants.underpassDepthM, 1 }
 							)
-							result.models[#result.models+1] = {
-								id = 'lollo_freestyle_train_station/icon/green.mdl',
-								-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
-								transf = underpassBottomTransf
-							}
+							-- result.models[#result.models+1] = {
+							-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
+							-- 	-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
+							-- 	transf = underpassBottomTransf
+							-- }
 							if terminateConstructionHookInfo.underpassBottoms[t] == nil then terminateConstructionHookInfo.underpassBottoms[t] = {} end
 							terminateConstructionHookInfo.underpassBottoms[t][#terminateConstructionHookInfo.underpassBottoms[t]+1] = {
 								t = t,
