@@ -83,21 +83,76 @@ helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
     -- transf[1] + transf[13] = platformPosTanX2[2][1][1]
     -- transf[2] + transf[14] = platformPosTanX2[2][1][2]
     -- transf[3] + transf[15] = platformPosTanX2[2][1][3]
+    -- third point: 0, 1, 0 => platformPosTanX2[1][1] + { 0, 1, 0 }
+    -- transf[5] + transf[13] = platformPosTanX2[1][1][1]
+    -- transf[6] + transf[14] = platformPosTanX2[1][1][2] + 1
+    -- transf[7] + transf[15] = platformPosTanX2[1][1][3]
+    -- fourth point: 0, 0, 1 => platformPosTanX2[1][1] + { 0, 0, 1 }
+    -- transf[9] + transf[13] = platformPosTanX2[1][1][1]
+    -- transf[10] + transf[14] = platformPosTanX2[1][1][2]
+    -- transf[11] + transf[15] = platformPosTanX2[1][1][3] + 1
+    -- fifth point: 1, 1, 0 => platformPosTanX2[2][1] + { 0, 1, 0 }
+    -- transf[1] + transf[5] + transf[13] = platformPosTanX2[2][1][1]
+    -- transf[2] + transf[6] + transf[14] = platformPosTanX2[2][1][2] + 1
+    -- transf[3] + transf[7] + transf[15] = platformPosTanX2[2][1][3]
     local waitingAreaTransf = {
         platformPosTanX2[2][1][1] - platformPosTanX2[1][1][1],
         platformPosTanX2[2][1][2] - platformPosTanX2[1][1][2],
         platformPosTanX2[2][1][3] - platformPosTanX2[1][1][3],
         0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
+        0, 1, 0,
+        0,
+        0, 0, 1,
+        0,
         platformPosTanX2[1][1][1],
         platformPosTanX2[1][1][2],
         platformPosTanX2[1][1][3],
         1
     }
-    -- LOLLO TODO try a better transf, this one works but skews the model
     -- print('waitingAreaTransf =') debugPrint(waitingAreaTransf)
     return waitingAreaTransf
+end
+
+helpers.getUnitaryLaneTransf = function(pos1, pos2)
+    -- gets a transf to fit a 1 m long model (typically a lane) between two points
+    -- print('platformPosTanX2 =') debugPrint(platformPosTanX2)
+    -- using transfUtils.getVecTransformed(), solve this system:
+    -- first point: 0, 0, 0 => platformPosTanX2[1][1]
+    -- transf[13] = platformPosTanX2[1][1][1]
+    -- transf[14] = platformPosTanX2[1][1][2]
+    -- transf[15] = platformPosTanX2[1][1][3]
+    -- second point: 1, 0, 0 => platformPosTanX2[2][1]
+    -- transf[1] + transf[13] = platformPosTanX2[2][1][1]
+    -- transf[2] + transf[14] = platformPosTanX2[2][1][2]
+    -- transf[3] + transf[15] = platformPosTanX2[2][1][3]
+    -- third point: 0, 1, 0 => platformPosTanX2[1][1] + { 0, 1, 0 }
+    -- transf[5] + transf[13] = platformPosTanX2[1][1][1]
+    -- transf[6] + transf[14] = platformPosTanX2[1][1][2] + 1
+    -- transf[7] + transf[15] = platformPosTanX2[1][1][3]
+    -- fourth point: 0, 0, 1 => platformPosTanX2[1][1] + { 0, 0, 1 }
+    -- transf[9] + transf[13] = platformPosTanX2[1][1][1]
+    -- transf[10] + transf[14] = platformPosTanX2[1][1][2]
+    -- transf[11] + transf[15] = platformPosTanX2[1][1][3] + 1
+    -- fifth point: 1, 1, 0 => platformPosTanX2[2][1] + { 0, 1, 0 }
+    -- transf[1] + transf[5] + transf[13] = platformPosTanX2[2][1][1]
+    -- transf[2] + transf[6] + transf[14] = platformPosTanX2[2][1][2] + 1
+    -- transf[3] + transf[7] + transf[15] = platformPosTanX2[2][1][3]
+    local result = {
+        pos2[1] - pos1[1],
+        pos2[2] - pos1[2],
+        pos2[3] - pos1[3],
+        0,
+        0, 1, 0,
+        0,
+        0, 0, 1,
+        0,
+        pos1[1],
+        pos1[2],
+        pos1[3],
+        1
+    }
+    -- print('unitaryLaneTransf =') debugPrint(result)
+    return result
 end
 
 helpers.getTerminalDecoTransf = function(posTanX2)

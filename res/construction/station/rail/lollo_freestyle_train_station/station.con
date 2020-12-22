@@ -108,6 +108,7 @@ function data()
 			local terminateConstructionHookInfo = {
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
+				underpassBottoms = {},
 				vehicleNodes = {}
 			}
 			-- LOLLO NOTE the coordinates in terminals are absolute
@@ -195,14 +196,33 @@ function data()
 					for i = 1, #params.terminals[t].waitingAreaPositions do
 						local underpassSlotId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
 						local isUnderpass = params.modules[underpassSlotId] ~= nil
+						local transf = moduleHelpers.getWaitingAreaTransf(
+							params.terminals[t].waitingAreaPositions[i],
+							inverseMainTransf
+						)
 						result.models[#result.models+1] = {
 							id = isUnderpass and _constants.passengersWaitingAreaUnderpassModelId or _constants.passengersWaitingAreaModelId,
 							tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
-							transf = moduleHelpers.getWaitingAreaTransf(
-								params.terminals[t].waitingAreaPositions[i],
-								inverseMainTransf
-							)
+							transf = transf
 						}
+						if isUnderpass then
+							local underpassBottomTransf = transfUtilsUG.mul(
+								transf,
+								{ 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassHalfLengthM, 0, _constants.laneZ - _constants.underpassDepthM, 1 }
+							)
+							result.models[#result.models+1] = {
+								id = 'lollo_freestyle_train_station/icon/green.mdl',
+								-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
+								transf = underpassBottomTransf
+							}
+							if terminateConstructionHookInfo.underpassBottoms[t] == nil then terminateConstructionHookInfo.underpassBottoms[t] = {} end
+							terminateConstructionHookInfo.underpassBottoms[t][#terminateConstructionHookInfo.underpassBottoms[t]+1] = {
+								t = t,
+								x = underpassBottomTransf[13],
+								y = underpassBottomTransf[14],
+								z = underpassBottomTransf[15]
+							}
+						end
 					end
 				end
 
@@ -302,7 +322,25 @@ function data()
 					table.insert(result.stations[stationIndex].terminals, t - 1)
 				end
 
-				-- LOLLO TODO link the underpasses underground
+				-- LOLLO TODO link the underpasses underground between different terminals, too
+				for t = 1, #params.terminals do
+					local underpassBottomsInTerminal = terminateConstructionHookInfo.underpassBottoms[t]
+					if underpassBottomsInTerminal ~= nil and #underpassBottomsInTerminal > 1 then
+						local previousUnderpassBottom = underpassBottomsInTerminal[1]
+						for i = 2, #underpassBottomsInTerminal do
+							local currentUnderpassBottom = underpassBottomsInTerminal[i]
+							result.models[#result.models+1] = {
+								id = 'lollo_freestyle_train_station/passengers_lane.mdl',
+								-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
+								transf = moduleHelpers.getUnitaryLaneTransf(
+									{ previousUnderpassBottom.x, previousUnderpassBottom.y, previousUnderpassBottom.z },
+									{ currentUnderpassBottom.x, currentUnderpassBottom.y, currentUnderpassBottom.z }
+								)
+							}
+							previousUnderpassBottom = currentUnderpassBottom
+						end
+					end
+				end
 
 				-- avoid dump when configuring
 				-- if #(result.stations[1].terminals) == 0 then

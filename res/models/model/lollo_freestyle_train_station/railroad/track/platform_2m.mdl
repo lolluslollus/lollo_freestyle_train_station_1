@@ -1,5 +1,4 @@
 function data()
-    -- local _cargoNodeZ = 0.3
     return {
         boundingInfo = {
             bbMax = { 40, 2.75, 0.79999995231628, },
