@@ -982,6 +982,9 @@ function data()
                 -- print('#eventArgs.leftLanePositions =', #eventArgs.leftLanePositions)
                 -- print('#eventArgs.rightLanePositions =', #eventArgs.rightLanePositions)
 
+                -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
+				-- maybe even overground. For now, it looks unnecessary.
+
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,
                     eventArgs
@@ -1150,7 +1153,7 @@ function data()
                                 local trackWaypoint1ModelId = api.res.modelRep.find(_constants.trackWaypoint1ModelId)
                                 local trackWaypoint2ModelId = api.res.modelRep.find(_constants.trackWaypoint2ModelId)
 
-                                local handleTrackWaypointBuilt = function(trackWaypointModelId)
+                                local handleTrackWaypointBuilt = function(trackWaypointModelId, twinModelId)
                                     print('LOLLO track waypoint with modelId', trackWaypoint1ModelId, 'built!')
                                     local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, args.proposal.proposal.addedSegments[1])
                                     if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then return false end
@@ -1164,6 +1167,7 @@ function data()
                                     local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltEdge.objects, trackWaypointModelId))
                                     if not(newWaypointId) then return false end
 
+                                    -- forbid building this on a platform-track
                                     if trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType) then
                                         guiHelpers.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -1176,20 +1180,48 @@ function data()
                                             }
                                         ))
                                         return false
-                                    else
-                                        local similarObjectsIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(trackWaypointModelId)
-                                        if #similarObjectsIdsInAnyEdges > 1 then
-                                            guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIdsInAnyEdges)
-                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                string.sub(debug.getinfo(1, 'S').source, 1),
-                                                _eventId,
-                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                                {
-                                                    edgeId = lastBuiltEdgeId,
-                                                    waypointId = newWaypointId
-                                                }
-                                            ))
-                                            return false
+                                    end
+
+                                    -- forbid building more then one waypoint of the same type
+                                    local similarObjectsIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(trackWaypointModelId)
+                                    if #similarObjectsIdsInAnyEdges > 1 then
+                                        guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectsIdsInAnyEdges)
+                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                            {
+                                                edgeId = lastBuiltEdgeId,
+                                                waypointId = newWaypointId
+                                            }
+                                        ))
+                                        return false
+                                    end
+
+                                    -- forbid building track waypoints too far apart, which would make the station too large
+                                    local twinWaypointIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(twinModelId)
+                                    if #twinWaypointIdsInAnyEdges > 0 then
+                                        local newWaypointPosition = edgeUtils.getObjectPosition(newWaypointId)
+                                        local twinWaypointPosition = edgeUtils.getObjectPosition(twinWaypointIdsInAnyEdges[1])
+                                        if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
+                                            local distance = edgeUtils.getVectorLength({
+                                                newWaypointPosition[1] - twinWaypointPosition[1],
+                                                newWaypointPosition[2] - twinWaypointPosition[2],
+                                                newWaypointPosition[3] - twinWaypointPosition[3],
+                                            })
+                                            if distance > _constants.maxTrackWaypointDistance then
+                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsTooFar'), newWaypointId, twinWaypointIdsInAnyEdges)
+                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                    string.sub(debug.getinfo(1, 'S').source, 1),
+                                                    _eventId,
+                                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                    {
+                                                        edgeId = lastBuiltEdgeId,
+                                                        waypointId = newWaypointId
+                                                    }
+                                                ))
+                                                return false
+                                            end
                                         end
                                     end
 
@@ -1348,9 +1380,9 @@ function data()
                                         ))
                                     end
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint1ModelId then
-                                    handleTrackWaypointBuilt(trackWaypoint1ModelId)
+                                    handleTrackWaypointBuilt(trackWaypoint1ModelId, trackWaypoint2ModelId)
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == trackWaypoint2ModelId then
-                                    handleTrackWaypointBuilt(trackWaypoint2ModelId)
+                                    handleTrackWaypointBuilt(trackWaypoint2ModelId, trackWaypoint1ModelId)
                                 end
                             end
                         elseif id == 'trackBuilder' or id == 'streetTrackModifier' then

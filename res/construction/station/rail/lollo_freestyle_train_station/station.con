@@ -181,7 +181,7 @@ function data()
 				end
 
 				-- add waiting areas and lanes
-				-- LOLLO TODO add cargo palform tracks in different widths (5, 10, 15)
+				-- LOLLO TODO add cargo palform tracks in different widths (5, 10, 15), with extra wait areas
 				if isCargoTerminal then
 					for i = 1, #params.terminals[t].centreLanePositions do
 						result.models[#result.models+1] = {

@@ -8,6 +8,7 @@ local constants = {
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     nTerminalMultiplier = 1000,
     nTracksMax = 10,
+    maxTrackWaypointDistance = 600,
     stationConFileNameLong = 'station/rail/lollo_freestyle_train_station/station.con',
     stationConFileNameShort = 'lollo_freestyle_train_station/station.con',
     cargoTerminalModuleType = 'freestyleTrainStationCargoTerminal',

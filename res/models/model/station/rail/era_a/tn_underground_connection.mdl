@@ -13,18 +13,18 @@ function data()
         lods = {
             {
                 node = {
-                    -- children = {
-                    --     {
-                    --         materials = {'asset/icon/asset_icon_mark.mtl'},
-                    --         mesh = 'asset/icon/lod_0_icon_pointer.msh',
-                    --         transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 20, 0.8, 1}
-                    --     },
-                    --     {
-                    --         materials = {'asset/icon/asset_icon_mark.mtl'},
-                    --         mesh = 'asset/icon/lod_0_icon_pointer.msh',
-                    --         transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.5, 0, 0, 7, 0.8, 1}
-                    --     },
-                    -- },
+                    children = {
+                        {
+                            materials = {'lollo_freestyle_train_station/icon/green.mtl'},
+                            mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.5, 1, 0, 1}
+                        },
+                        {
+                            materials = {'lollo_freestyle_train_station/icon/red.mtl'},
+                            mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0.5, 0,  0, 21, 0, 1}
+                        },
+                    },
                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                 },
                 static = false,
@@ -38,43 +38,43 @@ function data()
                     {
                         nodes = {
                             {
-                                { 0, 20, 0.80000001192093, },
-                                { 0, -13, 0, },
+                                { -2.5, 0, -7, },
+                                { 2.5, 0, 0, },
                                 2.4000000953674,
                             },
                             {
-                                { 0, 7, 0.80000001192093, },
-                                { 0, -13, 0, },
+                                { 0, 0, -7, },
+                                { 2.5, 0, 0, },
                                 2.4000000953674,
                             },
                             {
-                                { 0, 7, 0.80000001192093, },
-                                { 0, -7, 0, },
+                                { 0, 0, -7, },
+                                { 2.5, 0, 0, },
                                 2.4000000953674,
                             },
                             {
-                                { 0, 0, 0.80000001192093, },
-                                { 0, -7, 0, },
+                                { 2.5, 0, -7, },
+                                { 2.5, 0, 0, },
                                 2.4000000953674,
                             },
                             {
-                                { 0, 0, 0.80000001192093, },
-                                { 0, -7, 0, },
+                                { 0, -20, -7, },
+                                { 0, 20, 0, },
                                 2.4000000953674,
                             },
                             {
-                                { 0, -7, 0.80000001192093, },
-                                { 0, -7, 0, },
+                                { 0, 0, -7, },
+                                { 0, 20, 0, },
                                 2.4000000953674,
                             },
                             {
-                                { 0, -7, 0.80000001192093, },
-                                { 0, -13, 0, },
+                                { 0, 0, -7, },
+                                { 0, 20, 0, },
                                 2.4000000953674,
                             },
                             {
-                                { 0, -20, 0.80000001192093, },
-                                { 0, -13, 0, },
+                                { 0, 20, -7, },
+                                { 0, 20, 0, },
                                 2.4000000953674,
                             },
                         },
@@ -85,12 +85,6 @@ function data()
                 runways = {
                 },
                 terminals = {
-                    {
-                        order = 0,
-                        personEdges = { 0, 1, 2, 3},
-                        personNodes = { 1, },
-                        vehicleNode = 0,
-                    },
                 },
             },
         },
