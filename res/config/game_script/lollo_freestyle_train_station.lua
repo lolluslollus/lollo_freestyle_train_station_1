@@ -166,9 +166,10 @@ local _actions = {
             -- myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
-            centralLanePositions = args.centralLanePositions,
+            centreLanePositions = args.centreLanePositions,
             leftLanePositions = args.leftLanePositions,
             rightLanePositions = args.rightLanePositions,
+            crossConnectorPositions = args.crossConnectorPositions
         }
 
         if oldCon == nil then
@@ -973,10 +974,11 @@ function data()
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(args.platformEdgeIds)
                 eventArgs.trackEdgeIds = trackEdgeIdsBetweenNodeIds
                 eventArgs.trackEdgeList = trackEdgeList
-                eventArgs.centralLanePositions = stationHelpers.getCentralLanePositions(args.platformEdgeIds, args.isCargo)
-                eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centralLanePositions, args.isCargo, - _constants.sideLaneShiftM)
-                eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centralLanePositions, args.isCargo, _constants.sideLaneShiftM)
-                -- print('#eventArgs.centralLanePositions =', #eventArgs.centralLanePositions)
+                eventArgs.centreLanePositions = stationHelpers.getCentreLanePositions(args.platformEdgeIds, args.isCargo)
+                eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centreLanePositions, args.isCargo, - _constants.sideLaneShiftM)
+                eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centreLanePositions, args.isCargo, _constants.sideLaneShiftM)
+                eventArgs.crossConnectorPositions = stationHelpers.getCrossConnectors(eventArgs.leftLanePositions, eventArgs.centreLanePositions, eventArgs.rightLanePositions, args.isCargo)
+                -- print('#eventArgs.centreLanePositions =', #eventArgs.centreLanePositions)
                 -- print('#eventArgs.leftLanePositions =', #eventArgs.leftLanePositions)
                 -- print('#eventArgs.rightLanePositions =', #eventArgs.rightLanePositions)
 

@@ -244,8 +244,8 @@ local helpers = {
         return results
     end,
 
-    getCentralLanePositions = function(platformEdgeIds, isCargo)
-        -- print('getCentralLanePositions starting')
+    getCentreLanePositions = function(platformEdgeIds, isCargo)
+        -- print('getCentreLanePositions starting')
         if type(platformEdgeIds) ~= 'table' then return {} end
 
         local maxEdgeLength = isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength
@@ -374,26 +374,73 @@ local helpers = {
             end
         end
 
-        -- print('getCentralLanePositions results =') debugPrint(results)
+        -- print('getCentreLanePositions results =') debugPrint(results)
         return results
     end,
 
-    getShiftedLanePositions = function(centralLanePositions, isCargo, sideShift)
+    getShiftedLanePositions = function(centreLanePositions, isCargo, sideShift)
         if isCargo then return {} end
 
         local results = {
             {
-                posTanX2 = _getParallelSideways(centralLanePositions[1].posTanX2, sideShift)
+                posTanX2 = _getParallelSideways(centreLanePositions[1].posTanX2, sideShift)
             }
         }
         local previousPosTanX2 = results[1].posTanX2
-        for i = 2, #centralLanePositions do
-            local currentPosTanX2 = _getParallelSideways(centralLanePositions[i].posTanX2, sideShift)
+        for i = 2, #centreLanePositions do
+            local currentPosTanX2 = _getParallelSideways(centreLanePositions[i].posTanX2, sideShift)
             currentPosTanX2[1][1] = previousPosTanX2[2][1]
             results[#results+1] = {
                 posTanX2 = currentPosTanX2
             }
             previousPosTanX2 = currentPosTanX2
+        end
+
+        return results
+    end,
+
+    getCrossConnectors = function(leftLanePositions, centreLanePositions, rightLanePositions, isCargo)
+        if isCargo then return {} end
+
+        local results = {}
+        for i = 2, #leftLanePositions do
+            local leftPosTanX2 = leftLanePositions[i].posTanX2
+            local centrePosTanX2 = centreLanePositions[i].posTanX2
+            local rightPosTanX2 = rightLanePositions[i].posTanX2
+
+            local newTanLeft = {
+                centrePosTanX2[1][1][1] - leftPosTanX2[1][1][1],
+                centrePosTanX2[1][1][2] - leftPosTanX2[1][1][2],
+                centrePosTanX2[1][1][3] - leftPosTanX2[1][1][3],
+            }
+            local newRecordLeft = {
+                {
+                    leftPosTanX2[1][1],
+                    newTanLeft
+                },
+                {
+                    centrePosTanX2[1][1],
+                    newTanLeft
+                }
+            }
+            results[#results+1] = { posTanX2 = newRecordLeft }
+
+            local newTanRight = {
+                rightPosTanX2[1][1][1] - centrePosTanX2[1][1][1],
+                rightPosTanX2[1][1][2] - centrePosTanX2[1][1][2],
+                rightPosTanX2[1][1][3] - centrePosTanX2[1][1][3],
+            }
+            local newRecordRight = {
+                {
+                    centrePosTanX2[1][1],
+                    newTanRight
+                },
+                {
+                    rightPosTanX2[1][1],
+                    newTanRight
+                },
+            }
+            results[#results+1] = { posTanX2 = newRecordRight }
         end
 
         return results

@@ -182,20 +182,20 @@ function data()
 
 				-- add waiting areas
 				if isCargoTerminal then
-					for i = 1, #params.terminals[t].centralLanePositions do
+					for i = 1, #params.terminals[t].centreLanePositions do
 						result.models[#result.models+1] = {
 							id = _constants.cargoWaitingAreaModelId,
 							tag = slotHelpers.mangleModelTag(t, true),
 							transf = moduleHelpers.getWaitingAreaTransf(
-								params.terminals[t].centralLanePositions[i],
+								params.terminals[t].centreLanePositions[i],
 								inverseMainTransf
 							)
 						}
 					end
 				else
-					for i = 1, #params.terminals[t].centralLanePositions do
+					for i = 1, #params.terminals[t].centreLanePositions do
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
-						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].centralLanePositions[i].posTanX2, inverseMainTransf)
+						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].centreLanePositions[i].posTanX2, inverseMainTransf)
 						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
 						result.models[#result.models+1] = {
 							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
@@ -241,11 +241,21 @@ function data()
 							transf = rightLaneTransf
 						}
 					end
+					for i = 1, #params.terminals[t].crossConnectorPositions do
+						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectorPositions[i].posTanX2, inverseMainTransf)
+						local crossConnectorTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+
+						result.models[#result.models+1] = {
+							id = _constants.passengerLaneOnPlatformModelId,
+							tag = slotHelpers.mangleModelTag(t, false),
+							transf = crossConnectorTransf
+						}
+					end
 				end
 
 				-- add terminal slots
 				local midTransf = moduleHelpers.getWaitingAreaTransf(
-					params.terminals[t].centralLanePositions[math.ceil(#params.terminals[t].centralLanePositions * 0.5)],
+					params.terminals[t].centreLanePositions[math.ceil(#params.terminals[t].centreLanePositions * 0.5)],
 					inverseMainTransf
 				)
 				table.insert(result.slots, {
@@ -261,8 +271,8 @@ function data()
 
 				-- add underpass slots
 				if not(isCargoTerminal) then
-					for i = 2, #params.terminals[t].centralLanePositions - 1, 4 do
-						local wap = params.terminals[t].centralLanePositions[i]
+					for i = 2, #params.terminals[t].centreLanePositions - 1, 4 do
+						local wap = params.terminals[t].centreLanePositions[i]
 						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 						table.insert(result.slots, {
 							-- height = 1,
@@ -390,7 +400,7 @@ function data()
 			end
 			-- _terminateConstructionHook()
 
-			print('freestyleTrainStation result =') debugPrint(result)
+			-- print('freestyleTrainStation result =') debugPrint(result)
 			return result
 		end,
  		-- preProcessFn = function(modules, change, three)
