@@ -1293,6 +1293,7 @@ function data()
                                     end
                                     -- LOLLO TODO if any platform nodes are joints between more than 2 platform-tracks,
                                     -- bar building or only build up to the node.
+                                    -- LOLLO TODO consider using two platform markers, to call the ends of a platform.
 
                                     -- waypoint built on platform and two track waypoints built nearby:
                                     -- find all consecutive track edges of the same type
