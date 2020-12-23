@@ -976,6 +976,9 @@ function data()
                 eventArgs.centralLanePositions = stationHelpers.getCentralLanePositions(args.platformEdgeIds, args.isCargo)
                 eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centralLanePositions, args.isCargo, - _constants.sideLaneShiftM)
                 eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centralLanePositions, args.isCargo, _constants.sideLaneShiftM)
+                -- print('#eventArgs.centralLanePositions =', #eventArgs.centralLanePositions)
+                -- print('#eventArgs.leftLanePositions =', #eventArgs.leftLanePositions)
+                -- print('#eventArgs.rightLanePositions =', #eventArgs.rightLanePositions)
 
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,

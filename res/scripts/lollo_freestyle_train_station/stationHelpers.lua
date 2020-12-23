@@ -386,7 +386,7 @@ local helpers = {
                 posTanX2 = _getParallelSideways(centralLanePositions[1].posTanX2, sideShift)
             }
         }
-        local previousPosTanX2 = centralLanePositions[1].posTanX2
+        local previousPosTanX2 = results[1].posTanX2
         for i = 2, #centralLanePositions do
             local currentPosTanX2 = _getParallelSideways(centralLanePositions[i].posTanX2, sideShift)
             currentPosTanX2[1][1] = previousPosTanX2[2][1]
