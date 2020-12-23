@@ -166,4 +166,20 @@ utils.position2Transf = function(position)
     }
 end
 
+utils.transf2Position = function(transf, xyzFormat)
+    if xyzFormat then
+        return {
+            x = transf[13],
+            y = transf[14],
+            z = transf[15]
+        }
+    else
+        return {
+            transf[13],
+            transf[14],
+            transf[15]
+        }
+    end
+end
+
 return utils
