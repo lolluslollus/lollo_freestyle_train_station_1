@@ -161,7 +161,7 @@ helpers.getUnderpassTransfWithYRotation = function(posTanX2)
     -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
-    -- local newTransfNO = transfUtilsUG.rotZYXTransl(
+    -- local newTransf = transfUtilsUG.rotZYXTransl( -- NO!
     -- 	{
     -- 		x = 0, ---math.atan2(pos2[3] - pos1[3], pos2[2] - pos1[2]),
     -- 		y = 0, -- -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
