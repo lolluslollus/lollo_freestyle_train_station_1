@@ -287,6 +287,7 @@ function data()
 							transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2),
 							type = _constants.underpassModuleType,
 						})
+						-- LOLLO TODO they get yellow when the user wants to remove them: likje the following! Just do it.
 						-- LOLLO TODO add module type: stairs
 						if params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil then
 							result.models[#result.models+1] = {
