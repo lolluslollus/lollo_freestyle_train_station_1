@@ -772,10 +772,11 @@ helper.track.getContiguousEdges = function(edgeId, acceptedTrackTypes)
 end
 
 helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
+    print('getEdgeIdsBetweenEdgeIds starting, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
     -- the output is sorted by sequence, from edge1 to edge2
     print('one')
-    if type(_edge1Id) ~= 'number' or _edge1Id < 1 then return {} end
-    if type(_edge2Id) ~= 'number' or _edge2Id < 1 then return {} end
+    if not(helper.isValidAndExistingId(_edge1Id)) then return {} end
+    if not(helper.isValidAndExistingId(_edge2Id)) then return {} end
     print('two')
     if _edge1Id == _edge2Id then return { _edge1Id } end
     print('three')
@@ -827,11 +828,9 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
         local counter = 0
         while counter < 20 do
             counter = counter + 1
-            print('eight, node0Or1FieldName =')
-            debugPrint(node0Or1FieldName)
+            print('eight, node0Or1FieldName =') debugPrint(node0Or1FieldName)
             local nodeId = baseEdge1[node0Or1FieldName]
-            print('nodeId =')
-            debugPrint(nodeId)
+            print('nodeId =') debugPrint(nodeId)
             local adjacentEdgeIds = _map[nodeId] -- userdata
             if adjacentEdgeIds == nil then
                 print('nine')
@@ -869,15 +868,13 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
     end
 
     local node0Results = _getEdgesBetween1and2('node0')
-    print('node0results =')
-    debugPrint(node0Results)
+    print('node0results =') debugPrint(node0Results)
     if node0Results then
         return arrayUtils.getReversed(node0Results)
     end
 
     local node1Results = _getEdgesBetween1and2('node1')
-    print('node1results =')
-    debugPrint(node1Results)
+    print('node1results =') debugPrint(node1Results)
     if node1Results then return node1Results end
 
     return {}
