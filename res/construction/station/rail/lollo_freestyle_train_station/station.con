@@ -273,7 +273,7 @@ function data()
 					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 				})
 
-				-- add underpass slots
+				-- add underpass slots, skipping the ends
 				if not(isCargoTerminal) then
 					for i = 2, #params.terminals[t].centreLanePositions - 1, 4 do
 						local wap = params.terminals[t].centreLanePositions[i]
@@ -288,12 +288,13 @@ function data()
 							type = _constants.underpassModuleType,
 						})
 						-- LOLLO TODO add module type: stairs
-						-- LOLLO TODO uncomment this for active slots
-						-- result.models[#result.models+1] = {
-						-- 	id = _constants.underpassModelFileName2,
-						-- 	-- tag = slotHelpers.mangleModelTag(t, false),
-						-- 	transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2)
-						-- }
+						if params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil then
+							result.models[#result.models+1] = {
+								id = _constants.underpassModelFileName2,
+								-- tag = slotHelpers.mangleModelTag(t, false),
+								transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2)
+							}
+						end
 					end
 				end
 			end -- loop over terminals
