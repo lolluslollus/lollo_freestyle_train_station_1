@@ -73,14 +73,14 @@ function data()
 				labelText = {},
                 mangleId = slotHelpers.mangleId,
 				models = {
-					{
-						id = 'lollo_freestyle_train_station/icon/blue.mdl',
-						tag = 'stationTag',
-                        transf = {1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
-                            0, 0, 0, 1},
-					},
+					-- {
+					-- 	id = 'lollo_freestyle_train_station/icon/blue.mdl',
+					-- 	tag = 'stationTag',
+                    --     transf = {1, 0, 0, 0,
+                    --         0, 1, 0, 0,
+                    --         0, 0, 1, 0,
+                    --         0, 0, 0, 1},
+					-- },
                 },
 				slotConfig = {
 					[_constants.cargoTerminalModuleType] = {
@@ -149,7 +149,7 @@ function data()
 					-- and make them snap to the station own nodes.
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
-				terminateConstructionHookInfo.vehicleNodes[t] = #result.edgeLists * 2 - 2
+				terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists - math.floor(#params.terminals[t].trackEdgeLists * 0.5)) * 2 - 1
 
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
 				-- if #result.edgeLists > 0 then
@@ -351,111 +351,114 @@ function data()
 					table.insert(result.stations[stationIndex].terminals, t - 1)
 				end
 
-				-- link the underpasses along terminals, underground
-				for t = 1, #params.terminals do
-					local underpassPositionsInTerminal = terminateConstructionHookInfo.underpassPositions[t]
-					if underpassPositionsInTerminal ~= nil and #underpassPositionsInTerminal > 1 then
-						local previousUnderpassPosition = underpassPositionsInTerminal[1]
-						for i = 2, #underpassPositionsInTerminal do
-							local currentUnderpassPosition = underpassPositionsInTerminal[i]
-							result.models[#result.models+1] = {
-								id = _constants.passengerLaneModelId,
-								-- tag = slotHelpers.mangleModelTag(t, false),
-								transf = moduleHelpers.get1MLaneTransf(
-									previousUnderpassPosition.posBottom,
-									currentUnderpassPosition.posBottom
-								)
-							}
-							previousUnderpassPosition = currentUnderpassPosition
+				local _linkUnderpasses = function()
+					-- link the underpasses along terminals, underground
+					for t = 1, #params.terminals do
+						local underpassPositionsInTerminal = terminateConstructionHookInfo.underpassPositions[t]
+						if underpassPositionsInTerminal ~= nil and #underpassPositionsInTerminal > 1 then
+							local previousUnderpassPosition = underpassPositionsInTerminal[1]
+							for i = 2, #underpassPositionsInTerminal do
+								local currentUnderpassPosition = underpassPositionsInTerminal[i]
+								result.models[#result.models+1] = {
+									id = _constants.passengerLaneModelId,
+									-- tag = slotHelpers.mangleModelTag(t, false),
+									transf = moduleHelpers.get1MLaneTransf(
+										previousUnderpassPosition.posBottom,
+										currentUnderpassPosition.posBottom
+									)
+								}
+								previousUnderpassPosition = currentUnderpassPosition
+							end
 						end
 					end
-				end
 
-				-- link the underpasses across terminals, underground
-				-- for now, I link each terminal to 1 other terminal only, the closest with an underpass.
-				local _getDistances = function()
-					-- local allDistances = {}
-					local minDistances = {}
-					for t = 1, #params.terminals do
-						local positionsInT = terminateConstructionHookInfo.underpassPositions[t]
-						if positionsInT ~= nil then
-							for i = 1, #positionsInT do
-								for tt = t + 1, #params.terminals do
-									local positionsInTT = terminateConstructionHookInfo.underpassPositions[tt]
-									if positionsInTT ~= nil then
-										for ii = 1, #positionsInTT do
-											-- if allDistances[t] == nil then allDistances[t] = {} end
-											-- if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
-											if minDistances[t] == nil then minDistances[t] = {} end
+					-- link the underpasses across terminals, underground
+					-- for now, I link each terminal to 1 other terminal only, the closest with an underpass.
+					local _getDistances = function()
+						-- local allDistances = {}
+						local minDistances = {}
+						for t = 1, #params.terminals do
+							local positionsInT = terminateConstructionHookInfo.underpassPositions[t]
+							if positionsInT ~= nil then
+								for i = 1, #positionsInT do
+									for tt = t + 1, #params.terminals do
+										local positionsInTT = terminateConstructionHookInfo.underpassPositions[tt]
+										if positionsInTT ~= nil then
+											for ii = 1, #positionsInTT do
+												-- if allDistances[t] == nil then allDistances[t] = {} end
+												-- if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
+												if minDistances[t] == nil then minDistances[t] = {} end
 
-											local distance = edgeUtils.getVectorLength(
-												{
-													positionsInT[i].posBottom[1] - positionsInTT[ii].posBottom[1],
-													positionsInT[i].posBottom[2] - positionsInTT[ii].posBottom[2],
-													positionsInT[i].posBottom[3] - positionsInTT[ii].posBottom[3],
-												}
-											)
-											-- table.insert(
-											-- 	allDistances[t][tt],
-											-- 	{
-											-- 		t = t,
-											-- 		tt = tt,
-											-- 		i = i,
-											-- 		ii = ii,
-											-- 		distance = distance
-											-- 	}
-											-- )
+												local distance = edgeUtils.getVectorLength(
+													{
+														positionsInT[i].posBottom[1] - positionsInTT[ii].posBottom[1],
+														positionsInT[i].posBottom[2] - positionsInTT[ii].posBottom[2],
+														positionsInT[i].posBottom[3] - positionsInTT[ii].posBottom[3],
+													}
+												)
+												-- table.insert(
+												-- 	allDistances[t][tt],
+												-- 	{
+												-- 		t = t,
+												-- 		tt = tt,
+												-- 		i = i,
+												-- 		ii = ii,
+												-- 		distance = distance
+												-- 	}
+												-- )
 
-											if minDistances[t][tt] == nil or minDistances[t][tt].distance > distance then
-												minDistances[t][tt] = {
-													t = t,
-													tt = tt,
-													i = i,
-													ii = ii,
-													distance = distance
-												}
+												if minDistances[t][tt] == nil or minDistances[t][tt].distance > distance then
+													minDistances[t][tt] = {
+														t = t,
+														tt = tt,
+														i = i,
+														ii = ii,
+														distance = distance
+													}
+												end
 											end
 										end
 									end
 								end
 							end
 						end
+
+						-- return allDistances, minDistances
+						return minDistances
 					end
+					-- local allDistances, minDistances = _getDistances()
+					local minDistances = _getDistances()
+					-- print('allDistances =') debugPrint(allDistances)
+					-- print('minDistances =') debugPrint(minDistances)
 
-					-- return allDistances, minDistances
-					return minDistances
-				end
-				-- local allDistances, minDistances = _getDistances()
-				local minDistances = _getDistances()
-				-- print('allDistances =') debugPrint(allDistances)
-				-- print('minDistances =') debugPrint(minDistances)
-
-				for t = 1, #params.terminals do
-					local positionsInT = terminateConstructionHookInfo.underpassPositions[t]
-					if positionsInT ~= nil then
-						local minDistance4T = nil
-						for tt = t + 1, #params.terminals do
-							local positionsInTT = terminateConstructionHookInfo.underpassPositions[tt]
-							if positionsInTT ~= nil then
-								if minDistances[t][tt] ~= nil then
-									if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
-										minDistance4T = minDistances[t][tt]
+					for t = 1, #params.terminals do
+						local positionsInT = terminateConstructionHookInfo.underpassPositions[t]
+						if positionsInT ~= nil then
+							local minDistance4T = nil
+							for tt = t + 1, #params.terminals do
+								local positionsInTT = terminateConstructionHookInfo.underpassPositions[tt]
+								if positionsInTT ~= nil then
+									if minDistances[t][tt] ~= nil then
+										if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
+											minDistance4T = minDistances[t][tt]
+										end
 									end
 								end
 							end
-						end
-						if minDistance4T ~= nil then
-							result.models[#result.models+1] = {
-								id = _constants.passengerLaneModelId,
-								-- tag = slotHelpers.mangleModelTag(t, false),
-								transf = moduleHelpers.get1MLaneTransf(
-									terminateConstructionHookInfo.underpassPositions[minDistance4T.t][minDistance4T.i].posBottom,
-									terminateConstructionHookInfo.underpassPositions[minDistance4T.tt][minDistance4T.ii].posBottom
-								)
-							}
+							if minDistance4T ~= nil then
+								result.models[#result.models+1] = {
+									id = _constants.passengerLaneModelId,
+									-- tag = slotHelpers.mangleModelTag(t, false),
+									transf = moduleHelpers.get1MLaneTransf(
+										terminateConstructionHookInfo.underpassPositions[minDistance4T.t][minDistance4T.i].posBottom,
+										terminateConstructionHookInfo.underpassPositions[minDistance4T.tt][minDistance4T.ii].posBottom
+									)
+								}
+							end
 						end
 					end
 				end
+				_linkUnderpasses()
 				-- avoid dump when configuring
 				-- if #(result.stations[1].terminals) == 0 then
 				-- 	print('avoiding dump when configuring')
@@ -487,8 +490,7 @@ function data()
 				-- print('LOLLO result.stations = ') debugPrint(result.stations)
 				-- print('LOLLO result.models = ') debugPrint(result.models)
 				-- print('LOLLO result.terminalGroups = ') debugPrint(result.terminalGroups)
-			end
-			-- _terminateConstructionHook()
+			end -- end of terminateConstructionHook()
 
 			-- print('freestyleTrainStation result =') debugPrint(result)
 			return result
