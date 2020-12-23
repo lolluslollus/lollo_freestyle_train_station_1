@@ -284,7 +284,7 @@ function data()
 							-- shape 0 1 2 3
 							-- shape = 3,
 							spacing = _constants.underpassSpacing,
-							transf = moduleHelpers.getUnderpassTransf(posTanX2),
+							transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2),
 							type = _constants.underpassModuleType,
 						})
 						-- LOLLO TODO add module type: stairs

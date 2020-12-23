@@ -134,8 +134,8 @@ helpers.getTerminalDecoTransf = function(posTanX2)
     return newTransf
 end
 
-helpers.getUnderpassTransf = function(posTanX2)
-    -- print('getUnderpassTransf starting, posTanX2 =') debugPrint(posTanX2)
+helpers.getUnderpassTransfAlwaysVertical = function(posTanX2)
+    -- print('getUnderpassTransfAlwaysVertical starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
 
