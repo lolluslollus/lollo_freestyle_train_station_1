@@ -182,41 +182,34 @@ function data()
 
 				-- add waiting areas
 				if isCargoTerminal then
-					for i = 1, #params.terminals[t].waitingAreaPositions do
+					for i = 1, #params.terminals[t].centralLanePositions do
 						result.models[#result.models+1] = {
 							id = _constants.cargoWaitingAreaModelId,
 							tag = slotHelpers.mangleModelTag(t, true),
 							transf = moduleHelpers.getWaitingAreaTransf(
-								params.terminals[t].waitingAreaPositions[i],
+								params.terminals[t].centralLanePositions[i],
 								inverseMainTransf
 							)
 						}
 					end
 				else
-					for i = 1, #params.terminals[t].waitingAreaPositions do
+					for i = 1, #params.terminals[t].centralLanePositions do
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
-						local transf = moduleHelpers.getWaitingAreaTransf(
-							params.terminals[t].waitingAreaPositions[i],
-							inverseMainTransf
-						)
-						-- LOLLO TODO the passenger waiting area with underpass has a central lane
-						-- that goes underground, this is fine.
-						-- It also has two side lanes overground, which may get badly skewed by the transformation.
-						-- Use separate lanes instead, based on 'lollo_freestyle_train_station/passengers_lane.mdl' and 'lollo_freestyle_train_station/passengers_waiting_area.mdl'
-						-- transform them with moduleHelpers.getUnitaryLaneTransf()
+						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].centralLanePositions[i].posTanX2, inverseMainTransf)
+						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
 						result.models[#result.models+1] = {
-							id = isUnderpass and _constants.passengersWaitingAreaUnderpassModelId or _constants.passengersWaitingAreaModelId,
+							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
 							tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
-							transf = transf
+							transf = centreLaneTransf
 						}
 						if isUnderpass then
 							local underpassBottomTransf = transfUtilsUG.mul(
-								transf,
+								centreLaneTransf,
 								{ 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassHalfLengthM, 0, _constants.laneZ - _constants.underpassDepthM, 1 }
 							)
 							-- result.models[#result.models+1] = {
 							-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-							-- 	-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
+							-- 	-- tag = slotHelpers.mangleModelTag(t, false),
 							-- 	transf = underpassBottomTransf
 							-- }
 							if terminateConstructionHookInfo.underpassBottoms[t] == nil then terminateConstructionHookInfo.underpassBottoms[t] = {} end
@@ -228,14 +221,33 @@ function data()
 							}
 						end
 					end
+					for i = 1, #params.terminals[t].leftLanePositions do
+						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].leftLanePositions[i].posTanX2, inverseMainTransf)
+						local leftLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+
+						result.models[#result.models+1] = {
+							id = _constants.passengerWaitingAreaModelId,
+							tag = slotHelpers.mangleModelTag(t, false),
+							transf = leftLaneTransf
+						}
+					end
+					for i = 1, #params.terminals[t].rightLanePositions do
+						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].rightLanePositions[i].posTanX2, inverseMainTransf)
+						local rightLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+
+						result.models[#result.models+1] = {
+							id = _constants.passengerWaitingAreaModelId,
+							tag = slotHelpers.mangleModelTag(t, false),
+							transf = rightLaneTransf
+						}
+					end
 				end
 
 				-- add terminal slots
 				local midTransf = moduleHelpers.getWaitingAreaTransf(
-					params.terminals[t].waitingAreaPositions[math.ceil(#params.terminals[t].waitingAreaPositions * 0.5)],
+					params.terminals[t].centralLanePositions[math.ceil(#params.terminals[t].centralLanePositions * 0.5)],
 					inverseMainTransf
 				)
-				-- print('midTransf = ') debugPrint(midTransf)
 				table.insert(result.slots, {
 					-- height = 0.6,
 					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
@@ -248,11 +260,9 @@ function data()
 				})
 
 				-- add underpass slots
-				-- To make the paths clean, replace one waiting area with an underpass.
-				-- LOLLO TODO fix the transf, it rotates too much around the Y axis
 				if not(isCargoTerminal) then
-					for i = 2, #params.terminals[t].waitingAreaPositions - 1, 4 do
-						local wap = params.terminals[t].waitingAreaPositions[i]
+					for i = 2, #params.terminals[t].centralLanePositions - 1, 4 do
+						local wap = params.terminals[t].centralLanePositions[i]
 						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 						table.insert(result.slots, {
 							-- height = 1,
@@ -334,9 +344,9 @@ function data()
 						for i = 2, #underpassBottomsInTerminal do
 							local currentUnderpassBottom = underpassBottomsInTerminal[i]
 							result.models[#result.models+1] = {
-								id = 'lollo_freestyle_train_station/passengers_lane.mdl',
-								-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
-								transf = moduleHelpers.getUnitaryLaneTransf(
+								id = _constants.passengerLaneModelId,
+								-- tag = slotHelpers.mangleModelTag(t, false),
+								transf = moduleHelpers.get1MLaneTransf(
 									{ previousUnderpassBottom.x, previousUnderpassBottom.y, previousUnderpassBottom.z },
 									{ currentUnderpassBottom.x, currentUnderpassBottom.y, currentUnderpassBottom.z }
 								)

@@ -70,7 +70,7 @@ helpers.getCollider = function(sidewalkWidth, model)
 	return result
 end
 
-helpers.getUnitaryLaneTransf = function(pos1, pos2)
+helpers.get1MLaneTransf = function(pos1, pos2)
     -- gets a transf to fit a 1 m long model (typically a lane) between two points
     -- using transfUtils.getVecTransformed(), solve this system:
     -- first point: 0, 0, 0 => pos1
@@ -114,7 +114,7 @@ end
 helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
     -- print('wap =') debugPrint(wap)
     local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-    return helpers.getUnitaryLaneTransf(platformPosTanX2[1][1], platformPosTanX2[2][1])
+    return helpers.get1MLaneTransf(platformPosTanX2[1][1], platformPosTanX2[2][1])
 end
 
 helpers.getTerminalDecoTransf = function(posTanX2)

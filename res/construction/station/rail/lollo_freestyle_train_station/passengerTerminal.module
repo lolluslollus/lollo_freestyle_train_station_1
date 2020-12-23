@@ -36,7 +36,7 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		print('LOLLO terminal module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
+		print('LOLLO passenger terminal module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('LOLLO result =') debugPrint(result)
 		print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
 		-- print('params =') debugPrint(params)
@@ -46,19 +46,19 @@ return {
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
-		-- LOLLO only for testing
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = slotTransf,
-		-- 	tag = _constants.terminalModelTag
-		-- }
+		-- LOLLO TODO display something pretty so the user can click it to remove the terminal
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/icon/green.mdl',
+			slotId = slotId,
+			transf = slotTransf,
+			tag = _constants.terminalModelTag
+		}
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local yShift = 1
-		for i = 3, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
+		for i = 3, #params.terminals[nTerminal].centralLanePositions, _constants.terminalAssetStep do
 			-- print('i =', i)
-			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
+			local wap = params.terminals[nTerminal].centralLanePositions[i]
 			-- print('wap = ') debugPrint(wap)
 			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 			-- print('posTanX2 =') debugPrint(posTanX2)
@@ -79,9 +79,9 @@ return {
 			}
 			yShift = - yShift
 		end
-		for i = 2, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
+		for i = 2, #params.terminals[nTerminal].centralLanePositions, _constants.terminalAssetStep do
 			-- print('i =', i)
-			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
+			local wap = params.terminals[nTerminal].centralLanePositions[i]
 			-- print('wap = ') debugPrint(wap)
 			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 			-- print('posTanX2 =') debugPrint(posTanX2)
@@ -103,9 +103,9 @@ return {
 			}
 			yShift = - yShift
 		end
-		for i = 4, #params.terminals[nTerminal].waitingAreaPositions, _constants.terminalAssetStep do
+		for i = 4, #params.terminals[nTerminal].centralLanePositions, _constants.terminalAssetStep do
 			-- print('i =', i)
-			local wap = params.terminals[nTerminal].waitingAreaPositions[i]
+			local wap = params.terminals[nTerminal].centralLanePositions[i]
 			-- print('wap = ') debugPrint(wap)
 			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 			-- print('posTanX2 =') debugPrint(posTanX2)

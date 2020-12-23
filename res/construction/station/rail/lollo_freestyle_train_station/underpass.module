@@ -56,7 +56,6 @@ return {
 
 		-- start from 3 to avoid deco peeping out of the platform
 		result.models[#result.models + 1] = {
-			-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
 			id = _constants.underpassModelFileName,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),

@@ -166,7 +166,9 @@ local _actions = {
             -- myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
-            waitingAreaPositions = args.waitingAreaPositions
+            centralLanePositions = args.centralLanePositions,
+            leftLanePositions = args.leftLanePositions,
+            rightLanePositions = args.rightLanePositions,
         }
 
         if oldCon == nil then
@@ -971,7 +973,9 @@ function data()
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(args.platformEdgeIds)
                 eventArgs.trackEdgeIds = trackEdgeIdsBetweenNodeIds
                 eventArgs.trackEdgeList = trackEdgeList
-                eventArgs.waitingAreaPositions = stationHelpers.getWaitingAreaPositions(args.platformEdgeIds, args.isCargo)
+                eventArgs.centralLanePositions = stationHelpers.getCentralLanePositions(args.platformEdgeIds, args.isCargo)
+                eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centralLanePositions, args.isCargo, - _constants.sideLaneShiftM)
+                eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centralLanePositions, args.isCargo, _constants.sideLaneShiftM)
 
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,

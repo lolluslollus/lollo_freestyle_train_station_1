@@ -67,80 +67,80 @@ function data()
         metadata = {
             transportNetworkProvider = {
                 laneLists = {
-                    {
-                        linkable = true, -- false, --true,
-                        nodes = {
-                            {
-                                { 0, 0, _constants.laneZ },
-                                { 0.1, -1.5, 0 },
-                                2.4,
-                            },
-                            {
-                                { 0.1, -1.5, _constants.laneZ },
-                                { 0.1, -1.5, 0 },
-                                2.4,
-                            },
-                            {
-                                { 0.1, -1.5, _constants.laneZ },
-                                { 0.8, 0, 0 },
-                                2.4,
-                            },
-                            {
-                                { 0.9, -1.5, _constants.laneZ },
-                                { 0.8, 0, 0 },
-                                2.4,
-                            },
-                            {
-                                { 0.9, -1.5, _constants.laneZ },
-                                { 0.1, 1.5, 0 },
-                                2.4,
-                            },
-                            {
-                                { 1, 0, _constants.laneZ },
-                                { 0.1, 1.5, 0 },
-                                2.4,
-                            },
-                        },
-                        transportModes = { 'PERSON', },
-                        speedLimit = 20,
-                    },
-                    {
-                        linkable = true, -- false, --true,
-                        nodes = {
-                            {
-                                { 0, 0, _constants.laneZ },
-                                { 0.1, 1.5, 0 },
-                                2.4,
-                            },
-                            {
-                                { 0.1, 1.5, _constants.laneZ },
-                                { 0.1, 1.5, 0 },
-                                2.4,
-                            },
-                            {
-                                { 0.1, 1.5, _constants.laneZ },
-                                { 0.8, 0, 0 },
-                                2.4,
-                            },
-                            {
-                                { 0.9, 1.5, _constants.laneZ },
-                                { 0.8, 0, 0 },
-                                2.4,
-                            },
-                            {
-                                { 0.9, 1.5, _constants.laneZ },
-                                { 0.1, -1.5, 0 },
-                                2.4,
-                            },
-                            {
-                                { 1, 0, _constants.laneZ },
-                                { 0.1, -1.5, 0 },
-                                2.4,
-                            },
-                        },
-                        transportModes = { 'PERSON', },
-                        speedLimit = 20,
-                    },
+                    -- {
+                    --     linkable = true, -- false, --true,
+                    --     nodes = {
+                    --         {
+                    --             { 0, 0, _constants.laneZ },
+                    --             { 0.1, -1.5, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 0.1, -1.5, _constants.laneZ },
+                    --             { 0.1, -1.5, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 0.1, -1.5, _constants.laneZ },
+                    --             { 0.8, 0, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 0.9, -1.5, _constants.laneZ },
+                    --             { 0.8, 0, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 0.9, -1.5, _constants.laneZ },
+                    --             { 0.1, 1.5, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 1, 0, _constants.laneZ },
+                    --             { 0.1, 1.5, 0 },
+                    --             2.4,
+                    --         },
+                    --     },
+                    --     transportModes = { 'PERSON', },
+                    --     speedLimit = 20,
+                    -- },
+                    -- {
+                    --     linkable = true, -- false, --true,
+                    --     nodes = {
+                    --         {
+                    --             { 0, 0, _constants.laneZ },
+                    --             { 0.1, 1.5, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 0.1, 1.5, _constants.laneZ },
+                    --             { 0.1, 1.5, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 0.1, 1.5, _constants.laneZ },
+                    --             { 0.8, 0, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 0.9, 1.5, _constants.laneZ },
+                    --             { 0.8, 0, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 0.9, 1.5, _constants.laneZ },
+                    --             { 0.1, -1.5, 0 },
+                    --             2.4,
+                    --         },
+                    --         {
+                    --             { 1, 0, _constants.laneZ },
+                    --             { 0.1, -1.5, 0 },
+                    --             2.4,
+                    --         },
+                    --     },
+                    --     transportModes = { 'PERSON', },
+                    --     speedLimit = 20,
+                    -- },
                     {
                         linkable = false, -- false, --true,
                         nodes = {
@@ -172,12 +172,12 @@ function data()
                 },
                 runways = { },
                 terminals = {
-                    {
-                        -- order = 0,
-                        personEdges = { 1, 4 },
-                        personNodes = { 2, 3, 8, 9 },
-                        -- vehicleNode = -1, -- 0,
-                    },
+                    -- {
+                    --     -- order = 0,
+                    --     personEdges = { 1, 4 },
+                    --     personNodes = { 2, 3, 8, 9 },
+                    --     -- vehicleNode = -1, -- 0,
+                    -- },
                 },
             },
         },

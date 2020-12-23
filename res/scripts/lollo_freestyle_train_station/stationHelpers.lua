@@ -4,6 +4,30 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
+local _getParallelSideways = function(posTanX2, sideShift)
+    local result = {
+        {
+            {},
+            posTanX2[1][2]
+        },
+        {
+            {},
+            posTanX2[2][2]
+        },
+    }
+
+    local oldPos1 = posTanX2[1][1]
+    local oldPos2 = posTanX2[2][1]
+    local length = edgeUtils.getVectorLength({ oldPos2[1] - oldPos1[1], oldPos2[2] - oldPos1[2], oldPos2[3] - oldPos1[3] })
+
+    local ro = math.atan2(oldPos2[2] - oldPos1[2], oldPos2[1] - oldPos1[1])
+
+    result[1][1] = { oldPos1[1] + math.sin(ro) * sideShift, oldPos1[2] - math.cos(ro) * sideShift, oldPos1[3] }
+    result[2][1] = { oldPos2[1] + math.sin(ro) * sideShift, oldPos2[2] - math.cos(ro) * sideShift, oldPos2[3] }
+
+    return result
+end
+
 local helpers = {
     getNearbyFreestyleStationsList = function(transf, searchRadius)
         if type(transf) ~= 'table' then return {} end
@@ -220,8 +244,8 @@ local helpers = {
         return results
     end,
 
-    getWaitingAreaPositions = function(platformEdgeIds, isCargo)
-        -- print('getWaitingAreaPositions starting')
+    getCentralLanePositions = function(platformEdgeIds, isCargo)
+        -- print('getCentralLanePositions starting')
         if type(platformEdgeIds) ~= 'table' then return {} end
 
         local maxEdgeLength = isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength
@@ -350,7 +374,28 @@ local helpers = {
             end
         end
 
-        -- print('getWaitingAreaPositions results =') debugPrint(results)
+        -- print('getCentralLanePositions results =') debugPrint(results)
+        return results
+    end,
+
+    getShiftedLanePositions = function(centralLanePositions, isCargo, sideShift)
+        if isCargo then return {} end
+
+        local results = {
+            {
+                posTanX2 = _getParallelSideways(centralLanePositions[1].posTanX2, sideShift)
+            }
+        }
+        local previousPosTanX2 = centralLanePositions[1].posTanX2
+        for i = 2, #centralLanePositions do
+            local currentPosTanX2 = _getParallelSideways(centralLanePositions[i].posTanX2, sideShift)
+            currentPosTanX2[1][1] = previousPosTanX2[2][1]
+            results[#results+1] = {
+                posTanX2 = currentPosTanX2
+            }
+            previousPosTanX2 = currentPosTanX2
+        end
+
         return results
     end,
 
