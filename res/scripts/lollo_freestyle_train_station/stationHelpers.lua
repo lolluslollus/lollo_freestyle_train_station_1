@@ -195,8 +195,7 @@ local helpers = {
             end
         end
 
-        print('getAllEdgeObjectsWithModelId is about to return')
-        debugPrint(results)
+        -- print('getAllEdgeObjectsWithModelId is about to return') debugPrint(results)
         return results
     end,
 
@@ -538,8 +537,7 @@ local helpers = {
             result.assignToSecondEstimate = 1
         end
 
-        -- print('LOLLO assignment =')
-        -- debugPrint(result)
+        -- print('LOLLO assignment =') debugPrint(result)
         return result
     end,
 
@@ -595,20 +593,19 @@ local helpers = {
             end
             if #edgeObjects > 0 then
                 newEdge.comp.objects = edgeObjects -- LOLLO NOTE cannot insert directly into edge0.comp.objects
-                print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects =')
-                debugPrint(newEdge.comp.objects)
+                -- print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects =') debugPrint(newEdge.comp.objects)
             else
-                print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
+                -- print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
             end
         else
             print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is') debugPrint(objectIdToRemove)
             newEdge.comp.objects = oldEdge.objects
         end
 
-        print('newEdge.comp.objects:')
-        for key, value in pairs(newEdge.comp.objects) do
-            print('key =', key) debugPrint(value)
-        end
+        -- print('newEdge.comp.objects:')
+        -- for key, value in pairs(newEdge.comp.objects) do
+        --     print('key =', key) debugPrint(value)
+        -- end
 
         local proposal = api.type.SimpleProposal.new()
         proposal.streetProposal.edgesToRemove[1] = oldEdgeId
@@ -695,22 +692,13 @@ helpers.getStationEndEntitiesTyped = function(stationConstructionId)
         result[t].disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].disjointNeighbourNodeIds.node2Id})
     end
 
-    print('getStationEndEntitiesTyped result =') debugPrint(result)
+    -- print('getStationEndEntitiesTyped result =') debugPrint(result)
     return result
 end
 
 helpers.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
     print('getBulldozedStationNeighbourNodeIds starting')
     if endEntities4T == nil or endEntities4T.stationEndNodePositions == nil then return nil end
-
-    -- print('candidates for node 1 =')
-    -- debugPrint(edgeUtils.getNearestObjectIds(
-    --     transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
-    -- ))
-    -- print('candidates for node 2 =')
-    -- debugPrint(edgeUtils.getNearestObjectIds(
-    --     transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
-    -- ))
 
     local result = {
         node1 = endEntities4T.stationEndNodePositions.node1 ~= nil
@@ -725,7 +713,7 @@ helpers.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
             or nil
     }
 
-    print('getBulldozedStationNeighbourNodeIds about to return') debugPrint(result)
+    -- print('getBulldozedStationNeighbourNodeIds about to return') debugPrint(result)
     return result
 end
 
