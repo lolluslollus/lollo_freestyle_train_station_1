@@ -59,7 +59,7 @@ local helpers = {
         return results
     end,
 
-    getStationEndNodeIdsUnsorted = function(con, nTerminal)
+    getStationEndNodeIdsUntyped = function(con, nTerminal, stationConstructionId)
         -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
         -- print('getStationEndNodesUnsorted, con =') debugPrint(con)
         -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
@@ -109,13 +109,11 @@ local helpers = {
 
         if #endNodeIds ~= 2 then
             print('WARNING: found', #endNodeIds, 'free nodes in station construction')
-            return endNodeIds
+            print('stationConstructionId =') debugPrint(stationConstructionId)
+            print('I found endNodeIds =') debugPrint(endNodeIds)
         end
 
-        return {
-            endNodeIds[1],
-            endNodeIds[2]
-        }
+        return endNodeIds
     end,
 
     getEdgeIdsProperties = function(edgeIds)
@@ -639,23 +637,28 @@ helpers.getStationEndEntitiesTyped = function(stationConstructionId)
 
     local result = {}
     for t = 1, #con.params.terminals do
-        local endNodeIds4T = helpers.getStationEndNodeIdsUnsorted(con, t)
+        local endNodeIds4T = helpers.getStationEndNodeIdsUntyped(con, t, stationConstructionId)
         if #endNodeIds4T ~= 2 then
             print('ERROR: getStationEndEntitiesTyped cannnot find the end nodes of station', stationConstructionId)
             print('endNodeIds4T =') debugPrint(endNodeIds4T)
             print('stationConstructionId =', stationConstructionId)
-            return nil
+            -- return nil
         end
 
         -- I cannot clone these, for some reason: it dumps
-        local node1Position = api.engine.getComponent(endNodeIds4T[1], api.type.ComponentType.BASE_NODE).position, nil, true
-        local node2Position = api.engine.getComponent(endNodeIds4T[2], api.type.ComponentType.BASE_NODE).position, nil, true
+        local node1Position = edgeUtils.isValidAndExistingId(endNodeIds4T[1])
+            and api.engine.getComponent(endNodeIds4T[1], api.type.ComponentType.BASE_NODE).position
+            or nil
+        local node2Position = edgeUtils.isValidAndExistingId(endNodeIds4T[2])
+            and api.engine.getComponent(endNodeIds4T[2], api.type.ComponentType.BASE_NODE).position
+            or nil
         result[t] = {
             -- these are empty or nil if the station has been snapped to its neighbours
             disjointNeighbourEdgeIds = {
                 edge1Ids = {},
                 edge2Ids = {}
             },
+            -- same
             disjointNeighbourNodeIds = {
                 node1Id = nil,
                 node2Id = nil,
@@ -665,19 +668,21 @@ helpers.getStationEndEntitiesTyped = function(stationConstructionId)
                 node2Id = endNodeIds4T[2],
             },
             stationEndNodePositions = {
-                node1 = { x = node1Position.x, y = node1Position.y, z = node1Position.z },
-                node2 = { x = node2Position.x, y = node2Position.y, z = node2Position.z },
+                node1 = node1Position ~= nil and { x = node1Position.x, y = node1Position.y, z = node1Position.z } or nil,
+                node2 = node2Position ~= nil and { x = node2Position.x, y = node2Position.y, z = node2Position.z } or nil,
             }
         }
 
         for i = 1, 2 do
-            local nearbyNodeIds = edgeUtils.getNearestObjectIds(
-                transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T[i], api.type.ComponentType.BASE_NODE).position),
-                0.001,
-                api.type.ComponentType.BASE_NODE
-            )
+            local nearbyNodeIds = edgeUtils.isValidAndExistingId(endNodeIds4T[i])
+                and edgeUtils.getNearestObjectIds(
+                    transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T[i], api.type.ComponentType.BASE_NODE).position),
+                    0.001,
+                    api.type.ComponentType.BASE_NODE
+                )
+                or {}
             for _, nearbyNodeId in pairs(nearbyNodeIds) do
-                if nearbyNodeId ~= endNodeIds4T[i] then
+                if edgeUtils.isValidAndExistingId(nearbyNodeId) and nearbyNodeId ~= endNodeIds4T[i] then
                     if i == 1 then result[t].disjointNeighbourNodeIds.node1Id = nearbyNodeId
                     else result[t].disjointNeighbourNodeIds.node2Id = nearbyNodeId
                     end
@@ -690,7 +695,7 @@ helpers.getStationEndEntitiesTyped = function(stationConstructionId)
         result[t].disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].disjointNeighbourNodeIds.node2Id})
     end
 
-    -- print('getStationEndEntitiesTyped result =') debugPrint(result)
+    print('getStationEndEntitiesTyped result =') debugPrint(result)
     return result
 end
 

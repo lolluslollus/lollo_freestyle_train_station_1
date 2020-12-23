@@ -45,10 +45,11 @@ local _actions = {
         -- Here, I remove the neighbour track (edge and node) and replace it
         -- with an identical track, which snaps to the station end node instead.
         print('buildSnappyTracks starting')
-        -- print('endEntities =') debugPrint(endEntities)
+        print('endEntities =') debugPrint(endEntities)
         if endEntities == nil then return end
 
         local proposal = api.type.SimpleProposal.new()
+        local isProposalPopulated = false
         local nNewEntities = 0
 
         local _replaceSegment = function(edgeId, endEntities4T)
@@ -90,6 +91,7 @@ local _actions = {
 
             proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
             proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
+            isProposalPopulated = true
         end
 
         for _, endEntities4T in pairs(endEntities) do
@@ -101,10 +103,17 @@ local _actions = {
                 _replaceSegment(endEntities4T.disjointNeighbourEdgeIds.edge2Ids[i], endEntities4T)
             end
 
-            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.disjointNeighbourNodeIds.node1Id
-            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.disjointNeighbourNodeIds.node2Id
+            if edgeUtils.isValidAndExistingId(endEntities4T.disjointNeighbourNodeIds.node1Id) then
+                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.disjointNeighbourNodeIds.node1Id
+                isProposalPopulated = true
+            end
+            if edgeUtils.isValidAndExistingId(endEntities4T.disjointNeighbourNodeIds.node2Id) then
+                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.disjointNeighbourNodeIds.node2Id
+                isProposalPopulated = true
+            end
         end
 
+        if not(isProposalPopulated) then return end
         -- local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
         -- newConstruction.fileName = 'station/rail/lollo_freestyle_train_station/snappy_track.con'
         -- newConstruction.params = {
