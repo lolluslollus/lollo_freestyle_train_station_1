@@ -3,8 +3,8 @@ function data()
     -- local _rootNodeTransf = { 0.06, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 1, 0, 0.5, 0, 0.7, 1, }
     return {
         boundingInfo = {
-            bbMax = { 0.1, 0.1, 5 },
-            bbMin = { 0, 0, 0 },
+            -- bbMax = { 0.1, 0.1, 0.2 },
+            -- bbMin = { 0, 0, 0 },
         },
         collider = {
             -- params = {
