@@ -55,7 +55,8 @@ return {
 		}
 
 		-- start from 3 to avoid deco peeping out of the platform
-		for i = 3, #params.terminals[nTerminal].centreLanePositions, _constants.terminalAssetStep do
+		local yShift = 2
+		for i = 3, #params.terminals[nTerminal].centreLanePositions, 3 do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].centreLanePositions[i]
 			-- print('wap = ') debugPrint(wap)
@@ -67,11 +68,21 @@ return {
 				-- id = 'station/rail/asset/cargo_name_board.mdl', -- _constants.terminalModelFileName,
 				id = 'lollo_freestyle_train_station/asset/cargo_name_board.mdl',
 				slotId = slotId,
-				transf = transf,
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
+			result.models[#result.models + 1] = {
+				id = 'station/rail/asset/cargo_sign_nr_r.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, - yShift, 0, 1 }),
+				tag = _constants.terminalModelTag
+			}
+			-- the model index must be in base 0 !
+			result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+
+			yShift = - yShift
 		end
-		for i = 2, #params.terminals[nTerminal].centreLanePositions, _constants.terminalAssetStep do
+		for i = 2, #params.terminals[nTerminal].centreLanePositions, 3 do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].centreLanePositions[i]
 			-- print('wap = ') debugPrint(wap)
@@ -87,7 +98,7 @@ return {
 				tag = _constants.terminalModelTag
 			}
 		end
-		for i = 4, #params.terminals[nTerminal].centreLanePositions, _constants.terminalAssetStep do
+		for i = 4, #params.terminals[nTerminal].centreLanePositions, 6 do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].centreLanePositions[i]
 			-- print('wap = ') debugPrint(wap)

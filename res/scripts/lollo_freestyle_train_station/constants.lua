@@ -2,7 +2,7 @@ local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 
 local constants = {
     platformTracksCategory = 'platform-tracks',
-    maxCargoWaitingAreaEdgeLength = 5,
+    maxCargoWaitingAreaEdgeLength = 8,
     maxPassengerWaitingAreaEdgeLength = 10,
     terminalAssetStep = 3,
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
