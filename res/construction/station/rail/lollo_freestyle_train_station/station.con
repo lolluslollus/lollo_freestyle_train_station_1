@@ -39,7 +39,6 @@ function data()
 		updateFn = function(params)
 			-- print('updateFn starting, params =') debugPrint(params)
 			print('updateFn starting, params.modules =') debugPrint(params.modules)
-
 			if not params.modules then params.modules = {} end
 
 			-- LOLLO NOTE I cannot call the api from here, sigh.
@@ -257,21 +256,32 @@ function data()
 					end
 				end
 
-				-- add terminal slots
-				local midTransf = moduleHelpers.getWaitingAreaTransf(
-					params.terminals[t].centreLanePositions[math.ceil(#params.terminals[t].centreLanePositions * 0.5)],
-					inverseMainTransf
-				)
-				table.insert(result.slots, {
-					-- height = 0.6,
-					id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
-					-- shape 0 1 2 3
-					shape = 3,
-					spacing = _constants.trackSpacing,
-					-- transf = _constants.idTransf,
-					transf = midTransf,
-					type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
-				})
+				local _addTerminals = function()
+					-- add terminal slots
+					local i = math.ceil(#params.terminals[t].centreLanePositions * 0.5)
+					local midTransf = moduleHelpers.getWaitingAreaTransf(
+						params.terminals[t].centreLanePositions[i],
+						inverseMainTransf
+					)
+					table.insert(result.slots, {
+						-- height = 0.6,
+						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
+						-- shape 0 1 2 3
+						shape = 3,
+						spacing = _constants.trackSpacing,
+						-- transf = _constants.idTransf,
+						transf = midTransf,
+						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
+					})
+					local wap = params.terminals[t].centreLanePositions[i]
+					local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+					result.models[#result.models+1] = {
+						id = _constants.terminalModelFileName,
+						-- tag = slotHelpers.mangleModelTag(t, false),
+						transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2)
+					}
+				end
+				_addTerminals()
 
 				-- add underpass slots, skipping the ends
 				if not(isCargoTerminal) then

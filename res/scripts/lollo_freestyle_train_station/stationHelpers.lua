@@ -636,7 +636,7 @@ helpers.getStationEndEntitiesTyped = function(stationConstructionId)
     for t = 1, #con.params.terminals do
         local endNodeIds4T = helpers.getStationEndNodeIdsUntyped(con, t, stationConstructionId)
         if #endNodeIds4T ~= 2 then
-            print('ERROR: getStationEndEntitiesTyped cannnot find the end nodes of station', stationConstructionId)
+            print('WARNING: getStationEndEntitiesTyped cannnot find the end nodes of station', stationConstructionId)
             print('endNodeIds4T =') debugPrint(endNodeIds4T)
             print('stationConstructionId =', stationConstructionId)
             -- return nil

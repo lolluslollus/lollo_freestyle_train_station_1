@@ -339,9 +339,9 @@ local _actions = {
     end,
 
     rebuildTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
-        print('rebuildTracks starting')
-        print('trackEdgeLists =') debugPrint(trackEdgeLists)
-        print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
+        -- print('rebuildTracks starting')
+        -- print('trackEdgeLists =') debugPrint(trackEdgeLists)
+        -- print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
         if trackEdgeLists == nil or type(trackEdgeLists) ~= 'table' or #trackEdgeLists == 0 then return end
 
         local proposal = api.type.SimpleProposal.new()
@@ -350,39 +350,39 @@ local _actions = {
         local _baseNode1 = (neighbourNodeIds ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds.node1))
         and api.engine.getComponent(neighbourNodeIds.node1, api.type.ComponentType.BASE_NODE)
         or nil
-        print('_baseNode1 =') debugPrint(_baseNode1)
+        -- print('_baseNode1 =') debugPrint(_baseNode1)
         local _baseNode2 = (neighbourNodeIds ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds.node2))
         and api.engine.getComponent(neighbourNodeIds.node2, api.type.ComponentType.BASE_NODE)
         or nil
-        print('_baseNode2 =') debugPrint(_baseNode2)
+        -- print('_baseNode2 =') debugPrint(_baseNode2)
         local nNewEntities = 0
         local newNodes = {}
 
         local _addNode = function(position)
-            print('adding node, position =') debugPrint(position)
+            -- print('adding node, position =') debugPrint(position)
             if _baseNode1 ~= nil then
-                print('_baseNode1.position =') debugPrint(_baseNode1.position)
+                -- print('_baseNode1.position =') debugPrint(_baseNode1.position)
             else
-                print('_baseNode1 is nil')
+                -- print('_baseNode1 is NIL')
             end
             if _baseNode2 ~= nil then
-                print('_baseNode2.position =') debugPrint(_baseNode2.position)
+                -- print('_baseNode2.position =') debugPrint(_baseNode2.position)
             else
-                print('_baseNode2 is NIL')
+                -- print('_baseNode2 is NIL')
             end
             if _baseNode1 ~= nil
             and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x)
             and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y)
             and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z)
             then
-                print('fifteen')
+                -- print('fifteen')
                 return neighbourNodeIds.node1
             elseif _baseNode2 ~= nil
             and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x)
             and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y)
             and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z)
             then
-                print('sixteen')
+                -- print('sixteen')
                 return neighbourNodeIds.node2
             else
                 for _, newNode in pairs(newNodes) do
@@ -390,12 +390,12 @@ local _actions = {
                     and edgeUtils.isNumVeryClose(position[2], newNode.position[2])
                     and edgeUtils.isNumVeryClose(position[3], newNode.position[3])
                     then
-                        print('eighteen')
+                        -- print('eighteen')
                         return newNode.id
                     end
                 end
 
-                print('twenty')
+                -- print('twenty')
                 local newNode = api.type.NodeAndEntity.new()
                 nNewEntities = nNewEntities - 1
                 newNode.entity = nNewEntities

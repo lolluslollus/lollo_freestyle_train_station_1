@@ -46,13 +46,12 @@ return {
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
-		-- LOLLO TODO make some visible model so the user knows where to click to delete a terminal
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/icon/green.mdl',
-			slotId = slotId,
-			transf = slotTransf,
-			tag = _constants.terminalModelTag
-		}
+		-- result.models[#result.models + 1] = {
+		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = _constants.terminalModelTag
+		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local yShift = 2
@@ -65,7 +64,6 @@ return {
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
-				-- id = 'station/rail/asset/cargo_name_board.mdl', -- _constants.terminalModelFileName,
 				id = 'lollo_freestyle_train_station/asset/cargo_name_board.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
@@ -91,7 +89,6 @@ return {
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
-				-- id = 'station/rail/asset/cargo_name_board.mdl', -- _constants.terminalModelFileName,
 				id = 'station/rail/asset/cargo_lamps.mdl',
 				slotId = slotId,
 				transf = transf,
@@ -107,7 +104,6 @@ return {
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
-				-- id = 'station/rail/asset/cargo_name_board.mdl', -- _constants.terminalModelFileName,
 				id = 'station/rail/asset/cargo_speakers.mdl',
 				slotId = slotId,
 				transf = transf,
