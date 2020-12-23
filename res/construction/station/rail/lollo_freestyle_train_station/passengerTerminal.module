@@ -46,7 +46,7 @@ return {
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
-		-- LOLLO TODO display something pretty so the user can click it to remove the terminal
+		-- LOLLO TODO make some visible model so the user knows where to click to delete a terminal
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/icon/green.mdl',
 			slotId = slotId,

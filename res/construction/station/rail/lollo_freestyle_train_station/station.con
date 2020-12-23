@@ -40,47 +40,6 @@ function data()
 			-- print('updateFn starting, params =') debugPrint(params)
 			print('updateFn starting, params.modules =') debugPrint(params.modules)
 
-			local getUnderpassTransfWithYRotation = function(posTanX2)
-				-- print('getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
-				local pos1 = posTanX2[1][1]
-				local pos2 = posTanX2[2][1]
-				-- local newTransfNO = transfUtilsUG.rotZYXTransl(
-				-- 	{
-				-- 		x = 0, ---math.atan2(pos2[3] - pos1[3], pos2[2] - pos1[2]),
-				-- 		y = 0, -- -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
-				-- 		z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-				-- 	},
-				-- 	-- {
-				-- 	--     x = pos1[1],
-				-- 	--     y = pos1[2],
-				-- 	--     z = pos1[3],
-				-- 	-- }
-				-- 	{
-				-- 		x = (pos1[1] + pos2[1]) * 0.5,
-				-- 		y = (pos1[2] + pos2[2]) * 0.5,
-				-- 		z = (pos1[3] + pos2[3]) * 0.5 + 1,
-				-- 	}
-				-- )
-				local newTransf = transfUtilsUG.rotZTransl(
-					math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-							-- {
-					-- 	x = pos1[1],
-					-- 	y = pos1[2],
-					-- 	z = pos1[3] + 1,
-					-- }
-					{
-						x = (pos1[1] + pos2[1]) * 0.5,
-						y = (pos1[2] + pos2[2]) * 0.5,
-						z = (pos1[3] + pos2[3]) * 0.5 + 1,
-					}
-				)
-				local newVecTranformed = transfUtils.getVecTransformed({1, 0, 0}, newTransf)
-				local kkk = transfUtils.getPosTanX2Transformed
-				local angle = math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1]))
-				local newTransf2 = transfUtilsUG.rotY()
-				return newTransf
-			end
-
 			if not params.modules then params.modules = {} end
 
 			-- LOLLO NOTE I cannot call the api from here, sigh.
@@ -328,13 +287,11 @@ function data()
 							transf = moduleHelpers.getUnderpassTransf(posTanX2),
 							type = _constants.underpassModuleType,
 						})
-						-- LOLLO TODO remove this after testing
+						-- LOLLO TODO uncomment this for active slots
 						-- result.models[#result.models+1] = {
 						-- 	id = _constants.underpassModelFileName2,
 						-- 	-- tag = slotHelpers.mangleModelTag(t, false),
-						-- 	-- transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2)
-						-- 	transf = getUnderpassTransfWithYRotation(posTanX2)
-						-- 	-- transf = moduleHelpers.getUnderpassTransf(posTanX2),
+						-- 	transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2)
 						-- }
 					end
 				end

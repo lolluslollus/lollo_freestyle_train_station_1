@@ -158,19 +158,27 @@ helpers.getUnderpassTransf = function(posTanX2)
 end
 
 helpers.getUnderpassTransfWithYRotation = function(posTanX2)
-    -- print('getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
+    -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
-    local newTransf = transfUtilsUG.rotZYXTransl(
-        {
-            x = 0, -- math.atan2(pos2[3] - pos1[3], pos2[2] - pos1[2]),
-            y = 0, -- -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
-            z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-        },
+    -- local newTransfNO = transfUtilsUG.rotZYXTransl(
+    -- 	{
+    -- 		x = 0, ---math.atan2(pos2[3] - pos1[3], pos2[2] - pos1[2]),
+    -- 		y = 0, -- -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
+    -- 		z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
+    -- 	},
+    -- 	{
+    -- 		x = (pos1[1] + pos2[1]) * 0.5,
+    -- 		y = (pos1[2] + pos2[2]) * 0.5,
+    -- 		z = (pos1[3] + pos2[3]) * 0.5 + 1,
+    -- 	}
+    -- )
+    local newTransf = transfUtilsUG.rotZTransl(
+        math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
         -- {
-        --     x = pos1[1],
-        --     y = pos1[2],
-        --     z = pos1[3],
+            -- 	x = pos1[1],
+            -- 	y = pos1[2],
+            -- 	z = pos1[3] + 1,
         -- }
         {
             x = (pos1[1] + pos2[1]) * 0.5,
@@ -178,60 +186,19 @@ helpers.getUnderpassTransfWithYRotation = function(posTanX2)
             z = (pos1[3] + pos2[3]) * 0.5 + 1,
         }
     )
-    if true then return newTransf end
-    -- local newTransf = transfUtilsUG.rotZTransl(
-    --     math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-    --     -- {
-    --     -- 	x = pos1[1],
-    --     -- 	y = pos1[2],
-    --     -- 	z = pos1[3] + 1,
-    --     -- }
-    --     {
-    --         x = (pos1[1] + pos2[1]) * 0.5,
-    --         y = (pos1[2] + pos2[2]) * 0.5,
-    --         z = (pos1[3] + pos2[3]) * 0.5 + 1,
-    --     }
-    -- )
-
-    print('newTransf =') debugPrint(newTransf)
-
-    -- print('angle on Y axis (deg) with atan =') debugPrint(math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1])) * 180 / math.pi)
-    -- print('angle on Y axis (deg) with atan2 =') debugPrint(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]) * 180 / math.pi)
-    -- print('rotY =') debugPrint(transfUtilsUG.rotY(math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])))
-
-    -- if true then return newTransf2 end
-
-    -- LOLLO TODO this is wrong. The log shows:
---[[
-     getUnderpassTransfWithYRotation starting, posTanX2 =
-    {
+    local angle = -math.atan((pos2[3] - pos1[3]) / edgeUtils.getVectorLength(
         {
-            { 112.94583432614, 52.74210043538, -1.839821820744, },
-            { -4.2869175992319, -2.3746321067699, 0.092825916435686, },
-        },
-        {
-            { 108.64070527488, 50.402910568881, -1.7481150535168, },
-            { -4.3231888201262, -2.3036847898209, 0.090554455586243, },
-        },
-    }
-    newTransf 1 =
-    { -0.99977319498448, -0, 0.021296915047328, 0, 0.010167700978762, -0.87867196030975, 0.47731771811051, 0, 0.018713002093186, 0.47742600072202, 0.87847267310215, 0, 110.79326980051, 51.57250550213, -1.7939684371304, 1, }
-    newTransf 2 =
-    { -0.87867196030975, -0.47742600072202, 0, 0, 0.47742600072202, -0.87867196030975, 0, 0, 0, 0, 1, 0, 112.94583432614, 52.74210043538, 0.16017817925604, 1, }
-    angle on Y axis (deg) =
-    178.77968439184
-]]
-    -- local angle = -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1])
-    -- while angle > math.pi * 0.5 do angle = angle - math.pi end
-    -- while angle < -math.pi * 0.5 do angle = angle + math.pi end
-    local angle = math.atan((pos2[3] - pos1[3]) / (pos2[1] - pos1[1]))
-    print('angle around Y axis, deg =', angle * 180 / math.pi)
-    local newTransf3 = transfUtilsUG.mul(
-        newTransf,
-        transfUtilsUG.rotY(angle)
-    )
-    print('newTransf 3 =') debugPrint(newTransf3)
-    return newTransf3
+            pos2[1] - pos1[1],
+            pos2[2] - pos1[2],
+            0
+        }
+    ))
+
+    -- print('angle =') debugPrint(angle)
+    local newTransf2 = transfUtilsUG.rotY(angle)
+
+    local result = transfUtilsUG.mul(newTransf, newTransf2)
+    return result
 end
 
 return helpers
