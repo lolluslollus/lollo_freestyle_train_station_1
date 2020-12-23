@@ -857,7 +857,7 @@ function data()
                 local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                 if not(node0) or not(node1) then return end
                 local trackWaypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint1Id)
-                -- LOLLO TODO see if you get the exact percentage shift from entity2tn
+                -- UG TODO see if the api can get the exact percentage shift
                 local nodeBetween = edgeUtils.getNodeBetweenByPosition(
                     edgeId,
                     -- LOLLO NOTE position and transf are always very similar
@@ -897,7 +897,6 @@ function data()
                 local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                 if not(node0) or not(node1) then return end
                 local trackWaypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint2Id)
-                -- LOLLO TODO see if you get the exact percentage shift from entity2tn
                 local nodeBetween = edgeUtils.getNodeBetweenByPosition(
                     edgeId,
                     -- LOLLO NOTE position and transf are always very similar
@@ -935,7 +934,7 @@ function data()
                 print('trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
                 if #trackEdgeIdsBetweenNodeIds == 0 then
                     -- LOLLO TODO issue a warning and destroy platform waypoint; but does this ever happen?
-                    print('no track edges found')
+                    print('WARNING: no track edges found')
                     return
                 end
                 if #trackEdgeIdsBetweenNodeIds == 1 then
@@ -1294,7 +1293,8 @@ function data()
                                     end
                                     -- LOLLO TODO if any platform nodes are joints between more than 2 platform-tracks,
                                     -- bar building or only build up to the node.
-                                    -- waypoint built on platform and two track waypoints built nearby
+
+                                    -- waypoint built on platform and two track waypoints built nearby:
                                     -- find all consecutive track edges of the same type
                                     -- sort them from first to last
                                     print('nearbyTrackWaypoint1Ids =')
