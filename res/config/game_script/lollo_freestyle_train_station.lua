@@ -309,7 +309,10 @@ local _actions = {
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
                     local eventArgs = {
-                        endEntities = arrayUtils.cloneDeepOmittingFields(constructionData.endEntities[nTerminalToRemove]),
+                        endEntities = type(constructionData.endEntities) == 'table'
+                            and arrayUtils.cloneDeepOmittingFields(constructionData.endEntities[nTerminalToRemove])
+                            or {}
+                        ,
                         removedTerminal = removedTerminal,
                         stationConstructionId = result.resultEntities[1]
                     }
@@ -330,16 +333,16 @@ local _actions = {
         print('rebuildTracks starting')
         print('trackEdgeLists =') debugPrint(trackEdgeLists)
         print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
-        if trackEdgeLists == nil or neighbourNodeIds == nil then return end
+        if trackEdgeLists == nil or type(trackEdgeLists) ~= 'table' or #trackEdgeLists == 0 then return end
 
         local proposal = api.type.SimpleProposal.new()
 
         -- there may be no neighbour nodes, if the station was built in a certain fashion
-        local _baseNode1 = edgeUtils.isValidAndExistingId(neighbourNodeIds.node1)
+        local _baseNode1 = (neighbourNodeIds ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds.node1))
         and api.engine.getComponent(neighbourNodeIds.node1, api.type.ComponentType.BASE_NODE)
         or nil
         print('_baseNode1 =') debugPrint(_baseNode1)
-        local _baseNode2 = edgeUtils.isValidAndExistingId(neighbourNodeIds.node2)
+        local _baseNode2 = (neighbourNodeIds ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds.node2))
         and api.engine.getComponent(neighbourNodeIds.node2, api.type.ComponentType.BASE_NODE)
         or nil
         print('_baseNode2 =') debugPrint(_baseNode2)
@@ -789,19 +792,19 @@ local _actions = {
                     -- otherwise, we need a better way to check the new node
                     -- it looks fine, fortunately
                     -- print('split callback result =') debugPrint(result)
-                    print('split callback result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
+                    -- print('split callback result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
                     if #result.proposal.proposal.addedNodes ~= 1 then
                         print('ERROR: #result.proposal.proposal.addedNodes =', #result.proposal.proposal.addedNodes)
                     end
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
-                    print('addedNodePosition =') debugPrint(addedNodePosition)
+                    -- print('addedNodePosition =') debugPrint(addedNodePosition)
 
                     local addedNodeIds = edgeUtils.getNearestObjectIds(
                         transfUtils.position2Transf(addedNodePosition),
                         0,
                         api.type.ComponentType.BASE_NODE
                     )
-                    print('addedNodeIds =') debugPrint(addedNodeIds)
+                    -- print('addedNodeIds =') debugPrint(addedNodeIds)
 
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                     if isUpdateArgs then
@@ -1030,11 +1033,13 @@ function data()
                 _actions.bulldozeStation(args.constructionData, _eventNames.REBUILD_ALL_TRACKS_REQUESTED)
             elseif name == _eventNames.REBUILD_ALL_TRACKS_REQUESTED then
                 for t = 1, #args.constructionData.params.terminals do
-                    _actions.rebuildTracks(
-                        args.constructionData.params.terminals[t].trackEdgeLists,
-                        args.constructionData.params.terminals[t].platformEdgeLists,
-                        stationHelpers.getBulldozedStationNeighbourNodeIds(args.constructionData.endEntities[t])
-                    )
+                    if type(args.constructionData.endEntities) == 'table' then
+                        _actions.rebuildTracks(
+                            args.constructionData.params.terminals[t].trackEdgeLists,
+                            args.constructionData.params.terminals[t].platformEdgeLists,
+                            stationHelpers.getBulldozedStationNeighbourNodeIds(args.constructionData.endEntities[t])
+                        )
+                    end
                 end
             end
         end,

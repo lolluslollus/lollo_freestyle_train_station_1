@@ -76,7 +76,8 @@ local helpers = {
                     local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
                     local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                     for _, edgeInTerminal in pairs(con.params.terminals[nTerminal].trackEdgeLists) do
-                        if edgeInTerminal ~= nil and ((
+                        if edgeInTerminal ~= nil and (
+                        (
                             edgeInTerminal.posTanX2[1][1][1] == baseNode0.position.x
                             and edgeInTerminal.posTanX2[1][1][2] == baseNode0.position.y
                             and edgeInTerminal.posTanX2[1][1][3] == baseNode0.position.z
@@ -101,12 +102,14 @@ local helpers = {
                         end
                     end
                 end
+            else
+                print('WARNING: invalid frozen edge id')
             end
         end
 
         if #endNodeIds ~= 2 then
-            print('found', #endNodeIds, 'free nodes in station construction')
-            return {}
+            print('WARNING: found', #endNodeIds, 'free nodes in station construction')
+            return endNodeIds
         end
 
         return {
@@ -637,7 +640,12 @@ helpers.getStationEndEntitiesTyped = function(stationConstructionId)
     local result = {}
     for t = 1, #con.params.terminals do
         local endNodeIds4T = helpers.getStationEndNodeIdsUnsorted(con, t)
-        if #endNodeIds4T ~= 2 then print('ERROR: getStationEndEntitiesTyped cannnot find the end nodes of station', stationConstructionId) return nil end
+        if #endNodeIds4T ~= 2 then
+            print('ERROR: getStationEndEntitiesTyped cannnot find the end nodes of station', stationConstructionId)
+            print('endNodeIds4T =') debugPrint(endNodeIds4T)
+            print('stationConstructionId =', stationConstructionId)
+            return nil
+        end
 
         -- I cannot clone these, for some reason: it dumps
         local node1Position = api.engine.getComponent(endNodeIds4T[1], api.type.ComponentType.BASE_NODE).position, nil, true
@@ -688,7 +696,7 @@ end
 
 helpers.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
     print('getBulldozedStationNeighbourNodeIds starting')
-    if endEntities4T == nil then return nil end
+    if endEntities4T == nil or endEntities4T.stationEndNodePositions == nil then return nil end
 
     -- print('candidates for node 1 =')
     -- debugPrint(edgeUtils.getNearestObjectIds(
@@ -700,12 +708,16 @@ helpers.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
     -- ))
 
     local result = {
-        node1 = edgeUtils.getNearestObjectIds(
-            transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
-        )[1],
-        node2 = edgeUtils.getNearestObjectIds(
-            transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
-        )[1]
+        node1 = endEntities4T.stationEndNodePositions.node1 ~= nil
+            and edgeUtils.getNearestObjectIds(
+                transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
+            )[1]
+            or nil,
+        node2 = endEntities4T.stationEndNodePositions.node2 ~= nil
+            and edgeUtils.getNearestObjectIds(
+                transfUtils.position2Transf(endEntities4T.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
+            )[1]
+            or nil
     }
 
     print('getBulldozedStationNeighbourNodeIds about to return') debugPrint(result)
