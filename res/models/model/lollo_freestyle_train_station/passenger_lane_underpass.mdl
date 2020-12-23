@@ -2,7 +2,7 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants') -- LOLLO NOTE this is critical: 0.5 or 0.6 will crash coz it will be at the same height as the platform-track
     -- local _rootNodeTransf = { 0.06, 0, 0, 0, 0, 0.7, 0, 0, 0, 0, 1, 0, 0.5, 0, 0.7, 1, }
     return {
-        boundingInfo = {
+        boundingInfo = { -- LOLLO NOTE no boundingInfo reduces collisions and ugly automatic terrain spikes
             -- bbMax = { 0.1, 0.1, 0.2 },
             -- bbMin = { 0, 0, 0 },
         },
@@ -15,6 +15,15 @@ function data()
             type = 'NONE'
         },
         lods = {
+            {
+                node = {
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100,
+            },
             -- {
             --     node = {
             --         children = {
