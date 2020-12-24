@@ -1329,7 +1329,6 @@ function data()
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(allTrackWaypoint2Ids[1])
                                     )
                                     print('contiguous track edges =') debugPrint(contiguousTrackEdges)
-                                    -- LOLLO TODO it does not see the connection over a bridge
                                     if #contiguousTrackEdges < 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('TrackWaypointsNotConnected'), allTrackWaypoint1Ids[1], allTrackWaypoint2Ids)
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(

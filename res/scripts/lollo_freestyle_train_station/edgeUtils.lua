@@ -795,18 +795,18 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
     print('five')
     local _trackType2 = _baseEdgeTrack2.trackType
 
-    local _isTrackEdgeContiguousTo2 = function(baseEdge1)
-        return baseEdge1.node0 == _baseEdge2.node0 or baseEdge1.node0 == _baseEdge2.node1
-            or baseEdge1.node1 == _baseEdge2.node0 or baseEdge1.node1 == _baseEdge2.node1
+    local _isTrackEdgeContiguousTo2 = function(baseEdge)
+        return baseEdge.node0 == _baseEdge2.node0 or baseEdge.node0 == _baseEdge2.node1
+            or baseEdge.node1 == _baseEdge2.node0 or baseEdge.node1 == _baseEdge2.node1
     end
 
-    local _isTrackEdgesSameTypeAs2 = function(edge1Id)
-        local baseEdgeTrack1 = api.engine.getComponent(edge1Id, api.type.ComponentType.BASE_EDGE_TRACK)
-        return baseEdgeTrack1 ~= nil and baseEdgeTrack1.trackType == _trackType2
+    local _isTrackEdgesSameTypeAs2 = function(edgeId)
+        local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+        return baseEdgeTrack ~= nil and baseEdgeTrack.trackType == _trackType2
     end
 
     if _isTrackEdgeContiguousTo2(_baseEdge1) then
-        -- if _isTrackEdgesSameTypeAs2(_edge1Id) then
+        if _isTrackEdgesSameTypeAs2(_edge1Id) then
             print('six')
             if _baseEdge1.node1 == _baseEdge2.node0 then
                 print('six point one')
@@ -815,52 +815,61 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
                 print('six point two')
                 return { _edge2Id, _edge1Id }
             end
-        -- end
-        -- print('seven')
-        -- return {}
+        end
+        print('seven')
+        return {}
     end
 
     local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+
     local _getEdgesBetween1and2 = function(node0Or1FieldName)
         local baseEdge1 = _baseEdge1
         local edge1Id = _edge1Id
         local edgeIds = { _edge1Id }
-        local counter = 0
-        while counter < 20 do
-            counter = counter + 1
-            print('eight, node0Or1FieldName =') debugPrint(node0Or1FieldName)
-            local nodeId = baseEdge1[node0Or1FieldName]
-            print('nodeId =') debugPrint(nodeId)
+
+        local _fetchEdgeConnectedToNode = function(nodeId)
             local adjacentEdgeIds = _map[nodeId] -- userdata
             if adjacentEdgeIds == nil then
                 print('nine')
-                return false
+                return 0
             end
-            local isFound = false
             -- we don't deal with intersections for now
             for _, edgeId in pairs(adjacentEdgeIds) do -- cannot use adjacentEdgeIds[index] here, it's fucking userdata
                 print('ten')
-                if edgeId ~= edge1Id then
+                if not(arrayUtils.arrayHasValue(edgeIds, edgeId)) and _isTrackEdgesSameTypeAs2(edgeId) then
                     print('eleven')
-                    isFound = true
                     edge1Id = edgeId
                     edgeIds[#edgeIds+1] = edge1Id
-                    baseEdge1 = api.engine.getComponent(
-                        edgeId,
-                        api.type.ComponentType.BASE_EDGE
-                    )
+                    baseEdge1 = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
                     if _isTrackEdgeContiguousTo2(baseEdge1) then
                         print('twelve')
                         edgeIds[#edgeIds+1] = _edge2Id
-                        return edgeIds
+                        return 2
                     end
-
-                    break
+                    return 1
                 end
             end
-            if not(isFound) then
+            return 0
+        end
+
+        local nodeId = baseEdge1[node0Or1FieldName]
+        print('nodeId =', nodeId)
+        local counter = 0
+        while counter < 100 do
+            counter = counter + 1
+            print('eight, counter =', counter, 'nodeId =', nodeId)
+            local fetchResult = _fetchEdgeConnectedToNode(nodeId)
+            if fetchResult == 0 then
                 print('thirteen')
                 return false
+            elseif fetchResult == 1 then
+                -- make new nodeId
+                if nodeId == baseEdge1.node0 then nodeId = baseEdge1.node1 else nodeId = baseEdge1.node0 end
+                print('fourteen, new nodeId =', nodeId)
+            else
+                -- success
+                print('fifteen')
+                return edgeIds
             end
         end
 
@@ -869,7 +878,7 @@ helper.track.getEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
 
     local node0Results = _getEdgesBetween1and2('node0')
     print('node0results =') debugPrint(node0Results)
-    if node0Results then
+    if node0Results ~= false then
         return arrayUtils.getReversed(node0Results)
     end
 
