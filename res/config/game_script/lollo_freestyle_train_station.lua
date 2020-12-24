@@ -942,7 +942,7 @@ function data()
                     return
                 end
 
-                local trackEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(
+                local trackEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
                     args.splitNodeIds.node1Id,
                     args.splitNodeIds.node2Id
                 )
@@ -1324,7 +1324,7 @@ function data()
                                     print('nearbyTrackWaypoint2Ids =')
                                     debugPrint(allTrackWaypoint2Ids)
 
-                                    local contiguousTrackEdges = edgeUtils.track.getEdgeIdsBetweenEdgeIds(
+                                    local contiguousTrackEdges = stationHelpers.getTrackEdgeIdsBetweenEdgeIds(
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(allTrackWaypoint1Ids[1]),
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(allTrackWaypoint2Ids[1])
                                     )
