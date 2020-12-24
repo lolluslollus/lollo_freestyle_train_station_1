@@ -256,32 +256,34 @@ function data()
 					end
 				end
 
-				local _addTerminals = function()
-					-- add terminal slots
+				-- LOLLO TODO add module type: stairs
+
+				local _addTerminal = function()
 					local i = math.ceil(#params.terminals[t].centreLanePositions * 0.5)
 					local wap = params.terminals[t].centreLanePositions[i]
-					local midTransf = moduleHelpers.getWaitingAreaTransf(
-						wap,
-						inverseMainTransf
-					)
+					local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+					-- LOLLO TODO the underpasses below turn yellow when the user wants to remove them:
+					-- good, but these guys don't, unless there is only one terminal: why?
 					table.insert(result.slots, {
 						-- height = 0.6,
 						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
 						-- shape 0 1 2 3
-						shape = 3,
-						spacing = _constants.trackSpacing,
-						-- transf = _constants.idTransf,
-						transf = midTransf,
+						-- shape = 3,
+						-- spacing = _constants.trackSpacing,
+						spacing = _constants.underpassSpacing,
+						-- transf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1]),
+						-- transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2),
+						transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
-					local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 					result.models[#result.models+1] = {
 						id = _constants.terminalModelFileName,
 						-- tag = slotHelpers.mangleModelTag(t, false),
 						transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2)
+						-- transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2)
 					}
 				end
-				_addTerminals()
+				_addTerminal()
 
 				-- add underpass slots, skipping the ends
 				if not(isCargoTerminal) then
@@ -297,9 +299,6 @@ function data()
 							transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2),
 							type = _constants.underpassModuleType,
 						})
-						-- LOLLO TODO they get yellow when the user wants to remove them: like the following!
-						-- However, the termila above won't turn yellow: why?
-						-- LOLLO TODO add module type: stairs
 						if params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil then
 							result.models[#result.models+1] = {
 								id = _constants.underpassModelFileName2,

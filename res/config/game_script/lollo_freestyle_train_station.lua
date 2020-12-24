@@ -937,7 +937,10 @@ function data()
                 or not(edgeUtils.isValidAndExistingId(args.splitNodeIds.node2Id))
                 -- or type(args.trackWaypoint1Position) ~= 'table' or #args.trackWaypoint1Position ~= 3
                 -- or type(args.trackWaypoint2Position) ~= 'table' or #args.trackWaypoint2Position ~= 3
-                then return end
+                then
+                    print('WARNING: some data is missing or invalid. args.splitNodeIds =') debugPrint(args.splitNodeIds)
+                    return
+                end
 
                 local trackEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(
                     args.splitNodeIds.node1Id,
