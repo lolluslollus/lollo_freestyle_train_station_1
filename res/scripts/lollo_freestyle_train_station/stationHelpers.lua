@@ -139,23 +139,33 @@ local helpers = {
             local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
 
+            local pos0 = baseNode0.position
+            local pos1 = baseNode1.position
+            local tan0 = baseEdge.tangent0
+            local tan1 = baseEdge.tangent1
+            local _swap = function()
+                local swapPos = pos0
+                pos0 = pos1
+                pos1 = swapPos
+                local swapTan = tan0
+                tan0 = tan1
+                tan1 = swapTan
+                tan0.x = -tan0.x
+                tan0.y = -tan0.y
+                tan0.z = -tan0.z
+                tan1.x = -tan1.x
+                tan1.y = -tan1.y
+                tan1.z = -tan1.z
+            end
             -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
             if i == 1 then
                 if i < #edgeIds then
                     local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
-                    if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then
-                        local swap = baseNode0
-                        baseNode0 = baseNode1
-                        baseNode1 = swap
-                    end
+                    if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
                 end
             else
                 local prevBaseEdge = api.engine.getComponent(edgeIds[i - 1], api.type.ComponentType.BASE_EDGE)
-                if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then
-                    local swap = baseNode0
-                    baseNode0 = baseNode1
-                    baseNode1 = swap
-                end
+                if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then _swap() end
             end
 
             local result = {
@@ -164,26 +174,26 @@ local helpers = {
                 posTanX2 = {
                     {
                         {
-                            baseNode0.position.x,
-                            baseNode0.position.y,
-                            baseNode0.position.z,
+                            pos0.x,
+                            pos0.y,
+                            pos0.z,
                         },
                         {
-                            baseEdge.tangent0.x,
-                            baseEdge.tangent0.y,
-                            baseEdge.tangent0.z,
+                            tan0.x,
+                            tan0.y,
+                            tan0.z,
                         }
                     },
                     {
                         {
-                            baseNode1.position.x,
-                            baseNode1.position.y,
-                            baseNode1.position.z,
+                            pos1.x,
+                            pos1.y,
+                            pos1.z,
                         },
                         {
-                            baseEdge.tangent1.x,
-                            baseEdge.tangent1.y,
-                            baseEdge.tangent1.z,
+                            tan1.x,
+                            tan1.y,
+                            tan1.z,
                         }
                     }
                 },
