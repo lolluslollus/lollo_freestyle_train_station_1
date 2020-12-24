@@ -259,8 +259,9 @@ function data()
 				local _addTerminals = function()
 					-- add terminal slots
 					local i = math.ceil(#params.terminals[t].centreLanePositions * 0.5)
+					local wap = params.terminals[t].centreLanePositions[i]
 					local midTransf = moduleHelpers.getWaitingAreaTransf(
-						params.terminals[t].centreLanePositions[i],
+						wap,
 						inverseMainTransf
 					)
 					table.insert(result.slots, {
@@ -273,7 +274,6 @@ function data()
 						transf = midTransf,
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
-					local wap = params.terminals[t].centreLanePositions[i]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 					result.models[#result.models+1] = {
 						id = _constants.terminalModelFileName,
@@ -297,7 +297,8 @@ function data()
 							transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2),
 							type = _constants.underpassModuleType,
 						})
-						-- LOLLO TODO they get yellow when the user wants to remove them: likje the following! Just do it.
+						-- LOLLO TODO they get yellow when the user wants to remove them: like the following!
+						-- However, the termila above won't turn yellow: why?
 						-- LOLLO TODO add module type: stairs
 						if params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil then
 							result.models[#result.models+1] = {
