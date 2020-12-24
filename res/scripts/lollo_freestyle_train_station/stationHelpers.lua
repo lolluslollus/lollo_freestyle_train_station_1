@@ -138,6 +138,26 @@ local helpers = {
             local baseEdgeTrack = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE_TRACK)
             local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+
+            -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
+            if i == 1 then
+                if i < #edgeIds then
+                    local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
+                    if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then
+                        local swap = baseNode0
+                        baseNode0 = baseNode1
+                        baseNode1 = swap
+                    end
+                end
+            else
+                local prevBaseEdge = api.engine.getComponent(edgeIds[i - 1], api.type.ComponentType.BASE_EDGE)
+                if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then
+                    local swap = baseNode0
+                    baseNode0 = baseNode1
+                    baseNode1 = swap
+                end
+            end
+
             local result = {
                 catenary = baseEdgeTrack.catenary,
                 -- edgeId = edgeIds[i],
