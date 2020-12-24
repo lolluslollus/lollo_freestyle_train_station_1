@@ -1312,7 +1312,12 @@ function data()
                                     end
                                     -- LOLLO TODO if any platform nodes are joints between more than 2 platform-tracks,
                                     -- bar building or only build up to the node.
+
                                     -- LOLLO TODO consider using two platform markers, to call the ends of a platform.
+
+                                    -- LOLLO TODO build a platform, then a track from right to left starting halfway next to the platform,
+                                    -- then extend it from left to right starting from the same point:
+                                    -- the edges will have the wromg snap and the game will crash
 
                                     -- waypoint built on platform and two track waypoints built nearby:
                                     -- find all consecutive track edges of the same type
