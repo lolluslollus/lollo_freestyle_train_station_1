@@ -182,20 +182,19 @@ function data()
 				-- LOLLO TODO add cargo platform-tracks in different widths (5, 10, 15), with extra wait areas
 				if isCargoTerminal then
 					for i = 1, #params.terminals[t].centreLanePositions do
+						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centreLanePositions[i].posTanX2, inverseMainTransf)
+						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 						result.models[#result.models+1] = {
 							id = _constants.cargoWaitingAreaModelId,
 							tag = slotHelpers.mangleModelTag(t, true),
-							transf = moduleHelpers.getWaitingAreaTransf(
-								params.terminals[t].centreLanePositions[i],
-								inverseMainTransf
-							)
+							transf = centreLaneTransf
 						}
 					end
 				else
 					for i = 1, #params.terminals[t].centreLanePositions do
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
-						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].centreLanePositions[i].posTanX2, inverseMainTransf)
-						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centreLanePositions[i].posTanX2, inverseMainTransf)
+						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 						result.models[#result.models+1] = {
 							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
 							tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
@@ -214,8 +213,8 @@ function data()
 							if terminateConstructionHookInfo.underpassPositions[t] == nil then terminateConstructionHookInfo.underpassPositions[t] = {} end
 							terminateConstructionHookInfo.underpassPositions[t][#terminateConstructionHookInfo.underpassPositions[t]+1] = {
 								t = t,
-								pos1 = posTanX2Relative[1][1],
-								pos2 = posTanX2Relative[2][1],
+								pos1 = posTanX2[1][1],
+								pos2 = posTanX2[2][1],
 								posBottom = {
 									underpassBottomTransf[13],
 									underpassBottomTransf[14],
@@ -265,22 +264,26 @@ function data()
 					-- LOLLO TODO the underpasses below turn yellow when the user wants to remove them:
 					-- good, but these guys don't, unless there is only one terminal: why?
 					table.insert(result.slots, {
-						-- height = 0.6,
+						-- height = 10,
 						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
 						-- shape 0 1 2 3
-						-- shape = 3,
-						-- spacing = _constants.trackSpacing,
-						spacing = _constants.underpassSpacing,
+						shape = 3,
+						spacing = _constants.trackSpacing,
+						-- spacing = _constants.underpassSpacing,
 						-- transf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1]),
-						-- transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2),
-						transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2),
+						-- transf = transfUtilsUG.mul(
+						-- 	moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+						-- 	{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1}
+						-- ),
+						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+						-- transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
 					result.models[#result.models+1] = {
 						id = _constants.terminalModelFileName,
 						-- tag = slotHelpers.mangleModelTag(t, false),
-						transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2)
-						-- transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2)
+						transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2)
+						-- transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 					}
 				end
 				_addTerminal()
@@ -296,14 +299,14 @@ function data()
 							-- shape 0 1 2 3
 							-- shape = 3,
 							spacing = _constants.underpassSpacing,
-							transf = moduleHelpers.getUnderpassTransfAlwaysVertical(posTanX2),
+							transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
 							type = _constants.underpassModuleType,
 						})
 						if params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil then
 							result.models[#result.models+1] = {
 								id = _constants.underpassModelFileName2,
 								-- tag = slotHelpers.mangleModelTag(t, false),
-								transf = moduleHelpers.getUnderpassTransfWithYRotation(posTanX2)
+								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 							}
 						end
 					end
@@ -372,20 +375,20 @@ function data()
 				local _linkUnderpasses = function()
 					-- link the underpasses along terminals, underground
 					for t = 1, #params.terminals do
-						local underpassPositionsInTerminal = terminateConstructionHookInfo.underpassPositions[t]
-						if underpassPositionsInTerminal ~= nil and #underpassPositionsInTerminal > 1 then
-							local previousUnderpassPosition = underpassPositionsInTerminal[1]
-							for i = 2, #underpassPositionsInTerminal do
-								local currentUnderpassPosition = underpassPositionsInTerminal[i]
+						local positionsInTerminal = terminateConstructionHookInfo.underpassPositions[t]
+						if positionsInTerminal ~= nil and #positionsInTerminal > 1 then
+							local previousPosition = positionsInTerminal[1]
+							for i = 2, #positionsInTerminal do
+								local currentPosition = positionsInTerminal[i]
 								result.models[#result.models+1] = {
 									id = _constants.passengerLaneModelId,
 									-- tag = slotHelpers.mangleModelTag(t, false),
 									transf = moduleHelpers.get1MLaneTransf(
-										previousUnderpassPosition.posBottom,
-										currentUnderpassPosition.posBottom
+										previousPosition.posBottom,
+										currentPosition.posBottom
 									)
 								}
-								previousUnderpassPosition = currentUnderpassPosition
+								previousPosition = currentPosition
 							end
 						end
 					end

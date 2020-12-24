@@ -1093,7 +1093,7 @@ function data()
                                     print('#constructionDataBak.params.terminals =', #constructionDataBak.params.terminals)
                                     -- print('args = ') debugPrint(args)
                                     -- print('constructionDataBak =') debugPrint(constructionDataBak)
-                                    if edgeUtils.isValidAndExistingId(constructionId) and #constructionDataBak.params.terminals > 1 then
+                                    if edgeUtils.isValidAndExistingId(constructionId) then
                                         -- bulldozed a station module AND there are more terminals left
                                         local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
                                         local removedSlotIds = {}
@@ -1123,25 +1123,27 @@ function data()
                                         if #nTerminalsToRemove == 0 then print('user removed a module, but not the terminal: carry on') return end
                                         if #nTerminalsToRemove > 1 then print('ERROR user removed more than one terminal: this cannot be') return end
 
-                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                            string.sub(debug.getinfo(1, 'S').source, 1),
-                                            _eventId,
-                                            _eventNames.REMOVE_TERMINAL_REQUESTED,
-                                            {
-                                                constructionData = constructionDataBak,
-                                                nTerminalToRemove = nTerminalsToRemove[1]
-                                            }
-                                        ))
-                                    elseif edgeUtils.isValidAndExistingId(constructionId) and #constructionDataBak.params.terminals == 1 then
-                                        -- the user has removed the last terminal: bulldoze the whole station
-                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                            string.sub(debug.getinfo(1, 'S').source, 1),
-                                            _eventId,
-                                            _eventNames.BULLDOZE_STATION_REQUESTED,
-                                            {
-                                                constructionData = constructionDataBak,
-                                            }
-                                        ))
+                                        if #constructionDataBak.params.terminals > 1 then
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.REMOVE_TERMINAL_REQUESTED,
+                                                {
+                                                    constructionData = constructionDataBak,
+                                                    nTerminalToRemove = nTerminalsToRemove[1]
+                                                }
+                                            ))
+                                        else
+                                            -- last terminal removed: pull down the station
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.BULLDOZE_STATION_REQUESTED,
+                                                {
+                                                    constructionData = constructionDataBak,
+                                                }
+                                            ))
+                                        end
                                     else
                                         -- the whole station was bulldozed
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(

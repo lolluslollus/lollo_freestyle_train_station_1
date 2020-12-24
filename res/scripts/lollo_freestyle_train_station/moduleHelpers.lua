@@ -111,12 +111,6 @@ helpers.get1MLaneTransf = function(pos1, pos2)
     return result
 end
 
-helpers.getWaitingAreaTransf = function(wap, inverseMainTransf)
-    -- print('wap =') debugPrint(wap)
-    local platformPosTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-    return helpers.get1MLaneTransf(platformPosTanX2[1][1], platformPosTanX2[2][1])
-end
-
 helpers.getTerminalDecoTransf = function(posTanX2)
     -- print('getTerminalDecoTransf starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
@@ -134,8 +128,8 @@ helpers.getTerminalDecoTransf = function(posTanX2)
     return newTransf
 end
 
-helpers.getUnderpassTransfAlwaysVertical = function(posTanX2)
-    -- print('getUnderpassTransfAlwaysVertical starting, posTanX2 =') debugPrint(posTanX2)
+helpers.getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
+    -- print('getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
 
@@ -157,7 +151,7 @@ helpers.getUnderpassTransfAlwaysVertical = function(posTanX2)
     return newTransf
 end
 
-helpers.getUnderpassTransfWithYRotation = function(posTanX2)
+helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
     -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
