@@ -646,7 +646,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        -- context.cleanupStreetGraph = true -- default is false, true may shift the new nodes after the split, which makes them impossible for us to recognise.
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
@@ -685,16 +685,8 @@ local _actions = {
             return
         end
 
-        local node0TangentLength = edgeUtils.getVectorLength({
-            tangent0.x,
-            tangent0.y,
-            tangent0.z
-        })
-        local node1TangentLength = edgeUtils.getVectorLength({
-            tangent1.x,
-            tangent1.y,
-            tangent1.z
-        })
+        local node0TangentLength = edgeUtils.getVectorLength({ tangent0.x, tangent0.y, tangent0.z })
+        local node1TangentLength = edgeUtils.getVectorLength({ tangent1.x, tangent1.y, tangent1.z })
 
         -- local playerOwned = api.type.PlayerOwned.new()
         -- playerOwned.player = api.engine.util.getPlayer()
@@ -810,10 +802,22 @@ local _actions = {
 
                     local addedNodeIds = edgeUtils.getNearestObjectIds(
                         transfUtils.position2Transf(addedNodePosition),
-                        0,
+                        0.001,
                         api.type.ComponentType.BASE_NODE
                     )
+                    -- edgeUtils.getNearestObjectIds(transfUtils.position2Transf(addedNodePosition), 0, api.type.ComponentType.BASE_NODE)
+                    -- edgeUtils.getNearestObjectIds(transfUtils.position2Transf(addedNodePosition), 2, api.type.ComponentType.BASE_NODE)
+                    -- edgeUtils.getNearestObjectIds(transfUtils.position2Transf(addedNodePosition), 0.5, api.type.ComponentType.BASE_NODE)
                     -- print('addedNodeIds =') debugPrint(addedNodeIds)
+
+                    -- if #addedNodeIds == 0 then
+                    --     addedNodeIds = edgeUtils.getNearestObjectIds(
+                    --         transfUtils.position2Transf(addedNodePosition),
+                    --         1,
+                    --         api.type.ComponentType.BASE_NODE
+                    --     )
+                    --     print('addedNodeIds =') debugPrint(addedNodeIds)
+                    -- end
 
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                     if isUpdateArgs then
@@ -998,6 +1002,8 @@ function data()
 
                 -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
 				-- maybe even overground. For now, it looks unnecessary.
+
+                -- LOLLO TODO make everything on abridge: the station will build an ugly terrapin below.
 
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,
