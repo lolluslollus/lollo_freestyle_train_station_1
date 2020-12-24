@@ -70,7 +70,7 @@ return {
 				tag = _constants.terminalModelTag
 			}
 			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/cargo_sign_nr_r.mdl',
+				id = 'lollo_freestyle_train_station/asset/cargo_sign_nr_r.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, - yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
@@ -89,7 +89,7 @@ return {
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/cargo_lamps.mdl',
+				id = 'lollo_freestyle_train_station/asset/cargo_lamps.mdl',
 				slotId = slotId,
 				transf = transf,
 				tag = _constants.terminalModelTag
@@ -104,7 +104,7 @@ return {
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/cargo_speakers.mdl',
+				id = 'lollo_freestyle_train_station/asset/cargo_speakers.mdl',
 				slotId = slotId,
 				transf = transf,
 				tag = _constants.terminalModelTag

@@ -1,0 +1,61 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 0.055301699787378, -1.2952201366425, 4.5046000480652, },
+		bbMin = { -0.055301699787378, -2.3577699661255, 0.79999989271164, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 0.055301699787378, 0.53127491474152, 1.8523000478745, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "station/rail/cargo/cargo_assets_1.mtl", },
+						mesh = "station/rail/asset/cargo_sign_nr_r/sign_nr_r_lod0.msh",
+						name = "sign_nr_r",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 362.78573608398,
+		},
+	},
+	metadata = {
+		labelList = {
+			labels = {
+				{
+					transf = { 0, -1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, -0.02, -1.97 + 0.5, 3.145, 1, },
+					size = { 0.5, .5 },
+					color = {0.0, 0.0, 0.0, 1.0},
+					type = "CUSTOM",
+					alignment = "CENTER",
+					alphaMode = "BLEND",
+					fitting = "SCALE",
+					childId = "RootNode",
+				},
+				{
+					transf = { 0, 1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0.02, -1.97, 3.145, 1, },
+					size = { 0.5, .5 },
+					color = {0.0, 0.0, 0.0, 1.0},
+					type = "CUSTOM",
+					alignment = "CENTER",
+					alphaMode = "BLEND",
+					fitting = "SCALE",
+					childId = "RootNode",
+				},
+			},
+		},
+	},
+	version = 1,
+}
+end

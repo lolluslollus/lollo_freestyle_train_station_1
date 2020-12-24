@@ -1,0 +1,53 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 0.83007901906967, 0.83007597923279, 6.8350381851196, },
+		bbMin = { -0.83007901906967, -0.83007299900055, -0.038743998855352, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 0.83007901906967, 0.83007448911667, 3.436891078949, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "station/rail/cargo/cargo_assets_1.mtl", },
+						mesh = "station/rail/asset/cargo_speakers/speakers_lod0.msh",
+						name = "speakers",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 60.0,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = { "station/rail/cargo/cargo_assets_1.mtl", },
+						mesh = "station/rail/asset/cargo_speakers/speakers_lod1.msh",
+						name = "speakers",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 60.0,
+			visibleTo = 450.0,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

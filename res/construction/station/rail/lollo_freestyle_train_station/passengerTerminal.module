@@ -71,7 +71,7 @@ return {
 				tag = _constants.terminalModelTag
 			}
 			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/era_c_perron_pillar.mdl',
+				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
@@ -95,7 +95,7 @@ return {
 			-- the model index must be in base 0 !
 			result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal), tostring(nTerminal), tostring(nTerminal)}
 			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/era_c_perron_pillar.mdl',
+				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag

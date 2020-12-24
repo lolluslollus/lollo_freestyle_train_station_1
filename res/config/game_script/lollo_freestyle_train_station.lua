@@ -1003,7 +1003,8 @@ function data()
                 -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
 				-- maybe even overground. For now, it looks unnecessary.
 
-                -- LOLLO TODO make everything on abridge: the station will build an ugly terrapin below.
+                -- LOLLO TODO make everything on a bridge: the station will build ugly embankments below. The solution is, remove all models.
+                -- Not a very good one...
 
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,
