@@ -179,6 +179,16 @@ function data()
 
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
+				-- this works, too, as an alternative.
+				-- for i = 1, #params.terminals[t].centreLanePositionsFine do
+				-- 	local wap = params.terminals[t].centreLanePositionsFine[i]
+				-- 	local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+				-- 	result.models[#result.models+1] = {
+				-- 		id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base.mdl',
+				-- 		-- tag = slotHelpers.mangleModelTag(t, false),
+				-- 		transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+				-- 	}
+				-- end
 
 				-- add waiting areas and lanes
 				-- LOLLO TODO add cargo platform-tracks in different widths (5, 10, 15), with extra wait areas

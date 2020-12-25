@@ -213,9 +213,11 @@ local helpers = {
         return results
     end,
 
-    getAllEdgeObjectsWithModelId = function(refModelId)
+    getAllEdgeObjectsWithModelIdOLD = function(refModelId, searchRadius)
+        -- too slow
+        if not(searchRadius) then searchRadius = 99999 end
         local results = {}
-        local nearbyEdgeIds = edgeUtils.getNearestObjectIds(_constants.idTransf, 99999, api.type.ComponentType.BASE_EDGE)
+        local nearbyEdgeIds = edgeUtils.getNearestObjectIds(_constants.idTransf, searchRadius, api.type.ComponentType.BASE_EDGE)
         -- print('nearbyEdgeIds =')
         -- debugPrint(nearbyEdgeIds)
         for _, edgeId in pairs(nearbyEdgeIds) do
@@ -230,6 +232,18 @@ local helpers = {
 
         -- print('getAllEdgeObjectsWithModelId is about to return') debugPrint(results)
         return results
+    end,
+
+    getAllEdgeObjectsWithModelId = function(refModelId)
+        if not(edgeUtils.isValidAndExistingId(refModelId)) then return {} end
+
+        local _map = api.engine.system.streetSystem.getEdgeObject2EdgeMap()
+        local edgeObjectIds = {}
+        for edgeObjectId, edgeId in pairs(_map) do
+            edgeObjectIds[#edgeObjectIds+1] = edgeObjectId
+        end
+
+        return edgeUtils.getEdgeObjectsIdsWithModelId2(edgeObjectIds, refModelId)
     end,
 
     getOuterNodes = function(contiguousEdgeIds, trackType)
@@ -278,11 +292,10 @@ local helpers = {
         return results
     end,
 
-    getCentreLanePositions = function(platformEdgeIds, isCargo)
+    getCentreLanePositions = function(platformEdgeIds, maxEdgeLength)
         -- print('getCentreLanePositions starting')
         if type(platformEdgeIds) ~= 'table' then return {} end
 
-        local maxEdgeLength = isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength
         local results = {}
         for _, platformEdgeId in pairs(platformEdgeIds) do
             if edgeUtils.isValidAndExistingId(platformEdgeId) then

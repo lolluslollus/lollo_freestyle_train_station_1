@@ -95,9 +95,9 @@ guiHelpers.showNearbyStationPicker = function(cons, eventId, eventName, eventArg
         layout:addItem(button)
     end
     local function addGoBackToWrongObjectButton()
-        if not(edgeUtils.isValidAndExistingId(eventArgs.platformWaypointId)) then return end
+        if not(edgeUtils.isValidAndExistingId(eventArgs.platformWaypoint1Id)) then return end
 
-        local newObjectPosition = edgeUtils.getObjectPosition(eventArgs.platformWaypointId)
+        local newObjectPosition = edgeUtils.getObjectPosition(eventArgs.platformWaypoint1Id)
         if newObjectPosition ~= nil then
             local buttonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
             buttonLayout:addItem(api.gui.comp.ImageView.new('ui/design/window-content/arrow_style1_left.tga'))
