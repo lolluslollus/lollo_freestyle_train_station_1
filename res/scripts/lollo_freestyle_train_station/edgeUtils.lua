@@ -455,6 +455,24 @@ helper.getEdgeObjectsIdsWithModelId = function(edgeObjects, refModelId)
     return results
 end
 
+helper.getEdgeObjectsIdsWithModelId2 = function(edgeObjectIds, refModelId)
+    local results = {}
+    if type(edgeObjectIds) ~= 'table' or not(helper.isValidId(refModelId)) then return results end
+
+    for i = 1, #edgeObjectIds do
+        if helper.isValidAndExistingId(edgeObjectIds[i]) then
+            local modelInstanceList = api.engine.getComponent(edgeObjectIds[i], api.type.ComponentType.MODEL_INSTANCE_LIST)
+            if modelInstanceList ~= nil
+            and modelInstanceList.fatInstances
+            and modelInstanceList.fatInstances[1]
+            and modelInstanceList.fatInstances[1].modelId == refModelId then
+                results[#results+1] = edgeObjectIds[i]
+            end
+        end
+    end
+    return results
+end
+
 helper.getLastBuiltEdgeId = function(entity2tn, addedSegment)
     -- these variables are all userdata but I can use pairs on entity2tn.
     -- the game does not populate result here, so I have to go through this.
