@@ -957,7 +957,8 @@ function data()
                     print('WARNING: no track edges found')
                     return
                 end
-                -- LOLLO TODO why do I need this? Try without!
+                -- LOLLO NOTE I need this, or a station with only one track edge will dump with
+                -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                 if #trackEdgeIdsBetweenNodeIds == 1 then
                     print('only one track edge, going to split it')
                     local edgeId = trackEdgeIdsBetweenNodeIds[1]
