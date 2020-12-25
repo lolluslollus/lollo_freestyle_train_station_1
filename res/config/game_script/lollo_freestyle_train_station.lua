@@ -1006,9 +1006,6 @@ function data()
                 -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
 				-- maybe even overground. For now, it looks unnecessary.
 
-                -- LOLLO TODO make everything on a bridge: the station will build ugly embankments below. The solution is, remove all models.
-                -- Not a very good one...
-
                 _actions.removeTracks(
                     _eventNames.BUILD_STATION_REQUESTED,
                     eventArgs
@@ -1324,9 +1321,14 @@ function data()
                                     -- LOLLO TODO if any platform nodes are joints between more than 2 platform-tracks,
                                     -- bar building or only build up to the node.
 
+                                    -- LOLLO TODO split platform-tracks as you do tracks.
+
+                                    -- LOLLO TODO if two terminals are on two consecutive bits of platform, join them with a pedestrian lane.
+
                                     -- LOLLO TODO consider using two platform markers, to call the ends of a platform.
                                     -- use the same model for first and second marker.
-                                    -- on platform or track, if both markers are on the same edge, split it between them
+
+                                    -- LOLLO TODO on platform or track, if both markers are on the same edge, split it between them
                                     -- BEFORE splitting it at the markers. Or leave it like now? Leave it like now, for now.
                                     -- then make both splits at once
 

@@ -517,6 +517,8 @@ function data()
 				local _testTerrainAlignment = function()
 					if result.terrainAlignmentLists == nil or #result.terrainAlignmentLists == 0 then
 						-- LOLLO TODO run this on every rectangle between leftLane and rightLane
+						-- Otherwise, the game will make ugly colliding embankments below bridges and above underground bits
+
 						result.terrainAlignmentLists = {
 							{
 								type = 'LESS', -- accepted values: "EQUAL", "LESS" or "GREATER". Use GREATER underground and LESS on bridges
