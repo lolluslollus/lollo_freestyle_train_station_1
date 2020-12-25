@@ -122,6 +122,7 @@ function data()
 				for i = 1, #params.terminals[t].trackEdgeLists do
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local newEdgeList = {
+						-- alignTerrain = tel.type == 0, -- only align on ground, not on bridges or tunnels -- useless
 						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf),
 						edgeType = tel.edgeType,
 						edgeTypeName = tel.edgeTypeName,
@@ -162,6 +163,7 @@ function data()
 					local pel = params.terminals[t].platformEdgeLists[i]
 
 					local newEdgeList = {
+						-- alignTerrain = pel.type == 0, -- only align on ground, not on bridges or tunnels -- useless
 						edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseMainTransf),
 						edgeType = pel.edgeType,
 						edgeTypeName = pel.edgeTypeName,
@@ -514,9 +516,10 @@ function data()
 
 				local _testTerrainAlignment = function()
 					if result.terrainAlignmentLists == nil or #result.terrainAlignmentLists == 0 then
+						-- LOLLO TODO run this on every rectangle between leftLane and rightLane
 						result.terrainAlignmentLists = {
 							{
-								type = 'LESS',
+								type = 'LESS', -- accepted values: "EQUAL", "LESS" or "GREATER". Use GREATER underground and LESS on bridges
 								faces = {
 									-- {
 									-- 	{10.1, -0.1, 0.0, 1.0},
@@ -525,19 +528,20 @@ function data()
 									-- 	{9.9, -0.1, 0.0, 1.0}
 									-- }
 									{
-										{100, -50, 0.0, 1.0},
-										{100, 50, 0.0, 1.0},
-										{-100, 50, 0.0, 1.0},
-										{-100, -50, 0.0, 1.0}
+										{100, -50, -20},
+										{100, 50, -20},
+										{-100, 50, -20},
+										{-100, -50, -20}
 									}
 								},
+								optional = true,
 								slopeHigh = 999, --LOLLO added this
 								slopeLow = 0 --LOLLO added this
 							}
 						}
 					end
 				end
-				_testTerrainAlignment()
+				-- _testTerrainAlignment()
 			end -- end of terminateConstructionHook()
 
 			-- print('freestyleTrainStation result =') debugPrint(result)

@@ -10,7 +10,7 @@ function data()
 	t.yearFrom = 0
 	t.yearTo = 0
 
-	t.shapeWidth = 4.0
+	t.shapeWidth = 8.0 -- was 4.0
 	t.shapeStep = 4.0
 	t.shapeSleeperStep = 0.2 -- 8.0 / 12.0
 
