@@ -637,7 +637,7 @@ local _actions = {
         )
     end,
 
-    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventArgs, isUpdateArgs)
+    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventArgs, newArgName)
         if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
 
         local oldBaseEdge = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE)
@@ -665,14 +665,9 @@ local _actions = {
                     print('command callback firing for split, success =', success)
                     if success and successEventName ~= nil then
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
-                        if isUpdateArgs then
+                        if not(stringUtils.isNullOrEmptyString(newArgName)) then
                             local splitNodeId = nodeBetween.length0 == 0 and oldBaseEdge.node0 or oldBaseEdge.node1
-                            if eventArgs.splitNodeIds == nil then eventArgs.splitNodeIds = {} end
-                            if successEventName == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
-                                eventArgs.splitNodeIds.node1Id = splitNodeId
-                            elseif successEventName == _eventNames.TRACK_BULLDOZE_REQUESTED then
-                                eventArgs.splitNodeIds.node2Id = splitNodeId
-                            end
+                            eventArgs[newArgName] = splitNodeId
                         end
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -821,13 +816,8 @@ local _actions = {
                     -- end
 
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
-                    if isUpdateArgs then
-                        if eventArgs.splitNodeIds == nil then eventArgs.splitNodeIds = {} end
-                        if successEventName == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
-                            eventArgs.splitNodeIds.node1Id = addedNodeIds[1]
-                        elseif successEventName == _eventNames.TRACK_BULLDOZE_REQUESTED then
-                            eventArgs.splitNodeIds.node2Id = addedNodeIds[1]
-                        end
+                    if not(stringUtils.isNullOrEmptyString(newArgName)) then
+                        eventArgs[newArgName] = addedNodeIds[1]
                     end
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -895,7 +885,7 @@ function data()
                     args.trackWaypoint1Id,
                     _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED,
                     arrayUtils.cloneDeepOmittingFields(args),
-                    true
+                    'splitNode1Id'
                 )
             elseif name == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
                 if not(edgeUtils.isValidId(args.platformWaypointId))
@@ -933,23 +923,23 @@ function data()
                     args.trackWaypoint2Id,
                     _eventNames.TRACK_BULLDOZE_REQUESTED,
                     arrayUtils.cloneDeepOmittingFields(args),
-                    true
+                    'splitNode2Id'
                 )
             elseif name == _eventNames.TRACK_BULLDOZE_REQUESTED then
                 if not(edgeUtils.isValidId(args.platformWaypointId))
-                or args.splitNodeIds == nil
-                or not(edgeUtils.isValidAndExistingId(args.splitNodeIds.node1Id))
-                or not(edgeUtils.isValidAndExistingId(args.splitNodeIds.node2Id))
+                or not(edgeUtils.isValidAndExistingId(args.splitNode1Id))
+                or not(edgeUtils.isValidAndExistingId(args.splitNode2Id))
                 -- or type(args.trackWaypoint1Position) ~= 'table' or #args.trackWaypoint1Position ~= 3
                 -- or type(args.trackWaypoint2Position) ~= 'table' or #args.trackWaypoint2Position ~= 3
                 then
-                    print('WARNING: some data is missing or invalid. args.splitNodeIds =') debugPrint(args.splitNodeIds)
+                    print('WARNING: some data is missing or invalid. args.splitNode1Id =') debugPrint(args.splitNode1Id)
+                    print('args.splitNode2Id =') debugPrint(args.splitNode2Id)
                     return
                 end
 
                 local trackEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
-                    args.splitNodeIds.node1Id,
-                    args.splitNodeIds.node2Id
+                    args.splitNode1Id,
+                    args.splitNode2Id
                 )
                 print('trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
                 if #trackEdgeIdsBetweenNodeIds == 0 then
@@ -991,7 +981,7 @@ function data()
                 local trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 -- print('track bulldoze requested, trackEdgeList =') debugPrint(trackEdgeList)
 
-                local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'platformWaypointId', 'splitNodeIds', 'trackWaypoint1Id', 'trackWaypoint2Id', })
+                local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'platformWaypointId', 'splitNode1Id', 'splitNode2Id', 'trackWaypoint1Id', 'trackWaypoint2Id', })
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(args.platformEdgeIds)
                 eventArgs.trackEdgeIds = trackEdgeIdsBetweenNodeIds
                 eventArgs.trackEdgeList = trackEdgeList
@@ -1323,14 +1313,13 @@ function data()
 
                                     -- LOLLO TODO split platform-tracks as you do tracks.
 
-                                    -- LOLLO TODO if two terminals are on two consecutive bits of platform, join them with a pedestrian lane.
+                                    -- LOLLO TODO if two terminals are on two consecutive bits of platform, join them with a pedestrian lane, in the station.con
 
                                     -- LOLLO TODO consider using two platform markers, to call the ends of a platform.
                                     -- use the same model for first and second marker.
 
                                     -- LOLLO TODO on platform or track, if both markers are on the same edge, split it between them
                                     -- BEFORE splitting it at the markers. Or leave it like now? Leave it like now, for now.
-                                    -- then make both splits at once
 
                                     -- LOLLO TODO left and right lanes need the info if each posTanX2 ir flat, bridge or tunnel.
 
