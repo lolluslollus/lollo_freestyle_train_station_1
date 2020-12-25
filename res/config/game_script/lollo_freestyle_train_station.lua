@@ -957,6 +957,7 @@ function data()
                     print('WARNING: no track edges found')
                     return
                 end
+                -- LOLLO TODO why do I need this? Try without!
                 if #trackEdgeIdsBetweenNodeIds == 1 then
                     print('only one track edge, going to split it')
                     local edgeId = trackEdgeIdsBetweenNodeIds[1]
@@ -1323,6 +1324,12 @@ function data()
                                     -- bar building or only build up to the node.
 
                                     -- LOLLO TODO consider using two platform markers, to call the ends of a platform.
+                                    -- use the same model for first and second marker.
+                                    -- on platform or track, if both markers are on the same edge, split it between them
+                                    -- BEFORE splitting it at the markers. Or leave it like now? Leave it like now, for now.
+                                    -- then make both splits at once
+
+                                    -- LOLLO TODO left and right lanes need the info if each posTanX2 ir flat, bridge or tunnel.
 
                                     -- waypoint built on platform and two track waypoints built nearby:
                                     -- find all consecutive track edges of the same type
