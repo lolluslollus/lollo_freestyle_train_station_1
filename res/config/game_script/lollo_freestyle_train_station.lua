@@ -227,10 +227,10 @@ local _actions = {
         -- proposal.streetProposal = proposal2.streetProposal
 
         local context = api.type.Context:new()
-        context.checkTerrainAlignment = true -- true gives smoother z, default is false
-        context.cleanupStreetGraph = true -- default is false
-        context.gatherBuildings = false -- default is false
-        context.gatherFields = true -- default is true
+        -- context.checkTerrainAlignment = true -- we need it here, or we will have trouble later building the snappy tracks
+        -- context.cleanupStreetGraph = true -- we need it here, or we will have trouble later building the snappy tracks
+        -- context.gatherBuildings = false -- default is false
+        -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer()
 
         api.cmd.sendCommand(
@@ -239,7 +239,8 @@ local _actions = {
                 print('build station callback, success =', success)
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
-                    local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
+                    -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
+                    local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centreLanePositions', 'crossConnectorPositions', 'leftLanePositions', 'rightLanePositions'})
                     eventArgs.stationConstructionId = result.resultEntities[1]
                     print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
                     print('buildStation callback is about to send command')
@@ -548,7 +549,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        -- context.cleanupStreetGraph = true -- default is false, it seems to do nothing
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
@@ -623,7 +624,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        context.cleanupStreetGraph = true -- default is false, it seems to do nothing
+        context.cleanupStreetGraph = true -- default is false
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1

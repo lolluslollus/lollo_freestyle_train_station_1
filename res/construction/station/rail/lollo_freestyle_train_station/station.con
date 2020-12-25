@@ -511,9 +511,37 @@ function data()
 				-- print('LOLLO result.stations = ') debugPrint(result.stations)
 				-- print('LOLLO result.models = ') debugPrint(result.models)
 				-- print('LOLLO result.terminalGroups = ') debugPrint(result.terminalGroups)
+
+				local _testTerrainAlignment = function()
+					if result.terrainAlignmentLists == nil or #result.terrainAlignmentLists == 0 then
+						result.terrainAlignmentLists = {
+							{
+								type = 'LESS',
+								faces = {
+									-- {
+									-- 	{10.1, -0.1, 0.0, 1.0},
+									-- 	{10.1, 0.1, 0.0, 1.0},
+									-- 	{9.9, 0.1, 0.0, 1.0},
+									-- 	{9.9, -0.1, 0.0, 1.0}
+									-- }
+									{
+										{100, -50, 0.0, 1.0},
+										{100, 50, 0.0, 1.0},
+										{-100, 50, 0.0, 1.0},
+										{-100, -50, 0.0, 1.0}
+									}
+								},
+								slopeHigh = 999, --LOLLO added this
+								slopeLow = 0 --LOLLO added this
+							}
+						}
+					end
+				end
+				_testTerrainAlignment()
 			end -- end of terminateConstructionHook()
 
 			-- print('freestyleTrainStation result =') debugPrint(result)
+			print('freestyleTrainStation result.terrainAlignmentLists =') debugPrint(result.terrainAlignmentLists)
 			return result
 		end,
  		-- preProcessFn = function(modules, change, three)
