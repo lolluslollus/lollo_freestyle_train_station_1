@@ -766,6 +766,8 @@ helpers.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
 end
 
 helpers.getTrackEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
+    -- this function returns the ids in the right sequence, but their node0 and node1 may be scrambled,
+    -- depending how the user laid the tracks
     print('getTrackEdgeIdsBetweenEdgeIds starting, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
     -- the output is sorted by sequence, from edge1 to edge2
     print('one')
