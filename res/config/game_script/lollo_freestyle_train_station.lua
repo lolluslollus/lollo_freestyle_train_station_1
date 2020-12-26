@@ -35,6 +35,7 @@ local _eventNames = {
 local _actions = {
     -- LOLLO TODO try api.engine.util.proposal.makeProposalData()
     buildSnappyTracks = function(endEntities)
+        -- LOLLO TODO platforms don't always snap
         -- LOLLO NOTE after building the station, never mind how well you placed it,
         -- its end nodes won't snap to the adjacent roads.
         -- AltGr + L will show a red dot, and here is the catch: there are indeed
@@ -49,24 +50,24 @@ local _actions = {
         local isProposalPopulated = false
         local nNewEntities = 0
 
-        local _replaceSegment = function(edgeId, endEntities4T)
+        local _replaceSegment = function(edgeId, endEntities4T_plOrTr)
             local newSegment = api.type.SegmentAndEntity.new()
             nNewEntities = nNewEntities - 1
             newSegment.entity = nNewEntities
 
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge.node0 == endEntities4T.disjointNeighbourNodeIds.node1Id then
-                newSegment.comp.node0 = endEntities4T.stationEndNodeIds.node1Id
-            elseif baseEdge.node0 == endEntities4T.disjointNeighbourNodeIds.node2Id then
-                newSegment.comp.node0 = endEntities4T.stationEndNodeIds.node2Id
+            if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+                newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
+            elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+                newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
             else
                 newSegment.comp.node0 = baseEdge.node0
             end
 
-            if baseEdge.node1 == endEntities4T.disjointNeighbourNodeIds.node1Id then
-                newSegment.comp.node1 = endEntities4T.stationEndNodeIds.node1Id
-            elseif baseEdge.node1 == endEntities4T.disjointNeighbourNodeIds.node2Id then
-                newSegment.comp.node1 = endEntities4T.stationEndNodeIds.node2Id
+            if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+                newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
+            elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+                newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
             else
                 newSegment.comp.node1 = baseEdge.node1
             end
@@ -93,19 +94,33 @@ local _actions = {
 
         for _, endEntities4T in pairs(endEntities) do
             -- for each terminal
-            for i = 1, #endEntities4T.disjointNeighbourEdgeIds.edge1Ids do
-                _replaceSegment(endEntities4T.disjointNeighbourEdgeIds.edge1Ids[i], endEntities4T)
+            for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
+                _replaceSegment(edgeId, endEntities4T.tracks)
             end
-            for i = 1, #endEntities4T.disjointNeighbourEdgeIds.edge2Ids do
-                _replaceSegment(endEntities4T.disjointNeighbourEdgeIds.edge2Ids[i], endEntities4T)
+            for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge2Ids) do
+                _replaceSegment(edgeId, endEntities4T.tracks)
+            end
+            for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
+                _replaceSegment(edgeId, endEntities4T.platforms)
+            end
+            for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge2Ids) do
+                _replaceSegment(edgeId, endEntities4T.platforms)
             end
 
-            if edgeUtils.isValidAndExistingId(endEntities4T.disjointNeighbourNodeIds.node1Id) then
-                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.disjointNeighbourNodeIds.node1Id
+            if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node1Id) then
+                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.tracks.disjointNeighbourNodeIds.node1Id
                 isProposalPopulated = true
             end
-            if edgeUtils.isValidAndExistingId(endEntities4T.disjointNeighbourNodeIds.node2Id) then
-                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.disjointNeighbourNodeIds.node2Id
+            if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node2Id) then
+                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.tracks.disjointNeighbourNodeIds.node2Id
+                isProposalPopulated = true
+            end
+            if edgeUtils.isValidAndExistingId(endEntities4T.platforms.disjointNeighbourNodeIds.node1Id) then
+                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.platforms.disjointNeighbourNodeIds.node1Id
+                isProposalPopulated = true
+            end
+            if edgeUtils.isValidAndExistingId(endEntities4T.platforms.disjointNeighbourNodeIds.node2Id) then
+                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.platforms.disjointNeighbourNodeIds.node2Id
                 isProposalPopulated = true
             end
         end
@@ -310,7 +325,7 @@ local _actions = {
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
                     local eventArgs = {
-                        endEntities = type(constructionData.endEntities) == 'table'
+                        endEntities4T = type(constructionData.endEntities) == 'table'
                             and arrayUtils.cloneDeepOmittingFields(constructionData.endEntities[nTerminalToRemove])
                             or {}
                         ,
@@ -330,116 +345,115 @@ local _actions = {
         )
     end,
 
-    rebuildTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
-        -- print('rebuildTracks starting')
+    rebuildOneTerminalTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
+        -- print('rebuildOneTerminalTracks starting')
         -- print('trackEdgeLists =') debugPrint(trackEdgeLists)
         -- print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
         if trackEdgeLists == nil or type(trackEdgeLists) ~= 'table' or #trackEdgeLists == 0 then return end
 
         local proposal = api.type.SimpleProposal.new()
 
-        -- there may be no neighbour nodes, if the station was built in a certain fashion
-        local _baseNode1 = (neighbourNodeIds ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds.node1))
-        and api.engine.getComponent(neighbourNodeIds.node1, api.type.ComponentType.BASE_NODE)
-        or nil
-        -- print('_baseNode1 =') debugPrint(_baseNode1)
-        local _baseNode2 = (neighbourNodeIds ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds.node2))
-        and api.engine.getComponent(neighbourNodeIds.node2, api.type.ComponentType.BASE_NODE)
-        or nil
-        -- print('_baseNode2 =') debugPrint(_baseNode2)
         local nNewEntities = 0
         local newNodes = {}
 
-        local _addNode = function(position)
-            -- print('adding node, position =') debugPrint(position)
-            if _baseNode1 ~= nil then
-                -- print('_baseNode1.position =') debugPrint(_baseNode1.position)
-            else
-                -- print('_baseNode1 is NIL')
-            end
-            if _baseNode2 ~= nil then
-                -- print('_baseNode2.position =') debugPrint(_baseNode2.position)
-            else
-                -- print('_baseNode2 is NIL')
-            end
-            if _baseNode1 ~= nil
-            and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x)
-            and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y)
-            and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z)
-            then
-                -- print('fifteen')
-                return neighbourNodeIds.node1
-            elseif _baseNode2 ~= nil
-            and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x)
-            and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y)
-            and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z)
-            then
-                -- print('sixteen')
-                return neighbourNodeIds.node2
-            else
-                for _, newNode in pairs(newNodes) do
-                    if edgeUtils.isNumVeryClose(position[1], newNode.position[1])
-                    and edgeUtils.isNumVeryClose(position[2], newNode.position[2])
-                    and edgeUtils.isNumVeryClose(position[3], newNode.position[3])
-                    then
-                        -- print('eighteen')
-                        return newNode.id
-                    end
+        local doTrackOrPlatform = function(edgeLists, neighbourNodeIds_plOrTr)
+            -- there may be no neighbour nodes, if the station was built in a certain fashion
+            local _baseNode1 = (neighbourNodeIds_plOrTr ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds_plOrTr.node1))
+            and api.engine.getComponent(neighbourNodeIds_plOrTr.node1, api.type.ComponentType.BASE_NODE)
+            or nil
+            -- print('_baseNode1 =') debugPrint(_baseNode1)
+            local _baseNode2 = (neighbourNodeIds_plOrTr ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds_plOrTr.node2))
+            and api.engine.getComponent(neighbourNodeIds_plOrTr.node2, api.type.ComponentType.BASE_NODE)
+            or nil
+            -- print('_baseNode2 =') debugPrint(_baseNode2)
+
+            local _addNode = function(position)
+                -- print('adding node, position =') debugPrint(position)
+                if _baseNode1 ~= nil then
+                    -- print('_baseNode1.position =') debugPrint(_baseNode1.position)
+                else
+                    -- print('_baseNode1 is NIL')
                 end
+                if _baseNode2 ~= nil then
+                    -- print('_baseNode2.position =') debugPrint(_baseNode2.position)
+                else
+                    -- print('_baseNode2 is NIL')
+                end
+                if _baseNode1 ~= nil
+                and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x)
+                and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y)
+                and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z)
+                then
+                    -- print('fifteen')
+                    return neighbourNodeIds_plOrTr.node1
+                elseif _baseNode2 ~= nil
+                and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x)
+                and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y)
+                and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z)
+                then
+                    -- print('sixteen')
+                    return neighbourNodeIds_plOrTr.node2
+                else
+                    for _, newNode in pairs(newNodes) do
+                        if edgeUtils.isNumVeryClose(position[1], newNode.position[1])
+                        and edgeUtils.isNumVeryClose(position[2], newNode.position[2])
+                        and edgeUtils.isNumVeryClose(position[3], newNode.position[3])
+                        then
+                            -- print('eighteen')
+                            return newNode.id
+                        end
+                    end
 
-                -- print('twenty')
-                local newNode = api.type.NodeAndEntity.new()
-                nNewEntities = nNewEntities - 1
-                newNode.entity = nNewEntities
-                newNode.comp.position.x = position[1]
-                newNode.comp.position.y = position[2]
-                newNode.comp.position.z = position[3]
-                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                    -- print('twenty')
+                    local newNode = api.type.NodeAndEntity.new()
+                    nNewEntities = nNewEntities - 1
+                    newNode.entity = nNewEntities
+                    newNode.comp.position.x = position[1]
+                    newNode.comp.position.y = position[2]
+                    newNode.comp.position.z = position[3]
+                    proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
 
-                newNodes[#newNodes+1] = {
-                    id = nNewEntities,
-                    position = {
-                        position[1],
-                        position[2],
-                        position[3],
+                    newNodes[#newNodes+1] = {
+                        id = nNewEntities,
+                        position = {
+                            position[1],
+                            position[2],
+                            position[3],
+                        }
                     }
-                }
-                return nNewEntities
+                    return nNewEntities
+                end
+            end
+            local _addSegment = function(trackEdgeList)
+                local newSegment = api.type.SegmentAndEntity.new()
+                nNewEntities = nNewEntities - 1
+                newSegment.entity = nNewEntities
+                newSegment.comp.node0 = _addNode(trackEdgeList.posTanX2[1][1])
+                newSegment.comp.node1 = _addNode(trackEdgeList.posTanX2[2][1])
+                newSegment.comp.tangent0.x = trackEdgeList.posTanX2[1][2][1]
+                newSegment.comp.tangent0.y = trackEdgeList.posTanX2[1][2][2]
+                newSegment.comp.tangent0.z = trackEdgeList.posTanX2[1][2][3]
+                newSegment.comp.tangent1.x = trackEdgeList.posTanX2[2][2][1]
+                newSegment.comp.tangent1.y = trackEdgeList.posTanX2[2][2][2]
+                newSegment.comp.tangent1.z = trackEdgeList.posTanX2[2][2][3]
+                newSegment.comp.type = trackEdgeList.type
+                newSegment.comp.typeIndex = trackEdgeList.typeIndex
+                -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+                newSegment.type = _constants.railEdgeType
+                newSegment.trackEdge.trackType = trackEdgeList.trackType
+                newSegment.trackEdge.catenary = trackEdgeList.catenary
+
+                proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+            end
+
+            for _, edgeList in pairs(edgeLists) do
+                _addSegment(edgeList)
             end
         end
-        local _addSegment = function(trackEdgeList)
-            local newSegment = api.type.SegmentAndEntity.new()
-            nNewEntities = nNewEntities - 1
-            newSegment.entity = nNewEntities
-            newSegment.comp.node0 = _addNode(trackEdgeList.posTanX2[1][1])
-            newSegment.comp.node1 = _addNode(trackEdgeList.posTanX2[2][1])
-            newSegment.comp.tangent0.x = trackEdgeList.posTanX2[1][2][1]
-            newSegment.comp.tangent0.y = trackEdgeList.posTanX2[1][2][2]
-            newSegment.comp.tangent0.z = trackEdgeList.posTanX2[1][2][3]
-            newSegment.comp.tangent1.x = trackEdgeList.posTanX2[2][2][1]
-            newSegment.comp.tangent1.y = trackEdgeList.posTanX2[2][2][2]
-            newSegment.comp.tangent1.z = trackEdgeList.posTanX2[2][2][3]
-            newSegment.comp.type = trackEdgeList.type
-            newSegment.comp.typeIndex = trackEdgeList.typeIndex
-            -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-            newSegment.type = _constants.railEdgeType
-            newSegment.trackEdge.trackType = trackEdgeList.trackType
-            newSegment.trackEdge.catenary = trackEdgeList.catenary
+        doTrackOrPlatform(platformEdgeLists, neighbourNodeIds.platforms)
+        doTrackOrPlatform(trackEdgeLists, neighbourNodeIds.tracks)
 
-            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
-        end
-
-        for _, trackEdgeList in pairs(trackEdgeLists) do
-            _addSegment(trackEdgeList)
-        end
-
-        if type(platformEdgeLists) == 'table' then
-            for _, platformEdgeList in pairs(platformEdgeLists) do
-                _addSegment(platformEdgeList)
-            end
-        end
-
-        -- print('rebuildTracks proposal =') debugPrint(proposal)
+        -- print('rebuildOneTerminalTracks proposal =') debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -450,9 +464,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
-                -- print('LOLLO result = ')
-                -- debugPrint(result)
-                print('LOLLO rebuildTracks success = ', success)
+                print('LOLLO rebuildOneTerminalTracks success = ', success)
+                -- print('LOLLO result = ') debugPrint(result)
                 if success and successEventName ~= nil then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -801,18 +814,18 @@ local _actions = {
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     -- print('addedNodePosition =') debugPrint(addedNodePosition)
 
-                    local addedNodeIds = edgeUtils.getNearestObjectIds(
+                    local addedNodeIds = edgeUtils.getNearbyObjectIds(
                         transfUtils.position2Transf(addedNodePosition),
                         0.001,
                         api.type.ComponentType.BASE_NODE
                     )
-                    -- edgeUtils.getNearestObjectIds(transfUtils.position2Transf(addedNodePosition), 0, api.type.ComponentType.BASE_NODE)
-                    -- edgeUtils.getNearestObjectIds(transfUtils.position2Transf(addedNodePosition), 2, api.type.ComponentType.BASE_NODE)
-                    -- edgeUtils.getNearestObjectIds(transfUtils.position2Transf(addedNodePosition), 0.5, api.type.ComponentType.BASE_NODE)
+                    -- edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(addedNodePosition), 0, api.type.ComponentType.BASE_NODE)
+                    -- edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(addedNodePosition), 2, api.type.ComponentType.BASE_NODE)
+                    -- edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(addedNodePosition), 0.5, api.type.ComponentType.BASE_NODE)
                     -- print('addedNodeIds =') debugPrint(addedNodeIds)
 
                     -- if #addedNodeIds == 0 then
-                    --     addedNodeIds = edgeUtils.getNearestObjectIds(
+                    --     addedNodeIds = edgeUtils.getNearbyObjectIds(
                     --         transfUtils.position2Transf(addedNodePosition),
                     --         1,
                     --         api.type.ComponentType.BASE_NODE
@@ -1113,10 +1126,10 @@ function data()
                     print('ERROR: args.stationConstructionId not valid')
                     return
                 end
-                _actions.rebuildTracks(
+                _actions.rebuildOneTerminalTracks(
                     args.removedTerminal.trackEdgeLists,
                     args.removedTerminal.platformEdgeLists,
-                    stationHelpers.getBulldozedStationNeighbourNodeIds(args.endEntities),
+                    stationHelpers.getBulldozedStationNeighbourNodeIds(args.endEntities4T),
                     args.stationConstructionId,
                     _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED
                 )
@@ -1126,14 +1139,14 @@ function data()
                     return
                 end
                 _actions.buildSnappyTracks(
-                    stationHelpers.getStationEndEntitiesTyped(args.stationConstructionId)
+                    stationHelpers.getStationEndEntities(args.stationConstructionId)
                 )
             elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
                 _actions.bulldozeStation(args.constructionData, _eventNames.REBUILD_ALL_TRACKS_REQUESTED)
             elseif name == _eventNames.REBUILD_ALL_TRACKS_REQUESTED then
                 for t = 1, #args.constructionData.params.terminals do
                     if type(args.constructionData.endEntities) == 'table' then
-                        _actions.rebuildTracks(
+                        _actions.rebuildOneTerminalTracks(
                             args.constructionData.params.terminals[t].trackEdgeLists,
                             args.constructionData.params.terminals[t].platformEdgeLists,
                             stationHelpers.getBulldozedStationNeighbourNodeIds(args.constructionData.endEntities[t])
@@ -1157,7 +1170,7 @@ function data()
                             if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileNameLong then
                                 constructionDataBak = {
                                     constructionId = constructionId,
-                                    endEntities = stationHelpers.getStationEndEntitiesTyped(constructionId),
+                                    endEntities = stationHelpers.getStationEndEntities(constructionId),
                                     params = arrayUtils.cloneDeepOmittingFields(con.params, nil, true)
                                 }
                                 break

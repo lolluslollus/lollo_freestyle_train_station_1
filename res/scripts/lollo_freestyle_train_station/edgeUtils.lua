@@ -88,7 +88,7 @@ local function swap(num1, num2)
     num2 = swapTemp
 end
 
-helper.getNearestObjectIds = function(transf, searchRadius, componentType)
+helper.getNearbyObjectIds = function(transf, searchRadius, componentType)
     if type(transf) ~= 'table' then return {} end
 
     if not(componentType) then componentType = api.type.ComponentType.BASE_EDGE end

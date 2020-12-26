@@ -180,7 +180,7 @@ function data()
 					if i == 1 then
 						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
 					end
-					if i == #params.terminals[t].trackEdgeLists then
+					if i == #params.terminals[t].platformEdgeLists then
 						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
 					end
 
