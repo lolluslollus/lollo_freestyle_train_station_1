@@ -33,7 +33,8 @@ local _eventNames = {
 }
 
 local _actions = {
-    -- LOLLO TODO try api.engine.util.proposal.makeProposalData()
+    -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
+    -- which has the same format as the result of api.cmd.make.buildProposal
     buildSnappyTracks = function(endEntities)
         -- LOLLO NOTE after building the station, never mind how well you placed it,
         -- its end nodes won't snap to the adjacent roads.
@@ -645,6 +646,7 @@ local _actions = {
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
+
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
@@ -1461,7 +1463,7 @@ function data()
                                     -- LOLLO TODO if any platform nodes are joints between more than 2 platform-tracks,
                                     -- we bar building two platform waypoints outside a junction.
                                     -- Or maybe, we could bar intersecting platform-tracks altogether:
-                                    -- they look ugly anyway. Maybe someone knows how to fix their looks? ask UG TODO
+                                    -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
 
                                     -- LOLLO TODO if two terminals are on two consecutive bits of platform, join them with a pedestrian lane, in the station.con
                                     -- or at least, allow doing that by hand
