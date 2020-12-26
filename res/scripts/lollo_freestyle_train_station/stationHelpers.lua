@@ -67,36 +67,36 @@ local helpers = {
             return {}
         end
 
-        local pos1 = con.params.terminals[nTerminal].trackEdgeLists[1].posTanX2[1][1]
-        local edgeFunds1 = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(pos1), 0.001, api.type.ComponentType.BASE_EDGE)
-        print('edgeFunds1 =') debugPrint(edgeFunds1)
-        local nodeFunds1 = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(pos1), 0.001, api.type.ComponentType.BASE_NODE)
-        print('nodeFunds1 =') debugPrint(nodeFunds1)
-        local node1Id = nil
-        for _, edgeId in pairs(edgeFunds1) do
+        local trackPos1 = con.params.terminals[nTerminal].trackEdgeLists[1].posTanX2[1][1]
+        local trackEdgeFunds1 = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(trackPos1), 0.001, api.type.ComponentType.BASE_EDGE)
+        print('trackEdgeFunds1 =') debugPrint(trackEdgeFunds1)
+        local trackNodeFunds1 = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(trackPos1), 0.001, api.type.ComponentType.BASE_NODE)
+        print('trackNodeFunds1 =') debugPrint(trackNodeFunds1)
+        local trackNode1Id = nil
+        for _, edgeId in pairs(trackEdgeFunds1) do
             if arrayUtils.arrayHasValue(con.frozenEdges, edgeId) then
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                for _, nodeId in pairs(nodeFunds1) do
+                for _, nodeId in pairs(trackNodeFunds1) do
                     if baseEdge.node0 == nodeId or baseEdge.node1 == nodeId then
-                        node1Id = nodeId
+                        trackNode1Id = nodeId
                         break
                     end
                 end
                 break
             end
         end
-        local posN = con.params.terminals[nTerminal].trackEdgeLists[#con.params.terminals[nTerminal].trackEdgeLists].posTanX2[2][1]
-        local edgeFundsN = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(posN), 0.001, api.type.ComponentType.BASE_EDGE)
-        print('edgeFundsN =') debugPrint(edgeFundsN)
-        local nodeFundsN = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(posN), 0.001, api.type.ComponentType.BASE_NODE)
-        print('nodeFundsN =') debugPrint(nodeFundsN)
-        local node2Id = nil
-        for _, edgeId in pairs(edgeFundsN) do
+        local trackPosN = con.params.terminals[nTerminal].trackEdgeLists[#con.params.terminals[nTerminal].trackEdgeLists].posTanX2[2][1]
+        local trackEdgeFundsN = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(trackPosN), 0.001, api.type.ComponentType.BASE_EDGE)
+        print('trackEdgeFundsN =') debugPrint(trackEdgeFundsN)
+        local trackNodeFundsN = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(trackPosN), 0.001, api.type.ComponentType.BASE_NODE)
+        print('trackNodeFundsN =') debugPrint(trackNodeFundsN)
+        local trackNode2Id = nil
+        for _, edgeId in pairs(trackEdgeFundsN) do
             if arrayUtils.arrayHasValue(con.frozenEdges, edgeId) then
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                for _, nodeId in pairs(nodeFundsN) do
+                for _, nodeId in pairs(trackNodeFundsN) do
                     if baseEdge.node0 == nodeId or baseEdge.node1 == nodeId then
-                        node2Id = nodeId
+                        trackNode2Id = nodeId
                         break
                     end
                 end
@@ -104,18 +104,70 @@ local helpers = {
             end
         end
 
-        if node1Id == nil then
+        if trackNode1Id == nil then
             print('WARNING: could not find node1Id in station construction')
             print('stationConstructionId =') debugPrint(stationConstructionId)
         end
-        if node2Id == nil then
+        if trackNode2Id == nil then
+            print('WARNING: could not find node2Id in station construction')
+            print('stationConstructionId =') debugPrint(stationConstructionId)
+        end
+
+        local platformPos1 = con.params.terminals[nTerminal].trackEdgeLists[1].posTanX2[1][1]
+        local platformEdgeFunds1 = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(platformPos1), 0.001, api.type.ComponentType.BASE_EDGE)
+        print('platformEdgeFunds1 =') debugPrint(platformEdgeFunds1)
+        local platformNodeFunds1 = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(platformPos1), 0.001, api.type.ComponentType.BASE_NODE)
+        print('platformNodeFunds1 =') debugPrint(platformNodeFunds1)
+        local platformNode1Id = nil
+        for _, edgeId in pairs(platformEdgeFunds1) do
+            if arrayUtils.arrayHasValue(con.frozenEdges, edgeId) then
+                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                for _, nodeId in pairs(platformNodeFunds1) do
+                    if baseEdge.node0 == nodeId or baseEdge.node1 == nodeId then
+                        platformNode1Id = nodeId
+                        break
+                    end
+                end
+                break
+            end
+        end
+        local platformPosN = con.params.terminals[nTerminal].trackEdgeLists[#con.params.terminals[nTerminal].trackEdgeLists].posTanX2[2][1]
+        local platformEdgeFundsN = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(platformPosN), 0.001, api.type.ComponentType.BASE_EDGE)
+        print('platformEdgeFundsN =') debugPrint(platformEdgeFundsN)
+        local platformNodeFundsN = edgeUtils.getNearestObjectIds(transfUtils.position2Transf(platformPosN), 0.001, api.type.ComponentType.BASE_NODE)
+        print('platformNodeFundsN =') debugPrint(platformNodeFundsN)
+        local platformNode2Id = nil
+        for _, edgeId in pairs(platformEdgeFundsN) do
+            if arrayUtils.arrayHasValue(con.frozenEdges, edgeId) then
+                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                for _, nodeId in pairs(platformNodeFundsN) do
+                    if baseEdge.node0 == nodeId or baseEdge.node1 == nodeId then
+                        platformNode2Id = nodeId
+                        break
+                    end
+                end
+                break
+            end
+        end
+
+        if platformNode1Id == nil then
+            print('WARNING: could not find node1Id in station construction')
+            print('stationConstructionId =') debugPrint(stationConstructionId)
+        end
+        if platformNode2Id == nil then
             print('WARNING: could not find node2Id in station construction')
             print('stationConstructionId =') debugPrint(stationConstructionId)
         end
 
         return {
-            node1Id = node1Id,
-            node2Id = node2Id,
+            platforms = {
+                node1Id = platformNode1Id,
+                node2Id = platformNode2Id,
+            },
+            tracks = {
+                node1Id = trackNode1Id,
+                node2Id = trackNode2Id,
+            }
         }
     end,
 
@@ -679,65 +731,124 @@ helpers.getStationEndEntitiesTyped = function(stationConstructionId)
 
     local result = {}
     for t = 1, #con.params.terminals do
-        local endNodeIds4T = helpers.getStationEndNodeIds(con, t, stationConstructionId)
-
-        -- I cannot clone these, for some reason: it dumps
-        local node1Position = edgeUtils.isValidAndExistingId(endNodeIds4T.node1Id)
-            and api.engine.getComponent(endNodeIds4T.node1Id, api.type.ComponentType.BASE_NODE).position
-            or nil
-        local node2Position = edgeUtils.isValidAndExistingId(endNodeIds4T.node2Id)
-            and api.engine.getComponent(endNodeIds4T.node2Id, api.type.ComponentType.BASE_NODE).position
-            or nil
-        result[t] = {
-            -- these are empty or nil if the station has been snapped to its neighbours
-            disjointNeighbourEdgeIds = {
-                edge1Ids = {},
-                edge2Ids = {}
-            },
-            -- same
-            disjointNeighbourNodeIds = {
-                node1Id = nil,
-                node2Id = nil,
-            },
-            stationEndNodeIds = {
-                node1Id = endNodeIds4T.node1Id,
-                node2Id = endNodeIds4T.node2Id,
-            },
-            stationEndNodePositions = {
-                node1 = node1Position ~= nil and { x = node1Position.x, y = node1Position.y, z = node1Position.z } or nil,
-                node2 = node2Position ~= nil and { x = node2Position.x, y = node2Position.y, z = node2Position.z } or nil,
-            }
+        local endNodeIds4T = {
+            helpers.getStationEndNodeIds(con, t, stationConstructionId),
         }
 
-        local nearbyNodeIds = edgeUtils.isValidAndExistingId(endNodeIds4T.node1Id)
+        -- I cannot clone these, for some reason: it dumps
+        local node1TrackPosition = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node1Id)
+            and api.engine.getComponent(endNodeIds4T.tracks.node1Id, api.type.ComponentType.BASE_NODE).position
+            or nil
+        local node2TrackPosition = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node2Id)
+            and api.engine.getComponent(endNodeIds4T.tracks.node2Id, api.type.ComponentType.BASE_NODE).position
+            or nil
+        local node1PlatformPosition = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node1Id)
+            and api.engine.getComponent(endNodeIds4T.platforms.node1Id, api.type.ComponentType.BASE_NODE).position
+            or nil
+        local node2PlatformPosition = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node2Id)
+            and api.engine.getComponent(endNodeIds4T.platforms.node2Id, api.type.ComponentType.BASE_NODE).position
+            or nil
+        result[t] = {
+            tracks = {
+                -- these are empty or nil if the station has been snapped to its neighbours
+                disjointNeighbourEdgeIds = {
+                    edge1Ids = {},
+                    edge2Ids = {}
+                },
+                -- same
+                disjointNeighbourNodeIds = {
+                    node1Id = nil,
+                    node2Id = nil,
+                },
+                stationEndNodeIds = {
+                    node1Id = endNodeIds4T.tracks.node1Id,
+                    node2Id = endNodeIds4T.tracks.node2Id,
+                },
+                stationEndNodePositions = {
+                    node1 = node1TrackPosition ~= nil and { x = node1TrackPosition.x, y = node1TrackPosition.y, z = node1TrackPosition.z } or nil,
+                    node2 = node2TrackPosition ~= nil and { x = node2TrackPosition.x, y = node2TrackPosition.y, z = node2TrackPosition.z } or nil,
+                }
+            },
+            platforms = {
+                -- these are empty or nil if the station has been snapped to its neighbours
+                disjointNeighbourEdgeIds = {
+                    edge1Ids = {},
+                    edge2Ids = {}
+                },
+                -- same
+                disjointNeighbourNodeIds = {
+                    node1Id = nil,
+                    node2Id = nil,
+                },
+                stationEndNodeIds = {
+                    node1Id = endNodeIds4T.platforms.node1Id,
+                    node2Id = endNodeIds4T.platforms.node2Id,
+                },
+                stationEndNodePositions = {
+                    node1 = node1PlatformPosition ~= nil and { x = node1PlatformPosition.x, y = node1PlatformPosition.y, z = node1PlatformPosition.z } or nil,
+                    node2 = node2PlatformPosition ~= nil and { x = node2PlatformPosition.x, y = node2PlatformPosition.y, z = node2PlatformPosition.z } or nil,
+                }
+            },
+        }
+
+        local nearbyNodeIds = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node1Id)
             and edgeUtils.getNearestObjectIds(
-                transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T.node1Id, api.type.ComponentType.BASE_NODE).position),
+                transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T.tracks.node1Id, api.type.ComponentType.BASE_NODE).position),
                 0.001,
                 api.type.ComponentType.BASE_NODE
             )
             or {}
         for _, nearbyNodeId in pairs(nearbyNodeIds) do
-            if edgeUtils.isValidAndExistingId(nearbyNodeId) and nearbyNodeId ~= endNodeIds4T.node1Id then
-                result[t].disjointNeighbourNodeIds.node1Id = nearbyNodeId
+            if edgeUtils.isValidAndExistingId(nearbyNodeId) and nearbyNodeId ~= endNodeIds4T.tracks.node1Id then
+                result[t].tracks.disjointNeighbourNodeIds.node1Id = nearbyNodeId
                 break
             end
         end
-        nearbyNodeIds = edgeUtils.isValidAndExistingId(endNodeIds4T.node2Id)
+        nearbyNodeIds = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node2Id)
             and edgeUtils.getNearestObjectIds(
-                transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T.node2Id, api.type.ComponentType.BASE_NODE).position),
+                transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T.tracks.node2Id, api.type.ComponentType.BASE_NODE).position),
                 0.001,
                 api.type.ComponentType.BASE_NODE
             )
             or {}
         for _, nearbyNodeId in pairs(nearbyNodeIds) do
-            if edgeUtils.isValidAndExistingId(nearbyNodeId) and nearbyNodeId ~= endNodeIds4T.node2Id then
-                result[t].disjointNeighbourNodeIds.node2Id = nearbyNodeId
+            if edgeUtils.isValidAndExistingId(nearbyNodeId) and nearbyNodeId ~= endNodeIds4T.tracks.node2Id then
+                result[t].tracks.disjointNeighbourNodeIds.node2Id = nearbyNodeId
                 break
             end
         end
 
-        result[t].disjointNeighbourEdgeIds.edge1Ids = edgeUtils.getConnectedEdgeIds({result[t].disjointNeighbourNodeIds.node1Id})
-        result[t].disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].disjointNeighbourNodeIds.node2Id})
+        nearbyNodeIds = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node1Id)
+        and edgeUtils.getNearestObjectIds(
+            transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T.platforms.node1Id, api.type.ComponentType.BASE_NODE).position),
+            0.001,
+            api.type.ComponentType.BASE_NODE
+        )
+        or {}
+        for _, nearbyNodeId in pairs(nearbyNodeIds) do
+            if edgeUtils.isValidAndExistingId(nearbyNodeId) and nearbyNodeId ~= endNodeIds4T.platforms.node1Id then
+                result[t].platforms.disjointNeighbourNodeIds.node1Id = nearbyNodeId
+                break
+            end
+        end
+        nearbyNodeIds = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node2Id)
+            and edgeUtils.getNearestObjectIds(
+                transfUtils.position2Transf(api.engine.getComponent(endNodeIds4T.platforms.node2Id, api.type.ComponentType.BASE_NODE).position),
+                0.001,
+                api.type.ComponentType.BASE_NODE
+            )
+            or {}
+        for _, nearbyNodeId in pairs(nearbyNodeIds) do
+            if edgeUtils.isValidAndExistingId(nearbyNodeId) and nearbyNodeId ~= endNodeIds4T.platforms.node2Id then
+                result[t].platforms.disjointNeighbourNodeIds.node2Id = nearbyNodeId
+                break
+            end
+        end
+
+        result[t].tracks.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node1Id})
+        result[t].tracks.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node2Id})
+        result[t].platforms.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node1Id})
+        result[t].platforms.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node2Id})
     end
 
     -- print('getStationEndEntitiesTyped result =') debugPrint(result)
