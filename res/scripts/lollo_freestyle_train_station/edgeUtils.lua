@@ -140,22 +140,22 @@ helper.getEdgeLength = function(edgeId)
     -- return tn.edges[1].geometry.length
 end
 
-helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, length)
+helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift021) --, length)
     -- these should be identical, but they are not really so, so we average them
     local length0 = helper.getVectorLength({
-        x = baseEdge.tangent0.x,
-        y = baseEdge.tangent0.y,
-        z = baseEdge.tangent0.z,
+        x = tangent0.x,
+        y = tangent0.y,
+        z = tangent0.z,
     })
     local length1 = helper.getVectorLength({
-        x = baseEdge.tangent1.x,
-        y = baseEdge.tangent1.y,
-        z = baseEdge.tangent1.z,
+        x = tangent1.x,
+        y = tangent1.y,
+        z = tangent1.z,
     })
     local length = (length0 + length1) * 0.5
     if type(length) ~= 'number' or length <= 0 then return nil end
 
-    -- print('_getNodeBetween starting, shift021 =', shift021, 'length =', length)
+    -- print('getNodeBetween starting, shift021 =', shift021, 'length =', length)
     -- print('baseEdge =') debugPrint(baseEdge)
     -- print('baseNode0 =') debugPrint(baseNode0)
     -- print('baseNode1 =') debugPrint(baseNode1)
@@ -164,8 +164,8 @@ helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, 
     -- a + b l1 + c l1^2 + d l1^3 = posX1
     -- b + 2 c l0 + 3 d l0^2 = tanX0 / length
     -- b + 2 c l1 + 3 d l1^2 = tanX1 / length
-    local aX = baseNode0.position.x
-    local bX = baseEdge.tangent0.x / length
+    local aX = position0.x
+    local bX = tangent0.x / length
     -- I am left with:
     -- a + b l1 + c l1^2 + d l1^3 = posX1
     -- b + 2 c l1 + 3 d l1^2 = tanX1 / length
@@ -184,36 +184,36 @@ helper._getNodeBetween = function(baseEdge, baseNode0, baseNode1, shift021) --, 
     -- d length^3 = tanX1 - 2 posX1 + 2 a + b length
     -- =>
     -- d = (tanX1 - 2 posX1 + 2 a + b length) / length^3
-    local dX = (baseEdge.tangent1.x - 2 * baseNode1.position.x + 2 * aX + bX * length) / length / length / length
+    local dX = (tangent1.x - 2 * position1.x + 2 * aX + bX * length) / length / length / length
     -- =>
     -- c length^2 + d length^3 = posX1 - a - b length
     -- =>
     -- c length^2 = posX1 - a - b length - d length^3
     -- =>
     -- c = posX1 / length^2 - a / length^2 - b / length - d length
-    local cX = (baseNode1.position.x - aX) / length / length - bX / length - dX * length
+    local cX = (position1.x - aX) / length / length - bX / length - dX * length
 
     local testX = aX + bX * length + cX * length * length + dX * length * length * length
-    -- print(testX, 'should be', baseNode1.position.x)
-    if not(helper.isNumVeryClose(testX, baseNode1.position.x)) then return nil end
+    -- print(testX, 'should be', position1.x)
+    if not(helper.isNumVeryClose(testX, position1.x)) then return nil end
 
-    local aY = baseNode0.position.y
-    local bY = baseEdge.tangent0.y / length
-    local dY = (baseEdge.tangent1.y - 2 * baseNode1.position.y + 2 * aY + bY * length) / length / length / length
-    local cY = (baseNode1.position.y - aY) / length / length - bY / length - dY * length
+    local aY = position0.y
+    local bY = tangent0.y / length
+    local dY = (tangent1.y - 2 * position1.y + 2 * aY + bY * length) / length / length / length
+    local cY = (position1.y - aY) / length / length - bY / length - dY * length
 
     local testY = aY + bY * length + cY * length * length + dY * length * length * length
-    -- print(testY, 'should be', baseNode1.position.y)
-    if not(helper.isNumVeryClose(testY, baseNode1.position.y)) then return nil end
+    -- print(testY, 'should be', position1.y)
+    if not(helper.isNumVeryClose(testY, position1.y)) then return nil end
 
-    local aZ = baseNode0.position.z
-    local bZ = baseEdge.tangent0.z / length
-    local dZ = (baseEdge.tangent1.z - 2 * baseNode1.position.z + 2 * aZ + bZ * length) / length / length / length
-    local cZ = (baseNode1.position.z - aZ) / length / length - bZ / length - dZ * length
+    local aZ = position0.z
+    local bZ = tangent0.z / length
+    local dZ = (tangent1.z - 2 * position1.z + 2 * aZ + bZ * length) / length / length / length
+    local cZ = (position1.z - aZ) / length / length - bZ / length - dZ * length
 
     local testZ = aZ + bZ * length + cZ * length * length + dZ * length * length * length
-    -- print(testZ, 'should be', baseNode1.position.z)
-    if not(helper.isNumVeryClose(testZ, baseNode1.position.z)) then return nil end
+    -- print(testZ, 'should be', position1.z)
+    if not(helper.isNumVeryClose(testZ, position1.z)) then return nil end
 
     local lMid = shift021 * length
     local result = {
@@ -249,7 +249,7 @@ helper.getNodeBetweenByPercentageShift = function(edgeId, shift021)
 
     -- if helper.getEdgeLength(edgeId) <= 0 then return nil end
 
-    return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, shift021)
+    return helper.getNodeBetween(baseNode0.position, baseNode1.position, baseEdge.tangent0, baseEdge.tangent1, shift021)
 end
 
 helper.getNodeBetweenByPosition = function(edgeId, position)
@@ -283,7 +283,7 @@ helper.getNodeBetweenByPosition = function(edgeId, position)
     -- local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
     -- if tn == nil then return nil end
 
-    return helper._getNodeBetween(baseEdge, baseNode0, baseNode1, length0 / (length0 + length1))
+    return helper.getNodeBetween(baseNode0.position, baseNode1.position, baseEdge.tangent0, baseEdge.tangent1, length0 / (length0 + length1))
 end
 
 helper.getNodeBetweenOLD = function(position0, tangent0, position1, tangent1, betweenPosition)
