@@ -182,4 +182,14 @@ utils.transf2Position = function(transf, xyzFormat)
     end
 end
 
+utils.oneTwoThree2XYZ = function(arr)
+    if type(arr) ~= 'table' and type(arr) ~= 'userdata' then return nil end
+
+    return {
+        x = arr[1] or arr.x,
+        y = arr[2] or arr.y,
+        z = arr[3] or arr.z,
+    }
+end
+
 return utils
