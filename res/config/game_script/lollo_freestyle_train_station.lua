@@ -994,12 +994,6 @@ function data()
                     args.splitTrackNode1Id,
                     args.splitTrackNode2Id
                 )
-                print('trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
-                if #trackEdgeIdsBetweenNodeIds == 0 then
-                    -- LOLLO TODO issue a warning and destroy something; but does this ever happen?
-                    print('WARNING: no track edges found')
-                    return
-                end
                 -- LOLLO NOTE I need this, or a station with only one track edge will dump with
                 -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                 if #trackEdgeIdsBetweenNodeIds == 1 then
@@ -1035,12 +1029,6 @@ function data()
                     args.splitPlatformNode1Id,
                     args.splitPlatformNode2Id
                 )
-                print('platformEdgeIdsBetweenNodeIds =') debugPrint(platformEdgeIdsBetweenNodeIds)
-                if #platformEdgeIdsBetweenNodeIds == 0 then
-                    -- LOLLO TODO issue a warning and destroy something; but does this ever happen?
-                    print('WARNING: no platform edges found')
-                    return
-                end
                 -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
                 -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                 -- You may leave this out if you lay down platform models instead of edges
@@ -1079,8 +1067,8 @@ function data()
                 print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
-                eventArgs.centreLanePositionsFine = stationHelpers.getCentreLanePositions(platformEdgeIdsBetweenNodeIds, 1)
-                eventArgs.centreLanePositions = stationHelpers.getCentreLanePositions(platformEdgeIdsBetweenNodeIds, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                eventArgs.centreLanePositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
+                eventArgs.centreLanePositions = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centreLanePositions, args.isCargo, - _constants.sideLaneShiftM)
                 eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centreLanePositions, args.isCargo, _constants.sideLaneShiftM)
                 eventArgs.crossConnectorPositions = stationHelpers.getCrossConnectors(eventArgs.leftLanePositions, eventArgs.centreLanePositions, eventArgs.rightLanePositions, args.isCargo)
@@ -1088,8 +1076,6 @@ function data()
                 -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
 				-- maybe even overground. For now, it looks unnecessary.
 
-                -- LOLLO TODO lay the platform in two different pieces and directions: the waiting areas will be screwed
-                if true then return end -- LOLLO TODO remove after testing
                 _actions.removeTracks(
                     platformEdgeIdsBetweenNodeIds,
                     trackEdgeIdsBetweenNodeIds,
@@ -1457,8 +1443,9 @@ function data()
                                     -- bar building or only build up to the node.
 
                                     -- LOLLO TODO if two terminals are on two consecutive bits of platform, join them with a pedestrian lane, in the station.con
+                                    -- or at least, allow doing that by hand
 
-                                    -- LOLLO TODO left and right lanes need the info if each posTanX2 ir flat, bridge or tunnel.
+                                    -- LOLLO TODO centre, left and right lanes need the info if each posTanX2 ir flat, bridge or tunnel.
 
                                     -- local platformWaypointTransf = transfUtilsUG.new(
                                     --     args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),

@@ -43,7 +43,6 @@ return {
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
 
-		-- if true then return end -- LOLLO TODO remove after testing
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
