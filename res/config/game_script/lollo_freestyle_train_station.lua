@@ -35,7 +35,6 @@ local _eventNames = {
 local _actions = {
     -- LOLLO TODO try api.engine.util.proposal.makeProposalData()
     buildSnappyTracks = function(endEntities)
-        -- LOLLO TODO platforms don't always snap
         -- LOLLO NOTE after building the station, never mind how well you placed it,
         -- its end nodes won't snap to the adjacent roads.
         -- AltGr + L will show a red dot, and here is the catch: there are indeed
