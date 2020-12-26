@@ -858,7 +858,7 @@ function data()
                 local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                 if not(node0) or not(node1) then return end
                 local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint1Id)
-                -- UG TODO see if the api can get the exact percentage shift
+                -- UG TODO see if the api can get the exact percentage shift.
                 local nodeBetween = edgeUtils.getNodeBetweenByPosition(
                     edgeId,
                     -- LOLLO NOTE position and transf are always very similar
@@ -1074,7 +1074,7 @@ function data()
                 eventArgs.crossConnectorPositions = stationHelpers.getCrossConnectors(eventArgs.leftLanePositions, eventArgs.centreLanePositions, eventArgs.rightLanePositions, args.isCargo)
 
                 -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
-				-- maybe even overground. For now, it looks unnecessary.
+				-- maybe even overground. For now, it looks unnecessary but keep it in mind.
 
                 _actions.removeTracks(
                     platformEdgeIdsBetweenNodeIds,
@@ -1440,13 +1440,16 @@ function data()
                                     _handleValidWaypointBuilt()
 
                                     -- LOLLO TODO if any platform nodes are joints between more than 2 platform-tracks,
-                                    -- bar building or only build up to the node.
+                                    -- we bar building two platform waypoints outside a junction.
+                                    -- Or maybe, we could bar intersecting platform-tracks altogether:
+                                    -- they look ugly anyway. Maybe someone knows how to fix their looks? ask UG TODO
 
                                     -- LOLLO TODO if two terminals are on two consecutive bits of platform, join them with a pedestrian lane, in the station.con
                                     -- or at least, allow doing that by hand
 
-                                    -- LOLLO TODO centre, left and right lanes need the info if each posTanX2 ir flat, bridge or tunnel.
+                                    -- LOLLO TODO centre, left and right lanes need the info if each posTanX2 is flat, bridge or tunnel.
 
+                                    -- LOLLO NOTE useful to remember
                                     -- local platformWaypointTransf = transfUtilsUG.new(
                                     --     args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),
                                     --     args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(1),
@@ -1518,10 +1521,10 @@ function data()
                 _myErrorHandler
             )
         end,
-        update = function()
-        end,
-        guiUpdate = function()
-        end,
+        -- update = function()
+        -- end,
+        -- guiUpdate = function()
+        -- end,
         -- save = function()
         --     -- only fires when the worker thread changes the state
         --     if not state then state = {} end

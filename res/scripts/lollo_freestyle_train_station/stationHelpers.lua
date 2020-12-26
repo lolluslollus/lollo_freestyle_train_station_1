@@ -299,15 +299,15 @@ local helpers = {
         local results = {}
         for _, pel in pairs(platformEdgeLists) do
             local edgeLength = (edgeUtils.getVectorLength(pel.posTanX2[1][2]) + edgeUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
-            print('edgeLength =') debugPrint(edgeLength)
+            -- print('edgeLength =') debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
-            print('nModelsInEdge =') debugPrint(nModelsInEdge)
+            -- print('nModelsInEdge =') debugPrint(nModelsInEdge)
 
             local edgeResults = {}
             local lengthCovered = 0
             local previousNodeBetween = nil
             for i = 1, nModelsInEdge do
-                print('i == ', i)
+                -- print('i == ', i)
                 local nodeBetween = edgeUtils.getNodeBetween(
                     transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][1]),
                     transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][1]),
@@ -830,6 +830,12 @@ helpers.getTrackEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
                 return 0
             end
             -- we don't deal with intersections for now
+            -- LOLLO NOTE even if we did, the game will have trouble when we bulldoze the tracks,
+            -- if some of them cross an intersection
+            if #adjacentEdgeIds > 2 then
+                print('nine and a half')
+                return 0
+            end
             for _, edgeId in pairs(adjacentEdgeIds) do -- cannot use adjacentEdgeIds[index] here, it's fucking userdata
                 print('ten')
                 if not(arrayUtils.arrayHasValue(edgeIds, edgeId)) and _isTrackEdgesSameTypeAs2(edgeId) then
@@ -878,6 +884,7 @@ helpers.getTrackEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
         return arrayUtils.getReversed(node0Results)
     end
 
+    -- nothing good found, try in the opposite direction
     local node1Results = _getEdgesBetween1and2('node1')
     print('node1results =') debugPrint(node1Results)
     if node1Results then return node1Results end
