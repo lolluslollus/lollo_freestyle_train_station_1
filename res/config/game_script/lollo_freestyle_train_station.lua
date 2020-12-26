@@ -33,6 +33,7 @@ local _eventNames = {
 }
 
 local _actions = {
+    -- LOLLO TODO try api.engine.util.proposal.makeProposalData()
     buildSnappyTracks = function(endEntities)
         -- LOLLO NOTE after building the station, never mind how well you placed it,
         -- its end nodes won't snap to the adjacent roads.
@@ -430,6 +431,12 @@ local _actions = {
 
         for _, trackEdgeList in pairs(trackEdgeLists) do
             _addSegment(trackEdgeList)
+        end
+
+        if type(platformEdgeLists) == 'table' then
+            for _, platformEdgeList in pairs(platformEdgeLists) do
+                _addSegment(platformEdgeList)
+            end
         end
 
         -- print('rebuildTracks proposal =') debugPrint(proposal)
@@ -1108,7 +1115,7 @@ function data()
                 end
                 _actions.rebuildTracks(
                     args.removedTerminal.trackEdgeLists,
-                    nil,
+                    args.removedTerminal.platformEdgeLists,
                     stationHelpers.getBulldozedStationNeighbourNodeIds(args.endEntities),
                     args.stationConstructionId,
                     _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED

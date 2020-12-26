@@ -177,6 +177,13 @@ function data()
 						type = 'TRACK'
 					}
 
+					if i == 1 then
+						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
+					end
+					if i == #params.terminals[t].trackEdgeLists then
+						newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
+					end
+
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
 				-- this works, too, as an alternative.
