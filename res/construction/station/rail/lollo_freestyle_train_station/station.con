@@ -198,7 +198,10 @@ function data()
 				-- end
 
 				-- add waiting areas and lanes
-				-- LOLLO TODO add cargo platform-tracks in different widths (5, 10, 15), with extra wait areas
+				-- LOLLO TODO add cargo platform-tracks in different widths (5, 10, 15), with extra wait areas.
+				-- Tried that, they don't join seamlessly. Instead, we only use 5m areas for all,
+				-- and add new modules for extra cargo space, parallel to cargo areas
+				-- and maybe also to passenger areas.
 				if isCargoTerminal then
 					for i = 1, #params.terminals[t].centreLanePositions do
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centreLanePositions[i].posTanX2, inverseMainTransf)
