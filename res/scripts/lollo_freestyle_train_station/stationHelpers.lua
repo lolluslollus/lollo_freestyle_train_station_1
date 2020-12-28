@@ -1126,4 +1126,41 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
     return {}
 end
 
+helpers.replaceEdgeWithSameAddingObject = function(oldEdgeId, objectIdToAdd)
+    -- this function is only for testing
+    print('replaceEdgeWithSameRemovingObject starting')
+    if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
+    print('replaceEdgeWithSameRemovingObject found, the old edge id is valid')
+    -- replaces a track segment with an identical one, without destroying the buildings
+    local proposal = helpers.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId)
+    if not(proposal) then return end
+    print('replaceEdgeWithSameRemovingObject likes the proposal')
+    -- debugPrint(proposal)
+
+    local eo = api.type.SimpleStreetProposal.EdgeObject.new()
+    eo.left = true
+    eo.model = objectIdToAdd or "lollo_freestyle_train_station/railroad/passenger_platform_waypoint.mdl"
+    -- eo.playerEntity = game.interface.getPlayer()
+    eo.oneWay = false
+    eo.param = 0.5
+    eo.edgeEntity = -1
+    eo.name = "MY Beautiful Signal"
+    proposal.streetProposal.edgeObjectsToAdd[#proposal.streetProposal.edgeObjectsToAdd+1] = eo
+
+    local context = api.type.Context:new()
+    -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+    context.cleanupStreetGraph = true -- default is false
+    -- context.gatherBuildings = true  -- default is false
+    -- context.gatherFields = true -- default is true
+    context.player = api.engine.util.getPlayer() -- default is -1
+
+    api.cmd.sendCommand(
+        api.cmd.make.buildProposal(proposal, context, true),
+        function(result, success)
+            -- print('LOLLO replaceEdgeWithSameRemovingObject result = ') debugPrint(result)
+            print('LOLLO replaceEdgeWithSameRemovingObject success = ') debugPrint(success)
+        end
+    )
+end
+
 return helpers

@@ -31,7 +31,7 @@ local _eventNames = {
     TRACK_WAYPOINT_2_SPLIT_REQUESTED = 'trackWaypoint2SplitRequested',
     WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
 }
-
+-- LOLLO TODO make a very short station: it will crash
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
@@ -802,6 +802,7 @@ local _actions = {
                 -- print('LOLLO freestyle train station callback returned success = ')
                 print('command callback firing for split, success =', success)
                 if success and successEventName ~= nil then
+                    print('successEventName =') debugPrint(successEventName)
                     -- UG TODO this should come from UG!
                     -- try reading the node ids from the added edges instead.
                     -- no good, there may be a new edge using an old node!
@@ -839,6 +840,7 @@ local _actions = {
                     if not(stringUtils.isNullOrEmptyString(newArgName)) then
                         eventArgs[newArgName] = addedNodeIds[1]
                     end
+                    -- print('sending out eventArgs =') debugPrint(eventArgs)
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -1002,13 +1004,17 @@ function data()
                     'splitPlatformNode2Id'
                 )
             elseif name == _eventNames.TRACK_BULLDOZE_REQUESTED then
-                if not(edgeUtils.isValidAndExistingId(args.splitPlatformNode1Id))
+                if args == nil
+                or not(edgeUtils.isValidAndExistingId(args.splitPlatformNode1Id))
                 or not(edgeUtils.isValidAndExistingId(args.splitPlatformNode2Id))
                 or not(edgeUtils.isValidAndExistingId(args.splitTrackNode1Id))
                 or not(edgeUtils.isValidAndExistingId(args.splitTrackNode2Id))
                 then
-                    print('WARNING: some data is missing or invalid. args.splitTrackNode1Id =') debugPrint(args.splitTrackNode1Id)
-                    print('args.splitTrackNode2Id =') debugPrint(args.splitTrackNode2Id)
+                    if args == nil then print('args is NIL')
+                    else
+                        print('WARNING: some data is missing or invalid. args.splitTrackNode1Id =') debugPrint(args.splitTrackNode1Id)
+                        print('args.splitTrackNode2Id =') debugPrint(args.splitTrackNode2Id)
+                    end
                     return
                 end
 
@@ -1020,6 +1026,7 @@ function data()
                 -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                 if #trackEdgeIdsBetweenNodeIds == 1 then
                     print('only one track edge, going to split it')
+                    -- LOLLO TODO make a very short station: it will split successfully then crash
                     local edgeId = trackEdgeIdsBetweenNodeIds[1]
                     if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
 
@@ -1031,6 +1038,7 @@ function data()
                     if not(node0) or not(node1) then return end
 
                     local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, 0.5)
+                    print('nodeBetween =') debugPrint(nodeBetween)
                     _actions.splitEdgeRemovingObject(
                         edgeId,
                         node0.position,
