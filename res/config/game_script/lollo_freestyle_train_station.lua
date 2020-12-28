@@ -20,7 +20,9 @@ local _eventId = '__lolloFreestyleTrainStation__'
 local _eventNames = {
     BUILD_SNAPPY_TRACKS_REQUESTED = 'buildSnappyTracksRequested',
     BUILD_STATION_REQUESTED = 'buildStationRequested',
+    BULLDOZE_MARKER_REQUESTED = 'bulldozeMarkerRequested',
     BULLDOZE_STATION_REQUESTED = 'bulldozeStationRequested',
+    PLATFORM_MARKER_BUILT = 'platformMarkerBuilt',
     PLATFORM_WAYPOINT_1_SPLIT_REQUESTED = 'platformWaypoint1SplitRequested',
     PLATFORM_WAYPOINT_2_SPLIT_REQUESTED = 'platformWaypoint2SplitRequested',
     REBUILD_ALL_TRACKS_REQUESTED = 'rebuildAllTracksRequested',
@@ -35,6 +37,35 @@ local _eventNames = {
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
+    bulldozeMarker = function(conId)
+        if not(edgeUtils.isValidAndExistingId(conId)) then return end
+
+        -- local oldCon = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+        -- print('oldCon =') debugPrint(oldCon)
+        -- if not(oldCon) then return end
+
+        local proposal = api.type.SimpleProposal.new()
+        -- LOLLO NOTE there are asymmetries how different tables are handled.
+        -- This one requires this system, UG says they will document it or amend it.
+        proposal.constructionsToRemove = { conId }
+        -- proposal.constructionsToRemove[1] = constructionId -- fails to add
+        -- proposal.constructionsToRemove:add(constructionId) -- fails to add
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        -- context.player = api.engine.util.getPlayer() -- default is -1
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                print('LOLLO bulldozeMarker success = ', success)
+                -- print('LOLLO bulldozeStation result = ') debugPrint(result)
+            end
+        )
+    end,
+
     buildSnappyTracks = function(endEntities)
         -- LOLLO NOTE after building the station, never mind how well you placed it,
         -- its end nodes won't snap to the adjacent roads.
@@ -487,9 +518,9 @@ local _actions = {
 
         if not(edgeUtils.isValidAndExistingId(constructionId)) then return end
 
-        local oldCon = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+        -- local oldCon = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
         -- print('oldCon =') debugPrint(oldCon)
-        if not(oldCon) or not(oldCon.params) then return end
+        -- if not(oldCon) or not(oldCon.params) then return end
 
         local proposal = api.type.SimpleProposal.new()
         -- LOLLO NOTE there are asymmetries how different tables are handled.
@@ -853,8 +884,12 @@ local _actions = {
     end,
 }
 
-local function _isBuildingStation(param)
-    return stationHelpers.isBuildingConstructionWithFileName(param, _constants.stationConFileNameLong)
+-- local function _isBuildingPlatformMarker(args)
+--     return stationHelpers.isBuildingConstructionWithFileName(args, _constants.platformMarkerConName)
+-- end
+
+local function _getNewConstructionTransf(args)
+    return stationHelpers.getNewConstructionTransf(args, _constants.platformMarkerConName)
 end
 
 function data()
@@ -873,7 +908,9 @@ function data()
             -- if you remove it, it won't crash.
             -- debugPrint(args)
 
-            if name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
+            if name == _eventNames.BULLDOZE_MARKER_REQUESTED then
+                _actions.bulldozeMarker(args.platformMarkerConstructionEntityId)
+            elseif name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
                 -- game.interface.bulldoze(args.waypointId) -- dumps
                 _actions.replaceEdgeWithSameRemovingObject(args.edgeId, args.waypointId)
             elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
@@ -1281,6 +1318,61 @@ function data()
                                 else
                                     print('bulldozing something else than', constructionDataBak.constructionId)
                                 end
+                            end
+                        elseif id == 'constructionBuilder' then
+                            if not args.result or not args.result[1] then return end
+
+                            -- print('args =') debugPrint(args)
+                            local conTransf = _getNewConstructionTransf(args)
+                            if conTransf then
+                                print('conTransf =') debugPrint(conTransf)
+                                local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
+                                print('nearestStationIds =') debugPrint(nearestStationIds)
+                                local nearestStationGroupIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION_GROUP)
+                                print('nearestStationGroupIds =') debugPrint(nearestStationGroupIds)
+                                local nearestConstructionIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.CONSTRUCTION)
+                                print('nearestConstructionIds =') debugPrint(nearestConstructionIds)
+                                -- local nearestEdgeIds = edgeUtils.getNearbyObjectIds(conTransf, 0.001, api.type.ComponentType.BASE_EDGE)
+                                local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf)
+                                print('nearestEdgeId =') debugPrint(nearestEdgeId)
+                                local constructionEntityId = args.result[1]
+                                print('constructionEntityId =') debugPrint(constructionEntityId)
+
+                                local stationData = stationHelpers.getStationData(nearestConstructionIds, nearestEdgeId)
+                                print('platformData =') debugPrint(stationData)
+                                -- LOLLO TODO reject the marker if it falls on a platform, whose waiting area on this side is already in use
+                                -- on a station, use it for joining
+                                if stationData then
+                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                        string.sub(debug.getinfo(1, 'S').source, 1),
+                                        _eventId,
+                                        _eventNames.PLATFORM_MARKER_BUILT,
+                                        {
+                                            platformMarkerConstructionEntityId = constructionEntityId,
+                                            join2StationId = stationData.stationConstructionId,
+                                            nTerminal = stationData.nTerminal
+                                        }
+                                    ))
+                                    return
+                                end
+
+                                local platformData = stationHelpers.getPlatformData(nearestEdgeId)
+                                print('platformData') debugPrint(platformData)
+
+                                -- not on a station, is it on a free platform-track?
+                                if platformData then
+                                    -- LOLLO TODO behave like the waypoint. Remember, this is going to replace waypoints.
+                                    return
+                                end
+
+                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                        string.sub(debug.getinfo(1, 'S').source, 1),
+                                        _eventId,
+                                        _eventNames.BULLDOZE_MARKER_REQUESTED,
+                                        {
+                                            platformMarkerConstructionEntityId = constructionEntityId,
+                                        }
+                                    ))
                             end
                         elseif id == 'streetTerminalBuilder' then
                             -- waypoint, traffic light, my own waypoints built

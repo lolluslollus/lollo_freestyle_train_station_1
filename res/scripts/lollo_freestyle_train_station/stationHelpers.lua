@@ -3,6 +3,7 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require('transf')
 
 local _getParallelSideways = function(posTanX2, sideShift)
     local result = {
@@ -601,6 +602,27 @@ local helpers = {
         return false
     end,
 
+    getNewConstructionTransf = function(args, fileName)
+        local toAdd =
+            type(args) == 'table' and type(args.proposal) == 'userdata' and type(args.proposal.toAdd) == 'userdata' and args.proposal.toAdd
+
+        if toAdd and #toAdd > 0 then
+            for i = 1, #toAdd do
+                if toAdd[i].fileName == fileName then
+                    local apiTransf = toAdd[i].transf
+                    return transfUtilsUG.new(
+                        apiTransf:cols(0),
+                        apiTransf:cols(1),
+                        apiTransf:cols(2),
+                        apiTransf:cols(3)
+                    )
+                end
+            end
+        end
+
+        return false
+    end,
+
     getProposal2ReplaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
         -- replaces a track segment with an identical one, without destroying the buildings
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return false end
@@ -1161,6 +1183,69 @@ helpers.replaceEdgeWithSameAddingObject = function(oldEdgeId, objectIdToAdd)
             print('LOLLO replaceEdgeWithSameRemovingObject success = ') debugPrint(success)
         end
     )
+end
+
+helpers.getStationData = function(nearestConstructionIds, nearestEdgeId)
+    for _, conId in pairs(nearestConstructionIds) do
+        local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+        if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileNameLong then
+            local params = arrayUtils.cloneDeepOmittingFields(con.params, nil, true)
+            -- for _, edgeId in pairs(nearestEdgeIds) do
+            local edgeId = nearestEdgeId
+                if arrayUtils.arrayHasValue(con.frozenEdges, edgeId) then
+                    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                    local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                    if trackUtils.isPlatform(baseEdgeTrack.trackType) then
+                        local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+                        local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+                        -- the marker was plopped on a station platform: find the terminal or leave
+                        for t = 1, #con.params.terminals do
+                            for _, pel in pairs(con.params.terminals[t].platformEdgeLists) do
+                                if (pel.posTanX2[1][1][1] == baseNode0.position.x
+                                and pel.posTanX2[1][1][2] == baseNode0.position.y
+                                and pel.posTanX2[1][1][3] == baseNode0.position.z
+                                and pel.posTanX2[2][1][1] == baseNode1.position.x
+                                and pel.posTanX2[2][1][2] == baseNode1.position.y
+                                and pel.posTanX2[2][1][3] == baseNode1.position.z)
+                                or
+                                (pel.posTanX2[1][1][1] == baseNode1.position.x
+                                and pel.posTanX2[1][1][2] == baseNode1.position.y
+                                and pel.posTanX2[1][1][3] == baseNode1.position.z
+                                and pel.posTanX2[2][1][1] == baseNode0.position.x
+                                and pel.posTanX2[2][1][2] == baseNode0.position.y
+                                and pel.posTanX2[2][1][3] == baseNode0.position.z)
+                                then
+                                    return {
+                                        stationConstructionId = conId,
+                                        nTerminal = t
+                                    }
+                                end
+                            end
+                        end
+                    end
+                end
+            -- end
+        end
+    end
+
+    return false
+end
+
+helpers.getPlatformData = function(nearestEdgeIds)
+    -- for _, edgeId in pairs(nearestEdgeIds) do
+        local edgeId = nearestEdgeIds
+        if edgeUtils.isValidAndExistingId(edgeId) then
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+            local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+            if trackUtils.isPlatform(baseEdgeTrack.trackType) then
+                return {
+                    edgeId = edgeId
+                }
+            end
+        end
+    -- end
+
+    return false
 end
 
 return helpers
