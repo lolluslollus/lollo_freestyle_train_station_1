@@ -1112,12 +1112,13 @@ function data()
                 -- eventArgs.centrePlatformPositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
                 eventArgs.centrePlatformPositions = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.centreTrackPositions = stationHelpers.getCentreLanePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+
+                local trackTypeId = eventArgs.centrePlatformPositions[1].trackType
+                -- print('trackTypeId =') debugPrint(trackTypeId)
+                local trackTypeProperties = api.res.trackTypeRep.get(trackTypeId)
+                -- print('trackTypeProperties =') debugPrint(trackTypeProperties)
+                local trackDistance = trackTypeProperties.trackDistance
                 if args.isCargo then
-                    local trackTypeId = eventArgs.centrePlatformPositions[1].trackType
-                    -- print('trackTypeId =') debugPrint(trackTypeId)
-                    local trackTypeProperties = api.res.trackTypeRep.get(trackTypeId)
-                    -- print('trackTypeProperties =') debugPrint(trackTypeProperties)
-                    local trackDistance = trackTypeProperties.trackDistance
                     if trackDistance <= 5 then
                         eventArgs.cargoWaitingAreas = {
                             eventArgs.centrePlatformPositions
@@ -1147,8 +1148,8 @@ function data()
                     eventArgs.crossConnectorPositions = {}
                     eventArgs.tracksidePositionsFine = {}
                 else
-                    eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - _constants.passengerPlatformWidth * 0.4)
-                    eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, _constants.passengerPlatformWidth * 0.4)
+                    eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - trackDistance * 0.4)
+                    eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, trackDistance * 0.4)
 
                     -- LOLLO TODO this estimator is still buggy, fix it
                     local midLeftPosTanX2 = eventArgs.leftLanePositions[math.ceil(#eventArgs.leftLanePositions * 0.5)].posTanX2
@@ -1167,8 +1168,8 @@ function data()
                     local centrePlatformPositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
                     -- print('centrePlatformPositionsFine =') debugPrint(centrePlatformPositionsFine)
                     eventArgs.tracksidePositionsFine = eventArgs.isTrackOnPlatformLeft
-                        and stationHelpers.getShiftedLanePositions(centrePlatformPositionsFine, - _constants.passengerPlatformWidth * 0.4)
-                        or stationHelpers.getShiftedLanePositions(centrePlatformPositionsFine, _constants.passengerPlatformWidth * 0.4)
+                        and stationHelpers.getShiftedLanePositions(centrePlatformPositionsFine, - trackDistance * 0.4)
+                        or stationHelpers.getShiftedLanePositions(centrePlatformPositionsFine, trackDistance * 0.4)
                     -- print('eventArgs.tracksidePositionsFine =') debugPrint(eventArgs.tracksidePositionsFine)
                     eventArgs.cargoWaitingAreas = {}
                 end

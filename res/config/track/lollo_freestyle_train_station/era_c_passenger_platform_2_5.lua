@@ -3,8 +3,8 @@ function data()
 
 	local t = { }
 
-	t.name = _("PassengerPlatform2_5TracksName")
-	t.desc = _("PassengerPlatform2_5TracksDesc")
+	t.name = _("PassengerPlatform2_5MTracksName")
+	t.desc = _("PassengerPlatform2_5MTracksDesc")
 	t.categories  = { _constants.passengerPlatformTracksCategory }
 
 	t.yearFrom = 0
