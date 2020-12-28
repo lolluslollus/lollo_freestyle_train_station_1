@@ -1,4 +1,5 @@
 function data()
+	-- LOLLO TODO remove this file when done testing
 	local _constants = require('lollo_freestyle_train_station.constants')
 
 	local t = { }
