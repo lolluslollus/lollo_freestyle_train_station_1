@@ -31,7 +31,7 @@ local _eventNames = {
     TRACK_WAYPOINT_2_SPLIT_REQUESTED = 'trackWaypoint2SplitRequested',
     WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
 }
--- LOLLO TODO make a very short station: it will crash
+-- LOLLO TODO make a very short station: it will crash. Newly, it crashes when calling game.interface.getEntity(stationId).
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
