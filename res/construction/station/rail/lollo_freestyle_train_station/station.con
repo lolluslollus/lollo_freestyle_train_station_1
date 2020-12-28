@@ -202,6 +202,9 @@ function data()
 				-- Tried that, they don't join seamlessly. Instead, we only use 5m areas for all,
 				-- and add new modules for extra cargo space, parallel to cargo areas
 				-- and maybe also to passenger areas.
+				-- easier to place, we add more platform-tracks, initially only for cargo.
+				-- This means, we must change the data structure to accommodate an array of platform-tracks for each terminal.
+				-- We might add the same for passengers in future.
 				if isCargoTerminal then
 					for i = 1, #params.terminals[t].centreLanePositions do
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centreLanePositions[i].posTanX2, inverseMainTransf)
@@ -213,6 +216,8 @@ function data()
 						}
 					end
 				else
+					-- LOLLO TODO passenger tracks must be able to share the same platform.
+					-- for each terminal, the platform list will contain either a list like today, or a reference to another terminal.
 					for i = 1, #params.terminals[t].centreLanePositions do
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centreLanePositions[i].posTanX2, inverseMainTransf)
@@ -280,6 +285,7 @@ function data()
 				-- LOLLO TODO add module type: stairs
 
 				local _addTerminal = function()
+					-- LOLLO TODO use the centre track positions instead
 					local i = math.ceil(#params.terminals[t].centreLanePositions * 0.5)
 					local wap = params.terminals[t].centreLanePositions[i]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
@@ -394,6 +400,7 @@ function data()
 					table.insert(result.stations[stationIndex].terminals, t - 1)
 				end
 
+				-- LOLLO TODO also link adjacent (== close enough) passenger platforms
 				local _linkUnderpasses = function()
 					-- link the underpasses along terminals, underground
 					for t = 1, #params.terminals do
