@@ -1150,6 +1150,7 @@ function data()
                     eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - _constants.passengerPlatformWidth * 0.4)
                     eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, _constants.passengerPlatformWidth * 0.4)
 
+                    -- LOLLO TODO this estimator is still buggy, fix it
                     local midLeftPosTanX2 = eventArgs.leftLanePositions[math.ceil(#eventArgs.leftLanePositions * 0.5)].posTanX2
                     local midRightPosTanX2 = eventArgs.rightLanePositions[math.ceil(#eventArgs.rightLanePositions * 0.5)].posTanX2
                     local midCentreTrackPosTanX2 = eventArgs.centrePlatformPositions[math.ceil(#eventArgs.centrePlatformPositions * 0.5)].posTanX2
