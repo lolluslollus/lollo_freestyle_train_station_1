@@ -1,6 +1,6 @@
 function data()
 	return {
-		name = _("Platform-Tracks"),
+		name = _("Cargo-Platform-Tracks"),
 		order = 99,
 	}
 end

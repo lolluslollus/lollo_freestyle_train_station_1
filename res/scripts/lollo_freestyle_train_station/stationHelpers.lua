@@ -328,6 +328,7 @@ local helpers = {
                     local lengthFactor = nodeBetween.length0 - lengthCovered
                     if i == 1 then
                         edgeResults[#edgeResults+1] = {
+                            catenary = pel.catenary,
                             posTanX2 = {
                                 {
                                     {
@@ -353,10 +354,15 @@ local helpers = {
                                         nodeBetween.tangent.z * lengthFactor,
                                     }
                                 },
-                            }
+                            },
+                            trackType = pel.trackType,
+                            trackTypeName = pel.trackTypeName,
+                            type = pel.type,
+                            typeIndex = pel.typeIndex
                         }
                     elseif i == nModelsInEdge then
                         edgeResults[#edgeResults+1] = {
+                            catenary = pel.catenary,
                             posTanX2 = {
                                 {
                                     {
@@ -382,10 +388,15 @@ local helpers = {
                                         pel.posTanX2[2][2][3] * lengthFactor / edgeLength,
                                     }
                                 },
-                            }
+                            },
+                            trackType = pel.trackType,
+                            trackTypeName = pel.trackTypeName,
+                            type = pel.type,
+                            typeIndex = pel.typeIndex
                         }
                     else
                         edgeResults[#edgeResults+1] = {
+                            catenary = pel.catenary,
                             posTanX2 = {
                                 {
                                     {
@@ -411,7 +422,11 @@ local helpers = {
                                         nodeBetween.tangent.z * lengthFactor,
                                     }
                                 },
-                            }
+                            },
+                            trackType = pel.trackType,
+                            trackTypeName = pel.trackTypeName,
+                            type = pel.type,
+                            typeIndex = pel.typeIndex
                         }
                     end
                 end
@@ -431,7 +446,12 @@ local helpers = {
     getShiftedLanePositions = function(edgeLists, sideShift)
         local results = {
             {
-                posTanX2 = _getParallelSideways(edgeLists[1].posTanX2, sideShift)
+                catenary = edgeLists[1].catenary,
+                posTanX2 = _getParallelSideways(edgeLists[1].posTanX2, sideShift),
+                trackType = edgeLists[1].trackType,
+                trackTypeName = edgeLists[1].trackTypeName,
+                type = edgeLists[1].type,
+                typeIndex = edgeLists[1].typeIndex
             }
         }
         local previousPosTanX2 = results[1].posTanX2
@@ -439,7 +459,12 @@ local helpers = {
             local currentPosTanX2 = _getParallelSideways(edgeLists[i].posTanX2, sideShift)
             currentPosTanX2[1][1] = previousPosTanX2[2][1]
             results[#results+1] = {
-                posTanX2 = currentPosTanX2
+                catenary = edgeLists[i].catenary,
+                posTanX2 = currentPosTanX2,
+                trackType = edgeLists[i].trackType,
+                trackTypeName = edgeLists[i].trackTypeName,
+                type = edgeLists[i].type,
+                typeIndex = edgeLists[i].typeIndex
             }
             previousPosTanX2 = currentPosTanX2
         end
@@ -1036,12 +1061,6 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
             print('ELEVEN')
             table.remove(trackEdgeIdsBetweenEdgeIds, 1)
             print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
-        -- elseif #trackEdgeIdsBetweenEdgeIds > 1
-        -- and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[1])
-        -- and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[2]) then
-        --     print('ELEVEN HALF')
-        --     table.remove(trackEdgeIdsBetweenEdgeIds, 1)
-        --     print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
         else
             print('TWELVE')
             isExit = true
@@ -1050,17 +1069,11 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     isExit = false
     while not(isExit) do
         if #trackEdgeIdsBetweenEdgeIds > 1
-        and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
-        and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
-            print('THIRTEEN')
+        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
+        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
+            print('THIRTEEN HALF')
             table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
             print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
-        -- elseif #trackEdgeIdsBetweenEdgeIds > 1
-        -- and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
-        -- and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
-        --     print('THIRTEEN HALF')
-        --     table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
-        --     print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
         else
             print('FOURTEEN')
             isExit = true

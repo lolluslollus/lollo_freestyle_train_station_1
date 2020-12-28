@@ -1,7 +1,8 @@
 local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 
 local constants = {
-    platformTracksCategory = 'platform-tracks',
+    cargoPlatformTracksCategory = 'cargo-platform-tracks',
+    passengerPlatformTracksCategory = 'passenger-platform-tracks',
     passengerPlatformHeight = 0.6,
     passengerPlatformWidth = 2.5,
     maxCargoWaitingAreaEdgeLength = 9,
@@ -28,8 +29,7 @@ local constants = {
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
     passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module',
     trackWaypointModelId = 'lollo_freestyle_train_station/railroad/track_waypoint.mdl',
-    cargoPlatformWaypointModelId = 'lollo_freestyle_train_station/railroad/cargo_platform_waypoint.mdl',
-    passengerPlatformWaypointModelId = 'lollo_freestyle_train_station/railroad/passenger_platform_waypoint.mdl',
+    platformWaypointModelId = 'lollo_freestyle_train_station/railroad/platform_waypoint.mdl',
     cargoWaitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
     passengerWaitingAreaModelId = 'lollo_freestyle_train_station/passenger_waiting_area.mdl',
     passengerLaneUnderpassModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl',

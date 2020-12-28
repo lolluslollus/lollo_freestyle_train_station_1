@@ -3,15 +3,15 @@ function data()
 
 	local t = { }
 
-	t.name = _("PassengerPlatform2_5TracksName")
-	t.desc = _("PassengerPlatform2_5TracksDesc")
-	t.categories  = { _constants.passengerPlatformTracksCategory }
+	t.name = _("CargoPlatform20MTracksName")
+	t.desc = _("CargoPlatform20MTracksDesc")
+	t.categories  = { _constants.cargoPlatformTracksCategory }
 
 	t.yearFrom = 0
 	t.yearTo = 0
 
-	t.shapeWidth = 2.0 -- was 4.0
-	t.shapeStep = 4.0 -- was 4, you can use 2 for smoother bends
+	t.shapeWidth = 16.0 -- was 4.0
+	t.shapeStep = 4.0
 	t.shapeSleeperStep = 0.2 -- 8.0 / 12.0
 
 	t.ballastHeight = .3
@@ -19,7 +19,7 @@ function data()
 
 	t.sleeperBase = t.ballastHeight
 	t.sleeperLength = .26
-	t.sleeperWidth = 2 -- was 2.6
+	t.sleeperWidth = 2.6
 	t.sleeperHeight = .08
 	t.sleeperCutOff = .02
 
@@ -38,7 +38,7 @@ function data()
 	t.catenaryMaxPoleDistanceFactor = 999 -- 2.0
 	t.catenaryMinPoleDistanceFactor = 999 -- 0.8
 
-	t.trackDistance = 2.5 -- was 5.0 -- [m] distance between track centers when dragging parallel tracks
+	t.trackDistance = 20.0 -- was 5.0 -- [m] distance between track centers when dragging parallel tracks
 
 	t.speedLimit = 5.0 / 3.6 -- [m/s] maximum speed on a straight track
 	t.speedCoeffs = { .85, 30.0, .6 } -- curve speed limit = a * (radius + b) ^ c
@@ -65,7 +65,7 @@ function data()
 	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
 	-- t.bumperModel = "railroad/bumper.mdl"
-	t.bumperModel = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_end_2_5_wide.mdl'
+	t.bumperModel = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_end.mdl'
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
 	t.fillGroundTex = "none.lua" -- "ballast_fill.lua"
@@ -76,12 +76,12 @@ function data()
 	t.railModel = "lollo_freestyle_train_station/empty.mdl"
     -- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
 	-- t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
-	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_c_passenger_sleeper_2_5_wide.mdl"
+	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_c_cargo_sleeper_20_wide.mdl"
 	t.trackStraightModel = {
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_2m_base_2_5_wide.mdl', --"railroad/tracks/2m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_4m_base_2_5_wide.mdl', --"railroad/tracks/4m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_8m_base_2_5_wide.mdl', --"railroad/tracks/8m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_16m_base_2_5_wide.mdl', --"railroad/tracks/16m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_2m_base_20_wide.mdl', --"railroad/tracks/2m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_4m_base_20_wide.mdl', --"railroad/tracks/4m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_8m_base_20_wide.mdl', --"railroad/tracks/8m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_16m_base_20_wide.mdl', --"railroad/tracks/16m_base.mdl",
 	}
 
 	t.maintenanceCost = 0.0   -- [$/m/M] per meter and month

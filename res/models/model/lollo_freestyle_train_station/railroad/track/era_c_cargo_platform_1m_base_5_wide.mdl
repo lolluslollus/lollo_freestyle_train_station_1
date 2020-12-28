@@ -2,12 +2,12 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     return {
         boundingInfo = {
-            bbMax = { 40, 2.75, 0.79999995231628, },
-            bbMin = { -5.0884388007537e-24, -2.75, 0, },
+            bbMax = { 0.5, 2.75, 0.8, },
+            bbMin = { -0.5, -2.75, 0, },
         },
         collider = {
             params = {
-                halfExtents = { 20, 2.75, 0.39999997615814, },
+                halfExtents = { 0.5, 2.75, 0.4, },
             },
             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
             type = "BOX",
@@ -19,8 +19,9 @@ function data()
                         {
                             materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
                             -- mesh = "station/rail/era_c/perron_5/perron_5_lod0.msh",
-                            mesh = 'lollo_freestyle_train_station/lollo_era_c_passenger_platform_2m.msh',
-                            transf = { 1.1, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, -1, 0, _constants.passengerPlatformHeight, 1, },
+                            mesh = 'lollo_freestyle_train_station/lollo_era_c_passenger_platform_1m.msh',
+                            -- name = "perron_5",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.5, 0, _constants.passengerPlatformHeight, 1, },
                         },
                         -- {
                         --     materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},

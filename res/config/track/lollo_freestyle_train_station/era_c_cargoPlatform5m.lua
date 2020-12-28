@@ -4,8 +4,8 @@ function data()
 	local t = { }
 
 	t.name = _("CargoPlatform5MTracksName")
-	t.desc = _("CargoPlatform10MTracksDesc")
-	t.categories  = { _constants.platformTracksCategory }
+	t.desc = _("CargoPlatform5MTracksDesc")
+	t.categories  = { _constants.cargoPlatformTracksCategory }
 
 	t.yearFrom = 0
 	t.yearTo = 0
@@ -65,7 +65,7 @@ function data()
 	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
 	-- t.bumperModel = "railroad/bumper.mdl"
-	t.bumperModel = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_end.mdl'
+	t.bumperModel = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_end.mdl'
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
 	t.fillGroundTex = "none.lua" -- "ballast_fill.lua"
@@ -76,12 +76,12 @@ function data()
 	t.railModel = "lollo_freestyle_train_station/empty.mdl"
     -- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
 	-- t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
-	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_c_passenger_sleeper.mdl"
+	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_c_cargo_sleeper_5_wide.mdl"
 	t.trackStraightModel = {
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_2m_base.mdl', --"railroad/tracks/2m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_4m_base.mdl', --"railroad/tracks/4m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_8m_base.mdl', --"railroad/tracks/8m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_16m_base.mdl', --"railroad/tracks/16m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_2m_base_5_wide.mdl', --"railroad/tracks/2m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_4m_base_5_wide.mdl', --"railroad/tracks/4m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_8m_base_5_wide.mdl', --"railroad/tracks/8m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_16m_base_5_wide.mdl', --"railroad/tracks/16m_base.mdl",
 	}
 
 	t.maintenanceCost = 0.0   -- [$/m/M] per meter and month

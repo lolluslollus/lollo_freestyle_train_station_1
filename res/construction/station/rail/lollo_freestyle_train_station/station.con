@@ -172,44 +172,37 @@ function data()
 				-- 	local wap = params.terminals[t].centrePlatformPositionsFine[i]
 				-- 	local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 				-- 	result.models[#result.models+1] = {
-				-- 		id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base.mdl',
+				-- 		id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5_wide.mdl',
 				-- 		-- tag = slotHelpers.mangleModelTag(t, false),
 				-- 		transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 				-- 	}
 				-- end
 
 				-- add waiting areas and lanes
-				-- LOLLO TODO add cargo platform-tracks in different widths (5, 10, 15), with extra wait areas.
-				-- Tried that, they don't join seamlessly. That is up to the user tho.
-				-- Instead, we could only use 5m areas for all,
+				-- Instead of different cargo platforms with different widths, we could only use 5m areas for all,
 				-- and add new modules for extra cargo space, parallel to cargo areas
 				-- and maybe also to passenger areas.
 				-- However, it is easier to place more platform-tracks upfront than add modules later,
 				-- so we give the option to add multiple platform-tracks, initially only for cargo.
 				-- This means, we must change the data structure to accommodate an array of platform-tracks for each terminal.
 				-- We might add the same for passengers in future.
+				-- Much easier: leave the data structure alone, leave the four peg system alone
+				-- and offer cargo platforms with different widths.
+				-- And passenger platforms are fine with 2.5 m, especially now that they can extend trackside.
 
-				-- We also need to share a platform between two terminals (only passengers),
-				-- so the platform tracks must become brothers of params.terminals and in its place there must be an array of terminal indexes
-				-- when we build a new track to use an existing platform, we have two options:
-				-- use something like the smart street splitter to plop, then add the marker to the construction edge (if possible, it's frozen) NOT POSSIBLE!
-				-- use something like the smart street splitter, then go ahead like with the platform waypoint, which will be superceded YES try this
-				-- or open a popup asking to join, if it detects a nearby platform. too much complexity. little "freestyle"
-				-- Alternatively, and more easily, we leave it like now and make passenger platforms narrower.
-				-- We can extend them toward the track to make things look better.
 				if isCargoTerminal then
-					for i = 1, #params.terminals[t].centrePlatformPositions do
-						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatformPositions[i].posTanX2, inverseMainTransf)
-						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
-						result.models[#result.models+1] = {
-							id = _constants.cargoWaitingAreaModelId,
-							tag = slotHelpers.mangleModelTag(t, true),
-							transf = centreLaneTransf
-						}
+					for _, cwa in pairs(params.terminals[t].cargoWaitingAreas) do
+						for i = 1, #cwa do
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cwa[i].posTanX2, inverseMainTransf)
+							local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+							result.models[#result.models+1] = {
+								id = _constants.cargoWaitingAreaModelId,
+								tag = slotHelpers.mangleModelTag(t, true),
+								transf = centreLaneTransf
+							}
+						end
 					end
 				else
-					-- LOLLO TODO passenger tracks must be able to share the same platform.
-					-- for each terminal, the platform list will contain either a list like today, or a reference to another terminal.
 					for i = 1, #params.terminals[t].centrePlatformPositions do
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatformPositions[i].posTanX2, inverseMainTransf)
@@ -284,7 +277,7 @@ function data()
 							-- tag = slotHelpers.mangleModelTag(t, false),
 							transf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -1, 1 }
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -1.05, 1 }
 							)
 						}
 					end

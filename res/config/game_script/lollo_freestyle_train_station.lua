@@ -224,6 +224,7 @@ local _actions = {
             leftLanePositions = args.leftLanePositions,
             rightLanePositions = args.rightLanePositions,
             crossConnectorPositions = args.crossConnectorPositions,
+            cargoWaitingAreas = args.cargoWaitingAreas,
             isTrackOnPlatformLeft = args.isTrackOnPlatformLeft,
             tracksidePositionsFine = args.tracksidePositionsFine,
         }
@@ -280,16 +281,17 @@ local _actions = {
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
                     -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
-                    -- LOLLO TODO only pass the useful args parts, explicitly
-                    local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centrePlatformPositions', 'centrePlatformPositionsFine', 'tracksidePositionsFine', 'centreTrackPositions', 'crossConnectorPositions', 'leftLanePositions', 'rightLanePositions'})
-                    eventArgs.stationConstructionId = result.resultEntities[1]
-                    print('eventArgs =') debugPrint(eventArgs) -- LOLLO TODO this dumps, it is the usual misterious dump
+                    -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centrePlatformPositions', 'centrePlatformPositionsFine', 'tracksidePositionsFine', 'centreTrackPositions', 'crossConnectorPositions', 'leftLanePositions', 'rightLanePositions', 'cargoWaitingAreas'})
+                    -- eventArgs.stationConstructionId = result.resultEntities[1]
+                    -- print('eventArgs =') debugPrint(eventArgs)
                     print('buildStation callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName,
-                        eventArgs
+                        {
+                            stationConstructionId = result.resultEntities[1]
+                        }
                     ))
                 end
             end
@@ -568,8 +570,6 @@ local _actions = {
         arrayUtils.concatValues(allEdgeIds, platformEdgeIds)
         print('allEdgeIds =') debugPrint(allEdgeIds)
 
-        -- LOLLO TODO make a very short station: it won't like it. It will fail gracefully with Assertion `ctx.size() >= 2' failed
-
         local proposal = api.type.SimpleProposal.new()
         for _, edgeId in pairs(allEdgeIds) do
             if edgeUtils.isValidAndExistingId(edgeId) then
@@ -577,8 +577,8 @@ local _actions = {
                 if baseEdge then
                     proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
                     if baseEdge.objects then
-                        for j = 1, #baseEdge.objects do
-                            proposal.streetProposal.edgeObjectsToRemove[#proposal.streetProposal.edgeObjectsToRemove+1] = baseEdge.objects[j][1]
+                        for o = 1, #baseEdge.objects do
+                            proposal.streetProposal.edgeObjectsToRemove[#proposal.streetProposal.edgeObjectsToRemove+1] = baseEdge.objects[o][1]
                         end
                     end
                 end
@@ -599,8 +599,8 @@ local _actions = {
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
-        -- print('proposal.streetProposal.nodesToRemove =')
-        -- debugPrint(proposal.streetProposal.nodesToRemove)
+        -- print('proposal.streetProposal.nodesToRemove =') debugPrint(proposal.streetProposal.nodesToRemove)
+        -- print('proposal =') debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -862,16 +862,6 @@ local _actions = {
                     -- edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(addedNodePosition), 2, api.type.ComponentType.BASE_NODE)
                     -- edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(addedNodePosition), 0.5, api.type.ComponentType.BASE_NODE)
                     print('addedNodeIds =') debugPrint(addedNodeIds)
-
-                    -- if #addedNodeIds == 0 then
-                    --     addedNodeIds = edgeUtils.getNearbyObjectIds(
-                    --         transfUtils.position2Transf(addedNodePosition),
-                    --         1,
-                    --         api.type.ComponentType.BASE_NODE
-                    --     )
-                    --     print('addedNodeIds =') debugPrint(addedNodeIds)
-                    -- end
-
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                     if not(stringUtils.isNullOrEmptyString(newArgName)) then
                         eventArgs[newArgName] = addedNodeIds[1]
@@ -905,7 +895,9 @@ function data()
             if (id ~= _eventId) then return end
 
             print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
-            -- LOLLO TODO make a very short station: it will crash. Newly (?), it also crashes when calling game.interface.getEntity(stationId).
+            -- LOLLO NOTE ONLY SOMETIMES, it can crash when calling game.interface.getEntity(stationId).
+            -- Things are better now, it seems that the error came after a fast loop of calling split and raising the event, then calling split again.
+            -- That looks like a race, difficult to handle here.
             -- For example, it crashes when using the street get info on a piece of track
             -- the error happens when we do debugPrint(args), after removeTrack detected there was only on edge and decided to split it.
             -- the split succeeds, then control returns here and the eggs break.
@@ -942,7 +934,7 @@ function data()
                     nodeBetween,
                     args.trackWaypoint1Id,
                     _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED,
-                    arrayUtils.cloneDeepOmittingFields(args),
+                    arrayUtils.cloneDeepOmittingFields(args, {'trackWaypoint1Id'}),
                     'splitTrackNode1Id'
                 )
             elseif name == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
@@ -967,7 +959,7 @@ function data()
                     nodeBetween,
                     args.trackWaypoint2Id,
                     _eventNames.PLATFORM_WAYPOINT_1_SPLIT_REQUESTED,
-                    arrayUtils.cloneDeepOmittingFields(args),
+                    arrayUtils.cloneDeepOmittingFields(args, {'trackWaypoint2Id'}),
                     'splitTrackNode2Id'
                 )
             elseif name == _eventNames.PLATFORM_WAYPOINT_1_SPLIT_REQUESTED then
@@ -993,7 +985,7 @@ function data()
                     nodeBetween,
                     args.platformWaypoint1Id,
                     _eventNames.PLATFORM_WAYPOINT_2_SPLIT_REQUESTED,
-                    arrayUtils.cloneDeepOmittingFields(args),
+                    arrayUtils.cloneDeepOmittingFields(args, {'platformWaypoint1Id'}),
                     'splitPlatformNode1Id'
                 )
             elseif name == _eventNames.PLATFORM_WAYPOINT_2_SPLIT_REQUESTED then
@@ -1019,7 +1011,7 @@ function data()
                     nodeBetween,
                     args.platformWaypoint2Id,
                     _eventNames.TRACK_BULLDOZE_REQUESTED,
-                    arrayUtils.cloneDeepOmittingFields(args),
+                    arrayUtils.cloneDeepOmittingFields(args, {'platformWaypoint2Id'}),
                     'splitPlatformNode2Id'
                 )
             elseif name == _eventNames.TRACK_BULLDOZE_REQUESTED then
@@ -1112,7 +1104,7 @@ function data()
                 end
                 print('at least two platform edges found')
 
-                local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'splitTrackNode1Id', 'splitTrackNode2Id', 'trackWaypoint1Id', 'trackWaypoint2Id', })
+                local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'splitPlatformNode1Id', 'splitPlatformNode2Id', 'splitTrackNode1Id', 'splitTrackNode2Id', })
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
@@ -1121,8 +1113,37 @@ function data()
                 eventArgs.centrePlatformPositions = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.centreTrackPositions = stationHelpers.getCentreLanePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 if args.isCargo then
-                    eventArgs.leftLanePositions = {}
-                    eventArgs.rightLanePositions = {}
+                    local trackTypeId = eventArgs.centrePlatformPositions[1].trackType
+                    -- print('trackTypeId =') debugPrint(trackTypeId)
+                    local trackTypeProperties = api.res.trackTypeRep.get(trackTypeId)
+                    -- print('trackTypeProperties =') debugPrint(trackTypeProperties)
+                    local trackDistance = trackTypeProperties.trackDistance
+                    if trackDistance <= 5 then
+                        eventArgs.cargoWaitingAreas = {
+                            eventArgs.centrePlatformPositions
+                        }
+                    elseif trackDistance <= 10 then
+                        eventArgs.cargoWaitingAreas = {
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - 2.5),
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, 2.5)
+                        }
+                    elseif trackDistance <= 15 then
+                        eventArgs.cargoWaitingAreas = {
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - 5),
+                            eventArgs.centrePlatformPositions,
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, 5)
+                        }
+                    else
+                        eventArgs.cargoWaitingAreas = {
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - 7.5),
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - 2.5),
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, 2.5),
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, 7.5)
+                        }
+                    end
+
+                    eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - trackDistance * 0.4)
+                    eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, trackDistance * 0.4)
                     eventArgs.crossConnectorPositions = {}
                     eventArgs.tracksidePositionsFine = {}
                 else
@@ -1145,6 +1166,7 @@ function data()
                         and stationHelpers.getShiftedLanePositions(centrePlatformPositionsFine, - _constants.passengerPlatformWidth * 0.4)
                         or stationHelpers.getShiftedLanePositions(centrePlatformPositionsFine, _constants.passengerPlatformWidth * 0.4)
                     -- print('eventArgs.tracksidePositionsFine =') debugPrint(eventArgs.tracksidePositionsFine)
+                    eventArgs.cargoWaitingAreas = {}
                 end
 
                 -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
@@ -1375,8 +1397,7 @@ function data()
                             and args.proposal.proposal.edgeObjectsToAdd[1]
                             and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
                             then
-                                local _cargoPlatformWaypointModelId = api.res.modelRep.find(_constants.cargoPlatformWaypointModelId)
-                                local _passengerPlatformWaypointModelId = api.res.modelRep.find(_constants.passengerPlatformWaypointModelId)
+                                local _platformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
                                 local _trackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
 
                                 local _validateWaypointBuilt = function(targetWaypointModelId, mustBeOnPlatform)
@@ -1482,6 +1503,7 @@ function data()
                                     end
 
                                     -- LOLLO TODO check that the tracks between the waypoints are not frozen in any construction
+                                    -- LOLLO TODO check that the tracks between the waypoints are all of the same type (ie, platforms have the same width)
                                     -- validation fine, return data
                                     return {
                                         newWaypointId = newWaypointId,
@@ -1493,15 +1515,13 @@ function data()
                                     local trackWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_trackWaypointModelId)
                                     if #trackWaypointIds ~= 2 then return end
 
-                                    local cargoPlatformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_cargoPlatformWaypointModelId)
-                                    local passengerPlatformWaypointIds = #cargoPlatformWaypointIds ~= 2
-                                        and stationHelpers.getAllEdgeObjectsWithModelId(_passengerPlatformWaypointModelId)
-                                        or {}
-                                    if #cargoPlatformWaypointIds ~= 2 and #passengerPlatformWaypointIds ~= 2 then return end
+                                    local platformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_platformWaypointModelId)
+                                    if #platformWaypointIds ~= 2 then return end
 
-                                    local isCargo = #cargoPlatformWaypointIds == 2
-                                    print('TWENTY')
-                                    local platformWaypointIds = isCargo and cargoPlatformWaypointIds or passengerPlatformWaypointIds
+                                    local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointIds[1])
+                                    local edgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                                    local isCargo = trackUtils.isCargoPlatform(edgeTrack.trackType)
+                                    print('TWENTY, isCargo =', isCargo)
 
                                     -- set a place to build the station
                                     local platformWaypoint1Pos = edgeUtils.getObjectPosition(platformWaypointIds[1])
@@ -1514,16 +1534,8 @@ function data()
 
                                     local trackWaypoint1Pos = edgeUtils.getObjectPosition(trackWaypointIds[1])
                                     local trackWaypoint2Pos = edgeUtils.getObjectPosition(trackWaypointIds[2])
-                                    local distance11 = edgeUtils.getVectorLength({
-                                        platformWaypoint1Pos[1] - trackWaypoint1Pos[1],
-                                        platformWaypoint1Pos[2] - trackWaypoint1Pos[2],
-                                        platformWaypoint1Pos[3] - trackWaypoint1Pos[3],
-                                    })
-                                    local distance12 = edgeUtils.getVectorLength({
-                                        platformWaypoint1Pos[1] - trackWaypoint2Pos[1],
-                                        platformWaypoint1Pos[2] - trackWaypoint2Pos[2],
-                                        platformWaypoint1Pos[3] - trackWaypoint2Pos[3],
-                                    })
+                                    local distance11 = edgeUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint1Pos)
+                                    local distance12 = edgeUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint2Pos)
 
                                     local eventArgs = {
                                         isCargo = isCargo,
@@ -1552,28 +1564,20 @@ function data()
                                     end
                                 end
                                 -- LOLLO NOTE as I added an edge object, I have NOT split the edge
-                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _cargoPlatformWaypointModelId then
-                                    local waypointData = _validateWaypointBuilt(_cargoPlatformWaypointModelId, true)
-                                    print('cargoPlatformWaypointData =') debugPrint(waypointData)
-                                    if not(waypointData) then return end
-
-                                    _handleValidWaypointBuilt()
-                                elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _passengerPlatformWaypointModelId then
-                                    local waypointData = _validateWaypointBuilt(_passengerPlatformWaypointModelId, true)
-                                    print('passengerPlatformWaypointData =') debugPrint(waypointData)
+                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _platformWaypointModelId then
+                                    local waypointData = _validateWaypointBuilt(_platformWaypointModelId, true)
+                                    print('platformWaypointData =') debugPrint(waypointData)
                                     if not(waypointData) then return end
 
                                     _handleValidWaypointBuilt()
 
-                                    -- LOLLO TODO if any platform nodes are joints between more than 2 platform-tracks,
+                                    -- if any platform nodes are joints between more than 2 platform-tracks,
                                     -- we bar building two platform waypoints outside a junction.
                                     -- Or maybe, we could bar intersecting platform-tracks altogether:
                                     -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
 
                                     -- LOLLO TODO if two terminals are on two consecutive bits of platform, join them with a pedestrian lane, in the station.con
                                     -- or at least, allow doing that by hand
-
-                                    -- LOLLO TODO centre, left and right lanes need the info if each posTanX2 is flat, bridge or tunnel.
 
                                     -- LOLLO NOTE useful to remember
                                     -- local platformWaypointTransf = transfUtilsUG.new(

@@ -8,7 +8,19 @@ local helper = {
         if trackType == nil then return false end
 
         for _, cat in pairs(trackType.categories) do
-            if cat == _constants.platformTracksCategory then return true end
+            if cat == _constants.passengerPlatformTracksCategory or cat == _constants.cargoPlatformTracksCategory then return true end
+        end
+
+        return false
+    end,
+    isCargoPlatform = function(trackTypeIndex)
+        if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return false end
+
+        local trackType = api.res.trackTypeRep.get(trackTypeIndex)
+        if trackType == nil then return false end
+
+        for _, cat in pairs(trackType.categories) do
+            if cat == _constants.cargoPlatformTracksCategory then return true end
         end
 
         return false
