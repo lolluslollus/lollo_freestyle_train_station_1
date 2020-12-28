@@ -187,9 +187,8 @@ local _actions = {
             -- myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
-            centrePlatformPositions = args.centrePlatformPositions,
-            -- centrePlatformPositionsFine = args.centrePlatformPositionsFine,
-            centreTrackPositions = args.centreTrackPositions,
+            centreLanePositions = args.centreLanePositions,
+            -- centreLanePositionsFine = args.centreLanePositionsFine,
             leftLanePositions = args.leftLanePositions,
             rightLanePositions = args.rightLanePositions,
             crossConnectorPositions = args.crossConnectorPositions
@@ -247,7 +246,7 @@ local _actions = {
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
                     -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
-                    local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centrePlatformPositions', 'centrePlatformPositionsFine', 'centreTrackPositions', 'crossConnectorPositions', 'leftLanePositions', 'rightLanePositions'})
+                    local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centreLanePositions', 'centreLanePositionsFine', 'crossConnectorPositions', 'leftLanePositions', 'rightLanePositions'})
                     eventArgs.stationConstructionId = result.resultEntities[1]
                     print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
                     print('buildStation callback is about to send command')
@@ -1089,18 +1088,11 @@ function data()
                 print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
-                -- eventArgs.centrePlatformPositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
-                eventArgs.centrePlatformPositions = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
-                eventArgs.centreTrackPositions = stationHelpers.getCentreLanePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
-                if args.isCargo then
-                    eventArgs.leftLanePositions = {}
-                    eventArgs.rightLanePositions = {}
-                    eventArgs.crossConnectorPositions = {}
-                else
-                    eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - _constants.sideLaneShiftM)
-                    eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, _constants.sideLaneShiftM)
-                    eventArgs.crossConnectorPositions = stationHelpers.getCrossConnectors(eventArgs.leftLanePositions, eventArgs.centrePlatformPositions, eventArgs.rightLanePositions)
-                end
+                -- eventArgs.centreLanePositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
+                eventArgs.centreLanePositions = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centreLanePositions, args.isCargo, - _constants.sideLaneShiftM)
+                eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centreLanePositions, args.isCargo, _constants.sideLaneShiftM)
+                eventArgs.crossConnectorPositions = stationHelpers.getCrossConnectors(eventArgs.leftLanePositions, eventArgs.centreLanePositions, eventArgs.rightLanePositions, args.isCargo)
 
                 -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
 				-- maybe even overground. For now, it looks unnecessary but keep it in mind.
@@ -1385,7 +1377,6 @@ function data()
                                         return false
                                     end
 
-                                    -- LOLLO TODO check that the tracks between the waypoints are not frozen in any construction
                                     -- validation fine, return data
                                     return {
                                         newWaypointId = newWaypointId,

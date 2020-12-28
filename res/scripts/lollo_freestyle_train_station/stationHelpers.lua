@@ -295,12 +295,12 @@ local helpers = {
         return results
     end,
 
-    getCentreLanePositions = function(edgeLists, maxEdgeLength)
+    getCentreLanePositions = function(platformEdgeLists, maxEdgeLength)
         -- print('getCentreLanePositions starting')
-        if type(edgeLists) ~= 'table' then return {} end
+        if type(platformEdgeLists) ~= 'table' then return {} end
 
         local results = {}
-        for _, pel in pairs(edgeLists) do
+        for _, pel in pairs(platformEdgeLists) do
             local edgeLength = (edgeUtils.getVectorLength(pel.posTanX2[1][2]) + edgeUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
             -- print('edgeLength =') debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
@@ -427,15 +427,17 @@ local helpers = {
         return results
     end,
 
-    getShiftedLanePositions = function(edgeLists, sideShift)
+    getShiftedLanePositions = function(centreLanePositions, isCargo, sideShift)
+        if isCargo then return {} end
+
         local results = {
             {
-                posTanX2 = _getParallelSideways(edgeLists[1].posTanX2, sideShift)
+                posTanX2 = _getParallelSideways(centreLanePositions[1].posTanX2, sideShift)
             }
         }
         local previousPosTanX2 = results[1].posTanX2
-        for i = 2, #edgeLists do
-            local currentPosTanX2 = _getParallelSideways(edgeLists[i].posTanX2, sideShift)
+        for i = 2, #centreLanePositions do
+            local currentPosTanX2 = _getParallelSideways(centreLanePositions[i].posTanX2, sideShift)
             currentPosTanX2[1][1] = previousPosTanX2[2][1]
             results[#results+1] = {
                 posTanX2 = currentPosTanX2
@@ -446,7 +448,9 @@ local helpers = {
         return results
     end,
 
-    getCrossConnectors = function(leftLanePositions, centreLanePositions, rightLanePositions)
+    getCrossConnectors = function(leftLanePositions, centreLanePositions, rightLanePositions, isCargo)
+        if isCargo then return {} end
+
         local results = {}
         for i = 2, #leftLanePositions do
             local leftPosTanX2 = leftLanePositions[i].posTanX2
