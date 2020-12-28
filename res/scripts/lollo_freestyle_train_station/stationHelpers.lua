@@ -447,46 +447,48 @@ local helpers = {
         return results
     end,
 
-    getCrossConnectors = function(leftLanePositions, centreLanePositions, rightLanePositions)
+    getCrossConnectors = function(leftLanePositions, centreLanePositions, rightLanePositions, isTrackOnPlatformLeft)
         local results = {}
         for i = 2, #leftLanePositions do
-            local leftPosTanX2 = leftLanePositions[i].posTanX2
             local centrePosTanX2 = centreLanePositions[i].posTanX2
-            local rightPosTanX2 = rightLanePositions[i].posTanX2
 
-            local newTanLeft = {
-                centrePosTanX2[1][1][1] - leftPosTanX2[1][1][1],
-                centrePosTanX2[1][1][2] - leftPosTanX2[1][1][2],
-                centrePosTanX2[1][1][3] - leftPosTanX2[1][1][3],
-            }
-            local newRecordLeft = {
-                {
-                    leftPosTanX2[1][1],
-                    newTanLeft
-                },
-                {
-                    centrePosTanX2[1][1],
-                    newTanLeft
+            if isTrackOnPlatformLeft then
+                local leftPosTanX2 = leftLanePositions[i].posTanX2
+                local newTanLeft = {
+                    centrePosTanX2[1][1][1] - leftPosTanX2[1][1][1],
+                    centrePosTanX2[1][1][2] - leftPosTanX2[1][1][2],
+                    centrePosTanX2[1][1][3] - leftPosTanX2[1][1][3],
                 }
-            }
-            results[#results+1] = { posTanX2 = newRecordLeft }
-
-            local newTanRight = {
-                rightPosTanX2[1][1][1] - centrePosTanX2[1][1][1],
-                rightPosTanX2[1][1][2] - centrePosTanX2[1][1][2],
-                rightPosTanX2[1][1][3] - centrePosTanX2[1][1][3],
-            }
-            local newRecordRight = {
-                {
-                    centrePosTanX2[1][1],
-                    newTanRight
-                },
-                {
-                    rightPosTanX2[1][1],
-                    newTanRight
-                },
-            }
-            results[#results+1] = { posTanX2 = newRecordRight }
+                local newRecordLeft = {
+                    {
+                        leftPosTanX2[1][1],
+                        newTanLeft
+                    },
+                    {
+                        centrePosTanX2[1][1],
+                        newTanLeft
+                    }
+                }
+                results[#results+1] = { posTanX2 = newRecordLeft }
+            else
+                local rightPosTanX2 = rightLanePositions[i].posTanX2
+                local newTanRight = {
+                    rightPosTanX2[1][1][1] - centrePosTanX2[1][1][1],
+                    rightPosTanX2[1][1][2] - centrePosTanX2[1][1][2],
+                    rightPosTanX2[1][1][3] - centrePosTanX2[1][1][3],
+                }
+                local newRecordRight = {
+                    {
+                        centrePosTanX2[1][1],
+                        newTanRight
+                    },
+                    {
+                        rightPosTanX2[1][1],
+                        newTanRight
+                    },
+                }
+                results[#results+1] = { posTanX2 = newRecordRight }
+            end
         end
 
         return results
@@ -831,7 +833,7 @@ helpers.getTrackEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
     -- depending how the user laid the tracks
     print('getTrackEdgeIdsBetweenEdgeIds starting, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
     -- the output is sorted by sequence, from edge1 to edge2
-    print('one')
+    print('one, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
     if not(edgeUtils.isValidAndExistingId(_edge1Id)) then return {} end
     if not(edgeUtils.isValidAndExistingId(_edge2Id)) then return {} end
     print('two')
@@ -944,13 +946,19 @@ helpers.getTrackEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
     local node0Results = _getEdgesBetween1and2('node0')
     print('node0results =') debugPrint(node0Results)
     if node0Results ~= false then
-        return arrayUtils.getReversed(node0Results)
+        if node0Results[1] == _edge1Id then print('sixteen') return node0Results
+        else print('seventeen') return arrayUtils.getReversed(node0Results)
+        end
     end
 
     -- nothing good found, try in the opposite direction
     local node1Results = _getEdgesBetween1and2('node1')
     print('node1results =') debugPrint(node1Results)
-    if node1Results then return node1Results end
+    if node1Results ~= false then
+        if node1Results[1] == _edge1Id then print('eighteen') return node1Results
+        else print('nineteen') return arrayUtils.getReversed(node1Results)
+        end
+    end
 
     return {}
 end
@@ -1010,7 +1018,7 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     end
 
     local trackEdgeIdsBetweenEdgeIds = helpers.getTrackEdgeIdsBetweenEdgeIds(adjacentEdge1Ids[1], adjacentEdge2Ids[1])
-    print('trackEdgeIdsBetweenEdgeIds =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    print('trackEdgeIdsBetweenEdgeIds before pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
     -- print('adjacentEdge1Ids =') debugPrint(adjacentEdge1Ids)
     -- print('adjacentEdge2Ids =') debugPrint(adjacentEdge2Ids)
     -- remove edges adjacent to but outside node1 and node2
@@ -1027,11 +1035,13 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
         and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[2]) then
             print('ELEVEN')
             table.remove(trackEdgeIdsBetweenEdgeIds, 1)
-        elseif #trackEdgeIdsBetweenEdgeIds > 1
-        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[1])
-        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[2]) then
-            print('ELEVEN HALF')
-            table.remove(trackEdgeIdsBetweenEdgeIds, 1)
+            print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+        -- elseif #trackEdgeIdsBetweenEdgeIds > 1
+        -- and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[1])
+        -- and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[2]) then
+        --     print('ELEVEN HALF')
+        --     table.remove(trackEdgeIdsBetweenEdgeIds, 1)
+        --     print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
         else
             print('TWELVE')
             isExit = true
@@ -1044,11 +1054,13 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
         and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
             print('THIRTEEN')
             table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
-        elseif #trackEdgeIdsBetweenEdgeIds > 1
-        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
-        and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
-            print('THIRTEEN HALF')
-            table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
+            print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+        -- elseif #trackEdgeIdsBetweenEdgeIds > 1
+        -- and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
+        -- and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
+        --     print('THIRTEEN HALF')
+        --     table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
+        --     print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
         else
             print('FOURTEEN')
             isExit = true
@@ -1059,6 +1071,7 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
     --     print('base edge = ', edgeId) debugPrint(baseEdge)
     -- end
+    print('trackEdgeIdsBetweenEdgeIds after pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
     return trackEdgeIdsBetweenEdgeIds
 end
 

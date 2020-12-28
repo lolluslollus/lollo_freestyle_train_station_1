@@ -41,26 +41,7 @@ function data()
 			print('updateFn starting, params.modules =') debugPrint(params.modules)
 			if not params.modules then params.modules = {} end
 
-			-- LOLLO NOTE I cannot call the api from here, sigh.
-			print('game =')
-			if game ~= nil then
-				print('game is there')
-				if game.interface ~= nil then
-					print('game.interface is there too')
-				else
-					print('game.interface is NIL')
-				end
-			else
-				print('NIL')
-			end
-
-			print('api =')
-			if api ~= nil then
-                print('api is there')
-            else
-                print('NIL')
-			end
-
+			-- LOLLO NOTE I cannot call the api from here, sigh. api is there, but api.res is NIL. Also game is there, but game.interface is NIL
 			local result = {
 				colliders = {},
 				-- coord2terminalInfo = {},
@@ -186,7 +167,7 @@ function data()
 
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
-				-- this works, too, as an alternative.
+				-- this works, too, as an alternative. However, it is harder to snap new platforms.
 				-- for i = 1, #params.terminals[t].centrePlatformPositionsFine do
 				-- 	local wap = params.terminals[t].centrePlatformPositionsFine[i]
 				-- 	local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
@@ -214,6 +195,8 @@ function data()
 				-- use something like the smart street splitter to plop, then add the marker to the construction edge (if possible, it's frozen) NOT POSSIBLE!
 				-- use something like the smart street splitter, then go ahead like with the platform waypoint, which will be superceded YES try this
 				-- or open a popup asking to join, if it detects a nearby platform. too much complexity. little "freestyle"
+				-- Alternatively, and more easily, we leave it like now and make passenger platforms narrower.
+				-- We can extend them toward the track to make things look better.
 				if isCargoTerminal then
 					for i = 1, #params.terminals[t].centrePlatformPositions do
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatformPositions[i].posTanX2, inverseMainTransf)
@@ -259,25 +242,28 @@ function data()
 							}
 						end
 					end
-					for i = 1, #params.terminals[t].leftLanePositions do
-						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].leftLanePositions[i].posTanX2, inverseMainTransf)
-						local leftLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+					if params.terminals[t].isTrackOnPlatformLeft then
+						for i = 1, #params.terminals[t].leftLanePositions do
+							local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].leftLanePositions[i].posTanX2, inverseMainTransf)
+							local leftLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
 
-						result.models[#result.models+1] = {
-							id = _constants.passengerWaitingAreaModelId,
-							tag = slotHelpers.mangleModelTag(t, false),
-							transf = leftLaneTransf
-						}
-					end
-					for i = 1, #params.terminals[t].rightLanePositions do
-						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].rightLanePositions[i].posTanX2, inverseMainTransf)
-						local rightLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+							result.models[#result.models+1] = {
+								id = _constants.passengerWaitingAreaModelId,
+								tag = slotHelpers.mangleModelTag(t, false),
+								transf = leftLaneTransf
+							}
+						end
+					else
+						for i = 1, #params.terminals[t].rightLanePositions do
+							local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].rightLanePositions[i].posTanX2, inverseMainTransf)
+							local rightLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
 
-						result.models[#result.models+1] = {
-							id = _constants.passengerWaitingAreaModelId,
-							tag = slotHelpers.mangleModelTag(t, false),
-							transf = rightLaneTransf
-						}
+							result.models[#result.models+1] = {
+								id = _constants.passengerWaitingAreaModelId,
+								tag = slotHelpers.mangleModelTag(t, false),
+								transf = rightLaneTransf
+							}
+						end
 					end
 					for i = 1, #params.terminals[t].crossConnectorPositions do
 						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectorPositions[i].posTanX2, inverseMainTransf)
@@ -287,6 +273,19 @@ function data()
 							id = _constants.passengerLaneOnPlatformModelId,
 							tag = slotHelpers.mangleModelTag(t, false),
 							transf = crossConnectorTransf
+						}
+					end
+					-- add trackside bits
+					for i = 1, #params.terminals[t].tracksidePositionsFine do
+						local wap = params.terminals[t].tracksidePositionsFine[i]
+						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+						result.models[#result.models+1] = {
+							id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5_wide.mdl',
+							-- tag = slotHelpers.mangleModelTag(t, false),
+							transf = transfUtilsUG.mul(
+								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -1, 1 }
+							)
 						}
 					end
 				end

@@ -70,6 +70,15 @@ helper.getVectorNormalised = function(xyz, targetLength)
     end
 end
 
+helper.getPositionsDistance = function(pos0, pos1)
+    local distance = helper.getVectorLength({
+        (pos0.x or pos0[1]) - (pos1.x or pos1[1]),
+        (pos0.y or pos0[2]) - (pos1.y or pos1[2]),
+        (pos0.z or pos0[3]) - (pos1.z or pos1[3]),
+    })
+    return distance
+end
+
 helper.getNearbyEntities = function(transf)
     if type(transf) ~= 'table' then return {} end
 

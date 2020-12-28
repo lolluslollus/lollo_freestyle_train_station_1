@@ -1,4 +1,5 @@
 function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
     return {
         boundingInfo = {
             bbMax = { 40, 2.75, 0.79999995231628, },
@@ -20,7 +21,7 @@ function data()
                             -- mesh = "station/rail/era_c/perron_5/perron_5_lod0.msh",
                             mesh = 'lollo_freestyle_train_station/lollo_era_c_passenger_platform_8m.msh',
                             -- name = "perron_5",
-                            transf = { 1.025, 0, 0, 0, 0, 1.0, 0, 0, 0, 0, 1, 0, -4, 0, 0, 1, },
+                            transf = { 1.025, 0, 0, 0, 0, 1.0, 0, 0, 0, 0, 1, 0, -4, 0, _constants.passengerPlatformHeight, 1, },
                         },
                         -- {
                         --     materials = {'lollo_freestyle_train_station/icon/green.mtl'},

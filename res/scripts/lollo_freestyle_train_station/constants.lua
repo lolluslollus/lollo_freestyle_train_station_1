@@ -2,6 +2,8 @@ local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 
 local constants = {
     platformTracksCategory = 'platform-tracks',
+    passengerPlatformHeight = 0.6,
+    passengerPlatformWidth = 2.5,
     maxCargoWaitingAreaEdgeLength = 9,
     maxPassengerWaitingAreaEdgeLength = 10,
     terminalAssetStep = 3,
@@ -39,7 +41,7 @@ local constants = {
     underpassDepthM = 4,
     underpassLengthM = 1,
     laneZ = 0.4,
-    sideLaneShiftM = 2,
+    -- sideLaneShiftM = 2,
     trackSpacing = {2, 2, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
     underpassSpacing = {2.5, 2.5, 1.5, 1.5}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
 	idBases = {
