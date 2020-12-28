@@ -79,6 +79,24 @@ helper.getPositionsDistance = function(pos0, pos1)
     return distance
 end
 
+helper.getPositionsMiddle = function(pos0, pos1)
+    local midPos = {
+        ((pos0.x or pos0[1]) + (pos1.x or pos1[1])) * 0.5,
+        ((pos0.y or pos0[2]) + (pos1.y or pos1[2])) * 0.5,
+        ((pos0.z or pos0[3]) + (pos1.z or pos1[3])) * 0.5,
+    }
+
+    if pos0.x ~= nil and pos0.y ~= nil and pos0.z ~= nil then
+        return {
+            x = midPos[1],
+            y = midPos[2],
+            z = midPos[3]
+        }
+    else
+        return midPos
+    end
+end
+
 helper.getNearbyEntities = function(transf)
     if type(transf) ~= 'table' then return {} end
 

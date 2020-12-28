@@ -1151,15 +1151,18 @@ function data()
                     eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - trackDistance * 0.4)
                     eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, trackDistance * 0.4)
 
-                    -- LOLLO TODO this estimator is still buggy, fix it
                     local midLeftPosTanX2 = eventArgs.leftLanePositions[math.ceil(#eventArgs.leftLanePositions * 0.5)].posTanX2
                     local midRightPosTanX2 = eventArgs.rightLanePositions[math.ceil(#eventArgs.rightLanePositions * 0.5)].posTanX2
                     local midCentreTrackPosTanX2 = eventArgs.centrePlatformPositions[math.ceil(#eventArgs.centrePlatformPositions * 0.5)].posTanX2
                     print('midLeftPosTanX2 =') debugPrint(midLeftPosTanX2)
                     print('midRightPosTanX2 =') debugPrint(midRightPosTanX2)
                     print('midCentreTrackPosTanX2 =') debugPrint(midCentreTrackPosTanX2)
-                    local midLeftDistance = edgeUtils.getPositionsDistance(midLeftPosTanX2[1][1], midCentreTrackPosTanX2[1][1])
-                    local midRightDistance = edgeUtils.getPositionsDistance(midRightPosTanX2[1][1], midCentreTrackPosTanX2[1][1])
+                    local midLeftPos = edgeUtils.getPositionsMiddle(midLeftPosTanX2[1][1], midLeftPosTanX2[2][1])
+                    local midRightPos = edgeUtils.getPositionsMiddle(midRightPosTanX2[1][1], midRightPosTanX2[2][1])
+                    local midCentrePos = edgeUtils.getPositionsMiddle(midCentreTrackPosTanX2[1][1], midCentreTrackPosTanX2[2][1])
+
+                    local midLeftDistance = edgeUtils.getPositionsDistance(midLeftPos, midCentrePos)
+                    local midRightDistance = edgeUtils.getPositionsDistance(midRightPos, midCentrePos)
                     eventArgs.isTrackOnPlatformLeft = midLeftDistance < midRightDistance
                     print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
