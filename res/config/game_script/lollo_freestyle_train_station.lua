@@ -188,7 +188,7 @@ local _actions = {
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
             centreLanePositions = args.centreLanePositions,
-            -- centreLanePositionsFine = args.centreLanePositionsFine,
+            centreLanePositionsFine = args.centreLanePositionsFine,
             leftLanePositions = args.leftLanePositions,
             rightLanePositions = args.rightLanePositions,
             crossConnectorPositions = args.crossConnectorPositions
@@ -1088,7 +1088,7 @@ function data()
                 print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
-                -- eventArgs.centreLanePositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
+                eventArgs.centreLanePositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
                 eventArgs.centreLanePositions = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centreLanePositions, args.isCargo, - _constants.sideLaneShiftM)
                 eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centreLanePositions, args.isCargo, _constants.sideLaneShiftM)

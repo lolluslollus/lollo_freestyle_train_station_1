@@ -2,7 +2,7 @@ local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 
 local constants = {
     platformTracksCategory = 'platform-tracks',
-    maxCargoWaitingAreaEdgeLength = 9,
+    maxCargoWaitingAreaEdgeLength = 8,
     maxPassengerWaitingAreaEdgeLength = 10,
     terminalAssetStep = 3,
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
@@ -11,7 +11,6 @@ local constants = {
     maxWaypointDistance = 600,
     stationConFileNameLong = 'station/rail/lollo_freestyle_train_station/station.con',
     stationConFileNameShort = 'lollo_freestyle_train_station/station.con',
-    cargoExtraAreaModuleType = 'freestyleTrainStationCargoExtraArea',
     cargoTerminalModuleType = 'freestyleTrainStationCargoTerminal',
     passengerTerminalModuleType = 'freestyleTrainStationPassengerTerminal',
     underpassModuleType = 'freestyleTrainStationUnderpass',
@@ -43,7 +42,7 @@ local constants = {
     underpassSpacing = {2.5, 2.5, 1.5, 1.5}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
 	idBases = {
         terminalSlotId = 100000,
-        cargoExtraAreaSlotId = 200000,
+        trackSlotId = 200000,
         passengerPlatformSlotId = 300000,
         underpassSlotId = 400000,
     },

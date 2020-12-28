@@ -46,15 +46,12 @@ helper.getVectorLength = function(xyz)
     return math.sqrt(x * x + y * y + z * z)
 end
 
-helper.getVectorNormalised = function(xyz, targetLength)
+helper.getVectorNormalised = function(xyz)
     if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
-
-    local _targetLength = (type(targetLength) == 'number' and targetLength ~= 0) and targetLength or 1.0
 
     local length = helper.getVectorLength(xyz)
     if length == 0 then return nil end
 
-    length = length / _targetLength
     if xyz.x ~= nil and xyz.y ~= nil and xyz.z ~= nil then
         return {
             x = xyz.x / length,
