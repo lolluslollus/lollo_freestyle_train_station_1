@@ -208,8 +208,8 @@ function data()
 				-- We also need to share a platform between two terminals (only passengers),
 				-- so the platform tracks must become brothers of params.terminals and in its place there must be an array of terminal indexes
 				-- when we build a new track to use an existing platform, we have two options:
-				-- use something like the smart street splitter to plop, then add the marker to the construction edge (if possible, it's frozen)
-				-- or open a popup asking to join, if it detects a nearby platform.
+				-- use something like the smart street splitter to plop, then add the marker to the construction edge (if possible, it's frozen) NOT POSSIBLE!
+				-- or open a popup asking to join, if it detects a nearby platform. YES try this
 				if isCargoTerminal then
 					for i = 1, #params.terminals[t].centrePlatformPositions do
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatformPositions[i].posTanX2, inverseMainTransf)

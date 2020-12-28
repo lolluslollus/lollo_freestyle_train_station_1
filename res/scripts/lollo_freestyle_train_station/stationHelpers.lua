@@ -679,7 +679,7 @@ helpers.getStationEndEntities = function(stationConstructionId)
     local result = {}
     for t = 1, #con.params.terminals do
         local endNodeIds4T = _getStationEndNodeIds(con, t, stationConstructionId)
-        print('endNodeIds4T =') debugPrint(endNodeIds4T)
+        -- print('endNodeIds4T =') debugPrint(endNodeIds4T)
         -- I cannot clone these, for some reason: it dumps
         local node1TrackPosition = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node1Id)
             and api.engine.getComponent(endNodeIds4T.tracks.node1Id, api.type.ComponentType.BASE_NODE).position

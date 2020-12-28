@@ -31,7 +31,7 @@ local _eventNames = {
     TRACK_WAYPOINT_2_SPLIT_REQUESTED = 'trackWaypoint2SplitRequested',
     WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
 }
--- LOLLO TODO make a very short station: it will crash. Newly, it crashes when calling game.interface.getEntity(stationId).
+
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
@@ -859,13 +859,19 @@ end
 
 function data()
     return {
-        ini = function()
-        end,
+        -- ini = function()
+        -- end,
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
 
             print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
-            debugPrint(args)
+            -- LOLLO TODO make a very short station: it will crash. Newly (?), it also crashes when calling game.interface.getEntity(stationId).
+            -- For example, it crashes when using the street get info on a piece of track
+            -- the error happens when we do debugPrint(args), after removeTrack detected there was only on edge and decided to split it.
+            -- the split succeeds, then control returns here and the eggs break.
+            -- if you put debugPrint(args) inside split(), it will crash there.
+            -- if you remove it, it won't crash.
+            -- debugPrint(args)
 
             if name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
                 -- game.interface.bulldoze(args.waypointId) -- dumps
