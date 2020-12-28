@@ -1508,7 +1508,9 @@ function data()
                                     end
 
                                     -- LOLLO TODO check that the tracks between the waypoints are not frozen in any construction
-                                    -- LOLLO TODO check that the tracks between the waypoints are all of the same type (ie, platforms have the same width)
+                                    -- LOLLO NOTE do not check that the tracks between the waypoints are all of the same type
+                                    --  (ie, platforms have the same width) so we have more flexibility with tunnel entrances
+
                                     -- validation fine, return data
                                     return {
                                         newWaypointId = newWaypointId,
