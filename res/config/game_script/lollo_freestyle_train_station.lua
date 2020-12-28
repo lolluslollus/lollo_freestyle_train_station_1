@@ -1152,14 +1152,17 @@ function data()
 
                     local midLeftPosTanX2 = eventArgs.leftLanePositions[math.ceil(#eventArgs.leftLanePositions * 0.5)].posTanX2
                     local midRightPosTanX2 = eventArgs.rightLanePositions[math.ceil(#eventArgs.rightLanePositions * 0.5)].posTanX2
-                    local midCentreTrackPosTanX2 = eventArgs.trackEdgeList[math.ceil(#eventArgs.trackEdgeList * 0.5)].posTanX2
+                    local midCentreTrackPosTanX2 = eventArgs.centrePlatformPositions[math.ceil(#eventArgs.centrePlatformPositions * 0.5)].posTanX2
+                    -- print('midLeftPosTanX2 =') debugPrint(midLeftPosTanX2)
+                    -- print('midRightPosTanX2 =') debugPrint(midRightPosTanX2)
+                    -- print('midCentreTrackPosTanX2 =') debugPrint(midCentreTrackPosTanX2)
                     local midLeftDistance = edgeUtils.getPositionsDistance(midLeftPosTanX2[1][1], midCentreTrackPosTanX2[1][1])
                     local midRightDistance = edgeUtils.getPositionsDistance(midRightPosTanX2[1][1], midCentreTrackPosTanX2[1][1])
                     eventArgs.isTrackOnPlatformLeft = midLeftDistance < midRightDistance
+                    -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
                     eventArgs.crossConnectorPositions = stationHelpers.getCrossConnectors(eventArgs.leftLanePositions, eventArgs.centrePlatformPositions, eventArgs.rightLanePositions, eventArgs.isTrackOnPlatformLeft)
 
-                    -- print('ALALALAL')
                     local centrePlatformPositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
                     -- print('centrePlatformPositionsFine =') debugPrint(centrePlatformPositionsFine)
                     eventArgs.tracksidePositionsFine = eventArgs.isTrackOnPlatformLeft
