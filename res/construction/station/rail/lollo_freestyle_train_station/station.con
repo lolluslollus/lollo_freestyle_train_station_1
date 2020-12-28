@@ -81,7 +81,10 @@ function data()
                 slots = {},
 				stations = {},
 				terminalGroups = {},
-				terrainAlignmentLists = {},
+				terrainAlignmentLists = { { -- LOLLO NOTE populate this, otherwise the game will make its own, with spikes and all
+					type = "EQUAL",
+					faces =  { }
+				} }
 			}
 
 			local terminateConstructionHookInfo = {
@@ -283,6 +286,53 @@ function data()
 					end
 				end
 
+				local _makeTerrainAlignments = function()
+					for i = 1, #params.terminals[t].centrePlatformPositions do
+						print('i =', i)
+						local left = params.terminals[t].leftLanePositions[i]
+						print('left =') debugPrint(left)
+						local leftPosTanX2Relative = transfUtils.getPosTanX2Transformed(left.posTanX2, inverseMainTransf)
+						print('leftPosTanX2Relative =') debugPrint(leftPosTanX2Relative)
+						local right = params.terminals[t].rightLanePositions[i]
+						print('right =') debugPrint(right)
+						local rightPosTanX2Relative = transfUtils.getPosTanX2Transformed(right.posTanX2, inverseMainTransf)
+						print('rightPosTanX2Relative =') debugPrint(rightPosTanX2Relative)
+						local edgeType = params.terminals[t].centrePlatformPositions[i].type -- 1 BRIDGE 2 TUNNEL
+						local terrainALignmentType = nil
+						if edgeType == 2 then terrainALignmentType = 'GREATER'
+						elseif edgeType == 1 then terrainALignmentType = 'LESS'
+						end
+					-- end
+					-- for _, cpp in pairs(params.terminals[t].centrePlatformPositions) do
+						if terrainALignmentType ~= nil then
+							local terrainHeight = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2]))
+							result.terrainAlignmentLists[#result.terrainAlignmentLists+1] = {
+								type = terrainALignmentType, -- 'LESS', -- accepted values: "EQUAL", "LESS" or "GREATER". Use GREATER underground and LESS on bridges
+								faces = {
+									-- {
+									-- 	{10.1, -0.1, 0.0, 1.0},
+									-- 	{10.1, 0.1, 0.0, 1.0},
+									-- 	{9.9, 0.1, 0.0, 1.0},
+									-- 	{9.9, -0.1, 0.0, 1.0}
+									-- }
+									{
+										{ rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2], -20},
+										{ rightPosTanX2Relative[2][1][1], rightPosTanX2Relative[2][1][2], -20},
+										{ leftPosTanX2Relative[2][1][1], leftPosTanX2Relative[2][1][2], -20},
+										{ leftPosTanX2Relative[1][1][1], leftPosTanX2Relative[1][1][2], -20},
+									}
+								},
+								optional = true,
+								-- slopeHigh = 999, --LOLLO added this
+								-- slopeLow = 0 --LOLLO added this
+								slopeHigh = 2.5, --LOLLO added this
+								slopeLow = 0.75 --LOLLO added this
+							}
+						end
+					end
+				end
+				-- _makeTerrainAlignments() not needed
+
 				-- LOLLO TODO add module type: stairs
 
 				local _addTerminal = function()
@@ -347,59 +397,62 @@ function data()
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
 				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
 				-- that point at this.
-				result.stations = { }
-				if terminateConstructionHookInfo.isAnyCargoTerminal then
-					result.stations[#result.stations+1] = {
-						tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
-						terminals = { } -- 0 is the position of the linked terminal group, in base 0
-					}
-				end
-				if terminateConstructionHookInfo.isAnyPassengerTerminal then
-					result.stations[#result.stations+1] = {
-						tag = 1, -- in the stock station, this is 0 for cargo and 1 for passengers
-						terminals = { } -- 0 is the position of the linked terminal group, in base 0
-					}
-				end
-
-				for t = 1, #params.terminals do
-					local isCargoTerminal = params.terminals[t].isCargo
-					table.insert(
-						result.terminalGroups,
-						{
-							tag = t - 1,
-							terminals = {
-								-- { 0, 0 }
-							},
-							-- UG TODO ask UG if they can make a parameter similar to the following,
-							-- to override personEdges and personNodes.
-							-- This way, I won't be bound to using a model to assign a waiting area.
-							-- LOLLO NOTE there can be 1 terminal 4 1 vehicle node,
-							-- n terminals 4 1 person edge,
-							-- n terminals 4 1 person node
-							-- vehicleNodeOverride = #params.terminals[t].trackEdgeLists - 1
-							vehicleNodeOverride = terminateConstructionHookInfo.vehicleNodes[t]
+				local _makeTerminals = function()
+					result.stations = { }
+					if terminateConstructionHookInfo.isAnyCargoTerminal then
+						result.stations[#result.stations+1] = {
+							tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
+							terminals = { } -- 0 is the position of the linked terminal group, in base 0
 						}
-					)
+					end
+					if terminateConstructionHookInfo.isAnyPassengerTerminal then
+						result.stations[#result.stations+1] = {
+							tag = 1, -- in the stock station, this is 0 for cargo and 1 for passengers
+							terminals = { } -- 0 is the position of the linked terminal group, in base 0
+						}
+					end
 
-					local modelIndexesBase0 = {}
-					for i = 1, #result.models do
-						if slotHelpers.getTerminalFromModelTag(result.models[i].tag) == t then
-							modelIndexesBase0[#modelIndexesBase0+1] = i - 1
-						-- elseif result.models[i].slotId ~= nil then
-						-- 	local nTerminal, _, _ = slotHelpers.demangleId(result.models[i].slotId)
-						-- 	if nTerminal == t then
-						-- 		modelIndexesBase0[#modelIndexesBase0+1] = i - 1
-						-- 	end
+					for t = 1, #params.terminals do
+						local isCargoTerminal = params.terminals[t].isCargo
+						table.insert(
+							result.terminalGroups,
+							{
+								tag = t - 1,
+								terminals = {
+									-- { 0, 0 }
+								},
+								-- UG TODO ask UG if they can make a parameter similar to the following,
+								-- to override personEdges and personNodes.
+								-- This way, I won't be bound to using a model to assign a waiting area.
+								-- LOLLO NOTE there can be 1 terminal 4 1 vehicle node,
+								-- n terminals 4 1 person edge,
+								-- n terminals 4 1 person node
+								-- vehicleNodeOverride = #params.terminals[t].trackEdgeLists - 1
+								vehicleNodeOverride = terminateConstructionHookInfo.vehicleNodes[t]
+							}
+						)
+
+						local modelIndexesBase0 = {}
+						for i = 1, #result.models do
+							if slotHelpers.getTerminalFromModelTag(result.models[i].tag) == t then
+								modelIndexesBase0[#modelIndexesBase0+1] = i - 1
+							-- elseif result.models[i].slotId ~= nil then
+							-- 	local nTerminal, _, _ = slotHelpers.demangleId(result.models[i].slotId)
+							-- 	if nTerminal == t then
+							-- 		modelIndexesBase0[#modelIndexesBase0+1] = i - 1
+							-- 	end
+							end
 						end
-					end
-					for _, modelIndex in pairs(modelIndexesBase0) do
-						-- table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, t - 1}) -- NO!
-						table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
-					end
+						for _, modelIndex in pairs(modelIndexesBase0) do
+							-- table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, t - 1}) -- NO!
+							table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
+						end
 
-					local stationIndex = arrayUtils.findIndex(result.stations, 'tag', isCargoTerminal and 0 or 1)
-					table.insert(result.stations[stationIndex].terminals, t - 1)
+						local stationIndex = arrayUtils.findIndex(result.stations, 'tag', isCargoTerminal and 0 or 1)
+						table.insert(result.stations[stationIndex].terminals, t - 1)
+					end
 				end
+				_makeTerminals()
 
 				-- LOLLO TODO also link adjacent (== close enough) passenger platforms
 				local _linkUnderpasses = function()

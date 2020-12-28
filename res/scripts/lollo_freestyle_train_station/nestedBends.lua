@@ -132,5 +132,5 @@ debugPrint(newTan1Right)
 debugPrint(newPos1Left)
 debugPrint(newTan1Left)
 
--- LOLLO TODO this seems to work, try it with cargoExtraModules
+-- LOLLO NOTE this seems to work, try it with cargoExtraModules
 return newPos0Right, newTan0Right, newPos0Left, newTan0Left, newPos1Right, newTan1Right, newPos1Left, newTan1Left
