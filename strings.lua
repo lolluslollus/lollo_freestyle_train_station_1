@@ -19,7 +19,7 @@ function data()
 			["PlatformWaypointName"] = "Platform End Marker",
 			["PlatformWaypointDesc"] = "Mark the ends of a platform that will become part of a freestyle station",
 			["PassengerPlatform5MTracksName"] = "5 m Passenger Platforms",
-			["PassengerPlatform5MTracksDesc"] = "Passenger Platforms to Be Laid as Tracks, 5 m wide. Use them in tunnels, to make the ends meet.",
+			["PassengerPlatform5MTracksDesc"] = "Passenger Platforms to Be Laid as Tracks, 5 m wide. Use them at tunnel entrances, to make the ends meet.",
 			["PassengerPlatform2_5MTracksName"] = "2.5 m Passenger Platforms",
 			["PassengerPlatform2_5MTracksDesc"] = "Passenger Platforms to Be Laid as Tracks, 2.5 m wide",
 			["Cargo-Platform-Tracks"] = "Cargo platforms to be laid as tracks",
