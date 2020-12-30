@@ -218,15 +218,15 @@ local _actions = {
             -- myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
-            centrePlatformPositions = args.centrePlatformPositions,
-            -- centrePlatformPositionsFine = args.centrePlatformPositionsFine,
+            centrePlatforms = args.centrePlatforms,
+            -- centrePlatformsFine = args.centrePlatformsFine,
             centreTrackPositions = args.centreTrackPositions,
-            leftLanePositions = args.leftLanePositions,
-            rightLanePositions = args.rightLanePositions,
-            crossConnectorPositions = args.crossConnectorPositions,
+            leftPlatforms = args.leftPlatforms,
+            rightPlatforms = args.rightPlatforms,
+            crossConnectors = args.crossConnectors,
             cargoWaitingAreas = args.cargoWaitingAreas,
             isTrackOnPlatformLeft = args.isTrackOnPlatformLeft,
-            tracksidePositionsFine = args.tracksidePositionsFine,
+            tracksidesFine = args.tracksidesFine,
         }
 
         if oldCon == nil then
@@ -281,7 +281,7 @@ local _actions = {
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
                     -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
-                    -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centrePlatformPositions', 'centrePlatformPositionsFine', 'tracksidePositionsFine', 'centreTrackPositions', 'crossConnectorPositions', 'leftLanePositions', 'rightLanePositions', 'cargoWaitingAreas'})
+                    -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centrePlatforms', 'centrePlatformsFine', 'tracksidesFine', 'centreTrackPositions', 'crossConnectors', 'leftPlatforms', 'rightPlatforms', 'cargoWaitingAreas'})
                     -- eventArgs.stationConstructionId = result.resultEntities[1]
                     -- print('eventArgs =') debugPrint(eventArgs)
                     print('buildStation callback is about to send command')
@@ -883,10 +883,6 @@ local _actions = {
 --     return stationHelpers.isBuildingConstructionWithFileName(args, _constants.platformMarkerConName)
 -- end
 
-local function _getNewConstructionTransf(args)
-    return stationHelpers.getNewConstructionTransf(args, _constants.platformMarkerConName)
-end
-
 function data()
     return {
         -- ini = function()
@@ -1109,11 +1105,11 @@ function data()
                 print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
-                -- eventArgs.centrePlatformPositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
-                eventArgs.centrePlatformPositions = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
-                eventArgs.centreTrackPositions = stationHelpers.getCentreLanePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                -- eventArgs.centrePlatformsFine = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, 1)
+                eventArgs.centrePlatforms = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                eventArgs.centreTrackPositions = stationHelpers.getCentrePlatformPositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
 
-                local trackTypeId = eventArgs.centrePlatformPositions[1].trackType
+                local trackTypeId = eventArgs.centrePlatforms[1].trackType
                 -- print('trackTypeId =') debugPrint(trackTypeId)
                 local trackTypeProperties = api.res.trackTypeRep.get(trackTypeId)
                 -- print('trackTypeProperties =') debugPrint(trackTypeProperties)
@@ -1121,74 +1117,52 @@ function data()
                 if args.isCargo then
                     if trackDistance <= 5 then
                         eventArgs.cargoWaitingAreas = {
-                            eventArgs.centrePlatformPositions
+                            eventArgs.centrePlatforms
                         }
                     elseif trackDistance <= 10 then
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - 2.5),
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, 2.5)
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - 2.5),
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, 2.5)
                         }
                     elseif trackDistance <= 15 then
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - 5),
-                            eventArgs.centrePlatformPositions,
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, 5)
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - 5),
+                            eventArgs.centrePlatforms,
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, 5)
                         }
                     else
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - 7.5),
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - 2.5),
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, 2.5),
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, 7.5)
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - 7.5),
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - 2.5),
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, 2.5),
+                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, 7.5)
                         }
                     end
 
-                    eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - trackDistance * 0.4)
-                    eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, trackDistance * 0.4)
-                    eventArgs.crossConnectorPositions = {}
-                    eventArgs.tracksidePositionsFine = {}
+                    eventArgs.leftPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - trackDistance * 0.4)
+                    eventArgs.rightPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, trackDistance * 0.4)
+                    eventArgs.crossConnectors = {}
+                    eventArgs.tracksidesFine = {}
                 else
-                    print('alalalalal')
-                    eventArgs.leftLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, - trackDistance * 0.4)
-                    eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, trackDistance * 0.4)
-
-                    -- LOLLO TODO this estimator is still buggy, fix it
-                    local midCentrePlatformPosTanX2 = eventArgs.leftLanePositions[math.ceil(#eventArgs.centrePlatformPositions * 0.5)].posTanX2
-                    local track2CentrePlatformDistance = 99999
-                    local trackIndexAtMinDistance2Platform = 1
-                    for i = 1, #eventArgs.centreTrackPositions do
-                        local distance = edgeUtils.getPositionsDistance(
-                            eventArgs.centreTrackPositions[i].posTanX2[1][1],
-                            midCentrePlatformPosTanX2[1][1]
-                        )
-                        if distance < track2CentrePlatformDistance then
-                            trackIndexAtMinDistance2Platform = i
-                            track2CentrePlatformDistance = distance
-                        end
-                    end
-
-                    local midLeftPosTanX2 = eventArgs.leftLanePositions[math.ceil(#eventArgs.leftLanePositions * 0.5)].posTanX2
-                    local midRightPosTanX2 = eventArgs.rightLanePositions[math.ceil(#eventArgs.rightLanePositions * 0.5)].posTanX2
-                    if edgeUtils.getPositionsDistance(
-                        eventArgs.centreTrackPositions[trackIndexAtMinDistance2Platform].posTanX2[1][1],
-                        midLeftPosTanX2[1][1]
-                    ) < edgeUtils.getPositionsDistance(
-                        eventArgs.centreTrackPositions[trackIndexAtMinDistance2Platform].posTanX2[1][1],
-                        midRightPosTanX2[1][1]
+                    -- print('alalalalal')
+                    eventArgs.leftPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - trackDistance * 0.4)
+                    eventArgs.rightPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, trackDistance * 0.4)
+                    eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
+                        eventArgs.leftPlatforms,
+                        eventArgs.centrePlatforms,
+                        eventArgs.rightPlatforms,
+                        eventArgs.centreTrackPositions
                     )
-                    then eventArgs.isTrackOnPlatformLeft = true
-                    else eventArgs.isTrackOnPlatformLeft = false
-                    end
-                    print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
+                    -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
-                    eventArgs.crossConnectorPositions = stationHelpers.getCrossConnectors(eventArgs.leftLanePositions, eventArgs.centrePlatformPositions, eventArgs.rightLanePositions, eventArgs.isTrackOnPlatformLeft)
+                    eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
 
-                    local centrePlatformPositionsFine = stationHelpers.getCentreLanePositions(eventArgs.platformEdgeList, 1)
-                    -- print('centrePlatformPositionsFine =') debugPrint(centrePlatformPositionsFine)
-                    eventArgs.tracksidePositionsFine = eventArgs.isTrackOnPlatformLeft
-                        and stationHelpers.getShiftedLanePositions(centrePlatformPositionsFine, - trackDistance * 0.4)
-                        or stationHelpers.getShiftedLanePositions(centrePlatformPositionsFine, trackDistance * 0.4)
-                    -- print('eventArgs.tracksidePositionsFine =') debugPrint(eventArgs.tracksidePositionsFine)
+                    local centrePlatformsFine = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, 1)
+                    -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
+                    eventArgs.tracksidesFine = eventArgs.isTrackOnPlatformLeft
+                        and stationHelpers.getShiftedLanePositions(centrePlatformsFine, - trackDistance * 0.4)
+                        or stationHelpers.getShiftedLanePositions(centrePlatformsFine, trackDistance * 0.4)
+                    -- print('eventArgs.tracksidesFine =') debugPrint(eventArgs.tracksidesFine)
                     eventArgs.cargoWaitingAreas = {}
                 end
 
@@ -1362,7 +1336,7 @@ function data()
                         --     if not args.result or not args.result[1] then return end
 
                         --     -- print('args =') debugPrint(args)
-                        --     local conTransf = _getNewConstructionTransf(args)
+                        --     local conTransf = stationHelpers.getNewConstructionTransf(args)
                         --     if conTransf then
                         --         print('conTransf =') debugPrint(conTransf)
                         --         local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
@@ -1377,7 +1351,7 @@ function data()
                         --         local constructionEntityId = args.result[1]
                         --         print('constructionEntityId =') debugPrint(constructionEntityId)
 
-                        --         local stationData = stationHelpers.getStationData(nearestConstructionIds, nearestEdgeId)
+                        --         local stationData = stationHelpers.getStationProperties(nearestConstructionIds, nearestEdgeId)
                         --         print('platformData =') debugPrint(stationData)
                         --         -- LOLLO reject the marker if it falls on a platform, whose waiting area on this side is already in use
                         --         -- on a station, use it for joining

@@ -55,9 +55,9 @@ return {
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local yShift = 2
-		for i = 3, #params.terminals[nTerminal].centrePlatformPositions, 3 do
+		for i = 3, #params.terminals[nTerminal].centrePlatforms, 3 do
 			-- print('i =', i)
-			local wap = params.terminals[nTerminal].centrePlatformPositions[i]
+			local wap = params.terminals[nTerminal].centrePlatforms[i]
 			-- print('wap = ') debugPrint(wap)
 			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 			-- print('posTanX2 =') debugPrint(posTanX2)
@@ -80,9 +80,9 @@ return {
 
 			yShift = - yShift
 		end
-		for i = 2, #params.terminals[nTerminal].centrePlatformPositions, 3 do
+		for i = 2, #params.terminals[nTerminal].centrePlatforms, 3 do
 			-- print('i =', i)
-			local wap = params.terminals[nTerminal].centrePlatformPositions[i]
+			local wap = params.terminals[nTerminal].centrePlatforms[i]
 			-- print('wap = ') debugPrint(wap)
 			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 			-- print('posTanX2 =') debugPrint(posTanX2)
@@ -95,9 +95,9 @@ return {
 				tag = _constants.terminalModelTag
 			}
 		end
-		for i = 4, #params.terminals[nTerminal].centrePlatformPositions, 6 do
+		for i = 4, #params.terminals[nTerminal].centrePlatforms, 6 do
 			-- print('i =', i)
-			local wap = params.terminals[nTerminal].centrePlatformPositions[i]
+			local wap = params.terminals[nTerminal].centrePlatforms[i]
 			-- print('wap = ') debugPrint(wap)
 			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 			-- print('posTanX2 =') debugPrint(posTanX2)

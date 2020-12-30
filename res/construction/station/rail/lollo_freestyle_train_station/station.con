@@ -171,8 +171,8 @@ function data()
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
 				-- this works, too, as an alternative. However, it is harder to snap new platforms.
-				-- for i = 1, #params.terminals[t].centrePlatformPositionsFine do
-				-- 	local wap = params.terminals[t].centrePlatformPositionsFine[i]
+				-- for i = 1, #params.terminals[t].centrePlatformsFine do
+				-- 	local wap = params.terminals[t].centrePlatformsFine[i]
 				-- 	local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 				-- 	result.models[#result.models+1] = {
 				-- 		id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5_wide.mdl',
@@ -206,9 +206,9 @@ function data()
 						end
 					end
 				else
-					for i = 1, #params.terminals[t].centrePlatformPositions do
+					for i = 1, #params.terminals[t].centrePlatforms do
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
-						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatformPositions[i].posTanX2, inverseMainTransf)
+						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 						result.models[#result.models+1] = {
 							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
@@ -239,8 +239,8 @@ function data()
 						end
 					end
 					if params.terminals[t].isTrackOnPlatformLeft then
-						for i = 1, #params.terminals[t].leftLanePositions do
-							local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].leftLanePositions[i].posTanX2, inverseMainTransf)
+						for i = 1, #params.terminals[t].leftPlatforms do
+							local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].leftPlatforms[i].posTanX2, inverseMainTransf)
 							local leftLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
 
 							result.models[#result.models+1] = {
@@ -250,8 +250,8 @@ function data()
 							}
 						end
 					else
-						for i = 1, #params.terminals[t].rightLanePositions do
-							local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].rightLanePositions[i].posTanX2, inverseMainTransf)
+						for i = 1, #params.terminals[t].rightPlatforms do
+							local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].rightPlatforms[i].posTanX2, inverseMainTransf)
 							local rightLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
 
 							result.models[#result.models+1] = {
@@ -261,8 +261,8 @@ function data()
 							}
 						end
 					end
-					for i = 1, #params.terminals[t].crossConnectorPositions do
-						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectorPositions[i].posTanX2, inverseMainTransf)
+					for i = 1, #params.terminals[t].crossConnectors do
+						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
 						local crossConnectorTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
 
 						result.models[#result.models+1] = {
@@ -272,8 +272,8 @@ function data()
 						}
 					end
 					-- add trackside bits
-					for i = 1, #params.terminals[t].tracksidePositionsFine do
-						local wap = params.terminals[t].tracksidePositionsFine[i]
+					for i = 1, #params.terminals[t].tracksidesFine do
+						local wap = params.terminals[t].tracksidesFine[i]
 						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 						result.models[#result.models+1] = {
 							id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5_wide.mdl',
@@ -287,23 +287,23 @@ function data()
 				end
 
 				local _makeTerrainAlignments = function()
-					for i = 1, #params.terminals[t].centrePlatformPositions do
+					for i = 1, #params.terminals[t].centrePlatforms do
 						print('i =', i)
-						local left = params.terminals[t].leftLanePositions[i]
+						local left = params.terminals[t].leftPlatforms[i]
 						print('left =') debugPrint(left)
 						local leftPosTanX2Relative = transfUtils.getPosTanX2Transformed(left.posTanX2, inverseMainTransf)
 						print('leftPosTanX2Relative =') debugPrint(leftPosTanX2Relative)
-						local right = params.terminals[t].rightLanePositions[i]
+						local right = params.terminals[t].rightPlatforms[i]
 						print('right =') debugPrint(right)
 						local rightPosTanX2Relative = transfUtils.getPosTanX2Transformed(right.posTanX2, inverseMainTransf)
 						print('rightPosTanX2Relative =') debugPrint(rightPosTanX2Relative)
-						local edgeType = params.terminals[t].centrePlatformPositions[i].type -- 1 BRIDGE 2 TUNNEL
+						local edgeType = params.terminals[t].centrePlatforms[i].type -- 1 BRIDGE 2 TUNNEL
 						local terrainALignmentType = nil
 						if edgeType == 2 then terrainALignmentType = 'GREATER'
 						elseif edgeType == 1 then terrainALignmentType = 'LESS'
 						end
 					-- end
-					-- for _, cpp in pairs(params.terminals[t].centrePlatformPositions) do
+					-- for _, cpp in pairs(params.terminals[t].centrePlatforms) do
 						if terrainALignmentType ~= nil then
 							local terrainHeight = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2]))
 							result.terrainAlignmentLists[#result.terrainAlignmentLists+1] = {
@@ -369,8 +369,8 @@ function data()
 
 				-- add underpass slots, skipping the ends
 				if not(isCargoTerminal) then
-					for i = 2, #params.terminals[t].centrePlatformPositions - 1, 4 do
-						local wap = params.terminals[t].centrePlatformPositions[i]
+					for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
+						local wap = params.terminals[t].centrePlatforms[i]
 						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 						table.insert(result.slots, {
 							-- height = 1,
@@ -594,37 +594,6 @@ function data()
 				-- print('LOLLO result.stations = ') debugPrint(result.stations)
 				-- print('LOLLO result.models = ') debugPrint(result.models)
 				-- print('LOLLO result.terminalGroups = ') debugPrint(result.terminalGroups)
-
-				local _testTerrainAlignment = function()
-					if result.terrainAlignmentLists == nil or #result.terrainAlignmentLists == 0 then
-						-- LOLLO TODO run this on every rectangle between leftLane and rightLane
-						-- Otherwise, the game will make ugly colliding embankments below bridges and above underground bits
-
-						result.terrainAlignmentLists = {
-							{
-								type = 'LESS', -- accepted values: "EQUAL", "LESS" or "GREATER". Use GREATER underground and LESS on bridges
-								faces = {
-									-- {
-									-- 	{10.1, -0.1, 0.0, 1.0},
-									-- 	{10.1, 0.1, 0.0, 1.0},
-									-- 	{9.9, 0.1, 0.0, 1.0},
-									-- 	{9.9, -0.1, 0.0, 1.0}
-									-- }
-									{
-										{100, -50, -20},
-										{100, 50, -20},
-										{-100, 50, -20},
-										{-100, -50, -20}
-									}
-								},
-								optional = true,
-								slopeHigh = 999, --LOLLO added this
-								slopeLow = 0 --LOLLO added this
-							}
-						}
-					end
-				end
-				-- _testTerrainAlignment()
 			end -- end of terminateConstructionHook()
 
 			-- print('freestyleTrainStation result =') debugPrint(result)
