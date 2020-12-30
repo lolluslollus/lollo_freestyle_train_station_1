@@ -3,7 +3,13 @@ local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 local constants = {
     cargoPlatformTracksCategory = 'cargo-platform-tracks',
     passengerPlatformTracksCategory = 'passenger-platform-tracks',
-    passengerPlatformHeight = 0.6,
+
+    passengerPlatformModelZ = 0.3,
+    laneZ = 0.8,
+    tracksideBitsZ = -1.05,
+    underpassDepthM = 4,
+    underpassLengthM = 1, -- don't change this, it must stay 1
+
     maxCargoWaitingAreaEdgeLength = 9,
     maxPassengerWaitingAreaEdgeLength = 10,
     terminalAssetStep = 3,
@@ -11,10 +17,10 @@ local constants = {
     nTerminalMultiplier = 1000,
     nTracksMax = 10,
     maxWaypointDistance = 1000,
+
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileNameLong = 'station/rail/lollo_freestyle_train_station/station.con',
     stationConFileNameShort = 'lollo_freestyle_train_station/station.con',
-    -- cargoExtraAreaModuleType = 'freestyleTrainStationCargoExtraArea',
     cargoTerminalModuleType = 'freestyleTrainStationCargoTerminal',
     passengerTerminalModuleType = 'freestyleTrainStationPassengerTerminal',
     underpassModuleType = 'freestyleTrainStationUnderpass',
@@ -37,16 +43,11 @@ local constants = {
     cargoWaitingAreaTagRoot = 'cargoWaitingArea_',
     passengersWaitingAreaTagRoot = 'passengersWaitingArea_',
     passengersWaitingAreaUnderpassTagRoot = 'passengersWaitingAreaUnderpass_',
-    underpassDepthM = 4,
-    underpassLengthM = 1,
-    laneZ = 0.4,
-    -- sideLaneShiftM = 2,
+
     trackSpacing = {2, 2, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
     underpassSpacing = {2.5, 2.5, 1.5, 1.5}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
 	idBases = {
         terminalSlotId = 100000,
-        -- cargoExtraAreaSlotId = 200000,
-        passengerPlatformSlotId = 300000,
         underpassSlotId = 400000,
     },
     idTransf = {

@@ -17,11 +17,11 @@ function data()
                 node = {
                     children = {
                         {
-                            materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
+                            materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", "lollo_freestyle_train_station/era_c_trainstation_borders_3.mtl", },
                             -- mesh = "station/rail/era_c/perron_5/perron_5_lod0.msh",
                             mesh = 'lollo_freestyle_train_station/lollo_era_c_passenger_platform_8m.msh',
                             -- name = "perron_5",
-                            transf = { 1.025, 0, 0, 0, 0, 1.0, 0, 0, 0, 0, 1, 0, -4, 0, _constants.passengerPlatformHeight, 1, },
+                            transf = { 1.025, 0, 0, 0, 0, 1.0, 0, 0, 0, 0, 1, 0, -4, 0, _constants.passengerPlatformModelZ, 1, },
                         },
                         -- {
                         --     materials = {'lollo_freestyle_train_station/icon/green.mtl'},

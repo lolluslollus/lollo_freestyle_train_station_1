@@ -30,12 +30,12 @@ function data()
                         linkable = true, -- false, --true,
                         nodes = {
                             {
-                                { 0, 0, _constants.laneZ },
+                                { 0, 0, 0 },
                                 { 1, 0, 0 },
                                 3,
                             },
                             {
-                                { 1, 0, _constants.laneZ },
+                                { 1, 0, 0 },
                                 { 1, 0, 0 },
                                 3,
                             },

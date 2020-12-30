@@ -201,7 +201,7 @@ function data()
 							result.models[#result.models+1] = {
 								id = _constants.cargoWaitingAreaModelId,
 								tag = slotHelpers.mangleModelTag(t, true),
-								transf = centreLaneTransf
+								transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
 							}
 						end
 					end
@@ -213,7 +213,7 @@ function data()
 						result.models[#result.models+1] = {
 							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
 							tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
-							transf = centreLaneTransf
+							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
 						}
 						if isUnderpass then
 							local underpassBottomTransf = transfUtilsUG.mul(
@@ -246,7 +246,7 @@ function data()
 							result.models[#result.models+1] = {
 								id = _constants.passengerWaitingAreaModelId,
 								tag = slotHelpers.mangleModelTag(t, false),
-								transf = leftLaneTransf
+								transf = transfUtilsUG.mul(leftLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
 							}
 						end
 					else
@@ -257,7 +257,7 @@ function data()
 							result.models[#result.models+1] = {
 								id = _constants.passengerWaitingAreaModelId,
 								tag = slotHelpers.mangleModelTag(t, false),
-								transf = rightLaneTransf
+								transf = transfUtilsUG.mul(rightLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
 							}
 						end
 					end
@@ -268,10 +268,10 @@ function data()
 						result.models[#result.models+1] = {
 							id = _constants.passengerLaneOnPlatformModelId,
 							tag = slotHelpers.mangleModelTag(t, false),
-							transf = crossConnectorTransf
+							transf = transfUtilsUG.mul(crossConnectorTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
 						}
 					end
-					-- add trackside bits
+					-- add trackside bits, only visual
 					for i = 1, #params.terminals[t].tracksidesFine do
 						local wap = params.terminals[t].tracksidesFine[i]
 						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
@@ -280,57 +280,57 @@ function data()
 							-- tag = slotHelpers.mangleModelTag(t, false),
 							transf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -1.05, 1 }
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.tracksideBitsZ, 1 }
 							)
 						}
 					end
 				end
 
-				local _makeTerrainAlignments = function()
-					for i = 1, #params.terminals[t].centrePlatforms do
-						print('i =', i)
-						local left = params.terminals[t].leftPlatforms[i]
-						print('left =') debugPrint(left)
-						local leftPosTanX2Relative = transfUtils.getPosTanX2Transformed(left.posTanX2, inverseMainTransf)
-						print('leftPosTanX2Relative =') debugPrint(leftPosTanX2Relative)
-						local right = params.terminals[t].rightPlatforms[i]
-						print('right =') debugPrint(right)
-						local rightPosTanX2Relative = transfUtils.getPosTanX2Transformed(right.posTanX2, inverseMainTransf)
-						print('rightPosTanX2Relative =') debugPrint(rightPosTanX2Relative)
-						local edgeType = params.terminals[t].centrePlatforms[i].type -- 1 BRIDGE 2 TUNNEL
-						local terrainALignmentType = nil
-						if edgeType == 2 then terrainALignmentType = 'GREATER'
-						elseif edgeType == 1 then terrainALignmentType = 'LESS'
-						end
-					-- end
-					-- for _, cpp in pairs(params.terminals[t].centrePlatforms) do
-						if terrainALignmentType ~= nil then
-							local terrainHeight = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2]))
-							result.terrainAlignmentLists[#result.terrainAlignmentLists+1] = {
-								type = terrainALignmentType, -- 'LESS', -- accepted values: "EQUAL", "LESS" or "GREATER". Use GREATER underground and LESS on bridges
-								faces = {
-									-- {
-									-- 	{10.1, -0.1, 0.0, 1.0},
-									-- 	{10.1, 0.1, 0.0, 1.0},
-									-- 	{9.9, 0.1, 0.0, 1.0},
-									-- 	{9.9, -0.1, 0.0, 1.0}
-									-- }
-									{
-										{ rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2], -20},
-										{ rightPosTanX2Relative[2][1][1], rightPosTanX2Relative[2][1][2], -20},
-										{ leftPosTanX2Relative[2][1][1], leftPosTanX2Relative[2][1][2], -20},
-										{ leftPosTanX2Relative[1][1][1], leftPosTanX2Relative[1][1][2], -20},
-									}
-								},
-								optional = true,
-								-- slopeHigh = 999, --LOLLO added this
-								-- slopeLow = 0 --LOLLO added this
-								slopeHigh = 2.5, --LOLLO added this
-								slopeLow = 0.75 --LOLLO added this
-							}
-						end
-					end
-				end
+				-- local _makeTerrainAlignments = function()
+				-- 	for i = 1, #params.terminals[t].centrePlatforms do
+				-- 		print('i =', i)
+				-- 		local left = params.terminals[t].leftPlatforms[i]
+				-- 		print('left =') debugPrint(left)
+				-- 		local leftPosTanX2Relative = transfUtils.getPosTanX2Transformed(left.posTanX2, inverseMainTransf)
+				-- 		print('leftPosTanX2Relative =') debugPrint(leftPosTanX2Relative)
+				-- 		local right = params.terminals[t].rightPlatforms[i]
+				-- 		print('right =') debugPrint(right)
+				-- 		local rightPosTanX2Relative = transfUtils.getPosTanX2Transformed(right.posTanX2, inverseMainTransf)
+				-- 		print('rightPosTanX2Relative =') debugPrint(rightPosTanX2Relative)
+				-- 		local edgeType = params.terminals[t].centrePlatforms[i].type -- 1 BRIDGE 2 TUNNEL
+				-- 		local terrainALignmentType = nil
+				-- 		if edgeType == 2 then terrainALignmentType = 'GREATER'
+				-- 		elseif edgeType == 1 then terrainALignmentType = 'LESS'
+				-- 		end
+				-- 	-- end
+				-- 	-- for _, cpp in pairs(params.terminals[t].centrePlatforms) do
+				-- 		if terrainALignmentType ~= nil then
+				-- 			local terrainHeight = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2]))
+				-- 			result.terrainAlignmentLists[#result.terrainAlignmentLists+1] = {
+				-- 				type = terrainALignmentType, -- 'LESS', -- accepted values: "EQUAL", "LESS" or "GREATER". Use GREATER underground and LESS on bridges
+				-- 				faces = {
+				-- 					-- {
+				-- 					-- 	{10.1, -0.1, 0.0, 1.0},
+				-- 					-- 	{10.1, 0.1, 0.0, 1.0},
+				-- 					-- 	{9.9, 0.1, 0.0, 1.0},
+				-- 					-- 	{9.9, -0.1, 0.0, 1.0}
+				-- 					-- }
+				-- 					{
+				-- 						{ rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2], -20},
+				-- 						{ rightPosTanX2Relative[2][1][1], rightPosTanX2Relative[2][1][2], -20},
+				-- 						{ leftPosTanX2Relative[2][1][1], leftPosTanX2Relative[2][1][2], -20},
+				-- 						{ leftPosTanX2Relative[1][1][1], leftPosTanX2Relative[1][1][2], -20},
+				-- 					}
+				-- 				},
+				-- 				optional = true,
+				-- 				-- slopeHigh = 999, --LOLLO added this
+				-- 				-- slopeLow = 0 --LOLLO added this
+				-- 				slopeHigh = 2.5, --LOLLO added this
+				-- 				slopeLow = 0.75 --LOLLO added this
+				-- 			}
+				-- 		end
+				-- 	end
+				-- end
 				-- _makeTerrainAlignments() not needed
 
 				-- LOLLO TODO add module type: stairs
@@ -347,14 +347,7 @@ function data()
 						-- shape 0 1 2 3
 						shape = 3,
 						spacing = _constants.trackSpacing,
-						-- spacing = _constants.underpassSpacing,
-						-- transf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1]),
-						-- transf = transfUtilsUG.mul(
-						-- 	moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-						-- 	{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1}
-						-- ),
 						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-						-- transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
 					-- LOLLO TODO find a model to put on the track or leave it blank
