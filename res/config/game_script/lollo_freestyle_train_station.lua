@@ -1153,19 +1153,32 @@ function data()
                     eventArgs.rightLanePositions = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatformPositions, trackDistance * 0.4)
 
                     -- LOLLO TODO this estimator is still buggy, fix it
+                    local midCentrePlatformPosTanX2 = eventArgs.leftLanePositions[math.ceil(#eventArgs.centrePlatformPositions * 0.5)].posTanX2
+                    local track2CentrePlatformDistance = 99999
+                    local trackIndexAtMinDistance2Platform = 1
+                    for i = 1, #eventArgs.centreTrackPositions do
+                        local distance = edgeUtils.getPositionsDistance(
+                            eventArgs.centreTrackPositions[i].posTanX2[1][1],
+                            midCentrePlatformPosTanX2[1][1]
+                        )
+                        if distance < track2CentrePlatformDistance then
+                            trackIndexAtMinDistance2Platform = i
+                            track2CentrePlatformDistance = distance
+                        end
+                    end
+
                     local midLeftPosTanX2 = eventArgs.leftLanePositions[math.ceil(#eventArgs.leftLanePositions * 0.5)].posTanX2
                     local midRightPosTanX2 = eventArgs.rightLanePositions[math.ceil(#eventArgs.rightLanePositions * 0.5)].posTanX2
-                    local midCentreTrackPosTanX2 = eventArgs.centreTrackPositions[math.ceil(#eventArgs.centreTrackPositions * 0.5)].posTanX2
-                    print('midLeftPosTanX2 =') debugPrint(midLeftPosTanX2)
-                    print('midRightPosTanX2 =') debugPrint(midRightPosTanX2)
-                    print('midCentreTrackPosTanX2 =') debugPrint(midCentreTrackPosTanX2)
-                    local midLeftPos = edgeUtils.getPositionsMiddle(midLeftPosTanX2[1][1], midLeftPosTanX2[2][1])
-                    local midRightPos = edgeUtils.getPositionsMiddle(midRightPosTanX2[1][1], midRightPosTanX2[2][1])
-                    local midCentrePos = edgeUtils.getPositionsMiddle(midCentreTrackPosTanX2[1][1], midCentreTrackPosTanX2[2][1])
-
-                    local midLeftDistance = edgeUtils.getPositionsDistance(midLeftPos, midCentrePos)
-                    local midRightDistance = edgeUtils.getPositionsDistance(midRightPos, midCentrePos)
-                    eventArgs.isTrackOnPlatformLeft = midLeftDistance < midRightDistance
+                    if edgeUtils.getPositionsDistance(
+                        eventArgs.centreTrackPositions[trackIndexAtMinDistance2Platform].posTanX2[1][1],
+                        midLeftPosTanX2[1][1]
+                    ) < edgeUtils.getPositionsDistance(
+                        eventArgs.centreTrackPositions[trackIndexAtMinDistance2Platform].posTanX2[1][1],
+                        midRightPosTanX2[1][1]
+                    )
+                    then eventArgs.isTrackOnPlatformLeft = true
+                    else eventArgs.isTrackOnPlatformLeft = false
+                    end
                     print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
                     eventArgs.crossConnectorPositions = stationHelpers.getCrossConnectors(eventArgs.leftLanePositions, eventArgs.centrePlatformPositions, eventArgs.rightLanePositions, eventArgs.isTrackOnPlatformLeft)
