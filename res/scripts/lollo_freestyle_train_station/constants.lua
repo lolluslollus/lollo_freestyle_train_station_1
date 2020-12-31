@@ -30,7 +30,6 @@ local constants = {
     terminalModelFileName = 'lollo_freestyle_train_station/asset/arrivi_partenze_colonna_new.mdl',
     terminalModelTag = 'freestyleTrainStationTerminal',
     underpassModelTag = 'freestyleTrainStationUnderpass',
-    -- underpassGroundModelFileName = 'lollo_freestyle_train_station/era_c_underpass_alone.mdl',
     underpassGroundModelFileName = 'lollo_freestyle_train_station/underpassFloor.mdl',
     underpassWallsModelFileName = 'lollo_freestyle_train_station/underpassBuilding.mdl',
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
