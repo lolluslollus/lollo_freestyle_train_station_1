@@ -18,7 +18,7 @@ function data()
                         {
                             materials = { "station/rail/cargo/cargo_assets_1.mtl", },
                             -- mesh = "station/rail/asset/cargo_name_board/name_board_lod0.msh",
-                            mesh = 'lollo_freestyle_train_station/cargo_name_board_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/asset/cargo_name_board_lod0.msh',
                             name = "name_board",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, },
                         },

@@ -236,6 +236,15 @@ function data()
 									underpassBottomTransf[15]
 								}
 							}
+						elseif params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] == nil then
+							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
+							local crossConnectorTransf = moduleHelpers.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1])
+
+							result.models[#result.models+1] = {
+								id = _constants.passengerLaneOnPlatformModelId,
+								tag = slotHelpers.mangleModelTag(t, false),
+								transf = transfUtilsUG.mul(crossConnectorTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
+							}
 						end
 					end
 					if params.terminals[t].isTrackOnPlatformLeft then
@@ -261,16 +270,16 @@ function data()
 							}
 						end
 					end
-					for i = 1, #params.terminals[t].crossConnectors do
-						local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
-						local crossConnectorTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+					-- for i = 1, #params.terminals[t].crossConnectors do
+					-- 	local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
+					-- 	local crossConnectorTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
 
-						result.models[#result.models+1] = {
-							id = _constants.passengerLaneOnPlatformModelId,
-							tag = slotHelpers.mangleModelTag(t, false),
-							transf = transfUtilsUG.mul(crossConnectorTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
-						}
-					end
+					-- 	result.models[#result.models+1] = {
+					-- 		id = _constants.passengerLaneOnPlatformModelId,
+					-- 		tag = slotHelpers.mangleModelTag(t, false),
+					-- 		transf = transfUtilsUG.mul(crossConnectorTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
+					-- 	}
+					-- end
 					-- add trackside bits, only visual
 					for i = 1, #params.terminals[t].tracksidesFine do
 						local wap = params.terminals[t].tracksidesFine[i]
@@ -285,53 +294,6 @@ function data()
 						}
 					end
 				end
-
-				-- local _makeTerrainAlignments = function()
-				-- 	for i = 1, #params.terminals[t].centrePlatforms do
-				-- 		print('i =', i)
-				-- 		local left = params.terminals[t].leftPlatforms[i]
-				-- 		print('left =') debugPrint(left)
-				-- 		local leftPosTanX2Relative = transfUtils.getPosTanX2Transformed(left.posTanX2, inverseMainTransf)
-				-- 		print('leftPosTanX2Relative =') debugPrint(leftPosTanX2Relative)
-				-- 		local right = params.terminals[t].rightPlatforms[i]
-				-- 		print('right =') debugPrint(right)
-				-- 		local rightPosTanX2Relative = transfUtils.getPosTanX2Transformed(right.posTanX2, inverseMainTransf)
-				-- 		print('rightPosTanX2Relative =') debugPrint(rightPosTanX2Relative)
-				-- 		local edgeType = params.terminals[t].centrePlatforms[i].type -- 1 BRIDGE 2 TUNNEL
-				-- 		local terrainALignmentType = nil
-				-- 		if edgeType == 2 then terrainALignmentType = 'GREATER'
-				-- 		elseif edgeType == 1 then terrainALignmentType = 'LESS'
-				-- 		end
-				-- 	-- end
-				-- 	-- for _, cpp in pairs(params.terminals[t].centrePlatforms) do
-				-- 		if terrainALignmentType ~= nil then
-				-- 			local terrainHeight = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2]))
-				-- 			result.terrainAlignmentLists[#result.terrainAlignmentLists+1] = {
-				-- 				type = terrainALignmentType, -- 'LESS', -- accepted values: "EQUAL", "LESS" or "GREATER". Use GREATER underground and LESS on bridges
-				-- 				faces = {
-				-- 					-- {
-				-- 					-- 	{10.1, -0.1, 0.0, 1.0},
-				-- 					-- 	{10.1, 0.1, 0.0, 1.0},
-				-- 					-- 	{9.9, 0.1, 0.0, 1.0},
-				-- 					-- 	{9.9, -0.1, 0.0, 1.0}
-				-- 					-- }
-				-- 					{
-				-- 						{ rightPosTanX2Relative[1][1][1], rightPosTanX2Relative[1][1][2], -20},
-				-- 						{ rightPosTanX2Relative[2][1][1], rightPosTanX2Relative[2][1][2], -20},
-				-- 						{ leftPosTanX2Relative[2][1][1], leftPosTanX2Relative[2][1][2], -20},
-				-- 						{ leftPosTanX2Relative[1][1][1], leftPosTanX2Relative[1][1][2], -20},
-				-- 					}
-				-- 				},
-				-- 				optional = true,
-				-- 				-- slopeHigh = 999, --LOLLO added this
-				-- 				-- slopeLow = 0 --LOLLO added this
-				-- 				slopeHigh = 2.5, --LOLLO added this
-				-- 				slopeLow = 0.75 --LOLLO added this
-				-- 			}
-				-- 		end
-				-- 	end
-				-- end
-				-- _makeTerrainAlignments() not needed
 
 				-- LOLLO TODO add module type: stairs
 
@@ -363,8 +325,7 @@ function data()
 				-- add underpass slots, skipping the ends
 				if not(isCargoTerminal) then
 					for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
-						local wap = params.terminals[t].centrePlatforms[i]
-						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 						table.insert(result.slots, {
 							-- height = 1,
 							id = result.mangleId(t, i, _constants.idBases.underpassSlotId),
@@ -376,10 +337,19 @@ function data()
 						})
 						if params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil then
 							result.models[#result.models+1] = {
-								id = _constants.underpassModelFileName2,
-								-- tag = slotHelpers.mangleModelTag(t, false),
+								id = _constants.underpassGroundModelFileName,
 								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 							}
+							-- local posTanX2Minus1 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i-1].posTanX2, inverseMainTransf)
+							-- local posTanX2Plus1 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i+1].posTanX2, inverseMainTransf)
+							-- result.models[#result.models+1] = {
+							-- 	id = _constants.underpassWallsModelFileName,
+							-- 	transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2Minus1)
+							-- }
+							-- result.models[#result.models+1] = {
+							-- 	id = _constants.underpassWallsModelFileName,
+							-- 	transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2Plus1)
+							-- }
 						end
 					end
 				end

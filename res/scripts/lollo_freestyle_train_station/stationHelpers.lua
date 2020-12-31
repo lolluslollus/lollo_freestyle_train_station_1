@@ -474,7 +474,7 @@ local helpers = {
 
     getCrossConnectors = function(leftPlatforms, centrePlatforms, rightPlatforms, isTrackOnPlatformLeft)
         local results = {}
-        for i = 2, #centrePlatforms do
+        for i = 1, #centrePlatforms do
             local centrePosTanX2 = centrePlatforms[i].posTanX2
 
             if isTrackOnPlatformLeft then

@@ -56,7 +56,7 @@ return {
 
 		-- start from 3 to avoid deco peeping out of the platform
 		result.models[#result.models + 1] = {
-			id = _constants.underpassModelFileName,
+			id = _constants.underpassWallsModelFileName,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
 			tag = _constants.underpassModelTag
@@ -76,7 +76,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.underpassModelFileName,
+				id = _constants.underpassWallsModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}
