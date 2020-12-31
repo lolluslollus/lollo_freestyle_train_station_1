@@ -23,7 +23,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 320,
+                visibleTo = 250,
             },
         },
         metadata = { },

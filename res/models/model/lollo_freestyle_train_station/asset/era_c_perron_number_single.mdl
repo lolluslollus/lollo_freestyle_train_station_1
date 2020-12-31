@@ -19,12 +19,11 @@ function data()
                             children = {
                                 {
                                     materials = { "station/rail/era_c/era_c_trainstation_assets.mtl", },
-                                    mesh = "station/rail/asset/era_c_perron_number/era_c_perron_number_lod0.msh",
-                                    name = "era_c_perron_number",
+                                    -- mesh = "station/rail/asset/era_c_perron_number/era_c_perron_number_lod0.msh",
+                                    mesh = "lollo_freestyle_train_station/asset/era_c_perron_number_single_lod0.msh",
                                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                                 },
                             },
-                            name = "era_c_perron_number_grp",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                         },
                     },
@@ -39,26 +38,6 @@ function data()
         metadata = {
             labelList = {
                 labels = {
-                    {
-                        transf = { 0, 1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, -0.134, 1.02, -0.18, 1, },
-                        size = { 0.5, 0.5 },
-                        type = "CUSTOM",
-                        alignment = "CENTER",
-                        verticalAlignment = "CENTER",
-                        alphaMode = "BLEND",
-                        fitting = "SCALE",
-                        childId = "RootNode",
-                    },
-                    {
-                        transf = { 0, -1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, -0.333, 1.02 + 0.5, -0.18, 1, },
-                        size = { 0.5, 0.5 },
-                        type = "CUSTOM",
-                        alignment = "CENTER",
-                        verticalAlignment = "CENTER",
-                        alphaMode = "BLEND",
-                        fitting = "SCALE",
-                        childId = "RootNode",
-                    },
                     {
                         transf = { 0, 1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, -0.134, -1.02 - 0.5, -0.18, 1, },
                         size = { 0.5, 0.5 },

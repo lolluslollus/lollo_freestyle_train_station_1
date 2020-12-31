@@ -86,13 +86,13 @@ return {
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl',
+				id = 'lollo_freestyle_train_station/asset/era_c_perron_number_single.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 0, -yShift, 0, 0,  yShift, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 3.5, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 3.5, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			-- the model index must be in base 0 !
-			result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal), tostring(nTerminal), tostring(nTerminal)}
+			result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
