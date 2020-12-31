@@ -23,9 +23,6 @@ function data()
                                 'lollo_freestyle_train_station/wall_white.mtl',
                                 'lollo_freestyle_train_station/underpass-door.mtl',
                             },
-                            -- materials = {'lollo_freestyle_train_station/wall_white.mtl'},
-                            --materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
-                            --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", },
                             mesh = 'lollo_freestyle_train_station/underpass-building.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
