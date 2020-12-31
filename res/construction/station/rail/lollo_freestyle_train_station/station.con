@@ -133,6 +133,7 @@ function data()
 					-- and make them snap to the station own nodes.
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
+				-- LOLLO TODO try and assign a node close to the middle
 				terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists - math.floor(#params.terminals[t].trackEdgeLists * 0.5)) * 2 - 1
 
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
