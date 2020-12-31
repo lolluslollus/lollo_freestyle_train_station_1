@@ -53,7 +53,8 @@ return {
 		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
-		local yShift = 1
+		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+		local yShift = isTrackOnPlatformLeft and 1.5 or -1.5
 		for i = 3, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].centrePlatforms[i]
@@ -75,7 +76,6 @@ return {
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
-			yShift = - yShift
 		end
 		for i = 2, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
 			-- print('i =', i)
@@ -99,7 +99,6 @@ return {
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
-			yShift = - yShift
 		end
 		for i = 4, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
 			-- print('i =', i)
@@ -123,7 +122,6 @@ return {
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7, yShift, 0.7, 1 }),
 				tag = _constants.terminalModelTag
 			}
-			yShift = - yShift
 		end
 
 		-- local face = {
