@@ -53,7 +53,7 @@ return {
 		},
 		polygon_offset = {
 			factor = 0,
-			forceDepthWrite = false,
+			forceDepthWrite = true,
 			units = 0,
 		},
 		two_sided = {

@@ -175,7 +175,7 @@ function data()
 				-- 	local wap = params.terminals[t].centrePlatformsFine[i]
 				-- 	local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 				-- 	result.models[#result.models+1] = {
-				-- 		id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5_wide.mdl',
+				-- 		id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5m_wide_stripes.mdl',
 				-- 		-- tag = slotHelpers.mangleModelTag(t, false),
 				-- 		transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 				-- 	}
@@ -276,7 +276,7 @@ function data()
 						local wap = params.terminals[t].tracksidesFine[i]
 						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
 						result.models[#result.models+1] = {
-							id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5_wide.mdl',
+							id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide_stripes.mdl',
 							-- tag = slotHelpers.mangleModelTag(t, false),
 							transf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),

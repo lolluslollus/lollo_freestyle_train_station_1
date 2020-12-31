@@ -10,7 +10,9 @@ function data()
 	t.yearFrom = 0
 	t.yearTo = 0
 
-	t.shapeWidth = 2.0 -- was 4.0
+	-- sets the width of the terrain enbankment, all out (ie including ballastCutOff).
+	-- It can override trackDistance!
+	t.shapeWidth = 1.5 -- 2.7 -- was 4.0 -- sets the width of the terrain enbankment, all out (ie including ballastCutOff)
 	t.shapeStep = 4.0 -- was 4, you can use 2 for smoother bends
 	t.shapeSleeperStep = 0.2 -- 8.0 / 12.0
 
@@ -19,7 +21,7 @@ function data()
 
 	t.sleeperBase = t.ballastHeight
 	t.sleeperLength = .26
-	t.sleeperWidth = 2 -- was 2.6
+	t.sleeperWidth = 1.3 -- was 2.6
 	t.sleeperHeight = .08
 	t.sleeperCutOff = .02
 
@@ -52,7 +54,8 @@ function data()
 	
 	t.slopeBuildSteps = 4 -- was 2 -- [1-4] steps for slope arrow buttons
 
-	t.ballastMaterial = "track/ballast.mtl"
+	-- t.ballastMaterial = "lollo_freestyle_train_station/wall_1.mtl" -- "track/ballast.mtl" "station/rail/cargo/cargo_station_concrete_1.mtl"
+	t.ballastMaterial = "station/rail/cargo/cargo_station_concrete_1.mtl"
 	t.sleeperMaterial = "track/sleeper.mtl"
 	t.railMaterial = "track/rail.mtl"
 	t.catenaryMaterial = "track/catenary.mtl"
@@ -65,10 +68,10 @@ function data()
 	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
 	-- t.bumperModel = "railroad/bumper.mdl"
-	t.bumperModel = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_end_2_5_wide.mdl'
+	t.bumperModel = "lollo_freestyle_train_station/empty.mdl" -- 'lollo_freestyle_train_station/railroad/track/era_c_passenger_end_2_5_wide.mdl'
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
-	t.fillGroundTex = "none.lua" -- "ballast_fill.lua"
+	t.fillGroundTex = "industry_floor_paving.lua" -- "industry_concrete_01.lua" -- "none.lua" -- "ballast_fill.lua"
 	t.borderGroundTex = "none.lua" -- "ballast.lua"
 	
     -- t.railModel ="railroad/tracks/single_rail.mdl"
@@ -76,12 +79,12 @@ function data()
 	t.railModel = "lollo_freestyle_train_station/empty.mdl"
     -- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
 	-- t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
-	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_c_passenger_sleeper_2_5_wide.mdl"
+	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_c_passenger_sleeper_2_5m_wide.mdl"
 	t.trackStraightModel = {
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_2m_base_2_5_wide.mdl', --"railroad/tracks/2m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_4m_base_2_5_wide.mdl', --"railroad/tracks/4m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_8m_base_2_5_wide.mdl', --"railroad/tracks/8m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_16m_base_2_5_wide.mdl', --"railroad/tracks/16m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_2m_base_2_5m_wide.mdl', --"railroad/tracks/2m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_4m_base_2_5m_wide.mdl', --"railroad/tracks/4m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_8m_base_2_5m_wide.mdl', --"railroad/tracks/8m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_16m_base_2_5m_wide.mdl', --"railroad/tracks/16m_base.mdl",
 	}
 
 	t.maintenanceCost = 0.0   -- [$/m/M] per meter and month
