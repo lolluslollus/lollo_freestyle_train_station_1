@@ -498,17 +498,17 @@ local helpers = {
             else
                 local rightPosTanX2 = rightPlatforms[i].posTanX2
                 local newTanRight = {
-                    rightPosTanX2[1][1][1] - centrePosTanX2[1][1][1],
-                    rightPosTanX2[1][1][2] - centrePosTanX2[1][1][2],
-                    rightPosTanX2[1][1][3] - centrePosTanX2[1][1][3],
+                    centrePosTanX2[1][1][1] - rightPosTanX2[1][1][1],
+                    centrePosTanX2[1][1][2] - rightPosTanX2[1][1][2],
+                    centrePosTanX2[1][1][3] - rightPosTanX2[1][1][3],
                 }
                 local newRecordRight = {
                     {
-                        centrePosTanX2[1][1],
+                        rightPosTanX2[1][1],
                         newTanRight
                     },
                     {
-                        rightPosTanX2[1][1],
+                        centrePosTanX2[1][1],
                         newTanRight
                     },
                 }

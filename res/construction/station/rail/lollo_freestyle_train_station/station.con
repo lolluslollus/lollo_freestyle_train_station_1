@@ -88,6 +88,7 @@ function data()
 			}
 
 			local terminateConstructionHookInfo = {
+				crossConnectorPositions = {},
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
 				underpassPositions = {},
@@ -238,12 +239,19 @@ function data()
 							}
 						elseif params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] == nil then
 							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
-							local crossConnectorTransf = moduleHelpers.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1])
-
+							local crossConnectorTransf = transfUtilsUG.mul(
+								moduleHelpers.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
+								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1}
+							)
 							result.models[#result.models+1] = {
 								id = _constants.passengerLaneOnPlatformModelId,
 								tag = slotHelpers.mangleModelTag(t, false),
-								transf = transfUtilsUG.mul(crossConnectorTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
+								transf = crossConnectorTransf
+							}
+							if terminateConstructionHookInfo.crossConnectorPositions[t] == nil then terminateConstructionHookInfo.crossConnectorPositions[t] = {} end
+							terminateConstructionHookInfo.crossConnectorPositions[t][#terminateConstructionHookInfo.crossConnectorPositions[t]+1] = {
+								t = t,
+								pos = posTanX2[2][1],
 							}
 						end
 					end

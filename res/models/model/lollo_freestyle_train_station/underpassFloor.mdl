@@ -19,12 +19,14 @@ function data()
                 node = {
                     children = {
                         {
-                            -- materials = { "industry/oil_refinery/era_a/wall_2.mtl", },
                             -- materials = {'lollo_freestyle_train_station/wall_white.mtl'},
-                            materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
+                            materials = {
+                                -- "station/rail/era_c/era_c_trainstation_glass_milk.mtl",
+                                "lollo_freestyle_train_station/glass.mtl",
+                                "lollo_freestyle_train_station/era_c_trainstation_stripes.mtl",
+                            },
                             --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", },
-                            mesh = 'lollo_freestyle_train_station/plate10x1-5-centred.msh',
-                            name = 'oil_refinery_wall_large',
+                            mesh = 'lollo_freestyle_train_station/plate10x1-5-centred-stripes.msh',
                             transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
                         },
                     },

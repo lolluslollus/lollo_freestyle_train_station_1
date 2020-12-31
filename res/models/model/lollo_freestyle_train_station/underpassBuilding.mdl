@@ -1,0 +1,44 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = {1.0, 1.0, 3.0},
+            bbMin = {-1.0, -1.0, 0}
+        },
+        -- LOLLO NOTE the collider here seems to have no effect.
+        -- We already get it in elevated_stairs.module, so never mind
+        collider = {
+            params = {
+                halfExtents = {1.0, 1.0, 1.5}
+            },
+            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1.5, 1},
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/wall_white.mtl',
+                                'lollo_freestyle_train_station/underpass-door.mtl',
+                            },
+                            -- materials = {'lollo_freestyle_train_station/wall_white.mtl'},
+                            --materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
+                            --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", },
+                            mesh = 'lollo_freestyle_train_station/underpass-building.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

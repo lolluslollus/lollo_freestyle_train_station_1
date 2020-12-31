@@ -54,7 +54,7 @@ function data()
 	
 	t.slopeBuildSteps = 4 -- was 2 -- [1-4] steps for slope arrow buttons
 
-	-- t.ballastMaterial = "lollo_freestyle_train_station/wall_1.mtl" -- "track/ballast.mtl" "station/rail/cargo/cargo_station_concrete_1.mtl"
+	-- t.ballastMaterial = -- "track/ballast.mtl" "station/rail/cargo/cargo_station_concrete_1.mtl"
 	t.ballastMaterial = "station/rail/cargo/cargo_station_concrete_1.mtl"
 	t.sleeperMaterial = "track/sleeper.mtl"
 	t.railMaterial = "track/rail.mtl"
