@@ -562,7 +562,7 @@ function data()
 			end -- end of terminateConstructionHook()
 
 			-- print('freestyleTrainStation result =') debugPrint(result)
-			print('freestyleTrainStation result.terrainAlignmentLists =') debugPrint(result.terrainAlignmentLists)
+			-- print('freestyleTrainStation result.terrainAlignmentLists =') debugPrint(result.terrainAlignmentLists)
 			return result
 		end,
  		-- preProcessFn = function(modules, change, three)
