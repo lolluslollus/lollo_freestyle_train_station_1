@@ -202,7 +202,7 @@ function data()
 							result.models[#result.models+1] = {
 								id = _constants.cargoWaitingAreaModelId,
 								tag = slotHelpers.mangleModelTag(t, true),
-								transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
+								transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.cargoLaneZ, 1})
 							}
 						end
 					end
@@ -214,12 +214,12 @@ function data()
 						result.models[#result.models+1] = {
 							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
 							tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
-							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
+							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
 						}
 						if isUnderpass then
 							local underpassBottomTransf = transfUtilsUG.mul(
 								centreLaneTransf,
-								{ 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.laneZ - _constants.underpassDepthM, 1 }
+								{ 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ - _constants.underpassDepthM, 1 }
 							)
 							-- result.models[#result.models+1] = {
 							-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
@@ -241,7 +241,7 @@ function data()
 							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
 							local crossConnectorTransf = transfUtilsUG.mul(
 								moduleHelpers.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
-								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1}
+								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1}
 							)
 							result.models[#result.models+1] = {
 								id = _constants.passengerLaneOnPlatformModelId,
@@ -263,7 +263,7 @@ function data()
 							result.models[#result.models+1] = {
 								id = _constants.passengerWaitingAreaModelId,
 								tag = slotHelpers.mangleModelTag(t, false),
-								transf = transfUtilsUG.mul(leftLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
+								transf = transfUtilsUG.mul(leftLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
 							}
 						end
 					else
@@ -274,7 +274,7 @@ function data()
 							result.models[#result.models+1] = {
 								id = _constants.passengerWaitingAreaModelId,
 								tag = slotHelpers.mangleModelTag(t, false),
-								transf = transfUtilsUG.mul(rightLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
+								transf = transfUtilsUG.mul(rightLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
 							}
 						end
 					end
@@ -285,7 +285,7 @@ function data()
 					-- 	result.models[#result.models+1] = {
 					-- 		id = _constants.passengerLaneOnPlatformModelId,
 					-- 		tag = slotHelpers.mangleModelTag(t, false),
-					-- 		transf = transfUtilsUG.mul(crossConnectorTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.laneZ, 1})
+					-- 		transf = transfUtilsUG.mul(crossConnectorTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
 					-- 	}
 					-- end
 					-- add trackside bits, only visual
@@ -346,18 +346,11 @@ function data()
 						if params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil then
 							result.models[#result.models+1] = {
 								id = _constants.underpassGroundModelFileName,
-								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+								transf = transfUtilsUG.mul(
+									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.225, 1 }
+								)
 							}
-							-- local posTanX2Minus1 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i-1].posTanX2, inverseMainTransf)
-							-- local posTanX2Plus1 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i+1].posTanX2, inverseMainTransf)
-							-- result.models[#result.models+1] = {
-							-- 	id = _constants.underpassWallsModelFileName,
-							-- 	transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2Minus1)
-							-- }
-							-- result.models[#result.models+1] = {
-							-- 	id = _constants.underpassWallsModelFileName,
-							-- 	transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2Plus1)
-							-- }
 						end
 					end
 				end

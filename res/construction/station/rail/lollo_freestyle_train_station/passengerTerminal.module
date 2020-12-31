@@ -67,13 +67,13 @@ return {
 				-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
 				id = 'lollo_freestyle_train_station/asset/era_c_station_name.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 3, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 3.4, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0.4, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end
@@ -88,7 +88,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_number_single.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 3.5, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			-- the model index must be in base 0 !
@@ -96,7 +96,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0.4, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end
@@ -112,14 +112,14 @@ return {
 				-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.7, yShift, 0.7, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.7, yShift, 1.1, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			result.models[#result.models + 1] = {
 				-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 				id = 'lollo_freestyle_train_station/asset/partenze.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7, yShift, 0.7, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7, yShift, 1.1, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end

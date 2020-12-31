@@ -1139,14 +1139,14 @@ function data()
                         }
                     end
 
-                    eventArgs.leftPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - trackDistance * 0.4)
-                    eventArgs.rightPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, trackDistance * 0.4)
+                    eventArgs.leftPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - trackDistance * 0.45)
+                    eventArgs.rightPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, trackDistance * 0.45)
                     eventArgs.crossConnectors = {}
                     eventArgs.tracksidesFine = {}
                 else
                     -- print('alalalalal')
-                    eventArgs.leftPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - trackDistance * 0.4)
-                    eventArgs.rightPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, trackDistance * 0.4)
+                    eventArgs.leftPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - trackDistance * 0.45)
+                    eventArgs.rightPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, trackDistance * 0.45)
                     eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
                         eventArgs.leftPlatforms,
                         eventArgs.centrePlatforms,
@@ -1160,8 +1160,8 @@ function data()
                     local centrePlatformsFine = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, 1)
                     -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
                     eventArgs.tracksidesFine = eventArgs.isTrackOnPlatformLeft
-                        and stationHelpers.getShiftedLanePositions(centrePlatformsFine, - trackDistance * 0.4)
-                        or stationHelpers.getShiftedLanePositions(centrePlatformsFine, trackDistance * 0.4)
+                        and stationHelpers.getShiftedLanePositions(centrePlatformsFine, - trackDistance * 0.2)
+                        or stationHelpers.getShiftedLanePositions(centrePlatformsFine, trackDistance * 0.2)
                     -- print('eventArgs.tracksidesFine =') debugPrint(eventArgs.tracksidesFine)
                     eventArgs.cargoWaitingAreas = {}
                 end
