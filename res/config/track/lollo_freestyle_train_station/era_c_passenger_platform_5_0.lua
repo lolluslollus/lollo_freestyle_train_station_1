@@ -70,7 +70,6 @@ function data()
 	-- LOLLO TODO Close the platform meshes at the short ends, for all platforms
 
 	-- t.bumperModel = "railroad/bumper.mdl"
-	-- t.bumperModel = "lollo_freestyle_train_station/empty.mdl" -- 'lollo_freestyle_train_station/railroad/track/era_c_passenger_end.mdl'
 	t.bumperModel = "lollo_freestyle_train_station/railroad/track/railing_3m.mdl"
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
