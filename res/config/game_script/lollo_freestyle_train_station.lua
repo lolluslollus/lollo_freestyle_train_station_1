@@ -1063,6 +1063,8 @@ function data()
                     return
                 end
                 print('at least two track edges found')
+                -- LOLLO TODO try and find a node close to the middle. If not found, split.
+                -- This node will be used as the vehicleNode.
 
                 local platformEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
                     args.splitPlatformNode1Id,

@@ -67,8 +67,11 @@ function data()
 	t.catenaryMultiGirderModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1a_repeat.mdl"
 	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
+	-- LOLLO TODO Close the platform meshes at the short ends, for all platforms
+
 	-- t.bumperModel = "railroad/bumper.mdl"
-	t.bumperModel = "lollo_freestyle_train_station/empty.mdl" -- 'lollo_freestyle_train_station/railroad/track/era_c_passenger_end.mdl'
+	-- t.bumperModel = "lollo_freestyle_train_station/empty.mdl" -- 'lollo_freestyle_train_station/railroad/track/era_c_passenger_end.mdl'
+	t.bumperModel = "lollo_freestyle_train_station/railroad/track/railing_3m.mdl"
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
 	t.fillGroundTex = "industry_floor_paving.lua" -- "industry_concrete_01.lua" -- "none.lua" -- "ballast_fill.lua"

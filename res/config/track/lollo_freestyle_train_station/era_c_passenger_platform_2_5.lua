@@ -68,7 +68,7 @@ function data()
 	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
 	-- t.bumperModel = "railroad/bumper.mdl"
-	t.bumperModel = "lollo_freestyle_train_station/empty.mdl" -- 'lollo_freestyle_train_station/railroad/track/era_c_passenger_end_2_5_wide.mdl'
+	t.bumperModel = "lollo_freestyle_train_station/railroad/track/railing_2m.mdl"
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
 	t.fillGroundTex = "industry_floor_paving.lua" -- "industry_concrete_01.lua" -- "none.lua" -- "ballast_fill.lua"

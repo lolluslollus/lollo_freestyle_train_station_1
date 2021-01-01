@@ -1,0 +1,41 @@
+function data()
+    return {
+        boundingInfo = {
+            -- bbMax = { 1.4998956918716, 0.024999998509884, 1.1760129928589, },
+            -- bbMin = { -1.5001041889191, -0.024999998509884, 0, },
+            bbMax = { 1.249, 0.024999998509884, 1.1760129928589, },
+            bbMin = { -1.249, -0.024999998509884, 0, },
+        },
+        collider = {
+            params = {
+                -- halfExtents = { 1.5, 0.024999998509884, 0.58800649642944, },
+                halfExtents = { 1.249, 0.024999998509884, 0.58800649642944, },
+            },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            type = "BOX",
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = { "station/air/asset/asset_tf2/asset_transparent.mtl", },
+                            mesh = "station/air/asset/handrail_3m/handrail_3m_lod0.msh",
+                            name = "handrail_3m",
+                            -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                            -- transf = { 0.83333, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, },
+                            transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1, },
+                        },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 400,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+    end

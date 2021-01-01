@@ -133,7 +133,6 @@ function data()
 					-- and make them snap to the station own nodes.
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
-				-- LOLLO TODO try and assign a node close to the middle
 				terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists - math.floor(#params.terminals[t].trackEdgeLists * 0.5)) * 2 - 1
 
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
@@ -304,8 +303,6 @@ function data()
 					end
 				end
 
-				-- LOLLO TODO add module type: stairs
-
 				local _addTerminal = function()
 					local i = math.ceil(#params.terminals[t].centreTrackPositions * 0.5)
 					local wap = params.terminals[t].centreTrackPositions[i]
@@ -321,7 +318,7 @@ function data()
 						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
-					-- LOLLO TODO find a model to put on the track or leave it blank
+					-- LOLLO TODO find a model to put on the track, like a signal, or leave it blank
 					-- result.models[#result.models+1] = {
 					-- 	id = _constants.terminalModelFileName,
 					-- 	-- tag = slotHelpers.mangleModelTag(t, false),
