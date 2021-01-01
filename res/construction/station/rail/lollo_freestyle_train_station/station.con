@@ -171,28 +171,12 @@ function data()
 
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
-				-- this works, too, as an alternative. However, it is harder to snap new platforms.
-				-- for i = 1, #params.terminals[t].centrePlatformsFine do
-				-- 	local wap = params.terminals[t].centrePlatformsFine[i]
-				-- 	local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-				-- 	result.models[#result.models+1] = {
-				-- 		id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5m_wide_stripes.mdl',
-				-- 		-- tag = slotHelpers.mangleModelTag(t, false),
-				-- 		transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-				-- 	}
-				-- end
 
 				-- add waiting areas and lanes
 				-- Instead of different cargo platforms with different widths, we could only use 5m areas for all,
-				-- and add new modules for extra cargo space, parallel to cargo areas
-				-- and maybe also to passenger areas.
+				-- and add new modules for extra space, parallel to the platform-tracks.
 				-- However, it is easier to place more platform-tracks upfront than add modules later,
-				-- so we give the option to add multiple platform-tracks, initially only for cargo.
-				-- This means, we must change the data structure to accommodate an array of platform-tracks for each terminal.
-				-- We might add the same for passengers in future.
-				-- Much easier: leave the data structure alone, leave the four peg system alone
-				-- and offer cargo platforms with different widths.
-				-- And passenger platforms are fine with 2.5 m, especially now that they can extend trackside.
+				-- so we go this way.
 				-- print('add waiting areas and lanes')
 				if isCargoTerminal then
 					for _, cwa in pairs(params.terminals[t].cargoWaitingAreas) do
@@ -249,10 +233,17 @@ function data()
 								transf = crossConnectorTransf
 							}
 							if terminateConstructionHookInfo.crossConnectorPositions[t] == nil then terminateConstructionHookInfo.crossConnectorPositions[t] = {} end
-							terminateConstructionHookInfo.crossConnectorPositions[t][#terminateConstructionHookInfo.crossConnectorPositions[t]+1] = {
-								t = t,
-								pos = posTanX2[2][1],
-							}
+							table.insert(
+								terminateConstructionHookInfo.crossConnectorPositions[t],
+								{
+									t = t,
+									pos = {
+										posTanX2[2][1][1],
+										posTanX2[2][1][2],
+										posTanX2[2][1][3] + _constants.passengerLaneZ,
+									}
+								}
+							)
 						end
 					end
 					if params.terminals[t].isTrackOnPlatformLeft then
@@ -360,7 +351,7 @@ function data()
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
 				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
 				-- that point at this.
-				local _makeTerminals = function()
+				local _groupTerminals = function()
 					result.stations = { }
 					if terminateConstructionHookInfo.isAnyCargoTerminal then
 						result.stations[#result.stations+1] = {
@@ -415,9 +406,8 @@ function data()
 						table.insert(result.stations[stationIndex].terminals, t - 1)
 					end
 				end
-				_makeTerminals()
-				-- print('terminals made')
-				-- LOLLO TODO also link adjacent (== close enough) passenger platforms
+				_groupTerminals()
+				-- print('terminals grouped')
 				local _linkUnderpasses = function()
 					-- link the underpasses along terminals, underground
 					for t = 1, #params.terminals do
@@ -526,6 +516,34 @@ function data()
 					end
 				end
 				_linkUnderpasses()
+				local _linkPassengerPlatforms = function()
+					-- link the underpasses across terminals, on the ground, if they are close enough
+					for t = 1, #params.terminals do
+						local positionsInT = terminateConstructionHookInfo.crossConnectorPositions[t]
+						if positionsInT ~= nil then
+							for tt = t + 1, #params.terminals do
+								local positionsInTT = terminateConstructionHookInfo.crossConnectorPositions[tt]
+								if positionsInTT ~= nil then
+									for i = 1, #positionsInT do
+										for ii = 1, #positionsInTT do
+											if edgeUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < 6 then
+												result.models[#result.models+1] = {
+													id = _constants.passengerLaneModelId,
+													-- tag = slotHelpers.mangleModelTag(t, false),
+													transf = moduleHelpers.get1MLaneTransf(
+														positionsInT[i].pos,
+														positionsInTT[ii].pos
+													)
+												}
+											end
+										end
+									end
+								end
+							end
+						end
+					end
+				end
+				_linkPassengerPlatforms()
 				-- print('underpasses linked')
 				-- avoid dump when configuring
 				-- if #(result.stations[1].terminals) == 0 then
