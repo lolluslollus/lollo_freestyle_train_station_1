@@ -806,12 +806,10 @@ local _actions = {
             local edge0Objects = {}
             local edge1Objects = {}
             for _, edgeObj in pairs(oldBaseEdge.objects) do
-                print('edgeObj =')
-                debugPrint(edgeObj)
+                print('edgeObj =') debugPrint(edgeObj)
                 if edgeObj[1] ~= objectIdToRemove then
                     local edgeObjPosition = edgeUtils.getObjectPosition(edgeObj[1])
-                    print('edgeObjPosition =')
-                    debugPrint(edgeObjPosition)
+                    print('edgeObjPosition =') debugPrint(edgeObjPosition)
                     if type(edgeObjPosition) ~= 'table' then return end -- change nothing and leave
                     local assignment = stationHelpers.getWhichEdgeGetsEdgeObjectAfterSplit(
                         edgeObjPosition,
