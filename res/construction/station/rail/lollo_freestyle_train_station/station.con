@@ -301,11 +301,13 @@ function data()
 					local unitaryTangent = moduleHelpers.getPosTanX2Normalised(posTanX2)
 					-- LOLLO TODO the underpasses turn yellow when the user wants to remove them:
 					-- good, but these guys don't, unless there is only one terminal: why?
+					-- A similar issue happens when you try to bulldoze a platform-track:
+					-- the yellow area is there, but it is a surface below the top.
 					table.insert(result.slots, {
-						-- height = 10,
+						height = 0,
 						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
 						-- shape 0 1 2 3
-						shape = 3,
+						-- shape = 3,
 						spacing = _constants.trackSpacing,
 						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(unitaryTangent),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,

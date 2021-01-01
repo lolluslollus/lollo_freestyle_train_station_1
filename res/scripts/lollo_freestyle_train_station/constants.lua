@@ -47,6 +47,7 @@ local constants = {
     passengersWaitingAreaUnderpassTagRoot = 'passengersWaitingAreaUnderpass_',
 
     trackSpacing = {2, 2, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
+    -- trackSpacing = {5, 5, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
     underpassSpacing = {2.5, 2.5, 1.5, 1.5}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
 	idBases = {
         terminalSlotId = 100000,
