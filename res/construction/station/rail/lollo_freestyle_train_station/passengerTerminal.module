@@ -45,12 +45,12 @@ return {
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = slotTransf,
-		-- 	tag = _constants.terminalModelTag
-		-- }
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/icon/green.mdl',
+			slotId = slotId,
+			transf = slotTransf,
+			tag = _constants.terminalModelTag
+		}
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft

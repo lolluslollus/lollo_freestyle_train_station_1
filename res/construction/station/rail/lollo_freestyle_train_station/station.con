@@ -104,6 +104,7 @@ function data()
 				if isCargoTerminal then terminateConstructionHookInfo.isAnyCargoTerminal = true else terminateConstructionHookInfo.isAnyPassengerTerminal = true end
 
 				-- add track edges
+				terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].midTrackIndex) * 2 - 2
 				for i = 1, #params.terminals[t].trackEdgeLists do
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local newEdgeList = {
@@ -133,7 +134,6 @@ function data()
 					-- and make them snap to the station own nodes.
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
-				terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists - math.floor(#params.terminals[t].trackEdgeLists * 0.5)) * 2 - 1
 
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
 				-- if #result.edgeLists > 0 then
@@ -193,7 +193,7 @@ function data()
 				-- Much easier: leave the data structure alone, leave the four peg system alone
 				-- and offer cargo platforms with different widths.
 				-- And passenger platforms are fine with 2.5 m, especially now that they can extend trackside.
-
+				-- print('add waiting areas and lanes')
 				if isCargoTerminal then
 					for _, cwa in pairs(params.terminals[t].cargoWaitingAreas) do
 						for i = 1, #cwa do
@@ -304,10 +304,11 @@ function data()
 				end
 
 				local _addTerminal = function()
-					local i = math.ceil(#params.terminals[t].centreTrackPositions * 0.5)
-					local wap = params.terminals[t].centreTrackPositions[i]
+					local i = params.terminals[t].midTrackIndex
+					local wap = params.terminals[t].trackEdgeLists[i]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-					-- LOLLO TODO the underpasses below turn yellow when the user wants to remove them:
+					local unitaryTangent = moduleHelpers.getPosTanX2Normalised(posTanX2)
+					-- LOLLO TODO the underpasses turn yellow when the user wants to remove them:
 					-- good, but these guys don't, unless there is only one terminal: why?
 					table.insert(result.slots, {
 						-- height = 10,
@@ -315,7 +316,7 @@ function data()
 						-- shape 0 1 2 3
 						shape = 3,
 						spacing = _constants.trackSpacing,
-						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(unitaryTangent),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
 					-- LOLLO TODO find a model to put on the track, like a signal, or leave it blank
@@ -415,7 +416,7 @@ function data()
 					end
 				end
 				_makeTerminals()
-
+				-- print('terminals made')
 				-- LOLLO TODO also link adjacent (== close enough) passenger platforms
 				local _linkUnderpasses = function()
 					-- link the underpasses along terminals, underground
@@ -525,6 +526,7 @@ function data()
 					end
 				end
 				_linkUnderpasses()
+				-- print('underpasses linked')
 				-- avoid dump when configuring
 				-- if #(result.stations[1].terminals) == 0 then
 				-- 	print('avoiding dump when configuring')
@@ -558,6 +560,7 @@ function data()
 				-- print('LOLLO result.terminalGroups = ') debugPrint(result.terminalGroups)
 			end -- end of terminateConstructionHook()
 
+			-- print('freestyleTrainStation.updateFn about to return')
 			-- print('freestyleTrainStation result =') debugPrint(result)
 			-- print('freestyleTrainStation result.terrainAlignmentLists =') debugPrint(result.terrainAlignmentLists)
 			return result

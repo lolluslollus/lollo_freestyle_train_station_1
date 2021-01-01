@@ -150,6 +150,7 @@ local helpers = {
             local pos1 = baseNode1.position
             local tan0 = baseEdge.tangent0
             local tan1 = baseEdge.tangent1
+
             local _swap = function()
                 local swapPos = pos0
                 pos0 = pos1
@@ -296,8 +297,8 @@ local helpers = {
         return results
     end,
 
-    getCentrePlatformPositions = function(edgeLists, maxEdgeLength)
-        -- print('getCentrePlatformPositions starting')
+    getCentreEdgePositions = function(edgeLists, maxEdgeLength)
+        -- print('getCentreEdgePositions starting')
         if type(edgeLists) ~= 'table' then return {} end
 
         local results = {}
@@ -312,6 +313,7 @@ local helpers = {
             local previousNodeBetween = nil
             for i = 1, nModelsInEdge do
                 -- print('i == ', i)
+                -- print('i / nModelsInEdge =', i / nModelsInEdge)
                 local nodeBetween = edgeUtils.getNodeBetween(
                     transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][1]),
                     transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][1]),
@@ -324,113 +326,105 @@ local helpers = {
                     print('ERROR: nodeBetween not found')
                     print('pel =') debugPrint(pel)
                     return {}
-                else
-                    local lengthFactor = nodeBetween.length0 - lengthCovered
-                    if i == 1 then
-                        edgeResults[#edgeResults+1] = {
-                            catenary = pel.catenary,
-                            posTanX2 = {
-                                {
-                                    {
-                                        pel.posTanX2[1][1][1],
-                                        pel.posTanX2[1][1][2],
-                                        pel.posTanX2[1][1][3],
-                                    },
-                                    {
-                                        pel.posTanX2[1][2][1] * lengthFactor / edgeLength,
-                                        pel.posTanX2[1][2][2] * lengthFactor / edgeLength,
-                                        pel.posTanX2[1][2][3] * lengthFactor / edgeLength,
-                                    }
-                                },
-                                {
-                                    {
-                                        nodeBetween.position.x,
-                                        nodeBetween.position.y,
-                                        nodeBetween.position.z,
-                                    },
-                                    {
-                                        nodeBetween.tangent.x * lengthFactor,
-                                        nodeBetween.tangent.y * lengthFactor,
-                                        nodeBetween.tangent.z * lengthFactor,
-                                    }
-                                },
-                            },
-                            trackType = pel.trackType,
-                            trackTypeName = pel.trackTypeName,
-                            type = pel.type,
-                            typeIndex = pel.typeIndex
-                        }
-                    elseif i == nModelsInEdge then
-                        edgeResults[#edgeResults+1] = {
-                            catenary = pel.catenary,
-                            posTanX2 = {
-                                {
-                                    {
-                                        previousNodeBetween.position.x,
-                                        previousNodeBetween.position.y,
-                                        previousNodeBetween.position.z,
-                                    },
-                                    {
-                                        previousNodeBetween.tangent.x * lengthFactor,
-                                        previousNodeBetween.tangent.y * lengthFactor,
-                                        previousNodeBetween.tangent.z * lengthFactor,
-                                    }
-                                },
-                                {
-                                    {
-                                        pel.posTanX2[2][1][1],
-                                        pel.posTanX2[2][1][2],
-                                        pel.posTanX2[2][1][3],
-                                    },
-                                    {
-                                        pel.posTanX2[2][2][1] * lengthFactor / edgeLength,
-                                        pel.posTanX2[2][2][2] * lengthFactor / edgeLength,
-                                        pel.posTanX2[2][2][3] * lengthFactor / edgeLength,
-                                    }
-                                },
-                            },
-                            trackType = pel.trackType,
-                            trackTypeName = pel.trackTypeName,
-                            type = pel.type,
-                            typeIndex = pel.typeIndex
-                        }
-                    else
-                        edgeResults[#edgeResults+1] = {
-                            catenary = pel.catenary,
-                            posTanX2 = {
-                                {
-                                    {
-                                        previousNodeBetween.position.x,
-                                        previousNodeBetween.position.y,
-                                        previousNodeBetween.position.z,
-                                    },
-                                    {
-                                        previousNodeBetween.tangent.x * lengthFactor,
-                                        previousNodeBetween.tangent.y * lengthFactor,
-                                        previousNodeBetween.tangent.z * lengthFactor,
-                                    }
-                                },
-                                {
-                                    {
-                                        nodeBetween.position.x,
-                                        nodeBetween.position.y,
-                                        nodeBetween.position.z,
-                                    },
-                                    {
-                                        nodeBetween.tangent.x * lengthFactor,
-                                        nodeBetween.tangent.y * lengthFactor,
-                                        nodeBetween.tangent.z * lengthFactor,
-                                    }
-                                },
-                            },
-                            trackType = pel.trackType,
-                            trackTypeName = pel.trackTypeName,
-                            type = pel.type,
-                            typeIndex = pel.typeIndex
-                        }
-                    end
                 end
-                lengthCovered = nodeBetween.length0
+                local newEdgeLength = nodeBetween.refDistance0 - lengthCovered
+                -- print('newEdgeLength =', newEdgeLength)
+                -- print('lengthCovered =', lengthCovered)
+                if i == 1 then
+                    edgeResults[#edgeResults+1] = {
+                        posTanX2 = {
+                            {
+                                {
+                                    pel.posTanX2[1][1][1],
+                                    pel.posTanX2[1][1][2],
+                                    pel.posTanX2[1][1][3],
+                                },
+                                {
+                                    pel.posTanX2[1][2][1] * newEdgeLength / edgeLength,
+                                    pel.posTanX2[1][2][2] * newEdgeLength / edgeLength,
+                                    pel.posTanX2[1][2][3] * newEdgeLength / edgeLength,
+                                }
+                            },
+                            {
+                                {
+                                    nodeBetween.position.x,
+                                    nodeBetween.position.y,
+                                    nodeBetween.position.z,
+                                },
+                                {
+                                    nodeBetween.tangent.x * newEdgeLength,
+                                    nodeBetween.tangent.y * newEdgeLength,
+                                    nodeBetween.tangent.z * newEdgeLength,
+                                }
+                            },
+                        },
+                    }
+                elseif i == nModelsInEdge then
+                    edgeResults[#edgeResults+1] = {
+                        posTanX2 = {
+                            {
+                                {
+                                    previousNodeBetween.position.x,
+                                    previousNodeBetween.position.y,
+                                    previousNodeBetween.position.z,
+                                },
+                                {
+                                    previousNodeBetween.tangent.x * newEdgeLength,
+                                    previousNodeBetween.tangent.y * newEdgeLength,
+                                    previousNodeBetween.tangent.z * newEdgeLength,
+                                }
+                            },
+                            {
+                                {
+                                    pel.posTanX2[2][1][1],
+                                    pel.posTanX2[2][1][2],
+                                    pel.posTanX2[2][1][3],
+                                },
+                                {
+                                    pel.posTanX2[2][2][1] * newEdgeLength / edgeLength,
+                                    pel.posTanX2[2][2][2] * newEdgeLength / edgeLength,
+                                    pel.posTanX2[2][2][3] * newEdgeLength / edgeLength,
+                                }
+                            },
+                        },
+                    }
+                else
+                    edgeResults[#edgeResults+1] = {
+                        posTanX2 = {
+                            {
+                                {
+                                    previousNodeBetween.position.x,
+                                    previousNodeBetween.position.y,
+                                    previousNodeBetween.position.z,
+                                },
+                                {
+                                    previousNodeBetween.tangent.x * newEdgeLength,
+                                    previousNodeBetween.tangent.y * newEdgeLength,
+                                    previousNodeBetween.tangent.z * newEdgeLength,
+                                }
+                            },
+                            {
+                                {
+                                    nodeBetween.position.x,
+                                    nodeBetween.position.y,
+                                    nodeBetween.position.z,
+                                },
+                                {
+                                    nodeBetween.tangent.x * newEdgeLength,
+                                    nodeBetween.tangent.y * newEdgeLength,
+                                    nodeBetween.tangent.z * newEdgeLength,
+                                }
+                            },
+                        },
+                    }
+                end
+                edgeResults[#edgeResults].catenary = pel.catenary
+                edgeResults[#edgeResults].trackType = pel.trackType
+                edgeResults[#edgeResults].trackTypeName = pel.trackTypeName
+                edgeResults[#edgeResults].type = pel.type
+                edgeResults[#edgeResults].typeIndex = pel.typeIndex
+
+                lengthCovered = nodeBetween.refDistance0
                 previousNodeBetween = nodeBetween
             end
 
@@ -439,11 +433,11 @@ local helpers = {
             end
         end
 
-        -- print('getCentrePlatformPositions results =') debugPrint(results)
+        -- print('getCentreEdgePositions results =') debugPrint(results)
         return results
     end,
 
-    getShiftedLanePositions = function(edgeLists, sideShift)
+    getShiftedEdgePositions = function(edgeLists, sideShift)
         local results = {
             {
                 catenary = edgeLists[1].catenary,

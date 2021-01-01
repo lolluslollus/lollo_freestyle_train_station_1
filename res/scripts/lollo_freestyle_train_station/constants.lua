@@ -19,6 +19,7 @@ local constants = {
     nTerminalMultiplier = 1000,
     nTracksMax = 10,
     maxWaypointDistance = 1000,
+    minSplitDistance = 1,
 
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileNameLong = 'station/rail/lollo_freestyle_train_station/station.con',

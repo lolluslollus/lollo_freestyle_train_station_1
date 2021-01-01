@@ -195,4 +195,27 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
     return result
 end
 
+helpers.getPosTanX2Normalised = function(posTanX2)
+    local pos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
+    local tan1 = edgeUtils.getVectorNormalised(posTanX2[1][2], 2)
+    local tan2 = edgeUtils.getVectorNormalised(posTanX2[2][2], 2)
+    local pos2 = {
+        posTanX2[1][1][1] + tan1[1],
+        posTanX2[1][1][2] + tan1[2],
+        posTanX2[1][1][3] + tan1[3],
+    }
+
+    local result = {
+        {
+            pos1,
+            tan1
+        },
+        {
+            pos2,
+            tan2
+        }
+    }
+    return result
+end
+
 return helpers

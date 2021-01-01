@@ -247,19 +247,41 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
 
     local lMid = shift021 * length
     local result = {
-        length0 = length * shift021,
-        length1 = length * (1 - shift021),
+        refDistance0 = length * shift021,
+        refPosition0 = {
+            x = position0.x,
+            y = position0.y,
+            z = position0.z,
+        },
+        refTangent0 = {
+            x = tangent0.x,
+            y = tangent0.y,
+            z = tangent0.z,
+        },
+        refDistance1 = length * (1 - shift021),
+        refPosition1 = {
+            x = position1.x,
+            y = position1.y,
+            z = position1.z,
+        },
+        refTangent1 = {
+            x = tangent1.x,
+            y = tangent1.y,
+            z = tangent1.z,
+        },
+        -- length0 = length * shift021,
+        -- length1 = length * (1 - shift021),
         position = {
             x = aX + bX * lMid + cX * lMid * lMid + dX * lMid * lMid * lMid,
             y = aY + bY * lMid + cY * lMid * lMid + dY * lMid * lMid * lMid,
             z = aZ + bZ * lMid + cZ * lMid * lMid + dZ * lMid * lMid * lMid
         },
-        -- LOLLO NOTE these are real derivatives, they are normalised by construction
-        tangent = {
+        -- LOLLO NOTE these are real derivatives, they are normalised by construction, but there are edge cases
+        tangent = helper.getVectorNormalised({
             x = bX + 2 * cX * lMid + 3 * dX * lMid * lMid,
             y = bY + 2 * cY * lMid + 3 * dY * lMid * lMid,
             z = bZ + 2 * cZ * lMid + 3 * dZ * lMid * lMid,
-        }
+        })
     }
     -- print('getNodeBetween result =') debugPrint(result)
     return result
@@ -305,13 +327,6 @@ helper.getNodeBetweenByPosition = function(edgeId, position)
         y = (position[2] or position.y) - baseNode1.position.y,
         z = (position[3] or position.z) - baseNode1.position.z,
     })
-
-    -- print('length0 =', length0)
-    -- print('length1 =', length1)
-    -- print('length0 / (length0 + length1) =', length0 / (length0 + length1))
-
-    -- local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
-    -- if tn == nil then return nil end
 
     return helper.getNodeBetween(baseNode0.position, baseNode1.position, baseEdge.tangent0, baseEdge.tangent1, length0 / (length0 + length1))
 end
@@ -578,18 +593,23 @@ helper.getLastBuiltEdgeId = function(entity2tn, addedSegment)
     return nil
 end
 
-helper.getNodeIdsBetweenEdgeIds = function(edgeIds, isAddOuterNodes)
+helper.getNodeIdsBetweenEdgeIds = function(edgeIds, isIncludeExclusiveOuterNodes)
     if type(edgeIds) ~= 'table' then return {} end
 
+    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
     local allNodeIds = {}
     local sharedNodeIds = {}
     for _, edgeId in pairs(edgeIds) do
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
         if baseEdge ~= nil then
-            if isAddOuterNodes or arrayUtils.arrayHasValue(allNodeIds, baseEdge.node0) then
+            local nEdgesAttached2Node0 = _map[baseEdge.node0]
+            if nEdgesAttached2Node0 == nil then nEdgesAttached2Node0 = 2 else nEdgesAttached2Node0 = #_map[baseEdge.node0] end
+            if (nEdgesAttached2Node0 == 1 and isIncludeExclusiveOuterNodes) or arrayUtils.arrayHasValue(allNodeIds, baseEdge.node0) then
                 arrayUtils.addUnique(sharedNodeIds, baseEdge.node0)
             end
-            if isAddOuterNodes or arrayUtils.arrayHasValue(allNodeIds, baseEdge.node1) then
+            local nEdgesAttached2Node1 = _map[baseEdge.node1]
+            if nEdgesAttached2Node1 == nil then nEdgesAttached2Node1 = 2 else nEdgesAttached2Node1 = #_map[baseEdge.node1] end
+            if (nEdgesAttached2Node1 == 1 and isIncludeExclusiveOuterNodes) or arrayUtils.arrayHasValue(allNodeIds, baseEdge.node1) then
                 arrayUtils.addUnique(sharedNodeIds, baseEdge.node1)
             end
             allNodeIds[#allNodeIds+1] = baseEdge.node0

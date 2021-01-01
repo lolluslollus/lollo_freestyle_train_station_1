@@ -220,7 +220,7 @@ local _actions = {
             trackEdgeLists = args.trackEdgeList,
             centrePlatforms = args.centrePlatforms,
             -- centrePlatformsFine = args.centrePlatformsFine,
-            centreTrackPositions = args.centreTrackPositions,
+            midTrackIndex = args.midTrackIndex,
             leftPlatforms = args.leftPlatforms,
             rightPlatforms = args.rightPlatforms,
             crossConnectors = args.crossConnectors,
@@ -281,7 +281,7 @@ local _actions = {
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
                     -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
-                    -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centrePlatforms', 'centrePlatformsFine', 'tracksidesFine', 'centreTrackPositions', 'crossConnectors', 'leftPlatforms', 'rightPlatforms', 'cargoWaitingAreas'})
+                    -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centrePlatforms', 'centrePlatformsFine', 'tracksidesFine', 'crossConnectors', 'leftPlatforms', 'rightPlatforms', 'cargoWaitingAreas'})
                     -- eventArgs.stationConstructionId = result.resultEntities[1]
                     -- print('eventArgs =') debugPrint(eventArgs)
                     print('buildStation callback is about to send command')
@@ -588,14 +588,8 @@ local _actions = {
         -- debugPrint(proposal.streetProposal.edgeObjectsToRemove)
 
         local sharedNodeIds = {}
-        arrayUtils.concatValues(
-            sharedNodeIds,
-            edgeUtils.getNodeIdsBetweenEdgeIds(trackEdgeIds)
-        )
-        arrayUtils.concatValues(
-            sharedNodeIds,
-            edgeUtils.getNodeIdsBetweenEdgeIds(platformEdgeIds)
-        )
+        arrayUtils.concatValues(sharedNodeIds, edgeUtils.getNodeIdsBetweenEdgeIds(trackEdgeIds, true))
+        arrayUtils.concatValues(sharedNodeIds, edgeUtils.getNodeIdsBetweenEdgeIds(platformEdgeIds, true))
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
@@ -693,13 +687,29 @@ local _actions = {
         )
     end,
 
-    splitEdgeRemovingObject = function(wholeEdgeId, position0, tangent0, position1, tangent1, nodeBetween, objectIdToRemove, successEventName, successEventArgs, newArgName)
+    splitEdgeRemovingObject = function(wholeEdgeId, nodeBetween, objectIdToRemove, successEventName, successEventArgs, newArgName, mustSplit)
+        -- print('splitEdgeRemovingObject starting')
         if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
 
+        -- print('nodeBetween =') debugPrint(nodeBetween)
         local oldBaseEdge = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE)
         local oldBaseEdgeTrack = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
         -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
         if oldBaseEdge == nil or oldBaseEdgeTrack == nil then return end
+        -- print('oldBaseEdge =') debugPrint(oldBaseEdge)
+
+        local node0 = api.engine.getComponent(oldBaseEdge.node0, api.type.ComponentType.BASE_NODE)
+        local node1 = api.engine.getComponent(oldBaseEdge.node1, api.type.ComponentType.BASE_NODE)
+        if node0 == nil or node1 == nil then return end
+        -- print('node0 =') debugPrint(node0)
+        -- print('node1 =') debugPrint(node1)
+
+        local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZVeryClose(nodeBetween.refPosition0, node0.position)
+        -- print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
+        local distance0 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance0 or nodeBetween.refDistance1
+        local distance1 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance1 or nodeBetween.refDistance0
+        -- print('distance0 =') debugPrint(distance0)
+        -- print('distance1 =') debugPrint(distance1)
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -709,8 +719,8 @@ local _actions = {
         context.player = api.engine.util.getPlayer() -- default is -1
 
         -- the split may occur at the end of an edge - in theory, but I could not make it happen in practise.
-        if nodeBetween.length0 == 0 or nodeBetween.length1 == 0 then
-            -- LOLLO TODO check this, it seems to never happen
+        if distance0 == 0 or distance1 == 0 or (not(mustSplit) and (distance0 < _constants.minSplitDistance or distance1 < _constants.minSplitDistance)) then
+            -- we use this to avoid unnecessary splits, unless they must happen
             print('WARNING: nodeBetween is at the end of an edge; nodeBetween =') debugPrint(nodeBetween)
             local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(wholeEdgeId, objectIdToRemove)
             if not(proposal) then return end
@@ -720,9 +730,10 @@ local _actions = {
                 function(result, success)
                     print('command callback firing for split, success =', success)
                     if success and successEventName ~= nil then
+                        -- print('successEventName =') debugPrint(successEventName)
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                         if not(stringUtils.isNullOrEmptyString(newArgName)) then
-                            local splitNodeId = nodeBetween.length0 == 0 and oldBaseEdge.node0 or oldBaseEdge.node1
+                            local splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1
                             eventArgs[newArgName] = splitNodeId
                         end
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -737,8 +748,10 @@ local _actions = {
             return
         end
 
-        local node0TangentLength = edgeUtils.getVectorLength({ tangent0.x, tangent0.y, tangent0.z })
-        local node1TangentLength = edgeUtils.getVectorLength({ tangent1.x, tangent1.y, tangent1.z })
+        local oldTan0Length = edgeUtils.getVectorLength(oldBaseEdge.tangent0)
+        local oldTan1Length = edgeUtils.getVectorLength(oldBaseEdge.tangent1)
+        -- print('oldTan0Length =') debugPrint(oldTan0Length)
+        -- print('oldTan1Length =') debugPrint(oldTan1Length)
 
         -- local playerOwned = api.type.PlayerOwned.new()
         -- playerOwned.player = api.engine.util.getPlayer()
@@ -754,17 +767,17 @@ local _actions = {
         newEdge0.comp.node0 = oldBaseEdge.node0
         newEdge0.comp.node1 = -3
         newEdge0.comp.tangent0 = api.type.Vec3f.new(
-            tangent0.x * nodeBetween.length0 / node0TangentLength,
-            tangent0.y * nodeBetween.length0 / node0TangentLength,
-            tangent0.z * nodeBetween.length0 / node0TangentLength
+            oldBaseEdge.tangent0.x * distance0 / oldTan0Length,
+            oldBaseEdge.tangent0.y * distance0 / oldTan0Length,
+            oldBaseEdge.tangent0.z * distance0 / oldTan0Length
         )
         newEdge0.comp.tangent1 = api.type.Vec3f.new(
-            nodeBetween.tangent.x * nodeBetween.length0,
-            nodeBetween.tangent.y * nodeBetween.length0,
-            nodeBetween.tangent.z * nodeBetween.length0
+            nodeBetween.tangent.x * distance0,
+            nodeBetween.tangent.y * distance0,
+            nodeBetween.tangent.z * distance0
         )
         newEdge0.comp.type = oldBaseEdge.type -- respect bridge or tunnel
-        newEdge0.comp.typeIndex = oldBaseEdge.typeIndex -- respect bridge or tunnel
+        newEdge0.comp.typeIndex = oldBaseEdge.typeIndex -- respect bridge or tunnel type
         newEdge0.playerOwned = playerOwned
         newEdge0.trackEdge = oldBaseEdgeTrack
 
@@ -774,14 +787,14 @@ local _actions = {
         newEdge1.comp.node0 = -3
         newEdge1.comp.node1 = oldBaseEdge.node1
         newEdge1.comp.tangent0 = api.type.Vec3f.new(
-            nodeBetween.tangent.x * nodeBetween.length1,
-            nodeBetween.tangent.y * nodeBetween.length1,
-            nodeBetween.tangent.z * nodeBetween.length1
+            nodeBetween.tangent.x * distance1,
+            nodeBetween.tangent.y * distance1,
+            nodeBetween.tangent.z * distance1
         )
         newEdge1.comp.tangent1 = api.type.Vec3f.new(
-            tangent1.x * nodeBetween.length1 / node1TangentLength,
-            tangent1.y * nodeBetween.length1 / node1TangentLength,
-            tangent1.z * nodeBetween.length1 / node1TangentLength
+            oldBaseEdge.tangent1.x * distance1 / oldTan1Length,
+            oldBaseEdge.tangent1.y * distance1 / oldTan1Length,
+            oldBaseEdge.tangent1.z * distance1 / oldTan1Length
         )
         newEdge1.comp.type = oldBaseEdge.type
         newEdge1.comp.typeIndex = oldBaseEdge.typeIndex
@@ -802,8 +815,8 @@ local _actions = {
                     if type(edgeObjPosition) ~= 'table' then return end -- change nothing and leave
                     local assignment = stationHelpers.getWhichEdgeGetsEdgeObjectAfterSplit(
                         edgeObjPosition,
-                        {position0.x, position0.y, position0.z},
-                        {position1.x, position1.y, position1.z},
+                        {node0.position.x, node0.position.y, node0.position.z},
+                        {node1.position.x, node1.position.y, node1.position.z},
                         nodeBetween
                     )
                     if assignment.assignToSecondEstimate == 0 then
@@ -832,11 +845,11 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                -- print('LOLLO freestyle train station: split callback returned result = ')
-                -- debugPrint(result)
-                --for _, v in pairs(result.entities) do print(v) end
-                -- print('LOLLO freestyle train station callback returned success = ')
                 print('command callback firing for split, success =', success)
+                if not(success) then
+                    print('proposal =') debugPrint(proposal)
+                    print('split callback result =') debugPrint(result)
+                end
                 if success and successEventName ~= nil then
                     print('successEventName =') debugPrint(successEventName)
                     -- UG TODO this should come from UG!
@@ -912,21 +925,13 @@ function data()
 
                 local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.trackWaypoint1Id)
                 if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
-                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                if not(baseEdge) then return end
-                local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                if not(node0) or not(node1) then return end
+
                 local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint1Id)
                 -- UG TODO see if the api can get the exact percentage shift.
                 local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
 
                 _actions.splitEdgeRemovingObject(
                     edgeId,
-                    node0.position,
-                    baseEdge.tangent0,
-                    node1.position,
-                    baseEdge.tangent1,
                     nodeBetween,
                     args.trackWaypoint1Id,
                     _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED,
@@ -939,19 +944,11 @@ function data()
 
                 local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.trackWaypoint2Id)
                 if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
-                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                if not(baseEdge) then return end
-                local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                if not(node0) or not(node1) then return end
+
                 local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint2Id)
                 local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
                 _actions.splitEdgeRemovingObject(
                     edgeId,
-                    node0.position,
-                    baseEdge.tangent0,
-                    node1.position,
-                    baseEdge.tangent1,
                     nodeBetween,
                     args.trackWaypoint2Id,
                     _eventNames.PLATFORM_WAYPOINT_1_SPLIT_REQUESTED,
@@ -964,20 +961,12 @@ function data()
 
                 local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.platformWaypoint1Id)
                 if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
-                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                if not(baseEdge) then return end
-                local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                if not(node0) or not(node1) then return end
+
                 local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint1Id)
                 local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
 
                 _actions.splitEdgeRemovingObject(
                     edgeId,
-                    node0.position,
-                    baseEdge.tangent0,
-                    node1.position,
-                    baseEdge.tangent1,
                     nodeBetween,
                     args.platformWaypoint1Id,
                     _eventNames.PLATFORM_WAYPOINT_2_SPLIT_REQUESTED,
@@ -990,20 +979,12 @@ function data()
 
                 local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.platformWaypoint2Id)
                 if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
-                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                if not(baseEdge) then return end
-                local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                if not(node0) or not(node1) then return end
+
                 local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint2Id)
-                local nodeBetween = edgeUtils.getNodeBetweenByPosition( edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
+                local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
 
                 _actions.splitEdgeRemovingObject(
                     edgeId,
-                    node0.position,
-                    baseEdge.tangent0,
-                    node1.position,
-                    baseEdge.tangent1,
                     nodeBetween,
                     args.platformWaypoint2Id,
                     _eventNames.TRACK_BULLDOZE_REQUESTED,
@@ -1031,17 +1012,14 @@ function data()
                 )
                 -- LOLLO NOTE I need this, or a station with only one track edge will dump with
                 -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
+                if #trackEdgeIdsBetweenNodeIds == 0 then
+                    print('ERROR: #trackEdgeIdsBetweenNodeIds == 0')
+                    return
+                end
                 if #trackEdgeIdsBetweenNodeIds == 1 then
                     print('only one track edge, going to split it')
                     local edgeId = trackEdgeIdsBetweenNodeIds[1]
                     if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
-
-                    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                    if not(baseEdge) then return end
-
-                    local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                    local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                    if not(node0) or not(node1) then return end
 
                     print('args.splitTrackNode1Id =') debugPrint(args.splitTrackNode1Id)
                     print('args.splitTrackNode2Id =') debugPrint(args.splitTrackNode2Id)
@@ -1050,15 +1028,12 @@ function data()
                     print('nodeBetween =') debugPrint(nodeBetween)
                     _actions.splitEdgeRemovingObject(
                         edgeId,
-                        node0.position,
-                        baseEdge.tangent0,
-                        node1.position,
-                        baseEdge.tangent1,
                         nodeBetween,
                         nil,
                         _eventNames.TRACK_BULLDOZE_REQUESTED,
                         arrayUtils.cloneDeepOmittingFields(args),
-                        nil
+                        nil,
+                        true
                     )
                     return
                 end
@@ -1068,6 +1043,10 @@ function data()
                     args.splitPlatformNode1Id,
                     args.splitPlatformNode2Id
                 )
+                if #platformEdgeIdsBetweenNodeIds == 0 then
+                    print('ERROR: #platformEdgeIdsBetweenNodeIds == 0')
+                    return
+                end
                 -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
                 -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                 -- You may leave this out if you lay down platform models instead of edges
@@ -1076,25 +1055,15 @@ function data()
                     local edgeId = platformEdgeIdsBetweenNodeIds[1]
                     if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
 
-                    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                    if not(baseEdge) then return end
-
-                    local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                    local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                    if not(node0) or not(node1) then return end
-
                     local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, 0.5)
                     _actions.splitEdgeRemovingObject(
                         edgeId,
-                        node0.position,
-                        baseEdge.tangent0,
-                        node1.position,
-                        baseEdge.tangent1,
                         nodeBetween,
                         nil,
                         _eventNames.TRACK_BULLDOZE_REQUESTED,
                         arrayUtils.cloneDeepOmittingFields(args),
-                        nil
+                        nil,
+                        true
                     )
                     return
                 end
@@ -1105,21 +1074,92 @@ function data()
                 print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
+                local totalLength = 0
+                local trackLengths = {}
+                for i = 1, #eventArgs.trackEdgeList do
+                    local tel = eventArgs.trackEdgeList[i]
+                    -- these should be identical, but they are not really so, so we average them
+                    local length = (edgeUtils.getVectorLength(tel.posTanX2[1][2]) + edgeUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
+                    trackLengths[i] = length
+                    totalLength = totalLength + length
+                end
+                local lengthSoFar = 0
+                local halfTotalLength = totalLength * 0.5
+                local iAcrossMidLength = -1
+                local iCloseEnoughToMidLength = -1
+                for i = 1, #trackLengths do
+                    local length = trackLengths[i]
+                    if lengthSoFar <= halfTotalLength and lengthSoFar + length >= halfTotalLength then
+                        iAcrossMidLength = i
+                        if lengthSoFar / halfTotalLength > 0.9 and lengthSoFar / halfTotalLength < 1.1 then
+                            iCloseEnoughToMidLength = i
+                        else
+                            if (lengthSoFar + length) / halfTotalLength > 0.9 and (lengthSoFar + length) / halfTotalLength < 1.1 then
+                                iCloseEnoughToMidLength = i + 1
+                            end
+                        end
+                        break
+                    end
+                    lengthSoFar = lengthSoFar + length
+                end
+                if iCloseEnoughToMidLength < 1 then
+                    print('no track edge is close enough to the middle, going to add a split. iAcrossMidLength =', iAcrossMidLength)
+                    if iAcrossMidLength < 1 then
+                        print('WARNING: trouble finding midTrackIndex')
+                        print('totalLength =') debugPrint(totalLength)
+                        print('trackLengths =') debugPrint(trackLengths)
+                        print('halfTotalLength =') debugPrint(halfTotalLength)
+                        print('lengthSoFar =') debugPrint(lengthSoFar)
+                    end
+                    local edgeId = trackEdgeIdsBetweenNodeIds[iAcrossMidLength]
+                    if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
 
-                -- LOLLO TODO basing on trackEdgeList, try and find a node close to the middle.
-                -- If not found, split.
-                -- This node will be used as the vehicleNode and for placing the terminal slots.
-                -- Use this instead of centreTrackPositions in the con params.
+                    print('edgeId =') debugPrint(edgeId)
+                    local position0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][1])
+                    local position1 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[2][1])
+                    local tangent0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][2])
+                    local tangent1 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[2][2])
+                    print('position0 =') debugPrint(position0)
+                    print('position1 =') debugPrint(position1)
+                    print('tangent0 =') debugPrint(tangent0)
+                    print('tangent1 =') debugPrint(tangent1)
 
-                -- eventArgs.centrePlatformsFine = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, 1)
-                eventArgs.centrePlatforms = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
-                eventArgs.centreTrackPositions = stationHelpers.getCentrePlatformPositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                    local nodeBetween = edgeUtils.getNodeBetween(
+                        position0, position1, tangent0, tangent1,
+                        (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
+                    )
+                    print('nodeBetween =') debugPrint(nodeBetween)
+                    _actions.splitEdgeRemovingObject(
+                        edgeId,
+                        nodeBetween,
+                        nil,
+                        _eventNames.TRACK_BULLDOZE_REQUESTED,
+                        arrayUtils.cloneDeepOmittingFields(args),
+                        nil,
+                        true
+                    )
+                    return
+                end
+
+                eventArgs.centrePlatforms = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                local centreTrackPositions = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                eventArgs.midTrackIndex = iCloseEnoughToMidLength
 
                 local trackTypeId = eventArgs.centrePlatforms[1].trackType
                 -- print('trackTypeId =') debugPrint(trackTypeId)
                 local trackTypeProperties = api.res.trackTypeRep.get(trackTypeId)
                 -- print('trackTypeProperties =') debugPrint(trackTypeProperties)
                 local trackDistance = trackTypeProperties.trackDistance
+                eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - trackDistance * 0.45)
+                eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, trackDistance * 0.45)
+                -- print('alalalalal')
+                eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
+                    eventArgs.leftPlatforms,
+                    eventArgs.centrePlatforms,
+                    eventArgs.rightPlatforms,
+                    centreTrackPositions
+                )
+                -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
                     if trackDistance <= 5 then
                         eventArgs.cargoWaitingAreas = {
@@ -1127,53 +1167,38 @@ function data()
                         }
                     elseif trackDistance <= 10 then
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - 2.5),
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, 2.5)
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
                         }
                     elseif trackDistance <= 15 then
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - 5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
                             eventArgs.centrePlatforms,
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, 5)
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 5)
                         }
                     else
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - 7.5),
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - 2.5),
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, 2.5),
-                            stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, 7.5)
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 7.5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 7.5)
                         }
                     end
-
-                    eventArgs.leftPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - trackDistance * 0.45)
-                    eventArgs.rightPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, trackDistance * 0.45)
+                    -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
+                    -- maybe even overground. For now, it looks unnecessary but keep it in mind.
                     eventArgs.crossConnectors = {}
                     eventArgs.tracksidesFine = {}
                 else
-                    -- print('alalalalal')
-                    eventArgs.leftPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, - trackDistance * 0.45)
-                    eventArgs.rightPlatforms = stationHelpers.getShiftedLanePositions(eventArgs.centrePlatforms, trackDistance * 0.45)
-                    eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
-                        eventArgs.leftPlatforms,
-                        eventArgs.centrePlatforms,
-                        eventArgs.rightPlatforms,
-                        eventArgs.centreTrackPositions
-                    )
-                    -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
-
                     eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
 
-                    local centrePlatformsFine = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, 1)
+                    local centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, 1)
                     -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
                     eventArgs.tracksidesFine = eventArgs.isTrackOnPlatformLeft
-                        and stationHelpers.getShiftedLanePositions(centrePlatformsFine, - trackDistance * 0.2)
-                        or stationHelpers.getShiftedLanePositions(centrePlatformsFine, trackDistance * 0.2)
+                        and stationHelpers.getShiftedEdgePositions(centrePlatformsFine, - trackDistance * 0.2)
+                        or stationHelpers.getShiftedEdgePositions(centrePlatformsFine, trackDistance * 0.2)
                     -- print('eventArgs.tracksidesFine =') debugPrint(eventArgs.tracksidesFine)
                     eventArgs.cargoWaitingAreas = {}
                 end
-
-                -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
-				-- maybe even overground. For now, it looks unnecessary but keep it in mind.
 
                 _actions.removeTracks(
                     platformEdgeIdsBetweenNodeIds,
