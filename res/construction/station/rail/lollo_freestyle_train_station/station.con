@@ -312,13 +312,6 @@ function data()
 						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(unitaryTangent),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
-					-- LOLLO TODO find a model to put on the track, like a signal, or leave it blank
-					-- result.models[#result.models+1] = {
-					-- 	id = _constants.terminalModelFileName,
-					-- 	-- tag = slotHelpers.mangleModelTag(t, false),
-					-- 	transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2)
-					-- 	-- transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-					-- }
 				end
 				_addTerminal()
 
