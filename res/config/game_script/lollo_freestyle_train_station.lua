@@ -1063,8 +1063,6 @@ function data()
                     return
                 end
                 print('at least two track edges found')
-                -- LOLLO TODO try and find a node close to the middle. If not found, split.
-                -- This node will be used as the vehicleNode.
 
                 local platformEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
                     args.splitPlatformNode1Id,
@@ -1107,6 +1105,12 @@ function data()
                 print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
+
+                -- LOLLO TODO basing on trackEdgeList, try and find a node close to the middle.
+                -- If not found, split.
+                -- This node will be used as the vehicleNode and for placing the terminal slots.
+                -- Use this instead of centreTrackPositions in the con params.
+
                 -- eventArgs.centrePlatformsFine = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, 1)
                 eventArgs.centrePlatforms = stationHelpers.getCentrePlatformPositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.centreTrackPositions = stationHelpers.getCentrePlatformPositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
