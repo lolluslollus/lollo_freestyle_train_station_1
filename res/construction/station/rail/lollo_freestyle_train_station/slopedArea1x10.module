@@ -1,0 +1,103 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local modulesutil = require "modulesutil"
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+local vec3 = require "vec3"
+
+
+function data()
+
+return {
+	availability = {
+		yearFrom = 0,
+		yearTo = 0
+	},
+	cost = {
+		price = 0,
+	},
+	category = {
+		-- categories = { "cargo", },
+	},
+	description = {
+		name = _("SlopedArea1x10Name"),
+		description = _("SlopedArea1x10Desc"),
+		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+	},
+	metadata = {
+		-- cargo = true,
+	},
+	order = {
+		value = 22,
+	},
+	type = _constants.slopedPassengerArea1x10ModuleType,
+	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
+		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+		if not nTerminal or not baseId then return end
+
+		-- print('LOLLO area module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
+		-- print('LOLLO result =') debugPrint(result)
+		-- print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
+		-- print('params =') debugPrint(params)
+		-- params are the station params
+		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
+
+		local mainTransf = params.mainTransf
+		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+
+		result.models[#result.models + 1] = {
+			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
+			id = _constants.slopedPassengerArea1x10ModelFileName,
+			slotId = slotId,
+			transf = slotTransf,
+			tag = _constants.terminalModelTag
+		}
+
+		local groundFace = {
+			{-6, -6, 0, 1},
+			{-6, 6, 0, 1},
+			{3.5, 6, 0, 1},
+			{3.5, -6, 0, 1},
+		}
+		modulesutil.TransformFaces(slotTransf, groundFace)
+		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
+
+		local terrainAlignmentList = {
+			faces = {
+				{
+					{-6, -6, 0, 1},
+					{-6, 6, 0, 1},
+					{1, 6, 0, 1},
+					{1, -6, 0, 1},
+				},
+				{
+					{1, -6, 0, 1},
+					{1, 6, 0, 1},
+					{3.5, 6, -1.2, 1},
+					{3.5, -6, -1.2, 1},
+				}
+			},
+			optional = true,
+        	slopeHigh = 5, --99,
+        	slopeLow = 0.5, --0.1,
+			type = 'EQUAL',
+		}
+		for _, face in pairs(terrainAlignmentList.faces) do
+			modulesutil.TransformFaces(slotTransf, face)
+		end
+		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
+		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+	end,
+
+	getModelsFn = function(params)
+		return {
+			{
+				id = _constants.slopedPassengerArea1x10ModelFileName,
+				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
+			},
+		}
+	end
+}
+
+end

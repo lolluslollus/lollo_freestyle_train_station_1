@@ -29,7 +29,7 @@ return {
 		-- cargo = true,
 	},
 	order = {
-		value = 5,
+		value = 40,
 	},
 	type = _constants.underpassModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)

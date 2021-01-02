@@ -21,17 +21,17 @@ return {
 		-- categories = { "cargo", },
 	},
 	description = {
-		name = _("Area5x5Name"),
-		description = _("Area5x5Desc"),
+		name = _("FlatPassengerArea5x5Name"),
+		description = _("FlatPassengerArea5x5Desc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = {
 		-- cargo = true,
 	},
 	order = {
-		value = 2,
+		value = 11,
 	},
-	type = _constants.area5x5ModuleType,
+	type = _constants.flatPassengerArea5x5ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
@@ -48,7 +48,7 @@ return {
 
 		result.models[#result.models + 1] = {
 			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
-			id = _constants.area5x5ModelFileName,
+			id = _constants.flatPassengerArea5x5ModelFileName,
 			slotId = slotId,
 			transf = slotTransf,
 			tag = _constants.terminalModelTag
@@ -93,7 +93,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.area5x5ModelFileName,
+				id = _constants.flatPassengerArea5x5ModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

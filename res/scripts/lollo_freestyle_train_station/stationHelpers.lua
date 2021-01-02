@@ -1,6 +1,7 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+-- local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
@@ -464,6 +465,19 @@ local helpers = {
         end
 
         return results
+    end,
+
+    addGroupEveryN = function(positions, nEdgesInGroup) -- , nGroupName)
+        -- if stringUtils.isNullOrEmptyString(nGroupName) or arrayUtils.arrayHasValue({'catenary', 'posTanX2', 'trackType', 'trackTypeName', 'type', 'typeIndex'}, nGroupName) then
+        --     print('ERROR: wrong nGroupName') debugPrint(nGroupName)
+        -- end
+        local nGroup = 1
+        local nCounterInGroup = 0
+        for _, position in pairs(positions) do
+            position[tostring(nEdgesInGroup)] = nGroup
+            nCounterInGroup = nCounterInGroup + 1
+            if nCounterInGroup >= nEdgesInGroup then nCounterInGroup = 0 nGroup = nGroup + 1 end
+        end
     end,
 
     getCrossConnectors = function(leftPlatforms, centrePlatforms, rightPlatforms, isTrackOnPlatformLeft)

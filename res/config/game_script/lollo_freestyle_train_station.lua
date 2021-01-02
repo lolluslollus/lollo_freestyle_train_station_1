@@ -219,14 +219,14 @@ local _actions = {
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
             centrePlatforms = args.centrePlatforms,
-            -- centrePlatformsFine = args.centrePlatformsFine,
+            centrePlatformsFine = args.centrePlatformsFine,
             midTrackIndex = args.midTrackIndex,
             leftPlatforms = args.leftPlatforms,
             rightPlatforms = args.rightPlatforms,
             crossConnectors = args.crossConnectors,
             cargoWaitingAreas = args.cargoWaitingAreas,
             isTrackOnPlatformLeft = args.isTrackOnPlatformLeft,
-            tracksidesFine = args.tracksidesFine,
+            -- tracksidesFine = args.tracksidesFine,
         }
 
         if oldCon == nil then
@@ -280,10 +280,6 @@ local _actions = {
                 print('build station callback, success =', success)
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
-                    -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
-                    -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args, {'centrePlatforms', 'centrePlatformsFine', 'tracksidesFine', 'crossConnectors', 'leftPlatforms', 'rightPlatforms', 'cargoWaitingAreas'})
-                    -- eventArgs.stationConstructionId = result.resultEntities[1]
-                    -- print('eventArgs =') debugPrint(eventArgs)
                     print('buildStation callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1140,7 +1136,8 @@ function data()
                 end
 
                 eventArgs.centrePlatforms = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
-                local centreTrackPositions = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                eventArgs.centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, 1)
+                local centreTracks = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.midTrackIndex = iCloseEnoughToMidLength
 
                 local trackTypeId = eventArgs.centrePlatforms[1].trackType
@@ -1155,7 +1152,7 @@ function data()
                     eventArgs.leftPlatforms,
                     eventArgs.centrePlatforms,
                     eventArgs.rightPlatforms,
-                    centreTrackPositions
+                    centreTracks
                 )
                 -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
@@ -1185,15 +1182,13 @@ function data()
                     -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
                     -- maybe even overground. For now, it looks unnecessary but keep it in mind.
                     eventArgs.crossConnectors = {}
-                    eventArgs.tracksidesFine = {}
+                    -- eventArgs.tracksidesFine = {}
                 else
                     eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
-
-                    local centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, 1)
                     -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
-                    eventArgs.tracksidesFine = eventArgs.isTrackOnPlatformLeft
-                        and stationHelpers.getShiftedEdgePositions(centrePlatformsFine, - trackDistance * 0.2)
-                        or stationHelpers.getShiftedEdgePositions(centrePlatformsFine, trackDistance * 0.2)
+                    -- eventArgs.tracksidesFine = eventArgs.isTrackOnPlatformLeft
+                    --     and stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - trackDistance * 0.2)
+                    --     or stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, trackDistance * 0.2)
                     -- print('eventArgs.tracksidesFine =') debugPrint(eventArgs.tracksidesFine)
                     eventArgs.cargoWaitingAreas = {}
                 end

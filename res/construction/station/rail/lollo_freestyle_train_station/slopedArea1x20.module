@@ -21,24 +21,24 @@ return {
 		-- categories = { "cargo", },
 	},
 	description = {
-		name = _("Area10x10Name"),
-		description = _("Area10x10Desc"),
+		name = _("SlopedArea1x20Name"),
+		description = _("SlopedArea1x20Desc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = {
 		-- cargo = true,
 	},
 	order = {
-		value = 4,
+		value = 23,
 	},
-	type = _constants.area10x10ModuleType,
+	type = _constants.slopedPassengerArea1x20ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		print('LOLLO area module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
+		-- print('LOLLO area module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('LOLLO result =') debugPrint(result)
-		print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
+		-- print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
 		-- print('params =') debugPrint(params)
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
@@ -48,7 +48,7 @@ return {
 
 		result.models[#result.models + 1] = {
 			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
-			id = _constants.area10x10ModelFileName,
+			id = _constants.slopedPassengerArea1x20ModelFileName,
 			slotId = slotId,
 			transf = slotTransf,
 			tag = _constants.terminalModelTag
@@ -57,8 +57,8 @@ return {
 		local groundFace = {
 			{-6, -6, 0, 1},
 			{-6, 6, 0, 1},
-			{6, 6, 0, 1},
-			{6, -6, 0, 1},
+			{3.5, 6, 0, 1},
+			{3.5, -6, 0, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
@@ -68,14 +68,14 @@ return {
 				{
 					{-6, -6, 0, 1},
 					{-6, 6, 0, 1},
-					{3.5, 6, 0, 1},
-					{3.5, -6, 0, 1},
+					{1, 6, 0, 1},
+					{1, -6, 0, 1},
 				},
 				{
-					{3.5, -6, 0, 1},
-					{3.5, 6, 0, 1},
-					{6, 6, -1.2, 1},
-					{6, -6, -1.2, 1},
+					{1, -6, 0, 1},
+					{1, 6, 0, 1},
+					{3.5, 6, -1.2, 1},
+					{3.5, -6, -1.2, 1},
 				}
 			},
 			optional = true,
@@ -93,7 +93,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.area10x10ModelFileName,
+				id = _constants.slopedPassengerArea1x20ModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}
