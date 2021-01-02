@@ -13,7 +13,7 @@ local constants = {
     underpassLengthM = 1, -- don't change this, it must stay 1
 
     maxCargoWaitingAreaEdgeLength = 9,
-    maxPassengerWaitingAreaEdgeLength = 10,
+    maxPassengerWaitingAreaEdgeLength = 9,
     terminalAssetStep = 3,
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     nTerminalMultiplier = 1000,
@@ -24,9 +24,19 @@ local constants = {
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileNameLong = 'station/rail/lollo_freestyle_train_station/station.con',
     stationConFileNameShort = 'lollo_freestyle_train_station/station.con',
+
+    stairsModuleType = 'freestyleTrainStationStairs',
+    area5x5ModuleType = 'freestyleTrainStation5x5Area',
+    area10x5ModuleType = 'freestyleTrainStation10x5Area',
+    area10x10ModuleType = 'freestyleTrainStation10x10Area',
     cargoTerminalModuleType = 'freestyleTrainStationCargoTerminal',
     passengerTerminalModuleType = 'freestyleTrainStationPassengerTerminal',
     underpassModuleType = 'freestyleTrainStationUnderpass',
+
+    stairsModelFileName = 'lollo_freestyle_train_station/stairs.mdl',
+    area5x5ModelFileName = 'lollo_freestyle_train_station/area5x5.mdl',
+    area10x5ModelFileName = 'lollo_freestyle_train_station/area10x5.mdl',
+    area10x10ModelFileName = 'lollo_freestyle_train_station/area10x10.mdl',
     -- terminalModelFileName = 'lollo_freestyle_train_station/icon/red_short.mdl',
     terminalModelFileName = 'lollo_freestyle_train_station/asset/arrivi_partenze_colonna_new.mdl',
     terminalModelTag = 'freestyleTrainStationTerminal',
@@ -46,12 +56,18 @@ local constants = {
     passengersWaitingAreaTagRoot = 'passengersWaitingArea_',
     passengersWaitingAreaUnderpassTagRoot = 'passengersWaitingAreaUnderpass_',
 
+    areaSpacing = {2, 2, 2, 2},
     trackSpacing = {2, 2, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
     -- trackSpacing = {5, 5, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
     underpassSpacing = {2.5, 2.5, 1.5, 1.5}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
 	idBases = {
         terminalSlotId = 100000,
-        underpassSlotId = 400000,
+        -- areaSlotId = 200000,
+        stairsSlotId = 200000,
+        area5x5SlotId = 300000,
+        area10x5SlotId = 400000,
+        area10x10SlotId = 500000,
+        underpassSlotId = 600000,
     },
     idTransf = {
         1, 0, 0, 0,

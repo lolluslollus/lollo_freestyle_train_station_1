@@ -20,12 +20,13 @@ helpers.getGroundFace = function(face, key)
     }
 end
 
-helpers.getTerrainAlignmentList = function(face)
-    local _raiseBy = 0.28 -- a lil bit less than 0.3 to avoid bits of construction being covered by earth
+helpers.getTerrainAlignmentList = function(face, raiseBy)
+    if type(raiseBy) ~= 'number' then raiseBy = 0 end
+    -- local raiseBy = 0 -- 0.28 -- a lil bit less than 0.3 to avoid bits of construction being covered by earth
     local raisedFace = {}
     for i = 1, #face do
         raisedFace[i] = face[i]
-        raisedFace[i][3] = raisedFace[i][3] + _raiseBy
+        raisedFace[i][3] = raisedFace[i][3] + raiseBy
     end
     -- print('LOLLO raisedFaces =')
     -- debugPrint(raisedFace)
@@ -213,6 +214,29 @@ helpers.getPosTanX2Normalised = function(posTanX2)
         {
             pos2,
             tan2
+        }
+    }
+    return result
+end
+
+helpers.getExtrapolatedPosTanX2Continuation = function(posTanX2, length)
+    -- local oldPos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
+    local oldPos2 = {posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3]}
+    -- local tan1 = edgeUtils.getVectorNormalised(posTanX2[1][2], length)
+    local newTan = edgeUtils.getVectorNormalised(posTanX2[2][2], length)
+
+    local result = {
+        {
+            oldPos2,
+            newTan
+        },
+        {
+            {
+                oldPos2[1] + newTan[1],
+                oldPos2[2] + newTan[2],
+                oldPos2[3] + newTan[3],
+            },
+            newTan
         }
     }
     return result

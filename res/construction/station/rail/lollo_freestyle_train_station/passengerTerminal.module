@@ -57,6 +57,7 @@ return {
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		local xShift = 2
 		local yShift = isTrackOnPlatformLeft and 1.5 or -1.5
+		local yShiftArriviPartenze = isTrackOnPlatformLeft and -1.1 or 1.1
 		for i = 3, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
 			-- print('i =', i)
 			local wap = params.terminals[nTerminal].centrePlatforms[i]
@@ -115,14 +116,14 @@ return {
 				-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.7 + xShift, -yShift, 1.1, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.7 + xShift, yShiftArriviPartenze, 1.1, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			result.models[#result.models + 1] = {
 				-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 				id = 'lollo_freestyle_train_station/asset/partenze.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, -yShift, 1.1, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShiftArriviPartenze, 1.1, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end
