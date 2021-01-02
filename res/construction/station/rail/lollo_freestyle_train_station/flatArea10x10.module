@@ -32,7 +32,7 @@ return {
 		value = 13,
 	},
 	type = _constants.flatPassengerArea10x10ModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, callback)
+	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 

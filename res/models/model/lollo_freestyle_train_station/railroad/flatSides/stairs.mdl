@@ -36,36 +36,39 @@ function data()
             },
         },
         metadata = {
-            -- transportNetworkProvider = {
-            --     laneLists = {
-            --         {
-            --             linkable = true, -- false, --true,
-            --             nodes = {
-            --                 {
-            --                     { 0, 0, 0 },
-            --                     { 1, 0, 0 },
-            --                     3,
-            --                 },
-            --                 {
-            --                     { 1, 0, 0 },
-            --                     { 1, 0, 0 },
-            --                     3,
-            --                 },
-            --             },
-            --             transportModes = { 'CARGO', },
-            --             speedLimit = 30,
-            --         },
-            --     },
-            --     runways = { },
-            --     terminals = {
-            --         {
-            --             -- order = 0,
-            --             personEdges = { 0 },
-            --             personNodes = { 0, 1 },
-            --             -- vehicleNode = -1, -- 0,
-            --         },
-            --     },
-            -- },
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        linkable = true, -- false, --true,
+                        nodes = {
+                            -- {
+                            --     { 0, 0, 0 },
+                            --     { 2.5, 0, 0 },
+                            --     3,
+                            -- },
+                            -- {
+                            --     { 2.5, 0, 0 },
+                            --     { 2.5, 0, 0 },
+                            --     3,
+                            -- },
+                            {
+                                { 0, 0, 0 },
+                                { 1, 0, 0 },
+                                3,
+                            },
+                            {
+                                { 1, 0, -_constants.passengerLaneZ },
+                                { 1, 0, 0 },
+                                3,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = { },
+            },
         },
         version = 1
     }

@@ -1136,7 +1136,7 @@ function data()
                 end
 
                 eventArgs.centrePlatforms = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
-                eventArgs.centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, 1)
+                eventArgs.centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, 1, true)
                 local centreTracks = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.midTrackIndex = iCloseEnoughToMidLength
 

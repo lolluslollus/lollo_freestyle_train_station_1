@@ -302,8 +302,10 @@ local helpers = {
         -- print('getCentreEdgePositions starting')
         if type(edgeLists) ~= 'table' then return {} end
 
+        local leadingIndex = 0
         local results = {}
         for _, pel in pairs(edgeLists) do
+            leadingIndex = leadingIndex + 1
             local edgeLength = (edgeUtils.getVectorLength(pel.posTanX2[1][2]) + edgeUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
             -- print('edgeLength =') debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
@@ -420,6 +422,7 @@ local helpers = {
                     }
                 end
                 edgeResults[#edgeResults].catenary = pel.catenary
+                edgeResults[#edgeResults].leadingIndex = leadingIndex
                 edgeResults[#edgeResults].trackType = pel.trackType
                 edgeResults[#edgeResults].trackTypeName = pel.trackTypeName
                 edgeResults[#edgeResults].type = pel.type
