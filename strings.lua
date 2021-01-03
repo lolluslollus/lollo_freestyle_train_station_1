@@ -47,6 +47,7 @@ function data()
 			["UnderpassDesc"] = "Underpasses",
 			["WarningWindowTitle"] = "Warning",
 			["WaypointAlreadyBuilt"] = "You can only build two markers",
+			["WaypointsCrossStation"] = "You cannot cross an existing station",
 			["WaypointsNotConnected"] = "This markers is not connected to its twin",
 			["WaypointsTooFar"] = "Too far from its twin",
 		},

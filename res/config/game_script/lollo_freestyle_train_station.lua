@@ -1499,12 +1499,12 @@ function data()
                                     end
 
                                     -- make sure the waypoints are on connected tracks
-                                    local contiguousTrackEdges = stationHelpers.getTrackEdgeIdsBetweenEdgeIds(
+                                    local contiguousTrackEdgeIds = stationHelpers.getTrackEdgeIdsBetweenEdgeIds(
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId)
                                     )
-                                    print('contiguous track edges =') debugPrint(contiguousTrackEdges)
-                                    if #contiguousTrackEdges < 1 then
+                                    print('contiguous track edges =') debugPrint(contiguousTrackEdgeIds)
+                                    if #contiguousTrackEdgeIds < 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('WaypointsNotConnected'), newWaypointId, similarObjectIdsInAnyEdges)
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1518,7 +1518,27 @@ function data()
                                         return false
                                     end
 
-                                    -- LOLLO TODO check that the tracks between the waypoints are not frozen in any construction
+                                    -- make sure the waypoints are not overlapping existing station tracks or platforms, for any sort of station
+                                    for __, edgeId in pairs(contiguousTrackEdgeIds) do -- don't use _ here, we call it below to translate the message!
+                                        local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
+                                        if edgeUtils.isValidAndExistingId(conId) then
+                                            local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                                            if con ~= nil and con.stations ~= nil and #con.stations > 0 then
+                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossStation'), newWaypointId)
+                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                    string.sub(debug.getinfo(1, 'S').source, 1),
+                                                    _eventId,
+                                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                    {
+                                                        edgeId = lastBuiltEdgeId,
+                                                        waypointId = newWaypointId,
+                                                    }
+                                                ))
+                                                return false
+                                            end
+                                        end
+                                    end
+
                                     -- LOLLO NOTE do not check that the tracks between the waypoints are all of the same type
                                     --  (ie, platforms have the same width) so we have more flexibility with tunnel entrances
 
