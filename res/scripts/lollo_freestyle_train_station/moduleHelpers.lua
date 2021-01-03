@@ -1,6 +1,7 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local slotUtils = require('lollo_freestyle_train_station.slotHelpers')
+local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require 'transf'
 
@@ -20,8 +21,14 @@ helpers.getGroundFace = function(face, key)
     }
 end
 
-helpers.getTerrainAlignmentList = function(face, raiseBy)
+helpers.getTerrainAlignmentList = function(face, raiseBy, alignmentType, slopeHigh, slopeLow)
     if type(raiseBy) ~= 'number' then raiseBy = 0 end
+    if stringUtils.isNullOrEmptyString(alignmentType) then alignmentType = 'EQUAL' end -- GREATER, LESS
+    if type(slopeHigh) ~= 'number' then slopeHigh = 99 end
+    if type(slopeLow) ~= 'number' then slopeLow = 0.1 end
+    -- With “EQUAL” the terrain is aligned exactly to the specified faces,
+    -- with “LESS” only higher areas are taken down,
+    -- with “GREATER” areas below the faces will be filled up.
     -- local raiseBy = 0 -- 0.28 -- a lil bit less than 0.3 to avoid bits of construction being covered by earth
     local raisedFace = {}
     for i = 1, #face do
@@ -33,9 +40,9 @@ helpers.getTerrainAlignmentList = function(face, raiseBy)
     return {
         faces = {raisedFace},
         optional = true,
-        slopeHigh = 99,
-        slopeLow = 0.1,
-        type = 'EQUAL',
+        slopeHigh = slopeHigh,
+        slopeLow = slopeLow,
+        type = alignmentType,
     }
 end
 

@@ -34,69 +34,55 @@ return {
 	type = _constants.slopedPassengerArea1x10ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not baseId then return end
+		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		-- print('LOLLO area module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
-		-- print('LOLLO result =') debugPrint(result)
-		-- print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
-		-- print('params =') debugPrint(params)
-		-- params are the station params
-		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
-
+		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
-		result.models[#result.models + 1] = {
-			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
-			id = _constants.slopedPassengerArea1x10ModelFileName,
-			slotId = slotId,
-			transf = slotTransf,
-			tag = _constants.terminalModelTag
-		}
-
-		local groundFace = {
-			{-6, -6, 0, 1},
-			{-6, 6, 0, 1},
-			{3.5, 6, 0, 1},
-			{3.5, -6, 0, 1},
-		}
-		modulesutil.TransformFaces(slotTransf, groundFace)
-		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
-
-		local terrainAlignmentList = {
-			faces = {
-				{
-					{-6, -6, 0, 1},
-					{-6, 6, 0, 1},
-					{1, 6, 0, 1},
-					{1, -6, 0, 1},
-				},
-				{
-					{1, -6, 0, 1},
-					{1, 6, 0, 1},
-					{3.5, 6, -1.2, 1},
-					{3.5, -6, -1.2, 1},
+		local yShiftOutside = isTrackOnPlatformLeft and -5.9 or 5.9
+		local ii1 = nTrackEdge - 1
+		local iiN = nTrackEdge + 1
+		-- print('params.terminals[nTerminal].centrePlatforms =') debugPrint(params.terminals[nTerminal].centrePlatforms)
+		-- print('params.terminals[nTerminal].centrePlatformsFine =') debugPrint(params.terminals[nTerminal].centrePlatformsFine)
+		for ii = 1, #params.terminals[nTerminal].centrePlatformsFine do
+			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex > iiN then break end
+			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1 then
+			-- if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1
+			-- and params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex <= iiN then
+				local cpf = params.terminals[nTerminal].centrePlatformsFine[ii]
+				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+				result.models[#result.models+1] = {
+					id = _constants.slopedPassengerArea1x10ModelFileName,
+					-- tag = slotHelpers.mangleModelTag(t, false),
+					transf = transfUtilsUG.mul(
+						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2),
+						{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
+					)
 				}
-			},
-			optional = true,
-        	slopeHigh = 5, --99,
-        	slopeLow = 0.5, --0.1,
-			type = 'EQUAL',
-		}
-		for _, face in pairs(terrainAlignmentList.faces) do
-			modulesutil.TransformFaces(slotTransf, face)
+			end
 		end
-		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+
+		local face = {
+			{-5.5, -12, 0, 1},
+			{-5.5, 12, 0, 1},
+			{5.5, 12, 0, 1},
+			{5.5, -12, 0, 1},
+		}
+		modulesutil.TransformFaces(slotTransf, face)
+		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
+		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'GREATER', 1, 0.5)
 	end,
 
 	getModelsFn = function(params)
-		return {
-			{
+		local results = {}
+		for y = -5, 5 do
+			results[#results+1] = {
 				id = _constants.slopedPassengerArea1x10ModelFileName,
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
-			},
-		}
+				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+			}
+		end
+		return results
 	end
 }
 

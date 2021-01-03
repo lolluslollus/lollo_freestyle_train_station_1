@@ -37,7 +37,7 @@ return {
 		if not nTerminal or not baseId then return end
 
 		-- the tag looks like '__module_201030', never mind what you write into it
-		print('LOLLO flat stairs module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
+		-- print('LOLLO flat stairs module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('tag =') debugPrint(tag)
 		-- print('LOLLO result =') debugPrint(result)
 		-- print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.

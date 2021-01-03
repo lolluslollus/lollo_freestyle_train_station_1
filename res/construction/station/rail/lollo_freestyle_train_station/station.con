@@ -82,6 +82,21 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
+					[_constants.slopedPassengerArea1x5ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
+					[_constants.slopedPassengerArea1x10ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
+					[_constants.slopedPassengerArea1x20ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
 					[_constants.cargoTerminalModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
@@ -270,12 +285,12 @@ function data()
 									local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, 2.5)
 									local myTransf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -0.1, 1 } -- a lil lower for steeper stations
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
 									)
 									table.insert(result.slots, {
-										height = 0,
+										-- height = 0,
 										id = result.mangleId(t, i, _constants.idBases.flatStairsSlotId),
-										spacing = _constants.areaSpacing,
+										spacing = {2, 10, 2, 2},
 										transf = myTransf,
 										type = _constants.flatStairsModuleType,
 									})
@@ -305,9 +320,9 @@ function data()
 										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -0.1, 1 } -- a lil lower for steeper stations
 									)
 									table.insert(result.slots, {
-										height = 0,
+										-- height = 0,
 										id = result.mangleId(t, i, _constants.idBases.flatPassengerArea5x5SlotId),
-										spacing = _constants.areaSpacing,
+										spacing = {2, 10, 2, 2},
 										-- transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(area5x5PosTanX2),
 										-- transf = {
 										-- 	1, 0, 0, 0,
@@ -341,8 +356,7 @@ function data()
 								end
 							end
 						end
-						-- add large flat area slots on ground, -- skipping the ends
-						-- if i > 1 and i < #params.terminals[t].centrePlatforms and params.terminals[t].centrePlatforms[i].type == 0 then
+						-- add large flat area slots on ground,
 						if params.terminals[t].centrePlatforms[i].type == 0 then
 							if params.modules[result.mangleId(t, i, _constants.idBases.flatStairsSlotId)] == nil
 								and params.modules[result.mangleId(t, i, _constants.idBases.flatPassengerArea5x5SlotId)] == nil
@@ -353,10 +367,10 @@ function data()
 									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
 								)
 								table.insert(result.slots, {
-									height = 0,
+									-- height = 0,
 									id = result.mangleId(t, i, _constants.idBases.flatPassengerArea10x5SlotId),
 									-- id = result.mangleId(t, i, _constants.idBases.areaSlotId),
-									spacing = _constants.areaSpacing,
+									spacing = {2, 10, 3, 3},
 									transf = myTransf,
 									type = _constants.flatPassengerArea10x5ModuleType,
 								})
@@ -385,10 +399,10 @@ function data()
 									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
 								)
 								table.insert(result.slots, {
-									height = 0,
+									-- height = 0,
 									id = result.mangleId(t, i, _constants.idBases.flatPassengerArea10x10SlotId),
 									-- id = result.mangleId(t, i, _constants.idBases.areaSlotId),
-									spacing = _constants.areaSpacing,
+									spacing = {2, 10, 3, 3},
 									transf = myTransf,
 									type = _constants.flatPassengerArea10x10ModuleType,
 								})
@@ -434,24 +448,11 @@ function data()
 						end
 					end
 
-					-- add alongside bits, only visual
-					-- for i = 1, #params.terminals[t].tracksidesFine do
-					-- 	local wap = params.terminals[t].tracksidesFine[i]
-					-- 	local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-					-- 	result.models[#result.models+1] = {
-					-- 		id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide_stripes.mdl',
-					-- 		-- tag = slotHelpers.mangleModelTag(t, false),
-					-- 		transf = transfUtilsUG.mul(
-					-- 			moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-					-- 			{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.tracksideBitsZ, 1 }
-					-- 		)
-					-- 	}
-					-- end
-					for i = 1, #params.terminals[t].centrePlatformsFine do
+					-- add alongside bits, trackside
+					for ii = 1, #params.terminals[t].centrePlatformsFine do
 						local yShiftTrackside = isTrackOnPlatformLeft and 0.5 or -0.5
-						local yShiftOutside = isTrackOnPlatformLeft and -2 or 2
-						local wap = params.terminals[t].centrePlatformsFine[i]
-						local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+						local cpf = params.terminals[t].centrePlatformsFine[ii]
+						local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 						result.models[#result.models+1] = {
 							id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide_stripes.mdl',
 							-- tag = slotHelpers.mangleModelTag(t, false),
@@ -460,14 +461,47 @@ function data()
 								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftTrackside, _constants.tracksideBitsZ, 1 }
 							)
 						}
-						result.models[#result.models+1] = {
-							id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide_stripes.mdl',
-							-- tag = slotHelpers.mangleModelTag(t, false),
-							transf = transfUtilsUG.mul(
-								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
-							)
-						}
+					end
+
+					-- add alongside bits, outside -- LOLLO TODO connect them
+					for i = 2, #params.terminals[t].centrePlatforms, 3 do
+						if params.terminals[t].centrePlatforms[i].type == 0 then -- only on ground
+							local cpl = params.terminals[t].centrePlatforms[i]
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
+							local yShiftOutside = isTrackOnPlatformLeft and -3.4 or 3.4
+							table.insert(result.slots, {
+								-- height = 0,
+								id = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x5SlotId),
+								spacing = {1, 10, 10, 10},
+								transf = transfUtilsUG.mul(
+									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+									{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
+								),
+								type = _constants.slopedPassengerArea1x5ModuleType,
+							})
+							yShiftOutside = isTrackOnPlatformLeft and -5.9 or 5.9
+							table.insert(result.slots, {
+								-- height = 0,
+								id = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x10SlotId),
+								spacing = {3, 10, 10, 10},
+								transf = transfUtilsUG.mul(
+									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+									{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
+								),
+								type = _constants.slopedPassengerArea1x10ModuleType,
+							})
+							yShiftOutside = isTrackOnPlatformLeft and -10.9 or 10.9
+							table.insert(result.slots, {
+								-- height = 0,
+								id = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x20SlotId),
+								spacing = {5, 20, 10, 10},
+								transf = transfUtilsUG.mul(
+									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+									{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
+								),
+								type = _constants.slopedPassengerArea1x20ModuleType,
+							})
+						end
 					end
 				end
 
@@ -481,10 +515,8 @@ function data()
 					-- A similar issue happens when you try to bulldoze a platform-track:
 					-- the yellow area is there, but it is a surface below the top.
 					table.insert(result.slots, {
-						height = 0,
+						-- height = 0,
 						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
-						-- shape 0 1 2 3
-						-- shape = 3,
 						spacing = _constants.trackSpacing,
 						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(unitaryTangent),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
@@ -500,8 +532,7 @@ function data()
 							table.insert(result.slots, {
 								-- height = 1,
 								id = result.mangleId(t, i, _constants.idBases.underpassSlotId),
-								-- shape 0 1 2 3
-								-- shape = 3,
+								-- shape 0 1 2 3, only graphical
 								spacing = _constants.underpassSpacing,
 								transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
 								type = _constants.underpassModuleType,
