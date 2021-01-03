@@ -146,7 +146,7 @@ helper.getNearbyObjectIds = function(transf, searchRadius, componentType)
     return results
 end
 
-local function sign(num1)
+helper.sign = function(num1)
     if type(num1) ~= 'number' then return nil end
 
     if num1 == 0 then return 0 end
@@ -699,6 +699,16 @@ helper.isXYZVeryClose = function(xyz1, xyz2, roundingFactor)
     }
 
     return roundedXYZ1.x == roundedXYZ2.x and roundedXYZ1.y == roundedXYZ2.y and roundedXYZ1.z == roundedXYZ2.z
+end
+
+helper.isXYZSame = function(xyz1, xyz2)
+    if (type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata')
+    or (type(xyz2) ~= 'table' and type(xyz2) ~= 'userdata')
+    or type(xyz1.x) ~= 'number' or type(xyz1.y) ~= 'number' or type(xyz1.z) ~= 'number'
+    or type(xyz2.x) ~= 'number' or type(xyz2.y) ~= 'number' or type(xyz2.z) ~= 'number'
+    then return nil end
+
+    return xyz1.x == xyz2.x and xyz1.y == xyz2.y and xyz1.z == xyz2.z
 end
 
 helper.street = {}

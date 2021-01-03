@@ -699,12 +699,17 @@ local _actions = {
         -- print('node0 =') debugPrint(node0)
         -- print('node1 =') debugPrint(node1)
 
-        local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZVeryClose(nodeBetween.refPosition0, node0.position)
+        -- local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZVeryClose(nodeBetween.refPosition0, node0.position)
+        if not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)) and not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node1.position)) then
+            print('WARNING: splitEdge cannot find the nodes')
+        end
+        local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)
         print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
         local distance0 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance0 or nodeBetween.refDistance1
         local distance1 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance1 or nodeBetween.refDistance0
         print('distance0 =') debugPrint(distance0)
         print('distance1 =') debugPrint(distance1)
+        local tanSign = isNodeBetweenOrientatedLikeMyEdge and 1 or -1
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -767,9 +772,9 @@ local _actions = {
             oldBaseEdge.tangent0.z * distance0 / oldTan0Length
         )
         newEdge0.comp.tangent1 = api.type.Vec3f.new(
-            nodeBetween.tangent.x * distance0,
-            nodeBetween.tangent.y * distance0,
-            nodeBetween.tangent.z * distance0
+            nodeBetween.tangent.x * distance0 * tanSign,
+            nodeBetween.tangent.y * distance0 * tanSign,
+            nodeBetween.tangent.z * distance0 * tanSign
         )
         newEdge0.comp.type = oldBaseEdge.type -- respect bridge or tunnel
         newEdge0.comp.typeIndex = oldBaseEdge.typeIndex -- respect bridge or tunnel type
@@ -782,9 +787,9 @@ local _actions = {
         newEdge1.comp.node0 = -3
         newEdge1.comp.node1 = oldBaseEdge.node1
         newEdge1.comp.tangent0 = api.type.Vec3f.new(
-            nodeBetween.tangent.x * distance1,
-            nodeBetween.tangent.y * distance1,
-            nodeBetween.tangent.z * distance1
+            nodeBetween.tangent.x * distance1 * tanSign,
+            nodeBetween.tangent.y * distance1 * tanSign,
+            nodeBetween.tangent.z * distance1 * tanSign
         )
         newEdge1.comp.tangent1 = api.type.Vec3f.new(
             oldBaseEdge.tangent1.x * distance1 / oldTan1Length,
@@ -1116,13 +1121,22 @@ function data()
                     print('position1 =') debugPrint(position1)
                     print('tangent0 =') debugPrint(tangent0)
                     print('tangent1 =') debugPrint(tangent1)
+                    print('(halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength] =') debugPrint((halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength])
 
                     local nodeBetween = edgeUtils.getNodeBetween(
                         position0, position1, tangent0, tangent1,
                         (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
                     )
                     print('nodeBetween =') debugPrint(nodeBetween)
-                    -- LOLLO TODO this can screw up the directions: fix it. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
+                    -- LOLLO TODO it seems fixed, but keep checking it:
+                    -- this can screw up the directions. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
+                    -- in these cases, split produces something like:
+                    -- node0 = 26197,
+                    -- node0pos = { 972.18054199219, 596.27990722656, 12.010199546814, },
+                    -- node0tangent = { 35.427974700928, 26.778322219849, -2.9104161262512, },
+                    -- node1 = 26348,
+                    -- node1pos = { 1007.6336669922, 623.07720947266, 9.3951835632324, },
+                    -- node1tangent = { -35.457813262939, -26.800853729248, 2.2689030170441, },
                     _actions.splitEdgeRemovingObject(
                         edgeId,
                         nodeBetween,
