@@ -100,6 +100,42 @@ return {
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, 0, 1, 1, },
 			type = 'BOX',
 		}
+		-- perhaps:
+		table.insert(
+			result.colliders,
+			{
+				params = {
+					halfExtents = {2.4, 2.4, 2}
+				},
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, 0, 1, 1, },
+				type = 'BOX',
+			}
+		)
+		-- another idea:
+		table.insert(
+			result.colliders,
+			{
+				params = {
+					halfExtents = {2.4, 2.4, 2}
+				},
+				transf = slotTransf,
+				type = 'BOX',
+			}
+		)
+		-- or:
+		table.insert(
+			result.colliders,
+			{
+				params = {
+					halfExtents = {2.4, 2.4, 2}
+				},
+				transf = transfUtilsUG.mul(
+					slotTransf,
+					{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, 0, 1, 1, }
+				),
+				type = 'BOX',
+			}
+		)
 	end,
 
 	getModelsFn = function(params)
