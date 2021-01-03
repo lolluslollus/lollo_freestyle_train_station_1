@@ -338,6 +338,7 @@ function data()
 										type = _constants.flatPassengerArea5x5ModuleType,
 									})
 									-- LOLLO TODO make sure to avoid duplicating edges when naking these lanes
+									-- LOLLO TODO make sure to avoid overlapping sloped and flat areas
 									if params.modules[result.mangleId(t, i, _constants.idBases.flatPassengerArea5x5SlotId)] ~= nil then
 										local lane2AreaTransf = moduleHelpers.get1MLaneTransf(
 											{
@@ -466,7 +467,11 @@ function data()
 						}
 					end
 
-					-- add alongside bits, outside -- LOLLO TODO connect them
+					-- add alongside bits, outside -- LOLLO TODO connect them.
+					-- They are sloped, so the eeasiest way is to add some slots for flat stairs
+					-- after these sloped areas have been built. Just put them further out,
+					-- flush with the edges of the sloped areas, and connect them to the cross connections as usual.
+					-- Use a dedicated slot id or a smarter mangle id.
 					for i = 2, #params.terminals[t].centrePlatforms, 3 do
 						if params.terminals[t].centrePlatforms[i].type == 0 then -- only on ground
 							local cpl = params.terminals[t].centrePlatforms[i]
@@ -517,6 +522,8 @@ function data()
 					-- good, but these guys don't, unless there is only one terminal: why?
 					-- A similar issue happens when you try to bulldoze a platform-track:
 					-- the yellow area is there, but it is a surface below the top.
+					-- For terminals, the yellow areas only turn up when there is one terminal only.
+					-- Maybe height must be exact?
 					table.insert(result.slots, {
 						-- height = 0,
 						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
