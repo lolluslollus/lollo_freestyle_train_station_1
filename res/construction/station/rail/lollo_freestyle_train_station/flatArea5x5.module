@@ -1,4 +1,5 @@
 local _constants = require('lollo_freestyle_train_station.constants')
+-- local colliderutil = require "colliderutil"
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
@@ -14,46 +15,40 @@ return {
 		yearFrom = 0,
 		yearTo = 0
 	},
-	cost = {
-		price = 0,
-	},
 	category = {
 		-- categories = { "cargo", },
+	},
+	cost = {
+		price = 0,
 	},
 	description = {
 		name = _("FlatPassengerArea5x5Name"),
 		description = _("FlatPassengerArea5x5Desc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
-	metadata = {
-		-- cargo = true,
-	},
+	metadata = { },
 	order = {
 		value = 11,
 	},
 	skipCollision = true,
+	-- skipCollision = false,
 	type = _constants.flatPassengerArea5x5ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		-- print('LOLLO area module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
-		-- print('LOLLO result =') debugPrint(result)
-		-- print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
-		-- print('params =') debugPrint(params)
-		-- params are the station params
-		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
-
-		local mainTransf = params.mainTransf
-		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
-
 		result.models[#result.models + 1] = {
-			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
 			id = _constants.flatPassengerArea5x5ModelFileName,
 			slotId = slotId,
 			transf = slotTransf,
 			tag = _constants.terminalModelTag
 		}
+		-- result.models[#result.models + 1] = {
+		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = _constants.terminalModelTag
+		-- }
 
 		local groundFace = {
 			{-6, -3.5, 0, 1},
@@ -80,8 +75,8 @@ return {
 				}
 			},
 			optional = true,
-        	slopeHigh = 5, --99,
-        	slopeLow = 0.5, --0.1,
+        	slopeHigh = 10, --99,
+        	slopeLow = 0.9, --0.1,
 			type = 'EQUAL',
 		}
 		for _, face in pairs(terrainAlignmentList.faces) do
@@ -90,52 +85,8 @@ return {
 		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 
-		-- LOLLO TODO add colliders to flat and sloped areas, this seems to do nothing.
-		-- There was the same problem with the lorry station,
-		-- so try using the *.mdl files instead.
-		result.colliders[#result.colliders+1] = {
-			params = {
-				halfExtents = { 2.4, 2.4, 2, },
-			},
-			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, 0, 1, 1, },
-			type = 'BOX',
-		}
-		-- perhaps:
-		table.insert(
-			result.colliders,
-			{
-				params = {
-					halfExtents = {2.4, 2.4, 2}
-				},
-				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, 0, 1, 1, },
-				type = 'BOX',
-			}
-		)
-		-- another idea:
-		table.insert(
-			result.colliders,
-			{
-				params = {
-					halfExtents = {2.4, 2.4, 2}
-				},
-				transf = slotTransf,
-				type = 'BOX',
-			}
-		)
-		-- or:
-		table.insert(
-			result.colliders,
-			{
-				params = {
-					halfExtents = {2.4, 2.4, 2}
-				},
-				transf = transfUtilsUG.mul(
-					slotTransf,
-					{ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, 0, 1, 1, }
-				),
-				type = 'BOX',
-			}
-		)
+		-- LOLLO TODO add colliders to flat and sloped areas, using the model colliders.
+		-- If you don't define them, they won't work and you won't be able to configure the station.
 	end,
 
 	getModelsFn = function(params)

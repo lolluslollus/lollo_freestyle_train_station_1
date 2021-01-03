@@ -25,9 +25,7 @@ return {
 		description = _("FlatStairsSmoothDesc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
-	metadata = {
-		-- cargo = true,
-	},
+	metadata = { },
 	order = {
 		value = 1,
 	},
@@ -45,9 +43,6 @@ return {
 		-- print('params =') debugPrint(params)
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
-
-		local mainTransf = params.mainTransf
-		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
 		result.models[#result.models + 1] = {
 			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
@@ -82,8 +77,8 @@ return {
 				}
 			},
 			optional = true,
-        	slopeHigh = 5, --99,
-        	slopeLow = 0.5, --0.1,
+        	slopeHigh = 10, --99,
+        	slopeLow = 0.9, --0.1,
 			type = 'EQUAL',
 		}
 		for _, face in pairs(terrainAlignmentList.faces) do

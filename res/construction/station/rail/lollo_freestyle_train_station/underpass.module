@@ -25,9 +25,7 @@ return {
 		description = _("UnderpassDesc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
-	metadata = {
-		-- cargo = true,
-	},
+	metadata = { },
 	order = {
 		value = 40,
 	},
@@ -44,34 +42,12 @@ return {
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
 
-		-- local mainTransf = params.mainTransf
-		-- local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
-
-		-- LOLLO only for testing
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = slotTransf,
-		-- 	tag = _constants.terminalModelTag
-		-- }
-
-		-- start from 3 to avoid deco peeping out of the platform
 		result.models[#result.models + 1] = {
 			id = _constants.underpassWallsModelFileName,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
 			tag = _constants.underpassModelTag
 		}
-
-		-- local face = {
-		-- 	{-7, -7, 0, 1},
-		-- 	{-7, 7, 0, 1},
-		-- 	{7, 7, 0, 1},
-		-- 	{7, -7, 0, 1},
-		-- }
-		-- modulesutil.TransformFaces(slotTransf, face)
-		-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
-		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face)
 	end,
 
 	getModelsFn = function(params)
