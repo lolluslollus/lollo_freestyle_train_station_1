@@ -110,12 +110,12 @@ local helpers = {
                 local staGroupId = api.engine.system.stationGroupSystem.getStationGroup(staId)
                 local staGroupName = api.engine.getComponent(staGroupId, api.type.ComponentType.NAME)
                 staGroups[staGroupId] = staGroupName and staGroupName.name or ''
-                con.uiName = staGroupName and staGroupName.name or '' -- this could be the troublemaker
+                -- con.uiName = staGroupName and staGroupName.name or '' -- this does not help
                 print('staGroupName =') debugPrint(staGroupName)
             end
             -- LOLLO TODO 1 con can have N stations, but they all belong to the same group. Right?
             -- If so, staGroups will always have 1 item only
-            con.stationGroups = staGroups -- this could be the troublemaker
+            -- con.stationGroups = staGroups -- this does not help
             results[#results+1] = con
         end
 

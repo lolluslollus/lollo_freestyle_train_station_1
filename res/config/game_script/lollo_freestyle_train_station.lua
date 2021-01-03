@@ -174,15 +174,15 @@ local _actions = {
         -- local proposal = api.type.SimpleProposal.new()
         -- proposal.constructionsToAdd[1] = newConstruction
 
-        -- local context = api.type.Context:new()
+        local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-        -- context.cleanupStreetGraph = true -- default is false
+        context.cleanupStreetGraph = true -- default is false
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
         -- context.player = api.engine.util.getPlayer()
 
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, nil, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
                 print('buildSnappyTracks callback, success =', success)
                 -- debugPrint(result)
@@ -242,7 +242,7 @@ local _actions = {
                 api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
                 api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
             )
-            -- newCon.name = 'construction name' -- LOLLO TODO assign a proper name
+            newCon.name = _('NewStationName') -- LOLLO TODO assign a proper name
         else
             local newParams = {
                 mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),

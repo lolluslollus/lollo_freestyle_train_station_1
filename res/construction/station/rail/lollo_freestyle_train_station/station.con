@@ -13,8 +13,8 @@ function data()
 	return {
 		type = 'RAIL_STATION',
 		description = {
-			name = _("Lollo Freestyle Train Station"),
-			description = _("Lollo Freestyle Train Station."),
+			name = _("LolloFreestyleTrainStationName"),
+			description = _("LolloFreestyleTrainStationDesc"),
 		},
 		availability = {
 			yearFrom = -1, -- 1925, -- -1,
