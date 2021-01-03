@@ -146,6 +146,7 @@ local helpers = {
             local baseEdgeTrack = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE_TRACK)
             local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+            local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
 
             local pos0 = baseNode0.position
             local pos1 = baseNode1.position
@@ -206,6 +207,7 @@ local helpers = {
                         }
                     }
                 },
+                trackDistance = baseEdgeProperties.trackDistance,
                 trackType = baseEdgeTrack.trackType,
                 trackTypeName = api.res.trackTypeRep.getName(baseEdgeTrack.trackType),
                 type = baseEdge.type, -- 0 on ground, 1 bridge, 2 tunnel
@@ -423,6 +425,7 @@ local helpers = {
                 end
                 edgeResults[#edgeResults].catenary = pel.catenary
                 edgeResults[#edgeResults].leadingIndex = leadingIndex
+                edgeResults[#edgeResults].trackDistance = pel.trackDistance or 0
                 edgeResults[#edgeResults].trackType = pel.trackType
                 edgeResults[#edgeResults].trackTypeName = pel.trackTypeName
                 edgeResults[#edgeResults].type = pel.type

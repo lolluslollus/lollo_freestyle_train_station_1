@@ -1141,11 +1141,7 @@ function data()
                 local centreTracks = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.midTrackIndex = iCloseEnoughToMidLength
 
-                local trackTypeId = eventArgs.centrePlatforms[1].trackType
-                -- print('trackTypeId =') debugPrint(trackTypeId)
-                local trackTypeProperties = api.res.trackTypeRep.get(trackTypeId)
-                -- print('trackTypeProperties =') debugPrint(trackTypeProperties)
-                local trackDistance = trackTypeProperties.trackDistance
+                local trackDistance = centreTracks[eventArgs.midTrackIndex].trackDistance
                 eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - trackDistance * 0.45)
                 eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, trackDistance * 0.45)
                 -- print('alalalalal')

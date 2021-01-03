@@ -38,6 +38,8 @@ local constants = {
     underpassModuleType = 'freestyleTrainStationUnderpass',
 
     flatStairsModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/stairs.mdl',
+    flatStairsSmoothModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/stairs_smooth.mdl',
+    flatStairsSteepModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/stairs_steep.mdl',
     flatPassengerArea5x5ModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/passengers/area5x5.mdl',
     flatPassengerArea10x5ModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/passengers/area10x5.mdl',
     flatPassengerArea10x10ModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/passengers/area10x10.mdl',
