@@ -51,10 +51,10 @@ return {
 		-- }
 
 		local groundFace = {
-			{-6, -3.5, 0, 1},
-			{-6, 3.5, 0, 1},
-			{5, 3.5, 0, 1},
-			{5, -3.5, 0, 1},
+			{-2.5, -3.5, 0, 1},
+			{-2.5, 3.5, 0, 1},
+			{6, 3.5, 0, 1},
+			{6, -3.5, 0, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
@@ -62,16 +62,16 @@ return {
 		local terrainAlignmentList = {
 			faces = {
 				{
-					{-6, -3.5, 0, 1},
-					{-6, 3.5, 0, 1},
+					{-2.5, -3.5, 0, 1},
+					{-2.5, 3.5, 0, 1},
 					{1, 3.5, 0, 1},
 					{1, -3.5, 0, 1},
 				},
 				{
 					{1, -3.5, 0, 1},
 					{1, 3.5, 0, 1},
-					{5, 3.5, -1.2, 1},
-					{5, -3.5, -1.2, 1},
+					{6, 3.5, -1.2, 1},
+					{6, -3.5, -1.2, 1},
 				}
 			},
 			optional = true,
