@@ -90,7 +90,9 @@ return {
 		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 
-		-- LOLLO TODO add colliders to flat and sloped areas, this seems to do nothing
+		-- LOLLO TODO add colliders to flat and sloped areas, this seems to do nothing.
+		-- There was the same problem with the lorry station,
+		-- so try using the *.mdl files instead.
 		result.colliders[#result.colliders+1] = {
 			params = {
 				halfExtents = { 2.4, 2.4, 2, },
