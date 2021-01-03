@@ -700,11 +700,11 @@ local _actions = {
         -- print('node1 =') debugPrint(node1)
 
         local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZVeryClose(nodeBetween.refPosition0, node0.position)
-        -- print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
+        print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
         local distance0 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance0 or nodeBetween.refDistance1
         local distance1 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance1 or nodeBetween.refDistance0
-        -- print('distance0 =') debugPrint(distance0)
-        -- print('distance1 =') debugPrint(distance1)
+        print('distance0 =') debugPrint(distance0)
+        print('distance1 =') debugPrint(distance1)
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -1122,7 +1122,7 @@ function data()
                         (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
                     )
                     print('nodeBetween =') debugPrint(nodeBetween)
-                    -- LOLLO TODO this can screw up the directions: fix it
+                    -- LOLLO TODO this can screw up the directions: fix it. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
                     _actions.splitEdgeRemovingObject(
                         edgeId,
                         nodeBetween,
