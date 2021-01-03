@@ -168,7 +168,7 @@ function data()
 				underpassPositions = {},
 				vehicleNodes = {}
 			}
-			
+
 			-- LOLLO NOTE the coordinates in terminals are absolute
 			local mainTransf = params.mainTransf
 			local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
@@ -250,8 +250,8 @@ function data()
 				local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
 
 				-- add alongside bits, trackside
+				local yShiftTrackside = isTrackOnPlatformLeft and 0.6 or -0.6
 				for ii = 1, #params.terminals[t].centrePlatformsFine do
-					local yShiftTrackside = isTrackOnPlatformLeft and 0.5 or -0.5
 					local cpf = params.terminals[t].centrePlatformsFine[ii]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 					result.models[#result.models+1] = {
@@ -464,7 +464,6 @@ function data()
 				-- and add new modules for extra space, parallel to the platform-tracks.
 				-- However, it is easier to place more platform-tracks upfront than add modules later,
 				-- so we go this way.
-				-- print('add waiting areas and lanes')
 				if isCargoTerminal then
 					for _, cwa in pairs(params.terminals[t].cargoWaitingAreas) do
 						for i = 1, #cwa do
@@ -480,8 +479,12 @@ function data()
 				else
 					for i = 1, #params.terminals[t].centrePlatforms do
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
+						local isPreviousUnderpass = i > 1
+							and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
+							or false
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+						-- add passenger lanes along, central
 						result.models[#result.models+1] = {
 							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
 							tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
@@ -505,7 +508,8 @@ function data()
 									underpassBottomTransf[15]
 								}
 							}
-						elseif params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] == nil then
+						elseif not(isPreviousUnderpass) then
+							-- add passenger lanes across
 							local crossConnectorTransf = transfUtilsUG.mul(
 								moduleHelpers.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
 								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1}
@@ -530,10 +534,11 @@ function data()
 						end
 
 					end
+					-- add passenger waiting areas
 					if isTrackOnPlatformLeft then
 						for i = 1, #params.terminals[t].leftPlatforms do
-							local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].leftPlatforms[i].posTanX2, inverseMainTransf)
-							local leftLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].leftPlatforms[i].posTanX2, inverseMainTransf)
+							local leftLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 
 							result.models[#result.models+1] = {
 								id = _constants.passengerWaitingAreaModelId,
@@ -543,8 +548,8 @@ function data()
 						end
 					else
 						for i = 1, #params.terminals[t].rightPlatforms do
-							local posTanX2Relative = transfUtils.getPosTanX2Transformed(params.terminals[t].rightPlatforms[i].posTanX2, inverseMainTransf)
-							local rightLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2Relative[1][1], posTanX2Relative[2][1])
+							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].rightPlatforms[i].posTanX2, inverseMainTransf)
+							local rightLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 
 							result.models[#result.models+1] = {
 								id = _constants.passengerWaitingAreaModelId,

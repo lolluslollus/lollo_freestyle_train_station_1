@@ -1153,13 +1153,13 @@ function data()
                 -- eventArgs.centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, 1)
                 eventArgs.centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.centrePlatforms, 1)
                 -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
-                local centreTracks = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.midTrackIndex = iCloseEnoughToMidLength
 
-                local trackDistance = centreTracks[eventArgs.midTrackIndex].trackDistance
-                eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - trackDistance * 0.45)
-                eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, trackDistance * 0.45)
+                local platformWidth = eventArgs.centrePlatforms[eventArgs.midTrackIndex].trackDistance
+                eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.4)
+                eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.4)
                 -- print('alalalalal')
+                local centreTracks = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
                     eventArgs.leftPlatforms,
                     eventArgs.centrePlatforms,
@@ -1168,16 +1168,16 @@ function data()
                 )
                 -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
-                    if trackDistance <= 5 then
+                    if platformWidth <= 5 then
                         eventArgs.cargoWaitingAreas = {
                             eventArgs.centrePlatforms
                         }
-                    elseif trackDistance <= 10 then
+                    elseif platformWidth <= 10 then
                         eventArgs.cargoWaitingAreas = {
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
                         }
-                    elseif trackDistance <= 15 then
+                    elseif platformWidth <= 15 then
                         eventArgs.cargoWaitingAreas = {
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
                             eventArgs.centrePlatforms,
