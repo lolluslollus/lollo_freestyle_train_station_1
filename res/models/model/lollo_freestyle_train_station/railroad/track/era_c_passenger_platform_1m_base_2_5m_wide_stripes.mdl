@@ -2,14 +2,14 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     return {
         boundingInfo = {
-            bbMax = { 40, 2.75, 0.79999995231628, },
-            bbMin = { -5.0884388007537e-24, -2.75, 0, },
+            bbMax = { 0.4, 1.15, 0.78, },
+            bbMin = { -0.4, -1.15, 0, },
         },
         collider = {
             params = {
-                halfExtents = { 20, 2.75, 0.39999997615814, },
+                halfExtents = { 0.4, 1.15, 0.39, },
             },
-            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.5, 0, 0.6, 1, },
             type = "BOX",
         },
         lods = {
@@ -36,78 +36,10 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 1000, --2815.9614257813,
+                visibleTo = 1000,
             },
         },
-        metadata = {
-            --[[
-            transportNetworkProvider = {
-                -- LOLLO NOTE
-                -- copied from tn_passenger_wait_area.mdl.
-                -- together with cargo_wait_area.mdl, it is the ONLY model that sets the vehicleNode
-                -- When building, vehicleNode is replaced with vehicleNodeOverride 
-                laneLists = {
-                    {
-                        nodes = {
-                            {
-                                { 0, 20, 0.80000001192093, },
-                                { 0, -13, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, 7, 0.80000001192093, },
-                                { 0, -13, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, 7, 0.80000001192093, },
-                                { 0, -7, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, 0, 0.80000001192093, },
-                                { 0, -7, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, 0, 0.80000001192093, },
-                                { 0, -7, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, -7, 0.80000001192093, },
-                                { 0, -7, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, -7, 0.80000001192093, },
-                                { 0, -13, 0, },
-                                2.4000000953674,
-                            },
-                            {
-                                { 0, -20, 0.80000001192093, },
-                                { 0, -13, 0, },
-                                2.4000000953674,
-                            },
-                        },
-                        speedLimit = 20,
-                        transportModes = { "PERSON", },
-                    },
-                },
-                runways = {
-                },
-                terminals = {
-                    {
-                        order = 0,
-                        personEdges = { 0, 1, 2, 3},
-                        personNodes = { 1, },
-                        vehicleNode = 0,
-                    },
-                },
-            },
-             ]]
-        },
+        metadata = { },
         version = 1,
     }
     end
-    

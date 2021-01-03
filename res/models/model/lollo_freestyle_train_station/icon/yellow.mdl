@@ -11,9 +11,6 @@ function data()
             transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1},
             type = 'MESH'
         }, ]]
-        collider = {
-            type = 'NONE'
-        },
         lods = {
             {
                 node = {

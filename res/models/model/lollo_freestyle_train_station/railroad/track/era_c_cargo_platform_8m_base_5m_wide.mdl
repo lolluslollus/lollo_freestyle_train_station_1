@@ -2,14 +2,14 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     return {
         boundingInfo = {
-            bbMax = { 1.9, 2.4, 0.78, },
-            bbMin = { -1.9, -2.4, 0, },
+            bbMax = { 3.9, 2.4, 0.78, },
+            bbMin = { -3.9, -2.4, 0, },
         },
         collider = {
             params = {
-                halfExtents = { 1.9, 2.4, 0.39, },
+                halfExtents = { 3.9, 2.4, 0.39, },
             },
-            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2, 0, 0.6, 1, },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4, 0, 0.6, 1, },
             type = "BOX",
         },
         lods = {
@@ -18,16 +18,16 @@ function data()
                     children = {
                         {
                             materials = {
-                                "station/rail/era_c/era_c_trainstation_floor_1.mtl",
+                                "station/rail/cargo/cargo_station_concrete_1.mtl",
                                 "station/rail/cargo/cargo_station_concrete_1.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_4m_base_5m_wide.msh',
-                            transf = { 1.075, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2, 0, _constants.passengerPlatformModelZ, 1, },
+                            mesh = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_8m_base_5m_wide.msh',
+                            transf = { 1.05, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4, 0, _constants.passengerPlatformModelZ, 1, },
                         },
                         -- {
-                        --     materials = {'lollo_freestyle_train_station/icon/red.mtl'},
+                        --     materials = {'lollo_freestyle_train_station/icon/green.mtl'},
                         --     mesh = 'asset/icon/lod_0_icon_pointer.msh',
-                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.45, 0, 0, 0, 0.8, 1}
+                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.60, 0, 0, 0, 0.8, 1}
                         -- },
                     },
                     name = "RootNode",
