@@ -18,7 +18,7 @@ function data()
                     children = {
                         {
                             materials = {
-                                "station/rail/cargo/cargo_station_concrete_1.mtl",
+                                "station/rail/cargo/cargo_station_floor_1.mtl",
                                 "station/rail/cargo/cargo_station_concrete_1.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_2m_base_5m_wide.msh',
