@@ -53,12 +53,12 @@ function data()
                             },
                             {
                                 { 5, 0, 0 },
-                                { 1, 0, 0 },
+                                { 2.5, 0, 0 },
                                 3,
                             },
                             {
-                                { 6, 0, -_constants.passengerLaneZ },
-                                { 1, 0, 0 },
+                                { 7.5, 0, -_constants.passengerLaneZ },
+                                { 2.5, 0, 0 },
                                 3,
                             },
                         },

@@ -4,12 +4,14 @@ function data()
         boundingInfo = {
             -- bbMax = { 0.1, 0.1, 4 },
             -- bbMin = { 0, 0, 0 },
+            -- bbMax = { 4.9, 2.4, 4 },
+            -- bbMin = { 0, -2.4, 0 },
         },
         collider = {
             -- params = {
-            --     halfExtents = { 0.05, 0.05, 2, },
+            --     halfExtents = { 2.4, 2.4, 2, },
             -- },
-            -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, },
+            -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, 0, 1, 1, },
             -- type = 'BOX',
             type = 'NONE'
         },
@@ -53,12 +55,12 @@ function data()
                             },
                             {
                                 { 2.5, 0, 0 },
-                                { 1, 0, 0 },
+                                { 2.5, 0, 0 },
                                 3,
                             },
                             {
-                                { 3.5, 0, -_constants.passengerLaneZ },
-                                { 1, 0, 0 },
+                                { 5, 0, -_constants.passengerLaneZ },
+                                { 2.5, 0, 0 },
                                 3,
                             },
                         },

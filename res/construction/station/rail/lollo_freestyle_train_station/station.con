@@ -152,6 +152,15 @@ function data()
 				end
 				occupiedInfo.crossConnectorsWithSlopedAreas[t][i] = newValue
 			end
+			local _occupySlopedAreas = function(t, i, myId, yShift)
+				if params.modules[myId] ~= nil then
+					_setOccupiedInfo4SlopedAreas(t, i-1, yShift)
+					_setOccupiedInfo4SlopedAreas(t, i, yShift)
+					if i+1 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+1, yShift) end
+					if i+2 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+2, yShift) end
+				end
+			end
+
 			local terminateConstructionHookInfo = {
 				crossConnectorPositions = {},
 				isAnyCargoTerminal = false,
@@ -159,6 +168,7 @@ function data()
 				underpassPositions = {},
 				vehicleNodes = {}
 			}
+			
 			-- LOLLO NOTE the coordinates in terminals are absolute
 			local mainTransf = params.mainTransf
 			local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
@@ -271,13 +281,8 @@ function data()
 							),
 							type = _constants.slopedPassengerArea1x5ModuleType,
 						})
-						if params.modules[myId] ~= nil then
-							local yShift = 10
-							_setOccupiedInfo4SlopedAreas(t, i-1, yShift)
-							_setOccupiedInfo4SlopedAreas(t, i, yShift)
-							if i+1 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+1, yShift) end
-							if i+2 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+2, yShift) end
-						end
+						_occupySlopedAreas(t, i, myId, 10)
+
 						yShiftOutside = isTrackOnPlatformLeft and -5.9 or 5.9
 						myId = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x10SlotId)
 						table.insert(result.slots, {
@@ -290,13 +295,8 @@ function data()
 							),
 							type = _constants.slopedPassengerArea1x10ModuleType,
 						})
-						if params.modules[myId] ~= nil then
-							local yShift = 20
-							_setOccupiedInfo4SlopedAreas(t, i-1, yShift)
-							_setOccupiedInfo4SlopedAreas(t, i, yShift)
-							if i+1 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+1, yShift) end
-							if i+2 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+2, yShift) end
-						end
+						_occupySlopedAreas(t, i, myId, 20)
+
 						yShiftOutside = isTrackOnPlatformLeft and -10.9 or 10.9
 						myId = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x20SlotId)
 						table.insert(result.slots, {
@@ -309,13 +309,7 @@ function data()
 							),
 							type = _constants.slopedPassengerArea1x20ModuleType,
 						})
-						if params.modules[myId] ~= nil then
-							local yShift = 40
-							_setOccupiedInfo4SlopedAreas(t, i-1, yShift)
-							_setOccupiedInfo4SlopedAreas(t, i, yShift)
-							if i+1 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+1, yShift) end
-							if i+2 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+2, yShift) end
-						end
+						_occupySlopedAreas(t, i, myId, 40)
 					end
 				end
 
