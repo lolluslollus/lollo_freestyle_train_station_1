@@ -21,8 +21,8 @@ return {
 		-- categories = { "cargo", },
 	},
 	description = {
-		name = _("StairsName"),
-		description = _("StairsDesc"),
+		name = _("FlatStairsName"),
+		description = _("FlatStairsDesc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = {
