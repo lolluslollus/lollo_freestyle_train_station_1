@@ -1122,6 +1122,7 @@ function data()
                         (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
                     )
                     print('nodeBetween =') debugPrint(nodeBetween)
+                    -- LOLLO TODO this can screw up the directions: fix it
                     _actions.splitEdgeRemovingObject(
                         edgeId,
                         nodeBetween,
