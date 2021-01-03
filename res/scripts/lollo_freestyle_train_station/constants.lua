@@ -16,7 +16,6 @@ local constants = {
     maxPassengerWaitingAreaEdgeLength = 9, -- do not tamper with this
     terminalAssetStep = 3,
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
-    nTerminalMultiplier = 1000,
     nTracksMax = 10, -- LOLLO TODO enforce this
     maxWaypointDistance = 1000,
     minSplitDistance = 1,
@@ -69,17 +68,19 @@ local constants = {
     trackSpacing = {2, 2, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
     -- trackSpacing = {5, 5, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
     underpassSpacing = {2.5, 2.5, 1.5, 1.5}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
+
+    nTerminalMultiplier = 1000,
 	idBases = {
-        terminalSlotId = 100000,
+        terminalSlotId = 1000000,
         -- areaSlotId = 200000,
-        flatStairsSlotId = 200000,
-        flatPassengerArea5x5SlotId = 300000,
-        flatPassengerArea10x5SlotId = 400000,
-        flatPassengerArea10x10SlotId = 500000,
+        flatStairsSlotId = 2000000,
+        flatPassengerArea5x5SlotId = 3000000,
+        flatPassengerArea10x5SlotId = 4000000,
+        flatPassengerArea10x10SlotId = 5000000,
         -- slopedStairsSlotId = 600000,
-        slopedPassengerArea1x5SlotId = 700000,
-        slopedPassengerArea1x10SlotId = 800000,
-        slopedPassengerArea1x20SlotId = 900000,
+        slopedPassengerArea1x5SlotId = 7000000,
+        slopedPassengerArea1x10SlotId = 8000000,
+        slopedPassengerArea1x20SlotId = 9000000,
         underpassSlotId = 1000000,
     },
     idTransf = {
