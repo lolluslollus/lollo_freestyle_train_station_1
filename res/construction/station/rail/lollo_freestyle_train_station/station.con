@@ -358,6 +358,9 @@ function data()
 						end
 						-- add large flat area slots on ground,
 						if params.terminals[t].centrePlatforms[i].type == 0 then
+							local isPreviousUnderpass = i > 1
+								and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
+								or false
 							if params.modules[result.mangleId(t, i, _constants.idBases.flatStairsSlotId)] == nil
 								and params.modules[result.mangleId(t, i, _constants.idBases.flatPassengerArea5x5SlotId)] == nil
 								and params.modules[result.mangleId(t, i, _constants.idBases.flatPassengerArea10x10SlotId)] == nil then
@@ -374,7 +377,7 @@ function data()
 									transf = myTransf,
 									type = _constants.flatPassengerArea10x5ModuleType,
 								})
-								if not(isUnderpass) and params.modules[result.mangleId(t, i, _constants.idBases.flatPassengerArea10x5SlotId)] ~= nil then
+								if not(isUnderpass) and not(isPreviousUnderpass) and params.modules[result.mangleId(t, i, _constants.idBases.flatPassengerArea10x5SlotId)] ~= nil then
 									local lane2AreaTransf = moduleHelpers.get1MLaneTransf(
 										{
 											myPosTanX2[1][1][1],
@@ -406,7 +409,7 @@ function data()
 									transf = myTransf,
 									type = _constants.flatPassengerArea10x10ModuleType,
 								})
-								if not(isUnderpass) and params.modules[result.mangleId(t, i, _constants.idBases.flatPassengerArea10x10SlotId)] ~= nil then
+								if not(isUnderpass) and not(isPreviousUnderpass) and params.modules[result.mangleId(t, i, _constants.idBases.flatPassengerArea10x10SlotId)] ~= nil then
 									local lane2AreaTransf = moduleHelpers.get1MLaneTransf(
 										{
 											myPosTanX2[1][1][1],
