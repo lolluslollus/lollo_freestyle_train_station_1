@@ -264,7 +264,7 @@ function data()
 						table.insert(result.slots, {
 							-- height = 0,
 							id = myId,
-							spacing = isTrackOnPlatformLeft and {4.5, 1, 8, 8} or {1, 4.5, 8, 8},
+							spacing = isTrackOnPlatformLeft and {4.5, 0, 8, 8} or {0, 4.5, 8, 8},
 							transf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
 								{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
@@ -283,7 +283,7 @@ function data()
 						table.insert(result.slots, {
 							-- height = 0,
 							id = myId,
-							spacing = isTrackOnPlatformLeft and {7, 3, 8, 8} or {3, 7, 8, 8},
+							spacing = isTrackOnPlatformLeft and {7, 2, 8, 8} or {2, 7, 8, 8},
 							transf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
 								{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
@@ -302,7 +302,7 @@ function data()
 						table.insert(result.slots, {
 							-- height = 0,
 							id = myId,
-							spacing = isTrackOnPlatformLeft and {12, 5, 8, 8} or {5, 12, 8, 8},
+							spacing = isTrackOnPlatformLeft and {12, 4, 8, 8} or {4, 12, 8, 8},
 							transf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
 								{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
