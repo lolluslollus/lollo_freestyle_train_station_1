@@ -65,11 +65,7 @@ local constants = {
     passengersWaitingAreaTagRoot = 'passengersWaitingArea_',
     passengersWaitingAreaUnderpassTagRoot = 'passengersWaitingAreaUnderpass_',
 
-    trackSpacing = {2, 2, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
-    -- trackSpacing = {5, 5, 2, 2}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
-    underpassSpacing = {2.5, 2.5, 1.5, 1.5}, -- the smaller, the less the risk of collision. Too small, problems removing the module. x is length, y is width.
-
-    nTerminalMultiplier = 1000,
+    nTerminalMultiplier = 10000,
 	idBases = {
         terminalSlotId = 1000000,
         -- areaSlotId = 200000,
@@ -81,7 +77,7 @@ local constants = {
         slopedPassengerArea1x5SlotId = 7000000,
         slopedPassengerArea1x10SlotId = 8000000,
         slopedPassengerArea1x20SlotId = 9000000,
-        underpassSlotId = 1000000,
+        underpassSlotId = 10000000,
     },
     idTransf = {
         1, 0, 0, 0,

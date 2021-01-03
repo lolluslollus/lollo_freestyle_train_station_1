@@ -557,8 +557,8 @@ function data()
 
 				local _addTerminalSlot = function()
 					local i = params.terminals[t].midTrackIndex
-					local wap = params.terminals[t].trackEdgeLists[i]
-					local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+					local tel = params.terminals[t].trackEdgeLists[i]
+					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf)
 					local unitaryTangent = moduleHelpers.getPosTanX2Normalised(posTanX2)
 					-- LOLLO TODO the underpasses turn yellow when the user wants to remove them:
 					-- good, but these guys don't, unless there is only one terminal: why?
@@ -569,7 +569,7 @@ function data()
 					table.insert(result.slots, {
 						-- height = 0,
 						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
-						spacing = _constants.trackSpacing,
+						spacing = {2.5, 2.5, 1.5, 1.5},
 						transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(unitaryTangent),
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
@@ -578,19 +578,19 @@ function data()
 
 				local _addUnderpassSlots = function()
 					-- add underpass slots, skipping the ends
-					-- LOLLO TODO newly, removing an underpass will catch and remove the whole terminal: fix it.
 					if not(isCargoTerminal) then
 						for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
 							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
+							local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
 							table.insert(result.slots, {
 								-- height = 1,
-								id = result.mangleId(t, i, _constants.idBases.underpassSlotId),
+								id = myId,
 								-- shape 0 1 2 3, only graphical
-								spacing = _constants.underpassSpacing,
+								spacing = {2.5, 2.5, 1.5, 1.5},
 								transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
 								type = _constants.underpassModuleType,
 							})
-							if params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil then
+							if params.modules[myId] ~= nil then
 								result.models[#result.models+1] = {
 									id = _constants.underpassGroundModelFileName,
 									transf = transfUtilsUG.mul(
@@ -845,7 +845,7 @@ function data()
  		-- preProcessFn = function(modules, change, three)
 		-- 	-- this fires when the user adds or removes a module
 		-- 	print('LOLLO preProcessFn')
-		-- 	print('modules =') debugPrint(modules)
+		-- 	-- print('modules =') debugPrint(modules)
 		-- 	print('change =') debugPrint(change)
 		-- 	-- default behaviour
 		-- 	if change.added then
