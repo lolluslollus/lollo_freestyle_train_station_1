@@ -578,6 +578,7 @@ function data()
 
 				local _addUnderpassSlots = function()
 					-- add underpass slots, skipping the ends
+					-- LOLLO TODO newly, removing an underpass will catch and remove the whole terminal: fix it.
 					if not(isCargoTerminal) then
 						for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
 							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
