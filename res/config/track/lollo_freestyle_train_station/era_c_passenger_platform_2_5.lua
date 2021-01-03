@@ -52,7 +52,7 @@ function data()
 	t.maxSlope = t.maxSlopeBuild * 1.6
 	t.maxSlopeShape = t.maxSlope * 1.25
 	
-	t.slopeBuildSteps = 4 -- was 2 -- [1-4] steps for slope arrow buttons
+	t.slopeBuildSteps = 3 -- was 2 -- [1-4] steps for slope arrow buttons
 
 	-- t.ballastMaterial = -- "track/ballast.mtl" "station/rail/cargo/cargo_station_concrete_1.mtl"
 	t.ballastMaterial = "station/rail/cargo/cargo_station_concrete_1.mtl"

@@ -1167,6 +1167,7 @@ function data()
                     centreTracks
                 )
                 -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
+                eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
                     if platformWidth <= 5 then
                         eventArgs.cargoWaitingAreas = {
@@ -1193,9 +1194,7 @@ function data()
                     end
                     -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
                     -- maybe even overground. For now, it looks unnecessary but keep it in mind.
-                    eventArgs.crossConnectors = {}
                 else
-                    eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                     eventArgs.cargoWaitingAreas = {}
                 end
 

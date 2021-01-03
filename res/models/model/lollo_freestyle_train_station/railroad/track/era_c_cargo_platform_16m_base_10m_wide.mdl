@@ -1,0 +1,44 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    return {
+        boundingInfo = {
+            bbMax = { 7.9, 4.9, 0.78, },
+            bbMin = { -7.9, -4.9, 0, },
+        },
+        collider = {
+            params = {
+                halfExtents = { 7.9, 4.9, 0.39, },
+            },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8, 0, 0.6, 1, },
+            type = "BOX",
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "station/rail/cargo/cargo_station_concrete_1.mtl",
+                                "station/rail/cargo/cargo_station_concrete_1.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_16m_base_10m_wide.msh',
+                            transf = { 1.025, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8, 0, _constants.passengerPlatformModelZ, 1, },
+                        },
+                        -- {
+                        --     materials = {'lollo_freestyle_train_station/icon/blue.mtl'},
+                        --     mesh = 'asset/icon/lod_0_icon_pointer.msh',
+                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.75, 0, 0, 0, 0.8, 1}
+                        -- },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+    end

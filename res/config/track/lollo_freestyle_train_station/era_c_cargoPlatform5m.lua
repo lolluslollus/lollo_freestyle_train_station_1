@@ -50,9 +50,10 @@ function data()
 	t.maxSlope = t.maxSlopeBuild * 1.6
 	t.maxSlopeShape = t.maxSlope * 1.25
 	
-	t.slopeBuildSteps = 4 -- was 2 -- [1-4] steps for slope arrow buttons
+	t.slopeBuildSteps = 3 -- was 2 -- [1-4] steps for slope arrow buttons
 
-	t.ballastMaterial = "track/ballast.mtl"
+	-- t.ballastMaterial = -- "track/ballast.mtl" "station/rail/cargo/cargo_station_concrete_1.mtl"
+	t.ballastMaterial = "station/rail/cargo/cargo_station_concrete_1.mtl"
 	t.sleeperMaterial = "track/sleeper.mtl"
 	t.railMaterial = "track/rail.mtl"
 	t.catenaryMaterial = "track/catenary.mtl"
@@ -65,10 +66,10 @@ function data()
 	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
 	-- t.bumperModel = "railroad/bumper.mdl"
-	t.bumperModel = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_end.mdl'
+	t.bumperModel = "lollo_freestyle_train_station/railroad/track/railing_3m.mdl"
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
-	t.fillGroundTex = "none.lua" -- "ballast_fill.lua"
+	t.fillGroundTex = "industry_floor_paving.lua" -- "industry_concrete_01.lua" -- "none.lua" -- "ballast_fill.lua"
 	t.borderGroundTex = "none.lua" -- "ballast.lua"
 	
     -- t.railModel ="railroad/tracks/single_rail.mdl"

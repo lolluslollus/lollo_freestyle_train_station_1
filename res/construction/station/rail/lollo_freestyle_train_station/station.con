@@ -465,9 +465,11 @@ function data()
 				-- However, it is easier to place more platform-tracks upfront than add modules later,
 				-- so we go this way.
 				if isCargoTerminal then
-					for _, cwa in pairs(params.terminals[t].cargoWaitingAreas) do
-						for i = 1, #cwa do
-							local posTanX2 = transfUtils.getPosTanX2Transformed(cwa[i].posTanX2, inverseMainTransf)
+					print('params.terminals[t].cargoWaitingAreas =') debugPrint(params.terminals[t].cargoWaitingAreas)
+					for _, cwas in pairs(params.terminals[t].cargoWaitingAreas) do
+						for i = 1, #cwas do
+							print('cwas[i] =') debugPrint(cwas[i])
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cwas[i].posTanX2, inverseMainTransf)
 							local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 							result.models[#result.models+1] = {
 								id = _constants.cargoWaitingAreaModelId,

@@ -1,26 +1,26 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, 0, }, 
+		{ 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 72,
-					offset = 700,
+					count = 24,
+					offset = 428,
 				},
 				position = {
-					count = 72,
-					offset = 772,
+					count = 24,
+					offset = 452,
 				},
 				tangent = {
-					count = 72,
-					offset = 844,
+					count = 24,
+					offset = 500,
 				},
 				uv0 = {
-					count = 72,
-					offset = 916,
+					count = 24,
+					offset = 476,
 				},
 			},
 			materials = {
@@ -29,42 +29,20 @@ return {
 		}, {
 			indices = {
 				normal = {
-					count = 48,
-					offset = 988,
-				},
-				position = {
-					count = 48,
-					offset = 1036,
-				},
-				tangent = {
-					count = 48,
-					offset = 1084,
-				},
-				uv0 = {
-					count = 48,
-					offset = 1132,
-				},
-			},
-			materials = {
-				"station/train/passenger/trainstation_1920_floor_1.mtl", 
-			},
-		}, {
-			indices = {
-				normal = {
 					count = 144,
-					offset = 1180,
+					offset = 524,
 				},
 				position = {
 					count = 144,
-					offset = 1324,
+					offset = 668,
 				},
 				tangent = {
 					count = 144,
-					offset = 1468,
+					offset = 956,
 				},
 				uv0 = {
 					count = 144,
-					offset = 1612,
+					offset = 812,
 				},
 			},
 			materials = {
@@ -79,19 +57,19 @@ return {
 			offset = 0,
 		},
 		position = {
-			count = 240,
+			count = 144,
 			numComp = 3,
 			offset = 60,
 		},
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 300,
+			offset = 364,
 		},
 		uv0 = {
-			count = 336,
+			count = 160,
 			numComp = 2,
-			offset = 364,
+			offset = 204,
 		},
 	},
 }
