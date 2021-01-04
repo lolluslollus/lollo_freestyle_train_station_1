@@ -22,7 +22,7 @@ function data()
                                 "station/rail/cargo/cargo_station_concrete_1.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_16m_base_20m_wide.msh',
-                            transf = { 1.04, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8, 0, _constants.passengerPlatformModelZ, 1, },
+                            transf = { 1.05, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8, 0, _constants.passengerPlatformModelZ, 1, },
                         },
                         -- {
                         --     materials = {'lollo_freestyle_train_station/icon/blue.mtl'},
