@@ -45,6 +45,12 @@ return {
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
+			slotId = slotId,
+			transf = slotTransf,
+			tag = _constants.terminalModelTag
+		}
 		-- result.models[#result.models + 1] = {
 		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
 		-- 	slotId = slotId,
@@ -53,15 +59,12 @@ return {
 		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
+		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		local yShift = 2
 		for i = 3, #params.terminals[nTerminal].centrePlatforms, 3 do
-			-- print('i =', i)
 			local wap = params.terminals[nTerminal].centrePlatforms[i]
-			-- print('wap = ') debugPrint(wap)
 			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-			-- print('posTanX2 =') debugPrint(posTanX2)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
-			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/cargo_name_board.mdl',
 				slotId = slotId,

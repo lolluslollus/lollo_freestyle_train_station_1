@@ -325,7 +325,7 @@ function data()
 						if not(isUnderpass) and not(isPreviousUnderpass) then
 							if not(_getOccupiedInfo4FlatAreas(t, i))
 							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsSlotId then
-								local yShift = params.terminals[t].centrePlatforms[i].trackDistance + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+								local yShift = params.terminals[t].centrePlatforms[i].width + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
 								local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 								local myTransf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -358,7 +358,7 @@ function data()
 							end
 							if not(_getOccupiedInfo4FlatAreas(t, i))
 							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerArea5x5SlotId then
-								local yShift = params.terminals[t].centrePlatforms[i].trackDistance + 5 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+								local yShift = params.terminals[t].centrePlatforms[i].width + 5 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
 								local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 								local myTransf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -391,7 +391,7 @@ function data()
 							end
 							if not(_getOccupiedInfo4FlatAreas(t, i))
 							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerArea10x5SlotId then
-								local yShift = params.terminals[t].centrePlatforms[i].trackDistance + 5 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+								local yShift = params.terminals[t].centrePlatforms[i].width + 5 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
 								local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 								local myTransf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -424,7 +424,7 @@ function data()
 							end
 							if not(_getOccupiedInfo4FlatAreas(t, i))
 							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerArea10x10SlotId then
-								local yShift = params.terminals[t].centrePlatforms[i].trackDistance + 10 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+								local yShift = params.terminals[t].centrePlatforms[i].width + 10 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
 								local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 								local myTransf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),

@@ -207,13 +207,13 @@ local helpers = {
                         }
                     }
                 },
-                trackDistance = baseEdgeProperties.trackDistance,
                 trackType = baseEdgeTrack.trackType,
                 trackTypeName = api.res.trackTypeRep.getName(baseEdgeTrack.trackType),
                 type = baseEdge.type, -- 0 on ground, 1 bridge, 2 tunnel
                 edgeType = _getEdgeType(baseEdge.type), -- same as above but in a format constructions understand
                 typeIndex = baseEdge.typeIndex, -- -1 on ground, 0 tunnel / cement bridge, 1 steel bridge, 2 stone bridge, 3 suspension bridge
                 edgeTypeName = _getEdgeTypeName(baseEdge.type, baseEdge.typeIndex), -- same as above but in a format constructions understand
+                width = baseEdgeProperties.trackDistance,
             }
             results[#results+1] = result
         end
@@ -425,11 +425,11 @@ local helpers = {
                 end
                 edgeResults[#edgeResults].catenary = pel.catenary
                 edgeResults[#edgeResults].leadingIndex = leadingIndex
-                edgeResults[#edgeResults].trackDistance = pel.trackDistance or 0
                 edgeResults[#edgeResults].trackType = pel.trackType
                 edgeResults[#edgeResults].trackTypeName = pel.trackTypeName
                 edgeResults[#edgeResults].type = pel.type
                 edgeResults[#edgeResults].typeIndex = pel.typeIndex
+                edgeResults[#edgeResults].width = pel.width or 0
 
                 lengthCovered = nodeBetween.refDistance0
                 previousNodeBetween = nodeBetween

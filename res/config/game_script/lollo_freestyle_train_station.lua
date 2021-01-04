@@ -1155,7 +1155,7 @@ function data()
                 -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
                 eventArgs.midTrackIndex = iCloseEnoughToMidLength
 
-                local platformWidth = eventArgs.centrePlatforms[eventArgs.midTrackIndex].trackDistance
+                local platformWidth = eventArgs.centrePlatforms[eventArgs.midTrackIndex].width
                 eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.4)
                 eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.4)
                 -- print('alalalalal')

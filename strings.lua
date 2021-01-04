@@ -38,7 +38,7 @@ function data()
 			["PassengerPlatform5MTracksName"] = "5 m Passenger Platforms",
 			["PassengerPlatform5MTracksDesc"] = "Passenger Platforms to Be Laid as Tracks, 5 m wide. Use them at tunnel entrances, to make the ends meet.",
 			["PassengerPlatform2_5MTracksName"] = "2.5 m Passenger Platforms",
-			["PassengerPlatform2_5MTracksDesc"] = "Passenger Platforms to Be Laid as Tracks, 2.5 m wide",
+			["PassengerPlatform2_5MTracksDesc"] = "Passenger Platforms to Be Laid as Tracks, 2.5 m wide. It grows toward the track inside a station.",
 			["Cargo-Platform-Tracks"] = "Cargo platforms to be laid as tracks",
 			["Passenger-Platform-Tracks"] = "Passenger platforms to be laid as tracks",
 			["TrackWaypointName"] = "Track End Marker",
