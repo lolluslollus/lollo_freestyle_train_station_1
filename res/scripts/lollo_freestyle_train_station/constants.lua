@@ -5,7 +5,7 @@ local constants = {
     passengerPlatformTracksCategory = 'passenger-platform-tracks',
 
     passengerPlatformModelZ = 0.0,
-    cargoLaneZ = 0.8,
+    cargoLaneZ = 1.2,
     passengerLaneZ = 1.2,
 
     tracksideBitsZ = -1.05,
