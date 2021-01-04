@@ -38,7 +38,7 @@ function data()
         },
 		updateFn = function(params)
 			-- print('updateFn starting, params =') debugPrint(params)
-			print('updateFn starting, params.modules =') debugPrint(params.modules)
+			-- print('updateFn starting, params.modules =') debugPrint(params.modules)
 			if not params.modules then params.modules = {} end
 
 			-- LOLLO NOTE I cannot call the api from here, sigh. api is there, but api.res is NIL. Also game is there, but game.interface is NIL
@@ -119,7 +119,7 @@ function data()
 				terrainAlignmentLists = { { -- LOLLO NOTE populate this, otherwise the game will make its own, with spikes and all
 					type = "EQUAL",
 					faces =  { }
-				} }
+				} },
 			}
 
 			local occupiedInfo = {
@@ -269,7 +269,8 @@ function data()
 					if params.terminals[t].centrePlatforms[i].type == 0 then -- only on ground
 						local cpl = params.terminals[t].centrePlatforms[i]
 						local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
-						local yShiftOutside = isTrackOnPlatformLeft and -3.4 or 3.4
+
+						local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 5)
 						local myId = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x5SlotId)
 						table.insert(result.slots, {
 							-- height = 0,
@@ -281,9 +282,9 @@ function data()
 							),
 							type = _constants.slopedPassengerArea1x5ModuleType,
 						})
-						_occupySlopedAreas(t, i, myId, 7)
+						_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
 
-						yShiftOutside = isTrackOnPlatformLeft and -5.9 or 5.9
+						yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 10)
 						myId = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x10SlotId)
 						table.insert(result.slots, {
 							-- height = 0,
@@ -295,9 +296,9 @@ function data()
 							),
 							type = _constants.slopedPassengerArea1x10ModuleType,
 						})
-						_occupySlopedAreas(t, i, myId, 17)
+						_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
 
-						yShiftOutside = isTrackOnPlatformLeft and -10.9 or 10.9
+						yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 20)
 						myId = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x20SlotId)
 						table.insert(result.slots, {
 							-- height = 0,
@@ -309,7 +310,7 @@ function data()
 							),
 							type = _constants.slopedPassengerArea1x20ModuleType,
 						})
-						_occupySlopedAreas(t, i, myId, 37)
+						_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
 					end
 				end
 

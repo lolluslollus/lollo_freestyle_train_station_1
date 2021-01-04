@@ -249,4 +249,17 @@ helpers.getExtrapolatedPosTanX2Continuation = function(posTanX2, length)
     return result
 end
 
+helpers.getYShift4SlopedArea = function(params, t, i, slopedAreaWidth)
+    local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
+    local platformWidth = params.terminals[t].centrePlatforms[i].width
+
+    local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.35
+    -- local baseYShift = slopedAreaWidth * 0.5 + platformWidth - 1.6
+
+    local yShiftOutside = isTrackOnPlatformLeft and -baseYShift or baseYShift
+    local yShiftOutside4StreetAccess = slopedAreaWidth * 2 - 1.8
+
+    return yShiftOutside, yShiftOutside4StreetAccess
+end
+
 return helpers

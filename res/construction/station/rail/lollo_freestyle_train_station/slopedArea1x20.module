@@ -39,7 +39,6 @@ return {
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
-		local yShiftOutside = isTrackOnPlatformLeft and -10.9 or 10.9
 		local ii1 = nTrackEdge - 1
 		local iiN = nTrackEdge + 1
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFine do
@@ -49,6 +48,7 @@ return {
 			-- and params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex <= iiN then
 				local cpf = params.terminals[nTerminal].centrePlatformsFine[ii]
 				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+				local yShiftOutside = moduleHelpers.getYShift4SlopedArea(params, nTerminal, cpf.leadingIndex, 20)
 				result.models[#result.models+1] = {
 					id = _constants.slopedPassengerArea1x20ModelFileName,
 					-- tag = slotHelpers.mangleModelTag(t, false),
