@@ -20,7 +20,7 @@ function data()
                             materials = {
                                 "station/rail/era_c/era_c_trainstation_floor_1.mtl",
                                 "lollo_freestyle_train_station/era_c_trainstation_stripes.mtl",
-                                "station/rail/cargo/cargo_station_concrete_1.mtl",
+                                "lollo_freestyle_train_station/station_concrete_1.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide_stripes.msh',
                             transf = { 1.05, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.5, 0, _constants.passengerPlatformModelZ, 1, },

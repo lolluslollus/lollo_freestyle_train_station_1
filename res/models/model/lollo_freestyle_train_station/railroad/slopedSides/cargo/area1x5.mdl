@@ -19,8 +19,8 @@ function data()
                         {
                             -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
                             materials = {
-                                "station/rail/cargo/cargo_station_floor_1.mtl",
-                                "station/rail/cargo/cargo_station_concrete_1.mtl",
+                                "lollo_freestyle_train_station/station_concrete_2.mtl",
+                                "lollo_freestyle_train_station/station_concrete_1.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_c_passenger_platform_ext_1x5m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
