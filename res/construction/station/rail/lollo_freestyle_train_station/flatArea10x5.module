@@ -18,7 +18,7 @@ return {
 		price = 0,
 	},
 	category = {
-		-- categories = { "cargo", },
+		categories = { "street access", },
 	},
 	description = {
 		name = _("FlatPassengerArea10x5Name"),

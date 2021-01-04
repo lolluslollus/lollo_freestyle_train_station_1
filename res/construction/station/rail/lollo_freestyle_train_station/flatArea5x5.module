@@ -16,7 +16,7 @@ return {
 		yearTo = 0
 	},
 	category = {
-		-- categories = { "cargo", },
+		categories = { "street access", },
 	},
 	cost = {
 		price = 0,

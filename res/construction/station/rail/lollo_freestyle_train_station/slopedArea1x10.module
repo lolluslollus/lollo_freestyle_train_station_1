@@ -18,7 +18,7 @@ return {
 		price = 0,
 	},
 	category = {
-		-- categories = { "cargo", },
+		categories = { "misc", },
 	},
 	description = {
 		name = _("SlopedPassengerArea1x10Name"),
