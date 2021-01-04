@@ -56,9 +56,9 @@ function data()
                 scale = { 0.34999999403954, 0.34999999403954, },
             },
             polygon_offset = {
-                factor = 0,
-                forceDepthWrite = false,
-                units = 0,
+                factor = -1,
+                forceDepthWrite = true,
+                units = -1,
             },
             two_sided = {
                 flipNormal = true,
