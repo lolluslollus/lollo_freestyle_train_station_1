@@ -264,7 +264,7 @@ function data()
 					}
 				end
 
-				-- add alongside bits, outside
+				-- add alongside bits, outside, on ground
 				for i = 2, #params.terminals[t].centrePlatforms, 3 do
 					if params.terminals[t].centrePlatforms[i].type == 0 then -- only on ground
 						local cpl = params.terminals[t].centrePlatforms[i]
@@ -314,7 +314,7 @@ function data()
 					end
 				end
 
-				-- add flat area slots on ground
+				-- add flat area slots, on ground
 				for i = 1, #params.terminals[t].centrePlatforms do
 					if params.terminals[t].centrePlatforms[i].type == 0 then
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
@@ -322,7 +322,6 @@ function data()
 							and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
 							or false
 						local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
-						-- add small flat area slots on ground, away from underpasses
 						if not(isUnderpass) and not(isPreviousUnderpass) then
 							if not(_getOccupiedInfo4FlatAreas(t, i))
 							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsSlotId then
