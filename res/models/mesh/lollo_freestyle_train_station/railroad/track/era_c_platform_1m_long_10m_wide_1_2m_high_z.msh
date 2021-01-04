@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 1320,
+				},
+				position = {
+					count = 48,
+					offset = 1416,
+				},
+				tangent = {
+					count = 48,
+					offset = 1272,
+				},
+				uv0 = {
+					count = 48,
+					offset = 1368,
+				},
+			},
+			materials = {
+				"station/train/passenger/trainstation_1990_floor_1.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 288,
+					offset = 1752,
+				},
+				position = {
+					count = 288,
+					offset = 2328,
+				},
+				tangent = {
+					count = 288,
+					offset = 1464,
+				},
+				uv0 = {
+					count = 288,
+					offset = 2040,
+				},
+			},
+			materials = {
+				"station/train/passenger/trainstation_1850_floor_1.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 2664,
+				},
+				position = {
+					count = 48,
+					offset = 2760,
+				},
+				tangent = {
+					count = 48,
+					offset = 2616,
+				},
+				uv0 = {
+					count = 48,
+					offset = 2712,
+				},
+			},
+			materials = {
+				"station/train/passenger/trainstation_1991_floor_1.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 288,
+					offset = 3096,
+				},
+				position = {
+					count = 288,
+					offset = 3672,
+				},
+				tangent = {
+					count = 288,
+					offset = 2808,
+				},
+				uv0 = {
+					count = 288,
+					offset = 3384,
+				},
+			},
+			materials = {
+				"station/train/passenger/trainstation_1851_floor_1.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 180,
+			numComp = 3,
+			offset = 128,
+		},
+		position = {
+			count = 444,
+			numComp = 3,
+			offset = 828,
+		},
+		tangent = {
+			count = 128,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 520,
+			numComp = 2,
+			offset = 308,
+		},
+	},
+}
+end
