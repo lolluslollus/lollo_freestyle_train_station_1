@@ -81,7 +81,6 @@ return {
 			}
 		end
 		for i = 4, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
-			-- these must avoid the underpass buildings
 			local cpl = params.terminals[nTerminal].centrePlatforms[i]
 			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
