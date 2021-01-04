@@ -59,6 +59,7 @@ return {
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+		-- print('isTrackOnPlatformLeft =', isTrackOnPlatformLeft)
 		local xShift = 2
 		for i = 3, #params.terminals[nTerminal].centrePlatforms, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatforms[i]
@@ -91,7 +92,7 @@ return {
 				slotId = slotId,
 				transf = isTrackOnPlatformLeft
 					and transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 })
-					or transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }),
+					or transfUtilsUG.mul(transf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			-- the model index must be in base 0 !
@@ -99,7 +100,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1.2, 0,  xShift, yShift, 0.4, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1.2, 0,  xShift, yShift, 0.4, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end
