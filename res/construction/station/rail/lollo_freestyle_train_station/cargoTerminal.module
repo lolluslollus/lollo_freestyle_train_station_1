@@ -60,10 +60,11 @@ return {
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-		local yShift = 2
 		for i = 3, #params.terminals[nTerminal].centrePlatforms, 3 do
-			local wap = params.terminals[nTerminal].centrePlatforms[i]
-			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
+			local cpl = params.terminals[nTerminal].centrePlatforms[i]
+			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
+			local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.2 or -platformWidth * 0.5 + 0.2
+			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/cargo_name_board.mdl',
@@ -71,57 +72,48 @@ return {
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
+		end
+		for i = 4, #params.terminals[nTerminal].centrePlatforms, 3 do
+			local cpl = params.terminals[nTerminal].centrePlatforms[i]
+			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
+			local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.2 or -platformWidth * 0.5 + 0.2
+			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
+			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/cargo_sign_nr_r.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, - yShift, 0, 1 }),
+				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			-- the model index must be in base 0 !
 			result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
-
-			yShift = - yShift
 		end
-		for i = 2, #params.terminals[nTerminal].centrePlatforms, 3 do
-			-- print('i =', i)
-			local wap = params.terminals[nTerminal].centrePlatforms[i]
-			-- print('wap = ') debugPrint(wap)
-			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-			-- print('posTanX2 =') debugPrint(posTanX2)
+		for i = 2, #params.terminals[nTerminal].centrePlatforms, 4 do
+			local cpl = params.terminals[nTerminal].centrePlatforms[i]
+			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
+			local yShift = 0 -- isTrackOnPlatformLeft and platformWidth + 1.0 or -platformWidth - 1.0
+			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
-			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/cargo_lamps.mdl',
 				slotId = slotId,
-				transf = transf,
+				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end
-		for i = 4, #params.terminals[nTerminal].centrePlatforms, 6 do
-			-- print('i =', i)
-			local wap = params.terminals[nTerminal].centrePlatforms[i]
-			-- print('wap = ') debugPrint(wap)
-			local posTanX2 = transfUtils.getPosTanX2Transformed(wap.posTanX2, inverseMainTransf)
-			-- print('posTanX2 =') debugPrint(posTanX2)
+		for i = 4, #params.terminals[nTerminal].centrePlatforms, 4 do
+			local cpl = params.terminals[nTerminal].centrePlatforms[i]
+			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
+			local yShift = 0 --isTrackOnPlatformLeft and platformWidth + 1.0 or -platformWidth - 1.0
+			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
-			-- print('transf =') debugPrint(transf)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/cargo_speakers.mdl',
 				slotId = slotId,
-				transf = transf,
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end
-
-		-- local face = {
-		-- 	{-7, -7, 0, 1},
-		-- 	{-7, 7, 0, 1},
-		-- 	{7, 7, 0, 1},
-		-- 	{7, -7, 0, 1},
-		-- }
-		-- modulesutil.TransformFaces(slotTransf, face)
-		-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
-		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face)
 	end,
 
 	getModelsFn = function(params)

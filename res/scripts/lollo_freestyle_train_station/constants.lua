@@ -14,7 +14,6 @@ local constants = {
 
     maxCargoWaitingAreaEdgeLength = 9, -- do not tamper with this
     maxPassengerWaitingAreaEdgeLength = 9, -- do not tamper with this
-    terminalAssetStep = 3,
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     nTracksMax = 10, -- LOLLO TODO enforce this
     maxWaypointDistance = 1000,

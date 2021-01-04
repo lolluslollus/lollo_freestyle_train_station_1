@@ -60,7 +60,7 @@ return {
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		local xShift = 2
-		for i = 3, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
+		for i = 3, #params.terminals[nTerminal].centrePlatforms, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatforms[i]
 			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
@@ -80,7 +80,7 @@ return {
 				tag = _constants.terminalModelTag
 			}
 		end
-		for i = 4, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
+		for i = 4, #params.terminals[nTerminal].centrePlatforms, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatforms[i]
 			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
@@ -103,7 +103,7 @@ return {
 				tag = _constants.terminalModelTag
 			}
 		end
-		for i = 2, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
+		for i = 2, #params.terminals[nTerminal].centrePlatforms, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatforms[i]
 			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
