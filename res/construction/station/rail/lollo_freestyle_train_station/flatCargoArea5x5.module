@@ -83,10 +83,6 @@ return {
 		end
 		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-
-		-- LOLLO TODO add colliders to flat and sloped areas, using the model colliders.
-		-- If you don't define them, they won't work and you won't be able to configure the station.
-		-- If you define them, it won't work anyway, unless you set skipCollision = true in the construction
 	end,
 
 	getModelsFn = function(params)
