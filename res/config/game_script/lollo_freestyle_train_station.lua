@@ -1169,21 +1169,27 @@ function data()
                 -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
                 eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
+                    -- LOLLO TODO there may be platforms of different widths: set the waiting areas individually.
+                    -- Alternatively, forbid using platforms of different widths in a station, if any of them is > 5
+                    -- This way, we don't bother the passenger station.
                     if platformWidth <= 5 then
                         eventArgs.cargoWaitingAreas = {
                             eventArgs.centrePlatforms
                         }
+                        -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                     elseif platformWidth <= 10 then
                         eventArgs.cargoWaitingAreas = {
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
                         }
+                        -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[2], eventArgs.isTrackOnPlatformLeft)
                     elseif platformWidth <= 15 then
                         eventArgs.cargoWaitingAreas = {
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
                             eventArgs.centrePlatforms,
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 5)
                         }
+                        -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[3], eventArgs.isTrackOnPlatformLeft)
                     else
                         eventArgs.cargoWaitingAreas = {
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 7.5),
@@ -1191,9 +1197,11 @@ function data()
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5),
                             stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 7.5)
                         }
+                        -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[4], eventArgs.isTrackOnPlatformLeft)
                     end
                     -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
                     -- maybe even overground. For now, it looks unnecessary but keep it in mind.
+                    -- LOLLO TODO MAYBE Attach the cross connectors to the cargo lanes, which vary with the platform width.
                 else
                     eventArgs.cargoWaitingAreas = {}
                 end
