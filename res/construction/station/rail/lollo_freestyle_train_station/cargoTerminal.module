@@ -14,11 +14,11 @@ return {
 		yearFrom = -1,
 		yearTo = -1
 	},
-	cost = {
-		price = 0,
-	},
 	category = {
 		-- categories = { "cargo", },
+	},
+	cost = {
+		price = 0,
 	},
 	description = {
 		name = _("Terminal"),

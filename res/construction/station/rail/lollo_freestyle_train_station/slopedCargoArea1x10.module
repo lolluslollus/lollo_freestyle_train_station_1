@@ -14,15 +14,15 @@ return {
 		yearFrom = 0,
 		yearTo = 0
 	},
-	cost = {
-		price = 0,
-	},
 	category = {
 		categories = { "misc", },
 	},
+	cost = {
+		price = 0,
+	},
 	description = {
-		name = _("SlopedPassengerArea1x10Name"),
-		description = _("SlopedPassengerArea1x10Desc"),
+		name = _("SlopedCargoArea1x10Name"),
+		description = _("SlopedCargoArea1x10Desc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = { },
@@ -30,7 +30,7 @@ return {
 		value = 22,
 	},
 	-- skipCollision = true,
-	type = _constants.slopedPassengerArea1x10ModuleType,
+	type = _constants.slopedCargoArea1x10ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
@@ -50,7 +50,7 @@ return {
 				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 				local yShiftOutside = moduleHelpers.getYShift4SlopedArea(params, nTerminal, cpf.leadingIndex, 10)
 				result.models[#result.models+1] = {
-					id = _constants.slopedPassengerArea1x10ModelFileName,
+					id = _constants.slopedCargoArea1x10ModelFileName,
 					-- tag = slotHelpers.mangleModelTag(t, false),
 					transf = transfUtilsUG.mul(
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2),
@@ -75,7 +75,7 @@ return {
 		local results = {}
 		for y = -5, 5 do
 			results[#results+1] = {
-				id = _constants.slopedPassengerArea1x10ModelFileName,
+				id = _constants.slopedCargoArea1x10ModelFileName,
 				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 			}
 		end

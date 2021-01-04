@@ -1,0 +1,86 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local modulesutil = require "modulesutil"
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+local vec3 = require "vec3"
+
+
+function data()
+
+return {
+	availability = {
+		yearFrom = 0,
+		yearTo = 0
+	},
+	category = {
+		categories = { "misc", },
+	},
+	cost = {
+		price = 0,
+	},
+	description = {
+		name = _("SlopedPassengerArea1x5Name"),
+		description = _("SlopedPassengerArea1x5Desc"),
+		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+	},
+	metadata = { },
+	order = {
+		value = 21,
+	},
+	-- skipCollision = true,
+	type = _constants.slopedPassengerArea1x5ModuleType,
+	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+		if not nTerminal or not nTrackEdge or not baseId then return end
+
+		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+		local mainTransf = params.mainTransf
+		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+
+		local ii1 = nTrackEdge - 1
+		local iiN = nTrackEdge + 1
+		for ii = 1, #params.terminals[nTerminal].centrePlatformsFine do
+			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex > iiN then break end
+			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1 then
+			-- if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1
+			-- and params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex <= iiN then
+				local cpf = params.terminals[nTerminal].centrePlatformsFine[ii]
+				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+				local yShiftOutside = moduleHelpers.getYShift4SlopedArea(params, nTerminal, cpf.leadingIndex, 5)
+				result.models[#result.models+1] = {
+					id = _constants.slopedPassengerArea1x5ModelFileName,
+					-- tag = slotHelpers.mangleModelTag(t, false),
+					transf = transfUtilsUG.mul(
+						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2),
+						{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
+					)
+				}
+			end
+		end
+
+		local face = {
+			{-3, -12, 0, 1},
+			{-3, 12, 0, 1},
+			{3, 12, 0, 1},
+			{3, -12, 0, 1},
+		}
+		modulesutil.TransformFaces(slotTransf, face)
+		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
+		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'GREATER', 1, 0.5)
+	end,
+
+	getModelsFn = function(params)
+		local results = {}
+		for y = -2, 2 do
+			results[#results+1] = {
+				id = _constants.slopedPassengerArea1x5ModelFileName,
+				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+			}
+		end
+		return results
+	end
+}
+
+end

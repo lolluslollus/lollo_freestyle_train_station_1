@@ -67,7 +67,17 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
+					[_constants.flatCargoArea5x5ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
 					[_constants.flatPassengerArea5x5ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
+					[_constants.flatCargoArea10x5ModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
@@ -77,7 +87,17 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
+					[_constants.flatCargoArea10x10ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
 					[_constants.flatPassengerArea10x10ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
+					[_constants.slopedCargoArea1x5ModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
@@ -87,7 +107,17 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
+					[_constants.slopedCargoArea1x10ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
 					[_constants.slopedPassengerArea1x10ModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
+					[_constants.slopedCargoArea1x20ModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
@@ -271,7 +301,7 @@ function data()
 						local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 
 						local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 5)
-						local myId = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x5SlotId)
+						local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
 						table.insert(result.slots, {
 							-- height = 0,
 							id = myId,
@@ -280,12 +310,12 @@ function data()
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
 								{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
 							),
-							type = _constants.slopedPassengerArea1x5ModuleType,
+							type = isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
 						})
 						_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
 
 						yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 10)
-						myId = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x10SlotId)
+						myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)
 						table.insert(result.slots, {
 							-- height = 0,
 							id = myId,
@@ -294,12 +324,12 @@ function data()
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
 								{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
 							),
-							type = _constants.slopedPassengerArea1x10ModuleType,
+							type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
 						})
 						_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
 
 						yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 20)
-						myId = result.mangleId(t, i, _constants.idBases.slopedPassengerArea1x20SlotId)
+						myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
 						table.insert(result.slots, {
 							-- height = 0,
 							id = myId,
@@ -308,7 +338,7 @@ function data()
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
 								{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
 							),
-							type = _constants.slopedPassengerArea1x20ModuleType,
+							type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
 						})
 						_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
 					end
@@ -357,20 +387,20 @@ function data()
 								end
 							end
 							if not(_getOccupiedInfo4FlatAreas(t, i))
-							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerArea5x5SlotId then
+							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea5x5SlotId then
 								local yShift = params.terminals[t].centrePlatforms[i].width + 5 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
 								local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 								local myTransf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
 								)
-								local myId = result.mangleId(t, i, _constants.idBases.flatPassengerArea5x5SlotId)
+								local myId = result.mangleId(t, i, _constants.idBases.flatArea5x5SlotId)
 								table.insert(result.slots, {
 									-- height = 0,
 									id = myId,
 									spacing = {0, 10, 2, 2},
 									transf = myTransf,
-									type = _constants.flatPassengerArea5x5ModuleType,
+									type = isCargoTerminal and _constants.flatCargoArea5x5ModuleType or _constants.flatPassengerArea5x5ModuleType,
 								})
 								if params.modules[myId] ~= nil then
 									local lane2AreaTransf = moduleHelpers.get1MLaneTransf(
@@ -386,24 +416,24 @@ function data()
 										tag = slotHelpers.mangleModelTag(t, false),
 										transf = lane2AreaTransf
 									}
-									_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatPassengerArea5x5SlotId)
+									_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea5x5SlotId)
 								end
 							end
 							if not(_getOccupiedInfo4FlatAreas(t, i))
-							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerArea10x5SlotId then
+							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea10x5SlotId then
 								local yShift = params.terminals[t].centrePlatforms[i].width + 5 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
 								local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 								local myTransf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
 								)
-								local myId = result.mangleId(t, i, _constants.idBases.flatPassengerArea10x5SlotId)
+								local myId = result.mangleId(t, i, _constants.idBases.flatArea10x5SlotId)
 								table.insert(result.slots, {
 									-- height = 0,
 									id = myId,
 									spacing = {0, 10, 3, 3},
 									transf = myTransf,
-									type = _constants.flatPassengerArea10x5ModuleType,
+									type = isCargoTerminal and _constants.flatCargoArea10x5ModuleType or _constants.flatPassengerArea10x5ModuleType,
 								})
 								if not(isUnderpass) and not(isPreviousUnderpass) and params.modules[myId] ~= nil then
 									local lane2AreaTransf = moduleHelpers.get1MLaneTransf(
@@ -419,24 +449,24 @@ function data()
 										tag = slotHelpers.mangleModelTag(t, false),
 										transf = lane2AreaTransf
 									}
-									_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatPassengerArea10x5SlotId)
+									_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea10x5SlotId)
 								end
 							end
 							if not(_getOccupiedInfo4FlatAreas(t, i))
-							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerArea10x10SlotId then
+							or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea10x10SlotId then
 								local yShift = params.terminals[t].centrePlatforms[i].width + 10 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
 								local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 								local myTransf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
 								)
-								local myId = result.mangleId(t, i, _constants.idBases.flatPassengerArea10x10SlotId)
+								local myId = result.mangleId(t, i, _constants.idBases.flatArea10x10SlotId)
 								table.insert(result.slots, {
 									-- height = 0,
 									id = myId,
 									spacing = {0, 10, 3, 3},
 									transf = myTransf,
-									type = _constants.flatPassengerArea10x10ModuleType,
+									type = isCargoTerminal and _constants.flatCargoArea10x10ModuleType or _constants.flatPassengerArea10x10ModuleType,
 								})
 								if not(isUnderpass) and not(isPreviousUnderpass) and params.modules[myId] ~= nil then
 									local lane2AreaTransf = moduleHelpers.get1MLaneTransf(
@@ -452,7 +482,7 @@ function data()
 										tag = slotHelpers.mangleModelTag(t, false),
 										transf = lane2AreaTransf
 									}
-									_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatPassengerArea10x10SlotId)
+									_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea10x10SlotId)
 								end
 							end
 						end

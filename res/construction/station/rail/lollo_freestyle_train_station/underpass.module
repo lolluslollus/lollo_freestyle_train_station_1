@@ -14,11 +14,11 @@ return {
 		yearFrom = 0,
 		yearTo = 0
 	},
-	cost = {
-		price = 0,
-	},
 	category = {
 		categories = { "misc", },
+	},
+	cost = {
+		price = 0,
 	},
 	description = {
 		name = _("UnderpassName"),

@@ -1,4 +1,5 @@
 local _constants = require('lollo_freestyle_train_station.constants')
+-- local colliderutil = require "colliderutil"
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
@@ -14,40 +15,45 @@ return {
 		yearFrom = 0,
 		yearTo = 0
 	},
-	cost = {
-		price = 0,
-	},
 	category = {
 		categories = { "street access", },
 	},
+	cost = {
+		price = 0,
+	},
 	description = {
-		name = _("FlatPassengerArea10x5Name"),
-		description = _("FlatPassengerArea10x5Desc"),
+		name = _("FlatCargoArea5x5Name"),
+		description = _("FlatCargoArea5x5Desc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = { },
 	order = {
-		value = 12,
+		value = 11,
 	},
 	-- skipCollision = true,
-	type = _constants.flatPassengerArea10x5ModuleType,
+	type = _constants.flatCargoArea5x5ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
 		result.models[#result.models + 1] = {
-			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
-			id = _constants.flatPassengerArea10x5ModelFileName,
+			id = _constants.flatCargoArea5x5ModelFileName,
 			slotId = slotId,
 			transf = slotTransf,
 			tag = _constants.terminalModelTag
 		}
+		-- result.models[#result.models + 1] = {
+		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = _constants.terminalModelTag
+		-- }
 
 		local groundFace = {
-			{-2.5, -6, 0, 1},
-			{-2.5, 6, 0, 1},
-			{6, 6, 0, 1},
-			{6, -6, 0, 1},
+			{-2.5, -3.5, 0, 1},
+			{-2.5, 3.5, 0, 1},
+			{6, 3.5, 0, 1},
+			{6, -3.5, 0, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
@@ -55,16 +61,16 @@ return {
 		local terrainAlignmentList = {
 			faces = {
 				{
-					{-2.5, -6, 0, 1},
-					{-2.5, 6, 0, 1},
-					{1, 6, 0, 1},
-					{1, -6, 0, 1},
+					{-2.5, -3.5, 0, 1},
+					{-2.5, 3.5, 0, 1},
+					{1, 3.5, 0, 1},
+					{1, -3.5, 0, 1},
 				},
 				{
-					{1, -6, 0, 1},
-					{1, 6, 0, 1},
-					{6, 6, -1.2, 1},
-					{6, -6, -1.2, 1},
+					{1, -3.5, 0, 1},
+					{1, 3.5, 0, 1},
+					{6, 3.5, -1.2, 1},
+					{6, -3.5, -1.2, 1},
 				}
 			},
 			optional = true,
@@ -77,12 +83,16 @@ return {
 		end
 		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+
+		-- LOLLO TODO add colliders to flat and sloped areas, using the model colliders.
+		-- If you don't define them, they won't work and you won't be able to configure the station.
+		-- If you define them, it won't work anyway, unless you set skipCollision = true in the construction
 	end,
 
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.flatPassengerArea10x5ModelFileName,
+				id = _constants.flatCargoArea5x5ModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}
