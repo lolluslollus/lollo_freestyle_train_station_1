@@ -63,7 +63,7 @@ return {
 			},
 			static = false,
 			visibleFrom = 0,
-			visibleTo = 100.0,
+			visibleTo = 60.0,
 		},
 		{
 			node = {
@@ -109,7 +109,7 @@ return {
 				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 			},
 			static = false,
-			visibleFrom = 100.0,
+			visibleFrom = 60.0,
 			visibleTo = 800.0,
 		},
 	},
