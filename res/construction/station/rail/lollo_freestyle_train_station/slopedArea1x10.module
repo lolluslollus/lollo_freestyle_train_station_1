@@ -29,7 +29,7 @@ return {
 	order = {
 		value = 22,
 	},
-	skipCollision = true,
+	-- skipCollision = true,
 	type = _constants.slopedPassengerArea1x10ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)

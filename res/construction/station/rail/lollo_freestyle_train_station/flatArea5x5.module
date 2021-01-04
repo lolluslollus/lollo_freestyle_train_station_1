@@ -30,8 +30,7 @@ return {
 	order = {
 		value = 11,
 	},
-	skipCollision = true,
-	-- skipCollision = false,
+	-- skipCollision = true,
 	type = _constants.flatPassengerArea5x5ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
