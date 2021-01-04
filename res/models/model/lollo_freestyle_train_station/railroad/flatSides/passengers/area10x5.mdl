@@ -2,14 +2,14 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants') -- LOLLO NOTE this is critical: 0.5 or 0.6 will crash coz it will be at the same height as the platform-track
     return {
         boundingInfo = {
-            bbMax = { 4.9, 4, 4 },
-            bbMin = { 2.5, -4, 0 },
+            bbMax = { 4.9, 4, 2.8 },
+            bbMin = { 2.5, -4, -1.2 },
         },
         collider = {
             params = {
                 halfExtents = { 1.2, 4, 2, },
             },
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  3.7, 0, 2, 1, },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  3.7, 0, 0.8, 1, },
             type = 'BOX',
         },
         lods = {
@@ -19,7 +19,7 @@ function data()
                         {
                             -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
                             materials = {
-                                "station/rail/era_c/era_c_trainstation_floor_1.mtl",
+                                "lollo_freestyle_train_station/era_c_station_tiles_1.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_platform_area_10x5m.msh',
