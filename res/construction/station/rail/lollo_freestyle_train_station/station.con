@@ -615,27 +615,29 @@ function data()
 				_addTerminalSlot()
 
 				local _addUnderpassSlots = function()
-					-- add underpass slots, skipping the ends
+					-- add underpass slots, skipping the ends. For now, we also skip bridges
 					if not(isCargoTerminal) then
 						for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
-							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
-							local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
-							table.insert(result.slots, {
-								-- height = 1,
-								id = myId,
-								-- shape 0 1 2 3, only graphical
-								spacing = {2.5, 2.5, 1.5, 1.5},
-								transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
-								type = _constants.underpassModuleType,
-							})
-							if params.modules[myId] ~= nil then
-								result.models[#result.models+1] = {
-									id = _constants.underpassGroundModelFileName,
-									transf = transfUtilsUG.mul(
-										moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.225, 1 }
-									)
-								}
+							if params.terminals[t].centrePlatforms[i].type == 0 or params.terminals[t].centrePlatforms[i].type == 2 then
+								local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
+								local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
+								table.insert(result.slots, {
+									-- height = 1,
+									id = myId,
+									-- shape 0 1 2 3, only graphical
+									spacing = {2.5, 2.5, 1.5, 1.5},
+									transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
+									type = _constants.underpassModuleType,
+								})
+								if params.modules[myId] ~= nil then
+									result.models[#result.models+1] = {
+										id = _constants.underpassGroundModelFileName,
+										transf = transfUtilsUG.mul(
+											moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.225, 1 }
+										)
+									}
+								end
 							end
 						end
 					end

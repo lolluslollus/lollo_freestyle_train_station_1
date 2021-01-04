@@ -22,7 +22,7 @@ function data()
                                 "lollo_freestyle_train_station/glass-dark.mtl",
                                 "lollo_freestyle_train_station/era_c_trainstation_stripes.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/plate10x1-5-centred-stripes.msh',
+                            mesh = 'lollo_freestyle_train_station/underpass/plate10x1-5-centred-stripes.msh',
                             transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
                         },
                     },
