@@ -49,6 +49,7 @@ function data()
 			["NewStationName"] = "New Station",
 
 			["BuildMoreWaypoints"] = "Plop two track markers and two platform markers to build a freestyle station",
+			["DifferentPlatformWidths"] = "Avoid different track widths with cargo stations",
 			["GoBack"] = "Go back",
 			["GoThere"] = "Go there",
 			["Join"] = "Join",

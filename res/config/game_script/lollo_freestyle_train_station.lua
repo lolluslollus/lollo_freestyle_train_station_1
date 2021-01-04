@@ -1169,9 +1169,9 @@ function data()
                 -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
                 eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
-                    -- LOLLO TODO there may be platforms of different widths: set the waiting areas individually.
-                    -- Alternatively, forbid using platforms of different widths in a station, if any of them is > 5
-                    -- This way, we don't bother the passenger station.
+                    -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.
+                    -- For now, I forbid using platforms of different widths in a station, if any of them is > 5.
+                    -- This way, we don't disturb the passenger station, which hasn't got this problem coz it always has the same lanes.
                     if platformWidth <= 5 then
                         eventArgs.cargoWaitingAreas = {
                             eventArgs.centrePlatforms
@@ -1558,7 +1558,32 @@ function data()
                                     end
 
                                     -- LOLLO NOTE do not check that the tracks between the waypoints are all of the same type
-                                    --  (ie, platforms have the same width) so we have more flexibility with tunnel entrances
+                                    -- (ie, platforms have the same width) so we have more flexibility with tunnel entrances
+                                    -- on the other hand, different platform widths make trouble with cargo:
+                                    -- let's check if they are different only if one is > 5, which only happens with cargo.
+                                    local trackDistances = {}
+                                    for _, edgeId in pairs(contiguousTrackEdgeIds) do
+                                        local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                                        local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
+                                        arrayUtils.addUnique(trackDistances, baseEdgeProperties.trackDistance)
+                                    end
+                                    if #trackDistances > 1 then
+                                        for __, td in pairs(trackDistances) do -- don't use _ here, we call it below to translate the message!
+                                            if td > 5 then
+                                                guiHelpers.showWarningWindowWithGoto(_('DifferentPlatformWidths'), newWaypointId)
+                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                    string.sub(debug.getinfo(1, 'S').source, 1),
+                                                    _eventId,
+                                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                    {
+                                                        edgeId = lastBuiltEdgeId,
+                                                        waypointId = newWaypointId,
+                                                    }
+                                                ))
+                                                return false
+                                            end
+                                        end
+                                    end
 
                                     -- validation fine, return data
                                     return {
