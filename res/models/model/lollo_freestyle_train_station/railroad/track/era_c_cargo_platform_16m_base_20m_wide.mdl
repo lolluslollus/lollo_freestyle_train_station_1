@@ -2,14 +2,14 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     return {
         boundingInfo = {
-            bbMax = { 7.9, 9.9, 0.78, },
-            bbMin = { -7.9, -9.9, 0, },
+            bbMax = { 7.9, 9.9, 1.19, },
+            bbMin = { -7.9, -9.9, 0.1, },
         },
         collider = {
             params = {
-                halfExtents = { 7.9, 9.9, 0.39, },
+                halfExtents = { 7.9, 9.9, 0.59, },
             },
-            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8, 0, 0.6, 1, },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.6, 1, },
             type = "BOX",
         },
         lods = {
@@ -23,11 +23,9 @@ function data()
                                 "lollo_freestyle_train_station/station_concrete_2_z.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1_z.mtl",
                             },
-                            -- mesh = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_16m_base_20m_wide.msh',
-                            -- mesh = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_16m_base_20m_wide_z.msh',
-                            mesh = "lollo_freestyle_train_station/railroad/track/era_c_platform_16m_base_20m_wide_1_2m_high_z.msh",
-                            -- transf = { 1.05, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8, 0, _constants.passengerPlatformModelZ, 1, },
-                            transf = { 1.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8, 0, _constants.passengerPlatformModelZ, 1, },
+                            mesh = "lollo_freestyle_train_station/railroad/track/era_c_platform_16m_long_20m_wide_1_2m_high_z.msh",
+                            -- transf = { 1.05, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                            transf = { 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                         },
                         {
                             materials = {'lollo_freestyle_train_station/icon/blue.mtl'},
@@ -36,7 +34,7 @@ function data()
                         },
                     },
                     name = "RootNode",
-                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                 },
                 static = false,
                 visibleFrom = 0,

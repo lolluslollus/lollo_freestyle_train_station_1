@@ -283,15 +283,18 @@ function data()
 				local yShiftTrackside = isTrackOnPlatformLeft and 0.6 or -0.6
 				for ii = 1, #params.terminals[t].centrePlatformsFine do
 					local cpf = params.terminals[t].centrePlatformsFine[ii]
-					local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
-					result.models[#result.models+1] = {
-						id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide_stripes.mdl',
-						-- tag = slotHelpers.mangleModelTag(t, false),
-						transf = transfUtilsUG.mul(
-							moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-							{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftTrackside, _constants.tracksideBitsZ, 1 }
-						)
-					}
+					-- if params.terminals[t].centrePlatforms[cpf.leadingIndex].width < 5 then
+					if cpf.width < 5 then
+						local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+						result.models[#result.models+1] = {
+							id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide_stripes.mdl',
+							-- tag = slotHelpers.mangleModelTag(t, false),
+							transf = transfUtilsUG.mul(
+								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftTrackside, _constants.tracksideBitsZ, 1 }
+							)
+						}
+					end
 				end
 
 				-- add alongside bits, outside, on ground
