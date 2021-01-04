@@ -1156,8 +1156,8 @@ function data()
                 eventArgs.midTrackIndex = iCloseEnoughToMidLength
 
                 local platformWidth = eventArgs.centrePlatforms[eventArgs.midTrackIndex].width
-                eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.4)
-                eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.4)
+                eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
+                eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
                 -- print('alalalalal')
                 local centreTracks = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
                 eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(

@@ -63,20 +63,20 @@ return {
 		for i = 3, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
 			local cpl = params.terminals[nTerminal].centrePlatforms[i]
 			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
-			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 1.1 or -platformWidth * 0.2 - 1.1
+			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			result.models[#result.models + 1] = {
 				-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
 				id = 'lollo_freestyle_train_station/asset/era_c_station_name.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 3.4, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 3.9, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 0.4, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1.2, 0,  xShift, yShift, 0.4, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end
@@ -84,15 +84,15 @@ return {
 			-- these must avoid the underpass buildings
 			local cpl = params.terminals[nTerminal].centrePlatforms[i]
 			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
-			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 1.1 or -platformWidth * 0.2 - 1.1
+			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_number_single.mdl',
 				slotId = slotId,
 				transf = isTrackOnPlatformLeft
-					and transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4, 1 })
-					or transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4, 1 }),
+					and transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 })
+					or transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }),
 				tag = _constants.terminalModelTag
 			}
 			-- the model index must be in base 0 !
@@ -100,14 +100,14 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 0.4, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1.2, 0,  xShift, yShift, 0.4, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end
 		for i = 2, #params.terminals[nTerminal].centrePlatforms, _constants.terminalAssetStep do
 			local cpl = params.terminals[nTerminal].centrePlatforms[i]
 			local platformWidth = params.terminals[nTerminal].centrePlatforms[i].width
-			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.8 or -platformWidth * 0.2 - 0.8
+			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			result.models[#result.models + 1] = {
