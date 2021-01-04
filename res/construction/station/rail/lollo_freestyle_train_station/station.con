@@ -908,9 +908,16 @@ function data()
         upgradeFn = function(args, one)
             -- LOLLO TODO allow upgrading tracks.
             -- this sample is from the modular station, which puts edges in modules.
-            -- I don't coz they are curved, so see what I can do.
+			-- I don't coz they are curved, so see what I can do.
+			-- args contains the params and slotId, which is always -1, and no transf.
+			-- Pretty useless.
+			-- it also contains:
+			-- trackType = 1,
+			  -- trackTypeToggle = 1,
+			  -- to keep things simple, I could apply the toggle to all track edges of all terminals.
 			print('LOLLO upgradeFn starting, args =') debugPrint(args)
-			print('one = ') debugPrint(one)
+			print('LOLLO upgradeFn starting, args.slotId =') debugPrint(args.slotId)
+			-- print('one = ') debugPrint(one) -- nil
             local modules = {}
 
             local SwapModule = function(slotId, from, to)
