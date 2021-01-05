@@ -77,7 +77,21 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/era_c_perron_pillar.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1.2, 0,  xShift, yShift, 0.4, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1.3, 0,  xShift, yShift, 0.4, 1 }),
+				tag = _constants.terminalModelTag
+			}
+			yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 1.05 or -platformWidth * 0.2 - 1.05
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/asset/neon_light.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift, yShift, 5.2, 1 }),
+				tag = _constants.terminalModelTag
+			}
+			yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.75 or -platformWidth * 0.2 - 0.75
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/asset/neon_light.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(transf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  xShift, yShift, 5.2, 1 }),
 				tag = _constants.terminalModelTag
 			}
 		end

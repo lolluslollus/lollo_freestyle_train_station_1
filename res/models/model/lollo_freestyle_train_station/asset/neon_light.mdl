@@ -17,14 +17,14 @@ return {
 				children = {
 					{
 						materials = {
-							"lollo_freestyle_train_station/neon.mtl",
+							"lollo_freestyle_train_station/neon-medium.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 							-- "lollo_freestyle_train_station/train_all_lights.mtl",
 							-- "station/rail/era_c/era_c_trainstation_borders_2.mtl",
 							-- "station/rail/era_c/era_c_trainstation_borders_2.mtl",
 						},
-						mesh = "lollo_freestyle_train_station/asset/neon-light-lod0.msh",
+						mesh = "lollo_freestyle_train_station/asset/neon-light-2m-lod0.msh",
 						name = "neon-light",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
@@ -41,11 +41,11 @@ return {
 				children = {
 					{
 						materials = {
-							"lollo_freestyle_train_station/neon.mtl",
+							"lollo_freestyle_train_station/neon-medium.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 						},
-						mesh = "lollo_freestyle_train_station/asset/neon-light-lod1.msh",
+						mesh = "lollo_freestyle_train_station/asset/neon-light-2m-lod1.msh",
 						name = "neon-light",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
@@ -62,11 +62,11 @@ return {
 				children = {
 					{
 						materials = {
-							"lollo_freestyle_train_station/neon.mtl",
+							"lollo_freestyle_train_station/neon-medium.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 						},
-						mesh = "lollo_freestyle_train_station/asset/neon-light-lod2.msh",
+						mesh = "lollo_freestyle_train_station/asset/neon-light-2m-lod2.msh",
 						name = "neon-light",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
