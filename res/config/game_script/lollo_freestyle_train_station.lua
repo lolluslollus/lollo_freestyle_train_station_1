@@ -1637,7 +1637,7 @@ function data()
                                     }
 
                                     local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointMidTransf, 500)
-                                    if #nearbyFreestyleStations > 0 then
+                                    if #nearbyFreestyleStations > 0 and #nearbyFreestyleStations < _constants.maxNTerminals then
                                         guiHelpers.showNearbyStationPicker(
                                             nearbyFreestyleStations,
                                             _eventId,
