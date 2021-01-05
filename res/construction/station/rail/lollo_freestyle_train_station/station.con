@@ -276,12 +276,13 @@ function data()
 
 					result.edgeLists[#result.edgeLists+1] = newEdgeList
 				end
+				-- print('result.edgeLists =') debugPrint(result.edgeLists)
 
 				local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
 
 				-- add alongside bits, trackside
 				local yShiftTrackside = isTrackOnPlatformLeft and 0.6 or -0.6
-				for ii = 1, #params.terminals[t].centrePlatformsFine do
+				for ii = 2, #params.terminals[t].centrePlatformsFine - 1 do
 					local cpf = params.terminals[t].centrePlatformsFine[ii]
 					-- if params.terminals[t].centrePlatforms[cpf.leadingIndex].width < 5 then
 					if cpf.width < 5 then
@@ -347,8 +348,10 @@ function data()
 					end
 				end
 
+				-- LOLLO NOTE do not add slots where there may be a collision, or there will be unnecessary collision warnings
+				-- preventing filling *any* slots. This is dumb. UG TODO fix this
 				-- add flat area slots, on ground
-				for i = 1, #params.terminals[t].centrePlatforms do
+				for i = 2, #params.terminals[t].centrePlatforms do
 					if params.terminals[t].centrePlatforms[i].type == 0 then
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 						local isPreviousUnderpass = i > 1
@@ -565,7 +568,6 @@ function data()
 								}
 							)
 						end
-
 					end
 					-- add passenger waiting areas
 					if isTrackOnPlatformLeft then
