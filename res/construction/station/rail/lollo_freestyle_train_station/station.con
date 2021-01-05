@@ -8,6 +8,20 @@ local transfUtilsUG = require 'transf'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local vec3 = require 'vec3'
 
+-- LOLLO NOTE
+-- Instead of different cargo platforms with different widths, we could only use 5m areas for all,
+-- and add new modules for extra space, parallel to the platform-tracks.
+-- However, it is easier to place more platform-tracks upfront than add modules later,
+-- so we go this way.
+
+-- LOLLO NOTE we need skipCollision = true in the construction
+-- coz we don't want to check crazy stuff on a non-grid pattern.
+-- However, it can be trouble.
+-- Perhaps you bury the modules into the ground, like with the lorry station?
+-- If I crop the platform tracks outside the station, there are no more collisions!
+-- If I replace the track definition of my platform-track with the stock track, the problem still occurs.
+-- If I add the edgeLists in terminateConstructionHook, it does not help.
+-- The trick was to carefully avoid anything even grazing on the neighbour edge. Even a collision-free model with a path can make trouble.
 
 function data()
 	return {
@@ -25,7 +39,7 @@ function data()
 			soundSet = { name = "station_cargo_old" }
 		},
 		autoRemovable = false,
-		-- skipCollision = true, -- we just need this
+		-- skipCollision = true, -- see the notes
 		params = { -- keep it empty or it will crash coz it won't find the params, which I pass when building the construction
             -- {
             --     key = 'fileName',
@@ -146,7 +160,7 @@ function data()
                 slots = {},
 				stations = {},
 				terminalGroups = {},
-				terrainAlignmentLists = { { -- LOLLO NOTE populate this, otherwise the game will make its own, with spikes and all
+				terrainAlignmentLists = { { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
 					type = "EQUAL",
 					faces =  { }
 				} },
@@ -198,7 +212,6 @@ function data()
 				underpassPositions = {},
 				vehicleNodes = {}
 			}
-			
 
 			-- LOLLO NOTE the coordinates in terminals are absolute
 			local mainTransf = params.mainTransf
@@ -240,8 +253,8 @@ function data()
 				end
 				_addTracksideBits()
 
-				 -- add alongside bits, outside, on ground
-				 local function _addOutsideBits()
+				-- add alongside bits, outside, on ground
+				local function _addOutsideBits()
 					for i = 2, #params.terminals[t].centrePlatforms, 3 do
 						if params.terminals[t].centrePlatforms[i].type == 0 then -- only on ground
 							local cpl = params.terminals[t].centrePlatforms[i]
@@ -293,11 +306,8 @@ function data()
 				end
 				_addOutsideBits()
 
-				-- LOLLO NOTE do not add slots where there may be a collision, or there will be unnecessary collision warnings
-				-- preventing filling *any* slots. This is dumb. UG TODO fix this
-				-- add flat area (ie street sccess) slots, on ground
 				local function _addStreetAccess()
-					for i = 2, #params.terminals[t].centrePlatforms do
+					for i = 2, #params.terminals[t].centrePlatforms do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 						if params.terminals[t].centrePlatforms[i].type == 0 then
 							local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 							local isPreviousUnderpass = i > 1
@@ -443,12 +453,79 @@ function data()
 				end
 				_addStreetAccess()
 
-				-- add waiting areas and lanes
-				local function _addLanes()
-					-- Instead of different cargo platforms with different widths, we could only use 5m areas for all,
-					-- and add new modules for extra space, parallel to the platform-tracks.
-					-- However, it is easier to place more platform-tracks upfront than add modules later,
-					-- so we go this way.
+				local function _addLanesAcross()
+					if isCargoTerminal then return end
+
+					for i = 2, #params.terminals[t].centrePlatforms do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
+						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
+						local isPreviousUnderpass = i > 1
+							and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
+							or false
+
+						if not(isUnderpass) and not(isPreviousUnderpass) then
+							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
+							local crossConnectorTransf = transfUtilsUG.mul(
+								moduleHelpers.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
+								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1}
+							)
+							result.models[#result.models+1] = {
+								id = _constants.passengerLaneOnPlatformModelId,
+								-- tag = slotHelpers.mangleModelTag(t, false),
+								transf = crossConnectorTransf
+							}
+							if result.terminateConstructionHookInfo.crossConnectorPositions[t] == nil then result.terminateConstructionHookInfo.crossConnectorPositions[t] = {} end
+							table.insert(
+								result.terminateConstructionHookInfo.crossConnectorPositions[t],
+								{
+									t = t,
+									pos = {
+										crossConnectorPosTanX2[2][1][1],
+										crossConnectorPosTanX2[2][1][2],
+										crossConnectorPosTanX2[2][1][3] + _constants.passengerLaneZ,
+									}
+								}
+							)
+						end
+					end
+				end
+				_addLanesAcross()
+
+				local function _addLanesAlong()
+					if isCargoTerminal then return end
+
+					for i = 2, #params.terminals[t].centrePlatforms - 1 do -- skip the outermost edges to avoid collisions, the game is very picky here.
+						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
+						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
+						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+						result.models[#result.models+1] = {
+							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
+							-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
+							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
+						}
+
+						if isUnderpass then
+							local underpassBottomTransf = transfUtilsUG.mul(
+								centreLaneTransf,
+								{ 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ - _constants.underpassDepthM, 1 }
+							)
+							if result.terminateConstructionHookInfo.underpassPositions[t] == nil then result.terminateConstructionHookInfo.underpassPositions[t] = {} end
+							result.terminateConstructionHookInfo.underpassPositions[t][#result.terminateConstructionHookInfo.underpassPositions[t]+1] = {
+								t = t,
+								pos1 = posTanX2[1][1],
+								pos2 = posTanX2[2][1],
+								posBottom = {
+									underpassBottomTransf[13],
+									underpassBottomTransf[14],
+									underpassBottomTransf[15]
+								}
+							}
+						end
+					end
+				end
+				_addLanesAlong()
+
+				local function _addWaitingAreas()
+					-- waiting areas don't seem to make trouble with collisions, so we extend them as far as it goes
 					if isCargoTerminal then
 						for _, cwas in pairs(params.terminals[t].cargoWaitingAreas) do
 							for i = 1, #cwas do
@@ -462,63 +539,6 @@ function data()
 							end
 						end
 					else
-						for i = 1, #params.terminals[t].centrePlatforms do
-							local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
-							local isPreviousUnderpass = i > 1
-								and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
-								or false
-							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
-							local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
-							-- add passenger lanes along, central
-							result.models[#result.models+1] = {
-								id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
-								-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
-								transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
-							}
-
-							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
-							if isUnderpass then
-								local underpassBottomTransf = transfUtilsUG.mul(
-									centreLaneTransf,
-									{ 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ - _constants.underpassDepthM, 1 }
-								)
-								if result.terminateConstructionHookInfo.underpassPositions[t] == nil then result.terminateConstructionHookInfo.underpassPositions[t] = {} end
-								result.terminateConstructionHookInfo.underpassPositions[t][#result.terminateConstructionHookInfo.underpassPositions[t]+1] = {
-									t = t,
-									pos1 = posTanX2[1][1],
-									pos2 = posTanX2[2][1],
-									posBottom = {
-										underpassBottomTransf[13],
-										underpassBottomTransf[14],
-										underpassBottomTransf[15]
-									}
-								}
-							elseif not(isPreviousUnderpass) then
-								-- add passenger lanes across
-								local crossConnectorTransf = transfUtilsUG.mul(
-									moduleHelpers.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
-									{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1}
-								)
-								result.models[#result.models+1] = {
-									id = _constants.passengerLaneOnPlatformModelId,
-									-- tag = slotHelpers.mangleModelTag(t, false),
-									transf = crossConnectorTransf
-								}
-								if result.terminateConstructionHookInfo.crossConnectorPositions[t] == nil then result.terminateConstructionHookInfo.crossConnectorPositions[t] = {} end
-								table.insert(
-									result.terminateConstructionHookInfo.crossConnectorPositions[t],
-									{
-										t = t,
-										pos = {
-											posTanX2[2][1][1],
-											posTanX2[2][1][2],
-											posTanX2[2][1][3] + _constants.passengerLaneZ,
-										}
-									}
-								)
-							end
-						end
-						-- add passenger waiting areas
 						if isTrackOnPlatformLeft then
 							for i = 1, #params.terminals[t].leftPlatforms do
 								local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].leftPlatforms[i].posTanX2, inverseMainTransf)
@@ -544,7 +564,7 @@ function data()
 						end
 					end
 				end
-				_addLanes()
+				_addWaitingAreas()
 
 				local _addTerminalSlot = function()
 					local i = params.terminals[t].midTrackIndex

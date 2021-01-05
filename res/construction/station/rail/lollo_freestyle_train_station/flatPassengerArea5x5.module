@@ -83,14 +83,6 @@ return {
 		end
 		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-
-		-- LOLLO TODO add colliders to flat and sloped areas, using the model colliders.
-		-- If you don't define them, they won't work and you won't be able to configure the station.
-		-- If you define them, it won't work anyway, unless you set skipCollision = true in the construction
-		-- Perhaps you bury them into the ground, like with the lorry station?
-		-- If I crop the platform tracks outside the station, there are no more collisions!
-		-- If I replace the track definition of my platform-track with the stock track, the problem still occurs.
-		-- If I add the edgeLists in terminateConstructionHook, it does not help.
 	end,
 
 	getModelsFn = function(params)
