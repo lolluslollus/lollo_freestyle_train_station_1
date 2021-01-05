@@ -1,0 +1,106 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 0.16646501421928, 0.16646400094032, 3.7636997699738, },
+		bbMin = { -0.16646501421928, -0.16646404564381, 0.0037009401712567, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 0.16646501421928, 0.16646403074265, 1.8799993991852, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = {
+							"lollo_freestyle_train_station/neon.mtl",
+							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
+							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
+							-- "lollo_freestyle_train_station/train_all_lights.mtl",
+							-- "station/rail/era_c/era_c_trainstation_borders_2.mtl",
+							-- "station/rail/era_c/era_c_trainstation_borders_2.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/asset/neon-light-lod0.msh",
+						name = "neon-light",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 20,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = {
+							"lollo_freestyle_train_station/neon.mtl",
+							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
+							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/asset/neon-light-lod1.msh",
+						name = "neon-light",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 20,
+			visibleTo = 60,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = {
+							"lollo_freestyle_train_station/neon.mtl",
+							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
+							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/asset/neon-light-lod2.msh",
+						name = "neon-light",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 60,
+			visibleTo = 120,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = { 
+							"lollo_freestyle_train_station/neon.mtl",
+							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
+							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/asset/neon-light-lod3.msh",
+						name = "neon-light",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 120,
+			visibleTo = 400,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end
