@@ -89,6 +89,7 @@ return {
 		-- If you define them, it won't work anyway, unless you set skipCollision = true in the construction
 		-- Perhaps you bury them into the ground, like with the lorry station?
 		-- If I crop the platform tracks outside the station, there are no more collisions!
+		-- If I replace the track definition of my platform-track with the stock track, the problem still occurs.
 	end,
 
 	getModelsFn = function(params)
