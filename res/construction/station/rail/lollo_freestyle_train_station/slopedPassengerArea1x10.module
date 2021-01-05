@@ -61,14 +61,14 @@ return {
 		end
 
 		local face = {
-			{-5.5, -12, 0, 1},
-			{-5.5, 12, 0, 1},
-			{5.5, 12, 0, 1},
-			{5.5, -12, 0, 1},
+			{-5.5, -13, 0, 1},
+			{-5.5, 13, 0, 1},
+			{5.5, 13, 0, 1},
+			{5.5, -13, 0, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, face)
 		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'GREATER', 1, 0.5)
+		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
 	end,
 
 	getModelsFn = function(params)
