@@ -1,17 +1,5 @@
 function data()
-    local _constants = require('lollo_freestyle_train_station.constants')
     return {
-        boundingInfo = {
-            bbMax = { 7.9, 2.4, 1.1, },
-            bbMin = { -7.9, -2.4, 0.1, },
-        },
-        collider = {
-            params = {
-                halfExtents = { 7.9, 2.4, 0.5, },
-            },
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.6, 1, },
-            type = "BOX",
-        },
         lods = {
             {
                 node = {
@@ -43,4 +31,4 @@ function data()
         metadata = { },
         version = 1,
     }
-    end
+end

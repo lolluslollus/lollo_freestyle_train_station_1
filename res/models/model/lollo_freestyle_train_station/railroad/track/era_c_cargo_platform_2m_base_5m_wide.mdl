@@ -1,17 +1,10 @@
+-- local _constants = require('lollo_freestyle_train_station.constants')
+-- local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
 function data()
-    local _constants = require('lollo_freestyle_train_station.constants')
     return {
-        boundingInfo = {
-            bbMax = { 0.9, 2.4, 1.1, },
-            bbMin = { -0.9, -2.4, 0.1, },
-        },
-        collider = {
-            params = {
-                halfExtents = { 0.9, 2.4, 0.5, },
-            },
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.6, 1, },
-            type = "BOX",
-        },
+        -- boundingInfo = _mdlHelpers.getTrackBoundingInfo(2, 5, 1.2),
+        -- collider = _mdlHelpers.getTrackCollider(2, 5, 1.2),
         lods = {
             {
                 node = {
@@ -43,4 +36,4 @@ function data()
         metadata = { },
         version = 1,
     }
-    end
+end

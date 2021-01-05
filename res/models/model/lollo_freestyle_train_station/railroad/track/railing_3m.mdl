@@ -1,14 +1,14 @@
 function data()
     return {
         boundingInfo = {
-            bbMax = { 0.024999998509884, 1.4998956918716, 2.1760129928589, },
-            bbMin = { -0.024999998509884, -1.5001041889191, 1, },
+            bbMax = { 0.02, 1.4, 2.1, },
+            bbMin = { -0.02, -1.4, 1.1, },
         },
         collider = {
             params = {
-                halfExtents = { 0.024999998509884, 1.5, 0.58800649642944, },
+                halfExtents = { 0.02, 1.4, 0.58800649642944, },
             },
-            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1, },
             type = "BOX",
         },
         lods = {
@@ -20,12 +20,11 @@ function data()
                             mesh = "station/air/asset/handrail_3m/handrail_3m_lod0.msh",
                             name = "handrail_3m",
                             -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-                            -- transf = { 0.83333, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, },
                             transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1, },
                         },
                     },
                     name = "RootNode",
-                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                 },
                 static = false,
                 visibleFrom = 0,
@@ -35,4 +34,4 @@ function data()
         metadata = { },
         version = 1,
     }
-    end
+end
