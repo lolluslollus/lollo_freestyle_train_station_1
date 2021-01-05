@@ -1,10 +1,9 @@
--- local _constants = require('lollo_freestyle_train_station.constants')
--- local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
 
 function data()
     return {
-        -- boundingInfo = _mdlHelpers.getTrackBoundingInfo(2, 5, 1.2),
-        -- collider = _mdlHelpers.getTrackCollider(2, 5, 1.2),
+        boundingInfo = _mdlHelpers.getTrackBoundingInfo(2, 5, 1.2),
+        collider = _mdlHelpers.getTrackCollider(2, 5, 1.2),
         lods = {
             {
                 node = {

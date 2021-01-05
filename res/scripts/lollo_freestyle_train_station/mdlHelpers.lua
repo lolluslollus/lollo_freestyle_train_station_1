@@ -3,8 +3,10 @@ local helpers = {}
     local _tolerance = 0.1
 
     helpers.getTrackBoundingInfo = function(length, width, height)
-        local x = math.max(length * 0.5 - _tolerance, _minExtent)
-        local y = math.max(width * 0.5 - _tolerance, _minExtent)
+        local adjustedLength = 1
+        local adjustedWidth = 1
+        local x = math.max(adjustedLength * 0.5 - _tolerance, _minExtent)
+        local y = math.max(adjustedWidth * 0.5 - _tolerance, _minExtent)
         local z = math.max(height * 0.5 - _tolerance, _minExtent)
         return {
             bbMax = {
@@ -16,11 +18,13 @@ local helpers = {}
         }
     end
     helpers.getTrackCollider = function(length, width, height)
+        local adjustedLength = 1
+        local adjustedWidth = 1
         return {
             params = {
                 halfExtents = {
-                    math.max(length * 0.5 - _tolerance, _minExtent),
-                    math.max(width * 0.5 - _tolerance, _minExtent),
+                    math.max(adjustedLength * 0.5 - _tolerance, _minExtent),
+                    math.max(adjustedWidth * 0.5 - _tolerance, _minExtent),
                     math.max(height * 0.5 - _tolerance, _minExtent),
                 },
             },
