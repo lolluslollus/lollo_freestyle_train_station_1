@@ -930,7 +930,7 @@ function data()
 			-- trackType = 1,
 			  -- trackTypeToggle = 1,
 			  -- to keep things simple, I could apply the toggle to all track edges of all terminals.
-			print('LOLLO upgradeFn starting, args =') debugPrint(args)
+			-- print('LOLLO upgradeFn starting, args =') debugPrint(args)
 			print('LOLLO upgradeFn starting, args.slotId =') debugPrint(args.slotId)
 			-- print('one = ') debugPrint(one) -- nil
             local modules = {}
