@@ -46,7 +46,7 @@ function data()
 			["LolloFreestyleTrainStationName"] = "Freestyle train station",
 			["LolloFreestyleTrainStationDesc"] = "Freestyle train station",
 			["PlatformWaypointName"] = "Platform End Marker",
-			["PlatformWaypointDesc"] = "Mark the ends of a platform that will become part of a freestyle station",
+			["PlatformWaypointDesc"] = "Marks the ends of a platform that will become part of a freestyle station",
 			["PassengerPlatform5MTracksName"] = "5 m Passenger Platforms",
 			["PassengerPlatform5MTracksDesc"] = "Passenger Platforms to Be Laid as Tracks, 5 m wide. Use them at tunnel entrances or on bridges. Outside stations, you must add the pedestrian lane yourself, for example with an ultrathin path, because they are, in fact, train tracks.",
 			["PassengerPlatform2_5MTracksName"] = "2.5 m Passenger Platforms",
@@ -54,7 +54,7 @@ function data()
 			["Cargo-Platform-Tracks"] = "Cargo platforms to be laid as tracks",
 			["Passenger-Platform-Tracks"] = "Passenger platforms to be laid as tracks",
 			["TrackWaypointName"] = "Track End Marker",
-			["TrackWaypointDesc"] = "Mark the ends of a track that will become part of a freestyle station",
+			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station",
 			["UnderpassName"] = "Underpass",
 			["UnderpassDesc"] = "Underpasses",
 
