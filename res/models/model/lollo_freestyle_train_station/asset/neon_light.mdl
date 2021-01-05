@@ -1,14 +1,14 @@
 function data()
 return {
 	boundingInfo = {
-		bbMax = { 0.16646501421928, 0.16646400094032, 3.7636997699738, },
-		bbMin = { -0.16646501421928, -0.16646404564381, 0.0037009401712567, },
+		bbMax = { 0, 0.99, 0.01, },
+		bbMin = { -0.3, -0.99, -0.3, },
 	},
 	collider = {
 		params = {
-			halfExtents = { 0.16646501421928, 0.16646403074265, 1.8799993991852, },
+			halfExtents = { 0.14, 0.95, 0.14, },
 		},
-		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.15, 0, -0.15, 1, },
 		type = "BOX",
 	},
 	lods = {
@@ -34,7 +34,7 @@ return {
 			},
 			static = false,
 			visibleFrom = 0,
-			visibleTo = 20,
+			visibleTo = 50,
 		},
 		{
 			node = {
@@ -54,8 +54,8 @@ return {
 				transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
 			},
 			static = false,
-			visibleFrom = 20,
-			visibleTo = 60,
+			visibleFrom = 50,
+			visibleTo = 100,
 		},
 		{
 			node = {
@@ -75,28 +75,7 @@ return {
 				transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
 			},
 			static = false,
-			visibleFrom = 60,
-			visibleTo = 120,
-		},
-		{
-			node = {
-				children = {
-					{
-						materials = { 
-							"lollo_freestyle_train_station/neon.mtl",
-							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
-							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
-						},
-						mesh = "lollo_freestyle_train_station/asset/neon-light-lod3.msh",
-						name = "neon-light",
-						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-					},
-				},
-				name = "RootNode",
-				transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
-			},
-			static = false,
-			visibleFrom = 120,
+			visibleFrom = 100,
 			visibleTo = 400,
 		},
 	},
