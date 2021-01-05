@@ -733,7 +733,16 @@ local _actions = {
                         -- print('successEventName =') debugPrint(successEventName)
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                         if not(stringUtils.isNullOrEmptyString(newArgName)) then
-                            local splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1
+                            local splitNodeId = -1
+                            if distance0 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1
+                            elseif distance1 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0
+                            elseif distance0 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1
+                            elseif distance1 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0
+                            else
+                                print('ERROR: impossible condition, distance0 =') debugPrint(distance0)
+                                print('distance1 =') debugPrint(distance1)
+                                print('isNodeBetweenOrientatedLikeMyEdge =') debugPrint(isNodeBetweenOrientatedLikeMyEdge)
+                            end
                             eventArgs[newArgName] = splitNodeId
                         end
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(

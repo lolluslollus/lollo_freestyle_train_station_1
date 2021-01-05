@@ -17,7 +17,7 @@ local constants = {
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     nTracksMax = 12, -- LOLLO TODO enforce this
     maxWaypointDistance = 1000,
-    minSplitDistance = 1,
+    minSplitDistance = 2,
 
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileNameLong = 'station/rail/lollo_freestyle_train_station/station.con',
