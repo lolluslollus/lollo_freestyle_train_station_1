@@ -526,6 +526,7 @@ function data()
 
 				local function _addWaitingAreas()
 					-- waiting areas don't seem to make trouble with collisions, so we extend them as far as it goes
+					-- LOLLO TODO wide platforms and bends (eg 20m cargo platforms) are pickier tho: shorten them a bit
 					if isCargoTerminal then
 						for _, cwas in pairs(params.terminals[t].cargoWaitingAreas) do
 							for i = 1, #cwas do
