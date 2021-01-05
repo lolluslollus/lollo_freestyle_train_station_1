@@ -35,7 +35,10 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		-- the tag looks like '__module_201030', never mind what you write into it
+		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
+		-- in base_config.lua
+		-- Set it into the models so the game knows what module they belong to.
+
 		-- print('LOLLO flat stairs module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
 		-- print('tag =') debugPrint(tag)
 		-- print('LOLLO result =') debugPrint(result)
@@ -49,7 +52,7 @@ return {
 			id = _constants.flatStairsSmoothModelFileName,
 			slotId = slotId,
 			transf = slotTransf,
-			tag = _constants.terminalModelTag
+			tag = tag
 		}
 
 		local groundFace = {

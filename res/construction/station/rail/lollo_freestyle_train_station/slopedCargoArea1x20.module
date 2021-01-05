@@ -51,11 +51,11 @@ return {
 				local yShiftOutside = moduleHelpers.getYShift4SlopedArea(params, nTerminal, cpf.leadingIndex, 20)
 				result.models[#result.models+1] = {
 					id = _constants.slopedCargoArea1x20ModelFileName,
-					-- tag = slotHelpers.mangleModelTag(t, false),
 					transf = transfUtilsUG.mul(
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2),
 						{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
-					)
+					),
+					tag = tag
 				}
 			end
 		end

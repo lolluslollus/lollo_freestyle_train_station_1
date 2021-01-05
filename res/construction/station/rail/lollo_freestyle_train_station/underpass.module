@@ -46,7 +46,7 @@ return {
 			id = _constants.underpassWallsModelFileName,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
-			tag = _constants.underpassModelTag
+			tag = tag
 		}
 	end,
 

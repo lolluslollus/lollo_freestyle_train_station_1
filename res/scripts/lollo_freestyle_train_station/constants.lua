@@ -57,8 +57,6 @@ local constants = {
     slopedPassengerArea1x20ModelFileName = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/area1x20.mdl',
     -- terminalModelFileName = 'lollo_freestyle_train_station/icon/red_short.mdl',
     terminalModelFileName = 'lollo_freestyle_train_station/asset/arrivi_partenze_colonna_new.mdl',
-    terminalModelTag = 'freestyleTrainStationTerminal',
-    underpassModelTag = 'freestyleTrainStationUnderpass',
     underpassGroundModelFileName = 'lollo_freestyle_train_station/underpassFloor.mdl',
     underpassWallsModelFileName = 'lollo_freestyle_train_station/underpassBuilding.mdl',
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
@@ -70,6 +68,7 @@ local constants = {
     passengerLaneUnderpassModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl',
     passengerLaneOnPlatformModelId = 'lollo_freestyle_train_station/passenger_lane_on_platform.mdl',
     passengerLaneModelId = 'lollo_freestyle_train_station/passenger_lane.mdl',
+
     cargoWaitingAreaTagRoot = 'cargoWaitingArea_',
     passengersWaitingAreaTagRoot = 'passengersWaitingArea_',
     passengersWaitingAreaUnderpassTagRoot = 'passengersWaitingAreaUnderpass_',

@@ -49,13 +49,13 @@ return {
 			id = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
 			slotId = slotId,
 			transf = slotTransf,
-			tag = _constants.terminalModelTag
+			tag = tag
 		}
 		-- result.models[#result.models + 1] = {
 		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
 		-- 	slotId = slotId,
 		-- 	transf = slotTransf,
-		-- 	tag = _constants.terminalModelTag
+		-- 	tag = tag
 		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
@@ -70,7 +70,7 @@ return {
 				id = 'lollo_freestyle_train_station/asset/cargo_name_board.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
-				tag = _constants.terminalModelTag
+				tag = tag
 			}
 		end
 		for i = 4, #params.terminals[nTerminal].centrePlatforms - 1, 3 do
@@ -83,7 +83,7 @@ return {
 				id = 'lollo_freestyle_train_station/asset/cargo_sign_nr_r.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
-				tag = _constants.terminalModelTag
+				tag = tag
 			}
 			-- the model index must be in base 0 !
 			result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
@@ -98,7 +98,7 @@ return {
 				id = 'lollo_freestyle_train_station/asset/cargo_lamps.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
-				tag = _constants.terminalModelTag
+				tag = tag
 			}
 		end
 		for i = 4, #params.terminals[nTerminal].centrePlatforms - 1, 4 do
@@ -111,7 +111,7 @@ return {
 				id = 'lollo_freestyle_train_station/asset/cargo_speakers.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
-				tag = _constants.terminalModelTag
+				tag = tag
 			}
 		end
 	end,

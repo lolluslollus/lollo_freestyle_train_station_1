@@ -47,7 +47,7 @@ return {
 			id = _constants.flatPassengerArea10x10ModelFileName,
 			slotId = slotId,
 			transf = slotTransf,
-			tag = _constants.terminalModelTag
+			tag = tag
 		}
 
 		local groundFace = {

@@ -213,11 +213,12 @@ function data()
 				for i = 1, #params.terminals[t].trackEdgeLists do
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local newEdgeList = {
+						-- alignTerrain = false,
 						-- alignTerrain = tel.type == 0, -- only align on ground, not on bridges or tunnels -- useless
 						edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf),
 						edgeType = tel.edgeType,
 						edgeTypeName = tel.edgeTypeName,
-						freeNodes = {},
+						-- freeNodes = {},
 						params = {
 							type = tel.trackTypeName,
 							catenary = tel.catenary
@@ -253,11 +254,12 @@ function data()
 					local pel = params.terminals[t].platformEdgeLists[i]
 
 					local newEdgeList = {
+						-- alignTerrain = false,
 						-- alignTerrain = pel.type == 0, -- only align on ground, not on bridges or tunnels -- useless
 						edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseMainTransf),
 						edgeType = pel.edgeType,
 						edgeTypeName = pel.edgeTypeName,
-						freeNodes = {},
+						-- freeNodes = {},
 						params = {
 							type = pel.trackTypeName,
 							catenary = false --pel.catenary
@@ -393,7 +395,7 @@ function data()
 										)
 										result.models[#result.models+1] = {
 											id = _constants.passengerLaneOnPlatformModelId,
-											tag = slotHelpers.mangleModelTag(t, false),
+											-- tag = slotHelpers.mangleModelTag(t, false),
 											transf = lane2AreaTransf
 										}
 										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStairsSlotId)
@@ -426,7 +428,7 @@ function data()
 										)
 										result.models[#result.models+1] = {
 											id = _constants.passengerLaneOnPlatformModelId,
-											tag = slotHelpers.mangleModelTag(t, false),
+											-- tag = slotHelpers.mangleModelTag(t, false),
 											transf = lane2AreaTransf
 										}
 										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea5x5SlotId)
@@ -459,7 +461,7 @@ function data()
 										)
 										result.models[#result.models+1] = {
 											id = _constants.passengerLaneOnPlatformModelId,
-											tag = slotHelpers.mangleModelTag(t, false),
+											-- tag = slotHelpers.mangleModelTag(t, false),
 											transf = lane2AreaTransf
 										}
 										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea10x5SlotId)
@@ -492,7 +494,7 @@ function data()
 										)
 										result.models[#result.models+1] = {
 											id = _constants.passengerLaneOnPlatformModelId,
-											tag = slotHelpers.mangleModelTag(t, false),
+											-- tag = slotHelpers.mangleModelTag(t, false),
 											transf = lane2AreaTransf
 										}
 										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea10x10SlotId)
@@ -533,7 +535,7 @@ function data()
 							-- add passenger lanes along, central
 							result.models[#result.models+1] = {
 								id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
-								tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
+								-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
 								transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
 							}
 
@@ -562,7 +564,7 @@ function data()
 								)
 								result.models[#result.models+1] = {
 									id = _constants.passengerLaneOnPlatformModelId,
-									tag = slotHelpers.mangleModelTag(t, false),
+									-- tag = slotHelpers.mangleModelTag(t, false),
 									transf = crossConnectorTransf
 								}
 								if terminateConstructionHookInfo.crossConnectorPositions[t] == nil then terminateConstructionHookInfo.crossConnectorPositions[t] = {} end
@@ -612,12 +614,6 @@ function data()
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf)
 					local unitaryTangent = moduleHelpers.getPosTanX2Normalised(posTanX2)
-					-- LOLLO TODO the underpasses turn yellow when the user wants to remove them:
-					-- good, but these guys don't, unless there is only one terminal: why?
-					-- A similar issue happens when you try to bulldoze a platform-track:
-					-- the yellow area is there, but it is a surface below the top.
-					-- For terminals, the yellow areas only turn up when there is one terminal only.
-					-- Maybe height must be exact?
 					table.insert(result.slots, {
 						-- height = 0,
 						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
