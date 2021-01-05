@@ -90,6 +90,7 @@ return {
 		-- Perhaps you bury them into the ground, like with the lorry station?
 		-- If I crop the platform tracks outside the station, there are no more collisions!
 		-- If I replace the track definition of my platform-track with the stock track, the problem still occurs.
+		-- If I add the edgeLists in terminateConstructionHook, it does not help.
 	end,
 
 	getModelsFn = function(params)
