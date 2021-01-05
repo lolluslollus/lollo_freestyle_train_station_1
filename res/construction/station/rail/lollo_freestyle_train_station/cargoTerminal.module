@@ -95,8 +95,7 @@ return {
 			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			result.models[#result.models + 1] = {
-				-- id = 'lollo_freestyle_train_station/asset/cargo_lamps.mdl',
-				id = 'lollo_freestyle_train_station/asset/street_light_eu_c',
+				id = 'lollo_freestyle_train_station/asset/cargo_lamps.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = _constants.terminalModelTag
