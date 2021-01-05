@@ -1715,6 +1715,10 @@ function data()
                                             }
                                         end
                                     else
+                                        print('WARNING upgrading, addedSegment =') debugPrint(addedSegment)
+                                        print('args.data.entity2tn =') debugPrint(args.data.entity2tn)
+                                        -- LOLLO TODO when upgrading, the game adds a segment and two nodes, which won't work with the following.
+                                        -- Probably unimportant, but check it.
                                         removeTrackWaypointsEventArgs[#removeTrackWaypointsEventArgs+1] = {
                                             edgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, addedSegment),
                                             waypointId = nil,

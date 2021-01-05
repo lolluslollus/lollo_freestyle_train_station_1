@@ -56,7 +56,7 @@ function data()
 							catenary = false
 						},
 						snapNodes = { 0, 1 },
-						-- tag2Nodes = {},
+						-- tag2nodes = {},
 						type = 'TRACK'
 					},
 					{

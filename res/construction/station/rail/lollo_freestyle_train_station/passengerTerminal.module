@@ -38,6 +38,9 @@ return {
 		local mainTransf = params.mainTransf
 		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 
+		moduleHelpers.addEdges(params, result, inverseMainTransf, tag, nTerminal)
+		print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
+
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
 			slotId = slotId,

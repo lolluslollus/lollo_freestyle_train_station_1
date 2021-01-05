@@ -262,4 +262,104 @@ helpers.getYShift4SlopedArea = function(params, t, i, slopedAreaWidth)
     return yShiftOutside, yShiftOutside4StreetAccess
 end
 
+
+
+local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
+    result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].midTrackIndex) * 2 - 2
+
+    for i = 1, #params.terminals[t].trackEdgeLists do
+        local tel = params.terminals[t].trackEdgeLists[i]
+        local newEdgeList = {
+            alignTerrain = tel.type == 0 or tel.type == 2, -- only align on ground and in tunnels
+            edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf),
+            edgeType = tel.edgeType,
+            edgeTypeName = tel.edgeTypeName,
+            -- freeNodes = {},
+            params = {
+                type = tel.trackTypeName,
+                catenary = tel.catenary
+            },
+            snapNodes = {},
+            tag2nodes = tag2nodes,
+            type = 'TRACK'
+        }
+
+        if i == 1 then
+            newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
+        end
+        if i == #params.terminals[t].trackEdgeLists then
+            newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
+        end
+
+        -- LOLLO NOTE the edges won't snap to the neighbours
+        -- unless you rebuild those neighbours, by hand or by script,
+        -- and make them snap to the station own nodes.
+        result.edgeLists[#result.edgeLists+1] = newEdgeList
+    end
+end
+
+local _addPlatformEdges = function(params, result, inverseMainTransf, tag2nodes, t)
+    for i = 1, #params.terminals[t].platformEdgeLists do
+        local pel = params.terminals[t].platformEdgeLists[i]
+
+        local newEdgeList = {
+            alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
+            edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseMainTransf),
+            edgeType = pel.edgeType,
+            edgeTypeName = pel.edgeTypeName,
+            -- freeNodes = {},
+            params = {
+                type = pel.trackTypeName,
+                catenary = false --pel.catenary
+            },
+            snapNodes = {},
+            tag2nodes = tag2nodes,
+            type = 'TRACK'
+        }
+
+        if i == 1 then
+            newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
+        end
+        if i == #params.terminals[t].platformEdgeLists then
+            newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
+        end
+
+        result.edgeLists[#result.edgeLists+1] = newEdgeList
+    end
+end
+
+local _getNNodesInTerminalsSoFar = function(params, t)
+    local result = 0
+    for tt = 1, t - 1 do
+        if params.terminals[tt] ~= nil then
+            -- if params.terminals[tt].platformEdgeLists ~= nil then
+            --     result = result + #params.terminals[tt].platformEdgeLists * 2
+            -- end
+            if params.terminals[tt].trackEdgeLists ~= nil then
+                result = result + #params.terminals[tt].trackEdgeLists * 2
+            end
+        end
+    end
+    return result
+end
+
+helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
+    local nNodesInTerminalSoFar = _getNNodesInTerminalsSoFar(params, t)
+
+    local tag2nodes = {
+        [tag] = { } -- base 0
+    }
+
+    for i = 1, #params.terminals[t].platformEdgeLists + #params.terminals[t].trackEdgeLists do
+    -- for i = 1, #params.terminals[t].trackEdgeLists do
+        for ii = 1, 2 do
+            tag2nodes[tag][#tag2nodes[tag]+1] = nNodesInTerminalSoFar
+            nNodesInTerminalSoFar = nNodesInTerminalSoFar + 1
+        end
+    end
+
+    _addPlatformEdges(params, result, inverseMainTransf, tag2nodes, t)
+    _addTrackEdges(params, result, inverseMainTransf, tag2nodes, t)
+end
+
 return helpers

@@ -57,6 +57,10 @@ local aka = ''
 local akn = tonumber(aka)
 local akk = tonumber(nil)
 
+for i = 1, -1 do
+    print('LOLLO')
+end
+
 local dummy = 123
 
 --  id = 24148,
