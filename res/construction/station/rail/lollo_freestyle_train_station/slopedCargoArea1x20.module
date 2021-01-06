@@ -60,15 +60,17 @@ return {
 			end
 		end
 
-		local face = {
-			{-10.5, -13, 0, 1},
-			{-10.5, 13, 0, 1},
-			{10.5, 13, 0, 1},
-			{10.5, -13, 0, 1},
-		}
-		modulesutil.TransformFaces(slotTransf, face)
-		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
+		if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
+			local face = {
+				{-10.5, -13, 0, 1},
+				{-10.5, 13, 0, 1},
+				{10.5, 13, 0, 1},
+				{10.5, -13, 0, 1},
+			}
+			modulesutil.TransformFaces(slotTransf, face)
+			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
+		end
 	end,
 
 	getModelsFn = function(params)

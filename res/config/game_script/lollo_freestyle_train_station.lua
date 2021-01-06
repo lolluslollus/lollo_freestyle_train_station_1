@@ -1158,8 +1158,11 @@ function data()
                     return
                 end
 
-                eventArgs.centrePlatforms = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
-                -- eventArgs.centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.platformEdgeList, 1)
+                eventArgs.centrePlatforms = stationHelpers.getCentreEdgePositions(
+                    eventArgs.platformEdgeList,
+                    args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
+                    true
+                )
                 eventArgs.centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.centrePlatforms, 1)
                 -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
                 eventArgs.midTrackIndex = iCloseEnoughToMidLength
@@ -1168,7 +1171,11 @@ function data()
                 eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
                 eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
                 -- print('alalalalal')
-                local centreTracks = stationHelpers.getCentreEdgePositions(eventArgs.trackEdgeList, args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength)
+                local centreTracks = stationHelpers.getCentreEdgePositions(
+                    eventArgs.trackEdgeList,
+                    args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
+                    false
+                )
                 eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
                     eventArgs.leftPlatforms,
                     eventArgs.centrePlatforms,

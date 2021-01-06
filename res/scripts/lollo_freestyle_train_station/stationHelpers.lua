@@ -300,7 +300,7 @@ local helpers = {
         return results
     end,
 
-    getCentreEdgePositions = function(edgeLists, maxEdgeLength)
+    getCentreEdgePositions = function(edgeLists, maxEdgeLength, addTerrainHeight)
         -- print('getCentreEdgePositions starting')
         if type(edgeLists) ~= 'table' then return {} end
 
@@ -425,6 +425,16 @@ local helpers = {
                 end
                 edgeResults[#edgeResults].catenary = pel.catenary
                 edgeResults[#edgeResults].leadingIndex = leadingIndex
+                if addTerrainHeight then
+                    edgeResults[#edgeResults].terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+                        edgeResults[#edgeResults].posTanX2[1][1][1],
+                        edgeResults[#edgeResults].posTanX2[1][1][2]
+                    ))
+                    -- edgeResults[#edgeResults].terrainHeight2 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+                    --     edgeResults[#edgeResults].posTanX2[2][1][1],
+                    --     edgeResults[#edgeResults].posTanX2[2][1][2]
+                    -- ))
+                end
                 edgeResults[#edgeResults].trackType = pel.trackType
                 edgeResults[#edgeResults].trackTypeName = pel.trackTypeName
                 edgeResults[#edgeResults].type = pel.type
