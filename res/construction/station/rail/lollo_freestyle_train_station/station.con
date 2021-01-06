@@ -433,7 +433,7 @@ function data()
 												transfUtils.transf2Position(myTransf)
 											)
 											result.models[#result.models+1] = {
-												id = _constants.passengerLaneOnPlatformModelId,
+												id = _constants.passengerLaneModelId,
 												-- tag = slotHelpers.mangleModelTag(t, false),
 												transf = lane2AreaTransf
 											}
@@ -466,7 +466,7 @@ function data()
 												transfUtils.transf2Position(myTransf)
 											)
 											result.models[#result.models+1] = {
-												id = _constants.passengerLaneOnPlatformModelId,
+												id = _constants.passengerLaneModelId,
 												-- tag = slotHelpers.mangleModelTag(t, false),
 												transf = lane2AreaTransf
 											}
@@ -499,7 +499,7 @@ function data()
 												transfUtils.transf2Position(myTransf)
 											)
 											result.models[#result.models+1] = {
-												id = _constants.passengerLaneOnPlatformModelId,
+												id = _constants.passengerLaneModelId,
 												-- tag = slotHelpers.mangleModelTag(t, false),
 												transf = lane2AreaTransf
 											}
@@ -532,7 +532,7 @@ function data()
 												transfUtils.transf2Position(myTransf)
 											)
 											result.models[#result.models+1] = {
-												id = _constants.passengerLaneOnPlatformModelId,
+												id = _constants.passengerLaneModelId,
 												-- tag = slotHelpers.mangleModelTag(t, false),
 												transf = lane2AreaTransf
 											}
@@ -566,7 +566,7 @@ function data()
 												transfUtils.transf2Position(myTransf)
 											)
 											result.models[#result.models+1] = {
-												id = _constants.passengerLaneOnPlatformModelId,
+												id = _constants.passengerLaneModelId,
 												-- tag = slotHelpers.mangleModelTag(t, false),
 												transf = lane2AreaTransf
 											}
@@ -596,7 +596,7 @@ function data()
 								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1}
 							)
 							result.models[#result.models+1] = {
-								id = _constants.passengerLaneOnPlatformModelId,
+								id = _constants.passengerLaneModelId,
 								-- tag = slotHelpers.mangleModelTag(t, false),
 								transf = crossConnectorTransf
 							}
@@ -625,7 +625,7 @@ function data()
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 						result.models[#result.models+1] = {
-							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneOnPlatformModelId,
+							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneModelId,
 							-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
 							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
 						}
