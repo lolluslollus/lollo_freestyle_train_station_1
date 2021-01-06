@@ -21,16 +21,15 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("LiftName"),
-		description = _("LiftDesc"),
+		name = _("PassengerLiftName"),
+		description = _("PassengerLiftDesc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = { },
 	order = {
 		value = 1,
 	},
-	-- skipCollision = true,
-	type = _constants.liftModuleType,
+	type = _constants.passengerLiftModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
@@ -104,7 +103,6 @@ return {
 			{6.0, -6.2, -buildingHeight -0.8, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
-		-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
 		table.insert(
 			result.groundFaces,
 			{
@@ -134,7 +132,6 @@ return {
         	slopeLow = 0.9, --0.1,
 			type = 'EQUAL',
 		}
-		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 	end,
 

@@ -1,0 +1,96 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local modulesutil = require "modulesutil"
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+local vec3 = require "vec3"
+
+
+function data()
+
+return {
+	availability = {
+		yearFrom = 0,
+		yearTo = 0
+	},
+	category = {
+		categories = { "street access", },
+	},
+	cost = {
+		price = 0,
+	},
+	description = {
+		name = _("FlatPassengerStation0MName"),
+		description = _("FlatPassengerStation0MDesc"),
+		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+	},
+	metadata = { },
+	order = {
+		value = 1,
+	},
+	type = _constants.flatPassengerStationModuleType,
+	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+		if not nTerminal or not nTrackEdge or not baseId then return end
+
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/lift/elevated_stairs_0.mdl',
+			slotId = slotId,
+			transf = transfUtilsUG.mul(
+				slotTransf,
+				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
+			),
+			tag = tag
+		}
+
+		local groundFace = { -- the ground faces ignore z, the alignment lists don't
+			{-1, -6.2, -0.8, 1},
+			{-1, 6.2, -0.8, 1},
+			{6.0, 6.2, -0.8, 1},
+			{6.0, -6.2, -0.8, 1},
+		}
+		modulesutil.TransformFaces(slotTransf, groundFace)
+		table.insert(
+			result.groundFaces,
+			{
+				face = groundFace,
+				modes = {
+					{
+						type = 'FILL',
+						key = 'shared/asphalt_01.gtex.lua' --'shared/asphalt_01.gtex.lua'
+					},
+					--[[                         {
+						type = 'STROKE_INNER',
+						key = 'shared/asphalt_01.gtex.lua',
+					},
+					]]
+					{
+						type = 'STROKE_OUTER',
+						key = 'shared/asphalt_01.gtex.lua' --'street_border.lua'
+					}
+				}
+			}
+		)
+
+		local terrainAlignmentList = {
+			faces = { groundFace },
+			optional = true,
+        	slopeHigh = 99,
+        	slopeLow = 0.9, --0.1,
+			type = 'EQUAL',
+		}
+		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+	end,
+
+	getModelsFn = function(params)
+		return {
+			{
+				id = 'lollo_freestyle_train_station/lift/elevated_stairs_0.mdl',
+				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
+			},
+		}
+	end
+}
+
+end
