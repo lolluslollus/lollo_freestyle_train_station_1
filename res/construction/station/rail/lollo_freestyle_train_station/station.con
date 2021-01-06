@@ -232,16 +232,29 @@ function data()
 
 				local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
 
-				-- add alongside bits, trackside
-				local function _addTracksideBits()
+				-- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
+				-- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
+				-- The former is a bit glitchy, the latter is prettier.
+				local function _addTracksideExtensions()
 					local yShiftTrackside = isTrackOnPlatformLeft and 0.6 or -0.6
 					for ii = 2, #params.terminals[t].centrePlatformsFine - 1 do
 						local cpf = params.terminals[t].centrePlatformsFine[ii]
-						-- if params.terminals[t].centrePlatforms[cpf.leadingIndex].width < 5 then
+						local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+						local myModelId = isTrackOnPlatformLeft
+							and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_extension_1m_base_1m_wide_stripe_left.mdl'
+							or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_extension_1m_base_1m_wide_stripe_right.mdl'
 						if cpf.width < 5 then
-							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 							result.models[#result.models+1] = {
-								id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide_stripes.mdl',
+								id = myModelId,
+								-- tag = slotHelpers.mangleModelTag(t, false),
+								transf = transfUtilsUG.mul(
+									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftTrackside, _constants.tracksideBitsZ, 1 }
+								)
+							}
+						else
+							result.models[#result.models+1] = {
+								id = myModelId,
 								-- tag = slotHelpers.mangleModelTag(t, false),
 								transf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
@@ -251,10 +264,84 @@ function data()
 						end
 					end
 				end
-				_addTracksideBits()
+				-- _addTracksideExtensions()
 
-				-- add alongside bits, outside, on ground
-				local function _addOutsideBits()
+				local function _addPlatform()
+					if isCargoTerminal then
+						for ii = 1, #params.terminals[t].centrePlatformsFine, 1 do
+							local cpf = params.terminals[t].centrePlatformsFine[ii]
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+							local myTransf = transfUtilsUG.mul(
+								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformZ, 1 }
+							)
+							if cpf.width < 10 then
+								result.models[#result.models+1] = {
+									id = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_5m_wide.mdl',
+									-- tag = slotHelpers.mangleModelTag(t, false),
+									transf = myTransf
+								}
+							elseif cpf.width < 20 then
+								result.models[#result.models+1] = {
+									id = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_10m_wide.mdl',								-- tag = slotHelpers.mangleModelTag(t, false),
+									transf = myTransf
+								}
+							else
+								result.models[#result.models+1] = {
+									id = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_20m_wide.mdl',								-- tag = slotHelpers.mangleModelTag(t, false),
+									transf = myTransf
+								}
+							end
+						end
+					else
+						for ii = 1, #params.terminals[t].centrePlatformsFine, #params.terminals[t].centrePlatformsFine - 1 do
+							local cpf = params.terminals[t].centrePlatformsFine[ii]
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+							local myTransf = transfUtilsUG.mul(
+								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformZ, 1 }
+							)
+							if cpf.width < 5 then
+								result.models[#result.models+1] = {
+									id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide.mdl',
+									transf = myTransf
+								}
+							else
+								result.models[#result.models+1] = {
+									id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5m_wide.mdl',								-- tag = slotHelpers.mangleModelTag(t, false),
+									transf = myTransf
+								}
+							end
+						end
+
+						for ii = 2, #params.terminals[t].centrePlatformsFine - 1 do
+							local cpf = params.terminals[t].centrePlatformsFine[ii]
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+							local myTransf = transfUtilsUG.mul(
+								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformZ, 1 }
+							)
+							if cpf.width < 5 then
+								result.models[#result.models+1] = {
+									id = isTrackOnPlatformLeft
+										and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
+										or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl',
+									transf = myTransf
+								}
+							elseif cpf.width < 10 then
+								result.models[#result.models+1] = {
+									id = isTrackOnPlatformLeft
+										and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
+										or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl',
+									transf = myTransf
+								}
+							end
+						end
+					end
+				end
+				_addPlatform()
+
+				local function _addOutsideExtensions()
 					for i = 2, #params.terminals[t].centrePlatforms, 3 do
 						if params.terminals[t].centrePlatforms[i].type == 0 then -- only on ground
 							local cpl = params.terminals[t].centrePlatforms[i]
@@ -304,7 +391,7 @@ function data()
 						end
 					end
 				end
-				_addOutsideBits()
+				_addOutsideExtensions()
 
 				local function _addStreetAccess()
 					for i = 2, #params.terminals[t].centrePlatforms do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
@@ -586,6 +673,7 @@ function data()
 					-- add underpass slots, skipping the ends. For now, we also skip bridges
 					if not(isCargoTerminal) then
 						for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
+						-- for i = 1, #params.terminals[t].centrePlatforms, 4 do
 							if params.terminals[t].centrePlatforms[i].type == 0 or params.terminals[t].centrePlatforms[i].type == 2 then
 								local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 								local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)

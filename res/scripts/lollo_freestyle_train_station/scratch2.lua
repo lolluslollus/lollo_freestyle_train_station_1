@@ -61,6 +61,10 @@ for i = 1, -1 do
     print('LOLLO')
 end
 
+for i = 1, 7, 6 do
+    print('i ==', i)
+end
+
 local dummy = 123
 
 --  id = 24148,

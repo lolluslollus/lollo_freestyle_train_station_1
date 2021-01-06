@@ -302,6 +302,10 @@ local _addPlatformEdges = function(params, result, inverseMainTransf, tag2nodes,
     for i = 1, #params.terminals[t].platformEdgeLists do
         local pel = params.terminals[t].platformEdgeLists[i]
 
+        local invisibleTrackTypeName = stringUtils.stringContains(pel.trackTypeName, 'cargo')
+            and pel.trackTypeName:gsub('cargo', 'invisible')
+            or pel.trackTypeName:gsub('passenger', 'invisible')
+
         local newEdgeList = {
             alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
             edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseMainTransf),
@@ -309,7 +313,8 @@ local _addPlatformEdges = function(params, result, inverseMainTransf, tag2nodes,
             edgeTypeName = pel.edgeTypeName,
             -- freeNodes = {},
             params = {
-                type = pel.trackTypeName,
+                -- type = pel.trackTypeName,
+                type = invisibleTrackTypeName,
                 catenary = false --pel.catenary
             },
             snapNodes = {},

@@ -1098,10 +1098,10 @@ function data()
                     local length = trackLengths[i]
                     if lengthSoFar <= halfTotalLength and lengthSoFar + length >= halfTotalLength then
                         iAcrossMidLength = i
-                        if lengthSoFar / halfTotalLength > 0.9 and lengthSoFar / halfTotalLength < 1.1 then
+                        if lengthSoFar / halfTotalLength > _constants.minPercentageDeviation4Midpoint and lengthSoFar / halfTotalLength < _constants.maxPercentageDeviation4Midpoint then
                             iCloseEnoughToMidLength = i
                         else
-                            if (lengthSoFar + length) / halfTotalLength > 0.9 and (lengthSoFar + length) / halfTotalLength < 1.1 then
+                            if (lengthSoFar + length) / halfTotalLength > _constants.minPercentageDeviation4Midpoint and (lengthSoFar + length) / halfTotalLength < _constants.maxPercentageDeviation4Midpoint then
                                 iCloseEnoughToMidLength = i + 1
                             end
                         end
