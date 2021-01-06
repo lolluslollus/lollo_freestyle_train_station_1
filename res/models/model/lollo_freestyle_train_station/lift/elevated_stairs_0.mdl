@@ -24,18 +24,20 @@ local stationMainTransf = {.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 function data()
     return {
         boundingInfo = {
-            bbMax = {5.8, 1.0, 5.0},
-            bbMin = {-5.8, -5.0, -height}
+            bbMax = {5.8, 1.0, 5.0}, -- this would be the building without vents or tunnel awereness
+            -- bbMin = {-5.8, -5.0, 0} -- this would be the building without vents or tunnel awereness
+            bbMin = {-5.8, -5.0, -1.5} -- a bit lower to protect the floor from tunnels
         },
-        -- LOLLO NOTE the collider here seems to have no effect.
-        -- We already get it in elevated_stairs.module, so never mind
         collider = {
             params = {
-                halfExtents = {5.8, 3.0, 2.5}
+                -- halfExtents = {5.8, 3.0, 2.5} -- this would be the building without vents or tunnel awereness
+                halfExtents = {5.8, 3.0, 5.5} -- a bit taller to protect the floor from tunnels
             },
-            transf = idTransf,
+            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2, 2.5, 1 }, -- this would be the building without vents
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2, 1.0, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
             type = 'BOX'
         },
+
         lods = {
             {
                 node = {
@@ -181,7 +183,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 100
+                visibleTo = 200
             },
             {
                 node = {
@@ -277,7 +279,7 @@ function data()
                     transf = idTransf
                 },
                 static = false,
-                visibleFrom = 100,
+                visibleFrom = 200,
                 visibleTo = 400
             },
             {

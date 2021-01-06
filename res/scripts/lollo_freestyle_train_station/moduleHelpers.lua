@@ -1,9 +1,11 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local modulesutil = require "modulesutil"
 local slotUtils = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require 'transf'
+local vec3 = require "vec3"
 
 
 local helpers = {}
@@ -365,6 +367,84 @@ helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
 
     _addPlatformEdges(params, result, inverseMainTransf, tag2nodes, t)
     _addTrackEdges(params, result, inverseMainTransf, tag2nodes, t)
+end
+
+helpers.tryGetLiftProperties = function(params, nTerminal, nTrackEdge)
+    local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
+		-- local terrainHeight = cpl.terrainHeight1
+    local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
+
+    local buildingModelId = 'lollo_freestyle_train_station/lift/'
+    local buildingHeight = 0
+    if bridgeHeight < 5 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_5.mdl'
+        buildingHeight = 5
+    elseif bridgeHeight < 10 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_10.mdl'
+        buildingHeight = 10
+    elseif bridgeHeight < 15 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_15.mdl'
+        buildingHeight = 15
+    elseif bridgeHeight < 20 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_20.mdl'
+        buildingHeight = 20
+    elseif bridgeHeight < 25 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_25.mdl'
+        buildingHeight = 25
+    elseif bridgeHeight < 30 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_30.mdl'
+        buildingHeight = 30
+    elseif bridgeHeight < 35 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_35.mdl'
+        buildingHeight = 35
+    elseif bridgeHeight < 40 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_40.mdl'
+        buildingHeight = 40
+    else
+        return false
+    end
+
+    return buildingHeight, buildingModelId
+end
+
+helpers.doTerrain4Lifts = function(buildingHeight, slotTransf, result)
+    local groundFace = { -- the ground faces ignore z, the alignment lists don't
+        {-1, -6.2, -buildingHeight -0.8, 1},
+        {-1, 6.2, -buildingHeight -0.8, 1},
+        {6.0, 6.2, -buildingHeight -0.8, 1},
+        {6.0, -6.2, -buildingHeight -0.8, 1},
+    }
+    modulesutil.TransformFaces(slotTransf, groundFace)
+    table.insert(
+        result.groundFaces,
+        {
+            face = groundFace,
+            modes = {
+                {
+                    type = 'FILL',
+                    key = 'shared/asphalt_01.gtex.lua' --'shared/asphalt_01.gtex.lua'
+                },
+                --[[                         {
+                    type = 'STROKE_INNER',
+                    key = 'shared/asphalt_01.gtex.lua',
+                },
+                ]]
+                {
+                    type = 'STROKE_OUTER',
+                    key = 'shared/asphalt_01.gtex.lua' --'street_border.lua'
+                }
+            }
+        }
+    )
+
+    local terrainAlignmentList = {
+        faces = { groundFace },
+        optional = true,
+        slopeHigh = 99,
+        slopeLow = 0.9, --0.1,
+        type = 'EQUAL',
+    }
+    result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 end
 
 return helpers

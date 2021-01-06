@@ -1,0 +1,611 @@
+local zedShift4groundRoof = 2.89 -- micro shift to avoid flickering
+local groundRoofTransf = {0.4, 0, 0, 0, 0, 0.8, 0, 0, 0, 0, 0.07, 0, 0, 0.5, zedShift4groundRoof, 1}
+-- local groundFloorPavingTransf = {1.024, 0, 0, 0, 0, 1.30, 0, 0, 0, 0, 1, 0, 0, 1.25, zedShift4GroundFloor, 1}
+local _lampLeftTransf = {1, -1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, -9, -4, 0, 1}
+local _lampRightTransf = {-1, -1, 0, 0, 1, -1, 0, 0, 0, 0, 1, 0, 9, -4, 0, 1}
+local _streetPillarY = -3.8
+local _poleTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1.1, 0, 0, -3.6, 0, 1}
+local _clockTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.6, 4.55, 1}
+local _idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+local _stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+
+function data()
+    return {
+        boundingInfo = {
+            bbMax = {5.8, 1.0, 5.0},
+            bbMin = {-5.8, -5.0, 0}
+        },
+        -- LOLLO NOTE the collider here seems to have no effect.
+        -- We already get it in elevated_stairs.module, so never mind
+        collider = {
+            params = {
+                halfExtents = {5.8, 3.0, 2.5}
+            },
+            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.5, 0, 1},
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                -- ground level
+                                {
+                                    -- entrance roof
+                                    materials = {
+                                        'station/rail/era_c/era_c_trainstation_borders_1.mtl',
+                                        'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
+                                        'station/rail/era_c/era_c_trainstation_roof_white.mtl',
+                                        'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
+                                    },
+                                    mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
+                                    name = 'station_3_roof_perron_side',
+                                    transf = groundRoofTransf
+                                },
+                                -- {
+                                --     -- floor paving
+                                --     --materials = {'station/rail/era_c/era_c_trainstation_floor_1.mtl'}, -- same as era_c_station_floor_1.mtl
+                                --     --materials = {'station/rail/era_c/era_c_station_floor_1.mtl'},
+                                --     --materials = {'street/new_medium_paving.mtl'}, -- tarmac
+                                --     --materials = {'station/road/streetstation/streetstation_perron_base_mid.mtl'}, -- modern-ish paving
+                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'}, -- modern-ish paving
+                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod0.msh',
+                                --     name = 'station_1_main_perron',
+                                --     transf = groundFloorPavingTransf
+                                -- },
+                                {
+                                    -- lamp left
+                                    materials = {'asset/lamp_new.mtl'},
+                                    mesh = 'asset/lamp_new_lod_0.msh',
+                                    transf = _lampLeftTransf
+                                },
+                                {
+                                    -- lamp right
+                                    materials = {'asset/lamp_new.mtl'},
+                                    mesh = 'asset/lamp_new_lod_0.msh',
+                                    transf = _lampRightTransf
+                                },
+                                {
+                                    -- pole
+                                    materials = {'station/rail/era_c/era_c_trainstation_borders_2.mtl'},
+                                    mesh = 'station/rail/asset/era_c_perron_pillar/era_c_perron_pillar_lod0.msh',
+                                    name = 'era_c_perron_pillar',
+                                    transf = _poleTransf
+                                },
+                                {
+                                    -- street pillar 1
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
+                                    name = 'era_a_street_pillar',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -8, _streetPillarY, 0, 1}
+                                },
+                                {
+                                    -- street pillar 2
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
+                                    name = 'era_a_street_pillar',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5, _streetPillarY, 0, 1}
+                                },
+                                {
+                                    -- street pillar 3
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
+                                    name = 'era_a_street_pillar',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2, _streetPillarY, 0, 1}
+                                },
+                                {
+                                    -- street pillar 4
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
+                                    name = 'era_a_street_pillar',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, _streetPillarY, 0, 1}
+                                },
+                                {
+                                    -- street pillar 5
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
+                                    name = 'era_a_street_pillar',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, _streetPillarY, 0, 1}
+                                },
+                                {
+                                    -- street pillar 6
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
+                                    name = 'era_a_street_pillar',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 8, _streetPillarY, 0, 1}
+                                },
+                            },
+                            name = 'station_square_1_main_grp',
+                            transf = _stationMainTransf
+                        },
+                        {
+                            children = {
+                                {
+                                    animations = {
+                                        hours = {
+                                            params = {
+                                                id = 'station/rail/asset/era_c_small_clock/hours/era_c_hours_small_1.ani'
+                                            },
+                                            type = 'FILE_REF'
+                                        }
+                                    },
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_small_clock/era_c_hours_small_1_lod0.msh',
+                                    name = 'era_c_hours_small_1',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                },
+                                {
+                                    animations = {
+                                        minutes = {
+                                            params = {
+                                                id = 'station/rail/asset/era_c_small_clock/minutes/era_c_minutes_small_1.ani'
+                                            },
+                                            type = 'FILE_REF'
+                                        }
+                                    },
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_small_clock/era_c_minutes_small_1_lod0.msh',
+                                    name = 'era_c_minutes_small_1',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                },
+                                {
+                                    animations = {
+                                        seconds = {
+                                            params = {
+                                                id = 'station/rail/asset/era_c_small_clock/seconds/era_c_seconds_small_1.ani'
+                                            },
+                                            type = 'FILE_REF'
+                                        }
+                                    },
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_small_clock/era_c_seconds_small_1_lod0.msh',
+                                    name = 'era_c_seconds_small_1',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                },
+                                -- {
+                                --     animations = {
+                                --         hours = {
+                                --             params = {
+                                --                 id = 'station/rail/asset/era_c_small_clock/hours/era_c_hours_small_2.ani'
+                                --             },
+                                --             type = 'FILE_REF'
+                                --         }
+                                --     },
+                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_hours_small_2_lod0.msh',
+                                --     name = 'era_c_hours_small_2',
+                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                -- },
+                                -- {
+                                --     animations = {
+                                --         minutes = {
+                                --             params = {
+                                --                 id = 'station/rail/asset/era_c_small_clock/minutes/era_c_minutes_small_2.ani'
+                                --             },
+                                --             type = 'FILE_REF'
+                                --         }
+                                --     },
+                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_minutes_small_2_lod0.msh',
+                                --     name = 'era_c_minutes_small_2',
+                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                -- },
+                                -- {
+                                --     animations = {
+                                --         seconds = {
+                                --             params = {
+                                --                 id = 'station/rail/asset/era_c_small_clock/seconds/era_c_seconds_small_2.ani'
+                                --             },
+                                --             type = 'FILE_REF'
+                                --         }
+                                --     },
+                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_seconds_small_2_lod0.msh',
+                                --     name = 'era_c_seconds_small_2',
+                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                -- },
+                                {
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_small_clock/era_c_trainstation_small_clock_lod0.msh',
+                                    name = 'era_c_trainstation_small_clock',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                }
+                            },
+                            name = 'era_c_small_clock_grp',
+                            transf = _clockTransf
+                        },
+                        {
+                            children = {
+                                children = {
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_lod0.msh',
+                                    name = 'era_c_station_name',
+                                    transf = _idTransf
+                                }
+                            },
+                            name = 'era_c_station_name_grp',
+                            transf = {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.6, 3.3, 1}
+                        }
+                    },
+                    name = 'RootNode',
+                    transf = _idTransf
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                -- ground level
+                                {
+                                    -- entrance roof
+                                    materials = {
+                                        'station/rail/era_c/era_c_trainstation_borders_1.mtl',
+                                        'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
+                                        'station/rail/era_c/era_c_trainstation_roof_white.mtl',
+                                        'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
+                                    },
+                                    mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod1.msh',
+                                    name = 'station_3_roof_perron_side',
+                                    transf = groundRoofTransf
+                                },
+                                -- {
+                                --     -- floor paving
+                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'},
+                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod1.msh',
+                                --     name = 'station_1_main_perron',
+                                --     transf = groundFloorPavingTransf
+                                -- },
+                                {
+                                    -- lamp left
+                                    materials = {'asset/lamp_new.mtl'},
+                                    mesh = 'asset/lamp_new_lod_1.msh',
+                                    transf = _lampLeftTransf
+                                },
+                                {
+                                    -- lamp right
+                                    materials = {'asset/lamp_new.mtl'},
+                                    mesh = 'asset/lamp_new_lod_1.msh',
+                                    transf = _lampRightTransf
+                                },
+                                {
+                                    -- pole
+                                    materials = {'station/rail/era_c/era_c_trainstation_borders_2.mtl'},
+                                    mesh = 'station/rail/asset/era_c_perron_pillar/era_c_perron_pillar_lod1.msh',
+                                    name = 'era_c_perron_pillar',
+                                    transf = _poleTransf
+                                }
+                            },
+                            name = 'station_square_1_main_grp',
+                            transf = _stationMainTransf
+                        },
+                        {
+                            children = {
+                                {
+                                    animations = {
+                                        hours = {
+                                            params = {
+                                                id = 'station/rail/asset/era_c_small_clock/hours/era_c_hours_small_1.ani'
+                                            },
+                                            type = 'FILE_REF'
+                                        }
+                                    },
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_small_clock/era_c_hours_small_1_lod1.msh',
+                                    name = 'era_c_hours_small_1',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                },
+                                {
+                                    animations = {
+                                        minutes = {
+                                            params = {
+                                                id = 'station/rail/asset/era_c_small_clock/minutes/era_c_minutes_small_1.ani'
+                                            },
+                                            type = 'FILE_REF'
+                                        }
+                                    },
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_small_clock/era_c_minutes_small_1_lod1.msh',
+                                    name = 'era_c_minutes_small_1',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                },
+                                {
+                                    animations = {
+                                        seconds = {
+                                            params = {
+                                                id = 'station/rail/asset/era_c_small_clock/seconds/era_c_seconds_small_1.ani'
+                                            },
+                                            type = 'FILE_REF'
+                                        }
+                                    },
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_small_clock/era_c_seconds_small_1_lod1.msh',
+                                    name = 'era_c_seconds_small_1',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                },
+                                -- {
+                                --     animations = {
+                                --         hours = {
+                                --             params = {
+                                --                 id = 'station/rail/asset/era_c_small_clock/hours/era_c_hours_small_2.ani'
+                                --             },
+                                --             type = 'FILE_REF'
+                                --         }
+                                --     },
+                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_hours_small_2_lod1.msh',
+                                --     name = 'era_c_hours_small_2',
+                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                -- },
+                                -- {
+                                --     animations = {
+                                --         minutes = {
+                                --             params = {
+                                --                 id = 'station/rail/asset/era_c_small_clock/minutes/era_c_minutes_small_2.ani'
+                                --             },
+                                --             type = 'FILE_REF'
+                                --         }
+                                --     },
+                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_minutes_small_2_lod1.msh',
+                                --     name = 'era_c_minutes_small_2',
+                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                -- },
+                                -- {
+                                --     animations = {
+                                --         seconds = {
+                                --             params = {
+                                --                 id = 'station/rail/asset/era_c_small_clock/seconds/era_c_seconds_small_2.ani'
+                                --             },
+                                --             type = 'FILE_REF'
+                                --         }
+                                --     },
+                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_seconds_small_2_lod1.msh',
+                                --     name = 'era_c_seconds_small_2',
+                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                -- },
+                                {
+                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                                    mesh = 'station/rail/asset/era_c_small_clock/era_c_trainstation_small_clock_lod1.msh',
+                                    name = 'era_c_trainstation_small_clock',
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                                }
+                            },
+                            name = 'era_c_small_clock_grp',
+                            transf = _clockTransf
+                        }
+                    },
+                    name = 'RootNode',
+                    transf = _idTransf
+                },
+                static = false,
+                visibleFrom = 100,
+                visibleTo = 400
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                -- ground level
+                                {
+                                    -- entrance roof
+                                    materials = {
+                                        'station/rail/era_c/era_c_trainstation_borders_1.mtl',
+                                        'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
+                                        'station/rail/era_c/era_c_trainstation_roof_white.mtl',
+                                        'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
+                                    },
+                                    mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod2.msh',
+                                    name = 'station_3_roof_perron_side',
+                                    transf = groundRoofTransf
+                                },
+                                -- {
+                                --     -- floor paving
+                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'},
+                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod2.msh',
+                                --     name = 'station_1_main_perron',
+                                --     transf = groundFloorPavingTransf
+                                -- }
+                            },
+                            name = 'station_square_1_main_grp',
+                            transf = _stationMainTransf
+                        }
+                    },
+                    name = 'RootNode',
+                    transf = _idTransf
+                },
+                static = false,
+                visibleFrom = 400,
+                visibleTo = 3500
+            }
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = 'CENTER',
+                        alphaMode = 'BLEND',
+                        childId = 'RootNode',
+                        fitting = 'SCALE',
+                        nLines = 1,
+                        size = {5.2, .6},
+                        transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -3.833, 3.63, 1},
+                        type = 'STATION_NAME',
+                        verticalAlignment = 'CENTER'
+                    }
+                }
+            },
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        -- out of the station
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, 0.7, 0},
+                                {0, -1, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {0, -1.79, 0},
+                                {0, -1, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {0, -1.79, 0},
+                                {0, -1, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {0, -4.29, 0},
+                                {0, -1, 0},
+                                2.4000000953674
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- into the street left
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -1.79, 0},
+                                {-6, -3, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {-6, -4.29, 0},
+                                {-6, -3, 0},
+                                2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- into the street right
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -1.79, 0},
+                                {6, -3, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {6, -4.29, 0},
+                                {6, -3, 0},
+                                2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- sideways, to connect extra elements
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -1.79, 0},
+                                {-1, 0, 0},
+                                2.4000000953674
+                            },
+                            {
+                                -- {-6, -0.5, 0},
+                                {-6, -1.79, 0},
+                                {-1, 0, 0},
+                                2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- sideways, to connect extra elements
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -1.79, 0},
+                                {1, 0, 0},
+                                2.4000000953674
+                            },
+                            {
+                                -- {6, -0.5, 0},
+                                {6, -1.79, 0},
+                                {1, 0, 0},
+                                2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    -- {
+                    --     -- into the next sibling left, criss-crossing to avoid duplicating edges
+                    --     linkable = true,
+                    --     nodes = {
+                    --         {
+                    --             {-4.29, -4.29, 0},
+                    --             {-1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             {-5, -4.2, 0},
+                    --             {-1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             {-5, -4.2, 0},
+                    --             {-1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             {-6, -4.29, 0},
+                    --             {-1, 0, 0},
+                    --             2.4000000953674
+                    --         }
+                    --     },
+                    --     speedLimit = 20,
+                    --     transportModes = {'PERSON'}
+                    -- },
+                    -- {
+                    --     -- into the next sibling right, criss-crossing to avoid duplicating edges
+                    --     linkable = true,
+                    --     nodes = {
+                    --         {
+                    --             {4.29, -4.29, 0},
+                    --             {1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             {5, -4.2, 0},
+                    --             {1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             {5, -4.2, 0},
+                    --             {1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             {6, -4.29, 0},
+                    --             {1, 0, 0},
+                    --             2.4000000953674
+                    --         }
+                    --     },
+                    --     speedLimit = 20,
+                    --     transportModes = {'PERSON'}
+                    -- }
+                },
+                runways = {},
+                terminals = {}
+            }
+        },
+        version = 1
+    }
+end

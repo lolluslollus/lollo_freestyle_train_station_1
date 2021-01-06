@@ -1673,9 +1673,6 @@ function data()
                                     -- Or maybe, we could bar intersecting platform-tracks altogether:
                                     -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
 
-                                    -- LOLLO TODO if two terminals are on two consecutive bits of platform, join them with a pedestrian lane, in the station.con
-                                    -- or at least, allow doing that by hand
-
                                     -- LOLLO NOTE useful to remember
                                     -- local platformWaypointTransf = transfUtilsUG.new(
                                     --     args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),

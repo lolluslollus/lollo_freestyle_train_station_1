@@ -552,7 +552,7 @@ function data()
 											table.insert(result.slots, {
 												-- height = 0,
 												id = myId,
-												spacing = {0, 10, 3, 3},
+												spacing = {0, 3, 4, 4},
 												transf = myTransf,
 												type = _constants.flatPassengerStationModuleType,
 											})
@@ -571,6 +571,19 @@ function data()
 													transf = lane2AreaTransf
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStationSlotId)
+
+												local ssPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift + 11.5)
+												table.insert(result.slots, {
+													-- height = 0,
+													id = result.mangleId(t, i, _constants.idBases.stationSquareSlotId),
+													shape = 1,
+													spacing = {0, 4, 4, 4},
+													transf = transfUtilsUG.mul(
+														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssPosTanX2),
+														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5.1, 1 }
+													),
+													type = _constants.passengerStationSquareModuleType,
+												})
 											end
 										end
 									end
@@ -588,7 +601,7 @@ function data()
 											table.insert(result.slots, {
 												-- height = 0,
 												id = myId,
-												spacing = {0, 10, 3, 3},
+												spacing = {0, 3, 4, 4},
 												transf = myTransf,
 												type = _constants.passengerLiftModuleType,
 											})
@@ -607,6 +620,19 @@ function data()
 													transf = lane2AreaTransf
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.liftSlotId)
+
+												local ssPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift + 11.5)
+												table.insert(result.slots, {
+													-- height = 0,
+													id = result.mangleId(t, i, _constants.idBases.stationSquareSlotId),
+													shape = 1,
+													spacing = {0, 4, 4, 4},
+													transf = transfUtilsUG.mul(
+														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssPosTanX2),
+														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
+													),
+													type = _constants.passengerStationSquareModuleType,
+												})
 											end
 										end
 									end
@@ -689,8 +715,6 @@ function data()
 				_addLanesAlong()
 
 				local function _addWaitingAreas()
-					-- waiting areas don't seem to make trouble with collisions, so we extend them as far as it goes
-					-- LOLLO TODO wide platforms and bends (eg 20m cargo platforms) are pickier tho: shorten them a bit
 					if isCargoTerminal then
 						for _, cwas in pairs(params.terminals[t].cargoWaitingAreas) do
 							for i = 1, #cwas do

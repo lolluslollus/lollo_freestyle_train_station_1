@@ -1,6 +1,5 @@
 return function(height)
-    -- local underpassZed = require('lollo_freestyle_train_station.constants').underpassZed
-    local underpassZed = - 3 -- LOLLO TODO use the constants once you are done with testing
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
     local topTransf = {1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 6, -5.25, 0.707, 1}
 
     local function _getWallsBelowPlatform(lod)
@@ -60,7 +59,7 @@ return function(height)
     local floorPavingWithHoleTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -2.51, 0.0, 1}
     local floorPavingTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.01, 0, 1}
     local floorTransf = {1.96, 0, 0, 0, 0, 0, 1.9, 0, 0, 0.2, 0, 0, 0, -0.6, 0.32, 1}
-    local idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+    local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
     local stationMainTransf = {.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
     -- LOLLO NOTE I can make many of these, one for each height.
@@ -72,16 +71,18 @@ return function(height)
     --print('LOLLO height = ', height)
     return {
         boundingInfo = {
-            bbMax = {5.8, 1.0, 5.0},
-            bbMin = {-5.8, -5.0, -height}
+            -- bbMax = {5.8, 1.0, 5.0}, -- this would be the building without vents or tunnel awereness
+            -- bbMin = {-5.8, -5.0, -height} -- this would be the building without vents or tunnel awereness
+            bbMax = {5.8, 1.0, 6.5}, -- a bit taller to protect the vents from bridges
+            bbMin = {-5.8, -5.0, -height -1.5} -- a bit lower to protect the floor from tunnels
         },
-        -- LOLLO NOTE the collider here seems to have no effect.
-        -- We already get it in elevated_stairs.module, so never mind
         collider = {
             params = {
-                halfExtents = {5.8, 3.0, 32.0}
+                -- halfExtents = {5.8, 3.0, 2.5 + height * 0.5} -- this would be the building without vents or tunnel awereness
+                halfExtents = {5.8, 3.0, 5.5 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
             },
-            transf = idTransf,
+            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2, 2.5 - height * 0.5, 1 }, -- this would be the building without vents
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2, 1.0 - height * 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
             type = 'BOX'
         },
         lods = {
@@ -644,23 +645,6 @@ return function(height)
                         speedLimit = 20,
                         transportModes = {'PERSON'}
                     },
-                    -- {
-                    --     -- horizontally into the across underpass
-                    --     nodes = {
-                    --         {
-                    --             {0, -0, underpassZed},
-                    --             {0, -2.5, 0},
-                    --             2.4000000953674
-                    --         },
-                    --         {
-                    --             {0, -2.5, underpassZed},
-                    --             {0, -2.5, 0},
-                    --             2.4000000953674
-                    --         }
-                    --     },
-                    --     speedLimit = 20,
-                    --     transportModes = {'PERSON'}
-                    -- },
                     {
                         -- out to the back
                         nodes = {
@@ -708,7 +692,6 @@ return function(height)
                     height > 0 and
                         {
                             -- straight down and then out
-                            -- LOLLO NOTE alter the sequence if underpassZed changes!
                             linkable = true,
                             nodes = {
                                 {
@@ -716,16 +699,16 @@ return function(height)
                                     {0, 0, -1}, -- 0, 0, 0 crashes, 0, 0, -1 and 0, 0, 1 hide the people, 0, 1, 0 and 1, 0, 0 have them walk while being lifted
                                     2.4
                                 },
-                                {
-                                    {0, -2.5, underpassZed},
-                                    {0, 0, -1},
-                                    2.4
-                                },
-                                {
-                                    {0, -2.5, underpassZed},
-                                    {0, 0, -1},
-                                    2.4
-                                },
+                                -- {
+                                --     {0, -2.5, underpassZed},
+                                --     {0, 0, -1},
+                                --     2.4
+                                -- },
+                                -- {
+                                --     {0, -2.5, underpassZed},
+                                --     {0, 0, -1},
+                                --     2.4
+                                -- },
                                 {
                                     {0, -2.5, -height},
                                     {0, 0, -1},
@@ -745,9 +728,8 @@ return function(height)
                             speedLimit = 20,
                             transportModes = {'PERSON'}
                         } or
-                        {
+                        { -- height = 0: it never happens
                             -- straight down and then out
-                            -- LOLLO NOTE alter the sequence if underpassZed changes!
                             linkable = true,
                             nodes = {
                                 {
@@ -756,7 +738,7 @@ return function(height)
                                     2.4
                                 },
                                 {
-                                    {0, -2.5, underpassZed},
+                                    {0, -2.5, -3}, -- was {0, -2.5, underpassZed}
                                     {0, 0, -1},
                                     2.4
                                 }

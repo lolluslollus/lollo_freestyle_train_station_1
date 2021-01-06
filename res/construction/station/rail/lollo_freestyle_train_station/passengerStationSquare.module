@@ -21,46 +21,29 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("PassengerLiftName"),
-		description = _("PassengerLiftDesc"),
+		name = _("PassengerStationSquareName"),
+		description = _("PassengerStationSquareDesc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = { },
 	order = {
 		value = 1,
 	},
-	type = _constants.passengerLiftModuleType,
+	type = _constants.passengerStationSquareModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
-		-- in base_config.lua
-		-- Set it into the models so the game knows what module they belong to.
-
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = transfUtilsUG.mul(
-		-- 		slotTransf,
-		-- 		{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -terrainHeight, 1 }
-		-- 	),
-		-- 	tag = tag
-		-- }
-
 		local buildingHeight, buildingModelId = moduleHelpers.tryGetLiftProperties(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
 
-		-- print('buildingHeight =', buildingHeight)
-		-- print('buildingModelId =', buildingModelId)
-		local buildingTransf = transfUtilsUG.mul(
-			slotTransf,
-			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
-		)
 		result.models[#result.models + 1] = {
-			id = buildingModelId,
+			id = 'lollo_freestyle_train_station/lift/station_square.mdl',
 			slotId = slotId,
-			transf = buildingTransf,
+			transf = transfUtilsUG.mul(
+				slotTransf,
+				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -buildingHeight - 0.8, 1 }
+			),
 			tag = tag
 		}
 
@@ -70,7 +53,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = 'lollo_freestyle_train_station/lift/elevated_stairs_20.mdl',
+				id = 'lollo_freestyle_train_station/lift/station_square.mdl',
 				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
 			},
 		}
