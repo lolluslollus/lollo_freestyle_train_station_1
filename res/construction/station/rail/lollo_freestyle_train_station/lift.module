@@ -36,7 +36,7 @@ return {
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
 		local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
-		local terrainHeight = cpl.terrainHeight1
+		-- local terrainHeight = cpl.terrainHeight1
 		local bridgeHeight = cpl.posTanX2[1][1][3] - cpl.terrainHeight1
 
 		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
@@ -53,66 +53,87 @@ return {
 		-- 	tag = tag
 		-- }
 
-		print('terrainHeight =', terrainHeight)
-		print('bridgeHeight =', bridgeHeight)
+		-- print('terrainHeight =', terrainHeight)
+		-- print('bridgeHeight =', bridgeHeight)
 		local buildingModelId = 'lollo_freestyle_train_station/lift/'
+		local buildingHeight = 0
 		if bridgeHeight < 5 then
-			buildingModelId = buildingModelId .. 'elevated_stairs_0.mdl'
-		elseif bridgeHeight < 10 then
 			buildingModelId = buildingModelId .. 'elevated_stairs_5.mdl'
-		elseif bridgeHeight < 15 then
+			buildingHeight = 5
+		elseif bridgeHeight < 10 then
 			buildingModelId = buildingModelId .. 'elevated_stairs_10.mdl'
-		elseif bridgeHeight < 20 then
+			buildingHeight = 10
+		elseif bridgeHeight < 15 then
 			buildingModelId = buildingModelId .. 'elevated_stairs_15.mdl'
-		elseif bridgeHeight < 25 then
+			buildingHeight = 15
+		elseif bridgeHeight < 20 then
 			buildingModelId = buildingModelId .. 'elevated_stairs_20.mdl'
-		elseif bridgeHeight < 30 then
+			buildingHeight = 20
+		elseif bridgeHeight < 25 then
 			buildingModelId = buildingModelId .. 'elevated_stairs_25.mdl'
+			buildingHeight = 25
+		elseif bridgeHeight < 30 then
+			buildingModelId = buildingModelId .. 'elevated_stairs_30.mdl'
+			buildingHeight = 30
+		elseif bridgeHeight < 35 then
+			buildingModelId = buildingModelId .. 'elevated_stairs_35.mdl'
+			buildingHeight = 35
+		elseif bridgeHeight < 40 then
+			buildingModelId = buildingModelId .. 'elevated_stairs_40.mdl'
+			buildingHeight = 40
 		else
 			-- addModuleFn('elevated_stairs.mdl', stationTransf)
 			return
 		end
-		print('buildingModelId =', buildingModelId)
+		-- print('buildingModelId =', buildingModelId)
+		-- print('buildingHeight =', buildingHeight)
 		result.models[#result.models + 1] = {
 			id = buildingModelId,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				slotTransf,
-				-- { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -terrainHeight, 1 }
-				-- { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, bridgeHeight, 1 }
-				-- { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-				-- { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, terrainHeight - bridgeHeight, 1 }
 				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
 			),
 			tag = tag
 		}
 
-		local groundFace = {
-			{-1, -2, 0, 1},
-			{-1, 2, 0, 1},
-			{3.5, 2, 0, 1},
-			{3.5, -2, 0, 1},
+		local groundFace = { -- the ground faces ignore z, the alignment lists don't
+			{-1, -6.2, -buildingHeight -0.8, 1},
+			{-1, 6.2, -buildingHeight -0.8, 1},
+			{6.0, 6.2, -buildingHeight -0.8, 1},
+			{6.0, -6.2, -buildingHeight -0.8, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
-		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
+		-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
+		table.insert(
+			result.groundFaces,
+			{
+				face = groundFace,
+				modes = {
+					{
+						type = 'FILL',
+						key = 'shared/asphalt_01.gtex.lua' --'shared/asphalt_01.gtex.lua'
+					},
+					--[[                         {
+						type = 'STROKE_INNER',
+						key = 'shared/asphalt_01.gtex.lua',
+					},
+					]]
+					{
+						type = 'STROKE_OUTER',
+						key = 'shared/asphalt_01.gtex.lua' --'street_border.lua'
+					}
+				}
+			}
+		)
 
 		local terrainAlignmentList = {
-			faces = {
-				{
-					{-1, -2, -terrainHeight, 1},
-					{-1, 2, -terrainHeight, 1},
-					{3.5, 2, -terrainHeight, 1},
-					{3.5, -2, -terrainHeight, 1},
-				}
-			},
+			faces = { groundFace },
 			optional = true,
-        	slopeHigh = 10, --99,
+        	slopeHigh = 99,
         	slopeLow = 0.9, --0.1,
 			type = 'EQUAL',
 		}
-		for _, face in pairs(terrainAlignmentList.faces) do
-			modulesutil.TransformFaces(slotTransf, face)
-		end
 		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 	end,
@@ -120,8 +141,8 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.flatStairsSmoothModelFileName,
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
+				id = 'lollo_freestyle_train_station/lift/elevated_stairs_20.mdl',
+				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
 			},
 		}
 	end
