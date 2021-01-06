@@ -1,0 +1,56 @@
+function data()
+return {
+	order = 0,
+	params = {
+		albedo_scale = {
+			albedoScale = { 1, 1, 1, },
+		},
+		alpha_scale = {
+			alphaScale = 1.0,
+		},
+		alpha_test = {
+			alphaThreshold = 0.5,
+			cutout = false,
+		},
+		fade_out_range = {
+			fadeOutEndDist = 20000,
+			fadeOutStartDist = 10000,
+		},
+		map_albedo_opacity = {
+			-- fileName = "shaft_transparent_128.tga",
+			-- fileName = "shaft_transparent_striped_128.tga",
+			fileName = "lollo_freestyle_train_station/shaft_transparent_striped_ornate_256.tga",
+			type = "TWOD",
+			-- wrapS = "CLAMP_TO_EDGE",
+			-- wrapT = "CLAMP_TO_EDGE",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_metal_gloss_ao = {
+			-- fileName = "shaft_metal_gloss_ao_128.tga",
+			-- fileName = 'shaft_striped_metal_gloss_ao_128.tga',
+			fileName = 'lollo_freestyle_train_station/shaft_striped_ornate_metal_gloss_ao_256.tga',
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_normal = {
+			fileName = "lollo_freestyle_train_station/shaft_striped_ornate_normal_256.tga",
+			redGreen = true,
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		polygon_offset = {
+			factor = 0,
+			forceDepthWrite = false,
+			units = 0,
+		},
+		two_sided = {
+			flipNormal = false,
+			twoSided = true,
+		},
+	},
+	type = "PHYS_TRANSPARENT_NRML_MAP",
+}
+end

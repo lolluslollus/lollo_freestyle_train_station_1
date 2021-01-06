@@ -13,6 +13,7 @@ local constants = {
     tracksideBitsZ = -1.05,
     underpassDepthM = 4,
     underpassLengthM = 1, -- don't change this, it must stay 1
+    underpassZed = -3,
 
     maxCargoWaitingAreaEdgeLength = 9, -- do not tamper with this
     maxPassengerWaitingAreaEdgeLength = 9, -- do not tamper with this
