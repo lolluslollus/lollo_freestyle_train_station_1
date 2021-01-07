@@ -75,43 +75,42 @@ function data()
                     --         0, 0, 0, 1},
 					-- },
                 },
-				--[[
-					slotConfig = {
-					[_constants.flatStairsModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.flatCargoArea5x5ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.flatPassengerArea5x5ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.flatCargoArea10x5ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.flatPassengerArea10x5ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.flatCargoArea10x10ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.flatPassengerArea10x10ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
+                slotConfig = {
+					-- [_constants.flatStairsModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.flatCargoArea5x5ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.flatPassengerArea5x5ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.flatCargoArea10x5ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.flatPassengerArea10x5ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.flatCargoArea10x10ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.flatPassengerArea10x10ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
 					[_constants.slopedCargoArea1x5ModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
@@ -142,23 +141,22 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
-					[_constants.cargoTerminalModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.passengerTerminalModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.underpassModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					}
+					-- [_constants.cargoTerminalModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.passengerTerminalModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.underpassModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- }
 				},
-				]]
                 slots = {},
 				stations = {},
 				terminalGroups = {},
