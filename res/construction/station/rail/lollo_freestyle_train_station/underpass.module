@@ -43,7 +43,7 @@ return {
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
 
 		result.models[#result.models + 1] = {
-			id = _constants.underpassWallsModelFileName,
+			id = _constants.underpassBuilding10MModelFileName,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
 			tag = tag
@@ -53,7 +53,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.underpassWallsModelFileName,
+				id = _constants.underpassBuilding10MModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

@@ -1,6 +1,7 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local aaa = { 1, 2, 3, 4}
 table.remove(aaa, 2)
 
@@ -42,17 +43,17 @@ local trackEdgeLists = {
 
 local posTanX2 = trackEdgeLists[1].posTanX2
 
-local edgeXYZLen = edgeUtils.getVectorLength({
+local edgeXYZLen = transfUtils.getVectorLength({
     posTanX2[1][1][1] - posTanX2[2][1][1],
     posTanX2[1][1][2] - posTanX2[2][1][2],
     posTanX2[1][1][3] - posTanX2[2][1][3]
 })
-local edgeTanLen1 = edgeUtils.getVectorLength({
+local edgeTanLen1 = transfUtils.getVectorLength({
     posTanX2[1][2][1],
     posTanX2[1][2][2],
     posTanX2[1][2][3]
 })
-local edgeTanLen2 = edgeUtils.getVectorLength({
+local edgeTanLen2 = transfUtils.getVectorLength({
     posTanX2[2][2][1],
     posTanX2[2][2][2],
     posTanX2[2][2][3]

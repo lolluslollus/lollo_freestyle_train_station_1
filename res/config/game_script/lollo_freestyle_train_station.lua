@@ -757,8 +757,8 @@ local _actions = {
             return
         end
 
-        local oldTan0Length = edgeUtils.getVectorLength(oldBaseEdge.tangent0)
-        local oldTan1Length = edgeUtils.getVectorLength(oldBaseEdge.tangent1)
+        local oldTan0Length = transfUtils.getVectorLength(oldBaseEdge.tangent0)
+        local oldTan1Length = transfUtils.getVectorLength(oldBaseEdge.tangent1)
         -- print('oldTan0Length =') debugPrint(oldTan0Length)
         -- print('oldTan1Length =') debugPrint(oldTan1Length)
 
@@ -1086,7 +1086,7 @@ function data()
                 for i = 1, #eventArgs.trackEdgeList do
                     local tel = eventArgs.trackEdgeList[i]
                     -- these should be identical, but they are not really so, so we average them
-                    local length = (edgeUtils.getVectorLength(tel.posTanX2[1][2]) + edgeUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
+                    local length = (transfUtils.getVectorLength(tel.posTanX2[1][2]) + transfUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
                     trackLengths[i] = length
                     totalLength = totalLength + length
                 end
@@ -1516,7 +1516,7 @@ function data()
 
                                     -- forbid building waypoints too far apart, which would make the station too large
                                     if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
-                                        local distance = edgeUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition)
+                                        local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition)
                                         if distance > _constants.maxWaypointDistance then
                                             guiHelpers.showWarningWindowWithGoto(_('WaypointsTooFar'), newWaypointId, similarObjectIdsInAnyEdges)
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -1631,8 +1631,8 @@ function data()
 
                                     local trackWaypoint1Pos = edgeUtils.getObjectPosition(trackWaypointIds[1])
                                     local trackWaypoint2Pos = edgeUtils.getObjectPosition(trackWaypointIds[2])
-                                    local distance11 = edgeUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint1Pos)
-                                    local distance12 = edgeUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint2Pos)
+                                    local distance11 = transfUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint1Pos)
+                                    local distance12 = transfUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint2Pos)
 
                                     local eventArgs = {
                                         isCargo = isCargo,

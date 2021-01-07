@@ -48,8 +48,10 @@ return {
 		-- 	tag = tag
 		-- }
 
-		local buildingHeight, buildingModelId = moduleHelpers.tryGetSideLiftProperties(params, nTerminal, nTrackEdge)
+		local buildingHeight = moduleHelpers.tryGetLiftHeight(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
+		local buildingModelId = moduleHelpers.tryGetSideLiftModelId(params, nTerminal, nTrackEdge)
+		if not(buildingModelId) then return end
 
 		-- print('buildingHeight =', buildingHeight)
 		-- print('buildingModelId =', buildingModelId)

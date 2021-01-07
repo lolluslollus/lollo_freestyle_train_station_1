@@ -39,62 +39,19 @@ helper.isValidAndExistingId = function(id)
 end
 
 helper.getVectorLength = function(xyz)
-    if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
-    local x = xyz.x or xyz[1] or 0.0
-    local y = xyz.y or xyz[2] or 0.0
-    local z = xyz.z or xyz[3] or 0.0
-    return math.sqrt(x * x + y * y + z * z)
+    return transfUtils.getVectorLength(xyz)
 end
 
 helper.getVectorNormalised = function(xyz, targetLength)
-    if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
-
-    local _targetLength = (type(targetLength) == 'number' and targetLength ~= 0) and targetLength or 1.0
-
-    local length = helper.getVectorLength(xyz)
-    if length == 0 then return nil end
-
-    length = length / _targetLength
-    if xyz.x ~= nil and xyz.y ~= nil and xyz.z ~= nil then
-        return {
-            x = xyz.x / length,
-            y = xyz.y / length,
-            z = xyz.z / length
-        }
-    else
-        return {
-            xyz[1] / length,
-            xyz[2] / length,
-            xyz[3] / length
-        }
-    end
+    return transfUtils.getVectorNormalised(xyz, targetLength)
 end
 
 helper.getPositionsDistance = function(pos0, pos1)
-    local distance = helper.getVectorLength({
-        (pos0.x or pos0[1]) - (pos1.x or pos1[1]),
-        (pos0.y or pos0[2]) - (pos1.y or pos1[2]),
-        (pos0.z or pos0[3]) - (pos1.z or pos1[3]),
-    })
-    return distance
+    return transfUtils.getPositionsDistance(pos0, pos1)
 end
 
 helper.getPositionsMiddle = function(pos0, pos1)
-    local midPos = {
-        ((pos0.x or pos0[1]) + (pos1.x or pos1[1])) * 0.5,
-        ((pos0.y or pos0[2]) + (pos1.y or pos1[2])) * 0.5,
-        ((pos0.z or pos0[3]) + (pos1.z or pos1[3])) * 0.5,
-    }
-
-    if pos0.x ~= nil and pos0.y ~= nil and pos0.z ~= nil then
-        return {
-            x = midPos[1],
-            y = midPos[2],
-            z = midPos[3]
-        }
-    else
-        return midPos
-    end
+    return transfUtils.getPositionsMiddle(pos0, pos1)
 end
 
 helper.getNearbyEntities = function(transf)

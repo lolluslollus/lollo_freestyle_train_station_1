@@ -192,4 +192,176 @@ utils.oneTwoThree2XYZ = function(arr)
     }
 end
 
+utils.getVectorLength = function(xyz)
+    if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
+    local x = xyz.x or xyz[1] or 0.0
+    local y = xyz.y or xyz[2] or 0.0
+    local z = xyz.z or xyz[3] or 0.0
+    return math.sqrt(x * x + y * y + z * z)
+end
+
+utils.getVectorNormalised = function(xyz, targetLength)
+    if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
+    if type(targetLength) == 'number' and targetLength == 0 then return { 0, 0, 0 } end
+
+    local _oldLength = utils.getVectorLength(xyz)
+    if _oldLength == 0 then return { 0, 0, 0 } end
+
+    local _lengthFactor = (type(targetLength) == 'number' and targetLength or 1.0) / _oldLength
+    if xyz.x ~= nil and xyz.y ~= nil and xyz.z ~= nil then
+        return {
+            x = xyz.x * _lengthFactor,
+            y = xyz.y * _lengthFactor,
+            z = xyz.z * _lengthFactor
+        }
+    else
+        return {
+            xyz[1] * _lengthFactor,
+            xyz[2] * _lengthFactor,
+            xyz[3] * _lengthFactor
+        }
+    end
+end
+
+utils.getPositionsDistance = function(pos0, pos1)
+    local distance = utils.getVectorLength({
+        (pos0.x or pos0[1]) - (pos1.x or pos1[1]),
+        (pos0.y or pos0[2]) - (pos1.y or pos1[2]),
+        (pos0.z or pos0[3]) - (pos1.z or pos1[3]),
+    })
+    return distance
+end
+
+utils.getPositionsMiddle = function(pos0, pos1)
+    local midPos = {
+        ((pos0.x or pos0[1]) + (pos1.x or pos1[1])) * 0.5,
+        ((pos0.y or pos0[2]) + (pos1.y or pos1[2])) * 0.5,
+        ((pos0.z or pos0[3]) + (pos1.z or pos1[3])) * 0.5,
+    }
+
+    if pos0.x ~= nil and pos0.y ~= nil and pos0.z ~= nil then
+        return {
+            x = midPos[1],
+            y = midPos[2],
+            z = midPos[3]
+        }
+    else
+        return midPos
+    end
+end
+
+utils.getParallelSideways = function(posTanX2, sideShift)
+    local result = {
+        {
+            {},
+            posTanX2[1][2]
+        },
+        {
+            {},
+            posTanX2[2][2]
+        },
+    }
+
+    local oldPos1 = posTanX2[1][1]
+    local oldPos2 = posTanX2[2][1]
+    local length = utils.getVectorLength({ oldPos2[1] - oldPos1[1], oldPos2[2] - oldPos1[2], oldPos2[3] - oldPos1[3] })
+
+    local ro = math.atan2(oldPos2[2] - oldPos1[2], oldPos2[1] - oldPos1[1])
+
+    result[1][1] = { oldPos1[1] + math.sin(ro) * sideShift, oldPos1[2] - math.cos(ro) * sideShift, oldPos1[3] }
+    result[2][1] = { oldPos2[1] + math.sin(ro) * sideShift, oldPos2[2] - math.cos(ro) * sideShift, oldPos2[3] }
+
+    return result
+end
+
+utils.get1MLaneTransf = function(pos1, pos2)
+    -- gets a transf to fit a 1 m long model (typically a lane) between two points
+    -- using transfUtils.getVecTransformed(), solve this system:
+    -- first point: 0, 0, 0 => pos1
+    -- transf[13] = pos1[1]
+    -- transf[14] = pos1[2]
+    -- transf[15] = pos1[3]
+    -- second point: 1, 0, 0 => pos2
+    -- transf[1] + transf[13] = pos2[1]
+    -- transf[2] + transf[14] = pos2[2]
+    -- transf[3] + transf[15] = pos2[3]
+    -- third point: 0, 1, 0 => pos1 + { 0, 1, 0 }
+    -- transf[5] + transf[13] = pos1[1]
+    -- transf[6] + transf[14] = pos1[2] + 1
+    -- transf[7] + transf[15] = pos1[3]
+    -- fourth point: 0, 0, 1 => pos1 + { 0, 0, 1 }
+    -- transf[9] + transf[13] = pos1[1]
+    -- transf[10] + transf[14] = pos1[2]
+    -- transf[11] + transf[15] = pos1[3] + 1
+    -- fifth point: 1, 1, 0 => pos2 + { 0, 1, 0 }
+    -- transf[1] + transf[5] + transf[13] = pos2[1]
+    -- transf[2] + transf[6] + transf[14] = pos2[2] + 1
+    -- transf[3] + transf[7] + transf[15] = pos2[3]
+    local result = {
+        pos2[1] - pos1[1],
+        pos2[2] - pos1[2],
+        pos2[3] - pos1[3],
+        0,
+        0, 1, 0,
+        0,
+        0, 0, 1,
+        0,
+        pos1[1],
+        pos1[2],
+        pos1[3],
+        1
+    }
+    -- print('unitaryLaneTransf =') debugPrint(result)
+    return result
+end
+
+utils.getPosTanX2Normalised = function(posTanX2)
+    local pos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
+    local tan1 = utils.getVectorNormalised(posTanX2[1][2], 2)
+    local tan2 = utils.getVectorNormalised(posTanX2[2][2], 2)
+    local pos2 = {
+        posTanX2[1][1][1] + tan1[1],
+        posTanX2[1][1][2] + tan1[2],
+        posTanX2[1][1][3] + tan1[3],
+    }
+
+    local result = {
+        {
+            pos1,
+            tan1
+        },
+        {
+            pos2,
+            tan2
+        }
+    }
+    return result
+end
+
+utils.getExtrapolatedPosTanX2Continuation = function(posTanX2, length)
+    if length == 0 then
+        return posTanX2
+    -- elseif length > 0 then
+    else
+        local oldPos2 = {posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3]}
+        local newTan = utils.getVectorNormalised(posTanX2[2][2], length)
+
+        local result = {
+            {
+                oldPos2,
+                newTan
+            },
+            {
+                {
+                    oldPos2[1] + newTan[1],
+                    oldPos2[2] + newTan[2],
+                    oldPos2[3] + newTan[3],
+                },
+                newTan
+            }
+        }
+        return result
+    end
+end
+
 return utils

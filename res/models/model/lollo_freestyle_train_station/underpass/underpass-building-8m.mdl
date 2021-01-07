@@ -1,12 +1,12 @@
 function data()
     return {
         boundingInfo = {
-            bbMax = {4.9, 1.0, 2.1},
-            bbMin = {-4.9, -1.0, -0.1}
+            bbMax = {3.9, 1.0, 2.1},
+            bbMin = {-3.9, -1.0, -0.1}
         },
         collider = {
             params = {
-                halfExtents = {4.9, 1.0, 1.1}
+                halfExtents = {3.9, 1.0, 1.1}
             },
             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1.0, 1},
             type = 'BOX'
@@ -21,7 +21,7 @@ function data()
                                 'lollo_freestyle_train_station/wall_white.mtl',
                                 'lollo_freestyle_train_station/underpass-door.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/underpass/underpass-building.msh',
+                            mesh = 'lollo_freestyle_train_station/underpass/underpass-building-8m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },

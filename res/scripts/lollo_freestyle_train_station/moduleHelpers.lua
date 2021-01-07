@@ -1,5 +1,4 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
-local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local modulesutil = require "modulesutil"
 local slotUtils = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
@@ -80,47 +79,6 @@ helpers.getCollider = function(sidewalkWidth, model)
 	return result
 end
 
-helpers.get1MLaneTransf = function(pos1, pos2)
-    -- gets a transf to fit a 1 m long model (typically a lane) between two points
-    -- using transfUtils.getVecTransformed(), solve this system:
-    -- first point: 0, 0, 0 => pos1
-    -- transf[13] = pos1[1]
-    -- transf[14] = pos1[2]
-    -- transf[15] = pos1[3]
-    -- second point: 1, 0, 0 => pos2
-    -- transf[1] + transf[13] = pos2[1]
-    -- transf[2] + transf[14] = pos2[2]
-    -- transf[3] + transf[15] = pos2[3]
-    -- third point: 0, 1, 0 => pos1 + { 0, 1, 0 }
-    -- transf[5] + transf[13] = pos1[1]
-    -- transf[6] + transf[14] = pos1[2] + 1
-    -- transf[7] + transf[15] = pos1[3]
-    -- fourth point: 0, 0, 1 => pos1 + { 0, 0, 1 }
-    -- transf[9] + transf[13] = pos1[1]
-    -- transf[10] + transf[14] = pos1[2]
-    -- transf[11] + transf[15] = pos1[3] + 1
-    -- fifth point: 1, 1, 0 => pos2 + { 0, 1, 0 }
-    -- transf[1] + transf[5] + transf[13] = pos2[1]
-    -- transf[2] + transf[6] + transf[14] = pos2[2] + 1
-    -- transf[3] + transf[7] + transf[15] = pos2[3]
-    local result = {
-        pos2[1] - pos1[1],
-        pos2[2] - pos1[2],
-        pos2[3] - pos1[3],
-        0,
-        0, 1, 0,
-        0,
-        0, 0, 1,
-        0,
-        pos1[1],
-        pos1[2],
-        pos1[3],
-        1
-    }
-    -- print('unitaryLaneTransf =') debugPrint(result)
-    return result
-end
-
 helpers.getTerminalDecoTransf = function(posTanX2)
     -- print('getTerminalDecoTransf starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
@@ -190,7 +148,7 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
             z = (pos1[3] + pos2[3]) * 0.5 + 1,
         }
     )
-    local angle = -math.atan((pos2[3] - pos1[3]) / edgeUtils.getVectorLength(
+    local angle = -math.atan((pos2[3] - pos1[3]) / transfUtils.getVectorLength(
         {
             pos2[1] - pos1[1],
             pos2[2] - pos1[2],
@@ -202,52 +160,6 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
     local newTransf2 = transfUtilsUG.rotY(angle)
 
     local result = transfUtilsUG.mul(newTransf, newTransf2)
-    return result
-end
-
-helpers.getPosTanX2Normalised = function(posTanX2)
-    local pos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
-    local tan1 = edgeUtils.getVectorNormalised(posTanX2[1][2], 2)
-    local tan2 = edgeUtils.getVectorNormalised(posTanX2[2][2], 2)
-    local pos2 = {
-        posTanX2[1][1][1] + tan1[1],
-        posTanX2[1][1][2] + tan1[2],
-        posTanX2[1][1][3] + tan1[3],
-    }
-
-    local result = {
-        {
-            pos1,
-            tan1
-        },
-        {
-            pos2,
-            tan2
-        }
-    }
-    return result
-end
-
-helpers.getExtrapolatedPosTanX2Continuation = function(posTanX2, length)
-    -- local oldPos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
-    local oldPos2 = {posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3]}
-    -- local tan1 = edgeUtils.getVectorNormalised(posTanX2[1][2], length)
-    local newTan = edgeUtils.getVectorNormalised(posTanX2[2][2], length)
-
-    local result = {
-        {
-            oldPos2,
-            newTan
-        },
-        {
-            {
-                oldPos2[1] + newTan[1],
-                oldPos2[2] + newTan[2],
-                oldPos2[3] + newTan[3],
-            },
-            newTan
-        }
-    }
     return result
 end
 
@@ -369,42 +281,62 @@ helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
     _addTrackEdges(params, result, inverseMainTransf, tag2nodes, t)
 end
 
-helpers.tryGetSideLiftProperties = function(params, nTerminal, nTrackEdge)
+helpers.tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
     local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
 		-- local terrainHeight = cpl.terrainHeight1
     local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
-    local buildingModelId = 'lollo_freestyle_train_station/lift/'
     local buildingHeight = 0
     if bridgeHeight < 5 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_5.mdl'
         buildingHeight = 5
     elseif bridgeHeight < 10 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_10.mdl'
         buildingHeight = 10
     elseif bridgeHeight < 15 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_15.mdl'
         buildingHeight = 15
     elseif bridgeHeight < 20 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_20.mdl'
         buildingHeight = 20
     elseif bridgeHeight < 25 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_25.mdl'
         buildingHeight = 25
     elseif bridgeHeight < 30 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_30.mdl'
         buildingHeight = 30
     elseif bridgeHeight < 35 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_35.mdl'
         buildingHeight = 35
     elseif bridgeHeight < 40 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_40.mdl'
         buildingHeight = 40
     else
         return false
     end
 
-    return buildingHeight, buildingModelId
+    return buildingHeight
+end
+
+helpers.tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
+    local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
+		-- local terrainHeight = cpl.terrainHeight1
+    local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
+
+    local buildingModelId = 'lollo_freestyle_train_station/lift/'
+    if bridgeHeight < 5 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_5.mdl'
+    elseif bridgeHeight < 10 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_10.mdl'
+    elseif bridgeHeight < 15 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_15.mdl'
+    elseif bridgeHeight < 20 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_20.mdl'
+    elseif bridgeHeight < 25 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_25.mdl'
+    elseif bridgeHeight < 30 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_30.mdl'
+    elseif bridgeHeight < 35 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_35.mdl'
+    elseif bridgeHeight < 40 then
+        buildingModelId = buildingModelId .. 'elevated_stairs_40.mdl'
+    else
+        return false
+    end
+
+    return buildingModelId
 end
 
 helpers.doTerrain4SideLifts = function(buildingHeight, slotTransf, result)
@@ -447,42 +379,33 @@ helpers.doTerrain4SideLifts = function(buildingHeight, slotTransf, result)
     result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 end
 
-helpers.tryGetPlatformLiftProperties = function(params, nTerminal, nTrackEdge)
+helpers.tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge)
     local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
 		-- local terrainHeight = cpl.terrainHeight1
     local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
     local buildingModelId = 'lollo_freestyle_train_station/lift/'
-    local buildingHeight = 0
     if bridgeHeight < 5 then
         buildingModelId = buildingModelId .. 'platform_lifts_5.mdl'
-        buildingHeight = 5
     elseif bridgeHeight < 10 then
         buildingModelId = buildingModelId .. 'platform_lifts_10.mdl'
-        buildingHeight = 10
     elseif bridgeHeight < 15 then
         buildingModelId = buildingModelId .. 'platform_lifts_15.mdl'
-        buildingHeight = 15
     elseif bridgeHeight < 20 then
         buildingModelId = buildingModelId .. 'platform_lifts_20.mdl'
-        buildingHeight = 20
     elseif bridgeHeight < 25 then
         buildingModelId = buildingModelId .. 'platform_lifts_25.mdl'
-        buildingHeight = 25
     elseif bridgeHeight < 30 then
         buildingModelId = buildingModelId .. 'platform_lifts_30.mdl'
-        buildingHeight = 30
     elseif bridgeHeight < 35 then
         buildingModelId = buildingModelId .. 'platform_lifts_35.mdl'
-        buildingHeight = 35
     elseif bridgeHeight < 40 then
         buildingModelId = buildingModelId .. 'platform_lifts_40.mdl'
-        buildingHeight = 40
     else
         return false
     end
 
-    return buildingHeight, buildingModelId
+    return buildingModelId
 end
 
 helpers.doTerrain4PlatformLifts = function(buildingHeight, slotTransf, result)

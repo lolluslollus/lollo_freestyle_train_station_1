@@ -50,18 +50,17 @@ local three_nested_bends = {
 -- those vectors will be perpendicular to posTanX2[1] and point at their inner or outer siblings
 -- How to calculate the rotation?
 
-local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
 local _targetParallelDistance = 5
 
 -- setting z to 0 improves accuracy, after all, it's what I am looking for.
--- local vec0Orig = edgeUtils.getVectorNormalised({three_nested_bends[1].node0tangent[1], three_nested_bends[1].node0tangent[2], 0}, _targetParallelDistance)
+-- local vec0Orig = transfUtils.getVectorNormalised({three_nested_bends[1].node0tangent[1], three_nested_bends[1].node0tangent[2], 0}, _targetParallelDistance)
 -- local vec0RotatedRight = transfUtils.getVec123Transformed(vec0Orig, transfUtilsUG.rotZ(math.pi * 0.5))
 -- local vec0RotatedLeft = transfUtils.getVec123Transformed(vec0Orig, transfUtilsUG.rotZ(-math.pi * 0.5))
 
--- local vec1Orig = edgeUtils.getVectorNormalised({three_nested_bends[1].node1tangent[1], three_nested_bends[1].node1tangent[2], 0}, _targetParallelDistance)
+-- local vec1Orig = transfUtils.getVectorNormalised({three_nested_bends[1].node1tangent[1], three_nested_bends[1].node1tangent[2], 0}, _targetParallelDistance)
 -- local vec1RotatedRight = transfUtils.getVec123Transformed(vec1Orig, transfUtilsUG.rotZ(math.pi * 0.5))
 -- local vec1RotatedLeft = transfUtils.getVec123Transformed(vec1Orig, transfUtilsUG.rotZ(-math.pi * 0.5))
 
@@ -74,26 +73,26 @@ local oldPos1 = three_nested_bends[1].node1Pos
 local oldTan0 = three_nested_bends[1].node0tangent
 local oldTan1 = three_nested_bends[1].node1tangent
 print('transfUtils.oneTwoThree2XYZ(oldPos0) =') debugPrint(transfUtils.oneTwoThree2XYZ(oldPos0))
-local tan0Rotated = edgeUtils.getVectorNormalised({oldTan0[1], oldTan0[2], 0}, _targetParallelDistance)
+local tan0Rotated = transfUtils.getVectorNormalised({oldTan0[1], oldTan0[2], 0}, _targetParallelDistance)
 local newPos0Right = transfUtils.getVec123Transformed(tan0Rotated, transfUtilsUG.rotZTransl(math.pi * 0.5, transfUtils.oneTwoThree2XYZ(oldPos0)))
 local newPos0Left = transfUtils.getVec123Transformed(tan0Rotated, transfUtilsUG.rotZTransl(-math.pi * 0.5, transfUtils.oneTwoThree2XYZ(oldPos0)))
 
-local tan1Rotated = edgeUtils.getVectorNormalised({oldTan1[1], oldTan1[2], 0}, _targetParallelDistance)
+local tan1Rotated = transfUtils.getVectorNormalised({oldTan1[1], oldTan1[2], 0}, _targetParallelDistance)
 local newPos1Right = transfUtils.getVec123Transformed(tan1Rotated, transfUtilsUG.rotZTransl(math.pi * 0.5, transfUtils.oneTwoThree2XYZ(oldPos1)))
 local newPos1Left = transfUtils.getVec123Transformed(tan1Rotated, transfUtilsUG.rotZTransl(-math.pi * 0.5, transfUtils.oneTwoThree2XYZ(oldPos1)))
 
 -- this is an approximation
-local oldLength = edgeUtils.getVectorLength({
+local oldLength = transfUtils.getVectorLength({
     oldPos0[1] - oldPos1[1],
     oldPos0[2] - oldPos1[2],
     oldPos0[3] - oldPos1[3],
 })
-local newLengthRight = edgeUtils.getVectorLength({
+local newLengthRight = transfUtils.getVectorLength({
     newPos0Right[1] - newPos1Right[1],
     newPos0Right[2] - newPos1Right[2],
     newPos0Right[3] - newPos1Right[3],
 })
-local newLengthLeft = edgeUtils.getVectorLength({
+local newLengthLeft = transfUtils.getVectorLength({
     newPos0Left[1] - newPos1Left[1],
     newPos0Left[2] - newPos1Left[2],
     newPos0Left[3] - newPos1Left[3],
@@ -121,7 +120,7 @@ local newTan1Left = {
     oldTan1[3] * newLengthLeft / oldLength,
 }
 
--- local newTan0Right = edgeUtils.getVectorNormalised({oldTan0[1], oldTan0[2], 0}, _targetLength)
+-- local newTan0Right = transfUtils.getVectorNormalised({oldTan0[1], oldTan0[2], 0}, _targetLength)
 
 debugPrint(newPos0Right)
 debugPrint(newTan0Right)

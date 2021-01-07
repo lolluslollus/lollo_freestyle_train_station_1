@@ -48,8 +48,10 @@ return {
 		-- 	tag = tag
 		-- }
 
-		local buildingHeight, buildingModelId = moduleHelpers.tryGetPlatformLiftProperties(params, nTerminal, nTrackEdge)
+		local buildingHeight = moduleHelpers.tryGetLiftHeight(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
+		local buildingModelId = moduleHelpers.tryGetPlatformLiftModelId(params, nTerminal, nTrackEdge)
+		if not(buildingModelId) then return end
 
 		-- print('buildingHeight =', buildingHeight)
 		-- print('buildingModelId =', buildingModelId)
@@ -61,6 +63,12 @@ return {
 			id = buildingModelId,
 			slotId = slotId,
 			transf = buildingTransf,
+			tag = tag
+		}
+		result.models[#result.models + 1] = {
+			id = _constants.underpassBuilding8MModelFileName,
+			slotId = slotId,
+			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
 			tag = tag
 		}
 

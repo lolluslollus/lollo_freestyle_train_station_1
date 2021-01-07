@@ -6,29 +6,6 @@ local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
-local _getParallelSideways = function(posTanX2, sideShift)
-    local result = {
-        {
-            {},
-            posTanX2[1][2]
-        },
-        {
-            {},
-            posTanX2[2][2]
-        },
-    }
-
-    local oldPos1 = posTanX2[1][1]
-    local oldPos2 = posTanX2[2][1]
-    local length = edgeUtils.getVectorLength({ oldPos2[1] - oldPos1[1], oldPos2[2] - oldPos1[2], oldPos2[3] - oldPos1[3] })
-
-    local ro = math.atan2(oldPos2[2] - oldPos1[2], oldPos2[1] - oldPos1[1])
-
-    result[1][1] = { oldPos1[1] + math.sin(ro) * sideShift, oldPos1[2] - math.cos(ro) * sideShift, oldPos1[3] }
-    result[2][1] = { oldPos2[1] + math.sin(ro) * sideShift, oldPos2[2] - math.cos(ro) * sideShift, oldPos2[3] }
-
-    return result
-end
 
 local _getStationEndNodeIds = function(con, nTerminal, stationConstructionId)
     -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
@@ -308,7 +285,7 @@ local helpers = {
         local results = {}
         for _, pel in pairs(edgeLists) do
             leadingIndex = leadingIndex + 1
-            local edgeLength = (edgeUtils.getVectorLength(pel.posTanX2[1][2]) + edgeUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
+            local edgeLength = (transfUtils.getVectorLength(pel.posTanX2[1][2]) + transfUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
             -- print('edgeLength =') debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
             -- print('nModelsInEdge =') debugPrint(nModelsInEdge)
@@ -458,7 +435,7 @@ local helpers = {
         local results = {
             {
                 catenary = edgeLists[1].catenary,
-                posTanX2 = _getParallelSideways(edgeLists[1].posTanX2, sideShift),
+                posTanX2 = transfUtils.getParallelSideways(edgeLists[1].posTanX2, sideShift),
                 trackType = edgeLists[1].trackType,
                 trackTypeName = edgeLists[1].trackTypeName,
                 type = edgeLists[1].type,
@@ -467,7 +444,7 @@ local helpers = {
         }
         local previousPosTanX2 = results[1].posTanX2
         for i = 2, #edgeLists do
-            local currentPosTanX2 = _getParallelSideways(edgeLists[i].posTanX2, sideShift)
+            local currentPosTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift)
             currentPosTanX2[1][1] = previousPosTanX2[2][1]
             results[#results+1] = {
                 catenary = edgeLists[i].catenary,
@@ -605,19 +582,19 @@ local helpers = {
         -- print('nodeBetween.tangent =') debugPrint(nodeBetween.tangent)
         -- print('wholeEdge.node1pos =') debugPrint(node1pos)
         -- first estimator
-        -- local nodeBetween_Node0_Distance = edgeUtils.getVectorLength({
+        -- local nodeBetween_Node0_Distance = transfUtils.getVectorLength({
         --     nodeBetween.position.x - node0pos[1],
         --     nodeBetween.position.y - node0pos[2]
         -- })
-        -- local nodeBetween_Node1_Distance = edgeUtils.getVectorLength({
+        -- local nodeBetween_Node1_Distance = transfUtils.getVectorLength({
         --     nodeBetween.position.x - node1pos[1],
         --     nodeBetween.position.y - node1pos[2]
         -- })
-        -- local edgeObj_Node0_Distance = edgeUtils.getVectorLength({
+        -- local edgeObj_Node0_Distance = transfUtils.getVectorLength({
         --     edgeObjPosition[1] - node0pos[1],
         --     edgeObjPosition[2] - node0pos[2]
         -- })
-        -- local edgeObj_Node1_Distance = edgeUtils.getVectorLength({
+        -- local edgeObj_Node1_Distance = transfUtils.getVectorLength({
         --     edgeObjPosition[1] - node1pos[1],
         --     edgeObjPosition[2] - node1pos[2]
         -- })
@@ -1356,7 +1333,7 @@ helpers.getIsTrackOnPlatformLeft = function(leftPlatforms, centrePlatforms, righ
     local track2CentrePlatformDistance = 99999
     local trackIndexAtMinDistance2Platform = 1
     for i = 1, #centreTrackPositions do
-        local distance = edgeUtils.getPositionsDistance(
+        local distance = transfUtils.getPositionsDistance(
             centreTrackPositions[i].posTanX2[1][1],
             midCentrePlatformPosition.posTanX2[1][1]
         )
@@ -1366,10 +1343,10 @@ helpers.getIsTrackOnPlatformLeft = function(leftPlatforms, centrePlatforms, righ
         end
     end
 
-    if edgeUtils.getPositionsDistance(
+    if transfUtils.getPositionsDistance(
         centreTrackPositions[trackIndexAtMinDistance2Platform].posTanX2[1][1],
         leftPlatforms[midPlatformIndex].posTanX2[1][1]
-    ) < edgeUtils.getPositionsDistance(
+    ) < transfUtils.getPositionsDistance(
         centreTrackPositions[trackIndexAtMinDistance2Platform].posTanX2[1][1],
         rightPlatforms[midPlatformIndex].posTanX2[1][1]
     )
