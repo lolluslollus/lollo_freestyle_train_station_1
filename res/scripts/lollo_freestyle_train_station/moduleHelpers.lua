@@ -408,44 +408,4 @@ helpers.tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge)
     return buildingModelId
 end
 
-helpers.doTerrain4PlatformLifts = function(buildingHeight, slotTransf, result)
-    local groundFace = { -- the ground faces ignore z, the alignment lists don't
-        {-1, -6.2, -buildingHeight -0.8, 1},
-        {-1, 6.2, -buildingHeight -0.8, 1},
-        {6.0, 6.2, -buildingHeight -0.8, 1},
-        {6.0, -6.2, -buildingHeight -0.8, 1},
-    }
-    modulesutil.TransformFaces(slotTransf, groundFace)
-    table.insert(
-        result.groundFaces,
-        {
-            face = groundFace,
-            modes = {
-                {
-                    type = 'FILL',
-                    key = 'shared/asphalt_01.gtex.lua' --'shared/asphalt_01.gtex.lua'
-                },
-                --[[                         {
-                    type = 'STROKE_INNER',
-                    key = 'shared/asphalt_01.gtex.lua',
-                },
-                ]]
-                {
-                    type = 'STROKE_OUTER',
-                    key = 'shared/asphalt_01.gtex.lua' --'street_border.lua'
-                }
-            }
-        }
-    )
-
-    local terrainAlignmentList = {
-        faces = { groundFace },
-        optional = true,
-        slopeHigh = 99,
-        slopeLow = 0.9, --0.1,
-        type = 'EQUAL',
-    }
-    result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-end
-
 return helpers
