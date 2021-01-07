@@ -174,36 +174,38 @@ function data()
 			}
 			local _getOccupiedInfo4FlatAreas = function(t, i)
 				if occupiedInfo.crossConnectorsWithFlatAreas[t] == nil or occupiedInfo.crossConnectorsWithFlatAreas[t][i] == nil then
-					return false
+					return nil
 				else
 					return occupiedInfo.crossConnectorsWithFlatAreas[t][i]
 				end
 			end
-			local _setOccupiedInfo4FlatAreas = function(t, i, newValue)
+			local _setOccupiedInfo4FlatAreas = function(t, i, newId)
 				if occupiedInfo.crossConnectorsWithFlatAreas[t] == nil then
 					occupiedInfo.crossConnectorsWithFlatAreas[t] = {}
 				end
-				occupiedInfo.crossConnectorsWithFlatAreas[t][i] = newValue
+				occupiedInfo.crossConnectorsWithFlatAreas[t][i] = newId
 			end
 			local _getOccupiedInfo4SlopedAreas = function(t, i)
 				if occupiedInfo.crossConnectorsWithSlopedAreas[t] == nil or occupiedInfo.crossConnectorsWithSlopedAreas[t][i] == nil then
-					return false
+					return { id = nil, yShift = 0 }
 				else
+					-- print('get occupiedInfo.crossConnectorsWithSlopedAreas[t][i] =') debugPrint(occupiedInfo.crossConnectorsWithSlopedAreas[t][i])
 					return occupiedInfo.crossConnectorsWithSlopedAreas[t][i]
 				end
 			end
-			local _setOccupiedInfo4SlopedAreas = function(t, i, newValue)
+			local _setOccupiedInfo4SlopedAreas = function(t, i, newId, yShift)
 				if occupiedInfo.crossConnectorsWithSlopedAreas[t] == nil then
 					occupiedInfo.crossConnectorsWithSlopedAreas[t] = {}
 				end
-				occupiedInfo.crossConnectorsWithSlopedAreas[t][i] = newValue
+				-- print('set occupiedInfo.crossConnectorsWithSlopedAreas[t][i] =') debugPrint(occupiedInfo.crossConnectorsWithSlopedAreas[t][i])
+				occupiedInfo.crossConnectorsWithSlopedAreas[t][i] = { id = newId, yShift = yShift or 0 }
 			end
-			local _occupySlopedAreas = function(t, i, myId, yShift)
-				if params.modules[myId] ~= nil then
-					_setOccupiedInfo4SlopedAreas(t, i-1, yShift)
-					_setOccupiedInfo4SlopedAreas(t, i, yShift)
-					if i+1 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+1, yShift) end
-					if i+2 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+2, yShift) end
+			local _occupySlopedAreas = function(t, i, slotId, slotTypeId, yShift)
+				if params.modules[slotId] ~= nil then
+					_setOccupiedInfo4SlopedAreas(t, i-1, slotTypeId, yShift)
+					_setOccupiedInfo4SlopedAreas(t, i, slotTypeId, yShift)
+					if i+1 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+1, slotTypeId, yShift) end
+					if i+2 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+2, slotTypeId, yShift) end
 				end
 			end
 
@@ -349,48 +351,57 @@ function data()
 							local cpl = params.terminals[t].centrePlatforms[i]
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 
-							local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 5)
-							local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
-							table.insert(result.slots, {
-								-- height = 0,
-								id = myId,
-								spacing = isTrackOnPlatformLeft and {4.5, 0, 8, 8} or {0, 4.5, 8, 8},
-								transf = transfUtilsUG.mul(
-									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-									{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
-								),
-								type = isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
-							})
-							_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
+							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
+								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 5)
+								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
+								table.insert(result.slots, {
+									-- height = 0,
+									id = myId,
+									-- spacing = isTrackOnPlatformLeft and {4.5, 0, 8, 8} or {0, 4.5, 8, 8},
+									spacing = isTrackOnPlatformLeft and {2, 0, 7, 7} or {0, 2, 7, 7},
+									transf = transfUtilsUG.mul(
+										moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
+									),
+									type = isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
+								})
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess)
+							end
 
 							if params.terminals[t].centrePlatforms[i].type == 0 then -- only on ground
-								yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 10)
-								myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)
-								table.insert(result.slots, {
-									-- height = 0,
-									id = myId,
-									spacing = isTrackOnPlatformLeft and {7, 2, 8, 8} or {2, 7, 8, 8},
-									transf = transfUtilsUG.mul(
-										moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
-									),
-									type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
-								})
-								_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
+								if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 10)
+									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)
+									table.insert(result.slots, {
+										-- height = 0,
+										id = myId,
+										-- spacing = isTrackOnPlatformLeft and {7, 2, 8, 8} or {2, 7, 8, 8},
+										spacing = isTrackOnPlatformLeft and {3, 2, 7, 7} or {2, 3, 7, 7},
+										transf = transfUtilsUG.mul(
+											moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
+										),
+										type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
+									})
+									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess)
+								end
 
-								yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 20)
-								myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
-								table.insert(result.slots, {
-									-- height = 0,
-									id = myId,
-									spacing = isTrackOnPlatformLeft and {12, 4, 8, 8} or {4, 12, 8, 8},
-									transf = transfUtilsUG.mul(
-										moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
-									),
-									type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
-								})
-								_occupySlopedAreas(t, i, myId, yShiftOutside4StreetAccess)
+								if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 20)
+									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
+									table.insert(result.slots, {
+										-- height = 0,
+										id = myId,
+										-- spacing = isTrackOnPlatformLeft and {12, 4, 8, 8} or {4, 12, 8, 8},
+										spacing = isTrackOnPlatformLeft and {8, 4, 7, 7} or {4, 8, 7, 7},
+										transf = transfUtilsUG.mul(
+											moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
+										),
+										type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
+									})
+									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess)
+								end
 							end
 						end
 					end
@@ -409,7 +420,7 @@ function data()
 								if params.terminals[t].centrePlatforms[i].type == 0 then -- ground
 									if not(_getOccupiedInfo4FlatAreas(t, i))
 									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsSlotId then
-										local yShift = params.terminals[t].centrePlatforms[i].width + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+										local yShift = params.terminals[t].centrePlatforms[i].width + _getOccupiedInfo4SlopedAreas(t, i).yShift
 										local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 										local myTransf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -419,7 +430,7 @@ function data()
 										table.insert(result.slots, {
 											-- height = 0,
 											id = myId,
-											spacing = {0, 10, 1, 1},
+											spacing = {-2, 10, 1, 1},
 											transf = myTransf,
 											type = _constants.flatStairsModuleType,
 										})
@@ -442,7 +453,7 @@ function data()
 									end
 									if not(_getOccupiedInfo4FlatAreas(t, i))
 									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea5x5SlotId then
-										local yShift = params.terminals[t].centrePlatforms[i].width + 5 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+										local yShift = params.terminals[t].centrePlatforms[i].width + 5 + _getOccupiedInfo4SlopedAreas(t, i).yShift
 										local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 										local myTransf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -475,7 +486,7 @@ function data()
 									end
 									if not(_getOccupiedInfo4FlatAreas(t, i))
 									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea10x5SlotId then
-										local yShift = params.terminals[t].centrePlatforms[i].width + 5 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+										local yShift = params.terminals[t].centrePlatforms[i].width + 5 + _getOccupiedInfo4SlopedAreas(t, i).yShift
 										local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 										local myTransf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -508,7 +519,7 @@ function data()
 									end
 									if not(_getOccupiedInfo4FlatAreas(t, i))
 									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea10x10SlotId then
-										local yShift = params.terminals[t].centrePlatforms[i].width + 10 + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+										local yShift = params.terminals[t].centrePlatforms[i].width + 10 + _getOccupiedInfo4SlopedAreas(t, i).yShift
 										local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 										local myTransf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -542,7 +553,7 @@ function data()
 									if not(isCargoTerminal) then
 										if not(_getOccupiedInfo4FlatAreas(t, i))
 										or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStationSlotId then
-											local yShift = params.terminals[t].centrePlatforms[i].width + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+											local yShift = params.terminals[t].centrePlatforms[i].width + _getOccupiedInfo4SlopedAreas(t, i).yShift
 											local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 											local myTransf = transfUtilsUG.mul(
 												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -552,7 +563,7 @@ function data()
 											table.insert(result.slots, {
 												-- height = 0,
 												id = myId,
-												spacing = {0, 3, 4, 4},
+												spacing = {-2, 4, 4, 4},
 												transf = myTransf,
 												type = _constants.flatPassengerStationModuleType,
 											})
@@ -577,7 +588,7 @@ function data()
 													-- height = 0,
 													id = result.mangleId(t, i, _constants.idBases.stationSquareSlotId),
 													shape = 1,
-													spacing = {0, 4, 4, 4},
+													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssPosTanX2),
 														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5.1, 1 }
@@ -591,7 +602,7 @@ function data()
 									if not(isCargoTerminal) then
 										if not(_getOccupiedInfo4FlatAreas(t, i))
 										or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.liftSlotId then
-											local yShift = params.terminals[t].centrePlatforms[i].width + (_getOccupiedInfo4SlopedAreas(t, i) or 0)
+											local yShift = params.terminals[t].centrePlatforms[i].width + _getOccupiedInfo4SlopedAreas(t, i).yShift
 											local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 											local myTransf = transfUtilsUG.mul(
 												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
@@ -601,7 +612,7 @@ function data()
 											table.insert(result.slots, {
 												-- height = 0,
 												id = myId,
-												spacing = {0, 3, 4, 4},
+												spacing = {-2, 4, 4, 4},
 												transf = myTransf,
 												type = _constants.passengerLiftModuleType,
 											})
@@ -626,7 +637,7 @@ function data()
 													-- height = 0,
 													id = result.mangleId(t, i, _constants.idBases.stationSquareSlotId),
 													shape = 1,
-													spacing = {0, 4, 4, 4},
+													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssPosTanX2),
 														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
