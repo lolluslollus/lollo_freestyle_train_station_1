@@ -720,8 +720,12 @@ function data()
 						local isPreviousUnderpass = i > 1
 							and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
 							or false
+						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
+						local isPreviousPlatformLift = i > 1
+							and params.modules[result.mangleId(t, i-1, _constants.idBases.platformLiftSlotId)] ~= nil
+							or false
 
-						if not(isUnderpass) and not(isPreviousUnderpass) then
+						if not(isUnderpass) and not(isPreviousUnderpass) and not(isPlatformLift) and not(isPreviousPlatformLift) then
 							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
 							local crossConnectorTransf = transfUtilsUG.mul(
 								transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
