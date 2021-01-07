@@ -599,7 +599,7 @@ function data()
 												})
 											end
 										end
-									end -- LOLLO TODO tweak the spacing to work well with sloped and non sloped objects
+									end
 								elseif params.terminals[t].centrePlatforms[i].type == 1 then -- bridge
 									if not(isCargoTerminal) then
 										if not(_getOccupiedInfo4FlatAreas(t, i))
