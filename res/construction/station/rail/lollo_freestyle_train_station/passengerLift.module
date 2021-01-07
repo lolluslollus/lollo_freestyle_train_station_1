@@ -64,6 +64,74 @@ return {
 			tag = tag
 		}
 
+		-- add some deco
+		local _clockY = -5.3
+		if buildingHeight == 10 then
+			result.models[#result.models + 1] = {
+				id = 'station/rail/asset/era_c_big_clock.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(
+					buildingTransf,
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 3, 1 }
+				),
+				tag = tag
+			}
+		elseif buildingHeight >= 15 then
+			result.models[#result.models + 1] = {
+				id = 'station/rail/asset/era_c_big_clock.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(
+					buildingTransf,
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 5, 1 }
+				),
+				tag = tag
+			}
+		end
+
+		local _tableY = 0.8
+		if buildingHeight == 10 then
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(
+					buildingTransf,
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 5 - buildingHeight, 1 }
+				),
+				tag = tag
+			}
+		elseif buildingHeight >= 15 then
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(
+					buildingTransf,
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 3.5 - buildingHeight, 1 }
+				),
+				tag = tag
+			}
+		end
+
+		if buildingHeight > 0 then
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(
+					buildingTransf,
+					{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  3.7, -4.3, 0.8, 1 }
+				),
+				tag = tag
+			}
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/asset/partenze.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(
+					buildingTransf,
+					{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -3.7, -4.3, 0.8, 1 }
+				),
+				tag = tag
+			}
+		end
+
 		moduleHelpers.doTerrain4Lifts(buildingHeight, slotTransf, result)
 	end,
 

@@ -34,12 +34,33 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
+		local buildingTransf = transfUtilsUG.mul(
+			slotTransf,
+			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
+		)
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/lift/elevated_stairs_0.mdl',
 			slotId = slotId,
+			transf = buildingTransf,
+			tag = tag
+		}
+
+		-- add some deco
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
+			slotId = slotId,
 			transf = transfUtilsUG.mul(
-				slotTransf,
-				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
+				buildingTransf,
+				{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  5.4, -4.7, 0, 1 }
+			),
+			tag = tag
+		}
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/asset/partenze.mdl',
+			slotId = slotId,
+			transf = transfUtilsUG.mul(
+				buildingTransf,
+				{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -5.4, -4.7, 0, 1 }
 			),
 			tag = tag
 		}
