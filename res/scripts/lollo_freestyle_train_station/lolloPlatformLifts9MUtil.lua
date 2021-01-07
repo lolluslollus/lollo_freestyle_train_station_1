@@ -148,32 +148,6 @@ return function(height)
                 node = {
                     children = {
                         {
-                            children = {
-                                -- ground level
-                                -- {
-                                --     -- inner lift shaft
-                                --     materials = {'lollo_freestyle_train_station/shaft.mtl'},
-                                --     mesh = 'asset/industry/pipes_large_straight/pipes_large_straight_lod0.msh',
-                                --     name = 'ind_chimney_3_big_single',
-                                --     transf = groundLiftShaftTransf
-                                -- },
-                                {
-                                    -- entrance roof
-                                    materials = {
-                                        'station/rail/era_c/era_c_trainstation_borders_1.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_white.mtl',
-                                        'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
-                                    },
-                                    mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
-                                    name = 'station_3_roof_perron_side',
-                                    transf = groundRoofTransf
-                                },
-                            },
-                            name = 'station_1_main_grp',
-                            transf = stationMainTransf
-                        },
-                        {
                             children = _wallsBelowThePlatformLod1,
                             name = 'walls_below_the_platform',
                             transf = idTransf
@@ -204,7 +178,7 @@ return function(height)
                 },
                 static = false,
                 visibleFrom = 200,
-                visibleTo = 400
+                visibleTo = 1000
             },
             {
                 node = {
@@ -228,7 +202,7 @@ return function(height)
                     transf = idTransf
                 },
                 static = false,
-                visibleFrom = 400,
+                visibleFrom = 1000,
                 visibleTo = 3500
             }
         },

@@ -218,18 +218,6 @@ function data()
                                     transf = rearBelowTransf
                                 },
                                 {
-                                    -- entrance roof
-                                    materials = {
-                                        'station/rail/era_c/era_c_trainstation_borders_1.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_white.mtl',
-                                        'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
-                                    },
-                                    mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
-                                    name = 'station_3_roof_perron_side',
-                                    transf = groundRoofTransf
-                                },
-                                {
                                     -- front left pillar
                                     materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
@@ -262,14 +250,6 @@ function data()
                             transf = stationMainTransf
                         },
                         {
-                            -- inner lift shaft
-                            materials = {'lollo_freestyle_train_station/shaft.mtl'},
-                            -- mesh = 'asset/industry/pipes_large_straight/pipes_large_straight_lod0.msh',
-                            mesh = 'lollo_freestyle_train_station/lift/inner_shaft_round_lod0.msh',
-                            name = 'ind_chimney_3_big_single',
-                            transf = groundLiftShaftTransf
-                        },
-                        {
                             -- shaft top
                             materials = {
                                 'lollo_freestyle_train_station/shaft.mtl',
@@ -286,7 +266,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 200,
-                visibleTo = 400
+                visibleTo = 1000
             },
             {
                 node = {
@@ -345,7 +325,7 @@ function data()
                     transf = idTransf
                 },
                 static = false,
-                visibleFrom = 400,
+                visibleFrom = 1000,
                 visibleTo = 3500
             }
         },
