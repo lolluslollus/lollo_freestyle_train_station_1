@@ -111,6 +111,10 @@ function data()
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
 					-- },
+					-- LOLLO NOTE these guys skip the collision check between the spacing rectangle
+					-- of the module being placed and the spacing rectangles of the already built modules.
+					-- it also skips the collision check between the spacing rectangle
+					-- of the module being placed and the objects outside the construction (the slot does not turn red while proposing a placement).
 					[_constants.slopedCargoArea1x5ModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
