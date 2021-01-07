@@ -2,8 +2,6 @@
 local _underpassDepth = 4 -- _constants.underpassDepthM LOLLO TODO restore after testing
 
 return function(height)
-    -- local underpassZed = require('lollo_freestyle_train_station/constants').underpassZed -- LOLLO we make the passenger underpass less deep
-
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
 
     local function _getWallsBelowPlatform(lod)
@@ -13,14 +11,11 @@ return function(height)
         for h = 5, height, 5 do
             zShift4Wall = zShift4Wall - 5
             local zedZoom4Wall = h == 5 and 0.5 or 1
-            local wallTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Wall, 0, 6 + _xExtraShift, 2.2, zShift4Wall, 1}
+            local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  4.5 + _xExtraShift, 2.2, zShift4Wall, 1}
 
             results[#results + 1] = {
-                --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
                 materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl'},
-                -- mesh = 'lollo_freestyle_train_station/lift/lollo12x5x5room.msh',
-                mesh = 'lollo_freestyle_train_station/lift/lollo12x5x5room_deco.msh',
-                name = 'oil_refinery_wall_large',
+                mesh = 'lollo_freestyle_train_station/lift/lollo9x5x5room_deco.msh',
                 transf = wallTransf
             }
         end
@@ -31,11 +26,10 @@ return function(height)
                 zShift4Shaft = zShift4Shaft - 5
                 -- local zedZoom4Shaft = h == 5 and 0.5 or 1
                 local zedZoom4Shaft = 1
-                local shaftTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Shaft, 0, 0, 0, zShift4Shaft, 1}
+                local shaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Shaft, 0, 0, -0.3, zShift4Shaft, 1}
                     results[#results + 1] = {
                         materials = {'lollo_freestyle_train_station/shaft.mtl'},
-                        mesh = 'lollo_freestyle_train_station/lift/inner_shaft_lod0.msh',
-                        name = 'shaft',
+                        mesh = 'lollo_freestyle_train_station/lift/inner_shaft_round_lod0.msh',
                         transf = shaftTransf
                     }
             end
@@ -50,13 +44,9 @@ return function(height)
     local groundRoofTransf = {0.4, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -2.75, zedShift4groundRoof, 1}
 
     local zedShift4groundPillar = -height + 3.2
-    local zedZoom4groundPillar = -1.075
-    local frontLeftPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, -8.97 + _xExtraShift, -2.55, zedShift4groundPillar, 1}
-    local frontRightPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, 9.02 + _xExtraShift, -2.55, zedShift4groundPillar, 1}
-    local rearLeftPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, -8.97 + _xExtraShift, 1.95, zedShift4groundPillar, 1}
-    local rearRightPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, 9.02 + _xExtraShift, 1.95, zedShift4groundPillar, 1}
-
-    -- local groundLiftShaftTransf = {0, 0, -height / 4.0, 0, 0, 6, 0, 0, 14, 0, 0, 0, -14.0, 0, -height, 1}
+    -- local zedZoom4groundPillar = -1 -- -1.075
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5 + _xExtraShift, 2.2, zedShift4groundPillar, 1}
+    local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.8, 1}
 
     local idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -105,37 +95,6 @@ return function(height)
                                     transf = groundRoofTransf
                                 },
                                 {
-                                    -- front left pillar
-                                    --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
-                                    --materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
-                                    --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", },
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = frontLeftPillarTransf
-                                },
-                                {
-                                    --front right pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = frontRightPillarTransf
-                                },
-                                {
-                                    --rear left pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = rearLeftPillarTransf
-                                },
-                                {
-                                    -- rear right pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = rearRightPillarTransf
-                                },
-                                {
                                     -- ticket machine right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
@@ -157,6 +116,25 @@ return function(height)
                             children = _wallsBelowThePlatformLod0,
                             name = 'walls_below_the_platform',
                             transf = idTransf
+                        },
+                        {
+                            -- pillars
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
+                            transf = pillarsTransf
+                        },
+                        {
+                            -- shaft top
+                            materials = {
+                                'lollo_freestyle_train_station/shaft.mtl',
+                                -- 'lollo_freestyle_train_station/station_concrete_2.mtl',
+                                'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/hole.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/shaft-top-round-lod0.msh',
+                            transf = shaftTopTransf
                         },
                     },
                     name = 'RootNode',
@@ -191,34 +169,6 @@ return function(height)
                                     name = 'station_3_roof_perron_side',
                                     transf = groundRoofTransf
                                 },
-                                {
-                                    -- front left pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = frontLeftPillarTransf
-                                },
-                                {
-                                    --front right pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = frontRightPillarTransf
-                                },
-                                {
-                                    --rear left pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = rearLeftPillarTransf
-                                },
-                                {
-                                    -- rear right pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = rearRightPillarTransf
-                                },
                             },
                             name = 'station_1_main_grp',
                             transf = stationMainTransf
@@ -227,6 +177,26 @@ return function(height)
                             children = _wallsBelowThePlatformLod1,
                             name = 'walls_below_the_platform',
                             transf = idTransf
+                        },
+                        {
+                            -- pillars
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
+                            name = 'oil_refinery_wall_large',
+                            transf = pillarsTransf
+                        },
+                        {
+                            -- shaft top
+                            materials = {
+                                'lollo_freestyle_train_station/shaft.mtl',
+                                -- 'lollo_freestyle_train_station/station_concrete_2.mtl',
+                                'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/hole.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/shaft-top-round-lod1.msh',
+                            transf = shaftTopTransf
                         },
                     },
                     name = 'RootNode',
@@ -240,43 +210,18 @@ return function(height)
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    -- front left pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = frontLeftPillarTransf
-                                },
-                                {
-                                    --front right pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = frontRightPillarTransf
-                                },
-                                {
-                                    --rear left pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = rearLeftPillarTransf
-                                },
-                                {
-                                    -- rear right pillar
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = rearRightPillarTransf
-                                },
-                            },
-                            name = 'station_1_main_grp',
-                            transf = stationMainTransf
-                        },
-                        {
                             children = _wallsBelowThePlatformLod1,
                             name = 'walls_below_the_platform',
                             transf = idTransf
+                        },
+                        {
+                            -- pillars
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
+                            name = 'oil_refinery_wall_large',
+                            transf = pillarsTransf
                         },
                     },
                     name = 'RootNode',
@@ -325,11 +270,10 @@ return function(height)
                     height > 0 and
                         {
                             -- straight down and then out
-                            -- LOLLO NOTE alter the sequence if underpassZed changes!
                             linkable = true,
                             nodes = {
                                 {
-                                    {0, 0, 0.1 + 0.8 - _underpassDepth}, -- LOLLO TODO thematisiere tzhis 0.8 (typical of lifts) and 0.1 (typical of side areas)
+                                    {0, 0, 0.1 + 0.8 - _underpassDepth}, -- LOLLO TODO thematisiere this 0.8 (typical of lifts) and 0.1 (typical of side areas)
                                     {0, 0, -1},
                                     2.4
                                 },

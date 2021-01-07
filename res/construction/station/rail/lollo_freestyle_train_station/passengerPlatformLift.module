@@ -65,12 +65,12 @@ return {
 			transf = buildingTransf,
 			tag = tag
 		}
-		result.models[#result.models + 1] = {
-			id = _constants.underpassBuilding8MModelFileName,
-			slotId = slotId,
-			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
-			tag = tag
-		}
+		-- result.models[#result.models + 1] = {
+		-- 	id = _constants.underpassBuilding8MModelFileName,
+		-- 	slotId = slotId,
+		-- 	transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
+		-- 	tag = tag
+		-- }
 
 		-- add some deco
 		local _clockY = -2.9 -- 2.8

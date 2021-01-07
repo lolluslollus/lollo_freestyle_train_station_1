@@ -1,0 +1,115 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 360,
+					offset = 10192,
+				},
+				position = {
+					count = 360,
+					offset = 9112,
+				},
+				tangent = {
+					count = 360,
+					offset = 9472,
+				},
+				uv0 = {
+					count = 360,
+					offset = 10552,
+				},
+				uv1 = {
+					count = 360,
+					offset = 9832,
+				},
+			},
+			materials = {
+				"station/train/passenger/trainstation_1920_floor_1.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 2100,
+					offset = 17212,
+				},
+				position = {
+					count = 2100,
+					offset = 10912,
+				},
+				tangent = {
+					count = 2100,
+					offset = 13012,
+				},
+				uv0 = {
+					count = 2100,
+					offset = 19312,
+				},
+				uv1 = {
+					count = 2100,
+					offset = 15112,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/Material.001.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 144,
+					offset = 21844,
+				},
+				position = {
+					count = 144,
+					offset = 21412,
+				},
+				tangent = {
+					count = 144,
+					offset = 21556,
+				},
+				uv0 = {
+					count = 144,
+					offset = 21988,
+				},
+				uv1 = {
+					count = 144,
+					offset = 21700,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/Material.002.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 1452,
+			numComp = 3,
+			offset = 5788,
+		},
+		position = {
+			count = 1524,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 2560,
+			numComp = 4,
+			offset = 1524,
+		},
+		uv0 = {
+			count = 1872,
+			numComp = 2,
+			offset = 7240,
+		},
+		uv1 = {
+			count = 1704,
+			numComp = 2,
+			offset = 4084,
+		},
+	},
+}
+end
