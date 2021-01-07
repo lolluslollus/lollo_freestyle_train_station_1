@@ -34,7 +34,7 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local buildingHeight, buildingModelId = moduleHelpers.tryGetLiftProperties(params, nTerminal, nTrackEdge)
+		local buildingHeight, buildingModelId = moduleHelpers.tryGetSideLiftProperties(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
 
 		result.models[#result.models + 1] = {
@@ -47,7 +47,7 @@ return {
 			tag = tag
 		}
 
-		moduleHelpers.doTerrain4Lifts(buildingHeight, slotTransf, result)
+		moduleHelpers.doTerrain4SideLifts(buildingHeight, slotTransf, result)
 	end,
 
 	getModelsFn = function(params)

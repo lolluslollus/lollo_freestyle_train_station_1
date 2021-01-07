@@ -603,20 +603,20 @@ function data()
 								elseif params.terminals[t].centrePlatforms[i].type == 1 then -- bridge
 									if not(isCargoTerminal) then
 										if not(_getOccupiedInfo4FlatAreas(t, i))
-										or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.liftSlotId then
+										or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.sideLiftSlotId then
 											local yShift = params.terminals[t].centrePlatforms[i].width + _getOccupiedInfo4SlopedAreas(t, i).yShift
 											local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 											local myTransf = transfUtilsUG.mul(
 												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
 											)
-											local myId = result.mangleId(t, i, _constants.idBases.liftSlotId)
+											local myId = result.mangleId(t, i, _constants.idBases.sideLiftSlotId)
 											table.insert(result.slots, {
 												-- height = 0,
 												id = myId,
 												spacing = {-2, 4, 4, 4},
 												transf = myTransf,
-												type = _constants.passengerLiftModuleType,
+												type = _constants.passengerSideLiftModuleType,
 											})
 											if params.modules[myId] ~= nil then
 												local lane2AreaTransf = moduleHelpers.get1MLaneTransf(
@@ -632,9 +632,42 @@ function data()
 													-- tag = slotHelpers.mangleModelTag(t, false),
 													transf = lane2AreaTransf
 												}
-												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.liftSlotId)
+												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.sideLiftSlotId)
 
 												local ssPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift + 11.5)
+												table.insert(result.slots, {
+													-- height = 0,
+													id = result.mangleId(t, i, _constants.idBases.stationSquareSlotId),
+													shape = 1,
+													spacing = {-1, 4, 4, 4},
+													transf = transfUtilsUG.mul(
+														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssPosTanX2),
+														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
+													),
+													type = _constants.passengerStationSquareModuleType,
+												})
+											end
+										end
+										if not(_getOccupiedInfo4FlatAreas(t, i))
+										or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.platformLiftSlotId then
+											-- local yShift = params.terminals[t].centrePlatforms[i].width + _getOccupiedInfo4SlopedAreas(t, i).yShift
+											-- local myPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
+											local cpl = params.terminals[t].centrePlatforms[i]
+											local myPosTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
+											local myTransf = transfUtilsUG.mul(
+												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
+												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
+											)
+											local myId = result.mangleId(t, i, _constants.idBases.platformLiftSlotId)
+											table.insert(result.slots, {
+												-- height = 0,
+												id = myId,
+												spacing = {-2, 4, 4, 4},
+												transf = myTransf,
+												type = _constants.passengerPlatformLiftModuleType,
+											})
+											if params.modules[myId] ~= nil then
+												local ssPosTanX2 = moduleHelpers.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, 11.5)
 												table.insert(result.slots, {
 													-- height = 0,
 													id = result.mangleId(t, i, _constants.idBases.stationSquareSlotId),
@@ -698,10 +731,11 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatforms - 1 do -- skip the outermost edges to avoid collisions, the game is very picky here.
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
+						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 						local centreLaneTransf = moduleHelpers.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 						result.models[#result.models+1] = {
-							id = isUnderpass and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneModelId,
+							id = (isUnderpass or isPlatformLift) and _constants.passengerLaneUnderpassModelId or _constants.passengerLaneModelId,
 							-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
 							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
 						}

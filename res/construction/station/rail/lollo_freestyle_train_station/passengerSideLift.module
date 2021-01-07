@@ -21,15 +21,15 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("PassengerLiftName"),
-		description = _("PassengerLiftDesc"),
+		name = _("PassengerSideLiftName"),
+		description = _("PassengerSideLiftDesc"),
 		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
 	},
 	metadata = { },
 	order = {
 		value = 1,
 	},
-	type = _constants.passengerLiftModuleType,
+	type = _constants.passengerSideLiftModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
@@ -48,7 +48,7 @@ return {
 		-- 	tag = tag
 		-- }
 
-		local buildingHeight, buildingModelId = moduleHelpers.tryGetLiftProperties(params, nTerminal, nTrackEdge)
+		local buildingHeight, buildingModelId = moduleHelpers.tryGetSideLiftProperties(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
 
 		-- print('buildingHeight =', buildingHeight)
@@ -132,7 +132,7 @@ return {
 			}
 		end
 
-		moduleHelpers.doTerrain4Lifts(buildingHeight, slotTransf, result)
+		moduleHelpers.doTerrain4SideLifts(buildingHeight, slotTransf, result)
 	end,
 
 	getModelsFn = function(params)
