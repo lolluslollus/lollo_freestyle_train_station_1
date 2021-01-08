@@ -73,6 +73,7 @@ local constants = {
     platformWaypointModelId = 'lollo_freestyle_train_station/railroad/platform_waypoint.mdl',
     cargoWaitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
     passengerWaitingAreaModelId = 'lollo_freestyle_train_station/passenger_waiting_area.mdl',
+    passengerLaneLiftModelId = 'lollo_freestyle_train_station/passenger_lane_lift.mdl',
     passengerLaneUnderpassModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl',
     passengerLaneModelId = 'lollo_freestyle_train_station/passenger_lane.mdl',
     passengerLaneLinkableModelId = 'lollo_freestyle_train_station/passenger_lane_linkable.mdl',
