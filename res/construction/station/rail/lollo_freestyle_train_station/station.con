@@ -979,10 +979,10 @@ function data()
 					if params.modules[slotId] ~= nil then
 						local extraData = params.subways[slotId]
 						if extraData == nil then
-							print ('WARNING: subway[', slotId, '] not found')
+							print ('ERROR: subway[', slotId, '] not found')
 						else
 							if extraData.transf == nil then
-								print ('WARNING: subway[', slotId, '] has no transf')
+								print ('ERROR: subway[', slotId, '] has no transf')
 							else
 								table.insert(result.slots, {
 									-- height = 0,
@@ -1120,6 +1120,7 @@ function data()
 					end
 				end
 				_linkUnderpassesAndStairs()
+				print('passengers and stairs linked')
 
 				local _linkPassengerPlatforms = function()
 					-- link the underpasses across terminals, on the ground, if they are close enough
@@ -1149,6 +1150,7 @@ function data()
 					end
 				end
 				_linkPassengerPlatforms()
+				print('passenger platforms linked')
 
 				-- LOLLO TODO build two tunnel stations and join them: wait for the crash
 				local _linkStairs2Subways = function()
@@ -1160,7 +1162,11 @@ function data()
 					end
 
 					for slotId, subway in pairs(params.subways) do
-						if params.modules[slotId] ~= nil then
+						if subway == nil then
+							print ('ERROR: subway[', slotId, '] not found')
+						elseif subway.transf == nil then
+							print ('ERROR: subway[', slotId, '] has no transf')
+						elseif params.modules[slotId] ~= nil then
 							local subwayPosition = transfUtils.transf2Position(transfUtilsUG.mul(subway.transf, inverseMainTransf))
 							for t = 1, #params.terminals do
 								local minDistance = nil
@@ -1188,6 +1194,7 @@ function data()
 					end
 				end
 				_linkStairs2Subways()
+				print('stairs and subways linked')
 
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
 				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
@@ -1248,7 +1255,7 @@ function data()
 					end
 				end
 				_groupTerminals()
-				-- print('terminals grouped')
+				print('terminals grouped')
 
 				-- avoid dump when configuring
 				-- if #(result.stations[1].terminals) == 0 then
