@@ -1479,7 +1479,8 @@ function data()
                                 end
                             end
                         elseif id == 'constructionBuilder' then
-                            -- LOLLO TODO allow this also when selecting an existing subway, which has not been joined yet.
+                            -- LOLLO TODO MAYBE also allow this when selecting an existing subway, which has not been joined yet.
+                            -- same with stations.
                             if not args.result or not args.result[1] then return end
 
                             -- print('args =') debugPrint(args)
