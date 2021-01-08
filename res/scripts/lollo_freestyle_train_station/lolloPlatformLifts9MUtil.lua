@@ -131,6 +131,7 @@ return function(height)
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
                                 -- 'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/hole.mtl',
+                                'lollo_freestyle_train_station/station_concrete_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/shaft-top-round-lod0.msh',
                             transf = shaftTopTransf
@@ -168,6 +169,7 @@ return function(height)
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
                                 -- 'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/hole.mtl',
+                                'lollo_freestyle_train_station/station_concrete_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/shaft-top-round-lod1.msh',
                             transf = shaftTopTransf
