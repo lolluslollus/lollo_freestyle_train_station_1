@@ -14,6 +14,7 @@ local constants = {
     underpassDepthM = 4,
     underpassLengthM = 1, -- don't change this, it must stay 1
     underpassZed = -3,
+    platformLiftZShift = -0.1,
 
     maxCargoWaitingAreaEdgeLength = 9, -- do not tamper with this
     maxPassengerWaitingAreaEdgeLength = 9, -- do not tamper with this

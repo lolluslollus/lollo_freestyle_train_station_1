@@ -24,7 +24,7 @@ function data()
 
     -- local groundLiftShaftTransf = {0, 0, -height / 4.0, 0, 0, 6, 0, 0, 14, 0, 0, 0, -14.0, 0, -height, 1}
     local groundLiftShaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.3, -5, 1}
-    local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.8, 1}
+    local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 1 - _constants.platformLiftZShift, 1}
 
     local idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -341,7 +341,7 @@ function data()
                         linkable = false,
                         nodes = {
                             {
-                                {0, 0, 0.1 + 0.8 - _underpassDepth}, -- LOLLO TODO thematisiere this 0.8 (typical of lifts) and 0.1 (typical of side areas)
+                                {0, 0, 1 - _constants.platformLiftZShift - _underpassDepth},
                                 {0, 0, -1},
                                 2.4
                             },

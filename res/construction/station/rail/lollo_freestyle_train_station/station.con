@@ -708,12 +708,10 @@ function data()
 										end
 										if not(_getOccupiedInfo4FlatAreas(t, i))
 										or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.platformLiftSlotId then
-											-- local yShift = params.terminals[t].centrePlatforms[i].width + _getOccupiedInfo4SlopedAreas(t, i).yShift
-											-- local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 											local myPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 											local myTransf = transfUtilsUG.mul(
 												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
-												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
+												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformLiftZShift, 1 }
 											)
 											local myId = result.mangleId(t, i, _constants.idBases.platformLiftSlotId)
 											table.insert(result.slots, {
@@ -732,7 +730,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
+														{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformLiftZShift, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
@@ -744,7 +742,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssInnerPosTanX2),
-														{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0.1, 1 }
+														{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformLiftZShift, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})

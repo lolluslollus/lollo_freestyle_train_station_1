@@ -1,6 +1,7 @@
 return function(height)
     local _constants = require('lollo_freestyle_train_station.constants')
     local _underpassDepth = _constants.underpassDepthM
+
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
     -- LOLLO TODO station walls peep through steep platforms
     local function _getWallsBelowPlatform(lod)
@@ -45,7 +46,7 @@ return function(height)
     local zedShift4groundPillar = -height + 3.2
     -- local zedZoom4groundPillar = -1 -- -1.075
     local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5 + _xExtraShift, 2.2, zedShift4groundPillar, 1}
-    local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.8, 1}
+    local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 1 - _constants.platformLiftZShift, 1}
 
     local idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -214,7 +215,7 @@ return function(height)
                             linkable = false,
                             nodes = {
                                 {
-                                    {0, 0, 0.1 + 0.8 - _underpassDepth}, -- LOLLO TODO thematisiere this 0.8 (typical of lifts) and 0.1 (typical of side areas)
+                                    {0, 0, 1 - _constants.platformLiftZShift - _underpassDepth}, -- LOLLO TODO thematisiere this 0.8 (typical of lifts) and 0.1 (typical of side areas)
                                     {0, 0, -1},
                                     2.4
                                 },
