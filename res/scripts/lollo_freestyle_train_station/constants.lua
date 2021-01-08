@@ -86,6 +86,7 @@ local constants = {
 
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
     passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module',
+    subwayModuleFileName = 'station/rail/lollo_freestyle_train_station/subway.module',
 
     cargoWaitingAreaTagRoot = 'cargoWaitingArea_',
     passengersWaitingAreaTagRoot = 'passengersWaitingArea_',

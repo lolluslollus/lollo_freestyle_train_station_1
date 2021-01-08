@@ -11,8 +11,8 @@ function data()
 
 return {
 	availability = {
-		yearFrom = 0,
-		yearTo = 0
+		yearFrom = -1,
+		yearTo = -1
 	},
 	category = {
 		categories = { "street access", },
@@ -48,6 +48,7 @@ return {
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
 			tag = tag
 		}
+		print('subway.module.updateFn ending')
 	end,
 
 	getModelsFn = function(params)

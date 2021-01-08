@@ -667,27 +667,6 @@ local helpers = {
         return false
     end,
 
-    getNewConstructionTransf = function(args, fileName)
-        local toAdd =
-            type(args) == 'table' and type(args.proposal) == 'userdata' and type(args.proposal.toAdd) == 'userdata' and args.proposal.toAdd
-
-        if toAdd and #toAdd > 0 then
-            for i = 1, #toAdd do
-                if toAdd[i].fileName == fileName then
-                    local apiTransf = toAdd[i].transf
-                    return transfUtilsUG.new(
-                        apiTransf:cols(0),
-                        apiTransf:cols(1),
-                        apiTransf:cols(2),
-                        apiTransf:cols(3)
-                    )
-                end
-            end
-        end
-
-        return false
-    end,
-
     getProposal2ReplaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
         -- replaces a track segment with an identical one, without destroying the buildings
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return false end

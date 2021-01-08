@@ -56,12 +56,27 @@ local _actions = {
         newSubways[#newSubways+1] = {
             transf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
         }
+        print('newSubways =') debugPrint(newSubways)
+
         local newParams = {
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
             seed = oldCon.params.seed + 1,
             subways = newSubways,
             terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
+        }
+        newParams.modules[slotHelpers.mangleId(0, #newSubways, _constants.idBases.subwaySlotId)] = {
+            metadata = { -- it gets overwritten
+                myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
+            },
+            name = _constants.subwayModuleFileName,
+            updateScript = {
+                fileName = '',
+                params = {
+                    myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
+                },
+            },
+            variant = 0,
         }
         newCon.params = newParams
         newCon.transf = oldCon.transf
@@ -1449,38 +1464,35 @@ function data()
                                 end
                             end
                         elseif id == 'constructionBuilder' then
+                            -- LOLLO TODO allow this also when selecting an existing subway, which has not been joined yet.
                             if not args.result or not args.result[1] then return end
 
                             -- print('args =') debugPrint(args)
                             local subwayId = args.result[1]
                             print('subway construction built, construction id =') debugPrint(subwayId)
 
-                            local conTransf = stationHelpers.getNewConstructionTransf(args, _constants.subwayConFileName)
+                            local subwayTransfApi = api.engine.getComponent(subwayId, api.type.ComponentType.CONSTRUCTION).transf
+                            if subwayTransfApi == nil then return end
+
+                            local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
                             if not(conTransf) then return end
 
                             print('conTransf =') debugPrint(conTransf)
                             -- local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
                             local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, 500)
-                            print('nearestStations =') debugPrint(nearbyFreestyleStations)
-                            if #nearbyFreestyleStations > 0 then
-                                -- local nearestStationGroupIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION_GROUP)
-                                -- print('nearestStationGroupIds =') debugPrint(nearestStationGroupIds)
-                                -- local nearestConstructionIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.CONSTRUCTION)
-                                -- print('nearestConstructionIds =') debugPrint(nearestConstructionIds)
-                                -- local nearestEdgeIds = edgeUtils.getNearbyObjectIds(conTransf, 0.001, api.type.ComponentType.BASE_EDGE)
-                                -- local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf)
-                                -- print('nearestEdgeId =') debugPrint(nearestEdgeId)
+                            -- print('nearbyFreestyleStations =') debugPrint(nearbyFreestyleStations)
+                            print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
+                            if #nearbyFreestyleStations == 0 then return end
 
-                                guiHelpers.showNearbyStationPicker(
-                                    nearbyFreestyleStations,
-                                    _eventId,
-                                    _eventNames.SUBWAY_JOIN_REQUESTED,
-                                    {
-                                        subwayId = subwayId
-                                        -- join2StationId will be added by the popup
-                                    }
-                                )
-                            end
+                            guiHelpers.showNearbyStationPicker(
+                                nearbyFreestyleStations,
+                                _eventId,
+                                _eventNames.SUBWAY_JOIN_REQUESTED,
+                                {
+                                    subwayId = subwayId
+                                    -- join2StationId will be added by the popup
+                                }
+                            )
                         elseif id == 'streetTerminalBuilder' then
                             -- waypoint, traffic light, my own waypoints built
                             if args and args.proposal and args.proposal.proposal
