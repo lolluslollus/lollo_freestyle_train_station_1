@@ -281,8 +281,9 @@ helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
     _addTrackEdges(params, result, inverseMainTransf, tag2nodes, t)
 end
 
--- local _bridgeHeights = { 5, 10, 15, 20, 25, 30, 35, 40 }
+-- local _bridgeHeights = { 5, 10, 15, 20, 25, 30, 35, 40 } -- too little, stations get buried
 local _bridgeHeights = { 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
+-- local _bridgeHeights = { 6.5, 11.5, 16.5, 21.5, 26.5, 31.5, 36.5, 41.5 }
 helpers.tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
     local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
 		-- local terrainHeight = cpl.terrainHeight1
