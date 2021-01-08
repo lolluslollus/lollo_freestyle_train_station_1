@@ -3,7 +3,6 @@ return function(height)
     local _underpassDepth = -_constants.underpassZ
 
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
-    -- LOLLO TODO station walls peep through steep platforms
     local function _getWallsBelowPlatform(lod)
         local results = {}
 

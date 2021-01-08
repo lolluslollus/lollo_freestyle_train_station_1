@@ -844,7 +844,7 @@ function data()
 						elseif isUnderpass then
 							local underpassBottomTransf = transfUtilsUG.mul(
 								centreLaneTransf,
-								-- LOLLO TODO check the effect of NOT scaling x and y
+								-- LOLLO TODO check the effect of NOT scaling x and y, it should be fine
 								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ + _constants.underpassZ, 1 }
 								-- { 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ + _constants.underpassZ, 1 }
 							)
@@ -1154,7 +1154,6 @@ function data()
 				_linkPassengerPlatforms()
 				print('passenger platforms linked')
 
-				-- LOLLO TODO build two tunnel stations and join them: wait for the crash
 				local _linkStairs2Subways = function()
 					local allPositions = {}
 					for t = 1, #params.terminals do
