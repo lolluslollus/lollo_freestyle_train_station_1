@@ -8,23 +8,23 @@ return {
 			indices = {
 				normal = {
 					count = 360,
-					offset = 10192,
+					offset = 10308,
 				},
 				position = {
 					count = 360,
-					offset = 9112,
+					offset = 9228,
 				},
 				tangent = {
 					count = 360,
-					offset = 9472,
+					offset = 8868,
 				},
 				uv0 = {
 					count = 360,
-					offset = 10552,
+					offset = 9948,
 				},
 				uv1 = {
 					count = 360,
-					offset = 9832,
+					offset = 9588,
 				},
 			},
 			materials = {
@@ -34,23 +34,23 @@ return {
 			indices = {
 				normal = {
 					count = 2100,
-					offset = 17212,
+					offset = 19068,
 				},
 				position = {
 					count = 2100,
-					offset = 10912,
+					offset = 12768,
 				},
 				tangent = {
 					count = 2100,
-					offset = 13012,
+					offset = 10668,
 				},
 				uv0 = {
 					count = 2100,
-					offset = 19312,
+					offset = 16968,
 				},
 				uv1 = {
 					count = 2100,
-					offset = 15112,
+					offset = 14868,
 				},
 			},
 			materials = {
@@ -60,23 +60,23 @@ return {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 21844,
+					offset = 21744,
 				},
 				position = {
 					count = 144,
-					offset = 21412,
+					offset = 21312,
 				},
 				tangent = {
 					count = 144,
-					offset = 21556,
+					offset = 21168,
 				},
 				uv0 = {
 					count = 144,
-					offset = 21988,
+					offset = 21600,
 				},
 				uv1 = {
 					count = 144,
-					offset = 21700,
+					offset = 21456,
 				},
 			},
 			materials = {
@@ -86,29 +86,29 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 1452,
+			count = 1416,
 			numComp = 3,
-			offset = 5788,
+			offset = 7452,
 		},
 		position = {
 			count = 1524,
 			numComp = 3,
-			offset = 0,
+			offset = 2352,
 		},
 		tangent = {
-			count = 2560,
+			count = 2352,
 			numComp = 4,
-			offset = 1524,
+			offset = 0,
 		},
 		uv0 = {
 			count = 1872,
 			numComp = 2,
-			offset = 7240,
+			offset = 5580,
 		},
 		uv1 = {
 			count = 1704,
 			numComp = 2,
-			offset = 4084,
+			offset = 3876,
 		},
 	},
 }

@@ -211,8 +211,8 @@ return function(height)
                 laneLists = {
                     height > 0 and
                         {
-                            -- straight down and then out
-                            linkable = true,
+                            -- straight down
+                            linkable = false,
                             nodes = {
                                 {
                                     {0, 0, 0.1 + 0.8 - _underpassDepth}, -- LOLLO TODO thematisiere this 0.8 (typical of lifts) and 0.1 (typical of side areas)
@@ -224,67 +224,75 @@ return function(height)
                                     {0, 0, -1},
                                     2.4
                                 },
-                                {
-                                    {0, 0, -height},
-                                    {0, -1, 0},
-                                    2.4
-                                },
-                                {
-                                    {0, -2.7, -height},
-                                    -- {0, -2.8, -height},
-                                    {0, -1, 0},
-                                    2.4
-                                }
                             },
                             speedLimit = 20,
                             transportModes = {'PERSON'}
                         } or nil,
-                        {
-                            -- out to the back
-                            linkable = true,
-                            nodes = {
-                                {
-                                    {0, 0, -height},
-                                    {0, 1, 0},
-                                    2.4
-                                },
-                                {
-                                    {0, 2.2, -height},
-                                    {0, 1, 0},
-                                    2.4
-                                },
+                    {
+                        -- out to the front
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, 0, -height},
+                                {0, -1, 0},
+                                2.4
                             },
-                            speedLimit = 20,
-                            transportModes = {'PERSON'}
+                            {
+                                {0, -2.7, -height},
+                                -- {0, -2.8, -height},
+                                {0, -1, 0},
+                                2.4
+                            }
                         },
-                        {
-                            -- sideways, to connect extra elements
-                            linkable = true,
-                            nodes = {
-                                {
-                                    {-4.5, -0.3, -height},
-                                    {1, 0.1, 0},
-                                    2.4
-                                },
-                                {
-                                    {0, 0, -height},
-                                    {1, 0.1, 0},
-                                    2.4
-                                },
-                                {
-                                    {0, 0, -height},
-                                    {1, -0.1, 0},
-                                    2.4
-                                },
-                                {
-                                    {4.5, -0.3, -height},
-                                    {1, -0.1, 0},
-                                    2.4
-                                },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- out to the back
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, 0, -height},
+                                {0, 1, 0},
+                                2.4
                             },
-                            speedLimit = 20,
-                            transportModes = {'PERSON'}
+                            {
+                                {0, 2.2, -height},
+                                {0, 1, 0},
+                                2.4
+                            },
                         },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- sideways, to connect extra elements
+                        linkable = true,
+                        nodes = {
+                            {
+                                {-4.5, -0.3, -height},
+                                {1, 0.1, 0},
+                                2.4
+                            },
+                            {
+                                {0, 0, -height},
+                                {1, 0.1, 0},
+                                2.4
+                            },
+                            {
+                                {0, 0, -height},
+                                {1, -0.1, 0},
+                                2.4
+                            },
+                            {
+                                {4.5, -0.3, -height},
+                                {1, -0.1, 0},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
                 },
                 runways = {},
                 terminals = {}

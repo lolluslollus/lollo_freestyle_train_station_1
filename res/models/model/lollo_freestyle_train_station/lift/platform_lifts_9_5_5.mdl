@@ -337,19 +337,9 @@ function data()
             transportNetworkProvider = {
                 laneLists = {
                     {
-                        -- straight down and then out
-                        linkable = true,
+                        -- straight down
+                        linkable = false,
                         nodes = {
-                            -- {
-                            --     {0, 0, underpassZed},
-                            --     {0, 0, -1},
-                            --     2.4
-                            -- },
-                            -- {
-                            --     {0, 0, -height},
-                            --     {0, 0, -1},
-                            --     2.4
-                            -- },
                             {
                                 {0, 0, 0.1 + 0.8 - _underpassDepth}, -- LOLLO TODO thematisiere this 0.8 (typical of lifts) and 0.1 (typical of side areas)
                                 {0, 0, -1},
@@ -360,6 +350,14 @@ function data()
                                 {0, 0, -1},
                                 2.4
                             },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- out to the front
+                        linkable = true,
+                        nodes = {
                             {
                                 {0, 0, -height},
                                 {0, -1, 0},

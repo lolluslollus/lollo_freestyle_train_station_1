@@ -442,28 +442,84 @@ return function(height)
             transportNetworkProvider = {
                 laneLists = {
                     {
-                        -- down the stairs
+                        -- down the stairs and into the lift
                         linkable = false,
                         nodes = {
                             {
-                                {0, 0, 0.80000001192093},
-                                {0, -1.5, 0},
+                                {0, 0, 0.8},
+                                {0, -1.8, 0},
                                 2.4000000953674
                             },
                             {
-                                {0, -1.5, 0.80000001192093},
-                                {0, -1.5, 0},
+                                {0, -1.8, 0.8},
+                                {0, -1.8, 0},
                                 2.4000000953674
                             },
                             {
-                                {0, -1.5, 0.80000001192093},
-                                {0, -0.5, 0},
+                                {0, -1.8, 0.8},
+                                {0, -0.2, 0},
                                 2.4000000953674
                             },
                             {
                                 {0, -2.0, 0},
-                                {0, -0.5, 0},
+                                {0, -0.2, 0},
                                 2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    height > 0 and
+                    {
+                        -- straight down
+                        linkable = false,
+                        nodes = {
+                            {
+                                {0, -2.0, 0},
+                                {0, 0, -1}, -- 0, 0, 0 crashes, 0, 0, -1 and 0, 0, 1 hide the people, 0, 1, 0 and 1, 0, 0 have them walk while being lifted
+                                2.4
+                            },
+                            {
+                                {0, -2.0, -height},
+                                {0, 0, -1},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    } or nil,
+                    height > 0 and
+                    {
+                        -- out to the front
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -2.0, -height},
+                                {0, -2, 0},
+                                2.4
+                            },
+                            {
+                                {0, -4.0, -height},
+                                {0, -2, 0},
+                                2.4
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    } or
+                    { -- height = 0: it never happens
+                        -- out to the front
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -2.0, 0},
+                                {0, 0, -1}, -- 0, 0, 0 crashes, 0, 0, -1 and 0, 0, 1 hide the people, 0, 1, 0 and 1, 0, 0 have them walk while being lifted
+                                2.4
+                            },
+                            {
+                                {0, -2.0, -3}, -- was {0, -2.5, underpassZed}
+                                {0, 0, -1},
+                                2.4
                             }
                         },
                         speedLimit = 20,
@@ -515,63 +571,6 @@ return function(height)
                         speedLimit = 20,
                         transportModes = {'PERSON'}
                     },
-                    height > 0 and
-                        {
-                            -- straight down and then out
-                            linkable = true,
-                            nodes = {
-                                {
-                                    {0, -2.0, 0},
-                                    {0, 0, -1}, -- 0, 0, 0 crashes, 0, 0, -1 and 0, 0, 1 hide the people, 0, 1, 0 and 1, 0, 0 have them walk while being lifted
-                                    2.4
-                                },
-                                -- {
-                                --     {0, -2.0, underpassZed},
-                                --     {0, 0, -1},
-                                --     2.4
-                                -- },
-                                -- {
-                                --     {0, -2.0, underpassZed},
-                                --     {0, 0, -1},
-                                --     2.4
-                                -- },
-                                {
-                                    {0, -2.0, -height},
-                                    {0, 0, -1},
-                                    2.4
-                                },
-                                {
-                                    {0, -2.0, -height},
-                                    {0, -2, 0},
-                                    2.4
-                                },
-                                {
-                                    {0, -4, -height},
-                                    {0, -2, 0},
-                                    2.4
-                                }
-                            },
-                            speedLimit = 20,
-                            transportModes = {'PERSON'}
-                        } or
-                        { -- height = 0: it never happens
-                            -- straight down and then out
-                            linkable = true,
-                            nodes = {
-                                {
-                                    {0, -2.0, 0},
-                                    {0, 0, -1}, -- 0, 0, 0 crashes, 0, 0, -1 and 0, 0, 1 hide the people, 0, 1, 0 and 1, 0, 0 have them walk while being lifted
-                                    2.4
-                                },
-                                {
-                                    {0, -2.0, -3}, -- was {0, -2.5, underpassZed}
-                                    {0, 0, -1},
-                                    2.4
-                                }
-                            },
-                            speedLimit = 20,
-                            transportModes = {'PERSON'}
-                        }
                 },
                 runways = {},
                 terminals = {}
