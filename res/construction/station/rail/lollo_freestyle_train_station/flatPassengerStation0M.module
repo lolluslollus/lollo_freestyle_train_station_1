@@ -29,7 +29,7 @@ return {
 	order = {
 		value = 1,
 	},
-	type = _constants.flatPassengerStationModuleType,
+	type = _constants.flatPassengerStation0MModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end

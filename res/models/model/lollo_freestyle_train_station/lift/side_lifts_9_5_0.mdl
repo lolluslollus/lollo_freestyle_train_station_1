@@ -38,7 +38,6 @@ function data()
             transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 1.0, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
             type = 'BOX'
         },
--- LOLLO TODO Fix the coordinates of the station square.
         lods = {
             {
                 node = {
