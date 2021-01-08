@@ -12,15 +12,18 @@ local _stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 function data()
     return {
         boundingInfo = {
-            bbMax = {5.8, 1.0, 5.0},
-            bbMin = {-5.8, -5.0, 0}
+            -- bbMax = {4.4, 1.0, 5.0}, -- this would be fine without tunnel awareness and lamps
+            -- bbMin = {-4.4, -4.0, 0} -- this would be fine without tunnel awareness and lamps
+            bbMax = {4.4, 1.0, 6.5}, -- a bit taller for tunnels and lamps
+            bbMin = {-4.4, -4.0, -1.5} -- a bit lower for tunnels and lamps
         },
-        -- LOLLO TODO check the collider
         collider = {
             params = {
-                halfExtents = {5.8, 3.0, 2.5}
+                -- halfExtents = {4.4, 2.5, 2.5} -- this would be fine without tunnel awareness and lamps
+                halfExtents = {4.4, 2.5, 5.5} -- a bit taller for tunnels and lamps
             },
-            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.5, 0, 1},
+            -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 2.5, 1}, -- this would be fine without tunnel awareness and lamps
+            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 1.0, 1}, -- a bit taller for tunnels and lamps
             type = 'BOX'
         },
         lods = {
