@@ -585,7 +585,7 @@ function data()
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStationSlotId)
 
-												local ssOuterPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift + 11.5)
+												local ssOuterPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift + 9.5)
 												table.insert(result.slots, {
 													-- height = 0,
 													id = result.mangleId(t, i, _constants.idBases.stationSquareOuterSlotId),

@@ -281,27 +281,29 @@ helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
     _addTrackEdges(params, result, inverseMainTransf, tag2nodes, t)
 end
 
+-- local _bridgeHeights = { 5, 10, 15, 20, 25, 30, 35, 40 }
+local _bridgeHeights = { 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
 helpers.tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
     local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
 		-- local terrainHeight = cpl.terrainHeight1
     local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
     local buildingHeight = 0
-    if bridgeHeight < 5 then
+    if bridgeHeight < _bridgeHeights[1] then
         buildingHeight = 5
-    elseif bridgeHeight < 10 then
+    elseif bridgeHeight < _bridgeHeights[2] then
         buildingHeight = 10
-    elseif bridgeHeight < 15 then
+    elseif bridgeHeight < _bridgeHeights[3] then
         buildingHeight = 15
-    elseif bridgeHeight < 20 then
+    elseif bridgeHeight < _bridgeHeights[4] then
         buildingHeight = 20
-    elseif bridgeHeight < 25 then
+    elseif bridgeHeight < _bridgeHeights[5] then
         buildingHeight = 25
-    elseif bridgeHeight < 30 then
+    elseif bridgeHeight < _bridgeHeights[6] then
         buildingHeight = 30
-    elseif bridgeHeight < 35 then
+    elseif bridgeHeight < _bridgeHeights[7] then
         buildingHeight = 35
-    elseif bridgeHeight < 40 then
+    elseif bridgeHeight < _bridgeHeights[8] then
         buildingHeight = 40
     else
         return false
@@ -316,22 +318,22 @@ helpers.tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
     local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
     local buildingModelId = 'lollo_freestyle_train_station/lift/'
-    if bridgeHeight < 5 then
+    if bridgeHeight < _bridgeHeights[1] then
         -- buildingModelId = buildingModelId .. 'elevated_stairs_5.mdl'
         buildingModelId = buildingModelId .. 'side_lifts_9_5_5.mdl'
-    elseif bridgeHeight < 10 then
+    elseif bridgeHeight < _bridgeHeights[2] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_10.mdl'
-    elseif bridgeHeight < 15 then
+    elseif bridgeHeight < _bridgeHeights[3] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_15.mdl'
-    elseif bridgeHeight < 20 then
+    elseif bridgeHeight < _bridgeHeights[4] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_20.mdl'
-    elseif bridgeHeight < 25 then
+    elseif bridgeHeight < _bridgeHeights[5] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_25.mdl'
-    elseif bridgeHeight < 30 then
+    elseif bridgeHeight < _bridgeHeights[6] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_30.mdl'
-    elseif bridgeHeight < 35 then
+    elseif bridgeHeight < _bridgeHeights[7] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_35.mdl'
-    elseif bridgeHeight < 40 then
+    elseif bridgeHeight < _bridgeHeights[8] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_40.mdl'
     else
         return false
@@ -386,21 +388,21 @@ helpers.tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge)
     local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
     local buildingModelId = 'lollo_freestyle_train_station/lift/'
-    if bridgeHeight < 5 then
+    if bridgeHeight < _bridgeHeights[1] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_5.mdl'
-    elseif bridgeHeight < 10 then
+    elseif bridgeHeight < _bridgeHeights[2] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_10.mdl'
-    elseif bridgeHeight < 15 then
+    elseif bridgeHeight < _bridgeHeights[3] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_15.mdl'
-    elseif bridgeHeight < 20 then
+    elseif bridgeHeight < _bridgeHeights[4] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_20.mdl'
-    elseif bridgeHeight < 25 then
+    elseif bridgeHeight < _bridgeHeights[5] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_25.mdl'
-    elseif bridgeHeight < 30 then
+    elseif bridgeHeight < _bridgeHeights[6] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_30.mdl'
-    elseif bridgeHeight < 35 then
+    elseif bridgeHeight < _bridgeHeights[7] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_35.mdl'
-    elseif bridgeHeight < 40 then
+    elseif bridgeHeight < _bridgeHeights[8] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_40.mdl'
     else
         return false

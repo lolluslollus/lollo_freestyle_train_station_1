@@ -39,7 +39,8 @@ return {
 			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
 		)
 		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/lift/elevated_stairs_5.mdl',
+			-- id = 'lollo_freestyle_train_station/lift/elevated_stairs_5.mdl',
+			id = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl',
 			slotId = slotId,
 			transf = buildingTransf,
 			tag = tag
@@ -51,7 +52,7 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				buildingTransf,
-				{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  3.7, -4.3, 0.8, 1 }
+				{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0.8, 1 }
 			),
 			tag = tag
 		}
@@ -60,7 +61,7 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				buildingTransf,
-				{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -3.7, -4.3, 0.8, 1 }
+				{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0.8, 1 }
 			),
 			tag = tag
 		}
@@ -107,7 +108,8 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = 'lollo_freestyle_train_station/lift/elevated_stairs_5.mdl',
+				-- id = 'lollo_freestyle_train_station/lift/elevated_stairs_5.mdl',
+				id = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl',
 				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
 			},
 		}
