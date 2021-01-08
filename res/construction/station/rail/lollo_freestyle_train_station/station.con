@@ -1003,49 +1003,56 @@ function data()
 
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
+
+				local _getAllPositions = function()
+					local results = {}
+					for t = 1, #params.terminals do
+						results[t] = {}
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
+					end
+					return results
+				end
+
 				local _getDistancesBetweenPos2Links = function(allPositions)
 					-- local allDistances = {}
 					local minDistances = {}
 					for t = 1, #params.terminals do
 						local positionsInT = allPositions[t]
-						if positionsInT ~= nil then
-							for i = 1, #positionsInT do
-								for tt = t + 1, #params.terminals do
-									local positionsInTT = allPositions[tt]
-									if positionsInTT ~= nil then
-										for ii = 1, #positionsInTT do
-											-- if allDistances[t] == nil then allDistances[t] = {} end
-											-- if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
-											if minDistances[t] == nil then minDistances[t] = {} end
+						for i = 1, #positionsInT do
+							for tt = t + 1, #params.terminals do
+								local positionsInTT = allPositions[tt]
+								for ii = 1, #positionsInTT do
+									-- if allDistances[t] == nil then allDistances[t] = {} end
+									-- if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
+									if minDistances[t] == nil then minDistances[t] = {} end
 
-											local distance = transfUtils.getVectorLength(
-												{
-													positionsInT[i].pos2Link[1] - positionsInTT[ii].pos2Link[1],
-													positionsInT[i].pos2Link[2] - positionsInTT[ii].pos2Link[2],
-													positionsInT[i].pos2Link[3] - positionsInTT[ii].pos2Link[3],
-												}
-											)
-											-- table.insert(
-											-- 	allDistances[t][tt],
-											-- 	{
-											-- 		t = t,
-											-- 		tt = tt,
-											-- 		i = i,
-											-- 		ii = ii,
-											-- 		distance = distance
-											-- 	}
-											-- )
+									local distance = transfUtils.getVectorLength(
+										{
+											positionsInT[i].pos2Link[1] - positionsInTT[ii].pos2Link[1],
+											positionsInT[i].pos2Link[2] - positionsInTT[ii].pos2Link[2],
+											positionsInT[i].pos2Link[3] - positionsInTT[ii].pos2Link[3],
+										}
+									)
+									-- table.insert(
+									-- 	allDistances[t][tt],
+									-- 	{
+									-- 		t = t,
+									-- 		tt = tt,
+									-- 		i = i,
+									-- 		ii = ii,
+									-- 		distance = distance
+									-- 	}
+									-- )
 
-											if minDistances[t][tt] == nil or minDistances[t][tt].distance > distance then
-												minDistances[t][tt] = {
-													t = t,
-													tt = tt,
-													i = i,
-													ii = ii,
-													distance = distance
-												}
-											end
-										end
+									if minDistances[t][tt] == nil or minDistances[t][tt].distance > distance then
+										minDistances[t][tt] = {
+											t = t,
+											tt = tt,
+											i = i,
+											ii = ii,
+											distance = distance
+										}
 									end
 								end
 							end
@@ -1057,12 +1064,7 @@ function data()
 				end
 
 				local _linkUnderpassesAndStairs = function()
-					local allPositions = {}
-					for t = 1, #params.terminals do
-						allPositions[t] = {}
-						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
-						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
-					end
+					local allPositions = _getAllPositions()
 					-- print('allPositions =') debugPrint(allPositions)
 
 					-- link underpasses and stairs along terminals, underground
@@ -1096,28 +1098,24 @@ function data()
 
 					for t = 1, #params.terminals do
 						local positionsInT = allPositions[t]
-						if positionsInT ~= nil then
-							local minDistance4T = nil
-							for tt = t + 1, #params.terminals do
-								local positionsInTT = allPositions[tt]
-								if positionsInTT ~= nil then
-									if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
-										if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
-											minDistance4T = minDistances[t][tt]
-										end
-									end
+						local minDistance4T = nil
+						for tt = t + 1, #params.terminals do
+							local positionsInTT = allPositions[tt]
+							if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
+								if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
+									minDistance4T = minDistances[t][tt]
 								end
 							end
-							if minDistance4T ~= nil then
-								result.models[#result.models+1] = {
-									id = _constants.passengerLaneModelId,
-									-- tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtils.get1MLaneTransf(
-										allPositions[minDistance4T.t][minDistance4T.i].pos2Link,
-										allPositions[minDistance4T.tt][minDistance4T.ii].pos2Link
-									)
-								}
-							end
+						end
+						if minDistance4T ~= nil then
+							result.models[#result.models+1] = {
+								id = _constants.passengerLaneModelId,
+								-- tag = slotHelpers.mangleModelTag(t, false),
+								transf = transfUtils.get1MLaneTransf(
+									allPositions[minDistance4T.t][minDistance4T.i].pos2Link,
+									allPositions[minDistance4T.tt][minDistance4T.ii].pos2Link
+								)
+							}
 						end
 					end
 				end
@@ -1155,12 +1153,7 @@ function data()
 				print('passenger platforms linked')
 
 				local _linkStairs2Subways = function()
-					local allPositions = {}
-					for t = 1, #params.terminals do
-						allPositions[t] = {}
-						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
-						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
-					end
+					local allPositions = _getAllPositions()
 					-- print('allPositions =') debugPrint(allPositions)
 
 					for slotId, subway in pairs(params.subways) do
