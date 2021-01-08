@@ -1,3 +1,5 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+
 local helpers = {}
     local _minExtent = 0.1
     local _tolerance = 0.1
@@ -53,6 +55,51 @@ local helpers = {}
         -- }
         return {
             type = 'NONE'
+        }
+    end
+
+    helpers.getSubwayMetadata = function()
+        return {
+            transportNetworkProvider = {
+                laneLists = {
+                    { -- into the model
+                        linkable = true, -- false, --true,
+                        nodes = {
+                            {
+                                { -1, 0, 0 },
+                                { 1, 0, 0 },
+                                3,
+                            },
+                            {
+                                { 0, 0, 0 },
+                                { 1, 0, 0 },
+                                3,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                    { -- down into the earth
+                        linkable = false, -- false, --true,
+                        nodes = {
+                            {
+                                { 0, 0, 0 },
+                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, 0 },
+                                3,
+                            },
+                            {
+                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, _constants.subwayPos2LinkZ },
+                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, 0 },
+                                3,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = { },
+            },
         }
     end
 

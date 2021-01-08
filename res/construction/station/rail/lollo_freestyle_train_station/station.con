@@ -1027,13 +1027,7 @@ function data()
 									-- if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
 									if minDistances[t] == nil then minDistances[t] = {} end
 
-									local distance = transfUtils.getVectorLength(
-										{
-											positionsInT[i].pos2Link[1] - positionsInTT[ii].pos2Link[1],
-											positionsInT[i].pos2Link[2] - positionsInTT[ii].pos2Link[2],
-											positionsInT[i].pos2Link[3] - positionsInTT[ii].pos2Link[3],
-										}
-									)
+                                    local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
 									-- table.insert(
 									-- 	allDistances[t][tt],
 									-- 	{
@@ -1162,13 +1156,13 @@ function data()
 						elseif subway.transf == nil then
 							print ('ERROR: subway[', slotId, '] has no transf')
 						elseif params.modules[slotId] ~= nil then
-							local subwayPosition = transfUtils.transf2Position(transfUtilsUG.mul(subway.transf, inverseMainTransf))
+							local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(subway.transf2Link, inverseMainTransf))
 							for t = 1, #params.terminals do
 								-- print('attempting to link terminal t =', t, 'to subway')
 								local minDistance = nil
 								local minDistanceI = nil
 								for i = 1, #allPositions[t] do
-									local distance = transfUtils.getPositionsDistance(subwayPosition, allPositions[t][i].pos2Link)
+									local distance = transfUtils.getPositionsDistance(subwayPos2Link, allPositions[t][i].pos2Link)
 									if minDistance == nil or minDistance > distance then
 										minDistance = distance
 										minDistanceI = i
@@ -1183,7 +1177,7 @@ function data()
 										-- tag = slotHelpers.mangleModelTag(t, false),
 										transf = transfUtils.get1MLaneTransf(
 											allPositions[t][minDistanceI].pos2Link,
-											subwayPosition
+											subwayPos2Link
 										)
 									}
 								end

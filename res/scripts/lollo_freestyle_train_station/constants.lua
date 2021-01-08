@@ -1,5 +1,7 @@
 local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 
+local _maxPercentageDeviation4Midpoint = 1.1
+
 local constants = {
     cargoPlatformTracksCategory = 'cargo-platform-tracks',
     invisiblePlatformTracksCategory = 'invisible-platform-tracks',
@@ -14,8 +16,13 @@ local constants = {
     underpassZ = -4,
     underpassLengthM = 1, -- don't change this, it must stay 1
     stairs2SubwayZ = 4,
-    subwayZ = -4,
+    subwayPos2LinkX = 4,
+    subwayPos2LinkY = 0,
+    subwayPos2LinkZ = -4,
     platformLiftZShift = -0.1,
+
+    maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
+    minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,
 
     maxCargoWaitingAreaEdgeLength = 9, -- do not tamper with this
     maxPassengerWaitingAreaEdgeLength = 9, -- do not tamper with this
@@ -120,10 +127,6 @@ local constants = {
         0, 0, 0, 1
     }
 }
-
-constants.maxPercentageDeviation4Midpoint = 1.1
-constants.minPercentageDeviation4Midpoint = 1 / constants.maxPercentageDeviation4Midpoint
-
 
 local _idBasesSortedDesc = {}
 for k, v in pairs(constants.idBases) do

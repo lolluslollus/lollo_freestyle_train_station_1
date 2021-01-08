@@ -77,6 +77,10 @@ local _actions = {
         local newSubway_Value = {
             transf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
         }
+        newSubway_Value.transf2Link = transfUtilsUG.mul(
+            newSubway_Value.transf,
+            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, _constants.subwayPos2LinkZ, 1 }
+        )
 
         newParams.modules[newSubway_Key] = {
             metadata = { -- it gets overwritten

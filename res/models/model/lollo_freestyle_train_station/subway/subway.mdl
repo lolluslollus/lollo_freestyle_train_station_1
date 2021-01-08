@@ -23,48 +23,7 @@ function data()
                 visibleTo = 1000,
             },
         },
-        metadata = {
-            transportNetworkProvider = {
-                laneLists = {
-                    { -- into the model
-                        linkable = true, -- false, --true,
-                        nodes = {
-                            {
-                                { -1, 0, 0 },
-                                { 1, 0, 0 },
-                                3,
-                            },
-                            {
-                                { 0, 0, 0 },
-                                { 1, 0, 0 },
-                                3,
-                            },
-                        },
-                        transportModes = { 'PERSON', },
-                        speedLimit = 20,
-                    },
-                    { -- down into the earth
-                        linkable = false, -- false, --true,
-                        nodes = {
-                            {
-                                { 0, 0, 0 },
-                                { 4, 0, 0 },
-                                3,
-                            },
-                            {
-                                { 4, 0, _constants.subwayZ },
-                                { 4, 0, 0 },
-                                3,
-                            },
-                        },
-                        transportModes = { 'PERSON', },
-                        speedLimit = 20,
-                    },
-                },
-                runways = { },
-                terminals = { },
-            },
-        },
+        metadata = _mdlHelpers.getSubwayMetadata(),
         version = 1
     }
 end
