@@ -39,7 +39,7 @@ function data()
             table.insert(
                 result.models,
                 {
-                    id = _constants.subwayModelId,
+                    id = _constants.subwayUnconnectedModelId,
                     transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
                 }
             )

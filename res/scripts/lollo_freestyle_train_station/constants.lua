@@ -83,6 +83,7 @@ local constants = {
     passengerLaneStairs2SubwayModelId = 'lollo_freestyle_train_station/passenger_lane_stairs2Subway.mdl',
     stairs2SubwayModelId = 'lollo_freestyle_train_station/subway/stairs2Subway.mdl',
     subwayModelId = 'lollo_freestyle_train_station/subway/subway.mdl',
+    subwayUnconnectedModelId = 'lollo_freestyle_train_station/subway/subway_unconnected.mdl',
 
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
     passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module',
