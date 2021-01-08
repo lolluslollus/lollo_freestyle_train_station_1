@@ -292,7 +292,7 @@ function data()
                         childId = 'RootNode',
                         fitting = 'SCALE',
                         nLines = 1,
-                        renderMode = "EMISSIVE",
+                        -- renderMode = "EMISSIVE",
                         size = {5.2, .6},
                         --transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -5.333, .23, 1},
                         transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.8, -4.333, 4.66, 1},

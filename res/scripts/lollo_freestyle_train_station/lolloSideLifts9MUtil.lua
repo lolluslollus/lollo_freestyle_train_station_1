@@ -429,7 +429,7 @@ return function(height)
                         alphaMode = 'BLEND',
                         childId = 'RootNode',
                         fitting = 'SCALE',
-                        renderMode = "EMISSIVE",
+                        -- renderMode = "EMISSIVE",
                         -- nLines = 1,
                         size = {5.2, 0.6},
                         -- size = {4.0, 0.6},

@@ -1,7 +1,7 @@
 local zedShift4groundRoof = 2.89 -- micro shift to avoid flickering
 local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.8, 0, 0, 0, 0, 0.07, 0, 0, 0.5, zedShift4groundRoof, 1}
-local _lampLeftTransf = {1, -1, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, -7.5, -4, 0, 1}
-local _lampRightTransf = {-1, -1, 0, 0, 1, -1, 0, 0, 0, 0, 1, 0, 7.5, -4, 0, 1}
+local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -7.5, -4, 0, 1}
+local _lampRightTransf = {-0.71, -0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  7.5, -4, 0, 1}
 local _streetPillarY = -3.8
 local _idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 local _stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -42,17 +42,6 @@ function data()
                                     name = 'station_3_roof_perron_side',
                                     transf = groundRoofTransf
                                 },
-                                -- {
-                                --     -- floor paving
-                                --     --materials = {'station/rail/era_c/era_c_trainstation_floor_1.mtl'}, -- same as era_c_station_floor_1.mtl
-                                --     --materials = {'station/rail/era_c/era_c_station_floor_1.mtl'},
-                                --     --materials = {'street/new_medium_paving.mtl'}, -- tarmac
-                                --     --materials = {'station/road/streetstation/streetstation_perron_base_mid.mtl'}, -- modern-ish paving
-                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'}, -- modern-ish paving
-                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod0.msh',
-                                --     name = 'station_1_main_perron',
-                                --     transf = groundFloorPavingTransf
-                                -- },
                                 {
                                     -- lamp left
                                     materials = {'asset/lamp_new.mtl'},
@@ -137,13 +126,6 @@ function data()
                                     name = 'station_3_roof_perron_side',
                                     transf = groundRoofTransf
                                 },
-                                -- {
-                                --     -- floor paving
-                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'},
-                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod1.msh',
-                                --     name = 'station_1_main_perron',
-                                --     transf = groundFloorPavingTransf
-                                -- },
                                 {
                                     -- lamp left
                                     materials = {'asset/lamp_new.mtl'},
@@ -186,13 +168,6 @@ function data()
                                     name = 'station_3_roof_perron_side',
                                     transf = groundRoofTransf
                                 },
-                                -- {
-                                --     -- floor paving
-                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'},
-                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod2.msh',
-                                --     name = 'station_1_main_perron',
-                                --     transf = groundFloorPavingTransf
-                                -- }
                             },
                             name = 'station_square_1_main_grp',
                             transf = _stationMainTransf
