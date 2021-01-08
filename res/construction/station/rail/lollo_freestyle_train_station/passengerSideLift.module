@@ -67,7 +67,7 @@ return {
 		}
 
 		-- add some deco
-		local _clockY = -5.3
+		local _clockY = -4.3
 		if buildingHeight == 10 then
 			result.models[#result.models + 1] = {
 				id = 'station/rail/asset/era_c_big_clock.mdl',
@@ -119,7 +119,7 @@ return {
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
-					{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  3.7, -4.3, 0.8, 1 }
+					{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0.8, 1 }
 				),
 				tag = tag
 			}
@@ -128,7 +128,7 @@ return {
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
-					{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -3.7, -4.3, 0.8, 1 }
+					{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0.8, 1 }
 				),
 				tag = tag
 			}

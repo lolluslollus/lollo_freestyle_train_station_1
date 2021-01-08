@@ -41,7 +41,7 @@ return function(height)
     local _wallsBelowThePlatformLod1 = _getWallsBelowPlatform(1)
 
     local zedShift4groundRoof = -height + 2.9 -- - height * .6 + 2.60
-    local groundRoofTransf = {0.4, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -2.75, zedShift4groundRoof, 1}
+    local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -2.75, zedShift4groundRoof, 1}
 
     local zedShift4groundPillar = -height + 3.2
     -- local zedZoom4groundPillar = -1 -- -1.075
@@ -215,6 +215,7 @@ return function(height)
             --             childId = 'RootNode',
             --             fitting = 'SCALE',
             --             nLines = 1,
+            --             renderMode = "EMISSIVE",
             --             size = {5.2, .6},
             --             transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -2.833, .23, 1},
             --             type = 'STATION_NAME',
@@ -291,9 +292,10 @@ return function(height)
                         },
                         {
                             -- sideways, to connect extra elements
+                            linkable = true,
                             nodes = {
                                 {
-                                    {-6, -0.3, -height},
+                                    {-4.5, -0.3, -height},
                                     {1, 0.1, 0},
                                     2.4
                                 },
@@ -308,7 +310,7 @@ return function(height)
                                     2.4
                                 },
                                 {
-                                    {6, -0.3, -height},
+                                    {4.5, -0.3, -height},
                                     {1, -0.1, 0},
                                     2.4
                                 },

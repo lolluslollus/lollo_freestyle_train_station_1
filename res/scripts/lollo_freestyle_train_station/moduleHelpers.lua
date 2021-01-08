@@ -317,21 +317,22 @@ helpers.tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
 
     local buildingModelId = 'lollo_freestyle_train_station/lift/'
     if bridgeHeight < 5 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_5.mdl'
+        -- buildingModelId = buildingModelId .. 'elevated_stairs_5.mdl'
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_5.mdl'
     elseif bridgeHeight < 10 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_10.mdl'
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_10.mdl'
     elseif bridgeHeight < 15 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_15.mdl'
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_15.mdl'
     elseif bridgeHeight < 20 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_20.mdl'
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_20.mdl'
     elseif bridgeHeight < 25 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_25.mdl'
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_25.mdl'
     elseif bridgeHeight < 30 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_30.mdl'
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_30.mdl'
     elseif bridgeHeight < 35 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_35.mdl'
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_35.mdl'
     elseif bridgeHeight < 40 then
-        buildingModelId = buildingModelId .. 'elevated_stairs_40.mdl'
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_40.mdl'
     else
         return false
     end

@@ -8,41 +8,44 @@ return {
 			indices = {
 				normal = {
 					count = 984,
-					offset = 5116,
+					offset = 4976,
 				},
 				position = {
 					count = 984,
-					offset = 4132,
+					offset = 5960,
 				},
 				tangent = {
 					count = 984,
-					offset = 6100,
+					offset = 6944,
 				},
 				uv0 = {
 					count = 984,
-					offset = 3148,
+					offset = 3992,
 				},
+			},
+			materials = {
+				"station/train/passenger/trainstation_1920_floor_1.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 708,
+			count = 720,
 			numComp = 3,
-			offset = 1512,
+			offset = 1576,
 		},
 		position = {
 			count = 672,
 			numComp = 3,
-			offset = 840,
+			offset = 2296,
 		},
 		tangent = {
-			count = 928,
+			count = 1024,
 			numComp = 4,
-			offset = 2220,
+			offset = 2968,
 		},
 		uv0 = {
-			count = 840,
+			count = 1576,
 			numComp = 2,
 			offset = 0,
 		},
