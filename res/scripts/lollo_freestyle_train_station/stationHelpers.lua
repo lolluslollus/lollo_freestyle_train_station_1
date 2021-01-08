@@ -11,7 +11,7 @@ local _getStationEndNodeIds = function(con, nTerminal, stationConstructionId)
     -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
     -- print('getStationEndNodesUnsorted, con =') debugPrint(con)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    if not(con) or con.fileName ~= _constants.stationConFileNameLong then
+    if not(con) or con.fileName ~= _constants.stationConFileName then
         return {}
     end
 
@@ -77,7 +77,7 @@ local helpers = {
         local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
         local cons = game.interface.getEntities(
             {pos = squareCentrePosition, radius = searchRadius},
-            {type = "CONSTRUCTION", includeData = true, fileName = _constants.stationConFileNameLong}
+            {type = "CONSTRUCTION", includeData = true, fileName = _constants.stationConFileName}
         )
         -- #cons returns 0 coz it's not a list
         local results = {}
@@ -460,19 +460,6 @@ local helpers = {
         return results
     end,
 
-    addGroupEveryN = function(positions, nEdgesInGroup) -- , nGroupName)
-        -- if stringUtils.isNullOrEmptyString(nGroupName) or arrayUtils.arrayHasValue({'catenary', 'posTanX2', 'trackType', 'trackTypeName', 'type', 'typeIndex'}, nGroupName) then
-        --     print('ERROR: wrong nGroupName') debugPrint(nGroupName)
-        -- end
-        local nGroup = 1
-        local nCounterInGroup = 0
-        for _, position in pairs(positions) do
-            position[tostring(nEdgesInGroup)] = nGroup
-            nCounterInGroup = nCounterInGroup + 1
-            if nCounterInGroup >= nEdgesInGroup then nCounterInGroup = 0 nGroup = nGroup + 1 end
-        end
-    end,
-
     getCrossConnectors = function(leftPlatforms, centrePlatforms, rightPlatforms, isTrackOnPlatformLeft)
         local results = {}
         for i = 1, #centrePlatforms do
@@ -771,7 +758,7 @@ helpers.getStationEndEntities = function(stationConstructionId)
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
-    if not(con) or con.fileName ~= _constants.stationConFileNameLong then
+    if not(con) or con.fileName ~= _constants.stationConFileName then
         print('ERROR: getStationEndEntities con.fileName =') debugPrint(con.fileName)
         return nil
     end
@@ -1265,7 +1252,7 @@ end
 -- helpers.getStationProperties = function(nearestConstructionIds, nearestEdgeId)
 --     for _, conId in pairs(nearestConstructionIds) do
 --         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
---         if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileNameLong then
+--         if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
 --             local params = arrayUtils.cloneDeepOmittingFields(con.params, nil, true)
 --             -- for _, edgeId in pairs(nearestEdgeIds) do
 --             local edgeId = nearestEdgeId

@@ -6,7 +6,7 @@ local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
 local cons = game.interface.getEntities(
     {pos = squareCentrePosition, radius = searchRadius},
-    {type = "CONSTRUCTION", includeData = true, fileName = _constants.stationConFileNameLong}
+    {type = "CONSTRUCTION", includeData = true, fileName = _constants.stationConFileName}
 )
 -- returns all constructions of the given type, with type table
 -- api.engine.getComponent(25322, api.type.ComponentType.CONSTRUCTION) returns very similar data
@@ -216,7 +216,7 @@ local sampleCons = {
 
 local stationGroups = game.interface.getEntities(
     {pos = squareCentrePosition, radius = searchRadius},
-    {type = "STATION_GROUP", includeData = true, fileName = _constants.stationConFileNameLong}
+    {type = "STATION_GROUP", includeData = true, fileName = _constants.stationConFileName}
 )
 -- returns all station groups, ignoring the file name, with type table
 -- it is the only one to know the names
@@ -258,7 +258,7 @@ local sampleStationGroups = {
 
 local stations = game.interface.getEntities(
     {pos = squareCentrePosition, radius = searchRadius},
-    {type = "STATION", includeData = true, fileName = _constants.stationConFileNameLong}
+    {type = "STATION", includeData = true, fileName = _constants.stationConFileName}
 )
 -- returns all stations, ignoring the file name, with type table
 local sampleStations = {

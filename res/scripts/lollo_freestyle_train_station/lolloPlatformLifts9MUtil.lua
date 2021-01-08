@@ -1,6 +1,6 @@
 return function(height)
     local _constants = require('lollo_freestyle_train_station.constants')
-    local _underpassDepth = _constants.underpassDepthM
+    local _underpassDepth = -_constants.underpassZ
 
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
     -- LOLLO TODO station walls peep through steep platforms

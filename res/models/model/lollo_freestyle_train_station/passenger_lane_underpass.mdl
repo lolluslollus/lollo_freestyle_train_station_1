@@ -28,12 +28,12 @@ function data()
                                 2.4,
                             },
                             {
-                                { 0.5, 0, - _constants.underpassDepthM, },
+                                { 0.5, 0, _constants.underpassZ, },
                                 { 0.5, 0, 0, },
                                 2.4,
                             },
                             {
-                                { 0.5, 0, - _constants.underpassDepthM, },
+                                { 0.5, 0, _constants.underpassZ, },
                                 { 0.5, 0, 0, },
                                 2.4,
                             },

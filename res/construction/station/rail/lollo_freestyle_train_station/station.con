@@ -215,6 +215,7 @@ function data()
 				crossConnectorPositions = {},
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
+				stairs2SubwayPositions = {},
 				underpassPositions = {},
 				vehicleNodes = {}
 			}
@@ -804,11 +805,14 @@ function data()
 					for i = 2, #params.terminals[t].centrePlatforms - 1 do -- skip the outermost edges to avoid collisions, the game is very picky here.
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
+						local isStairs2Subway = params.modules[result.mangleId(t, i, _constants.idBases.stairs2SubwaySlotId)] ~= nil
+
 						local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 						local centreLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 						local myModelId = _constants.passengerLaneModelId
 						if isPlatformLift then myModelId = _constants.passengerLaneLiftModelId
 						elseif isUnderpass then myModelId = _constants.passengerLaneUnderpassModelId
+						elseif isStairs2Subway then myModelId = _constants.passengerLaneStairs2SubwayModelId
 						end
 						result.models[#result.models+1] = {
 							id = myModelId,
@@ -816,10 +820,28 @@ function data()
 							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
 						}
 
-						if isUnderpass then
+						if isStairs2Subway then
+							local stairs2SubwayTopTransf = transfUtilsUG.mul(
+								centreLaneTransf,
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ + _constants.stairs2SubwayZ, 1 }
+							)
+							if result.terminateConstructionHookInfo.stairs2SubwayPositions[t] == nil then result.terminateConstructionHookInfo.stairs2SubwayPositions[t] = {} end
+							result.terminateConstructionHookInfo.stairs2SubwayPositions[t][#result.terminateConstructionHookInfo.stairs2SubwayPositions[t]+1] = {
+								t = t,
+								pos1 = posTanX2[1][1],
+								pos2 = posTanX2[2][1],
+								posTop = {
+									stairs2SubwayTopTransf[13],
+									stairs2SubwayTopTransf[14],
+									stairs2SubwayTopTransf[15]
+								}
+							}
+						elseif isUnderpass then
 							local underpassBottomTransf = transfUtilsUG.mul(
 								centreLaneTransf,
-								{ 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ - _constants.underpassDepthM, 1 }
+								-- LOLLO TODO check the effect of NOT scaling x and y
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ + _constants.underpassZ, 1 }
+								-- { 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ + _constants.underpassZ, 1 }
 							)
 							if result.terminateConstructionHookInfo.underpassPositions[t] == nil then result.terminateConstructionHookInfo.underpassPositions[t] = {} end
 							result.terminateConstructionHookInfo.underpassPositions[t][#result.terminateConstructionHookInfo.underpassPositions[t]+1] = {
@@ -923,7 +945,45 @@ function data()
 					end
 				end
 				_addUnderpassSlots()
+
+				local _addStairs2SubwaySlots = function()
+					if isCargoTerminal then return end
+
+					for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
+						if params.terminals[t].centrePlatforms[i].type == 2 then -- only in tunnels
+							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
+							table.insert(result.slots, {
+								-- height = 1,
+								id = result.mangleId(t, i, _constants.idBases.stairs2SubwaySlotId),
+								spacing = {2.5, 2.5, 1.5, 1.5},
+								transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
+								type = _constants.stairs2SubwayModuleType,
+							})
+						end
+					end
+				end
+				_addStairs2SubwaySlots()
 			end -- loop over terminals
+
+			local _addSubwaySlots = function()
+				if not(params.subways) then return end
+
+				for i = 1, #params.subways do
+					local absoluteSubwayTransf = params.subways[i].transf
+					if absoluteSubwayTransf == nil then
+						print ('WARNING: subway transf is NIL')
+					else
+						table.insert(result.slots, {
+							-- height = 0,
+							id = result.mangleId(0, i, _constants.idBases.subwaySlotId),
+							spacing = {2.5, 2.5, 1.5, 1.5},
+							transf = transfUtilsUG.mul(absoluteSubwayTransf, inverseMainTransf),
+							type = _constants.subwayModuleType,
+						})
+					end
+				end
+			end
+			_addSubwaySlots()
 
 			result.terminateConstructionHook = function()
 				-- print('terminateConstructionHook starting')

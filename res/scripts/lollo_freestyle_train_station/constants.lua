@@ -11,9 +11,10 @@ local constants = {
 
     platformZ = -1.0,
     tracksideBitsZ = -1.05,
-    underpassDepthM = 4,
+    underpassZ = -4,
     underpassLengthM = 1, -- don't change this, it must stay 1
-    underpassZed = -3,
+    stairs2SubwayZ = 4,
+    subwayZ = -4,
     platformLiftZShift = -0.1,
 
     maxCargoWaitingAreaEdgeLength = 9, -- do not tamper with this
@@ -24,8 +25,8 @@ local constants = {
     minSplitDistance = 2,
 
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
-    stationConFileNameLong = 'station/rail/lollo_freestyle_train_station/station.con',
-    stationConFileNameShort = 'lollo_freestyle_train_station/station.con',
+    stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
+    subwayConFileName = 'lollo_freestyle_train_station/subway.con',
 
     flatStairsModuleType = 'freestyleTrainStationFlatStairs',
     flatCargoArea5x5ModuleType = 'freestyleTrainStationFlatCargoArea5x5',
@@ -49,6 +50,8 @@ local constants = {
     cargoTerminalModuleType = 'freestyleTrainStationCargoTerminal',
     passengerTerminalModuleType = 'freestyleTrainStationPassengerTerminal',
     underpassModuleType = 'freestyleTrainStationUnderpass',
+    stairs2SubwayModuleType = 'freestyleTrainStationStairs2Subway',
+    subwayModuleType = 'freestyleTrainStationSubway',
 
     flatStairsSmoothModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/stairs_smooth.mdl',
     flatStairsSteepModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/stairs_steep.mdl',
@@ -69,8 +72,6 @@ local constants = {
     underpassGroundModelFileName = 'lollo_freestyle_train_station/underpass/underpassFloor.mdl',
     underpassBuilding10MModelFileName = 'lollo_freestyle_train_station/underpass/underpass-building-10m.mdl',
     underpassBuilding8MModelFileName = 'lollo_freestyle_train_station/underpass/underpass-building-8m.mdl',
-    cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
-    passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module',
     trackWaypointModelId = 'lollo_freestyle_train_station/railroad/track_waypoint.mdl',
     platformWaypointModelId = 'lollo_freestyle_train_station/railroad/platform_waypoint.mdl',
     cargoWaitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
@@ -79,6 +80,12 @@ local constants = {
     passengerLaneUnderpassModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl',
     passengerLaneModelId = 'lollo_freestyle_train_station/passenger_lane.mdl',
     passengerLaneLinkableModelId = 'lollo_freestyle_train_station/passenger_lane_linkable.mdl',
+    passengerLaneStairs2SubwayModelId = 'lollo_freestyle_train_station/passenger_lane_stairs2Subway.mdl',
+    stairs2SubwayModelId = 'lollo_freestyle_train_station/subway/stairs2Subway.mdl',
+    subwayModelId = 'lollo_freestyle_train_station/subway/subway.mdl',
+
+    cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
+    passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module',
 
     cargoWaitingAreaTagRoot = 'cargoWaitingArea_',
     passengersWaitingAreaTagRoot = 'passengersWaitingArea_',
@@ -101,6 +108,8 @@ local constants = {
         slopedArea1x10SlotId = 32000000,
         slopedArea1x20SlotId = 33000000,
         underpassSlotId = 40000000,
+        stairs2SubwaySlotId = 50000000,
+        subwaySlotId = 51000000,
     },
     idTransf = {
         1, 0, 0, 0,

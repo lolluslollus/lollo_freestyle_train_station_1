@@ -28,6 +28,7 @@ local _eventNames = {
     REBUILD_ALL_TRACKS_REQUESTED = 'rebuildAllTracksRequested',
     REBUILD_1_TRACK_REQUESTED = 'rebuild1TrackRequested',
     REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
+    SUBWAY_JOIN_REQUESTED = 'subwayJoinRequested',
     TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
     TRACK_WAYPOINT_1_SPLIT_REQUESTED = 'trackWaypoint1SplitRequested',
     TRACK_WAYPOINT_2_SPLIT_REQUESTED = 'trackWaypoint2SplitRequested',
@@ -37,6 +38,59 @@ local _eventNames = {
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
+    addSubway = function(stationConstructionId, subwayConstructionId)
+        print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
+        if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then return end
+        if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
+
+        local oldCon = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+        if oldCon == nil then return end
+
+        local subwayTransf = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION).transf
+        if subwayTransf == nil then return end
+
+        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+        newCon.fileName = _constants.stationConFileName
+
+        local newSubways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true)
+        newSubways[#newSubways+1] = {
+            transf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
+        }
+        local newParams = {
+            mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
+            modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
+            seed = oldCon.params.seed + 1,
+            subways = newSubways,
+            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
+        }
+        newCon.params = newParams
+        newCon.transf = oldCon.transf
+
+        newCon.playerEntity = api.engine.util.getPlayer()
+
+        local proposal = api.type.SimpleProposal.new()
+        proposal.constructionsToAdd[1] = newCon
+        proposal.constructionsToRemove = { stationConstructionId, subwayConstructionId }
+        proposal.old2new = {
+            [stationConstructionId] = 0,
+        }
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- we need it here, or we will have trouble later building the snappy tracks
+        -- context.cleanupStreetGraph = true -- we need it here, or we will have trouble later building the snappy tracks
+        -- context.gatherBuildings = false -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer()
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                print('addSubway callback, success =', success)
+                -- debugPrint(result)
+            end
+        )
+    end,
+
     bulldozeMarker = function(conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
@@ -199,7 +253,7 @@ local _actions = {
         or nil
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = _constants.stationConFileNameLong
+        newCon.fileName = _constants.stationConFileName
 
         local params_newModuleKey = slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId)
         local params_newModuleValue = {
@@ -234,6 +288,7 @@ local _actions = {
                 modules = { [params_newModuleKey] = params_newModuleValue },
                 -- seed = 123,
                 seed = math.abs(math.ceil(conTransf[13] * 1000)),
+                subways = { },
                 terminals = { params_newTerminal },
             }
             newCon.transf = api.type.Mat4f.new(
@@ -248,6 +303,7 @@ local _actions = {
                 mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
                 seed = oldCon.params.seed + 1,
+                subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
                 terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
             }
             newParams.modules[params_newModuleKey] = params_newModuleValue
@@ -306,7 +362,7 @@ local _actions = {
         if type(nTerminalToRemove) ~= 'number' then return end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = _constants.stationConFileNameLong
+        newCon.fileName = _constants.stationConFileName
 
         local newParams = {
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
@@ -1279,6 +1335,13 @@ function data()
                         )
                     end
                 end
+            elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
+                if not(edgeUtils.isValidAndExistingId(args.join2StationId))
+                or not(edgeUtils.isValidAndExistingId(args.subwayId)) then
+                    print('ERROR: args.join2StationId or args.subwayId is invalid')
+                    return
+                end
+                _actions.addSubway(args.join2StationId, args.subwayId)
             end
         end,
         guiHandleEvent = function(id, name, args)
@@ -1293,7 +1356,7 @@ function data()
 
                         for _, constructionId in pairs(args.proposal.toRemove) do
                             local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
-                            if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileNameLong then
+                            if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
                                 constructionDataBak = {
                                     constructionId = constructionId,
                                     endEntities = stationHelpers.getStationEndEntities(constructionId),
@@ -1385,61 +1448,39 @@ function data()
                                     print('bulldozing something else than', constructionDataBak.constructionId)
                                 end
                             end
-                        -- elseif id == 'constructionBuilder' then
-                        --     if not args.result or not args.result[1] then return end
+                        elseif id == 'constructionBuilder' then
+                            if not args.result or not args.result[1] then return end
 
-                        --     -- print('args =') debugPrint(args)
-                        --     local conTransf = stationHelpers.getNewConstructionTransf(args)
-                        --     if conTransf then
-                        --         print('conTransf =') debugPrint(conTransf)
-                        --         local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
-                        --         print('nearestStationIds =') debugPrint(nearestStationIds)
-                        --         local nearestStationGroupIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION_GROUP)
-                        --         print('nearestStationGroupIds =') debugPrint(nearestStationGroupIds)
-                        --         local nearestConstructionIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.CONSTRUCTION)
-                        --         print('nearestConstructionIds =') debugPrint(nearestConstructionIds)
-                        --         -- local nearestEdgeIds = edgeUtils.getNearbyObjectIds(conTransf, 0.001, api.type.ComponentType.BASE_EDGE)
-                        --         local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf)
-                        --         print('nearestEdgeId =') debugPrint(nearestEdgeId)
-                        --         local constructionEntityId = args.result[1]
-                        --         print('constructionEntityId =') debugPrint(constructionEntityId)
+                            -- print('args =') debugPrint(args)
+                            local subwayId = args.result[1]
+                            print('subway construction built, construction id =') debugPrint(subwayId)
 
-                        --         local stationData = stationHelpers.getStationProperties(nearestConstructionIds, nearestEdgeId)
-                        --         print('platformData =') debugPrint(stationData)
-                        --         -- LOLLO reject the marker if it falls on a platform, whose waiting area on this side is already in use
-                        --         -- on a station, use it for joining
-                        --         if stationData then
-                        --             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                        --                 string.sub(debug.getinfo(1, 'S').source, 1),
-                        --                 _eventId,
-                        --                 _eventNames.PLATFORM_MARKER_BUILT,
-                        --                 {
-                        --                     platformMarkerConstructionEntityId = constructionEntityId,
-                        --                     join2StationId = stationData.stationConstructionId,
-                        --                     nTerminal = stationData.nTerminal
-                        --                 }
-                        --             ))
-                        --             return
-                        --         end
+                            local conTransf = stationHelpers.getNewConstructionTransf(args, _constants.subwayConFileName)
+                            if not(conTransf) then return end
 
-                        --         local platformData = stationHelpers.getPlatformData(nearestEdgeId)
-                        --         print('platformData') debugPrint(platformData)
+                            print('conTransf =') debugPrint(conTransf)
+                            -- local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
+                            local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, 500)
+                            print('nearestStations =') debugPrint(nearbyFreestyleStations)
+                            if #nearbyFreestyleStations > 0 then
+                                -- local nearestStationGroupIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION_GROUP)
+                                -- print('nearestStationGroupIds =') debugPrint(nearestStationGroupIds)
+                                -- local nearestConstructionIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.CONSTRUCTION)
+                                -- print('nearestConstructionIds =') debugPrint(nearestConstructionIds)
+                                -- local nearestEdgeIds = edgeUtils.getNearbyObjectIds(conTransf, 0.001, api.type.ComponentType.BASE_EDGE)
+                                -- local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf)
+                                -- print('nearestEdgeId =') debugPrint(nearestEdgeId)
 
-                        --         -- not on a station, is it on a free platform-track?
-                        --         if platformData then
-                        --             -- LOLLO behave like the waypoint. Remember, this is going to replace waypoints. Not anymore.
-                        --             return
-                        --         end
-
-                        --         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                        --                 string.sub(debug.getinfo(1, 'S').source, 1),
-                        --                 _eventId,
-                        --                 _eventNames.BULLDOZE_MARKER_REQUESTED,
-                        --                 {
-                        --                     platformMarkerConstructionEntityId = constructionEntityId,
-                        --                 }
-                        --             ))
-                        --     end
+                                guiHelpers.showNearbyStationPicker(
+                                    nearbyFreestyleStations,
+                                    _eventId,
+                                    _eventNames.SUBWAY_JOIN_REQUESTED,
+                                    {
+                                        subwayId = subwayId
+                                        -- join2StationId will be added by the popup
+                                    }
+                                )
+                            end
                         elseif id == 'streetTerminalBuilder' then
                             -- waypoint, traffic light, my own waypoints built
                             if args and args.proposal and args.proposal.proposal
@@ -1649,7 +1690,7 @@ function data()
                                             nearbyFreestyleStations,
                                             _eventId,
                                             _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                            eventArgs
+                                            eventArgs -- join2StationId will be added by the popup
                                         )
                                     else
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
