@@ -36,8 +36,7 @@ return {
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-		local mainTransf = params.mainTransf
-		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+		local inverseMainTransf = transfUtils.getInverseTransf(params.mainTransf)
 
 		local ii1 = nTrackEdge - 1
 		local iiN = nTrackEdge + 1

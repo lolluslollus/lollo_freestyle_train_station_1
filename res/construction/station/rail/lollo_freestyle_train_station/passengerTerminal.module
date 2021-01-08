@@ -35,8 +35,7 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		local mainTransf = params.mainTransf
-		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+		local inverseMainTransf = transfUtils.getInverseTransf(params.mainTransf)
 
 		moduleHelpers.addEdges(params, result, inverseMainTransf, tag, nTerminal)
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)

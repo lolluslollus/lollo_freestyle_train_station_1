@@ -226,8 +226,8 @@ function data()
 			}
 
 			-- LOLLO NOTE the coordinates in terminals are absolute
-			local mainTransf = params.mainTransf
-			local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+			-- local mainTransf = params.mainTransf
+			local inverseMainTransf = transfUtils.getInverseTransf(params.mainTransf)
 			-- print('inverseMainTransf =') debugPrint(inverseMainTransf)
 
 			for t = 1, #params.terminals do

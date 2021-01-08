@@ -42,8 +42,7 @@ return {
 		-- params are the station params
 		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
 
-		local mainTransf = params.mainTransf
-		local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
+		local inverseMainTransf = transfUtils.getInverseTransf(params.mainTransf)
 
 		moduleHelpers.addEdges(params, result, inverseMainTransf, tag, nTerminal)
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
