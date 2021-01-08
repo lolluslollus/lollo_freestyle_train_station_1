@@ -1,3 +1,0 @@
-function data()
-    return require('lollo_freestyle_train_station/lolloElevatedStairsUtil')(30)
-end

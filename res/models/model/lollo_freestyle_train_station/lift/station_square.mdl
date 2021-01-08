@@ -15,8 +15,7 @@ function data()
             bbMax = {5.8, 1.0, 5.0},
             bbMin = {-5.8, -5.0, 0}
         },
-        -- LOLLO NOTE the collider here seems to have no effect.
-        -- We already get it in elevated_stairs.module, so never mind
+        -- LOLLO TODO check the collider
         collider = {
             params = {
                 halfExtents = {5.8, 3.0, 2.5}
@@ -437,7 +436,7 @@ function data()
                         renderMode = "EMISSIVE",
                         size = {5.2, 0.6},
                         -- transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -3.833, 3.63, 1},
-                        transf = {0.7, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -1.8, -3.833, 3.63, 1},
+                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0, -1.8, -3.833, 3.63, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }

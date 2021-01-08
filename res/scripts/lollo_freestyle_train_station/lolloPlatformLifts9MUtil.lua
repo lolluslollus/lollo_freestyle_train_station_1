@@ -52,28 +52,26 @@ return function(height)
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
     -- LOLLO NOTE I can make many of these, one for each height.
-    -- For example, platform_lifts_5.mdl, platform_lifts_10.mdl, and so on.
+    -- For example, platform_lifts_9_5_5.mdl, platform_lifts_9_5_10.mdl, and so on.
     -- Only the transformations above will change, if I am clever,
     -- and the height of the bounding box.
 
     --print('LOLLO height = ', height)
     return {
         boundingInfo = {
-            -- bbMax = {5.8, 1.0, 1.0},
-            bbMax = {5.8, 2.0, 1.0},
-            bbMin = {-5.8, -2.6, -height}
+            -- bbMax = {4.4, 2.0, 4.0}, -- this would be the building without vents or tunnel awereness
+            -- bbMin = {-4.4, -2.6, -height} -- this would be the building without vents or tunnel awereness
+            bbMax = {4.4, 2.0, 5.5}, -- a bit taller to protect the vents from bridges
+            bbMin = {-4.4, -2.6, -height -1.5} -- a bit lower to protect the floor from tunnels
         },
-        -- LOLLO NOTE the collider here seems to have no effect.
-        -- We already get it in platform_lifts.module, so never mind
         collider = {
-            -- params = {
-            --     halfExtents = {5.8, 2.4, 32.0}
-            -- },
-            -- transf = idTransf,
-            -- type = 'BOX'
-            params = {},
-            transf = idTransf,
-            type = 'MESH'
+            params = {
+                -- halfExtents = {4.4, 2.3, 2.0 + height * 0.5} -- this would be the building without vents or tunnel awereness
+                halfExtents = {4.4, 2.3, 5.0 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
+            },
+            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 2.0 - height * 0.5, 1 }, -- this would be the building without vents
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.5 - height * 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
+            type = 'BOX'
         },
         lods = {
             {
@@ -209,41 +207,8 @@ return function(height)
             }
         },
         metadata = {
-            -- labelList = {
-            --     labels = {
-            --         {
-            --             alignment = 'CENTER',
-            --             alphaMode = 'BLEND',
-            --             childId = 'RootNode',
-            --             fitting = 'SCALE',
-            --             nLines = 1,
-            --             renderMode = "EMISSIVE",
-            --             size = {5.2, .6},
-            --             transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -2.833, .23, 1},
-            --             type = 'STATION_NAME',
-            --             verticalAlignment = 'CENTER'
-            --         }
-            --     }
-            -- },
             transportNetworkProvider = {
                 laneLists = {
-                    -- {
-                    --     -- horizontally into the across underpass
-                    --     nodes = {
-                    --         {
-                    --             {0, -0.3, underpassZed},
-                    --             {0, 0.3, 0},
-                    --             2.4000000953674
-                    --         },
-                    --         {
-                    --             {0, 0, underpassZed},
-                    --             {0, 0.3, 0},
-                    --             2.4000000953674
-                    --         }
-                    --     },
-                    --     speedLimit = 20,
-                    --     transportModes = {'PERSON'}
-                    -- },
                     height > 0 and
                         {
                             -- straight down and then out

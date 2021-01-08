@@ -1,43 +1,44 @@
 local height = 0
 
 local zedShift4groundRoof = -height + 2.9 -- - height * .6 + 2.60
-local groundRoofTransf = {0.4, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -5.1, zedShift4groundRoof, 1}
+local groundRoofTransf = {0.3, 0, 0, 0,  0, 0.05, 0, 0,  0, 0, 0.07, 0,  0, -4.1, zedShift4groundRoof, 1}
 
 local zedShift4groundPillar = -height + 3.2
 local zedZoom4groundPillar = -1.07
-local frontLeftPillarTransf = {.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, -9.0, -5, zedShift4groundPillar, 1}
-local frontRightPillarTransf = {.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, 9.0, -5, zedShift4groundPillar, 1}
-local rearLeftPillarTransf = {.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, -9.0, -0.97, zedShift4groundPillar, 1}
-local rearRightPillarTransf = {.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, 9.0, -0.97, zedShift4groundPillar, 1}
+local frontLeftPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, -6.75, -4, zedShift4groundPillar, 1}
+local frontRightPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, 6.75, -4, zedShift4groundPillar, 1}
+local rearLeftPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, -6.75, -0.97, zedShift4groundPillar, 1}
+local rearRightPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, 6.75, -0.97, zedShift4groundPillar, 1}
 
 -- local zedShift4GroundFloor = -height - .79
 -- local groundFloorPavingTransf = {1.024, 0, 0, 0, 0, 1.30, 0, 0, 0, 0, 1, 0, 0, 1.25, zedShift4GroundFloor, 1}
 local stairsTransf = {0, -2, 0, 0, 2, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
-local roofTransf = {2.0, 0, 0, 0, 0, 0, 4.0, 0, 0, 1.59, 0, 0, 0.0, -5.24, 4.2, 1}
+-- local roofTransf = {2.0, 0, 0, 0,  0, 0, 4.0, 0,  0, 1.59, 0, 0,  0.0, -5.24, 4.2, 1}
+local roofTransf = {1.56, 0, 0, 0,  0, 0, 4.0, 0,  0, 1.19, 0, 0,  0.0, -4.24, 4.2, 1}
 --local solarOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.1, 5.25, 1}
 -- local solarTwoTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.4, 5.25, 1}
 -- local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, -2, 5.3, 1}
 -- local ventTwoTransf = {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -6, -2, 5.3, 1}
-local idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
-local stationMainTransf = {.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+local stationMainTransf = {.6, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 
 function data()
     return {
         boundingInfo = {
-            bbMax = {5.8, 1.0, 5.0}, -- this would be the building without vents or tunnel awereness
-            -- bbMin = {-5.8, -5.0, 0} -- this would be the building without vents or tunnel awereness
-            bbMin = {-5.8, -5.0, -1.5} -- a bit lower to protect the floor from tunnels
+            bbMax = {4.4, 1.0, 5.0}, -- this would be the building without vents or tunnel awereness
+            -- bbMin = {-4.4, -4.0, 0} -- this would be the building without vents or tunnel awereness
+            bbMin = {-4.4, -4.0, -1.5} -- a bit lower to protect the floor from tunnels
         },
         collider = {
             params = {
-                -- halfExtents = {5.8, 3.0, 2.5} -- this would be the building without vents or tunnel awereness
-                halfExtents = {5.8, 3.0, 5.5} -- a bit taller to protect the floor from tunnels
+                -- halfExtents = {4.4, 2.5, 2.5} -- this would be the building without vents or tunnel awereness
+                halfExtents = {4.4, 2.5, 5.5} -- a bit taller to protect the floor from tunnels
             },
-            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2, 2.5, 1 }, -- this would be the building without vents
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2, 1.0, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
+            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 2.5, 1 }, -- this would be the building without vents
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 1.0, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
             type = 'BOX'
         },
-
+-- LOLLO TODO Fix the coordinates of the station square.
         lods = {
             {
                 node = {
@@ -57,15 +58,6 @@ function data()
                                     name = 'station_3_roof_perron_side',
                                     transf = groundRoofTransf
                                 },
-                                -- {
-                                --     -- floor paving
-                                --     --materials = {'station/rail/era_c/era_c_trainstation_floor_1.mtl'}, -- same as era_c_station_floor_1.mtl
-                                --     --materials = {'station/rail/era_c/era_c_station_floor_1.mtl'},
-                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'},
-                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod0.msh',
-                                --     name = 'station_1_main_perron',
-                                --     transf = groundFloorPavingTransf
-                                -- },
                                 {
                                     -- stairs to platform
                                     materials = { "station/train/passenger/trainstation_1990_borders_2.mtl", },
@@ -109,14 +101,14 @@ function data()
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                                     name = 'tickets_era_c_1',
-                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 7.47, -.95, 0, 1}
+                                    transf = {0, 1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  5.22, -0.5, 0, 1}
                                 },
                                 {
                                     -- ticket machine left
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                                     name = 'tickets_era_c_1',
-                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -7.47, -.95, 0, 1}
+                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -5.22, -0.5, 0, 1}
                                 },
                                 -- roof
                                 {
@@ -175,7 +167,7 @@ function data()
                             },
                             name = 'era_c_station_name_grp',
                             --transf = {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -5.1, -.1, 1}
-                            transf = {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -5.1, 4.3, 1}
+                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, 4.3, 1}
                         }
                     },
                     name = 'RootNode',
@@ -190,26 +182,6 @@ function data()
                     children = {
                         {
                             children = {
-                                -- ground level
-                                {
-                                    -- entrance roof
-                                    materials = {
-                                        'station/rail/era_c/era_c_trainstation_borders_1.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_white.mtl',
-                                        'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
-                                    },
-                                    mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
-                                    name = 'station_3_roof_perron_side',
-                                    transf = groundRoofTransf
-                                },
-                                -- {
-                                --     -- floor paving
-                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'},
-                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod1.msh',
-                                --     name = 'station_1_main_perron',
-                                --     transf = groundFloorPavingTransf
-                                -- },
                                 {
                                     -- front left pillar
                                     materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
@@ -246,30 +218,6 @@ function data()
                                     name = 'oil_refinery_wall_large',
                                     transf = roofTransf
                                 },
-                                --[[ {
-                                    --solar panel 1
-                                    materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                    mesh = 'asset/roof/lod_0_solar_panel1.msh',
-                                    transf = solarOneTransf
-                                }, ]]
---[[                                 {
-                                    --solar panel 2
-                                    materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                    mesh = 'asset/roof/lod_0_solar_panel1.msh',
-                                    transf = solarTwoTransf
-                                }, ]]
-                                -- {
-                                --     -- roof vent 1
-                                --     materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                --     mesh = 'asset/roof/lod_0_ventilation_end_curved.msh',
-                                --     transf = ventOneTransf
-                                -- },
-                                -- {
-                                --     -- roof vent 2
-                                --     materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                --     mesh = 'asset/roof/lod_0_ventilation_end_curved.msh',
-                                --     transf = ventTwoTransf
-                                -- }
                             },
                             name = 'station_1_main_grp',
                             transf = stationMainTransf
@@ -280,21 +228,13 @@ function data()
                 },
                 static = false,
                 visibleFrom = 200,
-                visibleTo = 400
+                visibleTo = 1000
             },
             {
                 node = {
                     children = {
                         {
                             children = {
-                                -- ground level
-                                -- {
-                                --     -- floor paving
-                                --     materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'},
-                                --     mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod2.msh',
-                                --     name = 'station_1_main_perron',
-                                --     transf = groundFloorPavingTransf
-                                -- },
                                 {
                                     -- front left pillar
                                     materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl'},
@@ -340,7 +280,7 @@ function data()
                     transf = idTransf
                 },
                 static = false,
-                visibleFrom = 400,
+                visibleFrom = 1000,
                 visibleTo = 3500
             }
         },
@@ -353,9 +293,10 @@ function data()
                         childId = 'RootNode',
                         fitting = 'SCALE',
                         nLines = 1,
+                        renderMode = "EMISSIVE",
                         size = {5.2, .6},
                         --transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -5.333, .23, 1},
-                        transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -5.333, 4.63, 1},
+                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.8, -4.333, 4.66, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }
@@ -363,40 +304,6 @@ function data()
             },
             transportNetworkProvider = {
                 laneLists = {
-                    {
-                        -- horizontally into the platform, left
-                        nodes = {
-                            {
-                                {-0.5, 1.5, 0.80000001192093},
-                                {0.5, -1.5, 0},
-                                2.4000000953674
-                            },
-                            {
-                                {0, 0, 0.80000001192093},
-                                {0.5, -1.5, 0},
-                                2.4000000953674
-                            }
-                        },
-                        speedLimit = 20,
-                        transportModes = {'PERSON'}
-                    },
-                    {
-                        -- horizontally into the platform, right
-                        nodes = {
-                            {
-                                {0.5, 1.5, 0.80000001192093},
-                                {-0.5, -1.5, 0},
-                                2.4000000953674
-                            },
-                            {
-                                {0, 0, 0.80000001192093},
-                                {-0.5, -1.5, 0},
-                                2.4000000953674
-                            }
-                        },
-                        speedLimit = 20,
-                        transportModes = {'PERSON'}
-                    },
                     {
                         -- down the stairs and out
                         linkable = true,
@@ -407,17 +314,17 @@ function data()
                                 2.4000000953674
                             },
                             {
-                                {0, -2.5, 0},
+                                {0, -2.0, 0},
                                 {0, -1, 0},
                                 2.4000000953674
                             },
                             {
-                                {0, -2.5, 0},
+                                {0, -2.0, 0},
                                 {0, -1, 0},
                                 2.4000000953674
                             },
                             {
-                                {0, -5, 0},
+                                {0, -4, 0},
                                 {0, -1, 0},
                                 2.4000000953674
                             }
@@ -427,24 +334,25 @@ function data()
                     },
                     {
                         -- sideways, to connect extra elements
+                        linkable = true,
                         nodes = {
                             {
-                                {-6, -2.5, -height},
+                                {-4.5, -2.0, -height},
                                 {1, 0, 0},
                                 2.4
                             },
                             {
-                                {0, -2.5, -height},
+                                {0, -2.0, -height},
                                 {1, 0, 0},
                                 2.4
                             },
                             {
-                                {0, -2.5, -height},
+                                {0, -2.0, -height},
                                 {1, 0, 0},
                                 2.4
                             },
                             {
-                                {6, -2.5, -height},
+                                {4.5, -2.0, -height},
                                 {1, 0, 0},
                                 2.4
                             },

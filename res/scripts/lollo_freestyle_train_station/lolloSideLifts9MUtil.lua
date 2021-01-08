@@ -62,26 +62,25 @@ return function(height)
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
     -- LOLLO NOTE I can make many of these, one for each height.
-    -- For example, elevated_stairs_5.mdl, elevated_stairs_10.mdl, and so on.
-    -- I must leave the existing elevated_stairs.mdl for compatibility with previous versions.
+    -- For example, side_lifts_9_5_5.mdl, side_lifts_9_5_10.mdl, and so on.
     -- Only the transformations above will change, if I am clever,
     -- and the height of the bounding box.
 
     --print('LOLLO height = ', height)
     return {
         boundingInfo = {
-            -- bbMax = {5.8, 1.0, 5.0}, -- this would be the building without vents or tunnel awereness
-            -- bbMin = {-5.8, -5.0, -height} -- this would be the building without vents or tunnel awereness
-            bbMax = {5.8, 1.0, 6.5}, -- a bit taller to protect the vents from bridges
-            bbMin = {-5.8, -5.0, -height -1.5} -- a bit lower to protect the floor from tunnels
+            -- bbMax = {4.4, 1.0, 5.0}, -- this would be the building without vents or tunnel awereness
+            -- bbMin = {-4.4, -4.0, -height} -- this would be the building without vents or tunnel awereness
+            bbMax = {4.4, 1.0, 6.5}, -- a bit taller to protect the vents from bridges
+            bbMin = {-4.4, -4.0, -height -1.5} -- a bit lower to protect the floor from tunnels
         },
         collider = {
             params = {
-                -- halfExtents = {5.8, 3.0, 2.5 + height * 0.5} -- this would be the building without vents or tunnel awereness
-                halfExtents = {5.8, 3.0, 5.5 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
+                -- halfExtents = {4.4, 2.5, 2.5 + height * 0.5} -- this would be the building without vents or tunnel awereness
+                halfExtents = {4.4, 2.5, 5.5 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
             },
-            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2, 2.5 - height * 0.5, 1 }, -- this would be the building without vents
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2, 1.0 - height * 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
+            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 2.5 - height * 0.5, 1 }, -- this would be the building without vents
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 1.0 - height * 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
             type = 'BOX'
         },
         lods = {
@@ -434,7 +433,7 @@ return function(height)
                         -- nLines = 1,
                         size = {5.2, 0.6},
                         -- size = {4.0, 0.6},
-                        transf = {0.7, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -1.80, -4.333, 0.27, 1},
+                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.80, -4.333, 0.27, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }

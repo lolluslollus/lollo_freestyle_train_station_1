@@ -319,7 +319,6 @@ helpers.tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
 
     local buildingModelId = 'lollo_freestyle_train_station/lift/'
     if bridgeHeight < _bridgeHeights[1] then
-        -- buildingModelId = buildingModelId .. 'elevated_stairs_5.mdl'
         buildingModelId = buildingModelId .. 'side_lifts_9_5_5.mdl'
     elseif bridgeHeight < _bridgeHeights[2] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_10.mdl'

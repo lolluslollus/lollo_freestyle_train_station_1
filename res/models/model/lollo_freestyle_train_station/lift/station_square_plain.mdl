@@ -12,8 +12,7 @@ function data()
             bbMax = {5.8, 1.0, 5.0},
             bbMin = {-5.8, -4.0, 0}
         },
-        -- LOLLO NOTE the collider here seems to have no effect.
-        -- We already get it in elevated_stairs.module, so never mind
+        -- LOLLO TODO check the collider
         collider = {
             params = {
                 halfExtents = {5.8, 2.5, 2.5}
