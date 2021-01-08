@@ -1060,9 +1060,10 @@ function data()
 					local allPositions = {}
 					for t = 1, #params.terminals do
 						allPositions[t] = {}
-						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.underpassPositions[t])
-						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t])
+						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
+						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
 					end
+					-- print('allPositions =') debugPrint(allPositions)
 
 					-- link underpasses and stairs along terminals, underground
 					for t = 1, #params.terminals do
@@ -1088,6 +1089,7 @@ function data()
 					-- for now, I link each terminal to 1 other terminal only, the closest with an underpass.
 
 					-- local allDistances, minDistances = _getDistancesBetweenPos2Links(allPositions)
+					-- print('lalala')
 					local minDistances = _getDistancesBetweenPos2Links(allPositions)
 					-- print('allDistances =') debugPrint(allDistances)
 					-- print('minDistances =') debugPrint(minDistances)
@@ -1099,7 +1101,7 @@ function data()
 							for tt = t + 1, #params.terminals do
 								local positionsInTT = allPositions[tt]
 								if positionsInTT ~= nil then
-									if minDistances[t][tt] ~= nil then
+									if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
 										if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
 											minDistance4T = minDistances[t][tt]
 										end
@@ -1157,9 +1159,10 @@ function data()
 					local allPositions = {}
 					for t = 1, #params.terminals do
 						allPositions[t] = {}
-						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.underpassPositions[t])
-						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t])
+						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
+						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
 					end
+					-- print('allPositions =') debugPrint(allPositions)
 
 					for slotId, subway in pairs(params.subways) do
 						if subway == nil then
@@ -1169,6 +1172,7 @@ function data()
 						elseif params.modules[slotId] ~= nil then
 							local subwayPosition = transfUtils.transf2Position(transfUtilsUG.mul(subway.transf, inverseMainTransf))
 							for t = 1, #params.terminals do
+								-- print('attempting to link terminal t =', t, 'to subway')
 								local minDistance = nil
 								local minDistanceI = nil
 								for i = 1, #allPositions[t] do
@@ -1179,7 +1183,9 @@ function data()
 									end
 								end
 
+								-- print('terminal t = ', t, 'about to link to subway')
 								if minDistanceI ~= nil then
+									-- print('allPositions[t][minDistanceI] =') debugPrint(allPositions[t][minDistanceI])
 									result.models[#result.models+1] = {
 										id = _constants.passengerLaneModelId,
 										-- tag = slotHelpers.mangleModelTag(t, false),
