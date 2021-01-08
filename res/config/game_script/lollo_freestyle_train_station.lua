@@ -52,33 +52,48 @@ local _actions = {
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
 
-        local newSubways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true)
-        newSubways[#newSubways+1] = {
-            transf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
-        }
-        print('newSubways =') debugPrint(newSubways)
-
         local newParams = {
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
             seed = oldCon.params.seed + 1,
-            subways = newSubways,
+            subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
             terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
         }
-        newParams.modules[slotHelpers.mangleId(0, #newSubways, _constants.idBases.subwaySlotId)] = {
+        local _getNextAvailableSlotId = function()
+            local counter = 0
+            while counter < 1000 do
+                counter = counter + 1
+
+                local testResult = slotHelpers.mangleId(0, counter, _constants.idBases.subwaySlotId)
+                if newParams.modules[testResult] == nil then return testResult end
+            end
+
+            print('WARNING: cannot find an available slot for a subway')
+            return false
+        end
+        local newSubway_Key = _getNextAvailableSlotId()
+        if not(newSubway_Key) then return end
+
+        local newSubway_Value = {
+            transf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
+        }
+
+        newParams.modules[newSubway_Key] = {
             metadata = { -- it gets overwritten
-                myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
+                -- myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
             },
             name = _constants.subwayModuleFileName,
             updateScript = {
                 fileName = '',
-                params = {
-                    myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
+                params = { -- it gets overwritten
+                    -- myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
                 },
             },
             variant = 0,
         }
+        newParams.subways[newSubway_Key] = newSubway_Value
         newCon.params = newParams
+
         newCon.transf = oldCon.transf
 
         newCon.playerEntity = api.engine.util.getPlayer()

@@ -23,6 +23,11 @@ local vec3 = require 'vec3'
 -- If I add the edgeLists in terminateConstructionHook, it does not help.
 -- The trick was to carefully avoid anything even grazing on the neighbour edge. Even a collision-free model with a path can make trouble.
 
+-- LOLLO NOTE we add a "subways" indexed table with the same indexes as params.modules, to hold extra information
+-- that is, the transf. If a module is deleted in the game, its matching subways[] entry may be still around.
+-- As soon as a new subway is built, its subways[] will be updated.
+-- So, when querying params.subways[slotId], make sure that params.modules[slotId] also exists.
+
 function data()
 	return {
 		type = 'RAIL_STATION',
@@ -970,19 +975,24 @@ function data()
 				print('_addSubwaySlots starting, params.subways =') debugPrint(params.subways)
 				if not(params.subways) then return end
 
-				for i = 1, #params.subways do
-					print('i ==', i)
-					local absoluteSubwayTransf = params.subways[i].transf
-					if absoluteSubwayTransf == nil then
-						print ('WARNING: subway transf is NIL')
-					else
-						table.insert(result.slots, {
-							-- height = 0,
-							id = result.mangleId(0, i, _constants.idBases.subwaySlotId),
-							spacing = {2.5, 2.5, 1.5, 1.5},
-							transf = transfUtilsUG.mul(absoluteSubwayTransf, inverseMainTransf),
-							type = _constants.subwayModuleType,
-						})
+				for slotId, subway in pairs(params.subways) do
+					if params.modules[slotId] ~= nil then
+						local extraData = params.subways[slotId]
+						if extraData == nil then
+							print ('WARNING: subway[', slotId, '] not found')
+						else
+							if extraData.transf == nil then
+								print ('WARNING: subway[', slotId, '] has no transf')
+							else
+								table.insert(result.slots, {
+									-- height = 0,
+									id = slotId,
+									spacing = {2.5, 2.5, 1.5, 1.5},
+									transf = transfUtilsUG.mul(extraData.transf, inverseMainTransf),
+									type = _constants.subwayModuleType,
+								})
+							end
+						end
 					end
 				end
 				print('_addSubwaySlots ending')
@@ -993,9 +1003,6 @@ function data()
 
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
-				-- LOLLO TODO add a subway to a station: at first, the links disappear. They come back when configuring further.
-				-- Also, when removing a subway, its link stays.
-				-- It would be best to pack params.subways into modules.
 				local _getDistancesBetweenPos2Links = function(allPositions)
 					-- local allDistances = {}
 					local minDistances = {}
@@ -1143,6 +1150,7 @@ function data()
 				end
 				_linkPassengerPlatforms()
 
+				-- LOLLO TODO build two tunnel stations and join them: wait for the crash
 				local _linkStairs2Subways = function()
 					local allPositions = {}
 					for t = 1, #params.terminals do
@@ -1151,29 +1159,30 @@ function data()
 						arrayUtils.concatValues(allPositions[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t])
 					end
 
-					-- this is based on params.subways coz params.modules has no transfs
-					for _, subway in pairs(params.subways) do
-						local subwayPosition = transfUtils.transf2Position(transfUtilsUG.mul(subway.transf, inverseMainTransf))
-						for t = 1, #params.terminals do
-							local minDistance = nil
-							local minDistanceI = nil
-							for i = 1, #allPositions[t] do
-								local distance = transfUtils.getPositionsDistance(subwayPosition, allPositions[t][i].pos2Link)
-								if minDistance == nil or minDistance > distance then
-									minDistance = distance
-									minDistanceI = i
+					for slotId, subway in pairs(params.subways) do
+						if params.modules[slotId] ~= nil then
+							local subwayPosition = transfUtils.transf2Position(transfUtilsUG.mul(subway.transf, inverseMainTransf))
+							for t = 1, #params.terminals do
+								local minDistance = nil
+								local minDistanceI = nil
+								for i = 1, #allPositions[t] do
+									local distance = transfUtils.getPositionsDistance(subwayPosition, allPositions[t][i].pos2Link)
+									if minDistance == nil or minDistance > distance then
+										minDistance = distance
+										minDistanceI = i
+									end
 								end
-							end
 
-							if minDistanceI ~= nil then
-								result.models[#result.models+1] = {
-									id = _constants.passengerLaneModelId,
-									-- tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtils.get1MLaneTransf(
-										allPositions[t][minDistanceI].pos2Link,
-										subwayPosition
-									)
-								}
+								if minDistanceI ~= nil then
+									result.models[#result.models+1] = {
+										id = _constants.passengerLaneModelId,
+										-- tag = slotHelpers.mangleModelTag(t, false),
+										transf = transfUtils.get1MLaneTransf(
+											allPositions[t][minDistanceI].pos2Link,
+											subwayPosition
+										)
+									}
+								end
 							end
 						end
 					end
