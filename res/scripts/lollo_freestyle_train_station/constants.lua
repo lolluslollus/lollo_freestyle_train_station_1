@@ -9,7 +9,6 @@ local constants = {
 
     stairsHeight = 1.2,
     platformHeight = 1.2,
-    platformZ = -1.0,
     tracksideBitsZ = -1.05, -- a bit lower than platformZ, to look good in bends
     underpassZ = -4,
     underpassLengthM = 1, -- don't change this, it must stay 1

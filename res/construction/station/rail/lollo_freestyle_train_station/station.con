@@ -240,8 +240,6 @@ function data()
 				-- end
 				-- LOLLO TODO see how these guys behave when altering the platform height
 				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal
-				local _platformZ = _constants.platformZ -- also this could vary, but it is linked to the track params, which we don't want to touch anyway,
-				-- so I think a fix valuie will cover all.
 
 				local isCargoTerminal = params.terminals[t].isCargo
 				if isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
@@ -287,10 +285,7 @@ function data()
 						for ii = 1, #params.terminals[t].centrePlatformsFine, 1 do
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
-							local myTransf = transfUtilsUG.mul(
-								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _platformZ + 1, 1 }
-							)
+							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 							local myModelId = nil
 							if cpf.width < 10 then
 								myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_5m_wide.mdl'
@@ -308,10 +303,7 @@ function data()
 						for ii = 1, #params.terminals[t].centrePlatformsFine, #params.terminals[t].centrePlatformsFine - 1 do
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
-							local myTransf = transfUtilsUG.mul(
-								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _platformZ + 1, 1 }
-							)
+							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 							if cpf.width < 5 then
 								result.models[#result.models+1] = {
 									id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide.mdl',
@@ -328,10 +320,7 @@ function data()
 						for ii = 2, #params.terminals[t].centrePlatformsFine - 1 do
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
-							local myTransf = transfUtilsUG.mul(
-								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _platformZ + 1, 1 }
-							)
+							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 							if cpf.width < 5 then
 								result.models[#result.models+1] = {
 									id = isTrackOnPlatformLeft
