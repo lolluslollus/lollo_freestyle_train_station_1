@@ -832,8 +832,8 @@ helpers.getStationEndEntities = function(stationConstructionId)
     return result
 end
 
-helpers.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
-    print('getBulldozedStationNeighbourNodeIds starting')
+helpers.getNeighbourNodeIdsOfBulldozedStation = function(endEntities4T)
+    print('getNeighbourNodeIdsOfBulldozedStation starting')
     if endEntities4T == nil
     or endEntities4T.platforms == nil or endEntities4T.platforms.stationEndNodePositions == nil
     or endEntities4T.tracks == nil or endEntities4T.tracks.stationEndNodePositions == nil
@@ -866,7 +866,7 @@ helpers.getBulldozedStationNeighbourNodeIds = function(endEntities4T)
         }
     }
 
-    -- print('getBulldozedStationNeighbourNodeIds about to return') debugPrint(result)
+    -- print('getNeighbourNodeIdsOfBulldozedStation about to return') debugPrint(result)
     return result
 end
 

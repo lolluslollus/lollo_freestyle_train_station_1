@@ -631,8 +631,11 @@ helper.isNumVeryClose = function(num1, num2, roundingFactor)
     if not(roundingFactor) then roundingFactor = 1000.0 end
     if type(num1) ~= 'number' or type(num2) ~= 'number' then return false end
 
-    local roundedNum1 = math.ceil(num1 * roundingFactor)
-    local roundedNum2 = math.ceil(num2 * roundingFactor)
+    -- wrong (less accurate):
+    -- local roundedNum1 = math.ceil(num1 * roundingFactor)
+    -- local roundedNum2 = math.ceil(num2 * roundingFactor)
+    local roundedNum1 = math.floor(num1 * roundingFactor + 0.5)
+    local roundedNum2 = math.floor(num2 * roundingFactor + 0.5)
     return roundedNum1 == roundedNum2
 end
 
