@@ -51,12 +51,12 @@ function data()
                             -- },
                             {
                                 { 0, 0, 0 },
-                                { 2.5, 0, 0 },
+                                { 2.75, 0, 0 },
                                 3,
                             },
                             {
-                                { 2.5, 0, -_constants.stairsHeight },
-                                { 2.5, 0, 0 },
+                                { 2.75, 0, -_constants.stairsHeight },
+                                { 2.75, 0, 0 },
                                 3,
                             },
                         },
