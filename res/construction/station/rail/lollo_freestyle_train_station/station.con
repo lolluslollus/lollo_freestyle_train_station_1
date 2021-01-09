@@ -238,6 +238,10 @@ function data()
 				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
 				-- 	print('retransformed first edge =') debugPrint(retransformedFirstEdge)
 				-- end
+				-- LOLLO TODO see how these guys behave when altering the platform height
+				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal
+				local _platformZ = _constants.platformZ -- also this could vary, but it is linked to the track params, which we don't want to touch anyway,
+				-- so I think a fix valuie will cover all.
 
 				local isCargoTerminal = params.terminals[t].isCargo
 				if isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
@@ -285,7 +289,7 @@ function data()
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 							local myTransf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformZ, 1 }
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _platformZ, 1 }
 							)
 							local myModelId = nil
 							if cpf.width < 10 then
@@ -297,7 +301,6 @@ function data()
 							end
 							result.models[#result.models+1] = {
 								id = myModelId,
-								-- tag = slotHelpers.mangleModelTag(t, false),
 								transf = myTransf
 							}
 						end
@@ -307,7 +310,7 @@ function data()
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 							local myTransf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformZ, 1 }
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _platformZ, 1 }
 							)
 							if cpf.width < 5 then
 								result.models[#result.models+1] = {
@@ -327,7 +330,7 @@ function data()
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 							local myTransf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformZ, 1 }
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _platformZ, 1 }
 							)
 							if cpf.width < 5 then
 								result.models[#result.models+1] = {
@@ -443,7 +446,7 @@ function data()
 												{
 													myPosTanX2[1][1][1],
 													myPosTanX2[1][1][2],
-													myPosTanX2[1][1][3] + _constants.passengerLaneZ,
+													myPosTanX2[1][1][3] + _laneZ,
 												},
 												transfUtils.transf2Position(myTransf)
 											)
@@ -476,7 +479,7 @@ function data()
 												{
 													myPosTanX2[1][1][1],
 													myPosTanX2[1][1][2],
-													myPosTanX2[1][1][3] + _constants.passengerLaneZ,
+													myPosTanX2[1][1][3] + _laneZ,
 												},
 												transfUtils.transf2Position(myTransf)
 											)
@@ -509,7 +512,7 @@ function data()
 												{
 													myPosTanX2[1][1][1],
 													myPosTanX2[1][1][2],
-													myPosTanX2[1][1][3] + _constants.passengerLaneZ,
+													myPosTanX2[1][1][3] + _laneZ,
 												},
 												transfUtils.transf2Position(myTransf)
 											)
@@ -542,7 +545,7 @@ function data()
 												{
 													myPosTanX2[1][1][1],
 													myPosTanX2[1][1][2],
-													myPosTanX2[1][1][3] + _constants.passengerLaneZ,
+													myPosTanX2[1][1][3] + _laneZ,
 												},
 												transfUtils.transf2Position(myTransf)
 											)
@@ -576,7 +579,7 @@ function data()
 													{
 														myPosTanX2[1][1][1],
 														myPosTanX2[1][1][2],
-														myPosTanX2[1][1][3] + _constants.passengerLaneZ,
+														myPosTanX2[1][1][3] + _laneZ,
 													},
 													transfUtils.transf2Position(myTransf)
 												)
@@ -622,7 +625,7 @@ function data()
 													{
 														myPosTanX2[1][1][1],
 														myPosTanX2[1][1][2],
-														myPosTanX2[1][1][3] + _constants.passengerLaneZ,
+														myPosTanX2[1][1][3] + _laneZ,
 													},
 													transfUtils.transf2Position(myTransf)
 												)
@@ -671,7 +674,7 @@ function data()
 													{
 														myPosTanX2[1][1][1],
 														myPosTanX2[1][1][2],
-														myPosTanX2[1][1][3] + _constants.passengerLaneZ,
+														myPosTanX2[1][1][3] + _laneZ,
 													},
 													transfUtils.transf2Position(myTransf)
 												)
@@ -776,7 +779,7 @@ function data()
 							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, inverseMainTransf)
 							local crossConnectorTransf = transfUtilsUG.mul(
 								transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
-								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1}
+								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1}
 							)
 							result.models[#result.models+1] = {
 								id = _constants.passengerLaneModelId,
@@ -791,7 +794,7 @@ function data()
 									pos = {
 										crossConnectorPosTanX2[2][1][1],
 										crossConnectorPosTanX2[2][1][2],
-										crossConnectorPosTanX2[2][1][3] + _constants.passengerLaneZ,
+										crossConnectorPosTanX2[2][1][3] + _laneZ,
 									}
 								}
 							)
@@ -818,13 +821,13 @@ function data()
 						result.models[#result.models+1] = {
 							id = myModelId,
 							-- tag = slotHelpers.mangleModelTag(t, false, isUnderpass),
-							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
+							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
 						}
 
 						if isStairs2Subway then
 							local stairs2SubwayTopTransf = transfUtilsUG.mul(
 								centreLaneTransf,
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ + _constants.stairs2SubwayZ, 1 }
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.stairs2SubwayZ, 1 }
 							)
 							if result.terminateConstructionHookInfo.stairs2SubwayPositions[t] == nil then result.terminateConstructionHookInfo.stairs2SubwayPositions[t] = {} end
 							result.terminateConstructionHookInfo.stairs2SubwayPositions[t][#result.terminateConstructionHookInfo.stairs2SubwayPositions[t]+1] = {
@@ -841,8 +844,8 @@ function data()
 							local underpassBottomTransf = transfUtilsUG.mul(
 								centreLaneTransf,
 								-- LOLLO TODO check the effect of NOT scaling x and y, it should be fine
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ + _constants.underpassZ, 1 }
-								-- { 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _constants.passengerLaneZ + _constants.underpassZ, 1 }
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+								-- { 0.1, 0, 0, 0,  0, 0.1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _passengerLaneZ + _constants.underpassZ, 1 }
 							)
 							if result.terminateConstructionHookInfo.underpassPositions[t] == nil then result.terminateConstructionHookInfo.underpassPositions[t] = {} end
 							result.terminateConstructionHookInfo.underpassPositions[t][#result.terminateConstructionHookInfo.underpassPositions[t]+1] = {
@@ -869,7 +872,7 @@ function data()
 								result.models[#result.models+1] = {
 									id = _constants.cargoWaitingAreaModelId,
 									tag = slotHelpers.mangleModelTag(t, true),
-									transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.cargoLaneZ, 1})
+									transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
 								}
 							end
 						end
@@ -882,7 +885,7 @@ function data()
 								result.models[#result.models+1] = {
 									id = _constants.passengerWaitingAreaModelId,
 									tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtilsUG.mul(leftLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
+									transf = transfUtilsUG.mul(leftLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
 								}
 							end
 						else
@@ -893,7 +896,7 @@ function data()
 								result.models[#result.models+1] = {
 									id = _constants.passengerWaitingAreaModelId,
 									tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtilsUG.mul(rightLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.passengerLaneZ, 1})
+									transf = transfUtilsUG.mul(rightLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
 								}
 							end
 						end

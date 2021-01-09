@@ -7,19 +7,17 @@ local constants = {
     invisiblePlatformTracksCategory = 'invisible-platform-tracks',
     passengerPlatformTracksCategory = 'passenger-platform-tracks',
 
-    passengerPlatformModelZ = 0.0,
-    cargoLaneZ = 1.2,
-    passengerLaneZ = 1.2,
-
+    stairsHeight = 1.2,
+    platformHeight = 1.2,
     platformZ = -1.0,
-    tracksideBitsZ = -1.05,
+    tracksideBitsZ = -1.05, -- a bit lower than platformZ, to look good in bends
     underpassZ = -4,
     underpassLengthM = 1, -- don't change this, it must stay 1
     stairs2SubwayZ = 4,
     subwayPos2LinkX = 4,
     subwayPos2LinkY = 0,
     subwayPos2LinkZ = -4,
-    platformLiftZShift = -0.1,
+    platformLiftZShift = -0.1, -- adjusts the vertical shift of platform lifts, so they look good on steep platforms
 
     maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
     minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,

@@ -63,7 +63,7 @@ function data()
                                 3,
                             },
                             {
-                                { 5, 0, -_constants.passengerLaneZ },
+                                { 5, 0, -_constants.stairsHeight },
                                 { 2.5, 0, 0 },
                                 3,
                             },
