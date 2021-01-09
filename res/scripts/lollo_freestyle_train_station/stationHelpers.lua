@@ -844,7 +844,7 @@ helpers.getNeighbourNodeIdsOfBulldozedStation = function(endEntities4T)
             node1 = endEntities4T.platforms.stationEndNodePositions.node1 ~= nil
                 and edgeUtils.getNearbyObjectIds(
                     transfUtils.position2Transf(endEntities4T.platforms.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
-                )[1]
+                )[1] -- LOLLO TODO what if it finds two nodes? How do I make sure it will take the best one?
                 or nil,
             node2 = endEntities4T.platforms.stationEndNodePositions.node2 ~= nil
                 and edgeUtils.getNearbyObjectIds(
