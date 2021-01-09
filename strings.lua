@@ -48,6 +48,12 @@ function data()
 			["SlopedPassengerArea1x10Desc"] = "Sloped side area, 10 m, passenger style. Good for plopping assets.",
 			["SlopedPassengerArea1x20Name"] = "20 m sloped side area, passenger style",
 			["SlopedPassengerArea1x20Desc"] = "Sloped side area, 20 m, passenger style. Good for plopping assets.",
+			["Stairs2SubwayName"] = "Subway stairs",
+			["Stairs2SubwayDesc"] = "Plop these on underground platforms, to connect them to the subways and the other terminals.",
+			["SubwayDesc"] = "Subway to underground station",
+			["SubwayName"] = "Plop these near a station and join them with the popup. Make sure your station has underpasses and / or subway stairs.",
+			["UnderpassName"] = "Underpass",
+			["UnderpassDesc"] = "Plop these on ground-level platforms, to connect them to the subways and the other terminals.",
 
 			["CargoPlatform5MTracksName"] = "5 m cargo platform",
 			["CargoPlatform5MTracksDesc"] = "Cargo platforms to be laid as tracks, 5 m wide. They are in fact slow train tracks.",
@@ -67,8 +73,6 @@ function data()
 			["Passenger-Platform-Tracks"] = "Passenger platforms to be laid as tracks",
 			["TrackWaypointName"] = "Track End Marker",
 			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter.",
-			["UnderpassName"] = "Underpass",
-			["UnderpassDesc"] = "Underpasses",
 
 			["NewStationName"] = "New Station",
 
