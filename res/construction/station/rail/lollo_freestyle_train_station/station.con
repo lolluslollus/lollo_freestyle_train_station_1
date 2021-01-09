@@ -1147,6 +1147,7 @@ function data()
 				print('passenger platforms linked')
 
 				local _linkStairs2Subways = function()
+					if not(params.subways) then return end
 					local allPositions = _getAllPositions()
 					-- print('allPositions =') debugPrint(allPositions)
 
