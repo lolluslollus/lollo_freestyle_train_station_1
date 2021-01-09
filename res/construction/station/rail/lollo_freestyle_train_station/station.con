@@ -287,23 +287,19 @@ function data()
 								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
 								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformZ, 1 }
 							)
+							local myModelId = nil
 							if cpf.width < 10 then
-								result.models[#result.models+1] = {
-									id = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_5m_wide.mdl',
-									-- tag = slotHelpers.mangleModelTag(t, false),
-									transf = myTransf
-								}
+								myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_5m_wide.mdl'
 							elseif cpf.width < 20 then
-								result.models[#result.models+1] = {
-									id = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_10m_wide.mdl',								-- tag = slotHelpers.mangleModelTag(t, false),
-									transf = myTransf
-								}
+								myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_10m_wide.mdl'
 							else
-								result.models[#result.models+1] = {
-									id = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_20m_wide.mdl',								-- tag = slotHelpers.mangleModelTag(t, false),
-									transf = myTransf
-								}
+								myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_20m_wide.mdl'
 							end
+							result.models[#result.models+1] = {
+								id = myModelId,
+								-- tag = slotHelpers.mangleModelTag(t, false),
+								transf = myTransf
+							}
 						end
 					else
 						for ii = 1, #params.terminals[t].centrePlatformsFine, #params.terminals[t].centrePlatformsFine - 1 do
