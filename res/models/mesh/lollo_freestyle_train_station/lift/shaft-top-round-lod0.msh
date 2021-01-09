@@ -10,19 +10,19 @@ return {
 			indices = {
 				normal = {
 					count = 768,
-					offset = 16284,
+					offset = 16784,
 				},
 				position = {
 					count = 768,
-					offset = 17052,
+					offset = 17552,
 				},
 				tangent = {
 					count = 768,
-					offset = 17820,
+					offset = 18320,
 				},
 				uv0 = {
 					count = 768,
-					offset = 18588,
+					offset = 19088,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 4200,
-					offset = 19356,
+					offset = 19856,
 				},
 				position = {
 					count = 4200,
-					offset = 23556,
+					offset = 24056,
 				},
 				tangent = {
 					count = 4200,
-					offset = 27756,
+					offset = 28256,
 				},
 				uv0 = {
 					count = 4200,
-					offset = 31956,
+					offset = 32456,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 360,
-					offset = 36156,
+					offset = 36656,
 				},
 				position = {
 					count = 360,
-					offset = 36516,
+					offset = 37016,
 				},
 				tangent = {
 					count = 360,
-					offset = 36876,
+					offset = 37376,
 				},
 				uv0 = {
 					count = 360,
-					offset = 37236,
+					offset = 37736,
 				},
 			},
 			materials = {
@@ -79,19 +79,19 @@ return {
 			indices = {
 				normal = {
 					count = 2304,
-					offset = 37596,
+					offset = 38096,
 				},
 				position = {
 					count = 2304,
-					offset = 39900,
+					offset = 40400,
 				},
 				tangent = {
 					count = 2304,
-					offset = 42204,
+					offset = 42704,
 				},
 				uv0 = {
 					count = 2304,
-					offset = 44508,
+					offset = 45008,
 				},
 			},
 			materials = {
@@ -101,24 +101,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 2700,
+			count = 2712,
 			numComp = 3,
 			offset = 0,
 		},
 		position = {
 			count = 4224,
 			numComp = 3,
-			offset = 2700,
+			offset = 2712,
 		},
 		tangent = {
-			count = 4400,
+			count = 4368,
 			numComp = 4,
-			offset = 6924,
+			offset = 6936,
 		},
 		uv0 = {
-			count = 4960,
+			count = 5480,
 			numComp = 2,
-			offset = 11324,
+			offset = 11304,
 		},
 	},
 }
