@@ -216,7 +216,7 @@ return function(height)
                             linkable = false,
                             nodes = {
                                 {
-                                    {0, 0, 1 - _constants.platformLiftZShift - _underpassDepth}, -- LOLLO TODO thematisiere this 0.8 (typical of lifts) and 0.1 (typical of side areas)
+                                    {0, 0, 1 - _constants.platformLiftZShift - _underpassDepth},
                                     {0, 0, -1},
                                     2.4
                                 },
