@@ -52,7 +52,7 @@ return {
 					id = _constants.slopedPassengerArea1x5ModelFileName,
 					transf = transfUtilsUG.mul(
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2),
-						{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ + 1, 1 }
+						{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
 					),
 					tag = tag
 				}

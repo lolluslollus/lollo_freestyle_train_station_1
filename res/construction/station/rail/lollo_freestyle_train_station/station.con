@@ -263,7 +263,7 @@ function data()
 								-- tag = slotHelpers.mangleModelTag(t, false),
 								transf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftTrackside, _constants.tracksideBitsZ + 1, 1 }
+									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftTrackside, _constants.tracksideBitsZ, 1 }
 								)
 							}
 						else
@@ -272,7 +272,7 @@ function data()
 								-- tag = slotHelpers.mangleModelTag(t, false),
 								transf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftTrackside, _constants.tracksideBitsZ + 1, 1 }
+									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftTrackside, _constants.tracksideBitsZ, 1 }
 								)
 							}
 						end
@@ -357,7 +357,7 @@ function data()
 									spacing = isTrackOnPlatformLeft and {2, 0, 7, 7} or {0, 2, 7, 7},
 									transf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ + 1, 1 }
+										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
 									),
 									type = isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
 								})
@@ -375,7 +375,7 @@ function data()
 										spacing = isTrackOnPlatformLeft and {3, 2, 7, 7} or {2, 3, 7, 7},
 										transf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ + 1, 1 }
+											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
 										),
 										type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
 									})
@@ -392,7 +392,7 @@ function data()
 										spacing = isTrackOnPlatformLeft and {8, 4, 7, 7} or {4, 8, 7, 7},
 										transf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ + 1, 1 }
+											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.tracksideBitsZ, 1 }
 										),
 										type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
 									})
