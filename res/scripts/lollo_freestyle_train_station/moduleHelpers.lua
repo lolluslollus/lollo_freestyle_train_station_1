@@ -47,38 +47,6 @@ helpers.getTerrainAlignmentList = function(face, raiseBy, alignmentType, slopeHi
     }
 end
 
--- LOLLO NOTE adding colliders with this seems correct,
--- but calling it from con.updateFn or from a module.updateFn or terminateConstructionHook
--- will result in no colliders at all being active,
--- except for the edge colliders
-helpers.getCollider = function(sidewalkWidth, model)
-	local result = nil
-	if sidewalkWidth < 3.8 then
-		if slotUtils.getIsStreetside(model.tag) then
-			local transfRes = transfUtilsUG.mul(
-				model.transf,
-				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, sidewalkWidth * 0.5, 0, 1 }
-			)
-			-- print('LOLLO transfRes =')
-			-- debugPrint(transfRes)
-			result = {
-				params = {
-					halfExtents = { 5.9, 1.9 - sidewalkWidth * 0.5, 1.0 },
-				},
-				transf = transfRes,
-				type = 'BOX',
-			}
-		end
-
-		-- print('LOLLO model =')
-		-- debugPrint(model)
-		-- print('LOLLO collider =')
-		-- debugPrint(result)
-	end
-
-	return result
-end
-
 helpers.getTerminalDecoTransf = function(posTanX2)
     -- print('getTerminalDecoTransf starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
