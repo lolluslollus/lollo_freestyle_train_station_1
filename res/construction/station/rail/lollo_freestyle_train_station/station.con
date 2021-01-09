@@ -877,33 +877,30 @@ function data()
 				_addTerminalSlot()
 
 				local _addUnderpassSlots = function()
-					-- add underpass slots, skipping the ends. For now, we also skip bridges
+					-- add underpass slots, skipping the ends.
 					if not(isCargoTerminal) then
 						for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
-						-- for i = 1, #params.terminals[t].centrePlatforms, 4 do
-							if params.terminals[t].centrePlatforms[i].type == 0 or params.terminals[t].centrePlatforms[i].type == 2 then
-								local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
-								local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
-								table.insert(result.slots, {
-									-- height = 1,
-									id = myId,
-									-- shape 0 1 2 3, only graphical
-									spacing = {2.5, 2.5, 1.5, 1.5},
+							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
+							local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
+							table.insert(result.slots, {
+								-- height = 1,
+								id = myId,
+								-- shape 0 1 2 3, only graphical
+								spacing = {2.5, 2.5, 1.5, 1.5},
+								transf = transfUtilsUG.mul(
+									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
+									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+								),
+								type = _constants.underpassModuleType,
+							})
+							if params.modules[myId] ~= nil then
+								result.models[#result.models+1] = {
+									id = _constants.underpassGroundModelFileName,
 									transf = transfUtilsUG.mul(
-										moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-									),
-									type = _constants.underpassModuleType,
-								})
-								if params.modules[myId] ~= nil then
-									result.models[#result.models+1] = {
-										id = _constants.underpassGroundModelFileName,
-										transf = transfUtilsUG.mul(
-											moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + 0.025, 1 }
-										)
-									}
-								end
+										moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + 0.025, 1 }
+									)
+								}
 							end
 						end
 					end
@@ -1020,31 +1017,33 @@ function data()
 				end
 
 				local _linkUnderpassesAndStairs = function()
-					local allPositions = _getAllPositions()
-					-- print('allPositions =') debugPrint(allPositions)
-
 					-- link underpasses and stairs along terminals, underground
-					for t = 1, #params.terminals do
-						local positionsInTerminal = allPositions[t]
-						if positionsInTerminal ~= nil and #positionsInTerminal > 1 then
-							local previousPosition = positionsInTerminal[1]
-							for i = 2, #positionsInTerminal do
-								local currentPosition = positionsInTerminal[i]
-								result.models[#result.models+1] = {
-									id = _constants.passengerLaneModelId,
-									-- tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtils.get1MLaneTransf(
-										previousPosition.pos2Link,
-										currentPosition.pos2Link
-									)
-								}
-								previousPosition = currentPosition
+					local _linkAlong = function(positions)
+						for t = 1, #params.terminals do
+							local positionsInTerminal = positions[t]
+							if positionsInTerminal ~= nil and #positionsInTerminal > 1 then
+								local previousPosition = positionsInTerminal[1]
+								for i = 2, #positionsInTerminal do
+									local currentPosition = positionsInTerminal[i]
+									result.models[#result.models+1] = {
+										id = _constants.passengerLaneModelId,
+										transf = transfUtils.get1MLaneTransf(
+											previousPosition.pos2Link,
+											currentPosition.pos2Link
+										)
+									}
+									previousPosition = currentPosition
+								end
 							end
 						end
 					end
+					_linkAlong(result.terminateConstructionHookInfo.stairs2SubwayPositions)
+					_linkAlong(result.terminateConstructionHookInfo.underpassPositions)
 
 					-- link the underpasses across terminals, underground
 					-- for now, I link each terminal to 1 other terminal only, the closest with an underpass.
+					local allPositions = _getAllPositions()
+					-- print('allPositions =') debugPrint(allPositions)
 
 					-- local allDistances, minDistances = _getDistancesBetweenPos2Links(allPositions)
 					-- print('lalala')
@@ -1108,7 +1107,7 @@ function data()
 				_linkPassengerPlatforms()
 				print('passenger platforms linked')
 
-				local _linkStairs2Subways = function()
+				local _linkUnderpassesAndStairs2Subways = function()
 					if not(params.subways) then return end
 					local allPositions = _getAllPositions()
 					-- print('allPositions =') debugPrint(allPositions)
@@ -1148,8 +1147,8 @@ function data()
 						end
 					end
 				end
-				_linkStairs2Subways()
-				print('stairs and subways linked')
+				_linkUnderpassesAndStairs2Subways()
+				print('underpasses, stairs and subways linked')
 
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
 				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
