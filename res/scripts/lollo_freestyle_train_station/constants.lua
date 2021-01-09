@@ -17,7 +17,7 @@ local constants = {
     subwayPos2LinkX = 4,
     subwayPos2LinkY = 0,
     subwayPos2LinkZ = -4,
-    platformLiftZShift = -0.1, -- adjusts the vertical shift of platform lifts, so they look good on steep platforms
+    platformLiftZShift = -0.2, -- adjusts the vertical shift of platform lifts, so they look good on steep platforms
 
     maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
     minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,
