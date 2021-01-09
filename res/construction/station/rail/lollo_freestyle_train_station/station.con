@@ -238,8 +238,8 @@ function data()
 				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
 				-- 	print('retransformed first edge =') debugPrint(retransformedFirstEdge)
 				-- end
-				-- LOLLO TODO see how these guys behave when altering the platform height
-				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal
+				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal:
+				-- everything except the platforms and the terminal deco will vary along with it.
 
 				local isCargoTerminal = params.terminals[t].isCargo
 				if isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
