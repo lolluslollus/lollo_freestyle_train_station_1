@@ -182,7 +182,7 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
 
     local testX = aX + bX * length + cX * length * length + dX * length * length * length
     -- print(testX, 'should be', position1.x)
-    if not(helper.isNumVeryClose(testX, position1.x)) then return nil end
+    if not(helper.isNumVeryClose(testX, position1.x, 3)) then return nil end
 
     local aY = position0.y
     local bY = tangent0.y / length
@@ -191,7 +191,7 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
 
     local testY = aY + bY * length + cY * length * length + dY * length * length * length
     -- print(testY, 'should be', position1.y)
-    if not(helper.isNumVeryClose(testY, position1.y)) then return nil end
+    if not(helper.isNumVeryClose(testY, position1.y, 3)) then return nil end
 
     local aZ = position0.z
     local bZ = tangent0.z / length
@@ -200,7 +200,7 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
 
     local testZ = aZ + bZ * length + cZ * length * length + dZ * length * length * length
     -- print(testZ, 'should be', position1.z)
-    if not(helper.isNumVeryClose(testZ, position1.z)) then return nil end
+    if not(helper.isNumVeryClose(testZ, position1.z, 3)) then return nil end
 
     local lMid = shift021 * length
     local result = {
@@ -627,16 +627,25 @@ helper.getConnectedEdgeIds = function(nodeIds)
     return results
 end
 
-helper.isNumVeryClose = function(num1, num2, roundingFactor)
-    if not(roundingFactor) then roundingFactor = 1000.0 end
+helper.isNumVeryClose = function(num1, num2, significantFigures)
     if type(num1) ~= 'number' or type(num2) ~= 'number' then return false end
+
+    if not(significantFigures) then significantFigures = 5
+    elseif type(significantFigures) ~= 'number' then return false
+    elseif significantFigures < 1 or significantFigures > 10 then return false
+    end
+
+    local _formatString = "%." .. math.floor(significantFigures) .. "g"
 
     -- wrong (less accurate):
     -- local roundedNum1 = math.ceil(num1 * roundingFactor)
     -- local roundedNum2 = math.ceil(num2 * roundingFactor)
-    local roundedNum1 = math.floor(num1 * roundingFactor + 0.5)
-    local roundedNum2 = math.floor(num2 * roundingFactor + 0.5)
-    return roundedNum1 == roundedNum2
+    -- better:
+    -- local roundedNum1 = math.floor(num1 * roundingFactor + 0.5)
+    -- local roundedNum2 = math.floor(num2 * roundingFactor + 0.5)
+    -- return roundedNum1 == roundedNum2
+    -- but what I really want are the first significant figures, never mind how big the number is
+    return (_formatString):format(num1) == (_formatString):format(num2)
 end
 
 helper.isXYZVeryClose = function(xyz1, xyz2, roundingFactor)

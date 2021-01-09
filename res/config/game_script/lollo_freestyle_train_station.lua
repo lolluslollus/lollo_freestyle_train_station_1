@@ -468,7 +468,7 @@ local _actions = {
     end,
 
     rebuildOneTerminalTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
-        local _roundingFactor2LocateNode = 1000 -- you may lower this down to 100 if tracks are not properly rebuilt.
+        local _significantFigures4LocateNode = 5 -- you may lower this down to 100 if tracks are not properly rebuilt.
         -- cleanupStreetGraph in previous events (removeTerminal and bulldozeStation) might also play a role, it might.
         print('rebuildOneTerminalTracks starting')
         print('trackEdgeLists =') debugPrint(trackEdgeLists)
@@ -496,24 +496,24 @@ local _actions = {
             local _addNode = function(position)
                 print('adding node, position =') debugPrint(position)
                 if _baseNode1 ~= nil
-                and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x, _roundingFactor2LocateNode)
-                and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y, _roundingFactor2LocateNode)
-                and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z, _roundingFactor2LocateNode)
+                and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x, _significantFigures4LocateNode)
+                and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y, _significantFigures4LocateNode)
+                and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z, _significantFigures4LocateNode)
                 then
                     print('_baseNode1 matches')
                     return neighbourNodeIds_plOrTr.node1
                 elseif _baseNode2 ~= nil
-                and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x, _roundingFactor2LocateNode)
-                and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y, _roundingFactor2LocateNode)
-                and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z, _roundingFactor2LocateNode)
+                and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x, _significantFigures4LocateNode)
+                and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y, _significantFigures4LocateNode)
+                and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z, _significantFigures4LocateNode)
                 then
                     print('_baseNode2 matches')
                     return neighbourNodeIds_plOrTr.node2
                 else
                     for _, newNode in pairs(newNodes) do
-                        if edgeUtils.isNumVeryClose(position[1], newNode.position[1], _roundingFactor2LocateNode)
-                        and edgeUtils.isNumVeryClose(position[2], newNode.position[2], _roundingFactor2LocateNode)
-                        and edgeUtils.isNumVeryClose(position[3], newNode.position[3], _roundingFactor2LocateNode)
+                        if edgeUtils.isNumVeryClose(position[1], newNode.position[1], _significantFigures4LocateNode)
+                        and edgeUtils.isNumVeryClose(position[2], newNode.position[2], _significantFigures4LocateNode)
+                        and edgeUtils.isNumVeryClose(position[3], newNode.position[3], _significantFigures4LocateNode)
                         then
                             print('reusing a new node')
                             return newNode.id

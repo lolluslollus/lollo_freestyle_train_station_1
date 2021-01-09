@@ -65,6 +65,13 @@ for i = 1, 7, 6 do
     print('i ==', i)
 end
 
+local a = ("%.5g"):format(234.235534)
+local aa = ("%.5g"):format(234235534)
+local b = ("%.3g"):format(234.235534)
+local bb = ("%.3g"):format(234235534)
+--local ccc = ("%.3g"):format(nil) -- error
+--local ddd = ("%.3g"):format('sqq') -- error
+
 local dummy = 123
 
 --  id = 24148,
