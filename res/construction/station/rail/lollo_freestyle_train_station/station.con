@@ -8,6 +8,10 @@ local transfUtilsUG = require 'transf'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local vec3 = require 'vec3'
 
+local function _myErrorHandler(err)
+    print('lollo freestyle train station - station.con ERROR: ', err)
+end
+
 -- LOLLO NOTE
 -- Instead of different cargo platforms with different widths, we could only use 5m areas for all,
 -- and add new modules for extra space, parallel to the platform-tracks.
@@ -1003,6 +1007,9 @@ function data()
 				-- 	return results
 				-- end
 
+				-- xpcall(
+				-- 	function()
+
 				local _getAllPositionsUnderground = function()
 					local results = {}
 					for t = 1, #params.terminals do
@@ -1018,34 +1025,38 @@ function data()
 					local minDistances = {}
 					for t = 1, #params.terminals do
 						local positionsInT = positions[t]
-						for i = 1, #positionsInT do
-							for tt = t + 1, #params.terminals do
-								local positionsInTT = positions[tt]
-								for ii = 1, #positionsInTT do
-									if allDistances[t] == nil then allDistances[t] = {} end
-									if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
-									if minDistances[t] == nil then minDistances[t] = {} end
+						if positionsInT ~= nil then
+							for i = 1, #positionsInT do
+								for tt = t + 1, #params.terminals do
+									local positionsInTT = positions[tt]
+									if positionsInTT ~= nil then
+										for ii = 1, #positionsInTT do
+											if allDistances[t] == nil then allDistances[t] = {} end
+											if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
+											if minDistances[t] == nil then minDistances[t] = {} end
 
-                                    local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
-									table.insert(
-										allDistances[t][tt],
-										{
-											t = t,
-											tt = tt,
-											i = i,
-											ii = ii,
-											distance = distance
-										}
-									)
+											local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
+											table.insert(
+												allDistances[t][tt],
+												{
+													t = t,
+													tt = tt,
+													i = i,
+													ii = ii,
+													distance = distance
+												}
+											)
 
-									if minDistances[t][tt] == nil or minDistances[t][tt].distance > distance then
-										minDistances[t][tt] = {
-											t = t,
-											tt = tt,
-											i = i,
-											ii = ii,
-											distance = distance
-										}
+											if minDistances[t][tt] == nil or minDistances[t][tt].distance > distance then
+												minDistances[t][tt] = {
+													t = t,
+													tt = tt,
+													i = i,
+													ii = ii,
+													distance = distance
+												}
+											end
+										end
 									end
 								end
 							end
@@ -1231,6 +1242,9 @@ function data()
 				_linkSubways()
 				print('subways linked')
 
+		-- 	end,
+		-- 	_myErrorHandler
+		-- )
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
 				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
 				-- that point at this.
