@@ -1015,7 +1015,7 @@ function data()
 
 				local _getDistancesBetweenPos2Links = function(positions)
 					local allDistances = {}
-					local minDistances = {} -- LOLLO TODO make it an array of shortDistances, so we have more than one cross connection
+					local minDistances = {}
 					for t = 1, #params.terminals do
 						local positionsInT = positions[t]
 						for i = 1, #positionsInT do
@@ -1105,28 +1105,42 @@ function data()
 						for t = 1, #params.terminals do
 							if positions[t] ~= nil then
 								local positionsInT = positions[t]
-								local minDistance4T = nil
+                                local minDistance4T = nil
+                                local shortDistances4T = nil
 								for tt = t + 1, #params.terminals do
 									if positions[tt] ~= nil then
 										local positionsInTT = positions[tt]
 										if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
 											if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
-												minDistance4T = minDistances[t][tt]
+                                                minDistance4T = minDistances[t][tt]
+                                                shortDistances4T = shortDistances[t][tt]
 											end
 										end
 									end
 								end
-								if minDistance4T ~= nil then
-									result.models[#result.models+1] = {
-										id = _constants.passengerLaneModelId,
-										-- tag = slotHelpers.mangleModelTag(t, false),
-										transf = transfUtils.get1MLaneTransf(
-											positions[minDistance4T.t][minDistance4T.i].pos2Link,
-											positions[minDistance4T.tt][minDistance4T.ii].pos2Link
-										)
-									}
-								end
-							end
+								-- if minDistance4T ~= nil then
+								-- 	result.models[#result.models+1] = {
+								-- 		id = _constants.passengerLaneModelId,
+								-- 		-- tag = slotHelpers.mangleModelTag(t, false),
+								-- 		transf = transfUtils.get1MLaneTransf(
+								-- 			positions[minDistance4T.t][minDistance4T.i].pos2Link,
+								-- 			positions[minDistance4T.tt][minDistance4T.ii].pos2Link
+								-- 		)
+								-- 	}
+                                -- end
+                                -- LOLLO TODO check this
+                                if shortDistances4T ~= nil then
+                                    for _, value in pairs(shortDistances4T) do
+                                        result.models[#result.models+1] = {
+                                            id = _constants.passengerLaneModelId,
+                                            transf = transfUtils.get1MLaneTransf(
+                                                positions[value.t][value.i].pos2Link,
+                                                positions[value.tt][value.ii].pos2Link
+                                            )
+                                        }
+                                    end
+                                end
+                            end
 						end
 					end
 					_linkAcross(allPositionsUnderground)
