@@ -1154,7 +1154,7 @@ function data()
 				_linkPassengerPlatforms()
 				print('passenger platforms linked')
 
-				local _linkUnderpassesAndStairs2Subways = function()
+				local _linkSubways = function()
 					if not(params.subways) then return end
 					local allPositionsExceptBridge = _getAllPositionsUnderground()
 					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
@@ -1194,8 +1194,8 @@ function data()
 						end
 					end
 				end
-				_linkUnderpassesAndStairs2Subways()
-				print('underpasses, stairs and subways linked')
+				_linkSubways()
+				print('subways linked')
 
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
 				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
