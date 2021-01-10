@@ -1015,7 +1015,7 @@ function data()
 
 				local _getDistancesBetweenPos2Links = function(positions)
 					-- local allDistances = {}
-					local minDistances = {}
+					local minDistances = {} -- LOLLO TODO make it an array of shortDistances, so we have more than one cross connection
 					for t = 1, #params.terminals do
 						local positionsInT = positions[t]
 						for i = 1, #positionsInT do
@@ -1057,7 +1057,6 @@ function data()
 				end
 
 				local _linkUnderpassesAndStairs = function()
-					-- link underpasses and stairs along terminals, underground
 					local _linkAlong = function(positions)
 						for t = 1, #params.terminals do
 							local positionsInTerminal = positions[t]
