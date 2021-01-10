@@ -1444,7 +1444,7 @@ function data()
 				end
 
 				local results = {
-					[moduleKey] = newModuleFileName
+					{ moduleKey, newModuleFileName }
 				}
 				print('results =') debugPrint(results)
 				return results
@@ -1465,12 +1465,13 @@ function data()
 				end
 
 				local results = {
-					[moduleKey] = newModuleFileName
+					{ moduleKey, newModuleFileName }
 				}
 				print('results =') debugPrint(results)
 				return results
 			end
 
+			print('return an empty table')
 			return {}
 
 			-- The return structure is an indexed list like:

@@ -151,20 +151,20 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
     result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].midTrackIndex) * 2 - 2
 
     local forceCatenary = 0
-    local trackElectricModuleKey = slotUtils.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId)
-    if params.modules[trackElectricModuleKey] ~= nil then
-        if params.modules[trackElectricModuleKey].name == _constants.trackElectrificationYesModuleFileName then
+    local trackElectrificationModuleKey = slotUtils.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId)
+    if params.modules[trackElectrificationModuleKey] ~= nil then
+        if params.modules[trackElectrificationModuleKey].name == _constants.trackElectrificationYesModuleFileName then
             forceCatenary = 2
-        else
+        elseif params.modules[trackElectrificationModuleKey].name == _constants.trackElectrificationNoModuleFileName then
             forceCatenary = 1
         end
     end
     local forceFast = 0
-    local trackFastModuleKey = slotUtils.mangleId(t, 0, _constants.idBases.trackSpeedSlotId)
-    if params.modules[trackFastModuleKey] ~= nil then
-        if params.modules[trackFastModuleKey].name == _constants.trackSpeedFastModuleFileName then
+    local trackSpeedModuleKey = slotUtils.mangleId(t, 0, _constants.idBases.trackSpeedSlotId)
+    if params.modules[trackSpeedModuleKey] ~= nil then
+        if params.modules[trackSpeedModuleKey].name == _constants.trackSpeedFastModuleFileName then
             forceFast = 2
-        else
+        elseif params.modules[trackSpeedModuleKey].name == _constants.trackSpeedSlowModuleFileName then
             forceFast = 1
         end
     end
