@@ -993,7 +993,7 @@ function data()
 				-- 	return results
 				-- end
 
-				local _getAllUndergroundPositions = function()
+				local _getAllPositionsBelowPlatforms = function()
 					local results = {}
 					for t = 1, #params.terminals do
 						results[t] = {}
@@ -1003,7 +1003,7 @@ function data()
 					return results
 				end
 
-				local _getAllPositionsExceptBridge = function()
+				local _getAllPositionsUnderground = function()
 					local results = {}
 					for t = 1, #params.terminals do
 						results[t] = {}
@@ -1077,16 +1077,16 @@ function data()
 						end
 					end
 					_linkAlong(result.terminateConstructionHookInfo.stairs2SubwayPositions)
-					local undergroundPositions = _getAllUndergroundPositions()
-					_linkAlong(undergroundPositions)
+					local PositionsBelowPlatforms = _getAllPositionsBelowPlatforms()
+					_linkAlong(PositionsBelowPlatforms)
 
 					-- link the underpasses across terminals, underground
 					-- for now, I link each terminal to 1 other terminal only, the closest with an underpass.
-					local allPositionsExceptBridge = _getAllPositionsExceptBridge()
+					local allPositionsUnderground = _getAllPositionsUnderground()
 					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
 					-- local allDistances, minDistances = _getDistancesBetweenPos2Links(allPositionsExceptBridge)
 					-- print('lalala')
-					local minDistances = _getDistancesBetweenPos2Links(allPositionsExceptBridge)
+					local minDistances = _getDistancesBetweenPos2Links(allPositionsUnderground)
 					-- print('allDistances =') debugPrint(allDistances)
 					-- print('minDistances =') debugPrint(minDistances)
 
@@ -1118,7 +1118,7 @@ function data()
 							end
 						end
 					end
-					_linkAcross(allPositionsExceptBridge)
+					_linkAcross(allPositionsUnderground)
 					_linkAcross(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
 				end
 				_linkUnderpassesAndStairs()
@@ -1156,7 +1156,7 @@ function data()
 
 				local _linkUnderpassesAndStairs2Subways = function()
 					if not(params.subways) then return end
-					local allPositionsExceptBridge = _getAllPositionsExceptBridge()
+					local allPositionsExceptBridge = _getAllPositionsUnderground()
 					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
 
 					for slotId, subway in pairs(params.subways) do
