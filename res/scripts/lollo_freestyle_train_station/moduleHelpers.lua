@@ -1,3 +1,4 @@
+local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local modulesutil = require "modulesutil"
 local slotUtils = require('lollo_freestyle_train_station.slotHelpers')
@@ -149,6 +150,25 @@ end
 local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
     result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].midTrackIndex) * 2 - 2
 
+    local forceCatenary = 0
+    local trackElectricModuleKey = slotUtils.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId)
+    if params.modules[trackElectricModuleKey] ~= nil then
+        if params.modules[trackElectricModuleKey].name == _constants.trackElectrificationYesModuleFileName then
+            forceCatenary = 2
+        else
+            forceCatenary = 1
+        end
+    end
+    local forceFast = 0
+    local trackFastModuleKey = slotUtils.mangleId(t, 0, _constants.idBases.trackSpeedSlotId)
+    if params.modules[trackFastModuleKey] ~= nil then
+        if params.modules[trackFastModuleKey].name == _constants.trackSpeedFastModuleFileName then
+            forceFast = 2
+        else
+            forceFast = 1
+        end
+    end
+
     for i = 1, #params.terminals[t].trackEdgeLists do
         local tel = params.terminals[t].trackEdgeLists[i]
         local newEdgeList = {
@@ -158,13 +178,15 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
             edgeTypeName = tel.edgeTypeName,
             -- freeNodes = {},
             params = {
-                type = tel.trackTypeName,
-                catenary = tel.catenary
+                type = forceFast == 0 and tel.trackTypeName or (forceFast == 1 and 'standard.lua' or 'high_speed.lua'),
+                -- type = tel.trackTypeName,
+                catenary = forceCatenary == 0 and tel.catenary or (forceCatenary == 1 and false or true)
             },
             snapNodes = {},
             tag2nodes = tag2nodes,
             type = 'TRACK'
         }
+        -- print('tel.trackTypeName =', tel.trackTypeName)
 
         if i == 1 then
             newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0

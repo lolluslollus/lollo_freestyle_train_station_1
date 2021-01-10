@@ -289,17 +289,39 @@ local _actions = {
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
 
-        local params_newModuleKey = slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId)
-        local params_newModuleValue = {
-            metadata = {
-                -- cargo = true,
+        local params_newModuleKeys = {
+            slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId),
+            slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.trackElectrificationSlotId),
+            slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.trackSpeedSlotId),
+        }
+        local params_newModuleValues = {
+            {
+                metadata = { },
+                name = args.isCargo and _constants.cargoTerminalModuleFileName or _constants.passengerTerminalModuleFileName,
+                updateScript = {
+                    fileName = '',
+                    params = { },
+                },
+                variant = 0,
             },
-            name = args.isCargo and _constants.cargoTerminalModuleFileName or _constants.passengerTerminalModuleFileName,
-            updateScript = {
-                fileName = '',
-                params = { },
+            {
+                metadata = { },
+                name = _constants.trackElectrificationUndefinedModuleFileName,
+                updateScript = {
+                    fileName = '',
+                    params = { },
+                },
+                variant = 0,
             },
-            variant = 0,
+            {
+                metadata = { },
+                name = _constants.trackSpeedUndefinedModuleFileName,
+                updateScript = {
+                    fileName = '',
+                    params = { },
+                },
+                variant = 0,
+            },
         }
         local params_newTerminal = {
             isCargo = args.isCargo,
@@ -319,7 +341,11 @@ local _actions = {
         if oldCon == nil then
             newCon.params = {
                 mainTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
-                modules = { [params_newModuleKey] = params_newModuleValue },
+                modules = {
+                    [params_newModuleKeys[1]] = params_newModuleValues[1],
+                    [params_newModuleKeys[2]] = params_newModuleValues[2],
+                    [params_newModuleKeys[3]] = params_newModuleValues[3],
+                },
                 -- seed = 123,
                 seed = math.abs(math.ceil(conTransf[13] * 1000)),
                 subways = { },
@@ -340,7 +366,9 @@ local _actions = {
                 subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
                 terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
             }
-            newParams.modules[params_newModuleKey] = params_newModuleValue
+            newParams.modules[params_newModuleKeys[1]] = params_newModuleValues[1]
+            newParams.modules[params_newModuleKeys[2]] = params_newModuleValues[2]
+            newParams.modules[params_newModuleKeys[3]] = params_newModuleValues[3]
             newParams.terminals[#newParams.terminals+1] = params_newTerminal
             newCon.params = newParams
             newCon.transf = oldCon.transf
@@ -1787,8 +1815,8 @@ function data()
                                             }
                                         end
                                     else
-                                        print('WARNING upgrading, addedSegment =') debugPrint(addedSegment)
-                                        print('args.data.entity2tn =') debugPrint(args.data.entity2tn)
+                                        print('WARNING upgrading, addedSegment =') -- debugPrint(addedSegment)
+                                        -- print('args.data.entity2tn =') debugPrint(args.data.entity2tn)
                                         -- LOLLO TODO when upgrading, the game adds a segment and two nodes, which won't work with the following.
                                         -- Probably unimportant, but check it coz edgeUtils.getLastBuiltEdgeId errors out (gracefully)
                                         -- when adding electrification or high speed.

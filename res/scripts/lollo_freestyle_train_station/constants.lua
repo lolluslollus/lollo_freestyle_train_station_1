@@ -56,6 +56,8 @@ local constants = {
     underpassModuleType = 'freestyleTrainStationUnderpass',
     stairs2SubwayModuleType = 'freestyleTrainStationStairs2Subway',
     subwayModuleType = 'freestyleTrainStationSubway',
+    trackSpeedModuleType = 'freestyleTrainStationTrackSpeed',
+    trackElectrificationModuleType = 'freestyleTrainStationTrackElectrification',
 
     flatStairsSmoothModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/stairs_smooth.mdl',
     flatStairsSteepModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/stairs_steep.mdl',
@@ -88,10 +90,17 @@ local constants = {
     stairs2SubwayModelId = 'lollo_freestyle_train_station/subway/stairs2Subway.mdl',
     subwayModelId = 'lollo_freestyle_train_station/subway/subway.mdl',
     subwayUnconnectedModelId = 'lollo_freestyle_train_station/subway/subway_unconnected.mdl',
+    emptyModelFileName = 'lollo_freestyle_train_station/empty.mdl',
 
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
     passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module',
     subwayModuleFileName = 'station/rail/lollo_freestyle_train_station/subway.module',
+    trackSpeedSlowModuleFileName = 'station/rail/lollo_freestyle_train_station/trackSpeedSlow.module',
+    trackSpeedFastModuleFileName = 'station/rail/lollo_freestyle_train_station/trackSpeedFast.module',
+    trackSpeedUndefinedModuleFileName = 'station/rail/lollo_freestyle_train_station/trackSpeedUndefined.module',
+    trackElectrificationNoModuleFileName = 'station/rail/lollo_freestyle_train_station/trackElectrificationNo.module',
+    trackElectrificationYesModuleFileName = 'station/rail/lollo_freestyle_train_station/trackElectrificationYes.module',
+    trackElectrificationUndefinedModuleFileName = 'station/rail/lollo_freestyle_train_station/trackElectrificationUndefined.module',
 
     cargoWaitingAreaTagRoot = 'cargoWaitingArea_',
     passengersWaitingAreaTagRoot = 'passengersWaitingArea_',
@@ -116,6 +125,8 @@ local constants = {
         underpassSlotId = 40000000,
         stairs2SubwaySlotId = 50000000,
         subwaySlotId = 51000000,
+        trackElectrificationSlotId = 60000000,
+        trackSpeedSlotId = 61000000,
     },
     idTransf = {
         1, 0, 0, 0,
