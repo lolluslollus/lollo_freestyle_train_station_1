@@ -1013,8 +1013,8 @@ function data()
 					return results
 				end
 
-				local _getMinDistancesBetweenPos2Links = function(positions)
-					-- local allDistances = {}
+				local _getDistancesBetweenPos2Links = function(positions)
+					local allDistances = {}
 					local minDistances = {} -- LOLLO TODO make it an array of shortDistances, so we have more than one cross connection
 					for t = 1, #params.terminals do
 						local positionsInT = positions[t]
@@ -1022,21 +1022,21 @@ function data()
 							for tt = t + 1, #params.terminals do
 								local positionsInTT = positions[tt]
 								for ii = 1, #positionsInTT do
-									-- if allDistances[t] == nil then allDistances[t] = {} end
-									-- if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
+									if allDistances[t] == nil then allDistances[t] = {} end
+									if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
 									if minDistances[t] == nil then minDistances[t] = {} end
 
                                     local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
-									-- table.insert(
-									-- 	allDistances[t][tt],
-									-- 	{
-									-- 		t = t,
-									-- 		tt = tt,
-									-- 		i = i,
-									-- 		ii = ii,
-									-- 		distance = distance
-									-- 	}
-									-- )
+									table.insert(
+										allDistances[t][tt],
+										{
+											t = t,
+											tt = tt,
+											i = i,
+											ii = ii,
+											distance = distance
+										}
+									)
 
 									if minDistances[t][tt] == nil or minDistances[t][tt].distance > distance then
 										minDistances[t][tt] = {
@@ -1052,8 +1052,8 @@ function data()
 						end
 					end
 
-					-- return allDistances, minDistances
-					return minDistances
+					return allDistances, minDistances
+					-- return minDistances
 				end
 
 				local _linkUnderpassesAndStairs = function()
@@ -1084,9 +1084,9 @@ function data()
 					-- for now, I link each terminal to 1 other terminal only, the closest with an underpass.
 					local allPositionsUnderground = _getAllPositionsUnderground()
 					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
-					-- local allDistances, minDistances = _getDistancesBetweenPos2Links(allPositionsExceptBridge)
-					-- print('lalala')
-					local minDistances = _getMinDistancesBetweenPos2Links(allPositionsUnderground)
+                    -- print('lalala')
+                    local allDistances, minDistances = _getDistancesBetweenPos2Links(allPositionsExceptBridge)
+					-- local minDistances = _getDistancesBetweenPos2Links(allPositionsUnderground)
 					-- print('allDistances =') debugPrint(allDistances)
 					-- print('minDistances =') debugPrint(minDistances)
 
