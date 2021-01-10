@@ -907,7 +907,10 @@ function data()
 						transf = myTransf,
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
 					})
-					-- insert two dummy slots for upgrading tracks
+                    -- insert two dummy slots for upgrading tracks
+                    -- LOLLO TODO try and make these undeletable.
+                    -- To do that, either make the spacing 0, 0, 0, 0
+                    -- or tweak preProcessFn
 					table.insert(result.slots, {
 						height = -2,
 						id = result.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId),
@@ -1377,34 +1380,34 @@ function data()
 			-- print('freestyleTrainStation result.terrainAlignmentLists =') debugPrint(result.terrainAlignmentLists)
 			return result
 		end,
- 		-- preProcessFn = function(modules, change, three)
-		-- 	-- this fires when the user adds or removes a module
-		-- 	print('LOLLO preProcessFn')
-		-- 	-- print('modules =') debugPrint(modules)
-		-- 	print('change =') debugPrint(change)
-		-- 	-- default behaviour
-		-- 	if change.added then
-		-- 		modules[change.slotId] = change.module
-		-- 	else
-		-- 		modules[change.slotId] = nil
-		-- 	end
-		-- 	-- airport behaviour
-		-- 	-- if change.added then
-		-- 	-- 	if change.slotId == landingSlotId + 1 then
-		-- 	-- 		modules[landingSlotId + 0] = nil
-		-- 	-- 	elseif change.slotId == landingSlotId + 0 then
-		-- 	-- 		modules[landingSlotId + 1] = nil
-		-- 	-- 	elseif change.slotId == landingSlotId + 2 then
-		-- 	-- 		modules[landingSlotId + 3] = nil
-		-- 	-- 	elseif change.slotId == landingSlotId + 3 then
-		-- 	-- 		modules[landingSlotId + 2] = nil
-		-- 	-- 	end
-		-- 	-- 	modules[change.slotId] = change.module
-		-- 	-- else
-		-- 	-- 	modules[change.slotId] = nil
-		-- 	-- end
-		-- 	return modules
-        -- end,
+ 		preProcessFn = function(modules, change, three)
+			-- this fires when the user adds or removes a module
+			print('LOLLO preProcessFn')
+			-- print('modules =') debugPrint(modules)
+			print('change =') debugPrint(change)
+			-- default behaviour
+			if change.added then
+				modules[change.slotId] = change.module
+			else
+				modules[change.slotId] = nil
+			end
+			-- airport behaviour
+			-- if change.added then
+			-- 	if change.slotId == landingSlotId + 1 then
+			-- 		modules[landingSlotId + 0] = nil
+			-- 	elseif change.slotId == landingSlotId + 0 then
+			-- 		modules[landingSlotId + 1] = nil
+			-- 	elseif change.slotId == landingSlotId + 2 then
+			-- 		modules[landingSlotId + 3] = nil
+			-- 	elseif change.slotId == landingSlotId + 3 then
+			-- 		modules[landingSlotId + 2] = nil
+			-- 	end
+			-- 	modules[change.slotId] = change.module
+			-- else
+			-- 	modules[change.slotId] = nil
+			-- end
+			return modules
+        end,
         upgradeFn = function(args)
 			-- args contains the params and slotId, which is now correct, and no transf.
 			-- it also contains:
