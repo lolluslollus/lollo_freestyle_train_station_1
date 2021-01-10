@@ -1514,7 +1514,10 @@ function data()
                             local subwayId = args.result[1]
                             print('subway construction built, construction id =') debugPrint(subwayId)
 
-                            local subwayTransfApi = api.engine.getComponent(subwayId, api.type.ComponentType.CONSTRUCTION).transf
+                            local con = api.engine.getComponent(subwayId, api.type.ComponentType.CONSTRUCTION)
+                            if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
+
+                            local subwayTransfApi = con.transf
                             if subwayTransfApi == nil then return end
 
                             local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
