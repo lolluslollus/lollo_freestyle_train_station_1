@@ -1020,9 +1020,9 @@ function data()
 					return results
 				end
 
-				local _getDistancesBetweenPos2Links = function(positions, tolerancePercent4ShortDistances)
-					local allDistances = {}
-					local minDistances = {}
+				local _getSegmentsBetweenPos2Links = function(positions, tolerancePercent4ShortDistances)
+					local allSegments = {}
+					local minDistanceSegments = {}
 					for t = 1, #params.terminals do
 						local positionsInT = positions[t]
 						if positionsInT ~= nil then
@@ -1031,29 +1031,33 @@ function data()
 									local positionsInTT = positions[tt]
 									if positionsInTT ~= nil then
 										for ii = 1, #positionsInTT do
-											if allDistances[t] == nil then allDistances[t] = {} end
-											if allDistances[t][tt] == nil then allDistances[t][tt] = {} end
-											if minDistances[t] == nil then minDistances[t] = {} end
+											if allSegments[t] == nil then allSegments[t] = {} end
+											if allSegments[t][tt] == nil then allSegments[t][tt] = {} end
+											if minDistanceSegments[t] == nil then minDistanceSegments[t] = {} end
 
 											local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
 											table.insert(
-												allDistances[t][tt],
+												allSegments[t][tt],
 												{
 													t = t,
 													tt = tt,
 													i = i,
 													ii = ii,
-													distance = distance
+													distance = distance,
+													pos2Link1 = positionsInT[i].pos2Link,
+													pos2Link2 = positionsInTT[ii].pos2Link
 												}
 											)
 
-											if minDistances[t][tt] == nil or minDistances[t][tt].distance > distance then
-												minDistances[t][tt] = {
+											if minDistanceSegments[t][tt] == nil or minDistanceSegments[t][tt].distance > distance then
+												minDistanceSegments[t][tt] = {
 													t = t,
 													tt = tt,
 													i = i,
 													ii = ii,
-													distance = distance
+													distance = distance,
+													pos2Link1 = positionsInT[i].pos2Link,
+													pos2Link2 = positionsInTT[ii].pos2Link
 												}
 											end
 										end
@@ -1063,21 +1067,21 @@ function data()
 						end
 					end
 
-                    local shortDistances = {}
+                    local shortSegments = {}
                     for t = 1, #params.terminals do
                         for tt = t + 1, #params.terminals do
-							if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
-								for _, value in pairs(allDistances[t][tt]) do
-									if tolerancePercent4ShortDistances == nil or value.distance / minDistances[t][tt].distance < tolerancePercent4ShortDistances then
-										if shortDistances[t] == nil then shortDistances[t] = {} end
-										if shortDistances[t][tt] == nil then shortDistances[t][tt] = {} end
-										table.insert(shortDistances[t][tt], value)
+							if minDistanceSegments[t] ~= nil and minDistanceSegments[t][tt] ~= nil then
+								for _, value in pairs(allSegments[t][tt]) do
+									if tolerancePercent4ShortDistances == nil or value.distance / minDistanceSegments[t][tt].distance < tolerancePercent4ShortDistances then
+										if shortSegments[t] == nil then shortSegments[t] = {} end
+										if shortSegments[t][tt] == nil then shortSegments[t][tt] = {} end
+										table.insert(shortSegments[t][tt], value)
 									end
 								end
                             end
                         end
                     end
-					return shortDistances, minDistances
+					return shortSegments, minDistanceSegments
 					-- return minDistances
 				end
 
@@ -1113,60 +1117,37 @@ function data()
 					-- There can be multiple links if they are short enough
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
-					local function _linkAcross(positions, minDistances, shortDistances, maxLinkLength)
+					local function _linkAcross(minDistanceSegments, shortSegments, maxLinkLength)
 						for t = 1, #params.terminals do
-							if positions[t] ~= nil then
-								local positionsInT = positions[t]
-								local minDistance4T = nil
-								local shortDistances4T = nil
+							if shortSegments[t] ~= nil then
 								for tt = t + 1, #params.terminals do
-									if positions[tt] ~= nil then
-										local positionsInTT = positions[tt]
-										if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
-											if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
-												if maxLinkLength == nil or minDistances[t][tt].distance < maxLinkLength then
-													minDistance4T = minDistances[t][tt]
-													shortDistances4T = shortDistances[t][tt]
-												-- else
-												-- 	print('minDistances[t][tt].distance =') debugPrint(minDistances[t][tt].distance)
-												end
-											end
+									if shortSegments[t][tt] ~= nil then
+										for _, value in pairs(shortSegments[t][tt]) do
+											result.models[#result.models+1] = {
+												id = _constants.passengerLaneModelId,
+												transf = transfUtils.get1MLaneTransf(
+													value.pos2Link1,
+													value.pos2Link2
+												)
+											}
 										end
 									end
-                                end
-								-- if minDistance4T ~= nil then
-								-- 	result.models[#result.models+1] = {
-								-- 		id = _constants.passengerLaneModelId,
-								-- 		transf = transfUtils.get1MLaneTransf(
-								-- 			positions[minDistance4T.t][minDistance4T.i].pos2Link,
-								-- 			positions[minDistance4T.tt][minDistance4T.ii].pos2Link
-								-- 		)
-								-- 	}
-								-- end
-								if shortDistances4T ~= nil then
-									for _, value in pairs(shortDistances4T) do
-										result.models[#result.models+1] = {
-											id = _constants.passengerLaneModelId,
-											transf = transfUtils.get1MLaneTransf(
-												positions[value.t][value.i].pos2Link,
-												positions[value.tt][value.ii].pos2Link
-											)
-										}
-									end
 								end
-                            end
+							end
 						end
 					end
 					local allPositionsUnderground = _getAllPositionsUnderground()
-					local shortDistancesUnderground, minDistancesUnderground = _getDistancesBetweenPos2Links(allPositionsUnderground, 1.11)
-					-- print('shortDistancesUnderground =') debugPrint(shortDistancesUnderground)
-					-- print('minDistancesUnderground =') debugPrint(minDistancesUnderground)
-					_linkAcross(allPositionsUnderground, minDistancesUnderground, shortDistancesUnderground)
+					local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(allPositionsUnderground, 2.01)
+					-- print('allPositionsUnderground =') debugPrint(allPositionsUnderground)
+					-- print('shortSegmentsUnderground =') debugPrint(shortSegmentsUnderground)
+					-- print('minDistanceSegmentsUnderground =') debugPrint(minDistanceSegmentsUnderground)
+					_linkAcross(minDistanceSegmentsUnderground, shortSegmentsUnderground)
 
-					local shortDistancesOnBridge, minDistancesOnBridge = _getDistancesBetweenPos2Links(result.terminateConstructionHookInfo.underpassPositionsOnBridge, 2.01)
-					-- print('shortDistancesOnBridge =') debugPrint(shortDistancesOnBridge)
-					-- print('minDistancesOnBridge =') debugPrint(minDistancesOnBridge)
-					_linkAcross(result.terminateConstructionHookInfo.underpassPositionsOnBridge, minDistancesOnBridge, shortDistancesOnBridge, 20)
+					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links(result.terminateConstructionHookInfo.underpassPositionsOnBridge, 2.01)
+					-- print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
+					-- print('shortSegmentsOnBridge =') debugPrint(shortSegmentsOnBridge)
+					-- print('minDistanceSegmentsOnBridge =') debugPrint(minDistanceSegmentsOnBridge)
+					_linkAcross(minDistanceSegmentsOnBridge, shortSegmentsOnBridge, 20)
 				end
 				_linkUnderpassesAndStairs()
 				print('passengers and stairs linked')
