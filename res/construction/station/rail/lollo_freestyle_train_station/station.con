@@ -993,15 +993,15 @@ function data()
 				-- 	return results
 				-- end
 
-				local _getAllPositionsBelowPlatforms = function()
-					local results = {}
-					for t = 1, #params.terminals do
-						results[t] = {}
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
-					end
-					return results
-				end
+				-- local _getAllPositionsBelowPlatforms = function()
+				-- 	local results = {}
+				-- 	for t = 1, #params.terminals do
+				-- 		results[t] = {}
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] or {})
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
+				-- 	end
+				-- 	return results
+				-- end
 
 				local _getAllPositionsUnderground = function()
 					local results = {}
@@ -1013,7 +1013,7 @@ function data()
 					return results
 				end
 
-				local _getDistancesBetweenPos2Links = function(positions)
+				local _getDistancesBetweenPos2Links = function(positions, tolerancePercent4ShortDistances)
 					local allDistances = {}
 					local minDistances = {}
 					for t = 1, #params.terminals do
@@ -1055,11 +1055,14 @@ function data()
                     local shortDistances = {}
                     for t = 1, #params.terminals do
                         for tt = t + 1, #params.terminals do
-                            if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
-                                if allDistances[t][tt].distance / minDistances[t][tt].distance < 1.11 then
-                                    if shortDistances[t] == nil then shortDistances[t] = {} end
-                                    shortDistances[t][tt] = allDistances[t][tt]
-                                end
+							if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
+								for _, value in pairs(allDistances[t][tt]) do
+									if tolerancePercent4ShortDistances == nil or value.distance / minDistances[t][tt].distance < tolerancePercent4ShortDistances then
+										if shortDistances[t] == nil then shortDistances[t] = {} end
+										if shortDistances[t][tt] == nil then shortDistances[t][tt] = {} end
+										table.insert(shortDistances[t][tt], value)
+									end
+								end
                             end
                         end
                     end
@@ -1068,6 +1071,8 @@ function data()
 				end
 
 				local _linkUnderpassesAndStairs = function()
+					-- link all underpasses along each platform, except on bridges
+					-- repeat with stairs 2 subway
 					local _linkAlong = function(positions)
 						for t = 1, #params.terminals do
 							local positionsInTerminal = positions[t]
@@ -1088,67 +1093,45 @@ function data()
 						end
 					end
 					_linkAlong(result.terminateConstructionHookInfo.stairs2SubwayPositions)
-					local positionsBelowPlatforms = _getAllPositionsBelowPlatforms()
-					_linkAlong(positionsBelowPlatforms)
+					-- local positionsBelowPlatforms = _getAllPositionsBelowPlatforms()
+					-- _linkAlong(positionsBelowPlatforms)
+					_linkAlong(result.terminateConstructionHookInfo.underpassPositions)
 
-					-- link the underpasses across terminals, underground
-					-- for now, I link each terminal to 1 other terminal only, the closest with an underpass.
-					local allPositionsUnderground = _getAllPositionsUnderground()
-					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
-                    -- print('lalala')
-                    local shortDistances, minDistances = _getDistancesBetweenPos2Links(allPositionsUnderground)
-					-- local minDistances = _getDistancesBetweenPos2Links(allPositionsUnderground)
-					-- print('shortDistances =') debugPrint(shortDistances)
-					-- print('minDistances =') debugPrint(minDistances)
-
-					local function _linkAcrossUnderground(positions)
+					-- link the underpasses and the stairs 2 subway across terminals, underground
+					-- I link each terminal to 1 other terminal only, the closest with an underpass.
+					-- There can be multiple links if they are short enough
+					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
+					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
+					local function _linkAcross(positions, minDistances, shortDistances, maxLinkLength)
 						for t = 1, #params.terminals do
 							if positions[t] ~= nil then
 								local positionsInT = positions[t]
-                                local minDistance4T = nil
+								local minDistance4T = nil
+								local shortDistances4T = nil
 								for tt = t + 1, #params.terminals do
 									if positions[tt] ~= nil then
 										local positionsInTT = positions[tt]
 										if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
 											if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
-                                                minDistance4T = minDistances[t][tt]
-											end
-										end
-									end
-                                end
-								if minDistance4T ~= nil then
-									result.models[#result.models+1] = {
-										id = _constants.passengerLaneModelId,
-										transf = transfUtils.get1MLaneTransf(
-											positions[minDistance4T.t][minDistance4T.i].pos2Link,
-											positions[minDistance4T.tt][minDistance4T.ii].pos2Link
-										)
-									}
-								end
-                            end
-						end
-					end
-					_linkAcrossUnderground(allPositionsUnderground)
-					local function _linkAcrossOnBridge(positions)
-						-- LOLLO TODO check this
-						for t = 1, #params.terminals do
-							if positions[t] ~= nil then
-								local positionsInT = positions[t]
-                                local minDistance4T = nil
-                                local shortDistances4T = nil
-								for tt = t + 1, #params.terminals do
-									if positions[tt] ~= nil then
-										local positionsInTT = positions[tt]
-										if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
-											if minDistance4T == nil or minDistances[t][tt].distance < minDistance4T.distance then
-												if minDistances[t][tt].distance < 10 then
+												if maxLinkLength == nil or minDistances[t][tt].distance < maxLinkLength then
 													minDistance4T = minDistances[t][tt]
 													shortDistances4T = shortDistances[t][tt]
+												-- else
+												-- 	print('minDistances[t][tt].distance =') debugPrint(minDistances[t][tt].distance)
 												end
 											end
 										end
 									end
                                 end
+								-- if minDistance4T ~= nil then
+								-- 	result.models[#result.models+1] = {
+								-- 		id = _constants.passengerLaneModelId,
+								-- 		transf = transfUtils.get1MLaneTransf(
+								-- 			positions[minDistance4T.t][minDistance4T.i].pos2Link,
+								-- 			positions[minDistance4T.tt][minDistance4T.ii].pos2Link
+								-- 		)
+								-- 	}
+								-- end
 								if shortDistances4T ~= nil then
 									for _, value in pairs(shortDistances4T) do
 										result.models[#result.models+1] = {
@@ -1163,12 +1146,21 @@ function data()
                             end
 						end
 					end
-					_linkAcrossOnBridge(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
+					local allPositionsUnderground = _getAllPositionsUnderground()
+					local shortDistancesUnderground, minDistancesUnderground = _getDistancesBetweenPos2Links(allPositionsUnderground, 1.11)
+					-- print('shortDistancesUnderground =') debugPrint(shortDistancesUnderground)
+					-- print('minDistancesUnderground =') debugPrint(minDistancesUnderground)
+					_linkAcross(allPositionsUnderground, minDistancesUnderground, shortDistancesUnderground)
+
+					local shortDistancesOnBridge, minDistancesOnBridge = _getDistancesBetweenPos2Links(result.terminateConstructionHookInfo.underpassPositionsOnBridge, 2.01)
+					-- print('shortDistancesOnBridge =') debugPrint(shortDistancesOnBridge)
+					-- print('minDistancesOnBridge =') debugPrint(minDistancesOnBridge)
+					_linkAcross(result.terminateConstructionHookInfo.underpassPositionsOnBridge, minDistancesOnBridge, shortDistancesOnBridge, 20)
 				end
 				_linkUnderpassesAndStairs()
 				print('passengers and stairs linked')
 
-				local _linkPassengerPlatforms = function()
+				local _linkPassengerPlatforms = function(maxLinkLength)
 					-- link the underpasses across terminals, on the ground, if they are close enough
 					for t = 1, #params.terminals do
 						local positionsInT = result.terminateConstructionHookInfo.crossConnectorPositions[t]
@@ -1178,10 +1170,9 @@ function data()
 								if positionsInTT ~= nil then
 									for i = 1, #positionsInT do
 										for ii = 1, #positionsInTT do
-											if transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < 6 then
+											if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
 												result.models[#result.models+1] = {
 													id = _constants.passengerLaneModelId,
-													-- tag = slotHelpers.mangleModelTag(t, false),
 													transf = transfUtils.get1MLaneTransf(
 														positionsInT[i].pos,
 														positionsInTT[ii].pos
@@ -1195,7 +1186,7 @@ function data()
 						end
 					end
 				end
-				_linkPassengerPlatforms()
+				_linkPassengerPlatforms(6)
 				print('passenger platforms linked')
 
 				local _linkSubways = function()
@@ -1227,7 +1218,6 @@ function data()
 									-- print('allPositionsExceptBridge[t][minDistanceI] =') debugPrint(allPositionsExceptBridge[t][minDistanceI])
 									result.models[#result.models+1] = {
 										id = _constants.passengerLaneModelId,
-										-- tag = slotHelpers.mangleModelTag(t, false),
 										transf = transfUtils.get1MLaneTransf(
 											allPositionsUnderground[t][minDistanceI].pos2Link,
 											subwayPos2Link
