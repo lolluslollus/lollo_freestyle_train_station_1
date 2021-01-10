@@ -1,7 +1,7 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
--- local stringUtils = require('lollo_freestyle_train_station.stringUtils')
+local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
@@ -71,7 +71,7 @@ local _getStationEndNodeIds = function(con, nTerminal, stationConstructionId)
 end
 
 local helpers = {
-    getNearbyFreestyleStationsList = function(transf, searchRadius)
+    getNearbyFreestyleStationsListOLD = function(transf, searchRadius)
         if type(transf) ~= 'table' then return {} end
 
         local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
@@ -82,20 +82,61 @@ local helpers = {
         -- #cons returns 0 coz it's not a list
         local results = {}
         for _, con in pairs(cons) do
-            local staGroups = {}
             for _, staId in pairs(con.stations) do
                 local staGroupId = api.engine.system.stationGroupSystem.getStationGroup(staId)
-                local staGroupName = api.engine.getComponent(staGroupId, api.type.ComponentType.NAME)
-                staGroups[staGroupId] = staGroupName and staGroupName.name or ''
-                -- con.uiName = staGroupName and staGroupName.name or '' -- this does not help
-                print('staGroupName =') debugPrint(staGroupName)
+                if edgeUtils.isValidAndExistingId(staGroupId) then
+                    local staGroupName = api.engine.getComponent(staGroupId, api.type.ComponentType.NAME)
+                    print('staGroupName =') debugPrint(staGroupName)
+                    if staGroupName ~= nil and not(stringUtils.isNullOrEmptyString(staGroupName.name)) then
+                        results[#results+1] = {
+                            id = con.id,
+                            name = staGroupName.name,
+                            position = arrayUtils.cloneDeepOmittingFields(con.position)
+                        }
+                        break
+                    end
+                end
             end
-            -- LOLLO TODO 1 con can have N stations, but they all belong to the same group. Right?
-            -- If so, staGroups will always have 1 item only
-            -- con.stationGroups = staGroups -- this does not help
-            results[#results+1] = con
+        end
+        -- print('# nearby freestyle stations = ', #results)
+        -- print('nearby freestyle stations = ') debugPrint(results)
+        return results
+    end,
+
+    getNearbyFreestyleStationsList = function(transf, searchRadius)
+        if type(transf) ~= 'table' then return {} end
+        if tonumber(searchRadius) == nil then searchRadius = _constants.searchRadius4NearbyStation2Join end
+
+        local stationIds = edgeUtils.getNearbyObjectIds(transf, searchRadius, api.type.ComponentType.STATION)
+        local _station2ConstructionMap = api.engine.system.streetConnectorSystem.getStation2ConstructionMap()
+        local resultsIndexed = {}
+        for _, stationId in pairs(stationIds) do
+            if edgeUtils.isValidAndExistingId(stationId) then
+                local conId = _station2ConstructionMap[stationId]
+                if edgeUtils.isValidAndExistingId(conId) then
+                    local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                    if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
+                        local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
+                        local stationGroupName = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
+                        if stationGroupName ~= nil and not(stringUtils.isNullOrEmptyString(stationGroupName.name)) then
+                            local position = transfUtils.transf2Position(
+                                transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
+                            )
+                            resultsIndexed[stationGroupId] = {
+                                id = conId,
+                                name = stationGroupName.name,
+                                position = position
+                            }
+                        end
+                    end
+                end
+            end
         end
 
+        local results = {}
+        for _, value in pairs(resultsIndexed) do
+            results[#results+1] = value
+        end
         -- print('# nearby freestyle stations = ', #results)
         -- print('nearby freestyle stations = ') debugPrint(results)
         return results

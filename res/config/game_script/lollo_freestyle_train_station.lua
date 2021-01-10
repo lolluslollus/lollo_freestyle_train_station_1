@@ -331,7 +331,7 @@ local _actions = {
                 api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
                 api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
             )
-            newCon.name = _('NewStationName') -- LOLLO TODO assign a proper name
+            newCon.name = _('NewStationName') -- LOLLO TODO see if the name can be assigned automatically, as it should
         else
             local newParams = {
                 mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
@@ -1494,7 +1494,7 @@ function data()
 
                             print('conTransf =') debugPrint(conTransf)
                             -- local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
-                            local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, 500)
+                            local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join)
                             -- print('nearbyFreestyleStations =') debugPrint(nearbyFreestyleStations)
                             print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
                             if #nearbyFreestyleStations == 0 then return end
@@ -1711,7 +1711,7 @@ function data()
                                         trackWaypoint2Id = distance11 < distance12 and trackWaypointIds[2] or trackWaypointIds[1],
                                     }
 
-                                    local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointMidTransf, 500)
+                                    local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
                                     if #nearbyFreestyleStations > 0 and #nearbyFreestyleStations < _constants.maxNTerminals then
                                         guiHelpers.showNearbyStationPicker(
                                             nearbyFreestyleStations,

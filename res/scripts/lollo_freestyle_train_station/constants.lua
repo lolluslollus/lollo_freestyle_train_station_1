@@ -24,8 +24,9 @@ local constants = {
     maxPassengerWaitingAreaEdgeLength = 9, -- do not tamper with this
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     maxNTerminals = 12,
-    maxWaypointDistance = 1000,
     minSplitDistance = 2,
+    maxWaypointDistance = 800,
+    searchRadius4NearbyStation2Join = 500,
 
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',

@@ -36,7 +36,7 @@ guiHelpers.showNearbyStationPicker = function(cons, eventId, eventName, eventArg
         for _, con in pairs(cons) do
             local buttonsLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
 
-            print('con.uiName or con.name or ""', con.uiName or con.name or '')
+            -- print('con.uiName or con.name or ""', con.uiName or con.name or '')
             buttonsLayout:addItem(api.gui.comp.TextView.new(con.uiName or con.name or ''))
 
             local gotoButtonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')

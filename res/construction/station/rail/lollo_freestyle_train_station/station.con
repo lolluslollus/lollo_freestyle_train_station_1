@@ -930,7 +930,7 @@ function data()
 				end
 				_addUnderpassSlots()
 
-				-- LOLLO TODO if a terminal is all underground, build a default module of these to make life easier
+				-- LOLLO TODO MAYBE if a terminal is all underground, build a default module of these to make life easier
 				local _addStairs2SubwaySlots = function()
 					if isCargoTerminal then return end
 
