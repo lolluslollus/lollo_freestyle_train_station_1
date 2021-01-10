@@ -257,7 +257,7 @@ helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
     local nNodesInTerminalSoFar = _getNNodesInTerminalsSoFar(params, t)
 
     local tag2nodes = {
-        [tag] = { } -- base 0
+        [tag] = { } -- list of base 0 indexes
     }
 
     for i = 1, #params.terminals[t].platformEdgeLists + #params.terminals[t].trackEdgeLists do
