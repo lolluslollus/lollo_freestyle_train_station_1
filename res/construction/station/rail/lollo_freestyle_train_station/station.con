@@ -1212,29 +1212,55 @@ function data()
 							print ('ERROR: subway[', slotId, '] has no transf')
 						elseif params.modules[slotId] ~= nil then
 							local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(subway.transf2Link, inverseMainTransf))
+							-- connect each subway to each terminal
+							-- for t = 1, #params.terminals do
+							-- 	-- print('attempting to link terminal t =', t, 'to subway')
+							-- 	local minDistance = nil
+							-- 	local minDistanceI = nil
+							-- 	for i = 1, #allPositionsUnderground[t] do
+							-- 		local distance = transfUtils.getPositionsDistance(subwayPos2Link, allPositionsUnderground[t][i].pos2Link)
+							-- 		if minDistance == nil or minDistance > distance then
+							-- 			minDistance = distance
+							-- 			minDistanceI = i
+							-- 		end
+							-- 	end
+
+							-- 	-- print('terminal t = ', t, 'about to link to subway')
+							-- 	if minDistanceI ~= nil then
+							-- 		-- print('allPositionsUnderground[t][minDistanceI] =') debugPrint(allPositionsUnderground[t][minDistanceI])
+							-- 		result.models[#result.models+1] = {
+							-- 			id = _constants.passengerLaneModelId,
+							-- 			transf = transfUtils.get1MLaneTransf(
+							-- 				allPositionsUnderground[t][minDistanceI].pos2Link,
+							-- 				subwayPos2Link
+							-- 			)
+							-- 		}
+							-- 	end
+							-- end
+							-- connect each subway to the nearest terminal
+							local minDistance = nil
+							local minDistanceI = nil
+							local minDistanceT = nil
 							for t = 1, #params.terminals do
-								-- print('attempting to link terminal t =', t, 'to subway')
-								local minDistance = nil
-								local minDistanceI = nil
 								for i = 1, #allPositionsUnderground[t] do
 									local distance = transfUtils.getPositionsDistance(subwayPos2Link, allPositionsUnderground[t][i].pos2Link)
 									if minDistance == nil or minDistance > distance then
 										minDistance = distance
 										minDistanceI = i
+										minDistanceT = t
 									end
 								end
-
-								-- print('terminal t = ', t, 'about to link to subway')
-								if minDistanceI ~= nil then
-									-- print('allPositionsExceptBridge[t][minDistanceI] =') debugPrint(allPositionsExceptBridge[t][minDistanceI])
-									result.models[#result.models+1] = {
-										id = _constants.passengerLaneModelId,
-										transf = transfUtils.get1MLaneTransf(
-											allPositionsUnderground[t][minDistanceI].pos2Link,
-											subwayPos2Link
-										)
-									}
-								end
+							end
+							-- print('terminal t = ', minDistanceT, 'about to link to subway')
+							if minDistanceT ~= nil and minDistanceI ~= nil then
+								-- print('allPositionsUnderground[minDistanceT][minDistanceI] =') debugPrint(allPositionsUnderground[minDistanceT][minDistanceI])
+								result.models[#result.models+1] = {
+									id = _constants.passengerLaneModelId,
+									transf = transfUtils.get1MLaneTransf(
+										allPositionsUnderground[minDistanceT][minDistanceI].pos2Link,
+										subwayPos2Link
+									)
+								}
 							end
 						end
 					end
