@@ -1052,7 +1052,18 @@ function data()
 						end
 					end
 
-					return allDistances, minDistances
+                    local shortDistances = {}
+                    for t = 1, #params.terminals do
+                        for tt = t + 1, #params.terminals do
+                            if minDistances[t] ~= nil and minDistances[t][tt] ~= nil then
+                                if allDistances[t][tt].distance / minDistances[t][tt].distance < 1.11 then
+                                    if shortDistances[t] == nil then shortDistances[t] = {} end
+                                    shortDistances[t][tt] = allDistances[t][tt]
+                                end
+                            end
+                        end
+                    end
+					return shortDistances, minDistances
 					-- return minDistances
 				end
 
@@ -1077,17 +1088,17 @@ function data()
 						end
 					end
 					_linkAlong(result.terminateConstructionHookInfo.stairs2SubwayPositions)
-					local PositionsBelowPlatforms = _getAllPositionsBelowPlatforms()
-					_linkAlong(PositionsBelowPlatforms)
+					local positionsBelowPlatforms = _getAllPositionsBelowPlatforms()
+					_linkAlong(positionsBelowPlatforms)
 
 					-- link the underpasses across terminals, underground
 					-- for now, I link each terminal to 1 other terminal only, the closest with an underpass.
 					local allPositionsUnderground = _getAllPositionsUnderground()
 					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
                     -- print('lalala')
-                    local allDistances, minDistances = _getDistancesBetweenPos2Links(allPositionsExceptBridge)
+                    local shortDistances, minDistances = _getDistancesBetweenPos2Links(allPositionsUnderground)
 					-- local minDistances = _getDistancesBetweenPos2Links(allPositionsUnderground)
-					-- print('allDistances =') debugPrint(allDistances)
+					-- print('shortDistances =') debugPrint(shortDistances)
 					-- print('minDistances =') debugPrint(minDistances)
 
 					local function _linkAcross(positions)
@@ -1156,7 +1167,7 @@ function data()
 
 				local _linkSubways = function()
 					if not(params.subways) then return end
-					local allPositionsExceptBridge = _getAllPositionsUnderground()
+					local allPositionsUnderground = _getAllPositionsUnderground()
 					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
 
 					for slotId, subway in pairs(params.subways) do
@@ -1170,8 +1181,8 @@ function data()
 								-- print('attempting to link terminal t =', t, 'to subway')
 								local minDistance = nil
 								local minDistanceI = nil
-								for i = 1, #allPositionsExceptBridge[t] do
-									local distance = transfUtils.getPositionsDistance(subwayPos2Link, allPositionsExceptBridge[t][i].pos2Link)
+								for i = 1, #allPositionsUnderground[t] do
+									local distance = transfUtils.getPositionsDistance(subwayPos2Link, allPositionsUnderground[t][i].pos2Link)
 									if minDistance == nil or minDistance > distance then
 										minDistance = distance
 										minDistanceI = i
@@ -1185,7 +1196,7 @@ function data()
 										id = _constants.passengerLaneModelId,
 										-- tag = slotHelpers.mangleModelTag(t, false),
 										transf = transfUtils.get1MLaneTransf(
-											allPositionsExceptBridge[t][minDistanceI].pos2Link,
+											allPositionsUnderground[t][minDistanceI].pos2Link,
 											subwayPos2Link
 										)
 									}
