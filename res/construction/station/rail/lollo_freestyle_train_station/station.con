@@ -1407,17 +1407,18 @@ function data()
         -- end,
         upgradeFn = function(args)
             -- LOLLO TODO allow upgrading tracks.
-            -- this sample is from the modular station, which puts edges in modules.
-			-- I don't coz they are curved, so see what I can do.
 			-- args contains the params and slotId, which is now correct, and no transf.
 			-- it also contains:
+			-- catenaryToggle = 1,
+			-- catenary = 1,
+			-- trackTypeToggle = 1,
 			-- trackType = 1,
-			  -- trackTypeToggle = 1,
-			  -- to keep things simple, I could apply the toggle to all track edges of all terminals.
 			-- print('LOLLO upgradeFn starting, args =') debugPrint(args)
 			print('LOLLO upgradeFn starting, args.slotId =') debugPrint(args.slotId)
 			print('args.catenaryToggle =') debugPrint(args.catenaryToggle)
+			print('args.catenary =') debugPrint(args.catenary)
 			print('args.trackTypeToggle =') debugPrint(args.trackTypeToggle)
+			print('args.trackType =') debugPrint(args.trackType)
 			-- print('args =') debugPrint(arrayUtils.cloneOmittingFields(args, {'modules'}, true)) -- hangs!
 			if args.slotId == nil or args.slotId < 0 then return {} end
 
@@ -1442,6 +1443,8 @@ function data()
 				else
 					newModuleFileName = _constants.trackElectrificationYesModuleFileName
 				end
+
+				-- newModuleFileName = args.catenary == 0 and _constants.trackElectrificationYesModuleFileName or _constants.trackElectrificationNoModuleFileName
 
 				local results = {
 					{ moduleKey, newModuleFileName }
@@ -1474,10 +1477,10 @@ function data()
 			print('return an empty table')
 			return {}
 
-			-- The return structure is an indexed list like:
+			-- The return structure is a list like:
 			-- return {
-			-- 	[10001000] = "station/rail/modular_station/platform_high_speed_track.module",
-			-- 	[10001010] = "station/rail/modular_station/platform_high_speed_track.module",
+			-- 		{ 10001000, "station/rail/modular_station/platform_high_speed_track.module" },
+			-- 		{ 10001010, "station/rail/modular_station/platform_high_speed_track.module" },
 			-- }
         end,
 	}
