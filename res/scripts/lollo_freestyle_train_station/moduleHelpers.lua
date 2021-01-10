@@ -150,6 +150,7 @@ end
 local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
     result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].midTrackIndex) * 2 - 2
 
+    -- print('_addTrackEdges starting for terminal =', t)
     local forceCatenary = 0
     local trackElectrificationModuleKey = slotUtils.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId)
     if params.modules[trackElectrificationModuleKey] ~= nil then
@@ -159,6 +160,7 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
             forceCatenary = 1
         end
     end
+    -- print('forceCatenary =', forceCatenary)
     local forceFast = 0
     local trackSpeedModuleKey = slotUtils.mangleId(t, 0, _constants.idBases.trackSpeedSlotId)
     if params.modules[trackSpeedModuleKey] ~= nil then
@@ -168,6 +170,7 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
             forceFast = 1
         end
     end
+    -- print('forceFast =', forceFast)
 
     for i = 1, #params.terminals[t].trackEdgeLists do
         local tel = params.terminals[t].trackEdgeLists[i]
@@ -179,14 +182,12 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
             -- freeNodes = {},
             params = {
                 type = forceFast == 0 and tel.trackTypeName or (forceFast == 1 and 'standard.lua' or 'high_speed.lua'),
-                -- type = tel.trackTypeName,
-                catenary = forceCatenary == 0 and tel.catenary or (forceCatenary == 1 and false or true)
+                catenary = forceCatenary == 0 and tel.catenary or (forceCatenary == 2 and true or false)
             },
             snapNodes = {},
             tag2nodes = tag2nodes,
             type = 'TRACK'
         }
-        -- print('tel.trackTypeName =', tel.trackTypeName)
 
         if i == 1 then
             newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0

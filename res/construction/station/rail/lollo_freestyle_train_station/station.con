@@ -1406,7 +1406,6 @@ function data()
 		-- 	return modules
         -- end,
         upgradeFn = function(args)
-            -- LOLLO TODO allow upgrading tracks.
 			-- args contains the params and slotId, which is now correct, and no transf.
 			-- it also contains:
 			-- catenaryToggle = 1,
@@ -1414,28 +1413,28 @@ function data()
 			-- trackTypeToggle = 1,
 			-- trackType = 1,
 			-- print('LOLLO upgradeFn starting, args =') debugPrint(args)
-			print('LOLLO upgradeFn starting, args.slotId =') debugPrint(args.slotId)
-			print('args.catenaryToggle =') debugPrint(args.catenaryToggle)
-			print('args.catenary =') debugPrint(args.catenary)
-			print('args.trackTypeToggle =') debugPrint(args.trackTypeToggle)
-			print('args.trackType =') debugPrint(args.trackType)
+			-- print('LOLLO upgradeFn starting, args.slotId =') debugPrint(args.slotId)
+			-- print('args.catenaryToggle =') debugPrint(args.catenaryToggle)
+			-- print('args.catenary =') debugPrint(args.catenary)
+			-- print('args.trackTypeToggle =') debugPrint(args.trackTypeToggle)
+			-- print('args.trackType =') debugPrint(args.trackType)
 			-- print('args =') debugPrint(arrayUtils.cloneOmittingFields(args, {'modules'}, true)) -- hangs!
 			if args.slotId == nil or args.slotId < 0 then return {} end
 
 			local nTerminal, _, _ = slotHelpers.demangleId(args.slotId)
-			print('nTerminal =') debugPrint(nTerminal)
+			-- print('nTerminal =') debugPrint(nTerminal)
 			if nTerminal == nil then return {} end
 
-			print('terminalModule =') debugPrint(args.modules[args.slotId])
+			-- print('terminalModule =') debugPrint(args.modules[args.slotId])
 			local newModuleFileName = nil
 			if args.catenaryToggle == 1 then
 				local moduleKey = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackElectrificationSlotId)
-				print('moduleKey =') debugPrint(moduleKey)
+				-- print('moduleKey =') debugPrint(moduleKey)
 				local oldModuleValue = args.modules[moduleKey]
-				print('oldModuleValue =') debugPrint(oldModuleValue)
+				-- print('oldModuleValue =') debugPrint(oldModuleValue)
 
 				if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
-					if oldModuleValue.name == _constants.trackElectrificationNoModuleFileName then
+					if oldModuleValue.name == _constants.trackElectrificationNoModuleFileName or oldModuleValue.name == _constants.trackElectrificationUndefinedModuleFileName then
 						newModuleFileName = _constants.trackElectrificationYesModuleFileName
 					else
 						newModuleFileName = _constants.trackElectrificationNoModuleFileName
@@ -1444,21 +1443,19 @@ function data()
 					newModuleFileName = _constants.trackElectrificationYesModuleFileName
 				end
 
-				-- newModuleFileName = args.catenary == 0 and _constants.trackElectrificationYesModuleFileName or _constants.trackElectrificationNoModuleFileName
-
 				local results = {
 					{ moduleKey, newModuleFileName }
 				}
-				print('results =') debugPrint(results)
+				-- print('results =') debugPrint(results)
 				return results
 			elseif args.trackTypeToggle == 1 then
 				local moduleKey = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackSpeedSlotId)
-				print('moduleKey =') debugPrint(moduleKey)
+				-- print('moduleKey =') debugPrint(moduleKey)
 				local oldModuleValue = args.modules[moduleKey]
-				print('oldModuleValue =') debugPrint(oldModuleValue)
+				-- print('oldModuleValue =') debugPrint(oldModuleValue)
 
 				if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
-					if oldModuleValue.name == _constants.trackSpeedSlowModuleFileName then
+					if oldModuleValue.name == _constants.trackSpeedSlowModuleFileName or oldModuleValue.name == _constants.trackSpeedUndefinedModuleFileName then
 						newModuleFileName = _constants.trackSpeedFastModuleFileName
 					else
 						newModuleFileName = _constants.trackSpeedSlowModuleFileName
@@ -1470,7 +1467,7 @@ function data()
 				local results = {
 					{ moduleKey, newModuleFileName }
 				}
-				print('results =') debugPrint(results)
+				-- print('results =') debugPrint(results)
 				return results
 			end
 
