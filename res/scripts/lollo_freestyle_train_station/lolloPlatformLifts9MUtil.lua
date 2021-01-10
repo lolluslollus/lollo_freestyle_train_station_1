@@ -1,7 +1,5 @@
 return function(height)
     local _constants = require('lollo_freestyle_train_station.constants')
-    local _underpassDepth = -_constants.underpassZ
-
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
     local function _getWallsBelowPlatform(lod)
         local results = {}
@@ -9,7 +7,8 @@ return function(height)
         local zShift4Wall = -1.8 + 5
         for h = 5, height, 5 do
             zShift4Wall = zShift4Wall - 5
-            local zedZoom4Wall = h == 5 and 0.5 or 1
+            -- local zedZoom4Wall = h == 5 and 0.5 or 1
+            local zedZoom4Wall = h == 5 and 0.3 or 1
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  4.5 + _xExtraShift, 2.2, zShift4Wall, 1}
 
             results[#results + 1] = {
@@ -23,7 +22,6 @@ return function(height)
             local zShift4Shaft = 0
             for h = 5, height, 5 do
                 zShift4Shaft = zShift4Shaft - 5
-                -- local zedZoom4Shaft = h == 5 and 0.5 or 1
                 local zedZoom4Shaft = 1
                 local shaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Shaft, 0, 0, -0.3, zShift4Shaft, 1}
                     results[#results + 1] = {
@@ -45,7 +43,7 @@ return function(height)
     local zedShift4groundPillar = -height + 3.2
     -- local zedZoom4groundPillar = -1 -- -1.075
     local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5 + _xExtraShift, 2.2, zedShift4groundPillar, 1}
-    local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 1.10 - _constants.platformLiftZShift, 1}
+    local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.25, 1}
 
     local idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -216,7 +214,7 @@ return function(height)
                             linkable = false,
                             nodes = {
                                 {
-                                    {0, 0, 1 - _constants.platformLiftZShift - _underpassDepth},
+                                    {0, 0, _constants.underpassZ},
                                     {0, 0, -1},
                                     2.4
                                 },

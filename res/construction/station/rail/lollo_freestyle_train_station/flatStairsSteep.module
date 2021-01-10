@@ -63,8 +63,8 @@ return {
 				{
 					{-1, -2, 0, 1},
 					{-1, 2, 0, 1},
-					{2.25, 2, -1.2, 1},
-					{2.25, -2, -1.2, 1},
+					{2.25, 2, -_constants.stairsHeight, 1},
+					{2.25, -2, -_constants.stairsHeight, 1},
 				}
 			},
 			optional = true,

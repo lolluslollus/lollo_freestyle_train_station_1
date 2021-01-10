@@ -42,12 +42,6 @@ return {
 			transf = slotTransf,
 			tag = tag
 		}
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = slotTransf,
-		-- 	tag = tag
-		-- }
 
 		local groundFace = {
 			{-3, -3.5, 0, 1},
@@ -69,8 +63,8 @@ return {
 				{
 					{1, -3.5, 0, 1},
 					{1, 3.5, 0, 1},
-					{6, 3.5, -1.2, 1},
-					{6, -3.5, -1.2, 1},
+					{6, 3.5, -_constants.stairsHeight, 1},
+					{6, -3.5, -_constants.stairsHeight, 1},
 				}
 			},
 			optional = true,

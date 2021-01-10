@@ -554,7 +554,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5 + _laneZ + _constants.platformSideBitsZ, 1 }
+														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5 + _laneZ + _constants.platformSideBitsZ - _constants.stairsHeight, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
@@ -566,7 +566,7 @@ function data()
 											local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 											local myTransf = transfUtilsUG.mul(
 												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
-												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + _constants.platformSideBitsZ, 1 }
+												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 											)
 											local myId = result.mangleId(t, i, _constants.idBases.flatStation5MSlotId)
 											table.insert(result.slots, {
@@ -600,7 +600,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + _constants.platformSideBitsZ, 1 }
+														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
@@ -615,7 +615,7 @@ function data()
 											local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 											local myTransf = transfUtilsUG.mul(
 												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
-												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + _constants.platformSideBitsZ, 1 }
+												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 											)
 											local myId = result.mangleId(t, i, _constants.idBases.sideLiftSlotId)
 											table.insert(result.slots, {
@@ -649,7 +649,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + _constants.platformSideBitsZ, 1 }
+														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
@@ -661,7 +661,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssInnerPosTanX2),
-														{ -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + _constants.platformSideBitsZ, 1 }
+														{ -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
@@ -672,7 +672,7 @@ function data()
 											local myPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 											local myTransf = transfUtilsUG.mul(
 												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
-												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformLiftZShift + _laneZ + _constants.platformSideBitsZ, 1 }
+												{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 											)
 											local myId = result.mangleId(t, i, _constants.idBases.platformLiftSlotId)
 											table.insert(result.slots, {
@@ -691,7 +691,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformLiftZShift + _laneZ + _constants.platformSideBitsZ, 1 }
+														{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
@@ -703,7 +703,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssInnerPosTanX2),
-														{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformLiftZShift + _laneZ + _constants.platformSideBitsZ, 1 }
+														{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
@@ -889,7 +889,7 @@ function data()
 								spacing = {2.5, 2.5, 1.5, 1.5},
 								transf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(posTanX2),
-									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + 1, 1 }
 								),
 								type = _constants.underpassModuleType,
 							})

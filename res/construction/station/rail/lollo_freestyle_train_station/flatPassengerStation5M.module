@@ -36,7 +36,7 @@ return {
 
 		local buildingTransf = transfUtilsUG.mul(
 			slotTransf,
-			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
+			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
 		)
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl',
@@ -51,7 +51,7 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				buildingTransf,
-				{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0.8, 1 }
+				{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0, 1 }
 			),
 			tag = tag
 		}
@@ -60,16 +60,16 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				buildingTransf,
-				{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0.8, 1 }
+				{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0, 1 }
 			),
 			tag = tag
 		}
 
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-1, -6.2, -5.8, 1},
-			{-1, 6.2, -5.8, 1},
-			{6.0, 6.2, -5.8, 1},
-			{6.0, -6.2, -5.8, 1},
+			{-1, -6.2, -5.0, 1},
+			{-1, 6.2, -5.0, 1},
+			{6.0, 6.2, -5.0, 1},
+			{6.0, -6.2, -5.0, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		table.insert(

@@ -55,20 +55,16 @@ return {
 
 		-- print('buildingHeight =', buildingHeight)
 		-- print('buildingModelId =', buildingModelId)
-		local buildingTransf = transfUtilsUG.mul(
-			slotTransf,
-			{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
-		)
 		result.models[#result.models + 1] = {
 			id = buildingModelId,
 			slotId = slotId,
-			transf = buildingTransf,
+			transf = slotTransf,
 			tag = tag
 		}
 		-- result.models[#result.models + 1] = {
 		-- 	id = _constants.underpassBuilding8MModelFileName,
 		-- 	slotId = slotId,
-		-- 	transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.8, 1 }),
+		-- 	transf = slotTransf,
 		-- 	tag = tag
 		-- }
 
@@ -79,7 +75,7 @@ return {
 				id = 'station/rail/asset/era_c_big_clock.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
-					buildingTransf,
+					slotTransf,
 					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 3, 1 }
 				),
 				tag = tag
@@ -89,7 +85,7 @@ return {
 				id = 'station/rail/asset/era_c_big_clock.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
-					buildingTransf,
+					slotTransf,
 					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 5, 1 }
 				),
 				tag = tag
@@ -102,7 +98,7 @@ return {
 				id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
-					buildingTransf,
+					slotTransf,
 					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 4 - buildingHeight, 1 }
 				),
 				tag = tag
@@ -112,7 +108,7 @@ return {
 				id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
-					buildingTransf,
+					slotTransf,
 					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 3.0 - buildingHeight, 1 }
 				),
 				tag = tag
@@ -120,10 +116,10 @@ return {
 		end
 
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-6.5, -4.2, -buildingHeight -0.8, 1},
-			{-6.5, 3.8, -buildingHeight -0.8, 1},
-			{6.5, 3.8, -buildingHeight -0.8, 1},
-			{6.5, -4.2, -buildingHeight -0.8, 1},
+			{-6.5, -4.2, -buildingHeight, 1},
+			{-6.5, 3.8, -buildingHeight, 1},
+			{6.5, 3.8, -buildingHeight, 1},
+			{6.5, -4.2, -buildingHeight, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		table.insert(

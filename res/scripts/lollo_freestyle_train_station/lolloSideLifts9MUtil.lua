@@ -1,6 +1,12 @@
 return function(height)
+    local _constants = require('lollo_freestyle_train_station.constants')
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
-    local topTransf = {1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  4.5, -4.25, 0.707, 1}
+
+    -- local roofTransf = {1.46, 0, 0, 0,  0, 0, 3.0, 0,  0, 1.55, 0, 0,  0.0, -4.24, 3.7, 1}
+    local roofTransf = {1.46, 0, 0, 0,  0, 0, 2.8, 0,  0, 1.55, 0, 0,  0.0, -4.24, 3.7, 1}
+    local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -2, 4.5, 1}
+    local ventTwoTransf = {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5, -2, 4.5, 1}
+    local topTransf = {1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  4.5, -4.25, 0.707 - 0.8, 1}
 
     local function _getWallsBelowPlatform(lod)
         local results = {}
@@ -8,7 +14,7 @@ return function(height)
         local zShift4Wall = -1.8 + 5
         for h = 5, height, 5 do
             zShift4Wall = zShift4Wall - 5
-            local zedZoom4Wall = h == 5 and 0.5 or 1
+            local zedZoom4Wall = h == 5 and 0.34 or 1
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  4.5, 0.75, zShift4Wall, 1}
             results[#results + 1] = {
                 --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
@@ -39,25 +45,14 @@ return function(height)
     local _wallsBelowThePlatformLod0 = _getWallsBelowPlatform(0)
     local _wallsBelowThePlatformLod1 = _getWallsBelowPlatform(1)
 
-    local zedShift4groundRoof = -height + 2.9 -- - height * .6 + 2.60
-    local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -4.1, zedShift4groundRoof, 1}
+    local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -4.1, 2.9 - height, 1}
 
-    local zedShift4groundPillar = -height + 3.2
-    -- local zedZoom4groundPillar = -1.075
-    -- local frontLeftPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, -9.0, -5, zedShift4groundPillar, 1}
-    -- local frontRightPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, 9.0, -5, zedShift4groundPillar, 1}
-    -- local rearLeftPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, -9.0, 0.5, zedShift4groundPillar, 1}
-    -- local rearRightPillarTransf = {0.2, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4groundPillar, 0, 9.0, 0.5, zedShift4groundPillar, 1}
-    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5 + _xExtraShift, 0.75, zedShift4groundPillar, 1}
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5 + _xExtraShift, 0.75, 3.2 - height, 1}
 
-    local roofTransf = {1.46, 0, 0, 0,  0, 0, 3.0, 0,  0, 1.55, 0, 0,  0.0, -4.24, 4.5, 1}
-    -- local solarOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.1, 5.25, 1}
-    -- local solarTwoTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.4, 5.25, 1}
-    local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -2, 5.3, 1}
-    local ventTwoTransf = {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5, -2, 5.3, 1}
-    local floorPavingWithHoleTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.71, 0.0, 1}
-    local floorPavingTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.01, 0, 1}
-    local floorBracketTransf = {1.48, 0, 0, 0, 0, 0, 1.9, 0, 0, 0.2, 0, 0, 0, -0.2, 0.32, 1}
+    local floorPavingWithHoleTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.71, -0.8, 1}
+    local floorPavingTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.01, -0.8, 1}
+    local floorBracketTransf = {1.48, 0, 0, 0, 0, 0, 1.9, 0, 0, 0.2, 0, 0, 0, -0.2, 0.32 - 0.8, 1}
+
     local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
@@ -95,14 +90,14 @@ return function(height)
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                                     name = 'tickets_era_c_1',
-                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 6.3, -1.5, 0.8, 1}
+                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 6.3, -1.5, 0, 1}
                                 },
                                 {
                                     -- ticket machine upstairs left
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                                     name = 'tickets_era_c_1',
-                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.25, -2.7, 0.8, 1}
+                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.25, -2.7, 0, 1}
                                 },
                                 -- ground level
                                 {
@@ -148,18 +143,6 @@ return function(height)
                                     name = 'oil_refinery_wall_large',
                                     transf = roofTransf
                                 },
-                                --[[ {
-                                    --solar panel 1
-                                    materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                    mesh = 'asset/roof/lod_0_solar_panel1.msh',
-                                    transf = solarOneTransf
-                                }, ]]
---[[                                 {
-                                    --solar panel 2
-                                    materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                    mesh = 'asset/roof/lod_0_solar_panel1.msh',
-                                    transf = solarTwoTransf
-                                }, ]]
                                 {
                                     -- roof vent 1
                                     materials = {'asset/roof/asset_roof_decor1.mtl'},
@@ -232,7 +215,7 @@ return function(height)
                             },
                             name = 'era_c_station_name_grp',
                             --transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-                            transf = {1.4, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, -.1, 1}
+                            transf = {1.4, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, -0.9, 1}
                         }
                     },
                     name = 'RootNode',
@@ -247,38 +230,13 @@ return function(height)
                     children = {
                         {
                             children = {
-                                -- {
-                                --     -- entrance roof
-                                --     materials = {
-                                --         'station/rail/era_c/era_c_trainstation_borders_1.mtl',
-                                --         'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
-                                --         'station/rail/era_c/era_c_trainstation_roof_white.mtl',
-                                --         'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
-                                --     },
-                                --     mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
-                                --     name = 'station_3_roof_perron_side',
-                                --     transf = groundRoofTransf
-                                -- },
                                 -- roof
                                 {
                                     -- flat roof
                                     materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
                                     transf = roofTransf
                                 },
-                                --[[ {
-                                    --solar panel 1
-                                    materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                    mesh = 'asset/roof/lod_0_solar_panel1.msh',
-                                    transf = solarOneTransf
-                                }, ]]
---[[                                 {
-                                    --solar panel 2
-                                    materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                    mesh = 'asset/roof/lod_0_solar_panel1.msh',
-                                    transf = solarTwoTransf
-                                }, ]]
                                 {
                                     -- roof vent 1
                                     materials = {'asset/roof/asset_roof_decor1.mtl'},
@@ -293,9 +251,6 @@ return function(height)
                                 },
                                 -- floor paving upstairs
                                 {
-                                    -- materials = {'station/rail/era_c/era_c_trainstation_floor_1.mtl'},
-                                    -- mesh = 'station/rail/era_c/station_1_main/station_1_main_perron_lod0.msh',
-                                    -- mesh = 'floor_with_hole.msh',
                                     materials = {
                                         'station/rail/era_c/era_c_trainstation_floor_1.mtl',
                                         'lollo_freestyle_train_station/shaft.mtl'
@@ -328,21 +283,10 @@ return function(height)
                             transf = pillarsTransf
                         },
                         {
-                            children = {
-                                {
-                                    -- top
-                                    --materials = { "industry/oil_refinery/era_a/wall_2.mtl", },
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl'},
-                                    --materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
-                                    --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", },
-                                    --materials = { "asset/commercial/era_c/com_glass.mtl", },
-                                    --materials = { "building/era_c/com_1_1x1_03/com_era_c_window_glass_mat.mtl", }, -- crashes
-                                    --materials = { "asset/roof/asset_roof_decor1.mtl", },
-                                    mesh = 'lollo_freestyle_train_station/lift/lollo9x5x5top.msh',
-                                    name = 'oil_refinery_wall_large',
-                                    transf = topTransf
-                                }
-                            },
+                            -- top
+                            materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl'},
+                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x5top.msh',
+                            transf = topTransf
                         },
                     },
                     name = 'RootNode',
@@ -397,20 +341,10 @@ return function(height)
                             transf = pillarsTransf
                         },
                         {
-                            children = {
-                                {
-                                    -- top
-                                    --materials = { "industry/oil_refinery/era_a/wall_2.mtl", },
-                                    materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl'},
-                                    --materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
-                                    --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", },
-                                    --materials = { "asset/commercial/era_c/com_glass.mtl", },
-                                    --materials = { "building/era_c/com_1_1x1_03/com_era_c_window_glass_mat.mtl", }, -- crashes
-                                    --materials = { "asset/roof/asset_roof_decor1.mtl", },
-                                    mesh = 'lollo_freestyle_train_station/lift/lollo9x5x5top.msh',
-                                    transf = topTransf
-                                }
-                            },
+                                -- top
+                                materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl'},
+                                mesh = 'lollo_freestyle_train_station/lift/lollo9x5x5top.msh',
+                                transf = topTransf
                         },
                     },
                     name = 'RootNode',
@@ -433,7 +367,7 @@ return function(height)
                         -- nLines = 1,
                         size = {5.2, 0.6},
                         -- size = {4.0, 0.6},
-                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.80, -4.333, 0.27, 1},
+                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.80, -4.333, 0.27 -0.8, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }
@@ -442,28 +376,18 @@ return function(height)
             transportNetworkProvider = {
                 laneLists = {
                     {
-                        -- down the stairs and into the lift
+                        -- across the hall and into the lift
                         linkable = false,
                         nodes = {
                             {
-                                {0, 0, 0.8},
-                                {0, -1.8, 0},
-                                2.4000000953674
-                            },
-                            {
-                                {0, -1.8, 0.8},
-                                {0, -1.8, 0},
-                                2.4000000953674
-                            },
-                            {
-                                {0, -1.8, 0.8},
-                                {0, -0.2, 0},
-                                2.4000000953674
+                                {0, 0, 0},
+                                {0, -2, 0},
+                                2.4
                             },
                             {
                                 {0, -2.0, 0},
-                                {0, -0.2, 0},
-                                2.4000000953674
+                                {0, -2, 0},
+                                2.4
                             }
                         },
                         speedLimit = 20,

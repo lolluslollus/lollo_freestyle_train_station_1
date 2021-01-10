@@ -42,7 +42,7 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				slotTransf,
-				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -buildingHeight - 0.8, 1 }
+				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -buildingHeight, 1 }
 			),
 			tag = tag
 		}

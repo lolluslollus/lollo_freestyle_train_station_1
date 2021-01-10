@@ -1,7 +1,7 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
--- local modulesutil = require "modulesutil"
+local modulesutil = require "modulesutil"
 -- local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
 -- local vec3 = require "vec3"
@@ -38,26 +38,14 @@ return {
 		-- in base_config.lua
 		-- Set it into the models so the game knows what module they belong to.
 
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = transfUtilsUG.mul(
-		-- 		slotTransf,
-		-- 		{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -terrainHeight, 1 }
-		-- 	),
-		-- 	tag = tag
-		-- }
-
 		local buildingHeight = moduleHelpers.tryGetLiftHeight(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
 		local buildingModelId = moduleHelpers.tryGetSideLiftModelId(params, nTerminal, nTrackEdge)
 		if not(buildingModelId) then return end
 
-		-- print('buildingHeight =', buildingHeight)
-		-- print('buildingModelId =', buildingModelId)
 		local buildingTransf = transfUtilsUG.mul(
 			slotTransf,
-			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -0.8, 1 }
+			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
 		)
 		result.models[#result.models + 1] = {
 			id = buildingModelId,
@@ -74,7 +62,7 @@ return {
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 3, 1 }
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 3.8, 1 }
 				),
 				tag = tag
 			}
@@ -84,7 +72,7 @@ return {
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 5, 1 }
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 5.8, 1 }
 				),
 				tag = tag
 			}
@@ -97,7 +85,7 @@ return {
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 5 - buildingHeight, 1 }
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 4.2 - buildingHeight, 1 }
 				),
 				tag = tag
 			}
@@ -119,7 +107,7 @@ return {
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
-					{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0.8, 1 }
+					{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0, 1 }
 				),
 				tag = tag
 			}
@@ -128,7 +116,7 @@ return {
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
-					{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0.8, 1 }
+					{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0, 1 }
 				),
 				tag = tag
 			}
