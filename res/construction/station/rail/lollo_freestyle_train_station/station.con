@@ -1013,7 +1013,7 @@ function data()
 					return results
 				end
 
-				local _getDistancesBetweenPos2Links = function(positions)
+				local _getMinDistancesBetweenPos2Links = function(positions)
 					-- local allDistances = {}
 					local minDistances = {} -- LOLLO TODO make it an array of shortDistances, so we have more than one cross connection
 					for t = 1, #params.terminals do
@@ -1086,7 +1086,7 @@ function data()
 					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
 					-- local allDistances, minDistances = _getDistancesBetweenPos2Links(allPositionsExceptBridge)
 					-- print('lalala')
-					local minDistances = _getDistancesBetweenPos2Links(allPositionsUnderground)
+					local minDistances = _getMinDistancesBetweenPos2Links(allPositionsUnderground)
 					-- print('allDistances =') debugPrint(allDistances)
 					-- print('minDistances =') debugPrint(minDistances)
 
