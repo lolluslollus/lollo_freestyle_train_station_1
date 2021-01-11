@@ -913,21 +913,18 @@ function data()
                     })
                     -- LOLLO TODO try building a station next to a platform and onto a track
                     -- belonging to another terminal: you can. You shouldn't tho.
-                    -- insert two dummy slots for upgrading tracks
-                    -- LOLLO TODO try and make these undeletable.
-                    -- To do that, either make the spacing 0, 0, 0, 0
-                    -- or tweak preProcessFn
+                    -- insert two undeletable dummy slots for upgrading tracks
 					table.insert(result.slots, {
 						height = -2,
 						id = result.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId),
-						spacing = {1, 1, 1, 1},
+						spacing = {0, 0, 0, 0}, -- this does not prevent deletion, it just makes it harder
 						transf = myTransf,
 						type = _constants.trackElectrificationModuleType
 					})
 					table.insert(result.slots, {
 						height = -4,
 						id = result.mangleId(t, 0, _constants.idBases.trackSpeedSlotId),
-						spacing = {1, 1, 1, 1},
+						spacing = {0, 0, 0, 0},
 						transf = myTransf,
 						type = _constants.trackSpeedModuleType
 					})
@@ -1388,13 +1385,26 @@ function data()
 		end,
  		preProcessFn = function(modules, change, three)
 			-- this fires when the user adds or removes a module
-			print('LOLLO preProcessFn')
+			-- print('LOLLO preProcessFn')
 			-- print('modules =') debugPrint(modules)
-			print('change =') debugPrint(change)
+			-- print('change =') debugPrint(change)
+
 			-- default behaviour
+			-- if change.added then
+			-- 	modules[change.slotId] = change.module
+			-- else
+			-- 	modules[change.slotId] = nil
+			-- end
+
 			if change.added then
 				modules[change.slotId] = change.module
 			else
+				-- bar deletion of modules for upgrading tracks
+				local _, _, baseId = slotHelpers.demangleId(change.slotId)
+				if baseId == _constants.idBases.trackElectrificationSlotId or baseId == _constants.idBases.trackSpeedSlotId then
+					-- print('barring removing modules for upgrading tracks')
+					return modules
+				end
 				modules[change.slotId] = nil
 			end
 			-- airport behaviour

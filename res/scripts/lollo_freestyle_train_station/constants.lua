@@ -73,7 +73,6 @@ local constants = {
     slopedPassengerArea1x5ModelFileName = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/area1x5.mdl',
     slopedPassengerArea1x10ModelFileName = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/area1x10.mdl',
     slopedPassengerArea1x20ModelFileName = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/area1x20.mdl',
-    -- terminalModelFileName = 'lollo_freestyle_train_station/icon/red_short.mdl',
     terminalModelFileName = 'lollo_freestyle_train_station/asset/arrivi_partenze_colonna_new.mdl',
     underpassGroundModelFileName = 'lollo_freestyle_train_station/underpass/underpassFloor.mdl',
     underpassBuilding10MModelFileName = 'lollo_freestyle_train_station/underpass/underpass-building-10m.mdl',
