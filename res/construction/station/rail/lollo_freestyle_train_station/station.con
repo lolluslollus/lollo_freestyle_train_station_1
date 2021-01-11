@@ -1399,10 +1399,10 @@ function data()
 			if change.added then
 				modules[change.slotId] = change.module
 			else
-				-- bar deletion of modules for upgrading tracks
+				-- bar removal of modules for upgrading tracks
 				local _, _, baseId = slotHelpers.demangleId(change.slotId)
 				if baseId == _constants.idBases.trackElectrificationSlotId or baseId == _constants.idBases.trackSpeedSlotId then
-					-- print('barring removing modules for upgrading tracks')
+					-- print('barring removal of modules for upgrading tracks')
 					return modules
 				end
 				modules[change.slotId] = nil
