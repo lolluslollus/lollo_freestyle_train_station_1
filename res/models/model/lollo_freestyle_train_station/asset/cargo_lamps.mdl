@@ -18,6 +18,10 @@ return {
 					{
 						children = {
 							{
+                                -- LOLLO NOTE the original model has those animations and scales down the
+                                -- emissive materials by 1e-4, producing no light.
+                                -- If I take away the scaling, the animations will make trouble on certain machines.
+                                -- Taking away the scaling and the animation does the trick.
 								-- animations = {
 								-- 	producing = {
 								-- 		params = {
@@ -121,4 +125,3 @@ return {
 	version = 1,
 }
 end
--- LOLLO TODO check this version of the cargo lamps with the folks online, it works fine here.
