@@ -21,8 +21,9 @@ function data()
                             materials = {
                                 "lollo_freestyle_train_station/station_concrete_2.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1.mtl",
+                                "lollo_freestyle_train_station/station_concrete_2.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_c_passenger_platform_ext_1x10m.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_c_platform_ext_1x10m.msh',
                             transf = {1, 0, 0, 0,  0, 1.05, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },

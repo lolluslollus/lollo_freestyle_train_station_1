@@ -1,26 +1,26 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
 					count = 24,
-					offset = 540,
+					offset = 724,
 				},
 				position = {
 					count = 24,
-					offset = 516,
+					offset = 748,
 				},
 				tangent = {
 					count = 24,
-					offset = 492,
+					offset = 676,
 				},
 				uv0 = {
 					count = 24,
-					offset = 564,
+					offset = 700,
 				},
 			},
 			materials = {
@@ -30,23 +30,45 @@ return {
 			indices = {
 				normal = {
 					count = 192,
-					offset = 972,
+					offset = 1156,
 				},
 				position = {
 					count = 192,
-					offset = 780,
+					offset = 1348,
 				},
 				tangent = {
 					count = 192,
-					offset = 588,
+					offset = 772,
 				},
 				uv0 = {
 					count = 192,
-					offset = 1164,
+					offset = 964,
 				},
 			},
 			materials = {
 				"station/train/passenger/trainstation_1850_floor_1.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 96,
+					offset = 1732,
+				},
+				position = {
+					count = 96,
+					offset = 1828,
+				},
+				tangent = {
+					count = 96,
+					offset = 1540,
+				},
+				uv0 = {
+					count = 96,
+					offset = 1636,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/slopedSides/Material.001.mtl", 
 			},
 		}, 
 	},
@@ -54,12 +76,12 @@ return {
 		normal = {
 			count = 60,
 			numComp = 3,
-			offset = 208,
+			offset = 376,
 		},
 		position = {
-			count = 144,
+			count = 240,
 			numComp = 3,
-			offset = 64,
+			offset = 436,
 		},
 		tangent = {
 			count = 64,
@@ -67,9 +89,9 @@ return {
 			offset = 0,
 		},
 		uv0 = {
-			count = 224,
+			count = 312,
 			numComp = 2,
-			offset = 268,
+			offset = 64,
 		},
 	},
 }
