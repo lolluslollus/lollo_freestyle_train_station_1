@@ -968,7 +968,7 @@ function data()
 					if isCargoTerminal then return end
 
 					for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
-						if params.terminals[t].centrePlatforms[i].type == 2 then -- only in tunnels
+						-- if params.terminals[t].centrePlatforms[i].type == 2 then -- only in tunnels -- LOLLO TODO uncomment after testing
 							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 							table.insert(result.slots, {
 								-- height = 1,
@@ -980,14 +980,14 @@ function data()
 								),
 								type = _constants.stairs2SubwayModuleType,
 							})
-						end
+						-- end
 					end
 				end
 				_addStairs2SubwaySlots()
 			end -- loop over terminals
 
 			local _addSubwaySlots = function()
-				print('_addSubwaySlots starting, params.subways =') debugPrint(params.subways)
+				-- print('_addSubwaySlots starting, params.subways =') debugPrint(params.subways)
 				if not(params.subways) then return end
 
 				for slotId, subway in pairs(params.subways) do
@@ -999,11 +999,12 @@ function data()
 							if extraData.transf == nil then
 								print ('ERROR: subway[', slotId, '] has no transf')
 							else
+								-- print('extraData =') debugPrint(extraData)
 								table.insert(result.slots, {
 									-- height = 0,
 									id = slotId,
 									spacing = {2.5, 2.5, 1.5, 1.5},
-									transf = transfUtilsUG.mul(extraData.transf, inverseMainTransf),
+									transf = transfUtilsUG.mul(inverseMainTransf, extraData.transf),
 									type = _constants.subwayModuleType,
 								})
 							end
@@ -1225,7 +1226,7 @@ function data()
 						elseif subway.transf == nil then
 							print ('ERROR: subway[', slotId, '] has no transf')
 						elseif params.modules[slotId] ~= nil then
-							local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(subway.transf2Link, inverseMainTransf))
+							local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(inverseMainTransf, subway.transf2Link))
 							-- connect each subway to each terminal
 							-- for t = 1, #params.terminals do
 							-- 	-- print('attempting to link terminal t =', t, 'to subway')

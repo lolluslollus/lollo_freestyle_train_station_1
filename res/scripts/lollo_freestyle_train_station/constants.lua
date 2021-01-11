@@ -30,7 +30,7 @@ local constants = {
 
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
-    subwayConFileName = 'lollo_freestyle_train_station/subway.con',
+    subwayConFileName = 'station/rail/lollo_freestyle_train_station/subway.con',
 
     flatStairsModuleType = 'freestyleTrainStationFlatStairs',
     flatCargoArea5x5ModuleType = 'freestyleTrainStationFlatCargoArea5x5',

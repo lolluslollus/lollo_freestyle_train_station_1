@@ -14,9 +14,6 @@ function data()
             yearTo = 0
         },
         order = 1102,
-        collider = {
-            type = 'NONE'
-        },
         -- autoRemovable = true,
         skipCollision = true,
         updateFn = function(params)
@@ -27,7 +24,12 @@ function data()
                 colliders = {},
                 cost = 0,
                 edgeLists = {},
+                groundFaces = {},
                 models = {},
+                terrainAlignmentLists = { { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+					type = "EQUAL",
+					faces =  { }
+				} },
             }
             --		result.groundFaces = {}
             --		result.h0 = {}

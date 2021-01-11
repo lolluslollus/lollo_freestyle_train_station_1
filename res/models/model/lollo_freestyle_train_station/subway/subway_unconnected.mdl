@@ -1,4 +1,5 @@
 function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
 
     return {
@@ -8,14 +9,22 @@ function data()
             {
                 node = {
                     children = {
+                        -- {
+                        --     materials = {'lollo_freestyle_train_station/icon/red.mtl'},
+                        --     mesh = 'asset/icon/lod_0_icon_pointer.msh',
+                        --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 10, 0,  0, 0, 0, 1}
+                        -- },
                         {
-                            materials = {'lollo_freestyle_train_station/icon/red.mtl'},
-                            mesh = 'asset/icon/lod_0_icon_pointer.msh',
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/subway/stairs-down-half-4m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },
                     name = 'RootNode',
-                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 10, 0, 0, 0, 0, 1, },
+                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                 },
                 static = false,
                 visibleFrom = 0,

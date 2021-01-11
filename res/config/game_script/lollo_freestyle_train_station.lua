@@ -48,6 +48,7 @@ local _actions = {
 
         local subwayTransf = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION).transf
         if subwayTransf == nil then return end
+        -- print('subwayTransf =') debugPrint(subwayTransf)
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
@@ -1454,7 +1455,7 @@ function data()
                                             if not(isStillThere) then removedSlotIds[#removedSlotIds+1] = oldSlotId end
                                         end
                                         print('removedSlotIds =') debugPrint(removedSlotIds)
-                                        if #removedSlotIds < 1 then print('ERROR station was bulldozed but no slot ids to remove were found') return end
+                                        if #removedSlotIds < 1 then print('WARNING: station was bulldozed but no slot ids to remove were found, maybe the user attempted to bulldoze the track upgrade modules') return end
 
                                         -- the user may have removed any sort of module. Here, we only care for the terminal slot,
                                         -- because we need to remove its tracks and platforms.
@@ -1515,13 +1516,14 @@ function data()
                             print('subway construction built, construction id =') debugPrint(subwayId)
 
                             local con = api.engine.getComponent(subwayId, api.type.ComponentType.CONSTRUCTION)
+                            -- if con ~= nil then print('con.fileName =') debugPrint(con.fileName) end
                             if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
 
                             local subwayTransfApi = con.transf
                             if subwayTransfApi == nil then return end
 
                             local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
-                            if not(conTransf) then return end
+                            if conTransf == nil then return end
 
                             print('conTransf =') debugPrint(conTransf)
                             -- local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
