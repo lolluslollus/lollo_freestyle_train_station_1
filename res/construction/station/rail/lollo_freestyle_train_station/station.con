@@ -18,14 +18,18 @@ end
 -- However, it is easier to place more platform-tracks upfront than add modules later,
 -- so we go this way.
 
--- LOLLO NOTE we need skipCollision = true in the construction
+-- LOLLO NOTE we need skipCollision = false in the construction
 -- coz we don't want to check crazy stuff on a non-grid pattern.
 -- However, it can be trouble.
 -- Perhaps you bury the modules into the ground, like with the lorry station?
 -- If I crop the platform tracks outside the station, there are no more collisions!
--- If I replace the track definition of my platform-track with the stock track, the problem still occurs.
+-- If I replace the track definition of my platform-track with the stock track,
+-- the problem still occurs.
 -- If I add the edgeLists in terminateConstructionHook, it does not help.
--- The trick was to carefully avoid anything even grazing on the neighbour edge. Even a collision-free model with a path can make trouble.
+-- The trick was to carefully avoid anything even grazing on the neighbour edge:
+-- even a collision-free model with a path can make trouble.
+-- It's also important to assign void bounding boxes and colliders to certain models,
+-- as opposed to not assigning any, which fails to turn off collisions.
 
 -- LOLLO NOTE we add a "subways" indexed table with the same indexes as params.modules, to hold extra information
 -- that is, the transf. If a module is deleted in the game, its matching subways[] entry may be still around.
@@ -48,7 +52,7 @@ function data()
 			soundSet = { name = "station_cargo_old" }
 		},
 		autoRemovable = false,
-		-- skipCollision = true, -- see the notes
+		skipCollision = false, -- see the notes
 		params = { -- keep it empty or it will crash coz it won't find the params, which I pass when building the construction
             -- {
             --     key = 'fileName',
