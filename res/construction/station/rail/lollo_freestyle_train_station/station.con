@@ -906,7 +906,9 @@ function data()
 						spacing = {2.5, 2.5, 1.5, 1.5},
 						transf = myTransf,
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
-					})
+                    })
+                    -- LOLLO TODO try building a station next to a platform and onto a track
+                    -- belonging to another terminal: you can. You shouldn't tho.
                     -- insert two dummy slots for upgrading tracks
                     -- LOLLO TODO try and make these undeletable.
                     -- To do that, either make the spacing 0, 0, 0, 0
