@@ -36,6 +36,9 @@ end
 -- As soon as a new subway is built, its subways[] will be updated.
 -- So, when querying params.subways[slotId], make sure that params.modules[slotId] also exists.
 
+-- LOLLO TODO try building a station next to a platform and onto a track
+-- belonging to another terminal: you can. You shouldn't tho. Adding colliders into the modules does not help.
+
 function data()
 	return {
 		type = 'RAIL_STATION',
@@ -911,8 +914,6 @@ function data()
 						transf = myTransf,
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
                     })
-                    -- LOLLO TODO try building a station next to a platform and onto a track
-                    -- belonging to another terminal: you can. You shouldn't tho.
                     -- insert two undeletable dummy slots for upgrading tracks
 					table.insert(result.slots, {
 						height = -2,
