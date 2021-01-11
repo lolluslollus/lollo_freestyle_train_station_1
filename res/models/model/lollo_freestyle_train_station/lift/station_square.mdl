@@ -45,15 +45,21 @@ function data()
                                     transf = groundRoofTransf
                                 },
                                 {
-                                    -- lamp left -- LOLLO TODO make my own emissive lamp
-                                    materials = {'asset/lamp_new.mtl'},
-                                    mesh = 'asset/lamp_new_lod_0.msh',
+                                    -- lamp left
+                                    materials = {
+                                        "asset/lamp_new.mtl",
+                                        "lollo_freestyle_train_station/neon-medium.mtl",
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_0.msh',
                                     transf = _lampLeftTransf
                                 },
                                 {
                                     -- lamp right
-                                    materials = {'asset/lamp_new.mtl'},
-                                    mesh = 'asset/lamp_new_lod_0.msh',
+                                    materials = {
+                                        "asset/lamp_new.mtl",
+                                        "lollo_freestyle_train_station/neon-medium.mtl",
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_0.msh',
                                     transf = _lampRightTransf
                                 },
                                 {
@@ -244,14 +250,20 @@ function data()
                                 },
                                 {
                                     -- lamp left
-                                    materials = {'asset/lamp_new.mtl'},
-                                    mesh = 'asset/lamp_new_lod_1.msh',
+                                    materials = {
+                                        "asset/lamp_new.mtl",
+                                        "lollo_freestyle_train_station/neon-medium.mtl",
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
                                     transf = _lampLeftTransf
                                 },
                                 {
                                     -- lamp right
-                                    materials = {'asset/lamp_new.mtl'},
-                                    mesh = 'asset/lamp_new_lod_1.msh',
+                                    materials = {
+                                        "asset/lamp_new.mtl",
+                                        "lollo_freestyle_train_station/neon-medium.mtl",
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
                                     transf = _lampRightTransf
                                 },
                                 {

@@ -1,0 +1,53 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 0.12200000137091, 0.37925198674202, 6.0475449562073, },
+		bbMin = { -0.12200000137091, -0.097726002335548, -0.16547299921513, },
+	},
+	collider = {
+		params = { },
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "MESH",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = {
+							"asset/lamp_new.mtl",
+							"lollo_freestyle_train_station/neon-medium.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/asset/lamp_new_lod_0.msh",
+						transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 100,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = {
+							"asset/lamp_new.mtl",
+							"lollo_freestyle_train_station/neon-medium.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/asset/lamp_new_lod_1.msh",
+						transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 100,
+			visibleTo = 300,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end
