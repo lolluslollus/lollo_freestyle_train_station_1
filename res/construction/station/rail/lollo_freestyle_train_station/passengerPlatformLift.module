@@ -38,16 +38,6 @@ return {
 		-- in base_config.lua
 		-- Set it into the models so the game knows what module they belong to.
 
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = transfUtilsUG.mul(
-		-- 		slotTransf,
-		-- 		{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -terrainHeight, 1 }
-		-- 	),
-		-- 	tag = tag
-		-- }
-
 		local buildingHeight = moduleHelpers.tryGetLiftHeight(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
 		local buildingModelId = moduleHelpers.tryGetPlatformLiftModelId(params, nTerminal, nTrackEdge)
@@ -61,12 +51,6 @@ return {
 			transf = slotTransf,
 			tag = tag
 		}
-		-- result.models[#result.models + 1] = {
-		-- 	id = _constants.underpassBuilding8MModelFileName,
-		-- 	slotId = slotId,
-		-- 	transf = slotTransf,
-		-- 	tag = tag
-		-- }
 
 		-- add some deco
 		local _clockY = -2.9 -- 2.8

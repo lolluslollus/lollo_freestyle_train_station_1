@@ -1170,7 +1170,6 @@ function data()
                 end
                 -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
                 -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
-                -- You may leave this out if you lay down platform models instead of edges
                 if #platformEdgeIdsBetweenNodeIds == 1 then
                     print('only one platform edge, going to split it')
                     local edgeId = platformEdgeIdsBetweenNodeIds[1]
@@ -1680,7 +1679,7 @@ function data()
 
                                     -- LOLLO NOTE do not check that the tracks between the waypoints are all of the same type
                                     -- (ie, platforms have the same width) so we have more flexibility with tunnel entrances
-                                    -- on the other hand, different platform widths make trouble with cargo:
+                                    -- on the other hand, different platform widths make trouble with cargo, which has multiple waiting areas:
                                     -- let's check if they are different only if one is > 5, which only happens with cargo.
                                     local trackDistances = {}
                                     for _, edgeId in pairs(contiguousTrackEdgeIds) do
@@ -1778,14 +1777,6 @@ function data()
                                     -- we bar building two platform waypoints outside a junction.
                                     -- Or maybe, we could bar intersecting platform-tracks altogether:
                                     -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
-
-                                    -- LOLLO NOTE useful to remember
-                                    -- local platformWaypointTransf = transfUtilsUG.new(
-                                    --     args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(0),
-                                    --     args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(1),
-                                    --     args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(2),
-                                    --     args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf:cols(3)
-                                    -- )
 
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _trackWaypointModelId then
                                     local waypointData = _validateWaypointBuilt(_trackWaypointModelId, false)

@@ -129,7 +129,7 @@ function data()
 					-- },
 					-- LOLLO NOTE these guys skip the collision check between the spacing rectangle
 					-- of the module being placed and the spacing rectangles of the already built modules.
-					-- it also skips the collision check between the spacing rectangle
+					-- they also skip the collision check between the spacing rectangle
 					-- of the module being placed and the objects outside the construction (the slot does not turn red while proposing a placement).
 					[_constants.slopedCargoArea1x5ModuleType] = {
 						maxModules = -1,

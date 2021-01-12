@@ -29,18 +29,10 @@ return {
 	order = {
 		value = 13,
 	},
-	-- skipCollision = true,
 	type = _constants.flatPassengerArea10x10ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
-
-		-- print('LOLLO area module received slotId, nTerminal, nTrackEdge, baseId = ', slotId, nTerminal, nTrackEdge, baseId)
-		-- print('LOLLO result =') debugPrint(result)
-		-- print('slotTransf =') debugPrint(slotTransf) -- LOLLO NOTE we only use slotTransf to place the slot! The coords are absolute.
-		-- print('params =') debugPrint(params)
-		-- params are the station params
-		-- addModelFn(_constants.cargoAreaInner12x12ModelFileName, transf.transl(vec3.new(0, 0, 0)), modelTag)
 
 		result.models[#result.models + 1] = {
 			-- id = 'lollo_freestyle_train_station/icon/green.mdl',

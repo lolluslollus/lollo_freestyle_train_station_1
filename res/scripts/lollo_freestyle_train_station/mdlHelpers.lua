@@ -60,7 +60,7 @@ local helpers = {}
     end
 
     -- LOLLO NOTE if a construction contains models without bounding info and collider,
-    -- it will still detect collisions with them. With this, we avoid that problem.
+    -- it will still detect collisions with them. With these, we avoid that problem.
     helpers.getVoidBoundingInfo = function()
         return {} -- this seems the same as the following
         -- return {

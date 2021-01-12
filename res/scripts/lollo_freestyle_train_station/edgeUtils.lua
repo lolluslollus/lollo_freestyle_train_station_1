@@ -233,7 +233,7 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
             y = aY + bY * lMid + cY * lMid * lMid + dY * lMid * lMid * lMid,
             z = aZ + bZ * lMid + cZ * lMid * lMid + dZ * lMid * lMid * lMid
         },
-        -- LOLLO NOTE these are real derivatives, they make no sense for e point, so we normalise them
+        -- LOLLO NOTE these are real derivatives, they make no sense for a single point, so we normalise them
         tangent = helper.getVectorNormalised({
             x = bX + 2 * cX * lMid + 3 * dX * lMid * lMid,
             y = bY + 2 * cY * lMid + 3 * dY * lMid * lMid,

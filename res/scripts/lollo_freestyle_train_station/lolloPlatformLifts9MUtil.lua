@@ -48,11 +48,6 @@ return function(height)
     local idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
-    -- LOLLO NOTE I can make many of these, one for each height.
-    -- For example, platform_lifts_9_5_5.mdl, platform_lifts_9_5_10.mdl, and so on.
-    -- Only the transformations above will change, if I am clever,
-    -- and the height of the bounding box.
-
     --print('LOLLO height = ', height)
     return {
         boundingInfo = {

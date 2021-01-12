@@ -35,7 +35,7 @@ function data()
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
-            polygon_offset = { -- LOLLO NOTE thsi really helps
+            polygon_offset = { -- LOLLO NOTE this helps
                 factor = -4,
                 forceDepthWrite = true,
                 units = -4,
