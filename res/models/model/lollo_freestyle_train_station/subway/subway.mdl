@@ -1,6 +1,23 @@
 function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    local metadata = _mdlHelpers.getSubwayMetadata()
+    metadata.labelList = {
+        labels = {
+            {
+                alignment = 'CENTER',
+                alphaMode = 'BLEND',
+                childId = 'RootNode',
+                fitting = 'SCALE',
+                nLines = 1,
+                renderMode = "EMISSIVE",
+                size = {2.5, 0.6},
+                transf = { 0, -0.6, 0, 0,  0, 0, 0.6, 0,  -0.6, 0, 0, 0,  0.026, 0.75, 3.16, 1, },
+                type = 'STATION_NAME',
+                verticalAlignment = 'CENTER'
+            }
+        }
+    }
 
     return {
         boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
@@ -18,10 +35,19 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
                                 'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/hole.mtl',
+                                'lollo_freestyle_train_station/rough-alu.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/subway/stairs-down-half-4m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
+                        {
+                            materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                            mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_lod0.msh',
+                            name = 'era_c_station_name',
+                            transf = {0, -0.6, 0, 0,  1, 0, 0, 0,  0, 0, 0.6, 0,  0.25, 0, 2.95, 1}
+                            -- transf = {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.6, 3.3, 1}
+                        }
                     },
                     name = 'RootNode',
                     transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
@@ -31,7 +57,7 @@ function data()
                 visibleTo = 1000,
             },
         },
-        metadata = _mdlHelpers.getSubwayMetadata(),
+        metadata = metadata,
         version = 1
     }
 end

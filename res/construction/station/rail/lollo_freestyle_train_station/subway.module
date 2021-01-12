@@ -1,7 +1,7 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
--- local modulesutil = require "modulesutil"
+local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
 local vec3 = require "vec3"
@@ -41,6 +41,47 @@ return {
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
 			tag = tag
 		}
+
+		local groundFace = { -- the ground faces ignore z, the alignment lists don't
+			{0, -1, 0, 1},
+			{0, 1, 0, 1},
+			{4.5, 1, 0, 1},
+			{4.5, -1, 0, 1},
+		}
+		modulesutil.TransformFaces(slotTransf, groundFace)
+		table.insert(
+			result.groundFaces,
+			{
+				face = groundFace,
+				modes = {
+					{
+						-- key = 'shared/asphalt_01.gtex.lua'
+						key = 'hole.lua',
+						type = 'FILL',
+					},
+					--[[                         {
+						key = 'shared/asphalt_01.gtex.lua',
+						type = 'STROKE_INNER',
+					},
+					]]
+					{
+						-- key = 'street_border.lua'
+						key = 'shared/asphalt_01.gtex.lua',
+						type = 'STROKE_OUTER',
+					}
+				}
+			}
+		)
+		table.insert(
+			result.terrainAlignmentLists,
+			{
+				faces =  { groundFace },
+				optional = true,
+				slopeHigh = 99,
+				slopeLow = 0.9, --0.1,
+				type = "EQUAL",
+			}
+		)
 		print('subway.module.updateFn ending')
 	end,
 
