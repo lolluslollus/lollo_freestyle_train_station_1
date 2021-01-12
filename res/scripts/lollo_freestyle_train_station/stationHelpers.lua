@@ -109,6 +109,7 @@ local helpers = {
 
         -- LOLLO NOTE in the game and in this mod, there is one train station for each station group
         -- and viceversa. Station groups hold some information that stations don't, tho.
+        -- Multiple station groups can share a construction.
         local stationIds = edgeUtils.getNearbyObjectIds(transf, searchRadius, api.type.ComponentType.STATION)
         local _station2ConstructionMap = api.engine.system.streetConnectorSystem.getStation2ConstructionMap()
         local resultsIndexed = {}
