@@ -6,6 +6,7 @@ function data()
 	t.name = _("CargoPlatform20MTracksName")
 	t.desc = _("CargoPlatform20MTracksDesc")
 	t.categories  = { _constants.cargoPlatformTracksCategory }
+	t.icon = "ui/lollo_freestyle_train_station/era_c_cargo_platform_20m.tga"
 
 	t.yearFrom = 0
 	t.yearTo = 0

@@ -6,6 +6,7 @@ function data()
 	t.name = _("CargoPlatform10MTracksName")
 	t.desc = _("CargoPlatform10MTracksDesc")
 	t.categories  = { _constants.invisiblePlatformTracksCategory }
+	t.icon = "ui/empty.tga"
 
 	t.yearFrom = -1
 	t.yearTo = -1

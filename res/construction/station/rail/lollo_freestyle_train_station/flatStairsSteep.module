@@ -23,13 +23,12 @@ return {
 	description = {
 		name = _("FlatStairsSteepName"),
 		description = _("FlatStairsSteepDesc"),
-		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+		icon = "ui/lollo_freestyle_train_station/stairs_steep.tga"
 	},
 	metadata = { },
 	order = {
 		value = 1,
 	},
-	-- skipCollision = true,
 	type = _constants.flatStairsModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)

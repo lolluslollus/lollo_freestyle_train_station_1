@@ -23,7 +23,7 @@ return {
 	description = {
 		name = _("Terminal"),
 		description = _("Terminal, can only be deleted, build this with the waypoints"),
-		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+		icon = "ui/empty.tga"
 	},
 	metadata = { },
 	order = {

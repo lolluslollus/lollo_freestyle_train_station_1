@@ -24,13 +24,12 @@ return {
 	description = {
 		name = _("FlatCargoArea5x5Name"),
 		description = _("FlatCargoArea5x5Desc"),
-		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+		icon = "ui/lollo_freestyle_train_station/flat_cargo_area_5x5.tga"
 	},
 	metadata = { },
 	order = {
 		value = 11,
 	},
-	-- skipCollision = true,
 	type = _constants.flatCargoArea5x5ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
