@@ -1537,6 +1537,8 @@ function data()
                                 end
                             end
                         elseif id == 'constructionBuilder' then
+                            -- LOLLO TODO when plopping a subway and not joining it, this prog logs an error.
+                            -- It's ugly but harmless.
                             if not args.result or not args.result[1] then return end
 
                             -- print('args =') debugPrint(args)
