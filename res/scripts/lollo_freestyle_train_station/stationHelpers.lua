@@ -103,10 +103,12 @@ local helpers = {
         return results
     end,
 
-    getNearbyFreestyleStationsList = function(transf, searchRadius)
+    getNearbyFreestyleStationsList = function(transf, searchRadius, isOnlyPassengers)
         if type(transf) ~= 'table' then return {} end
         if tonumber(searchRadius) == nil then searchRadius = _constants.searchRadius4NearbyStation2Join end
 
+        -- LOLLO NOTE in the game and in this mod, there is one train station for each station group
+        -- and viceversa. Station groups hold some information that stations don't, tho.
         local stationIds = edgeUtils.getNearbyObjectIds(transf, searchRadius, api.type.ComponentType.STATION)
         local _station2ConstructionMap = api.engine.system.streetConnectorSystem.getStation2ConstructionMap()
         local resultsIndexed = {}
@@ -116,23 +118,29 @@ local helpers = {
                 if edgeUtils.isValidAndExistingId(conId) then
                     local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                     if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
-                        local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
-                        local stationGroupName = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
-                        if stationGroupName ~= nil and not(stringUtils.isNullOrEmptyString(stationGroupName.name)) then
-                            local position = transfUtils.transf2Position(
-                                transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
-                            )
-                            resultsIndexed[stationGroupId] = {
-                                id = conId,
-                                name = stationGroupName.name,
-                                position = position
-                            }
+                        local isCargo = api.engine.getComponent(stationId, api.type.ComponentType.STATION).cargo or false
+                        if not(isCargo) or not(isOnlyPassengers) then
+                            local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
+                            local stationGroupName = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
+                            if stationGroupName ~= nil then
+                                local position = transfUtils.transf2Position(
+                                    transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
+                                )
+                                resultsIndexed[stationGroupId] = {
+                                    id = conId,
+                                    isCargo = isCargo,
+                                    name = stationGroupName.name or '',
+                                    position = position
+                                }
+                            end
                         end
                     end
                 end
             end
         end
 
+        -- this indexed first and then not indexed is probably redundant
+        print('resultsIndexed =') debugPrint(resultsIndexed)
         local results = {}
         for _, value in pairs(resultsIndexed) do
             results[#results+1] = value

@@ -19,7 +19,7 @@ local guiHelpers = {
         game.gui.setCamera({position[1], position[2], cameraData[3], cameraData[4], cameraData[5]})
     end
 }
-guiHelpers.showNearbyStationPicker = function(cons, eventId, joinEventName, noJoinEventName, eventArgs)
+guiHelpers.showNearbyStationPicker = function(isCargo, stations, eventId, joinEventName, noJoinEventName, eventArgs)
     print('showNearbyStationPicker starting')
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
     local window = api.gui.util.getById(_stationPickerWindowId)
@@ -32,13 +32,18 @@ guiHelpers.showNearbyStationPicker = function(cons, eventId, joinEventName, noJo
     end
 
     local function addJoinButtons()
-        if type(cons) ~= 'table' then return end
+        if type(stations) ~= 'table' then return end
 
-        for _, con in pairs(cons) do
+        for _, station in pairs(stations) do
             local buttonsLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
 
             -- print('con.uiName or con.name or ""', con.uiName or con.name or '')
-            buttonsLayout:addItem(api.gui.comp.TextView.new(con.uiName or con.name or ''))
+            buttonsLayout:addItem(api.gui.comp.TextView.new(station.uiName or station.name or ''))
+            if station.isCargo then
+                buttonsLayout:addItem(api.gui.comp.ImageView.new('ui/icons/construction-menu/category_cargo.tga'))
+            else
+                buttonsLayout:addItem(api.gui.comp.ImageView.new('ui/icons/construction-menu/category_passengers.tga'))
+            end
 
             local gotoButtonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
             gotoButtonLayout:addItem(api.gui.comp.ImageView.new('ui/design/window-content/locate_small.tga'))
@@ -46,31 +51,33 @@ guiHelpers.showNearbyStationPicker = function(cons, eventId, joinEventName, noJo
             local gotoButton = api.gui.comp.Button.new(gotoButtonLayout, true)
             gotoButton:onClick(
                 function()
-                    guiHelpers.moveCamera(con.position)
+                    guiHelpers.moveCamera(station.position)
                     -- game.gui.setCamera({con.position[1], con.position[2], 100, 0, 0})
                 end
             )
             buttonsLayout:addItem(gotoButton)
 
-            local joinButtonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
-            joinButtonLayout:addItem(api.gui.comp.ImageView.new('ui/design/components/checkbox_valid.tga'))
-            joinButtonLayout:addItem(api.gui.comp.TextView.new(_texts.join))
-            local joinButton = api.gui.comp.Button.new(joinButtonLayout, true)
-            joinButton:onClick(
-                function()
-                    if not(stringUtils.isNullOrEmptyString(joinEventName)) then
-                        eventArgs.join2StationId = con.id
-                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                            string.sub(debug.getinfo(1, 'S').source, 1),
-                            eventId,
-                            joinEventName,
-                            eventArgs
-                        ))
+            -- if isCargo == station.isCargo then
+                local joinButtonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
+                joinButtonLayout:addItem(api.gui.comp.ImageView.new('ui/design/components/checkbox_valid.tga'))
+                joinButtonLayout:addItem(api.gui.comp.TextView.new(_texts.join))
+                local joinButton = api.gui.comp.Button.new(joinButtonLayout, true)
+                joinButton:onClick(
+                    function()
+                        if not(stringUtils.isNullOrEmptyString(joinEventName)) then
+                            eventArgs.join2StationId = station.id
+                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                eventId,
+                                joinEventName,
+                                eventArgs
+                            ))
+                        end
+                        window:setVisible(false, false)
                     end
-                    window:setVisible(false, false)
-                end
-            )
-            buttonsLayout:addItem(joinButton)
+                )
+                buttonsLayout:addItem(joinButton)
+            -- end
 
             layout:addItem(buttonsLayout)
         end

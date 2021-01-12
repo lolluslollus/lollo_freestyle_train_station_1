@@ -500,9 +500,9 @@ local _actions = {
         local _significantFigures4LocateNode = 5 -- you may lower this down to 100 if tracks are not properly rebuilt.
         -- cleanupStreetGraph in previous events (removeTerminal and bulldozeStation) might also play a role, it might.
         print('rebuildOneTerminalTracks starting')
-        print('trackEdgeLists =') debugPrint(trackEdgeLists)
-        print('platformEdgeLists =') debugPrint(platformEdgeLists)
-        print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
+        -- print('trackEdgeLists =') debugPrint(trackEdgeLists)
+        -- print('platformEdgeLists =') debugPrint(platformEdgeLists)
+        -- print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
         if trackEdgeLists == nil or type(trackEdgeLists) ~= 'table' then return end
         if platformEdgeLists == nil or type(platformEdgeLists) ~= 'table' then return end
 
@@ -516,27 +516,27 @@ local _actions = {
             local _baseNode1 = (neighbourNodeIds_plOrTr ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds_plOrTr.node1))
             and api.engine.getComponent(neighbourNodeIds_plOrTr.node1, api.type.ComponentType.BASE_NODE)
             or nil
-            print('_baseNode1 =') debugPrint(_baseNode1)
+            -- print('_baseNode1 =') debugPrint(_baseNode1)
             local _baseNode2 = (neighbourNodeIds_plOrTr ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds_plOrTr.node2))
             and api.engine.getComponent(neighbourNodeIds_plOrTr.node2, api.type.ComponentType.BASE_NODE)
             or nil
-            print('_baseNode2 =') debugPrint(_baseNode2)
+            -- print('_baseNode2 =') debugPrint(_baseNode2)
 
             local _addNode = function(position)
-                print('adding node, position =') debugPrint(position)
+                -- print('adding node, position =') debugPrint(position)
                 if _baseNode1 ~= nil
                 and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x, _significantFigures4LocateNode)
                 and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y, _significantFigures4LocateNode)
                 and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z, _significantFigures4LocateNode)
                 then
-                    print('_baseNode1 matches')
+                    -- print('_baseNode1 matches')
                     return neighbourNodeIds_plOrTr.node1
                 elseif _baseNode2 ~= nil
                 and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x, _significantFigures4LocateNode)
                 and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y, _significantFigures4LocateNode)
                 and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z, _significantFigures4LocateNode)
                 then
-                    print('_baseNode2 matches')
+                    -- print('_baseNode2 matches')
                     return neighbourNodeIds_plOrTr.node2
                 else
                     for _, newNode in pairs(newNodes) do
@@ -544,12 +544,12 @@ local _actions = {
                         and edgeUtils.isNumVeryClose(position[2], newNode.position[2], _significantFigures4LocateNode)
                         and edgeUtils.isNumVeryClose(position[3], newNode.position[3], _significantFigures4LocateNode)
                         then
-                            print('reusing a new node')
+                            -- print('reusing a new node')
                             return newNode.id
                         end
                     end
 
-                    print('making a new node')
+                    -- print('making a new node')
                     local newNode = api.type.NodeAndEntity.new()
                     nNewEntities = nNewEntities - 1
                     newNode.entity = nNewEntities
@@ -1426,13 +1426,13 @@ function data()
                 if conTransf == nil then return end
 
                 print('conTransf =') debugPrint(conTransf)
-                -- local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
-                local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join)
+                local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
                 -- print('nearbyFreestyleStations =') debugPrint(nearbyFreestyleStations)
                 print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
                 if #nearbyFreestyleStations == 0 then return end
 
                 guiHelpers.showNearbyStationPicker(
+                    false, -- subways are only for passengers
                     nearbyFreestyleStations,
                     _eventId,
                     _eventNames.SUBWAY_JOIN_REQUESTED,
@@ -1549,7 +1549,7 @@ function data()
 
                             -- print('args =') debugPrint(args)
                             local subwayId = args.result[1]
-                            print('subway construction built, construction id =') debugPrint(subwayId)
+                            -- print('construction built, construction id =') debugPrint(subwayId)
 
                             _joinSubway(subwayId)
                         elseif id == 'streetTerminalBuilder' then
@@ -1758,6 +1758,7 @@ function data()
                                     local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
                                     if #nearbyFreestyleStations > 0 and #nearbyFreestyleStations < _constants.maxNTerminals then
                                         guiHelpers.showNearbyStationPicker(
+                                            isCargo,
                                             nearbyFreestyleStations,
                                             _eventId,
                                             _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,

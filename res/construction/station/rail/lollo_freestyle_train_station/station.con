@@ -171,16 +171,16 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
-					-- [_constants.cargoTerminalModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
-					-- [_constants.passengerTerminalModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
+					[_constants.cargoTerminalModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
+					[_constants.passengerTerminalModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
 					-- [_constants.underpassModuleType] = {
 					-- 	maxModules = -1,
 					-- 	message = nil, --'LOLLO slotConfig message',
@@ -910,7 +910,7 @@ function data()
 					table.insert(result.slots, {
 						-- height = 0,
 						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
-						spacing = {2.5, 2.5, 1.5, 1.5},
+						spacing = {0.5, 0.5, 0.5, 0.5},
 						transf = myTransf,
 						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
                     })
