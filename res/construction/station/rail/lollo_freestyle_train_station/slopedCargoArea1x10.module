@@ -27,7 +27,7 @@ return {
 	},
 	metadata = { },
 	order = {
-		value = 22,
+		value = 23,
 	},
 	-- skipCollision = true,
 	type = _constants.slopedCargoArea1x10ModuleType,

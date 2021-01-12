@@ -8,7 +8,6 @@ local vec3 = require "vec3"
 
 
 function data()
-
 return {
 	availability = {
 		yearFrom = 0,
@@ -21,16 +20,15 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("SlopedCargoArea1x20Name"),
-		description = _("SlopedCargoArea1x20Desc"),
-		icon = "ui/lollo_freestyle_train_station/cargo_area_1x20.tga"
+		name = _("SlopedCargoAreaWaiting1x10Name"),
+		description = _("SlopedCargoAreaWaiting1x10Desc"),
+		icon = "ui/lollo_freestyle_train_station/cargo_area_waiting_1x10.tga"
 	},
 	metadata = { },
 	order = {
-		value = 25,
+		value = 24,
 	},
-	-- skipCollision = true,
-	type = _constants.slopedCargoArea1x20ModuleType,
+	type = _constants.slopedCargoArea1x10ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
@@ -40,6 +38,7 @@ return {
 
 		local ii1 = nTrackEdge - 1
 		local iiN = nTrackEdge + 1
+		local waitingAreaCounter = -2
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFine do
 			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex > iiN then break end
 			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1 then
@@ -47,24 +46,39 @@ return {
 			-- and params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex <= iiN then
 				local cpf = params.terminals[nTerminal].centrePlatformsFine[ii]
 				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
-				local yShiftOutside = moduleHelpers.getYShift4SlopedArea(params, nTerminal, cpf.leadingIndex, 20)
+				local yShiftOutside = moduleHelpers.getYShift4SlopedArea(params, nTerminal, cpf.leadingIndex, 10)
+				local cpfTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2)
 				result.models[#result.models+1] = {
-					id = _constants.slopedCargoArea1x20ModelFileName,
+					id = _constants.slopedCargoArea1x10ModelFileName,
 					transf = transfUtilsUG.mul(
-						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2),
+						cpfTransf,
 						{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
 					),
 					tag = tag
 				}
+
+				waitingAreaCounter = waitingAreaCounter + 1
+				if params.terminals[nTerminal].centrePlatformsFine[ii + 2]
+				and params.terminals[nTerminal].centrePlatformsFine[ii + 2].leadingIndex <= iiN
+				and math.fmod(waitingAreaCounter, 5) == 0 then
+					result.models[#result.models+1] = {
+						id = _constants.cargoWaitingAreaCentredModelId,
+						transf = transfUtilsUG.mul(
+							cpfTransf,
+							{ 0, 8, 0, 0,  -8, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+						),
+						tag = tag
+					}
+				end
 			end
 		end
 
 		if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
 			local face = {
-				{-10.5, -13, 0, 1},
-				{-10.5, 13, 0, 1},
-				{10.5, 13, 0, 1},
-				{10.5, -13, 0, 1},
+				{-5.5, -13, 0, 1},
+				{-5.5, 13, 0, 1},
+				{5.5, 13, 0, 1},
+				{5.5, -13, 0, 1},
 			}
 			modulesutil.TransformFaces(slotTransf, face)
 			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
@@ -74,9 +88,9 @@ return {
 
 	getModelsFn = function(params)
 		local results = {}
-		for y = -10, 10 do
+		for y = -5, 5 do
 			results[#results+1] = {
-				id = _constants.slopedCargoArea1x20ModelFileName,
+				id = _constants.slopedCargoArea1x10ModelFileName,
 				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 			}
 		end
