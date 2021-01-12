@@ -402,4 +402,59 @@ helpers.tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge)
     return buildingModelId
 end
 
+helpers.doTerrain4Subways = function(result, slotTransf)
+    local groundFace = { -- the ground faces ignore z, the alignment lists don't
+        {0.0, -0.95, 0, 1},
+        {0.0, 0.95, 0, 1},
+        {4.5, 0.95, 0, 1},
+        {4.5, -0.95, 0, 1},
+    }
+    local terrainFace = { -- the ground faces ignore z, the alignment lists don't
+        {-0.2, -1.15, 0, 1},
+        {-0.2, 1.15, 0, 1},
+        {4.7, 1.15, 0, 1},
+        {4.7, -1.15, 0, 1},
+    }
+    if type(slotTransf) == 'table' then
+        modulesutil.TransformFaces(slotTransf, groundFace)
+        modulesutil.TransformFaces(slotTransf, terrainFace)
+    end
+
+    table.insert(
+        result.groundFaces,
+        {
+            face = groundFace,
+            loop = true,
+            modes = {
+                {
+                    -- key = 'shared/asphalt_01.gtex.lua'
+                    key = 'lollo_freestyle_train_station/hole.lua',
+                    type = 'FILL',
+                },
+                -- {
+                -- 	-- key = 'shared/asphalt_01.gtex.lua',
+                -- 	key = 'lollo_freestyle_train_station/hole.lua',
+                -- 	type = 'STROKE_INNER',
+                -- },
+                {
+                    -- key = 'street_border.lua'
+                    -- key = 'shared/asphalt_01.gtex.lua',
+                    key = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua',
+                    type = 'STROKE_OUTER',
+                }
+            }
+        }
+    )
+    table.insert(
+        result.terrainAlignmentLists,
+        {
+            faces =  { terrainFace },
+            optional = true,
+            slopeHigh = 99,
+            slopeLow = 0.9, --0.1,
+            type = "EQUAL",
+        }
+    )
+end
+
 return helpers

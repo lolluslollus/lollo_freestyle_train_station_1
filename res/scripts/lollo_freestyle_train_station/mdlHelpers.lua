@@ -4,6 +4,30 @@ local helpers = {}
     local _minExtent = 0.1
     local _tolerance = 0.1
 
+    helpers.getSubwayBoundingInfo = function(length, width)
+        return {
+            bbMax = {
+                4.5, 0.95, 3
+            },
+            bbMin = {
+                0, -0.95, -4
+            },
+        }
+    end
+    helpers.getSubwayCollider = function(length, width)
+        return {
+            params = {
+                halfExtents = {
+                    2.25 - _tolerance,
+                    0.95 - _tolerance,
+                    3.5 - _tolerance,
+                },
+            },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2.25, 0, -0.5, 1, },
+            type = "BOX",
+        }
+    end
+
     helpers.getTrackBoundingInfo = function(length, width, height)
         local adjustedLength = 1
         local adjustedWidth = 1
