@@ -110,6 +110,8 @@ local helpers = {
         -- LOLLO NOTE in the game and in this mod, there is one train station for each station group
         -- and viceversa. Station groups hold some information that stations don't, tho.
         -- Multiple station groups can share a construction.
+        -- What I really want here is a list with one item each construction, but that could be an expensive loop,
+        -- so I check the stations instead and index by the construction.
         local stationIds = edgeUtils.getNearbyObjectIds(transf, searchRadius, api.type.ComponentType.STATION)
         local _station2ConstructionMap = api.engine.system.streetConnectorSystem.getStation2ConstructionMap()
         local resultsIndexed = {}
@@ -117,30 +119,46 @@ local helpers = {
             if edgeUtils.isValidAndExistingId(stationId) then
                 local conId = _station2ConstructionMap[stationId]
                 if edgeUtils.isValidAndExistingId(conId) then
+                    -- print('getNearbyFreestyleStationsList has found conId =', conId)
                     local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                     if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
+                        -- print('construction.name =') debugPrint(con.name) nil
                         local isCargo = api.engine.getComponent(stationId, api.type.ComponentType.STATION).cargo or false
+                        -- print('isCargo =', isCargo)
+                        -- print('isOnlyPassengers =', isOnlyPassengers)
                         if not(isCargo) or not(isOnlyPassengers) then
                             local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
+                            local name = ''
                             local stationGroupName = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
-                            if stationGroupName ~= nil then
-                                local position = transfUtils.transf2Position(
-                                    transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
-                                )
-                                resultsIndexed[stationGroupId] = {
-                                    id = conId,
-                                    isCargo = isCargo,
-                                    name = stationGroupName.name or '',
-                                    position = position
-                                }
+                            if stationGroupName ~= nil then name = stationGroupName.name end
+
+                            local isTwinCargo = false
+                            local isTwinPassenger = false
+
+                            if resultsIndexed[conId] ~= nil then
+                                -- print('found a twin, it is') debugPrint(resultsIndexed[conId])
+                                if stringUtils.isNullOrEmptyString(name) then
+                                    name = resultsIndexed[conId].name or ''
+                                end
+                                if resultsIndexed[conId].isCargo then isTwinCargo = true end
+                                if resultsIndexed[conId].isPassenger then isTwinPassenger = true end
                             end
+                            local position = transfUtils.transf2Position(
+                                transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
+                            )
+                            resultsIndexed[conId] = {
+                                id = conId,
+                                isCargo = isCargo or isTwinCargo,
+                                isPassenger = not(isCargo) or isTwinPassenger,
+                                name = name,
+                                position = position
+                            }
                         end
                     end
                 end
             end
         end
 
-        -- this indexed first and then not indexed is probably redundant
         print('resultsIndexed =') debugPrint(resultsIndexed)
         local results = {}
         for _, value in pairs(resultsIndexed) do

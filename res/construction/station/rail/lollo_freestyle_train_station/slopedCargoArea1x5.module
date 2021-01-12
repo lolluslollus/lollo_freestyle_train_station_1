@@ -8,7 +8,6 @@ local vec3 = require "vec3"
 
 
 function data()
--- LOLLO TODO add some cargo waiting areas to these guys. No passengers.
 return {
 	availability = {
 		yearFrom = 0,

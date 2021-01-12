@@ -1,5 +1,5 @@
 local tu = require "texutil"
--- LOLLO TODO tried these to see how they handle the hole. they all suck equally
+-- LOLLO TODO tried these to see how they handle the hole. they all suck the same.
 function data()
 return {
 	-- texture = tu.makeTextureLinearNearest("res/textures/terrain/material/mat255.tga", true, false,false),

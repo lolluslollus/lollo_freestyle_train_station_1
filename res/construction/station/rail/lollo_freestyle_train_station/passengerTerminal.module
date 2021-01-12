@@ -64,7 +64,6 @@ return {
 			local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 			local transf = moduleHelpers.getTerminalDecoTransf(posTanX2)
 			result.models[#result.models + 1] = {
-				-- LOLLO TODO display the correct station name. With cargo + passenger stations, this is broken
 				id = 'lollo_freestyle_train_station/asset/era_c_station_name.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, 3.9, 1 }),
