@@ -72,6 +72,10 @@ function data()
 			["TrackWaypointName"] = "Track End Marker",
 			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter.",
 
+			["CementBridgeFewerPillars"] = "Concrete Bridge with few pillars and low railing",
+			["CementBridgeNoPillars"] = "Concrete Bridge with no pillars and low railing",
+			["CementBridgeNormalPillars"] = "Concrete Bridge with low railing",
+
 			["NewStationName"] = "New Station",
 
 			["cargo-platform-extensions"] = "Cargo platform extensions",

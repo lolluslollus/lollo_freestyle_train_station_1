@@ -29,7 +29,7 @@ function data()
     }
 
     return {
-        name = _('Cement bridge'),
+        name = _('CementBridgeFewerPillars'),
         yearFrom = 0, -- so we don't show it in the bridge menus
         yearTo = 0,
         carriers = {'RAIL', 'ROAD'},
