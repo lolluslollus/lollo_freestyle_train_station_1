@@ -43,30 +43,32 @@ return {
 		}
 
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{0, -1, 0, 1},
-			{0, 1, 0, 1},
-			{4.5, 1, 0, 1},
-			{4.5, -1, 0, 1},
+			{0.1, -0.95, 0, 1},
+			{0.1, 0.95, 0, 1},
+			{4.5, 0.95, 0, 1},
+			{4.5, -0.95, 0, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		table.insert(
 			result.groundFaces,
 			{
 				face = groundFace,
+				loop = true,
 				modes = {
 					{
 						-- key = 'shared/asphalt_01.gtex.lua'
-						key = 'hole.lua',
+						key = 'lollo_freestyle_train_station/hole.lua',
 						type = 'FILL',
 					},
-					--[[                         {
-						key = 'shared/asphalt_01.gtex.lua',
-						type = 'STROKE_INNER',
-					},
-					]]
+					-- {
+					-- 	-- key = 'shared/asphalt_01.gtex.lua',
+					-- 	key = 'lollo_freestyle_train_station/hole.lua',
+					-- 	type = 'STROKE_INNER',
+					-- },
 					{
 						-- key = 'street_border.lua'
-						key = 'shared/asphalt_01.gtex.lua',
+						-- key = 'shared/asphalt_01.gtex.lua',
+						key = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua',
 						type = 'STROKE_OUTER',
 					}
 				}
