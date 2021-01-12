@@ -15,7 +15,7 @@ return {
 		yearTo = -1
 	},
 	category = {
-		categories = { "street access", },
+		categories = { "passenger-up-and-down", },
 	},
 	cost = {
 		price = 0,

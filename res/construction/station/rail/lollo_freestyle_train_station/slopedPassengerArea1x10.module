@@ -15,7 +15,7 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "misc", },
+		categories = { "passenger-platform-extensions", },
 	},
 	cost = {
 		price = 0,
