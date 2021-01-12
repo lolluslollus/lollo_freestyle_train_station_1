@@ -17,10 +17,11 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                -- 'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_2.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/subway/stairs-up-8m.msh',
-                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -0.2, 1}
                         },
                     },
                     name = 'RootNode',

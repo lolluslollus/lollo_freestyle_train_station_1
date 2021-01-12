@@ -30,7 +30,8 @@ function data()
                             materials = {
                                 -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                -- 'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_2.mtl',
                                 'lollo_freestyle_train_station/hole.mtl',
                                 'lollo_freestyle_train_station/rough-alu.mtl',
                             },
@@ -58,7 +59,8 @@ function data()
                             materials = {
                                 -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                -- 'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_2.mtl',
                                 'lollo_freestyle_train_station/hole.mtl',
                                 'lollo_freestyle_train_station/rough-alu.mtl',
                             },
