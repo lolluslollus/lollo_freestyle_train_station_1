@@ -963,12 +963,13 @@ function data()
 				end
 				_addUnderpassSlots()
 
-				-- LOLLO TODO MAYBE if a terminal is all underground, build a default module of these to make life easier
+				-- LOLLO TODO MAYBE if a terminal is all underground, build a default module of these to make life easier.
+				-- But where? For now, we show a big red pin.
 				local _addStairs2SubwaySlots = function()
 					if isCargoTerminal then return end
 
 					for i = 2, #params.terminals[t].centrePlatforms - 1, 4 do
-						-- if params.terminals[t].centrePlatforms[i].type == 2 then -- only in tunnels -- LOLLO TODO uncomment after testing
+						if params.terminals[t].centrePlatforms[i].type == 2 then -- only in tunnels
 							local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].centrePlatforms[i].posTanX2, inverseMainTransf)
 							table.insert(result.slots, {
 								-- height = 1,
@@ -980,7 +981,7 @@ function data()
 								),
 								type = _constants.stairs2SubwayModuleType,
 							})
-						-- end
+						end
 					end
 				end
 				_addStairs2SubwaySlots()
