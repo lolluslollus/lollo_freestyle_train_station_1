@@ -1405,6 +1405,36 @@ function data()
         guiHandleEvent = function(id, name, args)
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
             -- print('guiHandleEvent caught id =', id, 'name =', name)
+            local _joinSubway = function(subwayConstructionId)
+                if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
+
+                local con = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
+                -- if con ~= nil then print('con.fileName =') debugPrint(con.fileName) end
+                if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
+
+                local subwayTransfApi = con.transf
+                if subwayTransfApi == nil then return end
+
+                local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
+                if conTransf == nil then return end
+
+                print('conTransf =') debugPrint(conTransf)
+                -- local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
+                local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join)
+                -- print('nearbyFreestyleStations =') debugPrint(nearbyFreestyleStations)
+                print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
+                if #nearbyFreestyleStations == 0 then return end
+
+                guiHelpers.showNearbyStationPicker(
+                    nearbyFreestyleStations,
+                    _eventId,
+                    _eventNames.SUBWAY_JOIN_REQUESTED,
+                    {
+                        subwayId = subwayConstructionId
+                        -- join2StationId will be added by the popup
+                    }
+                )
+            end
             xpcall(
                 function()
                     -- about to bulldoze a freestyle station: write away its params so you can rebuild its tracks later
@@ -1507,40 +1537,13 @@ function data()
                                 end
                             end
                         elseif id == 'constructionBuilder' then
-                            -- LOLLO TODO MAYBE also allow this when selecting an existing subway, which has not been joined yet.
-                            -- same with stations.
                             if not args.result or not args.result[1] then return end
 
                             -- print('args =') debugPrint(args)
                             local subwayId = args.result[1]
                             print('subway construction built, construction id =') debugPrint(subwayId)
 
-                            local con = api.engine.getComponent(subwayId, api.type.ComponentType.CONSTRUCTION)
-                            -- if con ~= nil then print('con.fileName =') debugPrint(con.fileName) end
-                            if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
-
-                            local subwayTransfApi = con.transf
-                            if subwayTransfApi == nil then return end
-
-                            local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
-                            if conTransf == nil then return end
-
-                            print('conTransf =') debugPrint(conTransf)
-                            -- local nearestStationIds = edgeUtils.getNearbyObjectIds(conTransf, 10, api.type.ComponentType.STATION)
-                            local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join)
-                            -- print('nearbyFreestyleStations =') debugPrint(nearbyFreestyleStations)
-                            print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
-                            if #nearbyFreestyleStations == 0 then return end
-
-                            guiHelpers.showNearbyStationPicker(
-                                nearbyFreestyleStations,
-                                _eventId,
-                                _eventNames.SUBWAY_JOIN_REQUESTED,
-                                {
-                                    subwayId = subwayId
-                                    -- join2StationId will be added by the popup
-                                }
-                            )
+                            _joinSubway(subwayId)
                         elseif id == 'streetTerminalBuilder' then
                             -- waypoint, traffic light, my own waypoints built
                             if args and args.proposal and args.proposal.proposal
@@ -1846,6 +1849,12 @@ function data()
                                 ))
                             end
                         end
+                    elseif name == 'select' then
+                        -- LOLLO TODO MAYBE same with stations. Maybe one day.
+                        print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
+                        debugPrint(args)
+
+                        _joinSubway(args)
                     end
                 end,
                 _myErrorHandler
