@@ -1,4 +1,5 @@
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 local _stationPickerWindowId = 'lollo_freestyle_station_picker_window'
 local _warningWindowId = 'lollo_freestyle_station_warning_window'
@@ -18,7 +19,7 @@ local guiHelpers = {
         game.gui.setCamera({position[1], position[2], cameraData[3], cameraData[4], cameraData[5]})
     end
 }
-guiHelpers.showNearbyStationPicker = function(cons, eventId, eventName, eventArgs)
+guiHelpers.showNearbyStationPicker = function(cons, eventId, joinEventName, noJoinEventName, eventArgs)
     print('showNearbyStationPicker starting')
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
     local window = api.gui.util.getById(_stationPickerWindowId)
@@ -57,13 +58,15 @@ guiHelpers.showNearbyStationPicker = function(cons, eventId, eventName, eventArg
             local joinButton = api.gui.comp.Button.new(joinButtonLayout, true)
             joinButton:onClick(
                 function()
-                    eventArgs.join2StationId = con.id
-                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                        string.sub(debug.getinfo(1, 'S').source, 1),
-                        eventId,
-                        eventName,
-                        eventArgs
-                    ))
+                    if not(stringUtils.isNullOrEmptyString(joinEventName)) then
+                        eventArgs.join2StationId = con.id
+                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                            string.sub(debug.getinfo(1, 'S').source, 1),
+                            eventId,
+                            joinEventName,
+                            eventArgs
+                        ))
+                    end
                     window:setVisible(false, false)
                 end
             )
@@ -84,12 +87,14 @@ guiHelpers.showNearbyStationPicker = function(cons, eventId, eventName, eventArg
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 2) =') debugPrint(string.sub(debug.getinfo(2, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 3) =') debugPrint(string.sub(debug.getinfo(3, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 4) =') debugPrint(string.sub(debug.getinfo(4, 'S').source, 1))
-                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                    string.sub(debug.getinfo(1, 'S').source, 1),
-                    eventId,
-                    eventName,
-                    eventArgs
-                ))
+                if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
+                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                        string.sub(debug.getinfo(1, 'S').source, 1),
+                        eventId,
+                        noJoinEventName,
+                        eventArgs
+                    ))
+                end
                 window:setVisible(false, false)
             end
         )
@@ -128,12 +133,14 @@ guiHelpers.showNearbyStationPicker = function(cons, eventId, eventName, eventArg
     window:setPosition(position.x, position.y)
     window:onClose(
         function()
-            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+            if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
+                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                     string.sub(debug.getinfo(1, 'S').source, 1),
                     eventId,
-                    eventName,
+                    noJoinEventName,
                     eventArgs
                 ))
+            end
             window:setVisible(false, false)
         end
     )

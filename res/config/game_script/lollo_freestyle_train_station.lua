@@ -1429,6 +1429,7 @@ function data()
                     nearbyFreestyleStations,
                     _eventId,
                     _eventNames.SUBWAY_JOIN_REQUESTED,
+                    nil,
                     {
                         subwayId = subwayConstructionId
                         -- join2StationId will be added by the popup
@@ -1537,8 +1538,6 @@ function data()
                                 end
                             end
                         elseif id == 'constructionBuilder' then
-                            -- LOLLO TODO when plopping a subway and not joining it, this prog logs an error.
-                            -- It's ugly but harmless.
                             if not args.result or not args.result[1] then return end
 
                             -- print('args =') debugPrint(args)
@@ -1754,6 +1753,7 @@ function data()
                                         guiHelpers.showNearbyStationPicker(
                                             nearbyFreestyleStations,
                                             _eventId,
+                                            _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
                                             _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
                                             eventArgs -- join2StationId will be added by the popup
                                         )
