@@ -318,8 +318,8 @@ local helpers = {
         return results
     end,
 
-    getCentreEdgePositions = function(edgeLists, maxEdgeLength, addTerrainHeight)
-        -- print('getCentreEdgePositions starting')
+    getCentralEdgePositions = function(edgeLists, maxEdgeLength, addTerrainHeight)
+        -- print('getCentralEdgePositions starting')
         if type(edgeLists) ~= 'table' then return {} end
 
         local leadingIndex = 0
@@ -468,7 +468,7 @@ local helpers = {
             end
         end
 
-        -- print('getCentreEdgePositions results =') debugPrint(results)
+        -- print('getCentralEdgePositions results =') debugPrint(results)
         return results
     end,
 
@@ -1232,134 +1232,39 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
     return {}
 end
 
--- helpers.replaceEdgeWithSameAddingObject = function(oldEdgeId, objectIdToAdd)
---     -- this function is only for testing
---     print('replaceEdgeWithSameRemovingObject starting')
---     if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
---     print('replaceEdgeWithSameRemovingObject found, the old edge id is valid')
---     -- replaces a track segment with an identical one, without destroying the buildings
---     local proposal = helpers.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId)
---     if not(proposal) then return end
---     print('replaceEdgeWithSameRemovingObject likes the proposal')
---     -- debugPrint(proposal)
-
---     local eo = api.type.SimpleStreetProposal.EdgeObject.new()
---     eo.left = true
---     eo.model = objectIdToAdd or "lollo_freestyle_train_station/railroad/passenger_platform_waypoint.mdl"
---     -- eo.playerEntity = game.interface.getPlayer()
---     eo.oneWay = false
---     eo.param = 0.5
---     eo.edgeEntity = -1
---     eo.name = "MY Beautiful Signal"
---     proposal.streetProposal.edgeObjectsToAdd[#proposal.streetProposal.edgeObjectsToAdd+1] = eo
-
---     local context = api.type.Context:new()
---     -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
---     context.cleanupStreetGraph = true -- default is false
---     -- context.gatherBuildings = true  -- default is false
---     -- context.gatherFields = true -- default is true
---     context.player = api.engine.util.getPlayer() -- default is -1
-
---     api.cmd.sendCommand(
---         api.cmd.make.buildProposal(proposal, context, true),
---         function(result, success)
---             -- print('LOLLO replaceEdgeWithSameRemovingObject result = ') debugPrint(result)
---             print('LOLLO replaceEdgeWithSameRemovingObject success = ') debugPrint(success)
---         end
---     )
--- end
-
--- helpers.getStationProperties = function(nearestConstructionIds, nearestEdgeId)
---     for _, conId in pairs(nearestConstructionIds) do
---         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
---         if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
---             local params = arrayUtils.cloneDeepOmittingFields(con.params, nil, true)
---             -- for _, edgeId in pairs(nearestEdgeIds) do
---             local edgeId = nearestEdgeId
---                 if arrayUtils.arrayHasValue(con.frozenEdges, edgeId) then
---                     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
---                     local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
---                     if trackUtils.isPlatform(baseEdgeTrack.trackType) then
---                         local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
---                         local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
---                         -- the marker was plopped on a station platform: find the terminal or leave
---                         for t = 1, #con.params.terminals do
---                             for _, pel in pairs(con.params.terminals[t].platformEdgeLists) do
---                                 if (pel.posTanX2[1][1][1] == baseNode0.position.x
---                                 and pel.posTanX2[1][1][2] == baseNode0.position.y
---                                 and pel.posTanX2[1][1][3] == baseNode0.position.z
---                                 and pel.posTanX2[2][1][1] == baseNode1.position.x
---                                 and pel.posTanX2[2][1][2] == baseNode1.position.y
---                                 and pel.posTanX2[2][1][3] == baseNode1.position.z)
---                                 or
---                                 (pel.posTanX2[1][1][1] == baseNode1.position.x
---                                 and pel.posTanX2[1][1][2] == baseNode1.position.y
---                                 and pel.posTanX2[1][1][3] == baseNode1.position.z
---                                 and pel.posTanX2[2][1][1] == baseNode0.position.x
---                                 and pel.posTanX2[2][1][2] == baseNode0.position.y
---                                 and pel.posTanX2[2][1][3] == baseNode0.position.z)
---                                 then
---                                     return {
---                                         stationConstructionId = conId,
---                                         nTerminal = t
---                                     }
---                                 end
---                             end
---                         end
---                     end
---                 end
---             -- end
---         end
---     end
-
---     return false
--- end
-
--- helpers.getPlatformData = function(nearestEdgeIds)
---     -- for _, edgeId in pairs(nearestEdgeIds) do
---         local edgeId = nearestEdgeIds
---         if edgeUtils.isValidAndExistingId(edgeId) then
---             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
---             local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
---             if trackUtils.isPlatform(baseEdgeTrack.trackType) then
---                 return {
---                     edgeId = edgeId
---                 }
---             end
---         end
---     -- end
-
---     return false
--- end
-
-helpers.getIsTrackOnPlatformLeft = function(leftPlatforms, centrePlatforms, rightPlatforms, centreTrackPositions)
-    -- LOLLO TODO this estimator is still buggy, fix it
-    local midPlatformIndex = math.ceil(#centrePlatforms * 0.51)
-    print('midPlatformIndex =', midPlatformIndex)
-    local midCentrePlatformPosition = centrePlatforms[midPlatformIndex]
-    local track2CentrePlatformDistance = 99999
-    local trackIndexAtMinDistance2Platform = 1
-    for i = 1, #centreTrackPositions do
-        local distance = transfUtils.getPositionsDistance(
-            centreTrackPositions[i].posTanX2[1][1],
-            midCentrePlatformPosition.posTanX2[1][1]
+helpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid = function(eventArgs)
+    local result = 1
+    local trackPlatformDistance = transfUtils.getPositionsDistance(
+        eventArgs.centrePlatforms[1].posTanX2[1][1],
+        eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
+    )
+    for i = 2, #eventArgs.centrePlatforms do
+        local testDistance = transfUtils.getPositionsDistance(
+            eventArgs.centrePlatforms[i].posTanX2[1][1],
+            eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
         )
-        if distance < track2CentrePlatformDistance then
-            trackIndexAtMinDistance2Platform = i
-            track2CentrePlatformDistance = distance
+        if testDistance < trackPlatformDistance then
+            trackPlatformDistance = testDistance
+            result = i
         end
     end
 
-    if transfUtils.getPositionsDistance(
-        centreTrackPositions[trackIndexAtMinDistance2Platform].posTanX2[1][1],
-        leftPlatforms[midPlatformIndex].posTanX2[1][1]
-    ) < transfUtils.getPositionsDistance(
-        centreTrackPositions[trackIndexAtMinDistance2Platform].posTanX2[1][1],
-        rightPlatforms[midPlatformIndex].posTanX2[1][1]
+    return result
+end
+
+helpers.getIsTrackOnPlatformLeft = function(leftPlatforms, rightPlatforms,
+centrePlatformIndex_Nearest2_TrackEdgeListMid, midTrackEdge)
+    local distanceLeft = transfUtils.getPositionsDistance(
+        midTrackEdge.posTanX2[1][1],
+        leftPlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].posTanX2[1][1]
     )
-    then return true
-    else return false
-    end
+    local distanceRight = transfUtils.getPositionsDistance(
+        midTrackEdge.posTanX2[1][1],
+        rightPlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].posTanX2[1][1]
+    )
+
+    if distanceLeft < distanceRight then return true end
+    return false
 end
 
 return helpers

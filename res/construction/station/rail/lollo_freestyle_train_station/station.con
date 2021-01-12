@@ -899,7 +899,7 @@ function data()
 				_addWaitingAreas()
 
 				local _addTerminalSlot = function()
-					local i = params.terminals[t].midTrackIndex
+					local i = params.terminals[t].trackEdgeListMidIndex
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf)
 					local unitaryTangent = transfUtils.getPosTanX2Normalised(posTanX2)

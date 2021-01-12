@@ -148,7 +148,7 @@ end
 
 
 local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
-    result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].midTrackIndex) * 2 - 2
+    result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
 
     -- print('_addTrackEdges starting for terminal =', t)
     local forceCatenary = 0

@@ -331,7 +331,7 @@ local _actions = {
             trackEdgeLists = args.trackEdgeList,
             centrePlatforms = args.centrePlatforms,
             centrePlatformsFine = args.centrePlatformsFine,
-            midTrackIndex = args.midTrackIndex,
+            trackEdgeListMidIndex = args.trackEdgeListMidIndex,
             leftPlatforms = args.leftPlatforms,
             rightPlatforms = args.rightPlatforms,
             crossConnectors = args.crossConnectors,
@@ -1223,9 +1223,9 @@ function data()
                     lengthSoFar = lengthSoFar + length
                 end
                 if iCloseEnoughToMidLength < 1 then
-                    print('no track edge is close enough to the middle, going to add a split. iAcrossMidLength =', iAcrossMidLength)
+                    print('no track edge is close enough to the middle (halfway between the ends), going to add a split. iAcrossMidLength =', iAcrossMidLength)
                     if iAcrossMidLength < 1 then
-                        print('WARNING: trouble finding midTrackIndex')
+                        print('WARNING: trouble finding trackEdgeListMidIndex')
                         print('totalLength =') debugPrint(totalLength)
                         print('trackLengths =') debugPrint(trackLengths)
                         print('halfTotalLength =') debugPrint(halfTotalLength)
@@ -1271,31 +1271,39 @@ function data()
                     return
                 end
 
-                eventArgs.centrePlatforms = stationHelpers.getCentreEdgePositions(
+                -- this will be the vehicle node, where the trains stop with their belly
+                eventArgs.trackEdgeListMidIndex = iCloseEnoughToMidLength
+                print('eventArgs.trackEdgeListMidIndex =') debugPrint(eventArgs.trackEdgeListMidIndex)
+                print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
+
+                eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions(
                     eventArgs.platformEdgeList,
                     args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
                     true
                 )
-                eventArgs.centrePlatformsFine = stationHelpers.getCentreEdgePositions(eventArgs.centrePlatforms, 1)
-                -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
-                eventArgs.midTrackIndex = iCloseEnoughToMidLength
+                print('aaa')
+                local centrePlatformIndex_Nearest2_TrackEdgeListMid = stationHelpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(eventArgs)
+                print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
 
-                local platformWidth = eventArgs.centrePlatforms[eventArgs.midTrackIndex].width
+                local platformWidth = eventArgs.centrePlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].width
                 eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
                 eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
                 -- print('alalalalal')
-                local centreTracks = stationHelpers.getCentreEdgePositions(
+                local centreTracks = stationHelpers.getCentralEdgePositions(
                     eventArgs.trackEdgeList,
                     args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
                     false
                 )
+                print('eee')
                 eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
                     eventArgs.leftPlatforms,
-                    eventArgs.centrePlatforms,
                     eventArgs.rightPlatforms,
-                    centreTracks
+                    centrePlatformIndex_Nearest2_TrackEdgeListMid,
+                    eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
                 )
-                -- print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
+                print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
+                eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions(eventArgs.centrePlatforms, 1)
+                -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
                 eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
                     -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.
