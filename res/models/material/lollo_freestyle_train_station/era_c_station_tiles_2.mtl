@@ -19,11 +19,15 @@ function data()
             map_metal_gloss_ao = {
                 fileName = "models/station/rail/era_c/era_c_trainstation_floor_2_metal_gloss_ao.dds",
                 type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
             },
             map_normal = {
                 fileName = "models/station/rail/era_c/era_c_trainstation_floor_2_normal.dds",
                 redGreen = true,
                 type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
             },
             map_op_1 = {
                 fileName = "unknown_texture.tga",

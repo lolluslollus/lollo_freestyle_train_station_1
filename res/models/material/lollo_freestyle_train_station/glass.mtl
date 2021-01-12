@@ -25,6 +25,8 @@ function data()
                 fileName = "models/station/rail/era_c/era_c_trainstation_glass_normal.dds",
                 redGreen = true,
                 type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
             },
             normal_scale = {
                 normalScale = 1,
