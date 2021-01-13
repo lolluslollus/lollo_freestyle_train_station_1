@@ -22,7 +22,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 200,
+                visibleTo = 1000,
             },
         },
         metadata = { },
