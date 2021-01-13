@@ -29,7 +29,6 @@ return {
 	order = {
 		value = 50,
 	},
-	-- skipCollision = true,
 	type = _constants.stairs2SubwayModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)

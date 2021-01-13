@@ -2,6 +2,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
 local vec3 = require "vec3"
@@ -67,7 +68,7 @@ return {
 							cpfTransf,
 							{ 0, 16, 0, 0,  -16, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
 						),
-						tag = tag
+						tag = slotHelpers.mangleModelTag(nTerminal, true),
 					}
 				end
 			end

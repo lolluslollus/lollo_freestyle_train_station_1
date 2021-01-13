@@ -133,36 +133,37 @@ function data()
 					-- of the module being placed and the spacing rectangles of the already built modules.
 					-- they also skip the collision check between the spacing rectangle
 					-- of the module being placed and the objects outside the construction (the slot does not turn red while proposing a placement).
-					[_constants.slopedCargoArea1x5ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.slopedPassengerArea1x5ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.slopedCargoArea1x10ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.slopedPassengerArea1x10ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.slopedCargoArea1x20ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.slopedPassengerArea1x20ModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
+					-- If I skip the sloped area collisions there will be trouble tho!
+					-- [_constants.slopedCargoArea1x5ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.slopedPassengerArea1x5ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.slopedCargoArea1x10ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.slopedPassengerArea1x10ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.slopedCargoArea1x20ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.slopedPassengerArea1x20ModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
 					[_constants.trackElectrificationModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',

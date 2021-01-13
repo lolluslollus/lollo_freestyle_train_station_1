@@ -29,7 +29,6 @@ return {
 	order = {
 		value = 25,
 	},
-	-- skipCollision = true,
 	type = _constants.slopedCargoArea1x20ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
