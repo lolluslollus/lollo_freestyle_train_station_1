@@ -38,6 +38,8 @@ end
 
 -- LOLLO TODO try building a station next to a platform and onto a track
 -- belonging to another terminal: you can. You shouldn't tho. Adding colliders into the modules does not help.
+-- The proper way would be to check the neighbours before assigning a slot,
+-- but this can be expensive and complicated in a free layout such as this.
 
 function data()
 	return {
@@ -171,16 +173,16 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
-					[_constants.cargoTerminalModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.passengerTerminalModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
+					-- [_constants.cargoTerminalModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.passengerTerminalModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
 					-- [_constants.underpassModuleType] = {
 					-- 	maxModules = -1,
 					-- 	message = nil, --'LOLLO slotConfig message',
