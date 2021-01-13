@@ -66,7 +66,7 @@ return {
 						id = _constants.cargoWaitingAreaCentredModelId,
 						transf = transfUtilsUG.mul(
 							cpfTransf,
-							{ 0, 8, 0, 0,  -8, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+							{ 0, 8, 0, 0,  -8, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, result.laneZs[nTerminal], 1 }
 						),
 						tag = slotHelpers.mangleModelTag(nTerminal, true),
 					}

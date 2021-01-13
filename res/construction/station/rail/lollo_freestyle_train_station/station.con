@@ -250,6 +250,8 @@ function data()
 				vehicleNodes = {}
 			}
 
+			result.laneZs = {}
+
 			-- LOLLO NOTE the coordinates in terminals are absolute
 			-- local mainTransf = params.mainTransf
 			local inverseMainTransf = transfUtils.getInverseTransf(params.mainTransf)
@@ -265,6 +267,7 @@ function data()
 				-- end
 				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal:
 				-- everything except the platforms and the terminal deco will vary along with it.
+				result.laneZs[t] = _laneZ
 
 				local isCargoTerminal = params.terminals[t].isCargo
 				if isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
