@@ -344,19 +344,21 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatforms, 3 do
 						local cpl = params.terminals[t].centrePlatforms[i]
-						local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
-						local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
-						table.insert(result.slots, {
-							height = 2,
-							id = myId,
-							spacing = {2, 2, 1, 1},
-							transf = transfUtilsUG.mul(
-								moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
-								-- { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-							),
-							type = _constants.platformRoofModuleType,
-						})
+						if cpl.type ~= 2 then -- no platform roofs in tunnels
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
+							local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
+							table.insert(result.slots, {
+								height = 2,
+								id = myId,
+								spacing = {2, 2, 1, 1},
+								transf = transfUtilsUG.mul(
+									moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
+									-- { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+								),
+								type = _constants.platformRoofModuleType,
+							})
+						end
 					end
 				end
 				_addPlatformRoofs()
