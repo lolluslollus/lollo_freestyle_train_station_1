@@ -21,13 +21,13 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("PlatformRoofName"),
-		description = _("PlatformRoofDesc"),
+		name = _("PlatformRoofMetalGlassName"),
+		description = _("PlatformRoofMetalGlassDesc"),
 		icon = "ui/empty.tga"
 	},
 	metadata = { },
 	order = {
-		value = 11,
+		value = 12,
 	},
 	type = _constants.platformRoofModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -51,7 +51,7 @@ return {
 			-- if leadingIndex >= ii1
 			-- and leadingIndex <= iiN then
 				local platformWidth = params.terminals[nTerminal].centrePlatforms[leadingIndex].width
-				local ceilingModelId = platformWidth < 5 and _constants.platformRoofCeiling2_5MModelFileName or _constants.platformRoofCeiling5MModelFileName
+				local ceilingModelId = platformWidth < 5 and _constants.platformRoofMetalGlassCeiling2_5MModelFileName or _constants.platformRoofMetalGlassCeiling5MModelFileName
 
 				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 				local myTransf = transfUtilsUG.mul(
@@ -68,7 +68,7 @@ return {
 				if params.terminals[nTerminal].centrePlatformsFine[ii + 2]
 				and params.terminals[nTerminal].centrePlatformsFine[ii + 2].leadingIndex <= iiN
 				and math.fmod(ceilingCounter, 4) == 0 then
-					local pillarModelId = platformWidth < 5 and _constants.platformRoofPillar2_5MModelFileName or _constants.platformRoofPillar5MModelFileName
+					local pillarModelId = platformWidth < 5 and _constants.platformRoofMetalGlassPillar2_5MModelFileName or _constants.platformRoofMetalGlassPillar5MModelFileName
 					result.models[#result.models+1] = {
 						id = pillarModelId,
 						transf = myTransf,
@@ -83,12 +83,12 @@ return {
 		local results = {}
 		for y = -2, 2 do
 			results[#results+1] = {
-				id = _constants.platformRoofCeiling2_5MModelFileName,
+				id = _constants.platformRoofMetalGlassCeiling2_5MModelFileName,
 				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 			}
 		end
 		results[#results+1] = {
-			id = _constants.platformRoofPillar2_5MModelFileName,
+			id = _constants.platformRoofMetalGlassPillar2_5MModelFileName,
 			transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 		}
 	return results

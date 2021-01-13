@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 384,
+					offset = 1404,
+				},
+				position = {
+					count = 384,
+					offset = 2172,
+				},
+				tangent = {
+					count = 384,
+					offset = 1020,
+				},
+				uv0 = {
+					count = 384,
+					offset = 1788,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/roofs/glass.001.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 156,
+			numComp = 3,
+			offset = 96,
+		},
+		position = {
+			count = 240,
+			numComp = 3,
+			offset = 780,
+		},
+		tangent = {
+			count = 96,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 528,
+			numComp = 2,
+			offset = 252,
+		},
+	},
+}
+end
