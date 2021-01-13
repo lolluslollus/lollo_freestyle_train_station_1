@@ -61,7 +61,7 @@ return {
 				waitingAreaCounter = waitingAreaCounter + 1
 				if params.terminals[nTerminal].centrePlatformsFine[ii + 2]
 				and params.terminals[nTerminal].centrePlatformsFine[ii + 2].leadingIndex <= iiN
-				and math.fmod(waitingAreaCounter, 5) == 0 then
+				and math.fmod(waitingAreaCounter, 4) == 0 then
 					result.models[#result.models+1] = {
 						id = _constants.cargoWaitingAreaCentredModelId,
 						transf = transfUtilsUG.mul(
