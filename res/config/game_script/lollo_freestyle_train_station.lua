@@ -1307,7 +1307,7 @@ function data()
                 eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
                     -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.
-                    -- If you do that, you may have to attach the cross connectors.
+                    -- If you do that, you won't need to attach the cross connectors. I could also do it.
                     -- For now, I forbid using platforms of different widths in a station, if any of them is > 5.
                     -- This way, we don't disturb the passenger station, which hasn't got this problem coz it always has the same lanes.
                     if platformWidth <= 5 then
@@ -1337,8 +1337,6 @@ function data()
                         }
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[4], eventArgs.isTrackOnPlatformLeft)
                     end
-                    -- LOLLO TODO MAYBE add underground connections for cargo, with lanes of type PERSON, if required. Not fancy, just vertical and horizontal lanes,
-                    -- maybe even overground. For now, it looks unnecessary but keep it in mind.
                 else
                     eventArgs.cargoWaitingAreas = {}
                 end
