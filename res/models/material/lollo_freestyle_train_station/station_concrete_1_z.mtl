@@ -46,7 +46,7 @@ function data()
             operation_1 = {
                 mode = "WORLD_XY",
                 op = "OVERLAY",
-                opacity = 0.9,
+                opacity = 0.75,
                 scale = { 0.15000000596046, 0.15000000596046, },
             },
             operation_2 = {
