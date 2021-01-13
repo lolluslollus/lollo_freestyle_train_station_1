@@ -26,7 +26,19 @@ function data()
                 cost = 0,
                 edgeLists = { },
                 groundFaces = { },
-                models = { },
+                labelText = {
+                    [1] = { _('SubwayNotConnected'), _('SubwayNotConnected') }
+                },
+                models = {
+                    {
+                        id = _constants.subwayUnconnectedModelId,
+                        transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+                    },
+                    {
+                        id = _constants.yellowMessageModelFileName,
+                        transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+                    }
+                },
                 terrainAlignmentLists = { },
             }
             --		result.groundFaces = {}
@@ -35,14 +47,6 @@ function data()
             --		result.stations = {}
             --		result.terminalGroups = {}
             --		result.terrainAlignmentLists = {}
-
-            table.insert(
-                result.models,
-                {
-                    id = _constants.subwayUnconnectedModelId,
-                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-                }
-            )
 
             moduleHelpers.doTerrain4Subways(result)
 

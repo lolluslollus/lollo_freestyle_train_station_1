@@ -103,6 +103,8 @@ function data()
 			["Join"] = "Join",
 			["NoJoin"] = "Do not join",
 			["StationPickerWindowTitle"] = "Pick a station to join",
+			["SubwayCannotConnect"] = "Add stairs or underpasses to connect this subway",
+			["SubwayNotConnected"] = "Join this subway to a station",
 			["TrackWaypointBuiltOnPlatform"] = "You can only build track markers on tracks and platform markers on platforms",
 			["TrackWaypointsMissing"] = "Build two track markers first",
 			["WarningWindowTitle"] = "Warning",

@@ -1264,10 +1264,11 @@ function data()
 							end
 							if not(isThisSubwayConnected) then
 								result.models[#result.models+1] = {
-									id = _constants.unconnectedSubwayModelId,
+									id = _constants.redMessageModelFileName,
 									-- transf = _constants.idTransf
 									transf = transfUtilsUG.mul(inverseMainTransf, subway.transf),
 								}
+								result.labelText[#result.models - 1] = { _('SubwayCannotConnect'), _('SubwayCannotConnect') }
 							end
 						end
 					end
