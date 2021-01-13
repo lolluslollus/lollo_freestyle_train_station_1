@@ -10,6 +10,8 @@ local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
 -- local state = nil -- LOLLO NOTE you can only update the state from the worker thread
+-- LOLLO TODO if you still experience collisions when combining several parallel tracks,
+-- try setting cleanupStreetGraph to false everywhere.
 
 local function _myErrorHandler(err)
     print('lollo freestyle train station ERROR: ', err)
@@ -111,8 +113,8 @@ local _actions = {
         }
 
         local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- we need it here, or we will have trouble later building the snappy tracks
-        -- context.cleanupStreetGraph = true -- we need it here, or we will have trouble later building the snappy tracks
+        -- context.checkTerrainAlignment = true
+        -- context.cleanupStreetGraph = true
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer()
@@ -386,8 +388,8 @@ local _actions = {
         end
 
         local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- we need it here, or we will have trouble later building the snappy tracks
-        -- context.cleanupStreetGraph = true -- we need it here, or we will have trouble later building the snappy tracks
+        -- context.checkTerrainAlignment = true
+        -- context.cleanupStreetGraph = true
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer()
