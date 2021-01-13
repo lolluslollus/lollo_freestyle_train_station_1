@@ -195,6 +195,7 @@ function data()
 				terminalGroups = {},
 				terrainAlignmentLists = { { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
 					type = "EQUAL",
+					optional = true,
 					faces =  { }
 				} },
 			}
