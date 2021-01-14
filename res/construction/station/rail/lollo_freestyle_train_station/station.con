@@ -71,6 +71,7 @@ function data()
 		updateFn = function(params)
 			-- print('updateFn starting, params =') debugPrint(params)
 			print('updateFn starting, params.modules =') debugPrint(params.modules)
+			-- LOLLO TODO sometimes, there are too many modules of type trackSpeed or trackElectrification
 			if not params.modules then params.modules = {} end
 
 			-- LOLLO NOTE I cannot call the api from here, sigh. api is there, but api.res is NIL. Also game is there, but game.interface is NIL
@@ -1047,7 +1048,7 @@ function data()
 			end
 			_addSubwaySlots()
 
-			print('params.upgrade =') debugPrint(params.upgrade)
+			-- print('params.upgrade =') debugPrint(params.upgrade)
 
 			result.terminateConstructionHook = function()
 				print('terminateConstructionHook starting')
