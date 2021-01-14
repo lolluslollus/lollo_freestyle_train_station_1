@@ -457,15 +457,41 @@ helpers.doTerrain4Subways = function(result, slotTransf)
     )
 end
 
-helpers.getVariant = function(params, slotId)
-    local variant = 0
+helpers.flatAreas = {}
+helpers.flatAreas.getVariant = function(params, slotId)
+    local variant = _constants.platformSideBitsZ
     if type(params) == 'table'
     and type(params.modules) == 'table'
     and type(params.modules[slotId]) == 'table'
     and type(params.modules[slotId].variant) == 'number' then
-        variant = params.modules[slotId].variant
+        variant = variant + params.modules[slotId].variant
     end
     return variant
+end
+
+helpers.flatAreas.getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
+    local variant = helpers.flatAreas.getVariant(params, slotId)
+    local deltaZ = variant * _constants.platformSideBitsZ
+    if deltaZ < -1 then deltaZ = -1 elseif deltaZ > 1 then deltaZ = 1 end
+
+    return transfUtils.getTransfRaisedBy(slotTransf, deltaZ)
+end
+
+helpers.flatAreas.addLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+    local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(
+        params.terminals[nTerminal].crossConnectors[nTrackEdge].posTanX2,
+        result.inverseMainTransf
+    )
+    local lane2AreaTransf = transfUtils.get1MLaneTransf(
+        transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
+        transfUtils.transf2Position(slotAdjustedTransf)
+    )
+    result.models[#result.models+1] = {
+        id = _constants.passengerLaneModelId,
+        slotId = slotId,
+        transf = lane2AreaTransf,
+        tag = tag
+    }
 end
 
 return helpers
