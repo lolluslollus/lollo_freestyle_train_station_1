@@ -457,4 +457,15 @@ helpers.doTerrain4Subways = function(result, slotTransf)
     )
 end
 
+helpers.getVariant = function(params, slotId)
+    local variant = 0
+    if type(params) == 'table'
+    and type(params.modules) == 'table'
+    and type(params.modules[slotId]) == 'table'
+    and type(params.modules[slotId].variant) == 'number' then
+        variant = params.modules[slotId].variant
+    end
+    return variant
+end
+
 return helpers
