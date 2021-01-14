@@ -1,5 +1,4 @@
 local _constants = require('lollo_freestyle_train_station.constants')
--- local colliderutil = require "colliderutil"
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
@@ -16,21 +15,21 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "cargo-road-access", },
+		categories = { "passenger-road-access", },
 	},
 	cost = {
 		price = 0,
 	},
 	description = {
-		name = _("FlatCargoArea5x5Name"),
-		description = _("FlatCargoArea5x5Desc"),
-		icon = "ui/lollo_freestyle_train_station/flat_cargo_area_5x5.tga"
+		name = _("FlatPassengerStairsSteepName"),
+		description = _("FlatPassengerStairsSteepDesc"),
+		icon = "ui/lollo_freestyle_train_station/stairs_steep.tga"
 	},
 	metadata = { },
 	order = {
-		value = 11,
+		value = 1,
 	},
-	type = _constants.flatCargoArea5x5ModuleType,
+	type = _constants.flatPassengerStairsModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
@@ -38,7 +37,7 @@ return {
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		result.models[#result.models + 1] = {
-			id = _constants.flatCargoArea5x5ModelFileName,
+			id = _constants.flatPassengerStairsSteepModelFileName,
 			slotId = slotId,
 			transf = zAdjustedTransf,
 			tag = tag
@@ -47,32 +46,32 @@ return {
 		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 		local groundFace = {
-			{-3, -3.5, 0, 1},
-			{-3, 3.5, 0, 1},
-			{6, 3.5, 0, 1},
-			{6, -3.5, 0, 1},
+			{-1, -2, 0, 1},
+			{-1, 2, 0, 1},
+			{2.25, 2, 0, 1},
+			{2.25, -2, 0, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
 
 		local terrainAlignmentList = {
 			faces = {
+				-- {
+				-- 	{-2, -2, 0, 1},
+				-- 	{-2, 2, 0, 1},
+				-- 	{-1, 2, 0, 1},
+				-- 	{-1, -2, 0, 1},
+				-- },
 				{
-					{-2.5, -3.5, 0, 1},
-					{-2.5, 3.5, 0, 1},
-					{1, 3.5, 0, 1},
-					{1, -3.5, 0, 1},
-				},
-				{
-					{1, -3.5, 0, 1},
-					{1, 3.5, 0, 1},
-					{6, 3.5, -_constants.stairsAndRampHeight, 1},
-					{6, -3.5, -_constants.stairsAndRampHeight, 1},
+					{-1, -2, 0, 1},
+					{-1, 2, 0, 1},
+					{2.25, 2, -_constants.stairsAndRampHeight, 1},
+					{2.25, -2, -_constants.stairsAndRampHeight, 1},
 				}
 			},
 			optional = true,
         	slopeHigh = 10, --99,
-        	slopeLow = 0.9, --0.1,
+			slopeLow = 0.9, --0.1,
 			type = 'EQUAL',
 		}
 		for _, face in pairs(terrainAlignmentList.faces) do
@@ -85,7 +84,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.flatCargoArea5x5ModelFileName,
+				id = _constants.flatPassengerStairsSteepModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

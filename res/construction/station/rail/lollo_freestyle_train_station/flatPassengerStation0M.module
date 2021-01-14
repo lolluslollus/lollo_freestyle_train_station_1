@@ -51,7 +51,7 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				buildingTransf,
-				{ 0, 1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.45, -3.5, -_constants.stairsHeight, 1 }
+				{ 0, 1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.45, -3.5, -_constants.stairsAndRampHeight, 1 }
 			),
 			tag = tag
 		}
@@ -60,16 +60,16 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				buildingTransf,
-				{ 0, -1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.45, -3.5, -_constants.stairsHeight, 1 }
+				{ 0, -1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.45, -3.5, -_constants.stairsAndRampHeight, 1 }
 			),
 			tag = tag
 		}
 
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-1, -6.2, -_constants.stairsHeight, 1},
-			{-1, 6.2, -_constants.stairsHeight, 1},
-			{6.0, 6.2, -_constants.stairsHeight, 1},
-			{6.0, -6.2, -_constants.stairsHeight, 1},
+			{-1, -6.2, -_constants.stairsAndRampHeight, 1},
+			{-1, 6.2, -_constants.stairsAndRampHeight, 1},
+			{6.0, 6.2, -_constants.stairsAndRampHeight, 1},
+			{6.0, -6.2, -_constants.stairsAndRampHeight, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		table.insert(

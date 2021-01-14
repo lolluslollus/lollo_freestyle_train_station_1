@@ -65,14 +65,14 @@ function data()
                             materials = {'station/road/streetstation/streetstation_1.mtl'},
                             mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                             name = 'tickets_era_c_1',
-                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.0, -0.68, -_constants.stairsHeight, 1}
+                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.0, -0.68, -_constants.stairsAndRampHeight, 1}
                         },
                         {
                             -- ticket machine right
                             materials = {'station/road/streetstation/streetstation_1.mtl'},
                             mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                             name = 'tickets_era_c_1',
-                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.0, -0.68, -_constants.stairsHeight, 1}
+                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.0, -0.68, -_constants.stairsAndRampHeight, 1}
                         },
                         {
                             -- top
@@ -91,7 +91,7 @@ function data()
                                 }
                             },
                             name = 'era_c_station_name_grp',
-                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, 4.3 -_constants.stairsHeight, 1}
+                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, 4.3 -_constants.stairsAndRampHeight, 1}
                         }
                     },
                     name = 'RootNode',
@@ -137,7 +137,7 @@ function data()
                         -- renderMode = "EMISSIVE",
                         size = {5.2, .6},
                         --transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -5.333, .23, 1},
-                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.8, -4.333, 4.66 -_constants.stairsHeight, 1},
+                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.8, -4.333, 4.66 -_constants.stairsAndRampHeight, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }
@@ -155,7 +155,7 @@ function data()
                                 2.4
                             },
                             {
-                                {0, -2.0, -_constants.stairsHeight},
+                                {0, -2.0, -_constants.stairsAndRampHeight},
                                 {0, -1, 0},
                                 2.4
                             },
@@ -168,12 +168,12 @@ function data()
                         linkable = true,
                         nodes = {
                             {
-                                {0, -2.0, -_constants.stairsHeight},
+                                {0, -2.0, -_constants.stairsAndRampHeight},
                                 {0, -1, 0},
                                 2.4
                             },
                             {
-                                {0, -4, -_constants.stairsHeight},
+                                {0, -4, -_constants.stairsAndRampHeight},
                                 {0, -1, 0},
                                 2.4
                             }
@@ -186,22 +186,22 @@ function data()
                         linkable = true,
                         nodes = {
                             {
-                                {-4.5, -2.0, -_constants.stairsHeight},
+                                {-4.5, -2.0, -_constants.stairsAndRampHeight},
                                 {1, 0, 0},
                                 2.4
                             },
                             {
-                                {0, -2.0, -_constants.stairsHeight},
+                                {0, -2.0, -_constants.stairsAndRampHeight},
                                 {1, 0, 0},
                                 2.4
                             },
                             {
-                                {0, -2.0, -_constants.stairsHeight},
+                                {0, -2.0, -_constants.stairsAndRampHeight},
                                 {1, 0, 0},
                                 2.4
                             },
                             {
-                                {4.5, -2.0, -_constants.stairsHeight},
+                                {4.5, -2.0, -_constants.stairsAndRampHeight},
                                 {1, 0, 0},
                                 2.4
                             },

@@ -2,14 +2,14 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants') -- LOLLO NOTE this is critical: 0.5 or 0.6 will crash coz it will be at the same height as the platform-track
     return {
         boundingInfo = {
-            bbMax = { 4.9, 2, 2.8 },
-            bbMin = { 2.5, -2, -1.2 },
+            bbMax = { 1.2, 0.9, 2.8 },
+            bbMin = { 1, -0.9, -1.2 },
         },
         collider = {
             params = {
-                halfExtents = { 1.2, 2, 2, },
+                halfExtents = { 0.1, 0.8, 1.9, },
             },
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  3.7, 0, 0.8, 1, },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.1, 0, 0.8, 1, },
             type = 'BOX',
         },
         lods = {
@@ -17,12 +17,12 @@ function data()
                 node = {
                     children = {
                         {
-                            -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
                             materials = {
-                                "lollo_freestyle_train_station/era_c_station_tiles_1.mtl",
+                                "lollo_freestyle_train_station/station_concrete_2.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1.mtl",
+                                "lollo_freestyle_train_station/era_c_trainstation_darker_stripes.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_platform_area_5x5m.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_platform_ramp_steep_2m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },
@@ -38,33 +38,26 @@ function data()
             transportNetworkProvider = {
                 laneLists = {
                     {
-                        linkable = false, -- false, --true,
-                        nodes = {
-                            {
-                                { 0, 0, 0 },
-                                { 2.5, 0, 0 },
-                                3,
-                            },
-                            {
-                                { 2.5, 0, 0 },
-                                { 2.5, 0, 0 },
-                                3,
-                            },
-                        },
-                        transportModes = { 'PERSON', },
-                        speedLimit = 20,
-                    },
-                    {
                         linkable = true, -- false, --true,
                         nodes = {
+                            -- {
+                            --     { 0, 0, 0 },
+                            --     { 2.5, 0, 0 },
+                            --     3,
+                            -- },
+                            -- {
+                            --     { 2.5, 0, 0 },
+                            --     { 2.5, 0, 0 },
+                            --     3,
+                            -- },
                             {
-                                { 2.5, 0, 0 },
-                                { 2.5, 0, 0 },
+                                { 0, 0, 0 },
+                                { 1.5, 0, 0 },
                                 3,
                             },
                             {
-                                { 5, 0, -_constants.stairsAndRampHeight },
-                                { 2.5, 0, 0 },
+                                { 1.5, 0, -_constants.stairsAndRampHeight },
+                                { 1.5, 0, 0 },
                                 3,
                             },
                         },

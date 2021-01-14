@@ -83,7 +83,7 @@ function data()
                                 3,
                             },
                             {
-                                { 7.5, 0, -_constants.stairsHeight },
+                                { 7.5, 0, -_constants.stairsAndRampHeight },
                                 { 2.5, 0, 0 },
                                 3,
                             },

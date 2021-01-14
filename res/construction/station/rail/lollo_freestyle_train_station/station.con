@@ -95,7 +95,7 @@ function data()
 					-- },
                 },
                 slotConfig = {
-					-- [_constants.flatStairsModuleType] = {
+					-- [_constants.flatPassengerStairsModuleType] = {
 					-- 	maxModules = -1,
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
@@ -435,23 +435,23 @@ function data()
 							if not(isUnderpass) and not(isPreviousUnderpass) then
 								if params.terminals[t].centrePlatforms[i].type == 0 then -- ground
 									if not(_getOccupiedInfo4FlatAreas(t, i))
-									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsSlotId then
+									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsOrRampSlotId then
 										local yShift = params.terminals[t].centrePlatforms[i].width + _getOccupiedInfo4SlopedAreas(t, i).yShift
 										local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 										local myTransf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 										)
-										local myId = result.mangleId(t, i, _constants.idBases.flatStairsSlotId)
+										local myId = result.mangleId(t, i, _constants.idBases.flatStairsOrRampSlotId)
 										table.insert(result.slots, {
 											-- height = 0,
 											id = myId,
 											spacing = {-2, 6, 1, 1},
 											transf = myTransf,
-											type = _constants.flatStairsModuleType,
+											type = isCargoTerminal and _constants.flatCargoRampModuleType or _constants.flatPassengerStairsModuleType,
 										})
 										if params.modules[myId] ~= nil then
-											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStairsSlotId)
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStairsOrRampSlotId)
 										end
 									end
 									if not(_getOccupiedInfo4FlatAreas(t, i))
@@ -555,7 +555,7 @@ function data()
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
 														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5 + _laneZ + _constants.platformSideBitsZ - _constants.stairsHeight, 1 }
+														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5 + _laneZ + _constants.platformSideBitsZ - _constants.stairsAndRampHeight, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
