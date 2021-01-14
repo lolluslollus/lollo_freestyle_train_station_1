@@ -8,23 +8,23 @@ return {
 			indices = {
 				normal = {
 					count = 384,
-					offset = 1404,
+					offset = 1412,
 				},
 				position = {
 					count = 384,
-					offset = 2172,
+					offset = 2180,
 				},
 				tangent = {
 					count = 384,
-					offset = 1020,
+					offset = 1028,
 				},
 				uv0 = {
 					count = 384,
-					offset = 1788,
+					offset = 1796,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/roofs/glass.001.mtl", 
+				"lollo_freestyle_train_station/roofs/concrete.mtl", 
 			},
 		}, 
 	},
@@ -37,7 +37,7 @@ return {
 		position = {
 			count = 240,
 			numComp = 3,
-			offset = 780,
+			offset = 788,
 		},
 		tangent = {
 			count = 96,
@@ -45,7 +45,7 @@ return {
 			offset = 0,
 		},
 		uv0 = {
-			count = 528,
+			count = 536,
 			numComp = 2,
 			offset = 252,
 		},

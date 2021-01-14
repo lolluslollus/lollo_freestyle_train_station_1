@@ -8,41 +8,41 @@ return {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 2504,
+					offset = 2536,
 				},
 				position = {
 					count = 144,
-					offset = 2792,
+					offset = 2824,
 				},
 				tangent = {
 					count = 144,
-					offset = 2360,
+					offset = 2392,
 				},
 				uv0 = {
 					count = 144,
-					offset = 2648,
+					offset = 2680,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/roofs/glass.001.mtl", 
+				"lollo_freestyle_train_station/roofs/glass.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
 					count = 1008,
-					offset = 3944,
+					offset = 3976,
 				},
 				position = {
 					count = 1008,
-					offset = 5960,
+					offset = 5992,
 				},
 				tangent = {
 					count = 1008,
-					offset = 2936,
+					offset = 2968,
 				},
 				uv0 = {
 					count = 1008,
-					offset = 4952,
+					offset = 4984,
 				},
 			},
 			materials = {
@@ -59,7 +59,7 @@ return {
 		position = {
 			count = 672,
 			numComp = 3,
-			offset = 1688,
+			offset = 1720,
 		},
 		tangent = {
 			count = 336,
@@ -67,7 +67,7 @@ return {
 			offset = 0,
 		},
 		uv0 = {
-			count = 1136,
+			count = 1168,
 			numComp = 2,
 			offset = 552,
 		},
