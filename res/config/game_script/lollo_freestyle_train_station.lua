@@ -9,9 +9,11 @@ local trackUtils = require('lollo_freestyle_train_station.trackHelper')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
--- local state = nil -- LOLLO NOTE you can only update the state from the worker thread
--- LOLLO TODO if you still experience collisions when combining several parallel tracks,
--- try setting cleanupStreetGraph to false everywhere.
+-- LOLLO NOTE you can only update the state from the worker thread
+-- local state = nil
+
+-- LOLLO NOTE to avoid collisions when combining several parallel tracks,
+-- cleanupStreetGraph is false everywhere.
 
 local function _myErrorHandler(err)
     print('lollo freestyle train station ERROR: ', err)
@@ -267,7 +269,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-        context.cleanupStreetGraph = true -- default is false
+        -- context.cleanupStreetGraph = true -- default is false
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
         -- context.player = api.engine.util.getPlayer()
@@ -466,7 +468,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- true gives smoother z, default is false
-        context.cleanupStreetGraph = true -- default is false
+        -- context.cleanupStreetGraph = true -- default is false
         context.gatherBuildings = false -- default is false
         context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer()
@@ -605,7 +607,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        context.cleanupStreetGraph = true -- default is false
+        -- context.cleanupStreetGraph = true -- default is false
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         -- context.player = api.engine.util.getPlayer() -- default is -1
@@ -647,7 +649,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        context.cleanupStreetGraph = true -- default is false
+        -- context.cleanupStreetGraph = true -- default is false
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         -- context.player = api.engine.util.getPlayer() -- default is -1
@@ -784,7 +786,7 @@ local _actions = {
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        context.cleanupStreetGraph = true -- default is false
+        -- context.cleanupStreetGraph = true -- default is false
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
