@@ -91,11 +91,11 @@ function data()
 
 			["NewStationName"] = "New Station",
 
-			["cargo-platform-extensions"] = "Cargo platform extensions",
+			["cargo-platform-extensions"] = "Cargo extensions",
 			["cargo-platform-tracks"] = "Cargo platforms to be laid as tracks",
 			["cargo-road-access"] = "Cargo road access",
-			["passenger-platform-extensions"] = "Passenger platform extensions",
-			["passenger-platform-roofs"] = "Platform Roofs",
+			["passenger-platform-extensions"] = "Passenger extensions",
+			["passenger-platform-roofs"] = "Platform roofs",
 			["passenger-platform-tracks"] = "Passenger platforms to be laid as tracks",
 			["passenger-road-access"] = "Passenger road access",
 			["passenger-up-and-down"] = "Up and down",
