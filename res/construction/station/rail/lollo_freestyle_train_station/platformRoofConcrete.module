@@ -56,7 +56,7 @@ return {
 				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 				local myTransf = transfUtilsUG.mul(
 					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2),
-					{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
+					{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformRoofZ, 1 }
 				)
 				result.models[#result.models+1] = {
 					id = ceilingModelId,
