@@ -110,22 +110,22 @@ function data()
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
 					-- },
-					-- [_constants.flatCargoArea10x5ModuleType] = {
+					-- [_constants.flatCargoArea8x5ModuleType] = {
 					-- 	maxModules = -1,
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
 					-- },
-					-- [_constants.flatPassengerArea10x5ModuleType] = {
+					-- [_constants.flatPassengerArea8x5ModuleType] = {
 					-- 	maxModules = -1,
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
 					-- },
-					-- [_constants.flatCargoArea10x10ModuleType] = {
+					-- [_constants.flatCargoArea8x10ModuleType] = {
 					-- 	maxModules = -1,
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
 					-- },
-					-- [_constants.flatPassengerArea10x10ModuleType] = {
+					-- [_constants.flatPassengerArea8x10ModuleType] = {
 					-- 	maxModules = -1,
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
@@ -475,43 +475,43 @@ function data()
 										end
 									end
 									if not(_getOccupiedInfo4FlatAreas(t, i))
-									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea10x5SlotId then
+									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea8x5SlotId then
 										local yShift = params.terminals[t].centrePlatforms[i].width + 5 + _getOccupiedInfo4SlopedAreas(t, i).yShift
 										local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 										local myTransf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 										)
-										local myId = result.mangleId(t, i, _constants.idBases.flatArea10x5SlotId)
+										local myId = result.mangleId(t, i, _constants.idBases.flatArea8x5SlotId)
 										table.insert(result.slots, {
 											-- height = 0,
 											id = myId,
 											spacing = {0, 6, 3, 3},
 											transf = myTransf,
-											type = isCargoTerminal and _constants.flatCargoArea10x5ModuleType or _constants.flatPassengerArea10x5ModuleType,
+											type = isCargoTerminal and _constants.flatCargoArea8x5ModuleType or _constants.flatPassengerArea8x5ModuleType,
 										})
 										if not(isUnderpass) and not(isPreviousUnderpass) and params.modules[myId] ~= nil then
-											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea10x5SlotId)
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea8x5SlotId)
 										end
 									end
 									if not(_getOccupiedInfo4FlatAreas(t, i))
-									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea10x10SlotId then
+									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea8x10SlotId then
 										local yShift = params.terminals[t].centrePlatforms[i].width + 10 + _getOccupiedInfo4SlopedAreas(t, i).yShift
 										local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 										local myTransf = transfUtilsUG.mul(
 											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 										)
-										local myId = result.mangleId(t, i, _constants.idBases.flatArea10x10SlotId)
+										local myId = result.mangleId(t, i, _constants.idBases.flatArea8x10SlotId)
 										table.insert(result.slots, {
 											-- height = 0,
 											id = myId,
 											spacing = {0, 6, 3, 3},
 											transf = myTransf,
-											type = isCargoTerminal and _constants.flatCargoArea10x10ModuleType or _constants.flatPassengerArea10x10ModuleType,
+											type = isCargoTerminal and _constants.flatCargoArea8x10ModuleType or _constants.flatPassengerArea8x10ModuleType,
 										})
 										if not(isUnderpass) and not(isPreviousUnderpass) and params.modules[myId] ~= nil then
-											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea10x10SlotId)
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea8x10SlotId)
 										end
 									end
 									if not(isCargoTerminal) then

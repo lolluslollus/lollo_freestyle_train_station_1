@@ -15,21 +15,21 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "passenger-road-access", },
+		categories = { "cargo-road-access", },
 	},
 	cost = {
 		price = 0,
 	},
 	description = {
-		name = _("FlatPassengerArea10x10Name"),
-		description = _("FlatPassengerArea10x10Desc"),
-		icon = "ui/lollo_freestyle_train_station/flat_passenger_area_10x10.tga"
+		name = _("FlatCargoArea8x10Name"),
+		description = _("FlatCargoArea8x10Desc"),
+		icon = "ui/lollo_freestyle_train_station/flat_cargo_area_8x10.tga"
 	},
 	metadata = { },
 	order = {
 		value = 13,
 	},
-	type = _constants.flatPassengerArea10x10ModuleType,
+	type = _constants.flatCargoArea8x10ModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
@@ -37,7 +37,7 @@ return {
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		result.models[#result.models + 1] = {
-			id = _constants.flatPassengerArea10x10ModelFileName,
+			id = _constants.flatCargoArea8x10ModelFileName,
 			slotId = slotId,
 			transf = zAdjustedTransf,
 			tag = tag
@@ -77,14 +77,13 @@ return {
 		for _, face in pairs(terrainAlignmentList.faces) do
 			modulesutil.TransformFaces(zAdjustedTransf, face)
 		end
-		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 	end,
 
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.flatPassengerArea10x10ModelFileName,
+				id = _constants.flatCargoArea8x10ModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}
