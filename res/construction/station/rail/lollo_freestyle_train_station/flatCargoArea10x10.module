@@ -34,13 +34,16 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
+		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+
 		result.models[#result.models + 1] = {
-			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
 			id = _constants.flatCargoArea10x10ModelFileName,
 			slotId = slotId,
-			transf = slotTransf,
+			transf = zAdjustedTransf,
 			tag = tag
 		}
+
+		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 		local groundFace = {
 			{-5.5, -6, 0, 1},
@@ -48,7 +51,7 @@ return {
 			{8.5, 6, 0, 1},
 			{8.5, -6, 0, 1},
 		}
-		modulesutil.TransformFaces(slotTransf, groundFace)
+		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
 
 		local terrainAlignmentList = {
@@ -72,9 +75,8 @@ return {
 			type = 'EQUAL',
 		}
 		for _, face in pairs(terrainAlignmentList.faces) do
-			modulesutil.TransformFaces(slotTransf, face)
+			modulesutil.TransformFaces(zAdjustedTransf, face)
 		end
-		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 	end,
 

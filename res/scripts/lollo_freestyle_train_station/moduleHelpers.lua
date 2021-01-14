@@ -474,7 +474,7 @@ helpers.flatAreas.getMNAdjustedTransf_Limited = function(params, slotId, slotTra
     local deltaZ = variant * _constants.platformSideBitsZ
     if deltaZ < -1 then deltaZ = -1 elseif deltaZ > 1 then deltaZ = 1 end
 
-    return transfUtils.getTransfRaisedBy(slotTransf, deltaZ)
+    return transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, deltaZ, 1 })
 end
 
 helpers.flatAreas.addLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)

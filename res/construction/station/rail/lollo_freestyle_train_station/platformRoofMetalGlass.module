@@ -38,7 +38,7 @@ return {
 		local transfXZoom = isTrackOnPlatformLeft and -1 or 1
 		local transfYZoom = isTrackOnPlatformLeft and -1 or 1
 
-		local inverseMainTransf = transfUtils.getInverseTransf(params.mainTransf)
+		local inverseMainTransf = result.inverseMainTransf
 
 		local ii1 = nTrackEdge - 1
 		local iiN = nTrackEdge + 1

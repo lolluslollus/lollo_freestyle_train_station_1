@@ -207,18 +207,6 @@ utils.getPositionRaisedBy = function(position, raiseBy)
     end
 end
 
-utils.getTransfRaisedBy = function(transf, raiseBy)
-    -- faster than calling mul()
-    if type(raiseBy) ~= 'number' then return transf end
-
-    return {
-        transf[1], transf[2], transf[3], transf[4],
-        transf[5], transf[6], transf[7], transf[8],
-        transf[9], transf[10], transf[11], transf[12],
-        transf[13], transf[14], transf[15] + raiseBy, transf[16],
-    }
-end
-
 utils.getVectorLength = function(xyz)
     if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
     local x = xyz.x or xyz[1] or 0.0

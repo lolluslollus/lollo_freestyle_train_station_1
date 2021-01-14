@@ -38,13 +38,16 @@ return {
 		-- in base_config.lua
 		-- Set it into the models, so the game knows what module they belong to.
 
+		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+
 		result.models[#result.models + 1] = {
-			-- id = 'lollo_freestyle_train_station/icon/green.mdl',
 			id = _constants.flatStairsSmoothModelFileName,
 			slotId = slotId,
-			transf = slotTransf,
+			transf = zAdjustedTransf,
 			tag = tag
 		}
+
+		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 		local groundFace = {
 			{-1, -2, 0, 1},
@@ -52,7 +55,7 @@ return {
 			{3.5, 2, 0, 1},
 			{3.5, -2, 0, 1},
 		}
-		modulesutil.TransformFaces(slotTransf, groundFace)
+		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
 
 		local terrainAlignmentList = {
@@ -76,7 +79,7 @@ return {
 			type = 'EQUAL',
 		}
 		for _, face in pairs(terrainAlignmentList.faces) do
-			modulesutil.TransformFaces(slotTransf, face)
+			modulesutil.TransformFaces(zAdjustedTransf, face)
 		end
 		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
