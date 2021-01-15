@@ -272,10 +272,11 @@ helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
     _addTrackEdges(params, result, inverseMainTransf, tag2nodes, t)
 end
 
+helpers.lifts = {}
 -- local _bridgeHeights = { 5, 10, 15, 20, 25, 30, 35, 40 } -- too little, stations get buried
 local _bridgeHeights = { 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
 -- local _bridgeHeights = { 6.5, 11.5, 16.5, 21.5, 26.5, 31.5, 36.5, 41.5 }
-helpers.tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
+helpers.lifts.tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
     local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
 		-- local terrainHeight = cpl.terrainHeight1
     local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
@@ -298,13 +299,14 @@ helpers.tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
     elseif bridgeHeight < _bridgeHeights[8] then
         buildingHeight = 40
     else
-        return false
+        buildingHeight = 40
+        -- return false
     end
 
     return buildingHeight
 end
 
-helpers.tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
+helpers.lifts.tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
     local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
 		-- local terrainHeight = cpl.terrainHeight1
     local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
@@ -327,13 +329,14 @@ helpers.tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
     elseif bridgeHeight < _bridgeHeights[8] then
         buildingModelId = buildingModelId .. 'side_lifts_9_5_40.mdl'
     else
-        return false
+        buildingModelId = buildingModelId .. 'side_lifts_9_5_40.mdl'
+        -- return false
     end
 
     return buildingModelId
 end
 
-helpers.doTerrain4SideLifts = function(buildingHeight, slotTransf, result)
+helpers.lifts.doTerrain4SideLifts = function(buildingHeight, slotTransf, result)
     local groundFace = { -- the ground faces ignore z, the alignment lists don't
         {-1, -6.2, -buildingHeight, 1},
         {-1, 6.2, -buildingHeight, 1},
@@ -373,7 +376,7 @@ helpers.doTerrain4SideLifts = function(buildingHeight, slotTransf, result)
     result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 end
 
-helpers.tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge)
+helpers.lifts.tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge)
     local cpl = params.terminals[nTerminal].centrePlatforms[nTrackEdge]
 		-- local terrainHeight = cpl.terrainHeight1
     local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
@@ -396,7 +399,8 @@ helpers.tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge)
     elseif bridgeHeight < _bridgeHeights[8] then
         buildingModelId = buildingModelId .. 'platform_lifts_9_5_40.mdl'
     else
-        return false
+        buildingModelId = buildingModelId .. 'platform_lifts_9_5_40.mdl'
+        -- return false
     end
 
     return buildingModelId

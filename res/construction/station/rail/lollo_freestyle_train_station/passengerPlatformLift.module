@@ -38,9 +38,9 @@ return {
 		-- in base_config.lua
 		-- Set it into the models so the game knows what module they belong to.
 
-		local buildingHeight = moduleHelpers.tryGetLiftHeight(params, nTerminal, nTrackEdge)
+		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
-		local buildingModelId = moduleHelpers.tryGetPlatformLiftModelId(params, nTerminal, nTrackEdge)
+		local buildingModelId = moduleHelpers.lifts.tryGetPlatformLiftModelId(params, nTerminal, nTrackEdge)
 		if not(buildingModelId) then return end
 
 		-- print('buildingHeight =', buildingHeight)
