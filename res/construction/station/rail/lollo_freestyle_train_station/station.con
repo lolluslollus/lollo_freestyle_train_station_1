@@ -72,6 +72,7 @@ function data()
 			-- print('updateFn starting, params =') debugPrint(params)
 			print('updateFn starting, params.modules =') debugPrint(params.modules)
 			-- LOLLO TODO sometimes, there are too many modules of type trackSpeed or trackElectrification
+			-- It seems fixed, but keep checking it.
 			if not params.modules then params.modules = {} end
 
 			-- LOLLO NOTE I cannot call the api from here, sigh. api is there, but api.res is NIL. Also game is there, but game.interface is NIL
@@ -350,7 +351,7 @@ function data()
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 							local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
 							table.insert(result.slots, {
-								height = 2,
+								height = 3,
 								id = myId,
 								spacing = {2, 2, 1, 1},
 								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2),
@@ -873,14 +874,14 @@ function data()
                     })
                     -- insert two undeletable dummy slots for upgrading tracks
 					table.insert(result.slots, {
-						height = -2,
+						height = 1,
 						id = result.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId),
 						spacing = {0, 0, 0, 0}, -- this does not prevent deletion, it just makes it harder
 						transf = myTransf,
 						type = _constants.trackElectrificationModuleType
 					})
 					table.insert(result.slots, {
-						height = -4,
+						height = 2,
 						id = result.mangleId(t, 0, _constants.idBases.trackSpeedSlotId),
 						spacing = {0, 0, 0, 0},
 						transf = myTransf,
@@ -1344,11 +1345,17 @@ function data()
 			if change.added then
 				modules[change.slotId] = change.module
 			else
-				-- bar removal of modules for upgrading tracks
-				local _, _, baseId = slotHelpers.demangleId(change.slotId)
+				-- bar removal of modules for upgrading tracks...
+				local nTerminal, _, baseId = slotHelpers.demangleId(change.slotId)
 				if baseId == _constants.idBases.trackElectrificationSlotId or baseId == _constants.idBases.trackSpeedSlotId then
-					-- print('barring removal of modules for upgrading tracks')
-					return modules
+					local terminalSlotId = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.terminalSlotId)
+					-- ... if their terminal is present
+					if modules[terminalSlotId] ~= nil then
+						-- print('barring removal of modules for upgrading tracks')
+						return modules
+					-- else
+						-- print('allowing removal of modules for upgrading tracks coz terminal does not exist')
+					end
 				end
 				modules[change.slotId] = nil
 			end
@@ -1407,11 +1414,8 @@ function data()
 					newModuleFileName = _constants.trackElectrificationYesModuleFileName
 				end
 
-				local results = {
-					{ moduleKey, newModuleFileName }
-				}
+				return { { moduleKey, newModuleFileName } }
 				-- print('results =') debugPrint(results)
-				return results
 			elseif args.trackTypeToggle == 1 then
 				local moduleKey = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackSpeedSlotId)
 				-- print('moduleKey =') debugPrint(moduleKey)
@@ -1428,14 +1432,11 @@ function data()
 					newModuleFileName = _constants.trackSpeedFastModuleFileName
 				end
 
-				local results = {
-					{ moduleKey, newModuleFileName }
-				}
+				return { { moduleKey, newModuleFileName } }
 				-- print('results =') debugPrint(results)
-				return results
 			end
 
-			print('return an empty table')
+			-- print('upgradeFn is returning an empty table')
 			return {}
 
 			-- The return structure is a list like:
