@@ -1,0 +1,71 @@
+function data()
+    return {
+        order = 0,
+        params = {
+            albedo_scale = {
+                albedoScale = { 1, 1, 1, },
+            },
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            map_albedo = {
+                fileName = "models/industry/construction_material/contruction_material_doors_002_albedo.dds",
+                type = "TWOD",
+                wrapS = "CLAMP_TO_EDGE",
+                wrapT = "CLAMP_TO_EDGE",
+            },
+            map_metal_gloss_ao = {
+                fileName = "models/industry/construction_material/contruction_material_doors_002_metal_gloss_ao.dds",
+                type = "TWOD",
+                wrapS = "CLAMP_TO_EDGE",
+                wrapT = "CLAMP_TO_EDGE",
+            },
+            map_normal = {
+                fileName = "models/industry/construction_material/contruction_material_doors_002_normal.dds",
+                redGreen = true,
+                type = "TWOD",
+                wrapS = "CLAMP_TO_EDGE",
+                wrapT = "CLAMP_TO_EDGE",
+            },
+            map_op_1 = {
+                fileName = "models/industry/overlay_textures/big_05.tga",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_2 = {
+                fileName = "models/industry/overlay_textures/big_04.tga",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            normal_scale = {
+                normalScale = 1,
+            },
+            operation_1 = {
+                mode = "NORMAL",
+                op = "OVERLAY",
+                opacity = 0.3,
+                scale = { 0.10000000149012, 0.10000000149012, },
+            },
+            operation_2 = {
+                mode = "NORMAL",
+                op = "OVERLAY",
+                opacity = 0.30000001192093,
+                scale = { 0.050000000745058, 0.050000000745058, },
+            },
+            polygon_offset = {
+                factor = 0,
+                forceDepthWrite = false,
+                units = 0,
+            },
+            two_sided = {
+                flipNormal = true,
+                twoSided = false,
+            },
+        },
+        type = "PHYSICAL_NRML_MAP_OP",
+    }
+    end
+    
