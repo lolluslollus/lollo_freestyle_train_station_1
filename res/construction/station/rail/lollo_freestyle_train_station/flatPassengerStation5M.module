@@ -27,7 +27,7 @@ return {
 	},
 	metadata = { },
 	order = {
-		value = 1,
+		value = 22,
 	},
 	type = _constants.flatPassengerStation5MModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)

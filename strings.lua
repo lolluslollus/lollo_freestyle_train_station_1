@@ -20,6 +20,8 @@ function data()
 			["FlatCargoArea8x5Desc"] = "Flat side area with stairs leading outside, 8x5 m, cargo style. Good for plopping assets. Adjust its height with <m> and <n>.",
 			["FlatCargoArea8x10Name"] = "8x10 flat side area with stairs, cargo",
 			["FlatCargoArea8x10Desc"] = "Flat side area with stairs leading outside, 8x10 m, cargo style. Good for plopping assets. Adjust its height with <m> and <n>.",
+			["FlatCargoStation8x10Name"] = "8x10 cargo station",
+			["FlatCargoStation8x10Desc"] = "8x10 cargo station. Adjust its height with <m> and <n>.",
 			["FlatPassengerArea5x5Name"] = "5x5 flat side area with stairs, passenger",
 			["FlatPassengerArea5x5Desc"] = "Flat side area with stairs leading outside, 5x5 m, passenger style. Good for plopping assets. Adjust its height with <m> and <n>.",
 			["FlatPassengerArea8x5Name"] = "8x5 flat side area with stairs, passenger",
