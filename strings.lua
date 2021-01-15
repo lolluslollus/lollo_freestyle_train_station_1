@@ -2,20 +2,20 @@ function data()
 	return {
 		en = {
 			["DESC"] = [[
-				A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
-				Lay them alongside normal tracks, then place two platform markers and two track markers where you want the station to end. Now click your station to open the configuration menu and add some street access.
-				Platforms must be connected to roads, as usual. In particular:
-				Underground stations require stairs or underpasses in each platform and at least one subway entrance placed nearby, connected to a road.
-				Elevated stations require lifts or underpasses in each platform. At least one lift must be connected to a road.
-				Ground stations require street access or underpasses in each platform.
-				Adjacent platforms are connected together automatically.
+A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
+Lay them alongside normal tracks, then place two platform markers and two track markers where you want the station to end. Now click your station to open the configuration menu and add some street access.
+Platforms must be connected to roads, as usual. In particular:
+Underground stations require stairs or underpasses in each platform and at least one subway entrance placed nearby, connected to a road.
+Elevated stations require lifts or underpasses in each platform. At least one lift must be connected to a road.
+Ground stations require street access or underpasses in each platform.
+Adjacent platforms are connected together automatically.
 
-				When you delete a freestyle station or one of its terminals, it will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it.
+When you delete a freestyle station or one of its terminals, it will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it.
 				
-				TIPS:
-				Use debug mode + AltGr + L to see the cargo and passenger lanes.
+TIPS:
+Use debug mode + AltGr + L to see the cargo and passenger lanes.
 			]],
-			["NAME"] = "Freestyle train station",
+			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
 			["FlatCargoRampSmoothName"] = "Smooth cargo ramp",
 			["FlatCargoRampSmoothDesc"] = "Smooth cargo ramp leading outside, 2 m. Adjust its height with <m> and <n>.",

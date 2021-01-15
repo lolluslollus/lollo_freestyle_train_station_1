@@ -7,6 +7,7 @@ function data()
             name = _('NAME'),
             description = _('DESC'),
             tags = {
+                'Station',
                 'Train Station'
             },
             authors = {
