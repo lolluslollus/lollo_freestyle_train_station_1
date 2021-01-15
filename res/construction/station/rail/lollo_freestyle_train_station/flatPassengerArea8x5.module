@@ -23,7 +23,7 @@ return {
 	description = {
 		name = _("FlatPassengerArea8x5Name"),
 		description = _("FlatPassengerArea8x5Desc"),
-		icon = "ui/lollo_freestyle_train_station/flat_passenger_area_8x5.tga"
+		icon = "ui/lollo_freestyle_train_station/flatPassengerArea8x5.tga"
 	},
 	metadata = { },
 	order = {

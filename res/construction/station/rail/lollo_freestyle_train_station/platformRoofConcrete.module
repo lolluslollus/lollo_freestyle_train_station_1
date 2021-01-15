@@ -23,7 +23,7 @@ return {
 	description = {
 		name = _("PlatformRoofConcreteName"),
 		description = _("PlatformRoofConcreteDesc"),
-		icon = "ui/empty.tga"
+		icon = "ui/lollo_freestyle_train_station/platformRoofConcrete.tga"
 	},
 	metadata = { },
 	order = {

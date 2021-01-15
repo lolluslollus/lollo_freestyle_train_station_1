@@ -23,7 +23,7 @@ return {
 	description = {
 		name = _("FlatCargoArea8x10Name"),
 		description = _("FlatCargoArea8x10Desc"),
-		icon = "ui/lollo_freestyle_train_station/flat_cargo_area_8x10.tga"
+		icon = "ui/lollo_freestyle_train_station/flatCargoArea8x10.tga"
 	},
 	metadata = { },
 	order = {

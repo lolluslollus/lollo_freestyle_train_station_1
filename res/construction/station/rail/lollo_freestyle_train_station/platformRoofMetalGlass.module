@@ -23,7 +23,7 @@ return {
 	description = {
 		name = _("PlatformRoofMetalGlassName"),
 		description = _("PlatformRoofMetalGlassDesc"),
-		icon = "ui/empty.tga"
+		icon = "ui/lollo_freestyle_train_station/platformRoofMetalGlass.tga"
 	},
 	metadata = { },
 	order = {

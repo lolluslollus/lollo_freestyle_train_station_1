@@ -23,7 +23,7 @@ return {
 	description = {
 		name = _("FlatPassengerStairsSmoothName"),
 		description = _("FlatPassengerStairsSmoothDesc"),
-		icon = "ui/lollo_freestyle_train_station/stairs_smooth.tga"
+		icon = "ui/lollo_freestyle_train_station/flatPassengerStairsSmooth.tga"
 	},
 	metadata = { },
 	order = {

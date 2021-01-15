@@ -23,7 +23,7 @@ return {
 	description = {
 		name = _("PassengerSideLiftName"),
 		description = _("PassengerSideLiftDesc"),
-		icon = "ui/construction/station/street/cargo_area_inner_12x12.tga"
+		icon = "ui/lollo_freestyle_train_station/passengerSideLift.tga"
 	},
 	metadata = { },
 	order = {
