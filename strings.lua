@@ -2,7 +2,18 @@ function data()
 	return {
 		en = {
 			["DESC"] = [[
-				A freestyle train station.
+				A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
+				Lay them alongside normal tracks, then place two platform markers and two track markers where you want the station to end. Now click your station to open the configuration menu and add some street access.
+				Platforms must be connected to roads, as usual. In particular:
+				Underground stations require stairs or underpasses in each platform and at least one subway entrance placed nearby, connected to a road.
+				Elevated stations require lifts or underpasses in each platform. At least one lift must be connected to a road.
+				Ground stations require street access or underpasses in each platform.
+				Adjacent platforms are connected together automatically.
+
+				When you delete a freestyle station or one of its terminals, it will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it.
+				
+				TIPS:
+				Use debug mode + AltGr + L to see the cargo and passenger lanes.
 			]],
 			["NAME"] = "Freestyle train station",
 
@@ -70,19 +81,19 @@ function data()
 			["UnderpassDesc"] = "Plop these on passenger platforms, to connect them to the subways and the other terminals.",
 
 			["CargoPlatform5MTracksName"] = "5 m cargo platform",
-			["CargoPlatform5MTracksDesc"] = "Cargo platforms to be laid as tracks, 5 m wide. They are in fact slow train tracks.",
+			["CargoPlatform5MTracksDesc"] = "Cargo platforms to be laid as tracks, 5 m wide. They are in fact slow train tracks; they are not meant to be crossed.",
 			["CargoPlatform10MTracksName"] = "10 m cargo platform",
-			["CargoPlatform10MTracksDesc"] = "Cargo platforms to be laid as tracks, 10 m wide. They are in fact slow train tracks.",
+			["CargoPlatform10MTracksDesc"] = "Cargo platforms to be laid as tracks, 10 m wide. They are in fact slow train tracks; they are not meant to be crossed.",
 			["CargoPlatform20MTracksName"] = "20 m cargo platform",
-			["CargoPlatform20MTracksDesc"] = "Cargo platforms to be laid as tracks, 20 m wide. They are in fact slow train tracks.",
+			["CargoPlatform20MTracksDesc"] = "Cargo platforms to be laid as tracks, 20 m wide. They are in fact slow train tracks; they are not meant to be crossed.",
 			["LolloFreestyleTrainStationName"] = "Freestyle train station",
 			["LolloFreestyleTrainStationDesc"] = "Freestyle train station",
 			["PlatformWaypointName"] = "Platform end marker",
 			["PlatformWaypointDesc"] = "Marks the ends of a platform that will become part of a freestyle station. The direction does not matter.",
 			["PassengerPlatform5MTracksName"] = "5 m passenger platform",
-			["PassengerPlatform5MTracksDesc"] = "Passenger platforms to be laid as tracks, 5 m wide. Use them with tunnels or bridges. They are in fact slow train tracks.",
+			["PassengerPlatform5MTracksDesc"] = "Passenger platforms to be laid as tracks, 5 m wide. Use them with tunnels or bridges. They are in fact slow train tracks; they are not meant to be crossed.",
 			["PassengerPlatform2_5MTracksName"] = "2.5 m passenger platform",
-			["PassengerPlatform2_5MTracksDesc"] = "Passenger platforms to be laid as tracks, 2.5 m wide. The best choice for stations on ground. They are in fact slow train tracks.",
+			["PassengerPlatform2_5MTracksDesc"] = "Passenger platforms to be laid as tracks, 2.5 m wide. The best choice for stations on ground. They are in fact slow train tracks; they are not meant to be crossed.",
 			["TrackWaypointName"] = "Track End Marker",
 			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter.",
 
