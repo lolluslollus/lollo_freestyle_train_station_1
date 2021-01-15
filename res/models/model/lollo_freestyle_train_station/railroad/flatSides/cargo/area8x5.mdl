@@ -40,7 +40,7 @@ function data()
                             materials = {
                                 "lollo_freestyle_train_station/station_concrete_2.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1.mtl",
-                                "lollo_freestyle_train_station/era_c_trainstation_darker_stripes.mtl",
+                                -- "lollo_freestyle_train_station/era_c_trainstation_darker_stripes.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_platform_area_8x5m_lod1.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
