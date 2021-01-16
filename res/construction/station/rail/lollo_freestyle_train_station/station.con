@@ -312,7 +312,7 @@ function data()
 								}
 							else
 								result.models[#result.models+1] = {
-									id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5m_wide.mdl',								-- tag = slotHelpers.mangleModelTag(t, false),
+									id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5m_wide.mdl',
 									transf = myTransf
 								}
 							end
@@ -543,7 +543,6 @@ function data()
 												)
 												result.models[#result.models+1] = {
 													id = _constants.passengerLaneModelId,
-													-- tag = slotHelpers.mangleModelTag(t, false),
 													transf = lane2AreaTransf
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation0MSlotId)
@@ -589,7 +588,6 @@ function data()
 												)
 												result.models[#result.models+1] = {
 													id = _constants.passengerLaneModelId,
-													-- tag = slotHelpers.mangleModelTag(t, false),
 													transf = lane2AreaTransf
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation5MSlotId)
@@ -1237,14 +1235,14 @@ function data()
 					result.stations = { }
 					if result.terminateConstructionHookInfo.isAnyCargoTerminal then
 						result.stations[#result.stations+1] = {
-							tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
-							terminals = { } -- 0 is the position of the linked terminal group, in base 0
+							tag = _constants.stationCargoTag, -- in the stock station, this is 1 for cargo and 2 for passengers
+							terminals = { } -- the indexes of the linked terminal groups, in base 0
 						}
 					end
 					if result.terminateConstructionHookInfo.isAnyPassengerTerminal then
 						result.stations[#result.stations+1] = {
-							tag = 1, -- in the stock station, this is 0 for cargo and 1 for passengers
-							terminals = { } -- 0 is the position of the linked terminal group, in base 0
+							tag = _constants.stationPassengerTag, -- in the stock station, this is 1 for cargo and 2 for passengers
+							terminals = { } -- the indexes of the linked terminal groups, in base 0
 						}
 					end
 
@@ -1263,7 +1261,6 @@ function data()
 								-- LOLLO NOTE there can be 1 terminal 4 1 vehicle node,
 								-- n terminals 4 1 person edge,
 								-- n terminals 4 1 person node
-								-- vehicleNodeOverride = #params.terminals[t].trackEdgeLists - 1
 								vehicleNodeOverride = result.terminateConstructionHookInfo.vehicleNodes[t]
 							}
 						)
@@ -1272,11 +1269,6 @@ function data()
 						for i = 1, #result.models do
 							if slotHelpers.getTerminalFromModelTag(result.models[i].tag) == t then
 								modelIndexesBase0[#modelIndexesBase0+1] = i - 1
-							-- elseif result.models[i].slotId ~= nil then
-							-- 	local nTerminal, _, _ = slotHelpers.demangleId(result.models[i].slotId)
-							-- 	if nTerminal == t then
-							-- 		modelIndexesBase0[#modelIndexesBase0+1] = i - 1
-							-- 	end
 							end
 						end
 						for _, modelIndex in pairs(modelIndexesBase0) do
@@ -1284,26 +1276,19 @@ function data()
 							table.insert(result.terminalGroups[#result.terminalGroups].terminals, {modelIndex, 0})
 						end
 
-						local stationIndex = arrayUtils.findIndex(result.stations, 'tag', isCargoTerminal and 0 or 1)
+						local stationIndex = arrayUtils.findIndex(result.stations, 'tag', isCargoTerminal and _constants.stationCargoTag or _constants.stationPassengerTag)
 						table.insert(result.stations[stationIndex].terminals, t - 1)
 					end
 				end
 				_groupTerminals()
 				print('terminals grouped')
 
-				-- avoid dump when configuring
-				-- if #(result.stations[1].terminals) == 0 then
-				-- 	print('avoiding dump when configuring')
-				-- 	table.insert(result.stations[1].terminals, 0)
-				-- 	print('result.stations =') debugPrint(result.stations)
-				-- end
-
 				-- it should output something like (this example has one terminal made of two adjacent bits)
 				-- stock result.stations =
 				-- 	{
 				-- 		{
-				-- 			tag = 0, -- in the stock station, this is 0 for cargo and 1 for passengers
-				-- 			terminals = { 0 } -- 0 is the position of the linked terminal group, in base 0
+				-- 			tag = 1, -- in the stock station, this is 1 for cargo and 2 for passengers
+				-- 			terminals = { 0, 2 } -- 0 and 2 are the indexes of the linked terminal groups, in base 0
 				-- 		}
 				-- 	}
 				-- stock result.terminalGroups =
@@ -1311,9 +1296,10 @@ function data()
 				-- 	{
 				-- 		tag = -1, -- possibly useless, try to keep them all different tho
 				-- 		terminals = {
-				-- 			{ 22, 0 }, -- 22 is the position of a model with a terminal, in base 0
+				-- 			{ 22, 0 }, -- 22 is the index of a model with a terminal, in base 0
 				-- 			{ 25, 0 }, -- 0 is always 0 in the stock station, it is something like a terminal number
-				-- 		}
+				-- 		},
+				--		vehicleNodeOverride { 10 }, -- 10 is the index of a node in the edge lists
 				-- 	}
 				-- }
 

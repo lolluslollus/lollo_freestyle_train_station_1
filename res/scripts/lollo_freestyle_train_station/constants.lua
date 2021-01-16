@@ -122,6 +122,9 @@ local constants = {
     passengersWaitingAreaTagRoot = 'passengersWaitingArea_',
     passengersWaitingAreaUnderpassTagRoot = 'passengersWaitingAreaUnderpass_',
 
+    stationCargoTag = 1,
+    stationPassengerTag = 2,
+
     nTerminalMultiplier = 10000,
 	idBases = {
         terminalSlotId = 1000000,
