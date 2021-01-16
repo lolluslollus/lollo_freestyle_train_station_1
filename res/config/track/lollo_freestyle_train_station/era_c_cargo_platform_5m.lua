@@ -3,8 +3,8 @@ function data()
 
 	local t = { }
 
-	t.name = _("CargoPlatform5MTracksName")
-	t.desc = _("CargoPlatform5MTracksDesc")
+	t.name = _("EraCCargoPlatform5MName")
+	t.desc = _("EraCCargoPlatform5MDesc")
 	t.categories  = { _constants.cargoPlatformTracksCategory }
 	t.icon = "ui/lollo_freestyle_train_station/era_c_cargo_platform_5m.tga"
 

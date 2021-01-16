@@ -187,8 +187,11 @@ local helpers = {
 
         local results = {}
         for i = 1, #edgeIds do
+            -- print('edgeId =', edgeIds[i])
             local baseEdge = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE)
+            -- print('baseEdge =') debugPrint(baseEdge)
             local baseEdgeTrack = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE_TRACK)
+            -- print('baseEdgeTrack =') debugPrint(baseEdgeTrack)
             local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
             local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
@@ -225,7 +228,6 @@ local helpers = {
 
             local result = {
                 catenary = baseEdgeTrack.catenary,
-                -- edgeId = edgeIds[i],
                 posTanX2 = {
                     {
                         {
@@ -259,6 +261,7 @@ local helpers = {
                 typeIndex = baseEdge.typeIndex, -- -1 on ground, 0 tunnel / cement bridge, 1 steel bridge, 2 stone bridge, 3 suspension bridge
                 edgeTypeName = _getEdgeTypeName(baseEdge.type, baseEdge.typeIndex), -- same as above but in a format constructions understand
                 width = baseEdgeProperties.trackDistance,
+                era = trackUtils.getEra(baseEdgeTrack.trackType)
             }
             results[#results+1] = result
         end
@@ -485,6 +488,7 @@ local helpers = {
                 edgeResults[#edgeResults].type = pel.type
                 edgeResults[#edgeResults].typeIndex = pel.typeIndex
                 edgeResults[#edgeResults].width = pel.width or 0
+                edgeResults[#edgeResults].era = pel.era or trackUtils.eras.era_c
 
                 lengthCovered = nodeBetween.refDistance0
                 previousNodeBetween = nodeBetween

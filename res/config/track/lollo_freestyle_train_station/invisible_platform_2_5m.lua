@@ -1,11 +1,10 @@
--- LOLLO TODO remove this, it is only there for compatibility with the first release
 function data()
 	local _constants = require('lollo_freestyle_train_station.constants')
 
 	local t = { }
 
-	t.name = _("InvisiblePlatform5MName")
-	t.desc = _("InvisiblePlatform5MDesc")
+	t.name = _("InvisiblePlatform2_5MName")
+	t.desc = _("InvisiblePlatform2_5MDesc")
 	t.categories  = { _constants.invisiblePlatformTracksCategory }
 	t.icon = "ui/empty.tga"
 
@@ -14,8 +13,8 @@ function data()
 
 	-- sets the width of the terrain enbankment, all out (ie including ballastCutOff).
 	-- It can override trackDistance!
-	t.shapeWidth = 4.0
-	t.shapeStep = 4.0
+	t.shapeWidth = 1.5 -- 2.7 -- was 4.0 -- sets the width of the terrain enbankment, all out (ie including ballastCutOff)
+	t.shapeStep = 4.0 -- was 4, you can use 2 for smoother bends
 	t.shapeSleeperStep = 8.0 / 12.0
 
 	t.ballastHeight = .3
@@ -23,7 +22,7 @@ function data()
 
 	t.sleeperBase = t.ballastHeight
 	t.sleeperLength = .26
-	t.sleeperWidth = 2.6
+	t.sleeperWidth = 1.3 -- was 2.6
 	t.sleeperHeight = .08
 	t.sleeperCutOff = .02
 
@@ -42,7 +41,7 @@ function data()
 	t.catenaryMaxPoleDistanceFactor = 999 -- 2.0
 	t.catenaryMinPoleDistanceFactor = 999 -- 0.8
 
-	t.trackDistance = 5.0 -- [m] distance between track centers when dragging parallel tracks
+	t.trackDistance = 2.5 -- was 5.0 -- [m] distance between track centers when dragging parallel tracks
 
 	t.speedLimit = 5.0 / 3.6 -- [m/s] maximum speed on a straight track
 	t.speedCoeffs = { .85, 30.0, .6 } -- curve speed limit = a * (radius + b) ^ c

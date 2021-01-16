@@ -4,6 +4,7 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
+local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtilsUG = require 'transf'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local vec3 = require 'vec3'
@@ -96,41 +97,6 @@ function data()
 					-- },
                 },
                 slotConfig = {
-					-- [_constants.flatPassengerStairsModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
-					-- [_constants.flatCargoArea5x5ModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
-					-- [_constants.flatPassengerArea5x5ModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
-					-- [_constants.flatCargoArea8x5ModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
-					-- [_constants.flatPassengerArea8x5ModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
-					-- [_constants.flatCargoArea8x10ModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
-					-- [_constants.flatPassengerArea8x10ModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- },
 					-- LOLLO NOTE these guys skip the collision check between the spacing rectangle
 					-- of the module being placed and the spacing rectangles of the already built modules.
 					-- they also skip the collision check between the spacing rectangle
@@ -243,6 +209,44 @@ function data()
 				end
 			end
 
+			local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, era)
+				local myModelId = ''
+				if isCargo then
+					if width < 10 then
+						myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_5m_wide.mdl'
+					elseif width < 20 then
+						myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_10m_wide.mdl'
+					else
+						myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_20m_wide.mdl'
+					end
+				else
+					-- if width < 5 then
+					-- 	myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide.mdl'
+					-- else
+					-- 	myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5m_wide.mdl'
+					-- end
+					if width < 5 then
+						myModelId = isTrackOnPlatformLeft
+							and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
+							or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
+					else
+						myModelId = isTrackOnPlatformLeft
+							and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
+							or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
+					end
+				end
+
+				-- LOLLO TODO in future, when we have the models, we can use this
+				-- if era == trackUtils.eras.era_a then
+				-- 	return myModelId:gsub(trackUtils.eras.era_c, trackUtils.eras.era_a)
+				-- elseif era == trackUtils.eras.era_b then
+				-- 	return myModelId:gsub(trackUtils.eras.era_c, trackUtils.eras.era_b)
+				-- else
+				-- 	return myModelId
+				-- end
+				return myModelId
+			end
+
 			result.terminateConstructionHookInfo = {
 				crossConnectorPositions = {},
 				isAnyCargoTerminal = false,
@@ -282,12 +286,23 @@ function data()
 				-- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
 				-- The former is a bit glitchy, the latter is prettier.
 				local function _addPlatform()
+					for ii = 1, #params.terminals[t].centrePlatformsFine, 1 do
+						local cpf = params.terminals[t].centrePlatformsFine[ii]
+						local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
+						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+						local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
+						result.models[#result.models+1] = {
+							id = myModelId,
+							transf = myTransf
+						}
+					end
+					--[[
 					if isCargoTerminal then
 						for ii = 1, #params.terminals[t].centrePlatformsFine, 1 do
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-							local myModelId = nil
+							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
 							if cpf.width < 10 then
 								myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_5m_wide.mdl'
 							elseif cpf.width < 20 then
@@ -305,6 +320,7 @@ function data()
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
 							if cpf.width < 5 then
 								result.models[#result.models+1] = {
 									id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide.mdl',
@@ -322,6 +338,7 @@ function data()
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
 							if cpf.width < 5 then
 								result.models[#result.models+1] = {
 									id = isTrackOnPlatformLeft
@@ -339,6 +356,7 @@ function data()
 							end
 						end
 					end
+					]]
 				end
 				_addPlatform()
 

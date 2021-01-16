@@ -30,11 +30,12 @@ function data()
             -- This works because this code always fires after base_mod.lua .
             local trackFileNames = api.res.trackTypeRep.getAll()
 
-            for oldTrackTypeIndex, oldTrackFileName in pairs(trackFileNames) do
-                local oldTrack = api.res.trackTypeRep.get(oldTrackTypeIndex)
-                if trackUtils.isPlatform2(oldTrack) then
-                    oldTrack.yearFrom = 0 -- we just change the value of the existing ref
-                    oldTrack.yearTo = 0 -- idem
+            for trackTypeIndex, trackFileName in pairs(trackFileNames) do
+                local track = api.res.trackTypeRep.get(trackTypeIndex)
+                if trackUtils.isPlatform2(track) then
+                    local availability = trackUtils.getTrackAvailability(trackFileName)
+                    track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
+                    track.yearTo = availability.yearTo -- idem
                     --[[
                         local newTrack = api.type.TrackType.new()
                         -- the api won't allow looping over properties with for key, value in pairs(oldTrack)

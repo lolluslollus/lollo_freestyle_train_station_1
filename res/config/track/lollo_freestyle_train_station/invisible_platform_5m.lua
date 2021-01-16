@@ -1,4 +1,3 @@
--- LOLLO TODO remove this, it is only there for compatibility with the first release
 function data()
 	local _constants = require('lollo_freestyle_train_station.constants')
 

@@ -1,13 +1,12 @@
--- LOLLO TODO remove this, it is only there for compatibility with the first release
 function data()
 	local _constants = require('lollo_freestyle_train_station.constants')
 
 	local t = { }
 
-	t.name = _("InvisiblePlatform5MName")
-	t.desc = _("InvisiblePlatform5MDesc")
-	t.categories  = { _constants.invisiblePlatformTracksCategory }
-	t.icon = "ui/empty.tga"
+	t.name = _("EraBCargoPlatform5MName")
+	t.desc = _("EraBCargoPlatform5MDesc")
+	t.categories  = { _constants.cargoPlatformTracksCategory }
+	t.icon = "ui/lollo_freestyle_train_station/era_b_cargo_platform_5m.tga"
 
 	t.yearFrom = -1
 	t.yearTo = -1
@@ -69,19 +68,24 @@ function data()
 	t.catenaryMultiGirderModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1a_repeat.mdl"
 	t.catenaryMultiInnerPoleModel = "lollo_freestyle_train_station/empty.mdl" -- "railroad/power_pole_us_1b_pole2.mdl"
 
-	t.bumperModel = "lollo_freestyle_train_station/empty.mdl"
+	-- t.bumperModel = "railroad/bumper.mdl"
+	t.bumperModel = "lollo_freestyle_train_station/railroad/track/railing_3m.mdl"
 	-- t.switchSignalModel = "railroad/switch_box.mdl"
 
 	t.fillGroundTex = "industry_floor_paving.lua" -- "industry_concrete_01.lua" -- "none.lua" -- "ballast_fill.lua"
 	t.borderGroundTex = "none.lua" -- "ballast.lua"
-
+	
+    -- t.railModel ="railroad/tracks/single_rail.mdl"
+	-- t.railModel = 'lollo_freestyle_train_station/railroad/track/platform_2m.mdl'
 	t.railModel = "lollo_freestyle_train_station/empty.mdl"
-	t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
+    -- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
+	-- t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
+	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_c_cargo_sleeper_5m_wide.mdl"
 	t.trackStraightModel = {
-		"lollo_freestyle_train_station/empty.mdl",
-		"lollo_freestyle_train_station/empty.mdl",
-		"lollo_freestyle_train_station/empty.mdl",
-		"lollo_freestyle_train_station/empty.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_2m_base_5m_wide.mdl', --"railroad/tracks/2m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_4m_base_5m_wide.mdl', --"railroad/tracks/4m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_8m_base_5m_wide.mdl', --"railroad/tracks/8m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_16m_base_5m_wide.mdl', --"railroad/tracks/16m_base.mdl",
 	}
 
 	t.maintenanceCost = 0.0   -- [$/m/M] per meter and month

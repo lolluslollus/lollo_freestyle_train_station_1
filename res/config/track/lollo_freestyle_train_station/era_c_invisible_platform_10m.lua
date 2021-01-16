@@ -1,10 +1,11 @@
+-- LOLLO TODO remove this, it is only there for compatibility with the first release
 function data()
 	local _constants = require('lollo_freestyle_train_station.constants')
 
 	local t = { }
 
-	t.name = _("CargoPlatform10MTracksName")
-	t.desc = _("CargoPlatform10MTracksDesc")
+	t.name = _("InvisiblePlatform10MName")
+	t.desc = _("InvisiblePlatform10MDesc")
 	t.categories  = { _constants.invisiblePlatformTracksCategory }
 	t.icon = "ui/empty.tga"
 

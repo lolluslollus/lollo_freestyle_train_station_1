@@ -37,7 +37,7 @@ return {
 
 		local inverseMainTransf = result.inverseMainTransf
 
-		moduleHelpers.addEdges(params, result, inverseMainTransf, tag, nTerminal)
+		moduleHelpers.edges.addEdges(params, result, inverseMainTransf, tag, nTerminal)
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
 
 		result.models[#result.models + 1] = {
