@@ -40,10 +40,10 @@ return {
 
 	getModelsFn = function(params)
 		return {
-			{
-				id = _constants.emptyModelFileName,
-				transf = _constants.idTransf,
-			},
+			-- {
+			-- 	id = _constants.emptyModelFileName,
+			-- 	transf = _constants.idTransf,
+			-- },
 		}
 	end
 }
