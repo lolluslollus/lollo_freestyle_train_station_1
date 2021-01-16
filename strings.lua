@@ -26,6 +26,7 @@ function data()
 				- If you want large buildings, use assets. There are mods for those.
 				- Station naming does not work properly.
 				- For now, it's only modern era.
+				- Upgrading tracks works poorly.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
