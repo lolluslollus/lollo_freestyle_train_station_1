@@ -2,7 +2,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
-local trackUtils = require('lollo_freestyle_train_station.trackHelper')
+local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 

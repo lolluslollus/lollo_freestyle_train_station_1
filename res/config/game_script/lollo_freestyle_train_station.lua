@@ -5,7 +5,7 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stationHelpers = require('lollo_freestyle_train_station.stationHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
-local trackUtils = require('lollo_freestyle_train_station.trackHelper')
+local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
