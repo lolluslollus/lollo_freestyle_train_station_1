@@ -290,7 +290,7 @@ function data()
 						local cpf = params.terminals[t].centrePlatformsFine[ii]
 						local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, inverseMainTransf)
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-						local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
+						local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.era)
 						result.models[#result.models+1] = {
 							id = myModelId,
 							transf = myTransf
