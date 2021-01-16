@@ -242,9 +242,9 @@ local _getNNodesInTerminalsSoFar = function(params, t)
     local result = 0
     for tt = 1, t - 1 do
         if params.terminals[tt] ~= nil then
-            -- if params.terminals[tt].platformEdgeLists ~= nil then
-            --     result = result + #params.terminals[tt].platformEdgeLists * 2
-            -- end
+            if params.terminals[tt].platformEdgeLists ~= nil then
+                result = result + #params.terminals[tt].platformEdgeLists * 2
+            end
             if params.terminals[tt].trackEdgeLists ~= nil then
                 result = result + #params.terminals[tt].trackEdgeLists * 2
             end
@@ -254,6 +254,8 @@ local _getNNodesInTerminalsSoFar = function(params, t)
 end
 
 helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
+    -- print('moduleHelpers.addEdges starting for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
+
     local nNodesInTerminalSoFar = _getNNodesInTerminalsSoFar(params, t)
 
     local tag2nodes = {
@@ -270,6 +272,8 @@ helpers.addEdges = function(params, result, inverseMainTransf, tag, t)
 
     _addPlatformEdges(params, result, inverseMainTransf, tag2nodes, t)
     _addTrackEdges(params, result, inverseMainTransf, tag2nodes, t)
+
+    -- print('moduleHelpers.addEdges ending for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
 end
 
 helpers.lifts = {}
