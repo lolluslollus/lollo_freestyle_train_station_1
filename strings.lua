@@ -14,6 +14,14 @@ function data()
 				
 				[h1]Some handy tips:[/h1]
 				- To visualise the lanes, start the game in debug mode and press <AltGr> + <L>.
+				- Very thin paths help with certain setups: those are in my street fine-tuning mod.
+				- Sound effects for stations are in my dedicated mod.
+				- Sound effects for trains are in my dedicated mod.
+				- Extra ground textures are in my terrain tweak mod.
+
+				[h1]Known issues:[/h1]
+				- Module placement is rather free, the player is allowed to do some unrealistic things.
+				- If you want large buildings, use assets. There are mods for those.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
