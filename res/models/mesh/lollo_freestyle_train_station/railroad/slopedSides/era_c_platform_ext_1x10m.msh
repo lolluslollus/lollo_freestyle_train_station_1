@@ -7,68 +7,68 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 24,
-					offset = 756,
+					count = 48,
+					offset = 728,
 				},
 				position = {
-					count = 24,
-					offset = 780,
+					count = 48,
+					offset = 824,
 				},
 				tangent = {
-					count = 24,
-					offset = 708,
+					count = 48,
+					offset = 872,
 				},
 				uv0 = {
-					count = 24,
-					offset = 732,
+					count = 48,
+					offset = 776,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1990_floor_1.mtl", 
+				"station/train/passenger/tiles.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
-					count = 192,
-					offset = 1188,
+					count = 252,
+					offset = 920,
 				},
 				position = {
-					count = 192,
-					offset = 1380,
+					count = 252,
+					offset = 1424,
 				},
 				tangent = {
-					count = 192,
-					offset = 804,
+					count = 252,
+					offset = 1676,
 				},
 				uv0 = {
-					count = 192,
-					offset = 996,
+					count = 252,
+					offset = 1172,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1850_floor_1.mtl", 
+				"station/train/passenger/edge.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
-					count = 96,
-					offset = 1764,
+					count = 48,
+					offset = 1928,
 				},
 				position = {
-					count = 96,
-					offset = 1860,
+					count = 48,
+					offset = 2024,
 				},
 				tangent = {
-					count = 96,
-					offset = 1572,
+					count = 48,
+					offset = 2072,
 				},
 				uv0 = {
-					count = 96,
-					offset = 1668,
+					count = 48,
+					offset = 1976,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/railroad/slopedSides/Material.001.mtl", 
+				"lollo_freestyle_train_station/railroad/slopedSides/tilesZ.mtl", 
 			},
 		}, 
 	},
@@ -76,22 +76,22 @@ return {
 		normal = {
 			count = 60,
 			numComp = 3,
-			offset = 408,
+			offset = 0,
 		},
 		position = {
-			count = 240,
+			count = 252,
 			numComp = 3,
-			offset = 468,
+			offset = 412,
 		},
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 0,
+			offset = 664,
 		},
 		uv0 = {
-			count = 344,
+			count = 352,
 			numComp = 2,
-			offset = 64,
+			offset = 60,
 		},
 	},
 }
