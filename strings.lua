@@ -4,11 +4,12 @@ function data()
 			["DESC"] = [[
 				A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
 				Lay them alongside normal tracks, then place two platform markers and two track markers where you want the station to end. Now click your station to open the configuration menu and add some street access.
+				
 				Platforms must be connected to roads, as usual. In particular:
-				Underground stations require stairs or underpasses in each platform and at least one subway entrance placed nearby, connected to a road.
-				Elevated stations require lifts or underpasses in each platform. At least one lift must be connected to a road.
-				Ground stations require street access or underpasses in each platform.
-				Adjacent platforms are connected together automatically.
+				- Underground stations require stairs or underpasses in each platform and at least one subway entrance placed nearby, connected to a road.
+				- Elevated stations require lifts or underpasses in each platform. At least one lift must be connected to a road.
+				- Ground stations require street access or underpasses in each platform.
+				In all cases, adjacent platforms are connected together automatically.
 
 				When you delete a freestyle station or one of its terminals, it will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it.
 				
@@ -18,10 +19,13 @@ function data()
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweak mod.
+				- This mod adds extra bridges (modern era only) to help with elevated stations.
 
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things.
 				- If you want large buildings, use assets. There are mods for those.
+				- Station naming does not work properly.
+				- For now, it's only modern era.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
