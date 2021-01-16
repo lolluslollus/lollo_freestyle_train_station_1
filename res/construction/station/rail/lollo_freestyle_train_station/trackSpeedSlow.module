@@ -29,13 +29,13 @@ return {
 	},
 	type = _constants.trackSpeedModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		print('trackSpeedSlow.module.updateFn ending')
-		result.models[#result.models + 1] = {
-			id = _constants.emptyModelFileName,
-			slotId = slotId,
-			transf = slotTransf,
-			tag = tag
-		}
+		-- print('trackSpeedSlow.module.updateFn ending')
+		-- result.models[#result.models + 1] = {
+		-- 	id = _constants.emptyModelFileName,
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = tag
+		-- }
 	end,
 
 	getModelsFn = function(params)
