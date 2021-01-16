@@ -27,7 +27,6 @@ function data()
 				- Station naming does not work properly.
 				- For now, it's only modern era.
 				- Upgrading tracks works poorly.
-				- This mod adds unnecessary stuff into the standard station config menu.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
