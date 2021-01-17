@@ -34,36 +34,50 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local paths = moduleHelpers.slopedAreas.getPaths(params, nTerminal, nTrackEdge, 10)
-		for ii = 1, #paths do
-			local posTanX2 = transfUtils.getPosTanX2Transformed(paths[ii].posTanX2, result.inverseMainTransf)
-			local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-			local xScaleFactor = (transfUtils.getVectorLength(paths[ii].posTanX2[1][2]) + transfUtils.getVectorLength(paths[ii].posTanX2[2][2]) ) * 0.5
-			result.models[#result.models+1] = {
-				id = _constants.slopedCargoArea1x10ModelFileName,
-				transf = transfUtilsUG.mul(
-					myTransf,
-					{ xScaleFactor * 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
-				),
-				tag = tag
-			}
+		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+		local xScaleFactor = isTrackOnPlatformLeft and 1.1 or 1
 
-			if ii > 2 and ii < #paths - 1 and math.fmod(ii, math.ceil(4 / xScaleFactor)) == 0 then
+		local ii1 = nTrackEdge - 1
+		local iiN = nTrackEdge + 1
+		local waitingAreaCounter = -2
+		for ii = 1, #params.terminals[nTerminal].centrePlatformsFine do
+			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex > iiN then break end
+			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1 then
+			-- if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1
+			-- and params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex <= iiN then
+				local cpf = params.terminals[nTerminal].centrePlatformsFine[ii]
+				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
+				local yShiftOutside = moduleHelpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, 10)
+				local cpfTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2)
 				result.models[#result.models+1] = {
-					id = _constants.cargoWaitingAreaCentredModelFileName,
+					id = _constants.slopedCargoArea1x10ModelFileName,
 					transf = transfUtilsUG.mul(
-						myTransf,
-						{ 0, 8, 0, 0,  -8, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
+						cpfTransf,
+						{ xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
 					),
-					tag = slotHelpers.mangleModelTag(nTerminal, true),
+					tag = tag
 				}
+
+				waitingAreaCounter = waitingAreaCounter + 1
+				if params.terminals[nTerminal].centrePlatformsFine[ii + 2]
+				and params.terminals[nTerminal].centrePlatformsFine[ii + 2].leadingIndex <= iiN
+				and math.fmod(waitingAreaCounter, 4) == 0 then
+					result.models[#result.models+1] = {
+						id = _constants.cargoWaitingAreaCentredModelFileName,
+						transf = transfUtilsUG.mul(
+							cpfTransf,
+							{ 0, 8, 0, 0,  -8, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, result.laneZs[nTerminal], 1 }
+						),
+						tag = slotHelpers.mangleModelTag(nTerminal, true),
+					}
+				end
 			end
 		end
 
 		if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
 			local face = {
-				{-5.5, -14, 0, 1},
-				{-5.5, 14, 0, 1},
+				{-5.5, -13, 0, 1},
+				{-5.5, 13, 0, 1},
 				{5.5, 13, 0, 1},
 				{5.5, -13, 0, 1},
 			}

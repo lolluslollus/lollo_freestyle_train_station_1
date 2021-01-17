@@ -33,25 +33,34 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local paths = moduleHelpers.slopedAreas.getPaths(params, nTerminal, nTrackEdge, 5)
-		for ii = 1, #paths do
-			local posTanX2 = transfUtils.getPosTanX2Transformed(paths[ii].posTanX2, result.inverseMainTransf)
-			local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-			local xScaleFactor = (transfUtils.getVectorLength(paths[ii].posTanX2[1][2]) + transfUtils.getVectorLength(paths[ii].posTanX2[2][2]) ) * 0.5
-			result.models[#result.models+1] = {
-				id = _constants.slopedCargoArea1x5ModelFileName,
-				transf = transfUtilsUG.mul(
-					myTransf,
-					{ xScaleFactor * 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
-				),
-				tag = tag
-			}
+		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+		local xScaleFactor = isTrackOnPlatformLeft and 1.05 or 1
+
+		local ii1 = nTrackEdge - 1
+		local iiN = nTrackEdge + 1
+		for ii = 1, #params.terminals[nTerminal].centrePlatformsFine do
+			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex > iiN then break end
+			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1 then
+			-- if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1
+			-- and params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex <= iiN then
+				local cpf = params.terminals[nTerminal].centrePlatformsFine[ii]
+				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
+				local yShiftOutside = moduleHelpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, 5)
+				result.models[#result.models+1] = {
+					id = _constants.slopedCargoArea1x5ModelFileName,
+					transf = transfUtilsUG.mul(
+						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2),
+						{ xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+					),
+					tag = tag
+				}
+			end
 		end
 
 		if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
 			local face = {
-				{-3, -13.5, 0, 1},
-				{-3, 13.5, 0, 1},
+				{-3, -13, 0, 1},
+				{-3, 13, 0, 1},
 				{3, 13, 0, 1},
 				{3, -13, 0, 1},
 			}

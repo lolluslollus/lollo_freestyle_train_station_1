@@ -99,7 +99,7 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
             z = (pos1[3] + pos2[3]) * 0.5,
         }
     )
-    -- local angle = -math.atan((pos2[3] - pos1[3]) / transfUtils.getVectorLength(
+    -- local angleY = -math.atan((pos2[3] - pos1[3]) / transfUtils.getVectorLength(
     --     {
     --         pos2[1] - pos1[1],
     --         pos2[2] - pos1[2],
@@ -139,104 +139,6 @@ helpers.slopedAreas = {
         return yShiftOutside, yShiftOutside4StreetAccess
     end,
 }
-
-helpers.slopedAreas.getPaths = function(params, nTerminal, nTrackEdge, slopedAreaWidth)
-    -- LOLLO TODO to speed things up, put this in memory, ie calculate it when setting up a new terminal
-    local centrePlatformsFine = params.terminals[nTerminal].centrePlatformsFine
-    local isCropStart = true
-    local isCropEnd = true
-    local ii0 = 1
-    local iiNP1 = #centrePlatformsFine
-    for ii = 1, #centrePlatformsFine - 1 do
-        if centrePlatformsFine[ii].leadingIndex == nTrackEdge - 2
-        and centrePlatformsFine[ii + 1].leadingIndex == nTrackEdge - 1 then
-            ii0 = ii - 1
-            if ii0 < 1 then isCropStart = false ii0 = 1 end -- try to take an extra bit and then throw it away so we interpolate better
-        end
-        if centrePlatformsFine[ii].leadingIndex == nTrackEdge + 1
-        and centrePlatformsFine[ii + 1].leadingIndex == nTrackEdge + 2 then
-            iiNP1 = ii + 2 -- same as above
-            if iiNP1 > #centrePlatformsFine then isCropEnd = false iiNP1 = #centrePlatformsFine end
-        end
-        if centrePlatformsFine[ii].leadingIndex > nTrackEdge + 1 then
-            break
-        end
-    end
-
-    local yShiftOutside = math.min(
-        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge - 1, slopedAreaWidth) or 999,
-        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge, slopedAreaWidth) or 999,
-        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge + 1, slopedAreaWidth) or 999
-    )
-    if yShiftOutside == 999 then return {} end
-
-    print('centrePlatformsFine within the interval =')
-    print('{')
-    for i = ii0, iiNP1, 1 do
-        debugPrint(centrePlatformsFine[i].posTanX2)
-    end
-    print('}')
-
-    local results = transfUtils.getShiftedEdgePositions(centrePlatformsFine, -yShiftOutside, ii0, iiNP1)
-
-    -- print('shiftedEdgePositions =') debugPrint(results)
-
-    if isCropStart then table.remove(results, 1) end
-    -- -- results[#results] = nil -- NO, it turns the list into an indexed table
-    if isCropEnd then table.remove(results) end
-
-    print('shiftedEdgePositions cropped =') debugPrint(results)
-    return results
-end
-
-helpers.slopedAreas.getPathsRough = function(params, nTerminal, nTrackEdge, slopedAreaWidth)
-    -- this is too rough, you get to see it's a polygon.
-    local centrePlatforms = params.terminals[nTerminal].centrePlatforms
-    local isCropStart = true
-    local isCropEnd = true
-    local ii0 = 1
-    local iiNP1 = #centrePlatforms
-    for ii = 1, #centrePlatforms - 1 do
-        if ii == nTrackEdge - 2
-        and ii + 1 == nTrackEdge - 1 then
-            ii0 = ii - 1
-            if ii0 < 1 then isCropStart = false ii0 = 1 end -- try to take an extra bit and then throw it away so we interpolate better
-        end
-        if ii == nTrackEdge + 1
-        and ii + 1 == nTrackEdge + 2 then
-            iiNP1 = ii + 2 -- same as above
-            if iiNP1 > #centrePlatforms then isCropEnd = false iiNP1 = #centrePlatforms end
-        end
-        if ii > nTrackEdge + 1 then
-            break
-        end
-    end
-
-    local yShiftOutside = math.min(
-        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge - 1, slopedAreaWidth) or 999,
-        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge, slopedAreaWidth) or 999,
-        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge + 1, slopedAreaWidth) or 999
-    )
-    if yShiftOutside == 999 then return {} end
-
-    print('centrePlatforms within the interval =')
-    print('{')
-    for i = ii0, iiNP1, 1 do
-        debugPrint(centrePlatforms[i].posTanX2)
-    end
-    print('}')
-
-    local results = transfUtils.getShiftedEdgePositions(centrePlatforms, -yShiftOutside, ii0, iiNP1)
-
-    -- print('shiftedEdgePositions =') debugPrint(results)
-
-    if isCropStart then table.remove(results, 1) end
-    -- -- results[#results] = nil -- NO, it turns the list into an indexed table
-    if isCropEnd then table.remove(results) end
-
-    print('shiftedEdgePositions cropped =') debugPrint(results)
-    return results
-end
 
 local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
     result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
