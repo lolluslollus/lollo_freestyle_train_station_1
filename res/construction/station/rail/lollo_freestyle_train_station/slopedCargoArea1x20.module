@@ -60,8 +60,8 @@ return {
 
 		if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
 			local face = {
-				{-10.5, -13, 0, 1},
-				{-10.5, 13, 0, 1},
+				{-10.5, -15, 0, 1},
+				{-10.5, 15, 0, 1},
 				{10.5, 13, 0, 1},
 				{10.5, -13, 0, 1},
 			}
