@@ -279,7 +279,6 @@ utils.getParallelSideways = function(posTanX2, sideShift)
 
     local oldPos1 = posTanX2[1][1]
     local oldPos2 = posTanX2[2][1]
-    local length = utils.getVectorLength({ oldPos2[1] - oldPos1[1], oldPos2[2] - oldPos1[2], oldPos2[3] - oldPos1[3] })
 
     local ro = math.atan2(oldPos2[2] - oldPos1[2], oldPos2[1] - oldPos1[1])
 
