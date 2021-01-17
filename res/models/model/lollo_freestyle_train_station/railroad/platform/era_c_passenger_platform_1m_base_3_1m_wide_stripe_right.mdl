@@ -18,7 +18,7 @@ function data()
                                 "lollo_freestyle_train_station/era_c_trainstation_stripes_z.mtl",
                             },
                             mesh = "lollo_freestyle_train_station/railroad/platform/era_c_platform_1m_long_3_1m_wide_1_2m_high_stripe_z.msh",
-                            transf = { -1.05, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                            transf = { -_mdlHelpers.getPlatformStretchFactor(1, 2.5), 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                         },
                         -- {
                         --     materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},

@@ -35,22 +35,33 @@ return {
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
 		local paths = moduleHelpers.slopedAreas.getPaths(params, nTerminal, nTrackEdge, 20)
+		-- local faces = {}
 		-- print('paths =') debugPrint(paths)
-		local waitingAreaCounter = -2
+		local averageXScaleFactor = 0
 		for ii = 1, #paths do
 			local posTanX2 = transfUtils.getPosTanX2Transformed(paths[ii].posTanX2, result.inverseMainTransf)
 			local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+			-- print('paths[ii].posTanX2[1][2] =') debugPrint(paths[ii].posTanX2[1][2])
+			-- print('paths[ii].posTanX2[2][2] =') debugPrint(paths[ii].posTanX2[2][2])
+			local xScaleFactor = (transfUtils.getVectorLength(paths[ii].posTanX2[1][2]) + transfUtils.getVectorLength(paths[ii].posTanX2[2][2]) ) * 0.5
+			-- print('xScaleFactor for terminal', nTerminal, 'is', xScaleFactor)
+			averageXScaleFactor = averageXScaleFactor + xScaleFactor
 			result.models[#result.models+1] = {
 				id = _constants.slopedCargoArea1x20ModelFileName,
 				transf = transfUtilsUG.mul(
 					myTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
+					{ xScaleFactor * 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
 				),
 				tag = tag
 			}
+			-- faces[#faces+1] = {
+			-- 	{-10.5, -0.5, 0, 1},
+			-- 	{-10.5, 0.5, 0, 1},
+			-- 	{10.5, 0.5, 0, 1},
+			-- 	{10.5, -0.5, 0, 1},
+			-- }
 
-			waitingAreaCounter = waitingAreaCounter + 1
-			if math.fmod(waitingAreaCounter, 4) == 0 then
+			if ii > 2 and ii < #paths - 1 and math.fmod(ii, math.ceil(4 / xScaleFactor)) == 0 then
 				result.models[#result.models+1] = {
 					id = _constants.cargoWaitingAreaCentredModelFileName,
 					transf = transfUtilsUG.mul(
@@ -62,16 +73,27 @@ return {
 			end
 		end
 
-		if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
+		if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 and #paths > 0 then -- only align terrain if on ground
+			averageXScaleFactor = averageXScaleFactor / #paths
+			-- LOLLO TODO this is no good, try a tight curve with a sloped area inward and one outward
 			local face = {
-				{-10.5, -15, 0, 1},
-				{-10.5, 15, 0, 1},
-				{10.5, 13, 0, 1},
-				{10.5, -13, 0, 1},
+				-- {-10.5, -15, 0, 1},
+				-- {-10.5, 15, 0, 1},
+				-- {10.5, 13, 0, 1},
+				-- {10.5, -13, 0, 1},
+				{-10.5, -12 * averageXScaleFactor, 0, 1},
+				{-10.5, 12 * averageXScaleFactor, 0, 1},
+				{10.5, 9 * averageXScaleFactor, 0, 1},
+				{10.5, -9 * averageXScaleFactor, 0, 1},
 			}
 			modulesutil.TransformFaces(slotTransf, face)
-			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
-			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
+			-- for _, face in pairs(faces) do
+				-- print('face before transform =') debugPrint(face)
+				-- modulesutil.TransformFaces(slotTransf, face)
+				-- print('face after transform =') debugPrint(face)
+				result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
+				result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
+			-- end
 		end
 	end,
 

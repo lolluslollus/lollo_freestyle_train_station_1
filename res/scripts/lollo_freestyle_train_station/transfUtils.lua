@@ -449,9 +449,9 @@ utils.getShiftedEdgePositions = function(posTanX2Owners, sideShift, index1, inde
 
             results[i + 1].posTanX2[1][1] = newPos
             results[i + 1].posTanX2[1][2] = {
-                results[i + 1].posTanX2[1][2][1] * tanCorrectionFactor1,
-                results[i + 1].posTanX2[1][2][2] * tanCorrectionFactor1,
-                results[i + 1].posTanX2[1][2][3] * tanCorrectionFactor1,
+                results[i + 1].posTanX2[1][2][1] * tanCorrectionFactor2,
+                results[i + 1].posTanX2[1][2][2] * tanCorrectionFactor2,
+                results[i + 1].posTanX2[1][2][3] * tanCorrectionFactor2,
             }
         end
     end

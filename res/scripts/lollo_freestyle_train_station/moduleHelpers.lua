@@ -142,16 +142,20 @@ helpers.slopedAreas = {
 
 helpers.slopedAreas.getPaths = function(params, nTerminal, nTrackEdge, slopedAreaWidth)
     local centrePlatformsFine = params.terminals[nTerminal].centrePlatformsFine
+    local isCropStart = true
+    local isCropEnd = true
     local ii0 = 1
     local iiNP1 = #centrePlatformsFine
     for ii = 1, #centrePlatformsFine - 1 do
         if centrePlatformsFine[ii].leadingIndex == nTrackEdge - 2
         and centrePlatformsFine[ii + 1].leadingIndex == nTrackEdge - 1 then
-            ii0 = ii
+            ii0 = ii - 1
+            if ii0 < 1 then isCropStart = false ii0 = 1 end -- try to take an extra bit and then throw it away so we interpolate better
         end
         if centrePlatformsFine[ii].leadingIndex == nTrackEdge + 1
         and centrePlatformsFine[ii + 1].leadingIndex == nTrackEdge + 2 then
-            iiNP1 = ii
+            iiNP1 = ii + 2 -- same as above
+            if iiNP1 > #centrePlatformsFine then isCropEnd = false iiNP1 = #centrePlatformsFine end
         end
         if centrePlatformsFine[ii].leadingIndex > nTrackEdge + 1 then
             break
@@ -165,7 +169,22 @@ helpers.slopedAreas.getPaths = function(params, nTerminal, nTrackEdge, slopedAre
     )
     if yShiftOutside == 999 then return {} end
 
+    print('centrePlatformsFine within the interval =')
+    print('{')
+    for i = ii0, iiNP1, 1 do
+        debugPrint(centrePlatformsFine[i].posTanX2)
+    end
+    print('}')
+
     local results = transfUtils.getShiftedEdgePositions(centrePlatformsFine, -yShiftOutside, ii0, iiNP1)
+
+    -- print('shiftedEdgePositions =') debugPrint(results)
+
+    if isCropStart then table.remove(results, 1) end
+    -- -- results[#results] = nil -- NO, it turns the list into an indexed table
+    if isCropEnd then table.remove(results) end
+
+    print('shiftedEdgePositions cropped =') debugPrint(results)
     return results
 end
 

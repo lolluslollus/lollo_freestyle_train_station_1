@@ -14,7 +14,7 @@ local helpers = {}
             },
         }
     end
-    helpers.getSubwayCollider = function(length, width)
+    helpers.getSubwayCollider = function(width, length)
         return {
             params = {
                 halfExtents = {
@@ -26,6 +26,23 @@ local helpers = {}
             transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2.25, 0, -0.5, 1, },
             type = "BOX",
         }
+    end
+
+    helpers.getPlatformStretchFactor = function(length, width)
+        if width < 10 and length <= 4 then return 1.075 end
+
+        local lengthAdjusted = math.max(length, 4) -- 4 is the shape step of our platform tracks, incidentally
+        local widthAdjusted = math.max(width, 5) -- narrow platforms are trickier than it appears they should
+        return 1 + widthAdjusted / lengthAdjusted * 0.06
+    end
+
+    helpers.getSlopedPlatformStretchFactor = function(length, width)
+        return 1
+        -- if width < 10 and length <= 4 then return 1.075 end
+
+        -- local lengthAdjusted = math.max(length, 4) -- 4 is the shape step of our platform tracks, incidentally
+        -- local widthAdjusted = math.max(width, 5) -- narrow platforms are trickier than it appears they should
+        -- return 1 + widthAdjusted / lengthAdjusted * 0.06
     end
 
     helpers.getTrackBoundingInfo = function(length, width, height)

@@ -35,15 +35,15 @@ return {
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
 		local paths = moduleHelpers.slopedAreas.getPaths(params, nTerminal, nTrackEdge, 20)
-		-- print('paths =') debugPrint(paths)
 		for ii = 1, #paths do
 			local posTanX2 = transfUtils.getPosTanX2Transformed(paths[ii].posTanX2, result.inverseMainTransf)
 			local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+			local xScaleFactor = (transfUtils.getVectorLength(paths[ii].posTanX2[1][2]) + transfUtils.getVectorLength(paths[ii].posTanX2[2][2]) ) * 0.5
 			result.models[#result.models+1] = {
 				id = _constants.slopedPassengerArea1x20ModelFileName,
 				transf = transfUtilsUG.mul(
 					myTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
+					{ xScaleFactor * 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
 				),
 				tag = tag
 			}
