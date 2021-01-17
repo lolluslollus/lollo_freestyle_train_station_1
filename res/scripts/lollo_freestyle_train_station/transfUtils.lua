@@ -132,8 +132,8 @@ utils.getVec123Transformed = function(vec123, transf)
 end
 
 utils.getPosTanX2Transformed = function(posTanX2, transf)
-    local point1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
-    local point2 = {posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3]}
+    local pos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
+    local pos2 = {posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3]}
     local tan1 = {posTanX2[1][2][1], posTanX2[1][2][2], posTanX2[1][2][3]}
     local tan2 = {posTanX2[2][2][1], posTanX2[2][2][2], posTanX2[2][2][3]}
 
@@ -146,11 +146,11 @@ utils.getPosTanX2Transformed = function(posTanX2, transf)
 
     local result = {
         {
-            utils.getVec123Transformed(point1, transf),
+            utils.getVec123Transformed(pos1, transf),
             utils.getVec123Transformed(tan1, rotateTransf)
         },
         {
-            utils.getVec123Transformed(point2, transf),
+            utils.getVec123Transformed(pos2, transf),
             utils.getVec123Transformed(tan2, rotateTransf)
         }
     }

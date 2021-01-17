@@ -23,7 +23,7 @@ function data()
                                 "lollo_freestyle_train_station/station_concrete_2_z.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_c_platform_ext_1x5m.msh',
-                            transf = {1, 0, 0, 0,  0, 1.075, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                            transf = {0, 1, 0, 0,  -1.1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },
                     name = 'RootNode',

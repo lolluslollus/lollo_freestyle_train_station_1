@@ -73,11 +73,6 @@ helpers.getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
 
     local newTransf = transfUtilsUG.rotZTransl(
         math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-        -- {
-        -- 	x = pos1[1],
-        -- 	y = pos1[2],
-        -- 	z = pos1[3] + 1,
-        -- }
         {
             x = (pos1[1] + pos2[1]) * 0.5,
             y = (pos1[2] + pos2[2]) * 0.5,
@@ -107,11 +102,6 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
     -- )
     local newTransf = transfUtilsUG.rotZTransl(
         math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-        -- {
-            -- 	x = pos1[1],
-            -- 	y = pos1[2],
-            -- 	z = pos1[3],
-        -- }
         {
             x = (pos1[1] + pos2[1]) * 0.5,
             y = (pos1[2] + pos2[2]) * 0.5,
