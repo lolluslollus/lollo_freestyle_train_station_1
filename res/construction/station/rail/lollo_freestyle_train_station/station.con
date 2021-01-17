@@ -387,7 +387,7 @@ function data()
 							local posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, inverseMainTransf)
 
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
-								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 5)
+								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
 								table.insert(result.slots, {
 									-- height = 0,
@@ -405,7 +405,7 @@ function data()
 
 							if params.terminals[t].centrePlatforms[i].type == 0 then -- only on ground
 								if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
-									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 10)
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 10)
 									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -422,7 +422,7 @@ function data()
 								end
 
 								if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
-									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.getYShift4SlopedArea(params, t, i, 20)
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 20)
 									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -696,26 +696,26 @@ function data()
 												type = _constants.passengerPlatformLiftModuleType,
 											})
 											if params.modules[myId] ~= nil then
-												local ssOuterPosTanX2 = transfUtils.getParallelSideways(myPosTanX2, 3.4)
+												local stationSquareOuterPosTanX2 = transfUtils.getParallelSideways(myPosTanX2, 3.4)
 												table.insert(result.slots, {
 													-- height = 0,
 													id = result.mangleId(t, i, _constants.idBases.stationSquareOuterSlotId),
 													shape = 1,
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
-														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
+														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(stationSquareOuterPosTanX2),
 														{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,
 												})
-												local ssInnerPosTanX2 = transfUtils.getParallelSideways(myPosTanX2, -2.9)
+												local stationSquareInnerPosTanX2 = transfUtils.getParallelSideways(myPosTanX2, -2.9)
 												table.insert(result.slots, {
 													-- height = 0,
 													id = result.mangleId(t, i, _constants.idBases.stationSquareInnerSlotId),
 													shape = 1,
 													spacing = {-1, 4, 4, 4},
 													transf = transfUtilsUG.mul(
-														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssInnerPosTanX2),
+														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(stationSquareInnerPosTanX2),
 														{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 													),
 													type = _constants.passengerStationSquareModuleType,

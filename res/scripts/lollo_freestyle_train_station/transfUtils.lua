@@ -378,4 +378,85 @@ utils.getExtrapolatedPosTanX2Continuation = function(posTanX2, length)
     end
 end
 
+utils.getShiftedEdgePositionsOLD = function(edgeLists, sideShift)
+    local results = {
+        {
+            -- catenary = edgeLists[1].catenary,
+            posTanX2 = utils.getParallelSideways(edgeLists[1].posTanX2, sideShift),
+            -- trackType = edgeLists[1].trackType,
+            -- trackTypeName = edgeLists[1].trackTypeName,
+            -- type = edgeLists[1].type,
+            -- typeIndex = edgeLists[1].typeIndex
+        }
+    }
+    local previousPosTanX2 = results[1].posTanX2
+    for i = 2, #edgeLists do
+        local currentPosTanX2 = utils.getParallelSideways(edgeLists[i].posTanX2, sideShift)
+        currentPosTanX2[1][1] = previousPosTanX2[2][1]
+        results[#results+1] = {
+            -- catenary = edgeLists[i].catenary,
+            posTanX2 = currentPosTanX2,
+            -- trackType = edgeLists[i].trackType,
+            -- trackTypeName = edgeLists[i].trackTypeName,
+            -- type = edgeLists[i].type,
+            -- typeIndex = edgeLists[i].typeIndex
+        }
+        previousPosTanX2 = currentPosTanX2
+    end
+
+    return results
+end
+
+utils.getShiftedEdgePositions = function(posTanX2Owners, sideShift, index1, indexN)
+    -- LOLLO TODO check this function, it's new
+    local i1 = index1
+    local iN = indexN
+    if type(i1) ~= 'number' or i1 < 1 then i1 = 1 end
+    if type(iN) ~= 'number' or iN > #posTanX2Owners then iN = #posTanX2Owners end
+
+    local results = {}
+    for i = i1, iN do
+        results[#results+1] = {
+            -- catenary = edgeLists[i].catenary,
+            posTanX2 = utils.getParallelSideways(posTanX2Owners[i].posTanX2, sideShift),
+            -- trackType = edgeLists[i].trackType,
+            -- trackTypeName = edgeLists[i].trackTypeName,
+            -- type = edgeLists[i].type,
+            -- typeIndex = edgeLists[i].typeIndex
+        }
+    end
+
+    for i = 1, #results - 1 do
+        local pos1 = results[i].posTanX2[2][1]
+        local pos2 = results[i + 1].posTanX2[1][1]
+        if pos1[1] ~= pos2[1] or pos1[2] ~= pos2[2] or pos1[3] ~= pos2[3] then
+            -- an average is cheaper than working out the intersection
+            local oldLength1 = utils.getPositionsDistance(results[i].posTanX2[1][1], results[i].posTanX2[2][1])
+            local oldLength2 = utils.getPositionsDistance(results[i + 1].posTanX2[1][1], results[i + 1].posTanX2[2][1])
+
+            local newPos = utils.getPositionsMiddle(pos1, pos2)
+            local newLength1 = utils.getPositionsDistance(results[i].posTanX2[1][1], newPos)
+            local newLength2 = utils.getPositionsDistance(newPos, results[i + 1].posTanX2[2][1])
+            local tanCorrectionFactor1 = newLength1 / oldLength1
+            local tanCorrectionFactor2 = newLength2 / oldLength2
+
+            results[i].posTanX2[2][1] = newPos
+            results[i].posTanX2[2][2] = {
+                results[i].posTanX2[2][2][1] * tanCorrectionFactor1,
+                results[i].posTanX2[2][2][2] * tanCorrectionFactor1,
+                results[i].posTanX2[2][2][3] * tanCorrectionFactor1,
+            }
+
+            results[i + 1].posTanX2[1][1] = newPos
+            results[i + 1].posTanX2[1][2] = {
+                results[i + 1].posTanX2[1][2][1] * tanCorrectionFactor1,
+                results[i + 1].posTanX2[1][2][2] * tanCorrectionFactor1,
+                results[i + 1].posTanX2[1][2][3] * tanCorrectionFactor1,
+            }
+        end
+    end
+
+    return results
+end
+
 return utils

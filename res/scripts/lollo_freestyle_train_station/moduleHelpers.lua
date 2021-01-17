@@ -7,6 +7,7 @@ local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require 'transf'
 local vec3 = require "vec3"
+local vec4 = require "vec4"
 
 
 local helpers = {}
@@ -88,54 +89,85 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
     -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
-    -- local newTransf = transfUtilsUG.rotZYXTransl( -- NO!
-    -- 	{
-    -- 		x = 0, ---math.atan2(pos2[3] - pos1[3], pos2[2] - pos1[2]),
-    -- 		y = 0, -- -math.atan2(pos2[3] - pos1[3], pos2[1] - pos1[1]),
-    -- 		z = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-    -- 	},
-    -- 	{
-    -- 		x = (pos1[1] + pos2[1]) * 0.5,
-    -- 		y = (pos1[2] + pos2[2]) * 0.5,
-    -- 		z = (pos1[3] + pos2[3]) * 0.5,
-    -- 	}
-    -- )
-    local newTransf = transfUtilsUG.rotZTransl(
-        math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
+
+    local angleZ = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1])
+    local transfZ = transfUtilsUG.rotZTransl(
+        angleZ,
         {
             x = (pos1[1] + pos2[1]) * 0.5,
             y = (pos1[2] + pos2[2]) * 0.5,
             z = (pos1[3] + pos2[3]) * 0.5,
         }
     )
-    local angle = -math.atan((pos2[3] - pos1[3]) / transfUtils.getVectorLength(
-        {
-            pos2[1] - pos1[1],
-            pos2[2] - pos1[2],
-            0
-        }
-    ))
+    -- local angle = -math.atan((pos2[3] - pos1[3]) / transfUtils.getVectorLength(
+    --     {
+    --         pos2[1] - pos1[1],
+    --         pos2[2] - pos1[2],
+    --         0
+    --     }
+    -- ))
 
-    -- print('angle =') debugPrint(angle)
-    local newTransf2 = transfUtilsUG.rotY(angle)
+    local angleY = math.atan2(
+        (pos2[3] - pos1[3]),
+        transfUtils.getVectorLength(
+            {
+                pos2[1] - pos1[1],
+                pos2[2] - pos1[2],
+                0
+            }
+        )
+    )
 
-    local result = transfUtilsUG.mul(newTransf, newTransf2)
-    return result
+    local transfY = transfUtilsUG.rotY(-angleY)
+
+    return transfUtilsUG.mul(transfZ, transfY)
+    -- return transfUtilsUG.mul(transfY, transfZ) -- NO!
 end
 
-helpers.getYShift4SlopedArea = function(params, t, i, slopedAreaWidth)
-    local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
-    local platformWidth = params.terminals[t].centrePlatforms[i].width
+helpers.slopedAreas = {
+    getYShift = function(params, t, i, slopedAreaWidth)
+        local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
+        if not(params.terminals[t].centrePlatforms[i]) then return false end
 
-    local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.35
-    -- local baseYShift = slopedAreaWidth * 0.5 + platformWidth - 1.6
+        local platformWidth = params.terminals[t].centrePlatforms[i].width
 
-    local yShiftOutside = isTrackOnPlatformLeft and -baseYShift or baseYShift
-    local yShiftOutside4StreetAccess = slopedAreaWidth * 2 - 1.8
+        local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.35
 
-    return yShiftOutside, yShiftOutside4StreetAccess
+        local yShiftOutside = isTrackOnPlatformLeft and -baseYShift or baseYShift
+        local yShiftOutside4StreetAccess = slopedAreaWidth * 2 - 1.8
+
+        return yShiftOutside, yShiftOutside4StreetAccess
+    end,
+}
+
+helpers.slopedAreas.getPaths = function(params, nTerminal, nTrackEdge, slopedAreaWidth)
+    local centrePlatformsFine = params.terminals[nTerminal].centrePlatformsFine
+    local ii0 = 1
+    local iiNP1 = #centrePlatformsFine
+    for ii = 1, #centrePlatformsFine - 1 do
+        if centrePlatformsFine[ii].leadingIndex == nTrackEdge - 2
+        and centrePlatformsFine[ii + 1].leadingIndex == nTrackEdge - 1 then
+            ii0 = ii
+        end
+        if centrePlatformsFine[ii].leadingIndex == nTrackEdge + 1
+        and centrePlatformsFine[ii + 1].leadingIndex == nTrackEdge + 2 then
+            iiNP1 = ii
+        end
+        if centrePlatformsFine[ii].leadingIndex > nTrackEdge + 1 then
+            break
+        end
+    end
+
+    local yShiftOutside = math.min(
+        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge - 1, slopedAreaWidth) or 999,
+        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge, slopedAreaWidth) or 999,
+        helpers.slopedAreas.getYShift(params, nTerminal, nTrackEdge + 1, slopedAreaWidth) or 999
+    )
+    if yShiftOutside == 999 then return {} end
+
+    local results = transfUtils.getShiftedEdgePositions(centrePlatformsFine, -yShiftOutside, ii0, iiNP1)
+    return results
 end
-
 
 
 local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)

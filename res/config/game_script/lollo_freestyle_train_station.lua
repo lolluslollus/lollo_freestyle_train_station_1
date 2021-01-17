@@ -1028,6 +1028,9 @@ function data()
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
 
+            xpcall(
+                function()
+
             print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
             -- LOLLO NOTE ONLY SOMETIMES, it can crash when calling game.interface.getEntity(stationId).
             -- Things are better now, it seems that the error came after a fast loop of calling split and raising the event, then calling split again.
@@ -1286,13 +1289,25 @@ function data()
                     true
                 )
                 print('aaa')
+                -- No, we need the leading indexes
+                -- eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions(
+                --     eventArgs.platformEdgeList,
+                --     1,
+                --     true
+                -- )
+                eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions(
+                    eventArgs.centrePlatforms,
+                    1
+                )
+                -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
+
                 local centrePlatformIndex_Nearest2_TrackEdgeListMid = stationHelpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(eventArgs)
                 print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
 
                 local platformWidth = eventArgs.centrePlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].width
-                eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
-                eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
-                -- print('alalalalal')
+                eventArgs.leftPlatforms = transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
+                eventArgs.rightPlatforms = transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
+                print('alalalalal')
                 local centreTracks = stationHelpers.getCentralEdgePositions(
                     eventArgs.trackEdgeList,
                     args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
@@ -1306,8 +1321,6 @@ function data()
                     eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
                 )
                 print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
-                eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions(eventArgs.centrePlatforms, 1)
-                -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
                 eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
                     -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.
@@ -1321,23 +1334,23 @@ function data()
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                     elseif platformWidth <= 10 then
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
-                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
+                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
+                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
                         }
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[2], eventArgs.isTrackOnPlatformLeft)
                     elseif platformWidth <= 15 then
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
+                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
                             eventArgs.centrePlatforms,
-                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 5)
+                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, 5)
                         }
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[3], eventArgs.isTrackOnPlatformLeft)
                     else
                         eventArgs.cargoWaitingAreas = {
-                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 7.5),
-                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
-                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5),
-                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 7.5)
+                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - 7.5),
+                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
+                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5),
+                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, 7.5)
                         }
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[4], eventArgs.isTrackOnPlatformLeft)
                     end
@@ -1410,6 +1423,9 @@ function data()
                 end
                 _actions.addSubway(args.join2StationId, args.subwayId)
             end
+        end,
+        _myErrorHandler
+    )
         end,
         guiHandleEvent = function(id, name, args)
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name

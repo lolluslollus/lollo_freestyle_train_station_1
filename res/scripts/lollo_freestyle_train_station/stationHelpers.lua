@@ -503,35 +503,6 @@ local helpers = {
         return results
     end,
 
-    getShiftedEdgePositions = function(edgeLists, sideShift)
-        local results = {
-            {
-                catenary = edgeLists[1].catenary,
-                posTanX2 = transfUtils.getParallelSideways(edgeLists[1].posTanX2, sideShift),
-                trackType = edgeLists[1].trackType,
-                trackTypeName = edgeLists[1].trackTypeName,
-                type = edgeLists[1].type,
-                typeIndex = edgeLists[1].typeIndex
-            }
-        }
-        local previousPosTanX2 = results[1].posTanX2
-        for i = 2, #edgeLists do
-            local currentPosTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift)
-            currentPosTanX2[1][1] = previousPosTanX2[2][1]
-            results[#results+1] = {
-                catenary = edgeLists[i].catenary,
-                posTanX2 = currentPosTanX2,
-                trackType = edgeLists[i].trackType,
-                trackTypeName = edgeLists[i].trackTypeName,
-                type = edgeLists[i].type,
-                typeIndex = edgeLists[i].typeIndex
-            }
-            previousPosTanX2 = currentPosTanX2
-        end
-
-        return results
-    end,
-
     getCrossConnectors = function(leftPlatforms, centrePlatforms, rightPlatforms, isTrackOnPlatformLeft)
         local results = {}
         for i = 1, #centrePlatforms do
