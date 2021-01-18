@@ -285,6 +285,16 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
     local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
 
+    -- LOLLO NOTE sloped areas are parallelepipeds that extend the parallelepipeds that make up the platform sideways.
+    -- I don't know of any transformation to twist or deform a model, so either I make an arsenal of meshes (no!) or I adjust things.
+    -- 1) If I am outside a bend, I must stretch the sloped areas so there are no holes between them.
+    -- Inside a bend, I haven't got this problem but I cannot shrink them, either, lest I get holes.
+    -- 2) As I approach the centre of a bend, the slope should increase, and it should decrease as I move outwards.
+    -- Since there is no transf for this, I tweak the angle around the Y axis.
+    -- These tricks work to a certain extent, but since I cannot skew or twist my models,
+    -- I could work out a new series of segments to follow instead of extending the platform sideways.
+    -- Tried that, it is slow and it does not bring real benefits.
+    -- Using multiple thin parallel extensions is slow and brings nothing at all.
     local angleYFactor = 1
     local xScaleFactor = 1
     local waitingAreaPeriod = 5
@@ -293,13 +303,13 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
         waitingAreaPeriod = 4
         if areaWidth <= 5 then
             xScaleFactor = 1.10
-            angleYFactor = 1.0125
+            angleYFactor = 1.0625
         elseif areaWidth <= 10 then
             xScaleFactor = 1.20
-            angleYFactor = 1.025
+            angleYFactor = 1.10
         elseif areaWidth <= 20 then
             xScaleFactor = 1.30
-            angleYFactor = 1.05
+            angleYFactor = 1.20
         end
     -- inside a bend
     elseif innerDegree > 0 then
@@ -308,9 +318,9 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
         if areaWidth <= 5 then
             angleYFactor = 0.9
         elseif areaWidth <= 10 then
-            angleYFactor = 0.85
+            angleYFactor = 0.825
         elseif areaWidth <= 20 then
-            angleYFactor = 0.8
+            angleYFactor = 0.75
         end
     -- more or less straight
     else
