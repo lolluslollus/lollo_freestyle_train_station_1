@@ -207,7 +207,7 @@ helpers.slopedAreas = {
 			isInner = (y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1) > 0
 		end
 		if not(isTrackOnPlatformLeft) then isInner = not(isInner) end
-        print('terminal', nTerminal, 'isInner =', isInner)
+        -- print('terminal', nTerminal, 'isInner =', isInner)
         return isInner
     end,
     getYShift = function(params, t, i, slopedAreaWidth)
