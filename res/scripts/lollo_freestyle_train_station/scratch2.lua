@@ -94,12 +94,40 @@ local isNumVeryClose = function(num1, num2, significantFigures)
     return (_formatString):format(num1) == (_formatString):format(num2)
         or (_formatString):format(num1 * 1.1) == (_formatString):format(num2 * 1.1)
 end
+
 local test0 = isNumVeryClose(0.999999, 1.0000001, 3) -- true
 local test1 = isNumVeryClose(0.99999, 1.00001, 3) -- true
 local test2 = isNumVeryClose(0.9999, 1.0001, 3) -- true
 local test3 = isNumVeryClose(0.999, 1.000, 3) -- true
 local test4 = isNumVeryClose(0.999, 1.001, 3) -- true
 local test5 = isNumVeryClose(0.99, 1.0000, 3) -- false
+
+local b0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {1, 0}) -- 0.707
+local b1 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {0, 1}) -- 0.707
+local b2 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {0, 0}) -- 0
+local b3 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {1, 1}) -- 0
+
+local c0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {1, 0}) -- 1
+local c1 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {0, 1}) -- 0
+local c2 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {0, 0}) -- 0
+local c3 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {1, 1}) -- 1
+local c4 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {-1, 1}) -- 1
+local c5 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {-1, 0}) -- 1
+
+local c6 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0.1, 1}, {-1, 1}) -- 1.094
+local c7 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {-0.1, 1}, {-1, 1}) -- 0.89
+local c8 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0.1, 1}, {1, 1}) -- 0.89
+local c9 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {-0.1, 1}, {1, 1}) -- 1.094
+
+local d0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {1, 0}) -- 0
+local d1 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {0, 1}) -- 1
+local d2 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {0, 0}) -- 0
+local d3 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {1, 1}) -- 1
+
+-- 808.78717041016	-997.80047607422	792.95832642313	-990.78839434966	800.90161479805	-994.2243518885
+local e0 = transfUtils.getDistanceBetweenPointAndStraight({808, -997}, {792, -990}, {800, -994})
+local e1 = transfUtils.getDistanceBetweenPointAndStraight({808 - 808, -997}, {792 - 808, -990}, {800 - 808, -994})
+local e2 = transfUtils.getDistanceBetweenPointAndStraight({808 - 808, -997 - 997}, {792 - 808, -990 - 997}, {800 - 808, -994 - 997})
 local dummy = 123
 
 --  id = 24148,
