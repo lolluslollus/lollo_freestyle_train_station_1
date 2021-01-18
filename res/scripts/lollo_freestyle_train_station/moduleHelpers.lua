@@ -380,6 +380,118 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
     return innerDegree
 end
 
+helpers.slopedAreas.getModelProperties = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, waitingAreaModelId)
+    local waitingAreaScaleFactor = 1
+    if areaWidth <= 5 then waitingAreaScaleFactor = 4
+    elseif areaWidth <= 10 then waitingAreaScaleFactor = 8
+    elseif areaWidth <= 20 then waitingAreaScaleFactor = 16
+    end
+
+    local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
+    print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
+
+    local angleYFactor = 1
+    local xScaleFactor = 1
+    local waitingAreaPeriod = 5
+    -- outside a bend
+    if innerDegree < 0 then
+        waitingAreaPeriod = 4
+        if areaWidth <= 5 then
+            xScaleFactor = 1.10
+            angleYFactor = 1.0625
+        elseif areaWidth <= 10 then
+            xScaleFactor = 1.20
+            angleYFactor = 1.10
+        elseif areaWidth <= 20 then
+            xScaleFactor = 1.30
+            angleYFactor = 1.20
+        end
+    -- inside a bend
+    elseif innerDegree > 0 then
+        waitingAreaPeriod = 6
+        xScaleFactor = 0.95
+        if areaWidth <= 5 then
+            angleYFactor = 0.9
+        elseif areaWidth <= 10 then
+            angleYFactor = 0.825
+        elseif areaWidth <= 20 then
+            angleYFactor = 0.75
+        end
+    -- more or less straight
+    else
+        if areaWidth <= 5 then
+            xScaleFactor = 1.05
+        elseif areaWidth <= 10 then
+            xScaleFactor = 1.15
+        elseif areaWidth <= 20 then
+            xScaleFactor = 1.25
+        end
+    end
+    print('xScaleFactor =', xScaleFactor)
+    print('angleYFactor =', angleYFactor)
+
+    local ii1 = nTrackEdge - 1
+    local iiN = nTrackEdge + 1
+    local waitingAreaCounter = 0
+    local cpfs = result.centrePlatformsFineRelative[nTerminal]
+
+    local terrainCoordinates = {}
+    for ii = 1, #cpfs do
+        if cpfs[ii].leadingIndex > iiN then break end
+        if cpfs[ii].leadingIndex >= ii1 then
+            local cpf = cpfs[ii]
+            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2, angleYFactor)
+            local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, areaWidth)
+            local traaa = transfUtilsUG.mul(
+                myTransf,
+                { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+            )
+            terrainCoordinates[#terrainCoordinates+1] = {
+                -- transfUtils.getVec123Transformed({-0.5, -areaWidth * 0.5, 0}, traaa),
+                -- transfUtils.getVec123Transformed({-0.5, areaWidth * 0.5, 0}, traaa),
+                -- transfUtils.getVec123Transformed({0.5, areaWidth * 0.5, 0}, traaa),
+                -- transfUtils.getVec123Transformed({0.5, -areaWidth * 0.5, 0}, traaa)
+                transfUtils.getVec123Transformed({-1, -areaWidth * 0.5, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                transfUtils.getVec123Transformed({-1, areaWidth * 0.5, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                transfUtils.getVec123Transformed({1, areaWidth * 0.5, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                transfUtils.getVec123Transformed({1, -areaWidth * 0.5, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                -- transfUtils.getVec123Transformed({-5, -areaWidth * 0.5, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                -- transfUtils.getVec123Transformed({-5, areaWidth * 0.5, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                -- transfUtils.getVec123Transformed({5, areaWidth * 0.5, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                -- transfUtils.getVec123Transformed({5, -areaWidth * 0.5, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                -- NO:
+                -- transfUtils.getVec123Transformed({-areaWidth * 0.5, -1, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                -- transfUtils.getVec123Transformed({areaWidth * 0.5, -1, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                -- transfUtils.getVec123Transformed({areaWidth * 0.5, 1, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa),
+                -- transfUtils.getVec123Transformed({-areaWidth * 0.5, 1, result.laneZs[nTerminal] - _constants.platformSideBitsZ}, traaa)
+            }
+
+            if waitingAreaModelId ~= nil
+            and cpfs[ii - 2]
+            and cpfs[ii - 2].leadingIndex >= ii1
+            and cpfs[ii + 2]
+            and cpfs[ii + 2].leadingIndex <= iiN then
+                if math.fmod(waitingAreaCounter, waitingAreaPeriod) == 0 then
+                    result.models[#result.models+1] = {
+                        id = waitingAreaModelId,
+                        transf = transfUtilsUG.mul(
+                            myTransf,
+                            { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, result.laneZs[nTerminal], 1 }
+                        ),
+                        tag = slotUtils.mangleModelTag(nTerminal, true),
+                    }
+                end
+                waitingAreaCounter = waitingAreaCounter + 1
+            end
+        end
+    end
+
+    return {
+        innerDegree = innerDegree,
+        terrainCoordinates = terrainCoordinates
+    }
+end
+
 local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
     result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
 
