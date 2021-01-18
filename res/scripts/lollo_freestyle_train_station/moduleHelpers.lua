@@ -177,6 +177,7 @@ helpers.slopedAreas = {
         end
     end,
     getIsInner = function(params, nTerminal, nTrackEdge)
+        -- LOLLO TODO make this work for straight(ish) tracks as well
         local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 
         local x1 = params.terminals[nTerminal].centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]

@@ -72,6 +72,34 @@ local bb = ("%.3g"):format(234235534)
 --local ccc = ("%.3g"):format(nil) -- error
 --local ddd = ("%.3g"):format('sqq') -- error
 
+local isNumVeryClose = function(num1, num2, significantFigures)
+    if type(num1) ~= 'number' or type(num2) ~= 'number' then return false end
+
+    if not(significantFigures) then significantFigures = 5
+    elseif type(significantFigures) ~= 'number' then return false
+    elseif significantFigures < 1 or significantFigures > 10 then return false
+    end
+
+    local _formatString = "%." .. math.floor(significantFigures) .. "g"
+
+    -- wrong (less accurate):
+    -- local roundedNum1 = math.ceil(num1 * roundingFactor)
+    -- local roundedNum2 = math.ceil(num2 * roundingFactor)
+    -- better:
+    -- local roundedNum1 = math.floor(num1 * roundingFactor + 0.5)
+    -- local roundedNum2 = math.floor(num2 * roundingFactor + 0.5)
+    -- return roundedNum1 == roundedNum2
+    -- but what I really want are the first significant figures, never mind how big the number is
+    -- LOLLO TODO test this THOROUGHLY
+    return (_formatString):format(num1) == (_formatString):format(num2)
+        or (_formatString):format(num1 * 1.1) == (_formatString):format(num2 * 1.1)
+end
+local test0 = isNumVeryClose(0.999999, 1.0000001, 3) -- true
+local test1 = isNumVeryClose(0.99999, 1.00001, 3) -- true
+local test2 = isNumVeryClose(0.9999, 1.0001, 3) -- true
+local test3 = isNumVeryClose(0.999, 1.000, 3) -- true
+local test4 = isNumVeryClose(0.999, 1.001, 3) -- true
+local test5 = isNumVeryClose(0.99, 1.0000, 3) -- false
 local dummy = 123
 
 --  id = 24148,

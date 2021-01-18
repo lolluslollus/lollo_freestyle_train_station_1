@@ -379,7 +379,7 @@ function data()
 					end
 				end
 				_addPlatformRoofs()
-
+				-- LOLLO TODO see if you can run some transformations in advance here, at least those for centraPlatformFine
 				local function _addOutsideExtensions()
 					for i = 2, #params.terminals[t].centrePlatforms, 3 do
 						if params.terminals[t].centrePlatforms[i].type ~= 2 then -- only on ground and bridges
