@@ -36,7 +36,7 @@ return {
 
 		local isInner = moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20, _constants.slopedCargoArea1x20ModelFileName, true)
 		-- -- local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-		-- local isInner = moduleHelpers.slopedAreas.getIsInner(params, nTerminal, nTrackEdge)
+		-- local isInner = moduleHelpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
 		-- local xScaleFactor = isInner and 0.95 or 1.25
 		-- local waitingAreaPeriod = isInner and 6 or 4
 

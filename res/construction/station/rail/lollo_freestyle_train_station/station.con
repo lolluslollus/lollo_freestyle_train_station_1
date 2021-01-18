@@ -70,8 +70,9 @@ function data()
             -- }
         },
 		updateFn = function(params)
+			print('station.con updateFn starting')
 			-- print('updateFn starting, params =') debugPrint(params)
-			print('updateFn starting, params.modules =') debugPrint(params.modules)
+			-- print('updateFn starting, params.modules =') debugPrint(params.modules)
 			-- LOLLO TODO sometimes, there are too many modules of type trackSpeed or trackElectrification
 			-- It seems fixed, but keep checking it.
 			if not params.modules then params.modules = {} end
