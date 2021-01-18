@@ -126,7 +126,7 @@ end
 
 helpers.slopedAreas = {
     _hunchLengthRatioToClaimBend = 0.01, -- must be positive
-    _hunchToClaimBend = 0.6, -- must be positive
+    _hunchToClaimBend = 0.3, -- must be positive
     doTerrain = function(result, slotTransf, params, nTerminal, nTrackEdge, innerDegree, areaWidth)
         if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
             local face = {}
@@ -211,7 +211,7 @@ helpers.slopedAreas = {
 
         local platformWidth = params.terminals[t].centrePlatforms[i].width
 
-        local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.35
+        local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.85
 
         local yShiftOutside = isTrackOnPlatformLeft and -baseYShift or baseYShift
         local yShiftOutside4StreetAccess = slopedAreaWidth * 2 - 1.8
@@ -290,6 +290,7 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
     local xScaleFactor = xScaleFactorMax
     local waitingAreaPeriod = 5
     local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
+    print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
     if innerDegree < 0 then xScaleFactor = xScaleFactorMax waitingAreaPeriod = 4
     elseif innerDegree > 0 then xScaleFactor = xScaleFactorMin waitingAreaPeriod = 6
     end
