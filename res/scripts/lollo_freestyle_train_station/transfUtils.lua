@@ -482,4 +482,59 @@ utils.isNumVeryClose = function(num1, num2, significantFigures)
         or (_formatString):format(num1 * 1.1) == (_formatString):format(num2 * 1.1)
 end
 
+utils.sgn = function(num)
+    if tonumber(num) == nil then return nil end
+    if num > 0 then return 1
+    elseif num < 0 then return -1
+    else return 0
+    end
+end
+
+utils.getDistanceBetweenPointAndStraight = function(segmentPosition1, segmentPosition2, testPointPosition)
+    -- a + bx = y
+    -- => a + b * x1 = y1
+    -- => a + b * x2 = y2
+    -- => b * (x1 - x2) = y1 - y2
+    -- => b = (y1 - y2) / (x1 - x2)
+    -- OR division by zero
+    -- => a = y1 - b * x1
+    -- => a = y1 - (y1 - y2) / (x1 - x2) * x1
+    -- a + b * xM > yM <= this is what we want to know
+    -- => y1 - (y1 - y2) / (x1 - x2) * x1 + (y1 - y2) / (x1 - x2) * xM > yM
+    -- => y1 * (x1 - x2) - (y1 - y2) * x1 + (y1 - y2) * xM > yM * (x1 - x2)
+    -- => (y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1) > 0
+
+    local x1 = segmentPosition1[1] or segmentPosition1.x
+    local y1 = segmentPosition1[2] or segmentPosition1.y
+    local x2 = segmentPosition2[1] or segmentPosition2.x
+    local y2 = segmentPosition2[2] or segmentPosition2.y
+    local xM = testPointPosition[1] or testPointPosition.x
+    local yM = testPointPosition[2] or testPointPosition.y
+    print('getDistanceBetweenPointAndStraight received coords =', x1, y1, x2, y2, xM, yM)
+    local b = (y1 - y2) / (x1 - x2)
+    local a = y1 - (y1 - y2) / (x1 - x2) * x1
+    -- local yMDist = math.abs(yM - b * xM - a) / math.sqrt(1 + b * b)
+    -- local yMDist = math.abs(yM - (y1 - y2) / (x1 - x2) * xM  - y1 + (y1 - y2) / (x1 - x2) * x1) / math.sqrt(1 + (y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2))
+    -- local yMDist = math.abs(yM - y1 + (y1 - y2) / (x1 - x2) * (x1 - xM)) / math.sqrt(1 + (y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2))
+
+    -- Ax + By + C = 0
+    -- dist = math.abs(A * xM + B * yM + C) / math.sqrt(A * A + B * B)
+    -- => -A/B x -C/B = y
+    -- => b = -A/B, a = -C/B
+    -- => dist = math.abs(A/B * xM + yM + C/B) / math.sqrt(A/B * A/B + 1)
+    -- => dist = math.abs(-b * xM + yM -a) / math.sqrt(b * b + 1)
+    -- => dist = math.abs(-(y1 - y2) / (x1 - x2) * xM + yM -(y1 - (y1 - y2) / (x1 - x2) * x1)) / math.sqrt((y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2) + 1)
+    -- => dist = math.abs(-(y1 - y2) / (x1 - x2) * xM + yM -y1 + (y1 - y2) / (x1 - x2) * x1) / math.sqrt((y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2) + 1)
+    -- => dist = math.abs((y1 - y2) / (x1 - x2) * (x1 -xM ) + yM -y1) / math.sqrt((y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2) + 1)
+    local yMDist = 0
+    if x1 == x2 then
+        if y1 == y2 then return utils.getPositionsDistance(segmentPosition1, testPointPosition) end
+        return math.abs(x1 - xM)
+    else
+        -- return math.abs(yM + (y1 - y2) / (x1 - x2) * (x1 - xM)) / math.sqrt(1 + (y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2))
+        return math.abs(yM - y1 + (y1 - y2) / (x1 - x2) * (x1 - xM)) / math.sqrt(1 + (y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2))
+    end
+
+end
+
 return utils
