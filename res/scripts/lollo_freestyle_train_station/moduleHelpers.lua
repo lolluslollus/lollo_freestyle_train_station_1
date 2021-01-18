@@ -130,7 +130,7 @@ helpers.slopedAreas = {
     _hunchLengthRatioToClaimBend = 0.01, -- must be positive
     _hunchToClaimBend = 0.3, -- must be positive
     doTerrain = function(result, slotTransf, params, nTerminal, nTrackEdge, innerDegree, areaWidth)
-        if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
+        if result.centrePlatformsRelative[nTerminal][nTrackEdge].type == 0 then -- only align terrain if on ground
             local face = {}
             if areaWidth <= 5 then
                 if innerDegree > 0 then
@@ -290,11 +290,14 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
     -- 1) If I am outside a bend, I must stretch the sloped areas so there are no holes between them.
     -- Inside a bend, I haven't got this problem but I cannot shrink them, either, lest I get holes.
     -- 2) As I approach the centre of a bend, the slope should increase, and it should decrease as I move outwards.
+    -- To visualise this, imagine building a helter skelter with horizontal planks, or a tight staircase: the centre will be super steep.
     -- Since there is no transf for this, I tweak the angle around the Y axis.
     -- These tricks work to a certain extent, but since I cannot skew or twist my models,
     -- I could work out a new series of segments to follow instead of extending the platform sideways.
     -- Tried that, it is slow and it does not bring real benefits.
     -- Using multiple thin parallel extensions is slow and brings nothing at all.
+    -- At the end of the day, the easiest is: leave the narrower slopes since they don't cause much grief, and bridges need them,
+    -- and use the terrain for the wider ones. LOLLO TODO try this.
     local angleYFactor = 1
     local xScaleFactor = 1
     local waitingAreaPeriod = 5
@@ -338,13 +341,12 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
     local ii1 = nTrackEdge - 1
     local iiN = nTrackEdge + 1
     local waitingAreaCounter = 0
-    local centrePlatformsFine = params.terminals[nTerminal].centrePlatformsFine
-    for ii = 1, #centrePlatformsFine do
-        if centrePlatformsFine[ii].leadingIndex > iiN then break end
-        if centrePlatformsFine[ii].leadingIndex >= ii1 then
-            local cpf = centrePlatformsFine[ii]
-            local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
-            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(posTanX2, angleYFactor)
+    local cpfs = result.centrePlatformsFineRelative[nTerminal]
+    for ii = 1, #cpfs do
+        if cpfs[ii].leadingIndex > iiN then break end
+        if cpfs[ii].leadingIndex >= ii1 then
+            local cpf = cpfs[ii]
+            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2, angleYFactor)
             local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, areaWidth)
             result.models[#result.models+1] = {
                 id = modelId,
@@ -356,10 +358,10 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
             }
 
             if waitingAreaModelId ~= nil
-            and centrePlatformsFine[ii - 2]
-            and centrePlatformsFine[ii - 2].leadingIndex >= ii1
-            and centrePlatformsFine[ii + 2]
-            and centrePlatformsFine[ii + 2].leadingIndex <= iiN then
+            and cpfs[ii - 2]
+            and cpfs[ii - 2].leadingIndex >= ii1
+            and cpfs[ii + 2]
+            and cpfs[ii + 2].leadingIndex <= iiN then
                 if math.fmod(waitingAreaCounter, waitingAreaPeriod) == 0 then
                     result.models[#result.models+1] = {
                         id = waitingAreaModelId,
