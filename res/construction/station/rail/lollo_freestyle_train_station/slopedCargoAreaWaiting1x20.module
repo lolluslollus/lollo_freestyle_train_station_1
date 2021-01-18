@@ -34,57 +34,70 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-		local xScaleFactor = isTrackOnPlatformLeft and 1.2 or 1
+		local isInner = moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20, _constants.slopedCargoArea1x20ModelFileName, true)
+		-- -- local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+		-- local isInner = moduleHelpers.slopedAreas.getIsInner(params, nTerminal, nTrackEdge)
+		-- local xScaleFactor = isInner and 0.95 or 1.25
+		-- local waitingAreaPeriod = isInner and 6 or 4
 
-		local ii1 = nTrackEdge - 1
-		local iiN = nTrackEdge + 1
-		local waitingAreaCounter = -2
-		for ii = 1, #params.terminals[nTerminal].centrePlatformsFine do
-			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex > iiN then break end
-			if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1 then
-			-- if params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex >= ii1
-			-- and params.terminals[nTerminal].centrePlatformsFine[ii].leadingIndex <= iiN then
-				local cpf = params.terminals[nTerminal].centrePlatformsFine[ii]
-				local cpfPosTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
-				local yShiftOutside = moduleHelpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, 20)
-				local cpfTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpfPosTanX2)
-				result.models[#result.models+1] = {
-					id = _constants.slopedCargoArea1x20ModelFileName,
-					transf = transfUtilsUG.mul(
-						cpfTransf,
-						{ xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
-					),
-					tag = tag
-				}
+		-- local ii1 = nTrackEdge - 1
+		-- local iiN = nTrackEdge + 1
+		-- local waitingAreaCounter = 0
+		-- local centrePlatformsFine = params.terminals[nTerminal].centrePlatformsFine
+		-- for ii = 1, #centrePlatformsFine do
+		-- 	if centrePlatformsFine[ii].leadingIndex > iiN then break end
+		-- 	if centrePlatformsFine[ii].leadingIndex >= ii1 then
+		-- 		local cpf = centrePlatformsFine[ii]
+		-- 		local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
+		-- 		local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+		-- 		local yShiftOutside = moduleHelpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, 20)
+		-- 		result.models[#result.models+1] = {
+		-- 			id = _constants.slopedCargoArea1x20ModelFileName,
+		-- 			transf = transfUtilsUG.mul(
+		-- 				myTransf,
+		-- 				{ xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+		-- 			),
+		-- 			tag = tag
+		-- 		}
 
-				waitingAreaCounter = waitingAreaCounter + 1
-				if params.terminals[nTerminal].centrePlatformsFine[ii + 2]
-				and params.terminals[nTerminal].centrePlatformsFine[ii + 2].leadingIndex <= iiN
-				and math.fmod(waitingAreaCounter, 4) == 0 then
-					result.models[#result.models+1] = {
-						id = _constants.cargoWaitingAreaCentredModelFileName,
-						transf = transfUtilsUG.mul(
-							cpfTransf,
-							{ 0, 16, 0, 0,  -16, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, result.laneZs[nTerminal], 1 }
-						),
-						tag = slotHelpers.mangleModelTag(nTerminal, true),
-					}
-				end
-			end
-		end
+		-- 		if centrePlatformsFine[ii - 2]
+		-- 		and centrePlatformsFine[ii - 2].leadingIndex >= ii1
+		-- 		and centrePlatformsFine[ii + 2]
+		-- 		and centrePlatformsFine[ii + 2].leadingIndex <= iiN then
+		-- 			if math.fmod(waitingAreaCounter, waitingAreaPeriod) == 0 then
+		-- 				result.models[#result.models+1] = {
+		-- 					id = _constants.cargoWaitingAreaCentredModelFileName,
+		-- 					transf = transfUtilsUG.mul(
+		-- 						myTransf,
+		-- 						{ 0, 16, 0, 0,  -16, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, result.laneZs[nTerminal], 1 }
+		-- 					),
+		-- 					tag = slotHelpers.mangleModelTag(nTerminal, true),
+		-- 				}
+		-- 			end
+		-- 			waitingAreaCounter = waitingAreaCounter + 1
+		-- 		end
+		-- 	end
+		-- end
 
-		if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
-			local face = {
-				{-10.5, -13, 0, 1},
-				{-10.5, 13, 0, 1},
-				{10.5, 13, 0, 1},
-				{10.5, -13, 0, 1},
-			}
-			modulesutil.TransformFaces(slotTransf, face)
-			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
-			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
-		end
+		moduleHelpers.slopedAreas.doTerrain(result, slotTransf, params, nTerminal, nTrackEdge, isInner, 20)
+		-- if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
+		-- 	local face = isInner
+		-- 	and {
+		-- 		{-10.5, -9, 0, 1},
+		-- 		{-10.5, 9, 0, 1},
+		-- 		{10.5, 13, 0, 1},
+		-- 		{10.5, -13, 0, 1},
+		-- 	}
+		-- 	or {
+		-- 		{-10.5, -15, 0, 1},
+		-- 		{-10.5, 15, 0, 1},
+		-- 		{10.5, 13, 0, 1},
+		-- 		{10.5, -13, 0, 1},
+		-- 	}
+		-- 	modulesutil.TransformFaces(slotTransf, face)
+		-- 	result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
+		-- 	result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
+		-- end
 	end,
 
 	getModelsFn = function(params)
