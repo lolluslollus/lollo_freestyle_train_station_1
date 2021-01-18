@@ -1,115 +1,52 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-local modulesutil = require "modulesutil"
-local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
-local transfUtils = require('lollo_freestyle_train_station.transfUtils')
-local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
+-- local modulesutil = require "modulesutil"
+-- local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
+-- local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+-- local transfUtilsUG = require "transf"
+-- local vec3 = require "vec3"
 
 
 function data()
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "cargo-platform-extensions", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("SlopedCargoAreaWaiting1x20Name"),
-		description = _("SlopedCargoAreaWaiting1x20Desc"),
-		icon = "ui/lollo_freestyle_train_station/cargo_area_waiting_1x20.tga"
-	},
-	metadata = { },
-	order = {
-		value = 26,
-	},
-	type = _constants.slopedCargoArea1x20ModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not nTrackEdge or not baseId then return end
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "cargo-platform-extensions", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("SlopedCargoAreaWaiting1x20Name"),
+			description = _("SlopedCargoAreaWaiting1x20Desc"),
+			icon = "ui/lollo_freestyle_train_station/cargo_area_waiting_1x20.tga"
+		},
+		metadata = { },
+		order = {
+			value = 26,
+		},
+		type = _constants.slopedCargoArea1x20ModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local isInner = moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20, _constants.slopedCargoArea1x20ModelFileName, true)
-		-- -- local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-		-- local isInner = moduleHelpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
-		-- local xScaleFactor = isInner and 0.95 or 1.25
-		-- local waitingAreaPeriod = isInner and 6 or 4
+			local innerDegree = moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20, _constants.slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
+			moduleHelpers.slopedAreas.doTerrain(result, slotTransf, params, nTerminal, nTrackEdge, innerDegree, 20)
+		end,
 
-		-- local ii1 = nTrackEdge - 1
-		-- local iiN = nTrackEdge + 1
-		-- local waitingAreaCounter = 0
-		-- local centrePlatformsFine = params.terminals[nTerminal].centrePlatformsFine
-		-- for ii = 1, #centrePlatformsFine do
-		-- 	if centrePlatformsFine[ii].leadingIndex > iiN then break end
-		-- 	if centrePlatformsFine[ii].leadingIndex >= ii1 then
-		-- 		local cpf = centrePlatformsFine[ii]
-		-- 		local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
-		-- 		local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-		-- 		local yShiftOutside = moduleHelpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, 20)
-		-- 		result.models[#result.models+1] = {
-		-- 			id = _constants.slopedCargoArea1x20ModelFileName,
-		-- 			transf = transfUtilsUG.mul(
-		-- 				myTransf,
-		-- 				{ xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
-		-- 			),
-		-- 			tag = tag
-		-- 		}
-
-		-- 		if centrePlatformsFine[ii - 2]
-		-- 		and centrePlatformsFine[ii - 2].leadingIndex >= ii1
-		-- 		and centrePlatformsFine[ii + 2]
-		-- 		and centrePlatformsFine[ii + 2].leadingIndex <= iiN then
-		-- 			if math.fmod(waitingAreaCounter, waitingAreaPeriod) == 0 then
-		-- 				result.models[#result.models+1] = {
-		-- 					id = _constants.cargoWaitingAreaCentredModelFileName,
-		-- 					transf = transfUtilsUG.mul(
-		-- 						myTransf,
-		-- 						{ 0, 16, 0, 0,  -16, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, result.laneZs[nTerminal], 1 }
-		-- 					),
-		-- 					tag = slotHelpers.mangleModelTag(nTerminal, true),
-		-- 				}
-		-- 			end
-		-- 			waitingAreaCounter = waitingAreaCounter + 1
-		-- 		end
-		-- 	end
-		-- end
-
-		moduleHelpers.slopedAreas.doTerrain(result, slotTransf, params, nTerminal, nTrackEdge, isInner, 20)
-		-- if params.terminals[nTerminal].centrePlatforms[nTrackEdge].type == 0 then -- only align terrain if on ground
-		-- 	local face = isInner
-		-- 	and {
-		-- 		{-10.5, -9, 0, 1},
-		-- 		{-10.5, 9, 0, 1},
-		-- 		{10.5, 13, 0, 1},
-		-- 		{10.5, -13, 0, 1},
-		-- 	}
-		-- 	or {
-		-- 		{-10.5, -15, 0, 1},
-		-- 		{-10.5, 15, 0, 1},
-		-- 		{10.5, 13, 0, 1},
-		-- 		{10.5, -13, 0, 1},
-		-- 	}
-		-- 	modulesutil.TransformFaces(slotTransf, face)
-		-- 	result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
-		-- 	result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
-		-- end
-	end,
-
-	getModelsFn = function(params)
-		local results = {}
-		for y = -10, 10 do
-			results[#results+1] = {
-				id = _constants.slopedCargoArea1x20ModelFileName,
-				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
-			}
+		getModelsFn = function(params)
+			local results = {}
+			for y = -10, 10 do
+				results[#results+1] = {
+					id = _constants.slopedCargoArea1x20ModelFileName,
+					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+				}
+			end
+			return results
 		end
-		return results
-	end
-}
-
+	}
 end

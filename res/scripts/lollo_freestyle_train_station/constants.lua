@@ -88,6 +88,7 @@ local constants = {
     cargoWaitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area.mdl',
     cargoWaitingAreaCentredModelFileName = 'lollo_freestyle_train_station/cargo_waiting_area_centred.mdl',
     passengerWaitingAreaModelId = 'lollo_freestyle_train_station/passenger_waiting_area.mdl',
+    passengerWaitingAreaCentredModelFileName = 'lollo_freestyle_train_station/passenger_waiting_area_centred.mdl',
     passengerLaneLiftModelId = 'lollo_freestyle_train_station/passenger_lane_lift.mdl',
     passengerLaneUnderpassModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl',
     passengerLaneModelId = 'lollo_freestyle_train_station/passenger_lane.mdl',

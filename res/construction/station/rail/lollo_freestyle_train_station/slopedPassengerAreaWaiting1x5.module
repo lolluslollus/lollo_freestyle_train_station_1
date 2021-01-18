@@ -2,7 +2,6 @@ local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
--- local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 -- local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 -- local transfUtilsUG = require "transf"
 -- local vec3 = require "vec3"
@@ -15,26 +14,26 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "cargo-platform-extensions", },
+			categories = { "passenger-platform-extensions", },
 		},
 		cost = {
 			price = 0,
 		},
 		description = {
-			name = _("SlopedCargoAreaWaiting1x5Name"),
-			description = _("SlopedCargoAreaWaiting1x5Desc"),
-			icon = "ui/lollo_freestyle_train_station/cargo_area_waiting_1x5.tga"
+			name = _("SlopedPassengerAreaWaiting1x5Name"),
+			description = _("SlopedPassengerAreaWaiting1x5Desc"),
+			icon = "ui/lollo_freestyle_train_station/passenger_area_waiting_1x5.tga"
 		},
 		metadata = { },
 		order = {
 			value = 22,
 		},
-		type = _constants.slopedCargoArea1x5ModuleType,
+		type = _constants.slopedPassengerArea1x5ModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			local innerDegree = moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5, _constants.slopedCargoArea1x5ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
+			local innerDegree = moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5, _constants.slopedPassengerArea1x5ModelFileName, _constants.passengerWaitingAreaCentredModelFileName)
 			moduleHelpers.slopedAreas.doTerrain(result, slotTransf, params, nTerminal, nTrackEdge, innerDegree, 5)
 		end,
 
@@ -42,7 +41,7 @@ function data()
 			local results = {}
 			for y = -2, 2 do
 				results[#results+1] = {
-					id = _constants.slopedCargoArea1x5ModelFileName,
+					id = _constants.slopedPassengerArea1x5ModelFileName,
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end

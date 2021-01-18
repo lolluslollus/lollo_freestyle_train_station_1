@@ -1,0 +1,52 @@
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        linkable = false, -- false, --true,
+                        nodes = {
+                            {
+                                { -0.5, 0, 0 },
+                                { 1, 0, 0 },
+                                3,
+                            },
+                            {
+                                { 0.5, 0, 0 },
+                                { 1, 0, 0 },
+                                3,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = {
+                    {
+                        -- order = 0,
+                        personEdges = { 0 },
+                        personNodes = { 0, 1 },
+                        -- vehicleNode = -1, -- 0,
+                    },
+                },
+            },
+        },
+        version = 1
+    }
+end

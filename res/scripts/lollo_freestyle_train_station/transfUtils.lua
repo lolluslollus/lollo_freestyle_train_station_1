@@ -510,9 +510,10 @@ utils.getDistanceBetweenPointAndStraight = function(segmentPosition1, segmentPos
     local y2 = segmentPosition2[2] or segmentPosition2.y
     local xM = testPointPosition[1] or testPointPosition.x
     local yM = testPointPosition[2] or testPointPosition.y
-    print('getDistanceBetweenPointAndStraight received coords =', x1, y1, x2, y2, xM, yM)
-    local b = (y1 - y2) / (x1 - x2)
-    local a = y1 - (y1 - y2) / (x1 - x2) * x1
+    -- print('getDistanceBetweenPointAndStraight received coords =', x1, y1, x2, y2, xM, yM)
+    -- local b = (y1 - y2) / (x1 - x2)
+    -- local a = y1 - (y1 - y2) / (x1 - x2) * x1
+
     -- local yMDist = math.abs(yM - b * xM - a) / math.sqrt(1 + b * b)
     -- local yMDist = math.abs(yM - (y1 - y2) / (x1 - x2) * xM  - y1 + (y1 - y2) / (x1 - x2) * x1) / math.sqrt(1 + (y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2))
     -- local yMDist = math.abs(yM - y1 + (y1 - y2) / (x1 - x2) * (x1 - xM)) / math.sqrt(1 + (y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2))
@@ -531,7 +532,6 @@ utils.getDistanceBetweenPointAndStraight = function(segmentPosition1, segmentPos
         if y1 == y2 then return utils.getPositionsDistance(segmentPosition1, testPointPosition) end
         return math.abs(x1 - xM)
     else
-        -- return math.abs(yM + (y1 - y2) / (x1 - x2) * (x1 - xM)) / math.sqrt(1 + (y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2))
         return math.abs(yM - y1 + (y1 - y2) / (x1 - x2) * (x1 - xM)) / math.sqrt(1 + (y1 - y2) / (x1 - x2) * (y1 - y2) / (x1 - x2))
     end
 
