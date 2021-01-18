@@ -125,6 +125,8 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
 end
 
 helpers.slopedAreas = {
+    -- LOLLO TODO recheck all the sloped stuff, it's new. There will always be some microsteps,
+    -- a skewing transf could be the best bet here.
     _hunchLengthRatioToClaimBend = 0.01, -- must be positive
     _hunchToClaimBend = 0.3, -- must be positive
     doTerrain = function(result, slotTransf, params, nTerminal, nTrackEdge, innerDegree, areaWidth)
@@ -219,9 +221,6 @@ helpers.slopedAreas = {
         return yShiftOutside, yShiftOutside4StreetAccess
     end,
     innerDegrees = {
-        -- { inner = 1 },
-        -- { neutral = 0 },
-        -- { outer = -1 }
         inner = 1,
         neutral = 0,
         outer = -1
@@ -229,7 +228,6 @@ helpers.slopedAreas = {
 }
 
 helpers.slopedAreas.getInnerDegree = function(params, nTerminal, nTrackEdge)
-    -- LOLLO TODO recheck all the sloped stuff, it's new
     local centrePlatforms = params.terminals[nTerminal].centrePlatforms
     if not(centrePlatforms[nTrackEdge - 1])
     or not(centrePlatforms[nTrackEdge])
