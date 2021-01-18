@@ -85,7 +85,7 @@ helpers.getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
     return newTransf
 end
 
-helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
+helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2, angleYFactor)
     -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
@@ -115,7 +115,7 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2)
                 pos2[2] - pos1[2],
                 0
             }
-        )
+        ) * (angleYFactor or 1)
     )
 
     local transfY = transfUtilsUG.rotY(-angleY)
@@ -277,21 +277,53 @@ end
 
 helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId)
     local waitingAreaScaleFactor = 1
-    local xScaleFactorMax = 1.05
-    -- local xScaleFactorMid = 1.00
-    local xScaleFactorMin = 0.95
-    if areaWidth <= 5 then waitingAreaScaleFactor = 4 xScaleFactorMax = 1.05 xScaleFactorMin = 0.95
-    elseif areaWidth <= 10 then waitingAreaScaleFactor = 8 xScaleFactorMax = 1.15 xScaleFactorMin = 0.95
-    elseif areaWidth <= 20 then waitingAreaScaleFactor = 16 xScaleFactorMax = 1.25 xScaleFactorMin = 0.95
+    if areaWidth <= 5 then waitingAreaScaleFactor = 4
+    elseif areaWidth <= 10 then waitingAreaScaleFactor = 8
+    elseif areaWidth <= 20 then waitingAreaScaleFactor = 16
     end
 
-    local xScaleFactor = xScaleFactorMax
-    local waitingAreaPeriod = 5
     local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-    if innerDegree < 0 then xScaleFactor = xScaleFactorMax waitingAreaPeriod = 4
-    elseif innerDegree > 0 then xScaleFactor = xScaleFactorMin waitingAreaPeriod = 6
+
+    local angleYFactor = 1
+    local xScaleFactor = 1
+    local waitingAreaPeriod = 5
+    -- outside a bend
+    if innerDegree < 0 then
+        waitingAreaPeriod = 4
+        if areaWidth <= 5 then
+            xScaleFactor = 1.10
+            angleYFactor = 1.0125
+        elseif areaWidth <= 10 then
+            xScaleFactor = 1.20
+            angleYFactor = 1.025
+        elseif areaWidth <= 20 then
+            xScaleFactor = 1.30
+            angleYFactor = 1.05
+        end
+    -- inside a bend
+    elseif innerDegree > 0 then
+        waitingAreaPeriod = 6
+        xScaleFactor = 0.95
+        if areaWidth <= 5 then
+            angleYFactor = 0.9
+        elseif areaWidth <= 10 then
+            angleYFactor = 0.85
+        elseif areaWidth <= 20 then
+            angleYFactor = 0.8
+        end
+    -- more or less straight
+    else
+        if areaWidth <= 5 then
+            xScaleFactor = 1.05
+        elseif areaWidth <= 10 then
+            xScaleFactor = 1.15
+        elseif areaWidth <= 20 then
+            xScaleFactor = 1.25
+        end
     end
+    print('xScaleFactor =', xScaleFactor)
+    print('angleYFactor =', angleYFactor)
 
     local ii1 = nTrackEdge - 1
     local iiN = nTrackEdge + 1
@@ -302,7 +334,7 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
         if centrePlatformsFine[ii].leadingIndex >= ii1 then
             local cpf = centrePlatformsFine[ii]
             local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
-            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(posTanX2)
+            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(posTanX2, angleYFactor)
             local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, areaWidth)
             result.models[#result.models+1] = {
                 id = modelId,
