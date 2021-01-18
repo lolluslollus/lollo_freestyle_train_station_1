@@ -459,4 +459,27 @@ utils.getShiftedEdgePositions = function(posTanX2Owners, sideShift, index1, inde
     return results
 end
 
+utils.isNumVeryClose = function(num1, num2, significantFigures)
+    if type(num1) ~= 'number' or type(num2) ~= 'number' then return false end
+
+    if not(significantFigures) then significantFigures = 5
+    elseif type(significantFigures) ~= 'number' then return false
+    elseif significantFigures < 1 or significantFigures > 10 then return false
+    end
+
+    local _formatString = "%." .. math.floor(significantFigures) .. "g"
+
+    -- wrong (less accurate):
+    -- local roundedNum1 = math.ceil(num1 * roundingFactor)
+    -- local roundedNum2 = math.ceil(num2 * roundingFactor)
+    -- better:
+    -- local roundedNum1 = math.floor(num1 * roundingFactor + 0.5)
+    -- local roundedNum2 = math.floor(num2 * roundingFactor + 0.5)
+    -- return roundedNum1 == roundedNum2
+    -- but what I really want are the first significant figures, never mind how big the number is
+    -- LOLLO TODO test this THOROUGHLY
+    return (_formatString):format(num1) == (_formatString):format(num2)
+        or (_formatString):format(num1 * 1.1) == (_formatString):format(num2 * 1.1)
+end
+
 return utils
