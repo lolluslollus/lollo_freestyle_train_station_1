@@ -34,7 +34,7 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 20,
-				_constants.slopedCargoArea1x5ModelFileName, nil,
+				_constants.slopedCargoArea1x20ModelFileName, nil,
 				'shared/asphalt_02.gtex.lua')
 		end,
 

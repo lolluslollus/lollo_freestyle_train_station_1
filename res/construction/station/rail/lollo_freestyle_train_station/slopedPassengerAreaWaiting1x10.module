@@ -34,7 +34,7 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 10,
-				_constants.slopedPassengerArea1x5ModelFileName, _constants.passengerWaitingAreaCentredModelFileName,
+				_constants.slopedPassengerArea1x10ModelFileName, _constants.passengerWaitingAreaCentredModelFileName,
 				'lollo_freestyle_train_station/era_c_station_tiles.lua')
 		end,
 

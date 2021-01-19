@@ -296,10 +296,12 @@ function data()
 				end
 
 				if not(result.slopedAreasFineRelative[t]) then result.slopedAreasFineRelative[t] = {} end
-				for ii = 1, #params.terminals[t].slopedAreasFine, 1 do
-					local saf = params.terminals[t].slopedAreasFine[ii]
-					result.slopedAreasFineRelative[t][#result.slopedAreasFineRelative[t]+1] = saf
-					result.slopedAreasFineRelative[t][#result.slopedAreasFineRelative[t]].posTanX2 = transfUtils.getPosTanX2Transformed(saf.posTanX2, result.inverseMainTransf)
+				for width, slopedAreasFine4Width in pairs(params.terminals[t].slopedAreasFine) do
+					result.slopedAreasFineRelative[t][width] = {}
+					for _, saf in pairs(slopedAreasFine4Width) do
+						result.slopedAreasFineRelative[t][width][#result.slopedAreasFineRelative[t][width]+1] = saf
+						result.slopedAreasFineRelative[t][width][#result.slopedAreasFineRelative[t][width]].posTanX2 = transfUtils.getPosTanX2Transformed(saf.posTanX2, result.inverseMainTransf)
+					end
 				end
 
 				local isCargoTerminal = params.terminals[t].isCargo

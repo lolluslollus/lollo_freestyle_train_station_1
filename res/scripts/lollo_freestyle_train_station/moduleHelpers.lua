@@ -296,7 +296,7 @@ local _doTerrain4SlopedArea = function(result, nTerminal, nTrackEdge, areaWidth,
 
     local i1 = nTrackEdge - 1
     local iN = nTrackEdge + 1
-    local safs = result.slopedAreasFineRelative[nTerminal]
+    local safs = result.slopedAreasFineRelative[nTerminal][areaWidth]
     for ii = 1, #safs do
         if safs[ii].leadingIndex > iN then break end
         if safs[ii].leadingIndex >= i1 then
@@ -310,8 +310,8 @@ local _doTerrain4SlopedArea = function(result, nTerminal, nTrackEdge, areaWidth,
             terrainCoordinates[#terrainCoordinates+1] = {
                 pos1Inner,
                 pos2Inner,
-                transfUtils.getExtrapolatedPosX2Continuation(pos2Inner, pos2Outer, areaWidth - 2.5),
-                transfUtils.getExtrapolatedPosX2Continuation(pos1Inner, pos1Outer, areaWidth - 2.5),
+                transfUtils.getExtrapolatedPosX2Continuation(pos2Inner, pos2Outer, areaWidth * 0.5),
+                transfUtils.getExtrapolatedPosX2Continuation(pos1Inner, pos1Outer, areaWidth * 0.5),
             }
         end
     end
@@ -358,14 +358,13 @@ local _doTerrain4SlopedArea = function(result, nTerminal, nTrackEdge, areaWidth,
 end
 
 helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey)
-    local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-    local waitingAreaShift = isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
+    -- local waitingAreaShift = params.terminals[nTerminal].isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
     local waitingAreaIndex = 0
 
     local ii1 = nTrackEdge - 1
     local iiN = nTrackEdge + 1
 
-    local safs = result.slopedAreasFineRelative[nTerminal]
+    local safs = result.slopedAreasFineRelative[nTerminal][areaWidth]
     for ii = 1, #safs do
         if safs[ii].leadingIndex > iiN then break end
         if safs[ii].leadingIndex >= ii1 then
@@ -390,7 +389,8 @@ helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge
                         id = waitingAreaModelId,
                         transf = transfUtilsUG.mul(
                             myTransf,
-                            { 0, areaWidth * 0.8, 0, 0,  -areaWidth * 0.8, 0, 0, 0,  0, 0, 1, 0,  0, waitingAreaShift, result.laneZs[nTerminal], 1 }
+                            -- { 0, areaWidth * 0.8, 0, 0,  -areaWidth * 0.8, 0, 0, 0,  0, 0, 1, 0,  0, waitingAreaShift, result.laneZs[nTerminal], 1 }
+                            { 0, areaWidth * 0.8, 0, 0,  -areaWidth * 0.8, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
                         ),
                         tag = slotUtils.mangleModelTag(nTerminal, true),
                     }
