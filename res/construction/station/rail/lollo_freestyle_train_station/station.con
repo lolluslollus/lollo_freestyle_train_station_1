@@ -267,6 +267,7 @@ function data()
 
 			result.centrePlatformsRelative = {}
 			result.centrePlatformsFineRelative = {}
+			result.slopedAreasFineRelative = {}
 
 			for t = 1, #params.terminals do
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
@@ -281,8 +282,8 @@ function data()
 				result.laneZs[t] = _laneZ
 
 				if not(result.centrePlatformsRelative[t]) then result.centrePlatformsRelative[t] = {} end
-				for ii = 1, #params.terminals[t].centrePlatforms, 1 do
-					local cpl = params.terminals[t].centrePlatforms[ii]
+				for i = 1, #params.terminals[t].centrePlatforms, 1 do
+					local cpl = params.terminals[t].centrePlatforms[i]
 					result.centrePlatformsRelative[t][#result.centrePlatformsRelative[t]+1] = cpl
 					result.centrePlatformsRelative[t][#result.centrePlatformsRelative[t]].posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, result.inverseMainTransf)
 				end
@@ -292,6 +293,13 @@ function data()
 					local cpf = params.terminals[t].centrePlatformsFine[ii]
 					result.centrePlatformsFineRelative[t][#result.centrePlatformsFineRelative[t]+1] = cpf
 					result.centrePlatformsFineRelative[t][#result.centrePlatformsFineRelative[t]].posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
+				end
+
+				if not(result.slopedAreasFineRelative[t]) then result.slopedAreasFineRelative[t] = {} end
+				for ii = 1, #params.terminals[t].slopedAreasFine, 1 do
+					local saf = params.terminals[t].slopedAreasFine[ii]
+					result.slopedAreasFineRelative[t][#result.slopedAreasFineRelative[t]+1] = saf
+					result.slopedAreasFineRelative[t][#result.slopedAreasFineRelative[t]].posTanX2 = transfUtils.getPosTanX2Transformed(saf.posTanX2, result.inverseMainTransf)
 				end
 
 				local isCargoTerminal = params.terminals[t].isCargo

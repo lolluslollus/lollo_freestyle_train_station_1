@@ -35,11 +35,11 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			-- LOLLO TODO consider this alternative: add a thin stripe like the platform to cover up the seam and do the rest like terrain, which is repaintable and has fewer glitches
-			-- moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5, _constants.slopedCargoArea1x5ModelFileName)
-			-- moduleHelpers.slopedAreas.addWaitingAreas(result, params, nTerminal, nTrackEdge, 20, _constants.cargoWaitingAreaCentredModelFileName)
+			moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5, _constants.slopedCargoArea1x5ModelFileName)
+			moduleHelpers.slopedAreas.addWaitingAreas(result, params, nTerminal, nTrackEdge, 20, _constants.cargoWaitingAreaCentredModelFileName)
 
-			moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20,
-				_constants.slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
+			-- moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20,
+			-- 	_constants.slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
 
 			moduleHelpers.slopedAreas.doTerrain(result, params, nTerminal, nTrackEdge, 20)
 		end,

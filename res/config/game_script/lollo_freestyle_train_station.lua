@@ -341,6 +341,7 @@ local _actions = {
             crossConnectors = args.crossConnectors,
             cargoWaitingAreas = args.cargoWaitingAreas,
             isTrackOnPlatformLeft = args.isTrackOnPlatformLeft,
+            slopedAreasFine = args.slopedAreasFine,
         }
 
         if oldCon == nil then
@@ -1321,6 +1322,20 @@ function data()
                     eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
                 )
                 print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
+
+                print('calculating slopedAreasFine, platformWidth =', platformWidth)
+                if eventArgs.isTrackOnPlatformLeft then
+                    eventArgs.slopedAreasFine = stationHelpers.getCentralEdgePositions(
+                        transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.5 + 2),
+                        1
+                    )
+                else
+                    eventArgs.slopedAreasFine = stationHelpers.getCentralEdgePositions(
+                        transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.5 -2),
+                        1
+                    )
+                end
+
                 eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
                     -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.

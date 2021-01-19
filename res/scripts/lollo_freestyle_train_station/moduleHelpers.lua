@@ -368,7 +368,7 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     return angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor
 end
 
-helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId)
+helpers.slopedAreas.addModelsEXTRAPOLATING = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId)
     local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
 
@@ -410,6 +410,56 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
                 end
                 waitingAreaCounter = waitingAreaCounter + 1
             end
+        end
+    end
+
+    return innerDegree
+end
+
+helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId)
+    local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
+    print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
+
+    local angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
+
+    local ii1 = nTrackEdge - 1
+    local iiN = nTrackEdge + 1
+    local waitingAreaCounter = 0
+    local safs = result.slopedAreasFineRelative[nTerminal]
+    for ii = 1, #safs do
+        if safs[ii].leadingIndex > iiN then break end
+        if safs[ii].leadingIndex >= ii1 then
+            local saf = safs[ii]
+            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(saf.posTanX2)
+            -- local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2, angleYFactor)
+            -- local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, areaWidth)
+            result.models[#result.models+1] = {
+                id = modelId,
+                transf = transfUtilsUG.mul(
+                    myTransf,
+                    -- { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
+                    { 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
+                ),
+                tag = tag
+            }
+
+            -- if waitingAreaModelId ~= nil
+            -- and cpfs[ii - 2]
+            -- and cpfs[ii - 2].leadingIndex >= ii1
+            -- and cpfs[ii + 2]
+            -- and cpfs[ii + 2].leadingIndex <= iiN then
+            --     if math.fmod(waitingAreaCounter, waitingAreaPeriod) == 0 then
+            --         result.models[#result.models+1] = {
+            --             id = waitingAreaModelId,
+            --             transf = transfUtilsUG.mul(
+            --                 myTransf,
+            --                 { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
+            --             ),
+            --             tag = slotUtils.mangleModelTag(nTerminal, true),
+            --         }
+            --     end
+            --     waitingAreaCounter = waitingAreaCounter + 1
+            -- end
         end
     end
 
