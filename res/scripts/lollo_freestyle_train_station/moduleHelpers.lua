@@ -772,4 +772,19 @@ helpers.addPassengerTerminalDeco = function(result, slotTransf, tag, slotId, xSh
     }
 end
 
+helpers.addCargoTerminalDeco = function(result, slotTransf, tag, slotId, xShift, yShift)
+    result.models[#result.models + 1] = {
+        id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
+        slotId = slotId,
+        transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift , yShift -2.2, _constants.stairsAndRampHeight + 0.0, 1 }),
+        tag = tag
+    }
+    result.models[#result.models + 1] = {
+        id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
+        slotId = slotId,
+        transf = transfUtilsUG.mul(slotTransf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift +2.2, _constants.stairsAndRampHeight + 0.0, 1 }),
+        tag = tag
+    }
+end
+
 return helpers
