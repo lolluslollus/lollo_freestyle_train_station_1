@@ -487,7 +487,7 @@ helpers.slopedAreas.getTerrainCoordinates = function(result, params, nTerminal, 
     return terrainCoordinates
 end
 
-helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, areaWidth)
+helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, areaWidth, groundFaceFillKey)
     local terrainCoordinates = helpers.slopedAreas.getTerrainCoordinates(result, params, nTerminal, nTrackEdge, areaWidth)
     local faces = {}
     for _, pos1234 in pairs(terrainCoordinates) do
@@ -502,9 +502,7 @@ helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, 
             modes = {
                 {
                     type = 'FILL',
-                    key = 'shared/asphalt_02.gtex.lua'
-                    -- key = 'shared/asphalt_03.gtex.lua'
-                    -- key = 'shared/asphalt_04.gtex.lua'
+                    key = groundFaceFillKey
                 },
                 -- {
                 -- 	type = 'STROKE_OUTER',
