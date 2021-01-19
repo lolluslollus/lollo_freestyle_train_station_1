@@ -315,7 +315,8 @@ local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, ar
             face[i] = {
                 terrainCoordinates[tc][i][1],
                 terrainCoordinates[tc][i][2],
-                terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] + _constants.platformSideBitsZ,
+                -- terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] + _constants.platformSideBitsZ,
+                terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + _constants.platformSideBitsZ,
                 1
             }
         end
