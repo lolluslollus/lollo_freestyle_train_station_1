@@ -85,7 +85,7 @@ helpers.getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
     return newTransf
 end
 
-helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2, angleYFactor)
+helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
     -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
@@ -115,7 +115,7 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2, angleYFactor)
                 pos2[2] - pos1[2],
                 0
             }
-        ) * (angleYFactor or 1)
+        ) -- * (angleYFactor or 1)
     )
 
     local transfY = transfUtilsUG.rotY(-angleY)
@@ -216,11 +216,7 @@ local _getSlopedAreaInnerDegree = function(params, nTerminal, nTrackEdge)
 end
 
 local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
-    local waitingAreaScaleFactor = 1
-    if areaWidth <= 5 then waitingAreaScaleFactor = 4
-    elseif areaWidth <= 10 then waitingAreaScaleFactor = 8
-    elseif areaWidth <= 20 then waitingAreaScaleFactor = 16
-    end
+    local waitingAreaScaleFactor = areaWidth * 0.8
 
     -- LOLLO NOTE sloped areas are parallelepipeds that extend the parallelepipeds that make up the platform sideways.
     -- I don't know of any transformation to twist or deform a model, so either I make an arsenal of meshes (no!) or I adjust things.
@@ -231,8 +227,8 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     -- Since there is no transf for this, I tweak the angle around the Y axis.
 
     -- These tricks work to a certain extent, but since I cannot skew or twist my models,
-    -- I could work out a new cleaner series of segments to follow, instead of extending the platform sideways.
-    -- It is cleaner but slow, so we run the calculations in advance in the big script.
+    -- I work out a new cleaner series of segments to follow, instead of extending the platform sideways.
+    -- It is cleaner (the Y angle is optimised by construction) but slow, so we run the calculations in advance in the big script.
     -- And we still need to tweak it a little.
 
     -- Using multiple thin parallel extensions is slow and brings nothing at all.
@@ -240,33 +236,33 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     -- The easiest is: leave the narrower slopes since they don't cause much grief, and bridges need them,
     -- and use the terrain for the wider ones. Even the smaller sloped areas need quite a bit of stretch, but they are less sensiitive to the angle problem.
     -- However, the terrain will never look as good as a dedicated model.
-    local angleYFactor = 1
+    -- local angleYFactor = 1
     local xScaleFactor = 1
-    local waitingAreaPeriod = 5
+    -- local waitingAreaPeriod = 5
     -- outside a bend
     if innerDegree < 0 then
-        waitingAreaPeriod = 4
+        -- waitingAreaPeriod = 4
         if areaWidth <= 5 then
             xScaleFactor = 1.20
-            angleYFactor = 1.0625
+            -- angleYFactor = 1.0625
         elseif areaWidth <= 10 then
             xScaleFactor = 1.30
-            angleYFactor = 1.10
+            -- angleYFactor = 1.10
         elseif areaWidth <= 20 then
             xScaleFactor = 1.40
-            angleYFactor = 1.20
+            -- angleYFactor = 1.20
         end
     -- inside a bend
     elseif innerDegree > 0 then
-        waitingAreaPeriod = 6
+        -- waitingAreaPeriod = 6
         xScaleFactor = 0.95
-        if areaWidth <= 5 then
-            angleYFactor = 0.9
-        elseif areaWidth <= 10 then
-            angleYFactor = 0.825
-        elseif areaWidth <= 20 then
-            angleYFactor = 0.75
-        end
+        -- if areaWidth <= 5 then
+        --     angleYFactor = 0.9
+        -- elseif areaWidth <= 10 then
+        --     angleYFactor = 0.825
+        -- elseif areaWidth <= 20 then
+        --     angleYFactor = 0.75
+        -- end
     -- more or less straight
     else
         if areaWidth <= 5 then
@@ -278,12 +274,12 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
         end
     end
     print('xScaleFactor =', xScaleFactor)
-    print('angleYFactor =', angleYFactor)
+    -- print('angleYFactor =', angleYFactor)
 
-    return angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor
+    return waitingAreaScaleFactor, xScaleFactor
 end
 
-local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
+local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey, isGroundLevel)
     local terrainCoordinates = {}
 
     local i1 = nTrackEdge - 1
@@ -315,8 +311,9 @@ local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, ar
             face[i] = {
                 terrainCoordinates[tc][i][1],
                 terrainCoordinates[tc][i][2],
-                -- terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] + _constants.platformSideBitsZ,
-                terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + _constants.platformSideBitsZ,
+                isGroundLevel
+                    and terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] + _constants.platformSideBitsZ
+                    or terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + _constants.platformSideBitsZ,
                 1
             }
         end
@@ -352,7 +349,7 @@ end
 helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey)
     local innerDegree = _getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
 --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-    local angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
+    local waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
     -- local waitingAreaShift = params.terminals[nTerminal].isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
     local waitingAreaIndex = 0
 
@@ -385,7 +382,7 @@ helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge
                         id = waitingAreaModelId,
                         transf = transfUtilsUG.mul(
                             myTransf,
-                            { 0, areaWidth * 0.8, 0, 0,  -areaWidth * 0.8, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
+                            { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
                         ),
                         tag = slotUtils.mangleModelTag(nTerminal, true),
                     }
