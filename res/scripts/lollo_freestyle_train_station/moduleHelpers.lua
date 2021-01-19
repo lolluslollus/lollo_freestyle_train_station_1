@@ -129,161 +129,11 @@ helpers.slopedAreas = {
     -- a skewing transf could be the best bet here.
     _hunchLengthRatioToClaimBend = 0.01, -- must be positive
     _hunchToClaimBend = 0.2, -- must be positive
-    doTerrainOLD = function(result, slotTransf, params, nTerminal, nTrackEdge, innerDegree, areaWidth)
-        if result.centrePlatformsRelative[nTerminal][nTrackEdge].type == 0 then -- only align terrain if on ground
-            local face = {}
-            if areaWidth <= 5 then
-                if innerDegree > 0 then
-                    face = {
-                        {-3.0, -9, 0, 1},
-                        {-3.0, 9, 0, 1},
-                        {3.0, 13, 0, 1},
-                        {3.0, -13, 0, 1},
-                    }
-                elseif innerDegree < 0 then
-                    face = {
-                        {-3.0, -15, 0, 1},
-                        {-3.0, 15, 0, 1},
-                        {3.0, 13, 0, 1},
-                        {3.0, -13, 0, 1},
-                    }
-                else
-                    face = {
-                        {-3.0, -13, 0, 1},
-                        {-3.0, 13, 0, 1},
-                        {3.0, 13, 0, 1},
-                        {3.0, -13, 0, 1},
-                    }
-                end
-            elseif areaWidth <= 10 then
-                if innerDegree > 0 then
-                    face = {
-                        {-5.5, -9, 0, 1},
-                        {-5.5, 9, 0, 1},
-                        {5.5, 13, 0, 1},
-                        {5.5, -13, 0, 1},
-                    }
-                elseif innerDegree < 0 then
-                    face = {
-                        {-5.5, -15, 0, 1},
-                        {-5.5, 15, 0, 1},
-                        {5.5, 13, 0, 1},
-                        {5.5, -13, 0, 1},
-                    }
-                else
-                    face = {
-                        {-5.5, -13, 0, 1},
-                        {-5.5, 13, 0, 1},
-                        {5.5, 13, 0, 1},
-                        {5.5, -13, 0, 1},
-                    }
-                end
-            elseif areaWidth <= 20 then
-                if innerDegree > 0 then
-                    face = {
-                        {-10.5, -9, 0, 1},
-                        {-10.5, 9, 0, 1},
-                        {10.5, 13, 0, 1},
-                        {10.5, -13, 0, 1},
-                    }
-                elseif innerDegree < 0 then
-                    face = {
-                        {-10.5, -15, 0, 1},
-                        {-10.5, 15, 0, 1},
-                        {10.5, 13, 0, 1},
-                        {10.5, -13, 0, 1},
-                    }
-                else
-                    face = {
-                        {-10.5, -13, 0, 1},
-                        {-10.5, 13, 0, 1},
-                        {10.5, 13, 0, 1},
-                        {10.5, -13, 0, 1},
-                    }
-                end
-            end
-			modulesutil.TransformFaces(slotTransf, face)
-			result.groundFaces[#result.groundFaces + 1] = helpers.getGroundFace(face, 'shared/asphalt_01.gtex.lua')
-			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = helpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
-        end
-    end,
     innerDegrees = {
         inner = 1,
         neutral = 0,
         outer = -1
     },
-    getInnerDegree = function(params, nTerminal, nTrackEdge)
-        local centrePlatforms = params.terminals[nTerminal].centrePlatforms
-        -- if not(centrePlatforms[nTrackEdge - 1])
-        -- or not(centrePlatforms[nTrackEdge])
-        -- or not(centrePlatforms[nTrackEdge + 1])
-        -- then return helpers.slopedAreas.innerDegrees.neutral end
-
-        local x1 = 0
-        local y1 = 0
-        local xM = 0
-        local yM = 0
-        local x2 = 0
-        local y2 = 0
-        if centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
-            x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
-            y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
-            x2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][1]
-            y2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][2]
-            xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
-            yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
-        elseif centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil then
-            x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
-            y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
-            x2 = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
-            y2 = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
-            xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
-            yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
-        elseif centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
-            x1 = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
-            y1 = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
-            x2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][1]
-            y2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][2]
-            xM = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
-            yM = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
-        else
-            print('WARNING: cannot get inner degree')
-            return helpers.slopedAreas.innerDegrees.neutral
-        end
-
-        local segmentHunch = transfUtils.getDistanceBetweenPointAndStraight(
-            {x1, y1, 0},
-            {x2, y2, 0},
-            {xM, yM, 0}
-        )
-        print('segmentHunch =', segmentHunch)
-        -- local segmentLength = transfUtils.getPositionsDistance(
-        --     centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
-        --     centrePlatforms[nTrackEdge + 1].posTanX2[1][1]
-        -- )
-        -- print('segmentLength =', segmentLength)
-        -- if segmentHunch / segmentLength < helpers.slopedAreas._hunchLengthRatioToClaimBend then return helpers.slopedAreas.innerDegrees.neutral end
-        if segmentHunch < helpers.slopedAreas._hunchToClaimBend then return helpers.slopedAreas.innerDegrees.neutral end
-
-        -- a + bx = y
-        -- => a + b * x1 = y1
-        -- => a + b * x2 = y2
-        -- => b * (x1 - x2) = y1 - y2
-        -- => b = (y1 - y2) / (x1 - x2)
-        -- OR division by zero
-        -- => a = y1 - b * x1
-        -- => a = y1 - (y1 - y2) / (x1 - x2) * x1
-        -- a + b * xM > yM <= this is what we want to know
-        -- => y1 - (y1 - y2) / (x1 - x2) * x1 + (y1 - y2) / (x1 - x2) * xM > yM
-        -- => y1 * (x1 - x2) - (y1 - y2) * x1 + (y1 - y2) * xM > yM * (x1 - x2)
-        -- => (y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1) > 0
-
-        local innerSign = transfUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
-
-        if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
-        print('terminal', nTerminal, 'innerSign =', innerSign)
-        return innerSign
-    end,
     getYShift = function(params, t, i, slopedAreaWidth)
         local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
         if not(params.terminals[t].centrePlatforms[i]) then return false end
@@ -298,6 +148,79 @@ helpers.slopedAreas = {
         return yShiftOutside, yShiftOutside4StreetAccess
     end,
 }
+
+local _getSlopedAreaInnerDegree = function(params, nTerminal, nTrackEdge)
+    local centrePlatforms = params.terminals[nTerminal].centrePlatforms
+    -- if not(centrePlatforms[nTrackEdge - 1])
+    -- or not(centrePlatforms[nTrackEdge])
+    -- or not(centrePlatforms[nTrackEdge + 1])
+    -- then return helpers.slopedAreas.innerDegrees.neutral end
+
+    local x1 = 0
+    local y1 = 0
+    local xM = 0
+    local yM = 0
+    local x2 = 0
+    local y2 = 0
+    if centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
+        x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
+        y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
+        x2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][1]
+        y2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][2]
+        xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+        yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+    elseif centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil then
+        x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
+        y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
+        x2 = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
+        y2 = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
+        xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+        yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+    elseif centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
+        x1 = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+        y1 = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+        x2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][1]
+        y2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][2]
+        xM = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
+        yM = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
+    else
+        print('WARNING: cannot get inner degree')
+        return helpers.slopedAreas.innerDegrees.neutral
+    end
+
+    local segmentHunch = transfUtils.getDistanceBetweenPointAndStraight(
+        {x1, y1, 0},
+        {x2, y2, 0},
+        {xM, yM, 0}
+    )
+    print('segmentHunch =', segmentHunch)
+    -- local segmentLength = transfUtils.getPositionsDistance(
+    --     centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
+    --     centrePlatforms[nTrackEdge + 1].posTanX2[1][1]
+    -- )
+    -- print('segmentLength =', segmentLength)
+    -- if segmentHunch / segmentLength < helpers.slopedAreas._hunchLengthRatioToClaimBend then return helpers.slopedAreas.innerDegrees.neutral end
+    if segmentHunch < helpers.slopedAreas._hunchToClaimBend then return helpers.slopedAreas.innerDegrees.neutral end
+
+    -- a + bx = y
+    -- => a + b * x1 = y1
+    -- => a + b * x2 = y2
+    -- => b * (x1 - x2) = y1 - y2
+    -- => b = (y1 - y2) / (x1 - x2)
+    -- OR division by zero
+    -- => a = y1 - b * x1
+    -- => a = y1 - (y1 - y2) / (x1 - x2) * x1
+    -- a + b * xM > yM <= this is what we want to know
+    -- => y1 - (y1 - y2) / (x1 - x2) * x1 + (y1 - y2) / (x1 - x2) * xM > yM
+    -- => y1 * (x1 - x2) - (y1 - y2) * x1 + (y1 - y2) * xM > yM * (x1 - x2)
+    -- => (y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1) > 0
+
+    local innerSign = transfUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
+
+    if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
+    print('terminal', nTerminal, 'innerSign =', innerSign)
+    return innerSign
+end
 
 local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     local waitingAreaScaleFactor = 1
@@ -368,60 +291,8 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     return angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor
 end
 
-helpers.slopedAreas.addModelsEXTRAPOLATING = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId)
-    local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
-    print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-
-    local angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
-
-    local ii1 = nTrackEdge - 1
-    local iiN = nTrackEdge + 1
-    local waitingAreaCounter = 0
-    local cpfs = result.centrePlatformsFineRelative[nTerminal]
-    for ii = 1, #cpfs do
-        if cpfs[ii].leadingIndex > iiN then break end
-        if cpfs[ii].leadingIndex >= ii1 then
-            local cpf = cpfs[ii]
-            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2, angleYFactor)
-            local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, areaWidth)
-            result.models[#result.models+1] = {
-                id = modelId,
-                transf = transfUtilsUG.mul(
-                    myTransf,
-                    { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
-                ),
-                tag = tag
-            }
-
-            if waitingAreaModelId ~= nil
-            and cpfs[ii - 2]
-            and cpfs[ii - 2].leadingIndex >= ii1
-            and cpfs[ii + 2]
-            and cpfs[ii + 2].leadingIndex <= iiN then
-                if math.fmod(waitingAreaCounter, waitingAreaPeriod) == 0 then
-                    result.models[#result.models+1] = {
-                        id = waitingAreaModelId,
-                        transf = transfUtilsUG.mul(
-                            myTransf,
-                            { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, result.laneZs[nTerminal], 1 }
-                        ),
-                        tag = slotUtils.mangleModelTag(nTerminal, true),
-                    }
-                end
-                waitingAreaCounter = waitingAreaCounter + 1
-            end
-        end
-    end
-
-    return innerDegree
-end
-
 helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId)
-    local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
-    print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-
-    local angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
-
+    local waitingAreaScaleFactor = areaWidth * 0.8
     local ii1 = nTrackEdge - 1
     local iiN = nTrackEdge + 1
     local waitingAreaCounter = 0
@@ -431,84 +302,65 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
         if safs[ii].leadingIndex >= ii1 then
             local saf = safs[ii]
             local myTransf = helpers.getPlatformObjectTransf_WithYRotation(saf.posTanX2)
-            -- local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2, angleYFactor)
-            -- local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, areaWidth)
             result.models[#result.models+1] = {
                 id = modelId,
                 transf = transfUtilsUG.mul(
                     myTransf,
-                    -- { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
                     { 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
                 ),
                 tag = tag
             }
 
-            -- if waitingAreaModelId ~= nil
-            -- and cpfs[ii - 2]
-            -- and cpfs[ii - 2].leadingIndex >= ii1
-            -- and cpfs[ii + 2]
-            -- and cpfs[ii + 2].leadingIndex <= iiN then
-            --     if math.fmod(waitingAreaCounter, waitingAreaPeriod) == 0 then
-            --         result.models[#result.models+1] = {
-            --             id = waitingAreaModelId,
-            --             transf = transfUtilsUG.mul(
-            --                 myTransf,
-            --                 { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
-            --             ),
-            --             tag = slotUtils.mangleModelTag(nTerminal, true),
-            --         }
-            --     end
-            --     waitingAreaCounter = waitingAreaCounter + 1
-            -- end
-        end
-    end
-
-    return innerDegree
-end
-
-helpers.slopedAreas.addWaitingAreas = function(result, params, nTerminal, nTrackEdge, areaWidth, waitingAreaModelId)
-    local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
-    print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-    if waitingAreaModelId == nil then return innerDegree end
-
-    local angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
-
-    local ii1 = nTrackEdge - 1
-    local iiN = nTrackEdge + 1
-    local waitingAreaIndex = 0
-    local cpfs = result.centrePlatformsFineRelative[nTerminal]
-
-    for ii = 1, #cpfs do
-        if cpfs[ii].leadingIndex > iiN then break end
-        if cpfs[ii].leadingIndex >= ii1 then
-            if cpfs[ii - 2]
-            and cpfs[ii - 2].leadingIndex >= ii1
-            and cpfs[ii + 2]
-            and cpfs[ii + 2].leadingIndex <= iiN then
-                if math.fmod(waitingAreaIndex, waitingAreaPeriod) == 0 then
-                    local cpf = cpfs[ii]
-                    local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2, angleYFactor)
-                    local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, cpf.leadingIndex, areaWidth)
-
+            if waitingAreaModelId ~= nil
+            and safs[ii - 2]
+            and safs[ii - 2].leadingIndex >= ii1
+            and safs[ii + 2]
+            and safs[ii + 2].leadingIndex <= iiN then
+                if math.fmod(waitingAreaCounter, 5) == 0 then
                     result.models[#result.models+1] = {
                         id = waitingAreaModelId,
                         transf = transfUtilsUG.mul(
                             myTransf,
-                            { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, result.laneZs[nTerminal], 1 }
+                            { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
                         ),
                         tag = slotUtils.mangleModelTag(nTerminal, true),
                     }
                 end
-                waitingAreaIndex = waitingAreaIndex + 1
+                waitingAreaCounter = waitingAreaCounter + 1
             end
         end
     end
-
-    return innerDegree
 end
 
-helpers.slopedAreas.getTerrainCoordinates = function(result, params, nTerminal, nTrackEdge, areaWidth)
-    local innerDegree = helpers.slopedAreas.getInnerDegree(params, nTerminal, nTrackEdge)
+local _getSlopedAreaTerrainCoordinates = function(result, params, nTerminal, nTrackEdge, areaWidth)
+    local waitingAreaScaleFactor = areaWidth * 0.8
+
+    local cpls = result.centrePlatformsRelative[nTerminal]
+    local i1 = math.max(nTrackEdge - 1, 1)
+    local iN = math.min(nTrackEdge + 1, #cpls)
+
+    local terrainCoordinates = {}
+    for i = i1, iN do
+        local cpl = cpls[i]
+        local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
+        local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, i, areaWidth)
+        local traaa = transfUtilsUG.mul(
+            myTransf,
+            { 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+        )
+        terrainCoordinates[#terrainCoordinates+1] = {
+            transfUtils.getVec123Transformed({-4.75, -areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
+            transfUtils.getVec123Transformed({-4.75, areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
+            transfUtils.getVec123Transformed({4.75, areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
+            transfUtils.getVec123Transformed({4.75, -areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
+        }
+    end
+
+    return terrainCoordinates
+end
+
+local _getSlopedAreaTerrainCoordinatesTWEAKED = function(result, params, nTerminal, nTrackEdge, areaWidth)
+    local innerDegree = _getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
 
     local angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
@@ -537,8 +389,10 @@ helpers.slopedAreas.getTerrainCoordinates = function(result, params, nTerminal, 
     return terrainCoordinates
 end
 
-helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, areaWidth)
-    local terrainCoordinates = helpers.slopedAreas.getTerrainCoordinates(result, params, nTerminal, nTrackEdge, areaWidth)
+helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
+    -- local terrainCoordinates = _getSlopedAreaTerrainCoordinates(result, params, nTerminal, nTrackEdge, areaWidth)
+    -- this is prettier
+    local terrainCoordinates = _getSlopedAreaTerrainCoordinatesTWEAKED(result, params, nTerminal, nTrackEdge, areaWidth)
     local faces = {}
     for _, pos1234 in pairs(terrainCoordinates) do
         local face = {}
@@ -552,9 +406,7 @@ helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, 
             modes = {
                 {
                     type = 'FILL',
-                    key = 'shared/asphalt_02.gtex.lua'
-                    -- key = 'shared/asphalt_03.gtex.lua'
-                    -- key = 'shared/asphalt_04.gtex.lua'
+                    key = groundFacesFillKey,
                 },
                 -- {
                 -- 	type = 'STROKE_OUTER',
