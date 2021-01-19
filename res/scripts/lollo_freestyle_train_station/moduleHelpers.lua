@@ -293,6 +293,7 @@ end
 
 helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId)
     local waitingAreaScaleFactor = areaWidth * 0.8
+    local waitingAreaShiftFactor = areaWidth * 0.4
     local ii1 = nTrackEdge - 1
     local iiN = nTrackEdge + 1
     local waitingAreaCounter = 0
@@ -321,7 +322,7 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
                         id = waitingAreaModelId,
                         transf = transfUtilsUG.mul(
                             myTransf,
-                            { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
+                            { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, waitingAreaShiftFactor, result.laneZs[nTerminal], 1 }
                         ),
                         tag = slotUtils.mangleModelTag(nTerminal, true),
                     }
@@ -390,9 +391,9 @@ local _getSlopedAreaTerrainCoordinatesTWEAKED = function(result, params, nTermin
 end
 
 helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
-    -- local terrainCoordinates = _getSlopedAreaTerrainCoordinates(result, params, nTerminal, nTrackEdge, areaWidth)
+    local terrainCoordinates = _getSlopedAreaTerrainCoordinates(result, params, nTerminal, nTrackEdge, areaWidth)
     -- this is prettier
-    local terrainCoordinates = _getSlopedAreaTerrainCoordinatesTWEAKED(result, params, nTerminal, nTrackEdge, areaWidth)
+    -- local terrainCoordinates = _getSlopedAreaTerrainCoordinatesTWEAKED(result, params, nTerminal, nTrackEdge, areaWidth)
     local faces = {}
     for _, pos1234 in pairs(terrainCoordinates) do
         local face = {}
