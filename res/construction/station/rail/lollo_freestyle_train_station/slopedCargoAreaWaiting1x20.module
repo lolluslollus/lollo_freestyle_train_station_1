@@ -34,39 +34,14 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			-- local innerDegree = moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20, _constants.slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
-			-- moduleHelpers.slopedAreas.doTerrain(result, slotTransf, params, nTerminal, nTrackEdge, innerDegree, 20)
+			-- LOLLO TODO consider this alternative: add a thin stripe like the platform to cover up the seam and do the rest like terrain, which is repaintable and has fewer glitches
+			-- moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5, _constants.slopedCargoArea1x5ModelFileName)
+			-- moduleHelpers.slopedAreas.addWaitingAreas(result, params, nTerminal, nTrackEdge, 20, _constants.cargoWaitingAreaCentredModelFileName)
 
-			-- LOLLO TODO this works, except the terrain makes ugly bends under the platform edge.
-			-- it seems the invisible platform is the culprit
-			local areaProperties = moduleHelpers.slopedAreas.getModelProperties(result, tag, params, nTerminal, nTrackEdge, 20, _constants.cargoWaitingAreaCentredModelFileName)
-			local faces = {}
-			for _, pos1234 in pairs(areaProperties.terrainCoordinates) do
-				local face = {}
-				for i = 1, 4 do
-					-- face[i] = { pos1234[i][1], pos1234[i][2], pos1234[i][3] + result.laneZs[nTerminal] - _constants.platformSideBitsZ, 0 }
-					face[i] = { pos1234[i][1], pos1234[i][2], pos1234[i][3], 0 }
-				end
-				faces[#faces+1] = face
-				result.groundFaces[#result.groundFaces + 1] = {
-					face = face, -- LOLLO NOTE Z is ignored here
-					loop = true,
-					modes = {
-						{
-							type = 'FILL',
-							key = 'shared/asphalt_01.gtex.lua'
-						}
-					}
-				}
-				-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(face, 0, 'EQUAL', 1, 0.5)
-			end
-			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
-				faces = faces,
-				optional = true,
-				slopeHigh = 10.75,
-				slopeLow = 0.01, --0.25,
-				type = 'EQUAL', -- GREATER, LESS
-			}
+			moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20,
+				_constants.slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
+
+			moduleHelpers.slopedAreas.doTerrain(result, params, nTerminal, nTrackEdge, 20)
 		end,
 
 		getModelsFn = function(params)

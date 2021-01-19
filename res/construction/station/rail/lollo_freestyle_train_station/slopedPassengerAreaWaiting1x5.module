@@ -33,8 +33,10 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			local innerDegree = moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5, _constants.slopedPassengerArea1x5ModelFileName, _constants.passengerWaitingAreaCentredModelFileName)
-			moduleHelpers.slopedAreas.doTerrain(result, slotTransf, params, nTerminal, nTrackEdge, innerDegree, 5)
+			moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5,
+			_constants.slopedPassengerArea1x5ModelFileName, _constants.passengerWaitingAreaCentredModelFileName)
+
+			moduleHelpers.slopedAreas.doTerrain(result, params, nTerminal, nTrackEdge, 5)
 		end,
 
 		getModelsFn = function(params)
