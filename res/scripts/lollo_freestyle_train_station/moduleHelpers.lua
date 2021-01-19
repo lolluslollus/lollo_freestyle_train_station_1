@@ -313,12 +313,18 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     -- 2) As I approach the centre of a bend, the slope should increase, and it should decrease as I move outwards.
     -- To visualise this, imagine building a helter skelter with horizontal planks, or a tight staircase: the centre will be super steep.
     -- Since there is no transf for this, I tweak the angle around the Y axis.
+
     -- These tricks work to a certain extent, but since I cannot skew or twist my models,
-    -- I could work out a new series of segments to follow instead of extending the platform sideways.
+    -- I could work out a new cleaner series of segments to follow, instead of extending the platform sideways.
     -- Tried that, it is slow and it does not bring real benefits.
+    -- We can speed it up in the usual way: calculate it in the worker thread when setting up a terminal for the first time,
+    -- hogging even more memory. It could be good tho, LOLLO TODO try it. Only one lane, only for 5m sloped areas,
+    -- the other sloped areas can add their own terrain texture.
+
     -- Using multiple thin parallel extensions is slow and brings nothing at all.
+
     -- At the end of the day, the easiest is: leave the narrower slopes since they don't cause much grief, and bridges need them,
-    -- and use the terrain for the wider ones.
+    -- and use the terrain for the wider ones. Even the smaller sloped areas need quite a bit of stretch, but they are less sensiitive to the angle problem.
     local angleYFactor = 1
     local xScaleFactor = 1
     local waitingAreaPeriod = 5
