@@ -28,8 +28,8 @@ end
 helpers.getTerrainAlignmentList = function(face, raiseBy, alignmentType, slopeHigh, slopeLow)
     if type(raiseBy) ~= 'number' then raiseBy = 0 end
     if stringUtils.isNullOrEmptyString(alignmentType) then alignmentType = 'EQUAL' end -- GREATER, LESS
-    if type(slopeHigh) ~= 'number' then slopeHigh = 99 end
-    if type(slopeLow) ~= 'number' then slopeLow = 0.1 end
+    if type(slopeHigh) ~= 'number' then slopeHigh = _constants.slopeHigh end
+    if type(slopeLow) ~= 'number' then slopeLow = _constants.slopeLow end
     -- With “EQUAL” the terrain is aligned exactly to the specified faces,
     -- with “LESS” only higher areas are taken down,
     -- with “GREATER” areas below the faces will be filled up.
@@ -516,8 +516,8 @@ helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, 
     result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
         faces = faces,
         optional = true,
-        slopeHigh = 10.0,
-        slopeLow = 0.25, --0.25,
+        slopeHigh = _constants.slopeHigh,
+        slopeLow = _constants.slopeLow,
         type = 'EQUAL', -- GREATER, LESS
     }
 end
@@ -747,8 +747,8 @@ helpers.lifts = {
         local terrainAlignmentList = {
             faces = { groundFace },
             optional = true,
-            slopeHigh = 99,
-            slopeLow = 0.9, --0.1,
+            slopeHigh = _constants.slopeHigh,
+			slopeLow = _constants.slopeLow,
             type = 'EQUAL',
         }
         result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
@@ -833,8 +833,8 @@ helpers.doTerrain4Subways = function(result, slotTransf)
         {
             faces =  { terrainFace },
             optional = true,
-            slopeHigh = 99,
-            slopeLow = 0.9, --0.1,
+            slopeHigh = _constants.slopeHigh,
+			slopeLow = _constants.slopeLow,
             type = "EQUAL",
         }
     )

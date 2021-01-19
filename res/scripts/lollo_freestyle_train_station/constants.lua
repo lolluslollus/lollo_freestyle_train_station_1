@@ -28,6 +28,8 @@ local constants = {
     minSplitDistance = 2,
     maxWaypointDistance = 800,
     searchRadius4NearbyStation2Join = 500,
+    slopeHigh = 100,
+    slopeLow = 2.5,
 
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',

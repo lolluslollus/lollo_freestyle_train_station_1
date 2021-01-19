@@ -97,8 +97,8 @@ return {
 		local terrainAlignmentList = {
 			faces = { groundFace },
 			optional = true,
-        	slopeHigh = 99,
-        	slopeLow = 0.9, --0.1,
+			slopeHigh = _constants.slopeHigh,
+			slopeLow = _constants.slopeLow,
 			type = 'EQUAL',
 		}
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
