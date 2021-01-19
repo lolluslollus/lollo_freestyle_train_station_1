@@ -16,7 +16,7 @@ function data()
                         {
                             -- materials = { "station/road/streetstation/streetstation_1.mtl", },
                             materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
-                            mesh = "station/road/streetstation/lod_0_com_large_mid_1.msh",
+                            mesh = "lollo_freestyle_train_station/asset/tabellone_standing.msh",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                         },
                     },
