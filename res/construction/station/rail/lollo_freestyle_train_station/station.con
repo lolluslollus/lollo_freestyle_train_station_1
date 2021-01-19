@@ -1386,6 +1386,7 @@ function data()
 			-- LOLLO TODO when hovering on a station with the track upgrade tool,
 			-- some terminals are recognised and others are not (ie args.slotId = -1)
 			-- This makes upgrading tracks impossible.
+			-- Workaround: let's upgrade them all!
 			-- print('args.catenaryToggle =') debugPrint(args.catenaryToggle)
 			-- print('args.catenary =') debugPrint(args.catenary)
 			-- print('args.trackTypeToggle =') debugPrint(args.trackTypeToggle)

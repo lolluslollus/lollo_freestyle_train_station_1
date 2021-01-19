@@ -42,7 +42,7 @@ local _eventNames = {
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
-    addSubway = function(stationConstructionId, subwayConstructionId)
+    addSubway = function(stationConstructionId, subwayConstructionId, successEventName)
         print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
         if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then return end
         if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
@@ -119,13 +119,23 @@ local _actions = {
         -- context.cleanupStreetGraph = true
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
-        context.player = api.engine.util.getPlayer()
+        -- context.player = api.engine.util.getPlayer()
 
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
                 print('addSubway callback, success =', success)
                 -- debugPrint(result)
+                if success and successEventName ~= nil then
+                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                        string.sub(debug.getinfo(1, 'S').source, 1),
+                        _eventId,
+                        successEventName,
+                        {
+                            stationConstructionId = result.resultEntities[1]
+                        }
+                    ))
+                end
             end
         )
     end,
@@ -1470,7 +1480,7 @@ function data()
                     print('ERROR: args.join2StationId or args.subwayId is invalid')
                     return
                 end
-                _actions.addSubway(args.join2StationId, args.subwayId)
+                _actions.addSubway(args.join2StationId, args.subwayId, _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED)
             end
         end,
         _myErrorHandler

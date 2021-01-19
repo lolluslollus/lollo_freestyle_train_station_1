@@ -186,7 +186,8 @@ local _getSlopedAreaInnerDegree = function(params, nTerminal, nTrackEdge)
         {x2, y2, 0},
         {xM, yM, 0}
     )
-    print('segmentHunch =', segmentHunch)
+    -- print('segmentHunch =', segmentHunch)
+
     -- local segmentLength = transfUtils.getPositionsDistance(
     --     centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
     --     centrePlatforms[nTrackEdge + 1].posTanX2[1][1]
@@ -211,7 +212,7 @@ local _getSlopedAreaInnerDegree = function(params, nTerminal, nTrackEdge)
     local innerSign = transfUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
 
     if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
-    print('terminal', nTerminal, 'innerSign =', innerSign)
+    -- print('terminal', nTerminal, 'innerSign =', innerSign)
     return innerSign
 end
 
@@ -273,7 +274,7 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
             xScaleFactor = 1.25
         end
     end
-    print('xScaleFactor =', xScaleFactor)
+    -- print('xScaleFactor =', xScaleFactor)
     -- print('angleYFactor =', angleYFactor)
 
     return waitingAreaScaleFactor, xScaleFactor
