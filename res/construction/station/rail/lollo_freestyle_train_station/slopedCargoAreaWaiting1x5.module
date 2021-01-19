@@ -37,7 +37,7 @@ function data()
 			moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5,
 				_constants.slopedCargoArea1x5ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
 
-			moduleHelpers.slopedAreas.doTerrain(result, params, nTerminal, nTrackEdge, 5)
+			moduleHelpers.slopedAreas.doTerrain(result, params, nTerminal, nTrackEdge, 5, 'shared/asphalt_02.gtex.lua')
 		end,
 
 		getModelsFn = function(params)
