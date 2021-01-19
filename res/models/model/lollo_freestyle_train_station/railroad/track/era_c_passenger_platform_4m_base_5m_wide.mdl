@@ -17,7 +17,6 @@ function data()
                             },
                             mesh = "lollo_freestyle_train_station/railroad/track/era_c_platform_4m_long_5m_wide_1_2m_high_z.msh",
                             transf = { _mdlHelpers.getPlatformStretchFactor(4, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
-                            -- was 1.075 , is 1.05 -- LOLLO TODO increase it
                         },
                         -- {
                         --     materials = {'lollo_freestyle_train_station/icon/red.mtl'},

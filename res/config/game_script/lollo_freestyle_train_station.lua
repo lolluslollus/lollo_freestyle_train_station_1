@@ -294,6 +294,11 @@ local _actions = {
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
 
+        local _mainTransf = oldCon == nil
+            and arrayUtils.cloneDeepOmittingFields(conTransf)
+            or arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true)
+        local _inverseMainTransf = transfUtils.getInverseTransf(_mainTransf)
+
         local params_newModuleKeys = {
             slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId),
             slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.trackElectrificationSlotId),
@@ -333,20 +338,50 @@ local _actions = {
             -- myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
-            centrePlatforms = args.centrePlatforms,
-            centrePlatformsFine = args.centrePlatformsFine,
+            -- centrePlatforms = args.centrePlatforms,
+            centrePlatformsRelative = arrayUtils.map(
+                args.centrePlatforms,
+                function(record)
+                    record.posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf)
+                    return record
+                end
+            ),            
+            -- centrePlatformsFine = args.centrePlatformsFine,
+            centrePlatformsFineRelative = arrayUtils.map(
+                args.centrePlatformsFine,
+                function(record)
+                    record.posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf)
+                    return record
+                end
+            ),
             trackEdgeListMidIndex = args.trackEdgeListMidIndex,
             leftPlatforms = args.leftPlatforms,
             rightPlatforms = args.rightPlatforms,
             crossConnectors = args.crossConnectors,
             cargoWaitingAreas = args.cargoWaitingAreas,
             isTrackOnPlatformLeft = args.isTrackOnPlatformLeft,
-            slopedAreasFine = args.slopedAreasFine,
+            -- slopedAreasFine = args.slopedAreasFine,
+            slopedAreasFineRelative = {},
         }
+
+        for width, slopedAreasFine4Width in pairs(args.slopedAreasFine) do
+            params_newTerminal.slopedAreasFineRelative[width] = arrayUtils.map(
+                slopedAreasFine4Width,
+                function(record)
+                    record.posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf)
+                    return record
+                end
+            )
+            -- for _, saf in pairs(slopedAreasFine4Width) do
+            --     params_newTerminal.slopedAreasFineRelative[width][#params_newTerminal.slopedAreasFineRelative[width]+1] = saf
+            --     params_newTerminal.slopedAreasFineRelative[width][#params_newTerminal.slopedAreasFineRelative[width]].posTanX2 = transfUtils.getPosTanX2Transformed(saf.posTanX2, _inverseMainTransf)
+            -- end
+        end
+        -- print('params_newTerminal =') debugPrint(params_newTerminal)
 
         if oldCon == nil then
             newCon.params = {
-                mainTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
+                mainTransf = _mainTransf,
                 modules = {
                     [params_newModuleKeys[1]] = params_newModuleValues[1],
                     [params_newModuleKeys[2]] = params_newModuleValues[2],
@@ -366,7 +401,7 @@ local _actions = {
             newCon.name = _('NewStationName') -- LOLLO TODO see if the name can be assigned automatically, as it should
         else
             local newParams = {
-                mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
+                mainTransf = _mainTransf,
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
                 seed = oldCon.params.seed + 1,
                 subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
@@ -1324,7 +1359,6 @@ function data()
                 print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
                 print('calculating slopedAreasFine, platformWidth =', platformWidth)
-                -- LOLLO TODO check what happens with 2.5 m passenger platforms
                 eventArgs.slopedAreasFine = {}
                 if eventArgs.isTrackOnPlatformLeft then
                     -- I add 2 coz it is a little less than half the width of the 5m sloped area,
@@ -1340,7 +1374,6 @@ function data()
                 eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                 if args.isCargo then
                     -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.
-                    -- If you do that, you won't need to attach the cross connectors. I could also do it.
                     -- For now, I forbid using platforms of different widths in a station, if any of them is > 5.
                     -- This way, we don't disturb the passenger station, which hasn't got this problem coz it always has the same lanes.
                     if platformWidth <= 5 then

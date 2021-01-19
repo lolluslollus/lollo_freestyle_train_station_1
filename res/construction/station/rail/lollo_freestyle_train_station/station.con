@@ -205,8 +205,8 @@ function data()
 				if params.modules[slotId] ~= nil then
 					_setOccupiedInfo4SlopedAreas(t, i-1, slotTypeId, yShift)
 					_setOccupiedInfo4SlopedAreas(t, i, slotTypeId, yShift)
-					if i+1 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+1, slotTypeId, yShift) end
-					if i+2 <= #params.terminals[t].centrePlatforms then _setOccupiedInfo4SlopedAreas(t, i+2, slotTypeId, yShift) end
+					if i+1 <= #params.terminals[t].centrePlatformsRelative then _setOccupiedInfo4SlopedAreas(t, i+1, slotTypeId, yShift) end
+					if i+2 <= #params.terminals[t].centrePlatformsRelative then _setOccupiedInfo4SlopedAreas(t, i+2, slotTypeId, yShift) end
 				end
 			end
 
@@ -259,15 +259,8 @@ function data()
 			}
 
 			result.laneZs = {}
-
-			-- LOLLO NOTE the coordinates in terminals are absolute
-			-- local mainTransf = params.mainTransf
 			result.inverseMainTransf = transfUtils.getInverseTransf(params.mainTransf)
 			-- print('inverseMainTransf =') debugPrint(result.inverseMainTransf)
-
-			result.centrePlatformsRelative = {}
-			result.centrePlatformsFineRelative = {}
-			result.slopedAreasFineRelative = {}
 
 			for t = 1, #params.terminals do
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
@@ -281,29 +274,6 @@ function data()
 				-- everything except the platforms and the terminal deco will vary along with it.
 				result.laneZs[t] = _laneZ
 
-				if not(result.centrePlatformsRelative[t]) then result.centrePlatformsRelative[t] = {} end
-				for i = 1, #params.terminals[t].centrePlatforms, 1 do
-					local cpl = params.terminals[t].centrePlatforms[i]
-					result.centrePlatformsRelative[t][#result.centrePlatformsRelative[t]+1] = cpl
-					result.centrePlatformsRelative[t][#result.centrePlatformsRelative[t]].posTanX2 = transfUtils.getPosTanX2Transformed(cpl.posTanX2, result.inverseMainTransf)
-				end
-
-				if not(result.centrePlatformsFineRelative[t]) then result.centrePlatformsFineRelative[t] = {} end
-				for ii = 1, #params.terminals[t].centrePlatformsFine, 1 do
-					local cpf = params.terminals[t].centrePlatformsFine[ii]
-					result.centrePlatformsFineRelative[t][#result.centrePlatformsFineRelative[t]+1] = cpf
-					result.centrePlatformsFineRelative[t][#result.centrePlatformsFineRelative[t]].posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
-				end
-
-				if not(result.slopedAreasFineRelative[t]) then result.slopedAreasFineRelative[t] = {} end
-				for width, slopedAreasFine4Width in pairs(params.terminals[t].slopedAreasFine) do
-					result.slopedAreasFineRelative[t][width] = {}
-					for _, saf in pairs(slopedAreasFine4Width) do
-						result.slopedAreasFineRelative[t][width][#result.slopedAreasFineRelative[t][width]+1] = saf
-						result.slopedAreasFineRelative[t][width][#result.slopedAreasFineRelative[t][width]].posTanX2 = transfUtils.getPosTanX2Transformed(saf.posTanX2, result.inverseMainTransf)
-					end
-				end
-
 				local isCargoTerminal = params.terminals[t].isCargo
 				if isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
 
@@ -313,7 +283,7 @@ function data()
 				-- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
 				-- The former is a bit glitchy, the latter is prettier.
 				local function _addPlatform()
-					for _, cpf in pairs(result.centrePlatformsFineRelative[t]) do
+					for _, cpf in pairs(params.terminals[t].centrePlatformsFineRelative) do
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
 						local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.era)
 						result.models[#result.models+1] = {
@@ -388,8 +358,8 @@ function data()
 				local function _addPlatformRoofs()
 					if isCargoTerminal then return end
 
-					for i = 2, #result.centrePlatformsRelative[t], 3 do
-						local cpl = result.centrePlatformsRelative[t][i]
+					for i = 2, #params.terminals[t].centrePlatformsRelative, 3 do
+						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						if cpl.type ~= 2 then -- no platform roofs in tunnels
 							local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
 							table.insert(result.slots, {
@@ -403,10 +373,10 @@ function data()
 					end
 				end
 				_addPlatformRoofs()
-				-- LOLLO TODO see if you can run some transformations in advance here, at least those for centraPlatformFine
+
 				local function _addOutsideExtensions()
-					for i = 2, #result.centrePlatformsRelative[t], 3 do
-						local cpl = result.centrePlatformsRelative[t][i]
+					for i = 2, #params.terminals[t].centrePlatformsRelative, 3 do
+						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						if cpl.type ~= 2 then -- only on ground and bridges
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 5)
@@ -463,8 +433,8 @@ function data()
 				_addOutsideExtensions()
 
 				local function _addStreetAccess()
-					for i = 2, #result.centrePlatformsRelative[t] do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
-						local cpl = result.centrePlatformsRelative[t][i]
+					for i = 2, #params.terminals[t].centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
+						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						if cpl.type ~= 2 then -- no tunnels
 							local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 							local isPreviousUnderpass = i > 1
@@ -752,7 +722,7 @@ function data()
 				local function _addLanesAcross()
 					if isCargoTerminal then return end
 
-					for i = 2, #result.centrePlatformsRelative[t] do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
+					for i = 2, #params.terminals[t].centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 						local isPreviousUnderpass = i > 1
 							and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
@@ -789,8 +759,8 @@ function data()
 				local function _addLanesAlong()
 					if isCargoTerminal then return end
 
-					for i = 2, #result.centrePlatformsRelative[t] - 1 do -- skip the outermost edges to avoid collisions, the game is very picky here.
-						local cpl = result.centrePlatformsRelative[t][i]
+					for i = 2, #params.terminals[t].centrePlatformsRelative - 1 do -- skip the outermost edges to avoid collisions, the game is very picky here.
+						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						local isOnBridge = cpl.type == 1
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
@@ -928,8 +898,8 @@ function data()
 				local _addUnderpassSlots = function()
 					-- add underpass slots, skipping the ends.
 					if not(isCargoTerminal) then
-						for i = 2, #result.centrePlatformsRelative[t] - 1, 4 do
-							local cpl = result.centrePlatformsRelative[t][i]
+						for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 4 do
+							local cpl = params.terminals[t].centrePlatformsRelative[i]
 							local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
 							table.insert(result.slots, {
 								-- height = 1,
@@ -961,8 +931,8 @@ function data()
 				local _addStairs2SubwaySlots = function()
 					if isCargoTerminal then return end
 
-					for i = 2, #result.centrePlatformsRelative[t] - 1, 4 do
-						local cpl = result.centrePlatformsRelative[t][i]
+					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 4 do
+						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						if cpl.type == 2 then -- only in tunnels
 							table.insert(result.slots, {
 								-- height = 1,

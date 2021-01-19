@@ -533,7 +533,6 @@ local helpers = {
     end,
 
     getShiftedEdgePositions = function(edgeLists, sideShift, index1, indexN)
-        -- LOLLO TODO check this function, it's new
         local i1 = index1
         local iN = indexN
         if type(i1) ~= 'number' or i1 < 1 then i1 = 1 end

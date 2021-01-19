@@ -55,8 +55,8 @@ return {
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		-- print('isTrackOnPlatformLeft =', isTrackOnPlatformLeft)
 		local xShift = 2
-		for i = 3, #result.centrePlatformsRelative[nTerminal] - 1, 3 do
-			local cpl = result.centrePlatformsRelative[nTerminal][i]
+		for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
@@ -95,8 +95,8 @@ return {
 			-- 	}
 			-- end
 		end
-		for i = 4, #result.centrePlatformsRelative[nTerminal] - 1, 3 do
-			local cpl = result.centrePlatformsRelative[nTerminal][i]
+		for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
@@ -117,8 +117,8 @@ return {
 				tag = tag
 			}
 		end
-		for i = 2, #result.centrePlatformsRelative[nTerminal] - 1, 3 do
-			local cpl = result.centrePlatformsRelative[nTerminal][i]
+		for i = 2, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
