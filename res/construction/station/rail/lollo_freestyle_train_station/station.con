@@ -365,7 +365,8 @@ function data()
 							table.insert(result.slots, {
 								height = 3,
 								id = myId,
-								spacing = {2, 2, 1, 1},
+								-- spacing = {2, 2, 1, 1}, -- this collides with the underpass
+								spacing = {-3, 4, 1, 1},
 								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 								type = _constants.platformRoofModuleType,
 							})
@@ -905,7 +906,7 @@ function data()
 								-- height = 1,
 								id = myId,
 								-- shape 0 1 2 3, only graphical
-								spacing = {2.5, 2.5, 1.5, 1.5},
+								spacing = {2, 2, 1, 1},
 								transf = transfUtilsUG.mul(
 									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
 									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + 1, 1 }
