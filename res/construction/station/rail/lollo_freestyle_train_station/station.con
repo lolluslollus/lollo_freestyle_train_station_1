@@ -849,11 +849,15 @@ function data()
 						else
 							for i = 1, #params.terminals[t].rightPlatforms do
 								local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].rightPlatforms[i].posTanX2, result.inverseMainTransf)
-								local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+								-- invert the lanes or the passengers will face away from the track when waiting
+								-- local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+								local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[2][1], posTanX2[1][1])
 
 								result.models[#result.models+1] = {
 									id = _constants.passengerWaitingAreaModelId,
 									tag = slotHelpers.mangleModelTag(t, false),
+									-- if you touch this, you screw things
+									-- transf = transfUtilsUG.mul(rightLaneTransf, {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
 									transf = transfUtilsUG.mul(rightLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
 								}
 							end
@@ -928,8 +932,8 @@ function data()
 				end
 				_addUnderpassSlots()
 
-				-- LOLLO TODO MAYBE if a terminal is all underground, build a default module of these to make life easier.
-				-- But where? For now, we show a big red pin.
+				-- LOLLO TODO these are too low, you see the passengers float into mid air. Try 6 or 7 metres instead of 4.
+				-- LOLLO TODO also make a higher mesh.
 				local _addStairs2SubwaySlots = function()
 					if isCargoTerminal then return end
 
