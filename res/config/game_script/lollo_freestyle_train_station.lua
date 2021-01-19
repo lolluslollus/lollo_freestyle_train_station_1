@@ -1306,8 +1306,8 @@ function data()
                 print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
 
                 local platformWidth = eventArgs.centrePlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].width
-                eventArgs.leftPlatforms = transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
-                eventArgs.rightPlatforms = transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
+                eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
+                eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
                 print('alalalalal')
                 local centreTracks = stationHelpers.getCentralEdgePositions(
                     eventArgs.trackEdgeList,
@@ -1326,15 +1326,11 @@ function data()
                 print('calculating slopedAreasFine, platformWidth =', platformWidth)
                 -- LOLLO TODO check what happens with 2.5 m passenger platforms
                 if eventArgs.isTrackOnPlatformLeft then
-                    eventArgs.slopedAreasFine = stationHelpers.getCentralEdgePositions(
-                        transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.5 + 2),
-                        1
-                    )
+                    -- I add 2 coz it is a little less than half the width of the 5m sloped area,
+                    -- which I am going to add for all sloped areas
+                    eventArgs.slopedAreasFine = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 2)
                 else
-                    eventArgs.slopedAreasFine = stationHelpers.getCentralEdgePositions(
-                        transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.5 -2),
-                        1
-                    )
+                    eventArgs.slopedAreasFine = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 2)
                 end
 
                 eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
@@ -1350,23 +1346,23 @@ function data()
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                     elseif platformWidth <= 10 then
                         eventArgs.cargoWaitingAreas = {
-                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
-                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
                         }
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[2], eventArgs.isTrackOnPlatformLeft)
                     elseif platformWidth <= 15 then
                         eventArgs.cargoWaitingAreas = {
-                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
                             eventArgs.centrePlatforms,
-                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, 5)
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 5)
                         }
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[3], eventArgs.isTrackOnPlatformLeft)
                     else
                         eventArgs.cargoWaitingAreas = {
-                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - 7.5),
-                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
-                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5),
-                            transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, 7.5)
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 7.5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5),
+                            stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 7.5)
                         }
                         -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[4], eventArgs.isTrackOnPlatformLeft)
                     end

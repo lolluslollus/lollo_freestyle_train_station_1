@@ -291,12 +291,80 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     return angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor
 end
 
-helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId)
-    local waitingAreaScaleFactor = areaWidth * 0.8
-    local waitingAreaShiftFactor = areaWidth * 0.4
+local _doTerrain4SlopedArea = function(result, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
+    local terrainCoordinates = {}
+
+    local i1 = nTrackEdge - 1
+    local iN = nTrackEdge + 1
+    local safs = result.slopedAreasFineRelative[nTerminal]
+    for ii = 1, #safs do
+        if safs[ii].leadingIndex > iN then break end
+        if safs[ii].leadingIndex >= i1 then
+            local saf = safs[ii]
+            -- local cpf = result.centrePlatformsRelative[nTerminal][saf.leadingIndex]
+            local cpf = result.centrePlatformsFineRelative[nTerminal][ii]
+            local pos1Inner = cpf.posTanX2[1][1]
+            local pos2Inner = cpf.posTanX2[2][1]
+            local pos2Outer = saf.posTanX2[2][1]
+            local pos1Outer = saf.posTanX2[1][1]
+            terrainCoordinates[#terrainCoordinates+1] = {
+                pos1Inner,
+                pos2Inner,
+                transfUtils.getExtrapolatedPosX2Continuation(pos2Inner, pos2Outer, areaWidth - 2.5),
+                transfUtils.getExtrapolatedPosX2Continuation(pos1Inner, pos1Outer, areaWidth - 2.5),
+            }
+        end
+    end
+    -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
+
+    local faces = {}
+    for tc = 1, #terrainCoordinates do
+        local face = { }
+        for i = 1, 4 do
+            face[i] = {
+                terrainCoordinates[tc][i][1],
+                terrainCoordinates[tc][i][2],
+                terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] + _constants.platformSideBitsZ,
+                1
+            }
+        end
+        faces[#faces+1] = face
+        if groundFacesFillKey ~= nil then
+            result.groundFaces[#result.groundFaces + 1] = {
+                face = face, -- Z is ignored here
+                loop = true,
+                modes = {
+                    {
+                        type = 'FILL',
+                        key = groundFacesFillKey,
+                    },
+                    -- {
+                    -- 	type = 'STROKE_OUTER',
+                    -- 	key = 'shared/asphalt_04.gtex.lua'
+                    -- }
+                }
+            }
+        end
+    end
+    if #faces > 1 then
+        result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
+            faces = faces, -- Z is accounted here
+            optional = true,
+            slopeHigh = _constants.slopeHigh,
+            slopeLow = _constants.slopeLow,
+            type = 'EQUAL', -- GREATER, LESS
+        }
+    end
+end
+
+helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey)
+    local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+    local waitingAreaShift = isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
+    local waitingAreaIndex = 0
+
     local ii1 = nTrackEdge - 1
     local iiN = nTrackEdge + 1
-    local waitingAreaCounter = 0
+
     local safs = result.slopedAreasFineRelative[nTerminal]
     for ii = 1, #safs do
         if safs[ii].leadingIndex > iiN then break end
@@ -317,20 +385,22 @@ helpers.slopedAreas.addModels = function(result, tag, params, nTerminal, nTrackE
             and safs[ii - 2].leadingIndex >= ii1
             and safs[ii + 2]
             and safs[ii + 2].leadingIndex <= iiN then
-                if math.fmod(waitingAreaCounter, 5) == 0 then
+                if math.fmod(waitingAreaIndex, 5) == 0 then
                     result.models[#result.models+1] = {
                         id = waitingAreaModelId,
                         transf = transfUtilsUG.mul(
                             myTransf,
-                            { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, waitingAreaShiftFactor, result.laneZs[nTerminal], 1 }
+                            { 0, areaWidth * 0.8, 0, 0,  -areaWidth * 0.8, 0, 0, 0,  0, 0, 1, 0,  0, waitingAreaShift, result.laneZs[nTerminal], 1 }
                         ),
                         tag = slotUtils.mangleModelTag(nTerminal, true),
                     }
                 end
-                waitingAreaCounter = waitingAreaCounter + 1
+                waitingAreaIndex = waitingAreaIndex + 1
             end
         end
     end
+
+    _doTerrain4SlopedArea(result, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
 end
 
 local _getSlopedAreaTerrainCoordinates = function(result, params, nTerminal, nTrackEdge, areaWidth)
