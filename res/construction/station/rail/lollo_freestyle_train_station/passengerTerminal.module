@@ -137,6 +137,28 @@ return {
 				tag = tag
 			}
 		end
+		for i = 2, #params.terminals[nTerminal].centrePlatformsRelative - 1, 1 do
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
+			local platformWidth = cpl.width
+			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.0 or -platformWidth * 0.2 - 0.0
+			-- local transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
+			local transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2)
+			result.models[#result.models + 1] = {
+				-- id = 'station/rail/asset/era_c_single_chair.mdl',
+				id = 'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
+				slotId = slotId,
+				transf = isTrackOnPlatformLeft
+					and transfUtilsUG.mul(transf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -0.5 + xShift, yShift, _constants.stairsAndRampHeight + 0.0, 1 })
+					or transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -0.5 + xShift, yShift, _constants.stairsAndRampHeight + 0.0, 1 }),
+				tag = tag
+			}
+			result.models[#result.models + 1] = {
+				id = 'station/rail/asset/era_c_trashcan.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0.9 + xShift, yShift, 1.1, 1 }),
+				tag = tag
+			}
+		end
 
 		print('passengerTerminal.module.updateFn ending')
 	end,
