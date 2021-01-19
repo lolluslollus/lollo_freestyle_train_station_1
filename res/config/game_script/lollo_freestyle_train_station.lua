@@ -1324,6 +1324,7 @@ function data()
                 print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
                 print('calculating slopedAreasFine, platformWidth =', platformWidth)
+                -- LOLLO TODO check what happens with 2.5 m passenger platforms
                 if eventArgs.isTrackOnPlatformLeft then
                     eventArgs.slopedAreasFine = stationHelpers.getCentralEdgePositions(
                         transfUtils.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.5 + 2),
