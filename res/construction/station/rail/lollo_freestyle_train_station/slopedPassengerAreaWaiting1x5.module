@@ -36,6 +36,8 @@ function data()
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 5,
 				_constants.slopedPassengerArea1x5ModelFileName, _constants.passengerWaitingAreaCentredModelFileName,
 				_constants.groundFacesFillKey)
+
+			moduleHelpers.addPassengerTerminalDeco(result, slotTransf, tag, slotId, 0.9, 0.0)
 		end,
 
 		getModelsFn = function(params)
