@@ -214,15 +214,47 @@ helpers.slopedAreas = {
     },
     getInnerDegree = function(params, nTerminal, nTrackEdge)
         local centrePlatforms = params.terminals[nTerminal].centrePlatforms
-        if not(centrePlatforms[nTrackEdge - 1])
-        or not(centrePlatforms[nTrackEdge])
-        or not(centrePlatforms[nTrackEdge + 1])
-        then return helpers.slopedAreas.innerDegrees.neutral end
+        -- if not(centrePlatforms[nTrackEdge - 1])
+        -- or not(centrePlatforms[nTrackEdge])
+        -- or not(centrePlatforms[nTrackEdge + 1])
+        -- then return helpers.slopedAreas.innerDegrees.neutral end
+
+        local x1 = 0
+        local y1 = 0
+        local xM = 0
+        local yM = 0
+        local x2 = 0
+        local y2 = 0
+        if centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
+            x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
+            y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
+            x2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][1]
+            y2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][2]
+            xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+            yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+        elseif centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil then
+            x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
+            y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
+            x2 = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
+            y2 = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
+            xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+            yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+        elseif centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
+            x1 = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+            y1 = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+            x2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][1]
+            y2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][2]
+            xM = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
+            yM = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
+        else
+            print('WARNING: cannot get inner degree')
+            return helpers.slopedAreas.innerDegrees.neutral
+        end
 
         local segmentHunch = transfUtils.getDistanceBetweenPointAndStraight(
-            centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
-            centrePlatforms[nTrackEdge + 1].posTanX2[1][1],
-            centrePlatforms[nTrackEdge].posTanX2[1][1]
+            {x1, y1, 0},
+            {x2, y2, 0},
+            {xM, yM, 0}
         )
         print('segmentHunch =', segmentHunch)
         -- local segmentLength = transfUtils.getPositionsDistance(
@@ -233,12 +265,6 @@ helpers.slopedAreas = {
         -- if segmentHunch / segmentLength < helpers.slopedAreas._hunchLengthRatioToClaimBend then return helpers.slopedAreas.innerDegrees.neutral end
         if segmentHunch < helpers.slopedAreas._hunchToClaimBend then return helpers.slopedAreas.innerDegrees.neutral end
 
-        local x1 = params.terminals[nTerminal].centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
-        local y1 = params.terminals[nTerminal].centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
-        local xM = params.terminals[nTerminal].centrePlatforms[nTrackEdge].posTanX2[1][1][1]
-        local yM = params.terminals[nTerminal].centrePlatforms[nTrackEdge].posTanX2[1][1][2]
-        local x2 = params.terminals[nTerminal].centrePlatforms[nTrackEdge + 1].posTanX2[1][1][1]
-        local y2 = params.terminals[nTerminal].centrePlatforms[nTrackEdge + 1].posTanX2[1][1][2]
         -- a + bx = y
         -- => a + b * x1 = y1
         -- => a + b * x2 = y2
@@ -292,7 +318,7 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     -- Tried that, it is slow and it does not bring real benefits.
     -- Using multiple thin parallel extensions is slow and brings nothing at all.
     -- At the end of the day, the easiest is: leave the narrower slopes since they don't cause much grief, and bridges need them,
-    -- and use the terrain for the wider ones. LOLLO TODO try this.
+    -- and use the terrain for the wider ones.
     local angleYFactor = 1
     local xScaleFactor = 1
     local waitingAreaPeriod = 5
@@ -300,13 +326,13 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     if innerDegree < 0 then
         waitingAreaPeriod = 4
         if areaWidth <= 5 then
-            xScaleFactor = 1.15
+            xScaleFactor = 1.20
             angleYFactor = 1.0625
         elseif areaWidth <= 10 then
-            xScaleFactor = 1.25
+            xScaleFactor = 1.30
             angleYFactor = 1.10
         elseif areaWidth <= 20 then
-            xScaleFactor = 1.35
+            xScaleFactor = 1.40
             angleYFactor = 1.20
         end
     -- inside a bend
