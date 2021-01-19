@@ -66,10 +66,10 @@ return {
 		}
 
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-1, -6.2, -5.0, 1},
-			{-1, 6.2, -5.0, 1},
-			{6.0, 6.2, -5.0, 1},
-			{6.0, -6.2, -5.0, 1},
+			{-1, -6.2, -5.0 + _constants.platformSideBitsZ, 1},
+			{-1, 6.2, -5.0 + _constants.platformSideBitsZ, 1},
+			{6.0, 6.2, -5.0 + _constants.platformSideBitsZ, 1},
+			{6.0, -6.2, -5.0 + _constants.platformSideBitsZ, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		table.insert(

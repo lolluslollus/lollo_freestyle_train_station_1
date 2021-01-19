@@ -493,7 +493,7 @@ helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, 
     for _, pos1234 in pairs(terrainCoordinates) do
         local face = {}
         for i = 1, 4 do
-            face[i] = { pos1234[i][1], pos1234[i][2], pos1234[i][3], 0 }
+            face[i] = { pos1234[i][1], pos1234[i][2], pos1234[i][3], 1 }
         end
         faces[#faces+1] = face
         result.groundFaces[#result.groundFaces + 1] = {
@@ -716,10 +716,10 @@ helpers.lifts = {
 
     doTerrain4SideLifts = function(buildingHeight, slotTransf, result)
         local groundFace = { -- the ground faces ignore z, the alignment lists don't
-            {-1, -6.2, -buildingHeight, 1},
-            {-1, 6.2, -buildingHeight, 1},
-            {6.0, 6.2, -buildingHeight, 1},
-            {6.0, -6.2, -buildingHeight, 1},
+            {-1, -6.2, -buildingHeight + _constants.platformSideBitsZ, 1},
+            {-1, 6.2, -buildingHeight + _constants.platformSideBitsZ, 1},
+            {6.0, 6.2, -buildingHeight + _constants.platformSideBitsZ, 1},
+            {6.0, -6.2, -buildingHeight + _constants.platformSideBitsZ, 1},
         }
         modulesutil.TransformFaces(slotTransf, groundFace)
         table.insert(
@@ -793,10 +793,10 @@ helpers.doTerrain4Subways = function(result, slotTransf)
         {4.5, -0.95, 0, 1},
     }
     local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-        {-0.2, -1.15, 0, 1},
-        {-0.2, 1.15, 0, 1},
-        {4.7, 1.15, 0, 1},
-        {4.7, -1.15, 0, 1},
+        {-0.2, -1.15, _constants.platformSideBitsZ, 1},
+        {-0.2, 1.15, _constants.platformSideBitsZ, 1},
+        {4.7, 1.15, _constants.platformSideBitsZ, 1},
+        {4.7, -1.15, _constants.platformSideBitsZ, 1},
     }
     if type(slotTransf) == 'table' then
         modulesutil.TransformFaces(slotTransf, groundFace)
