@@ -43,6 +43,12 @@ return {
 			transf = zAdjustedTransf,
 			tag = tag
 		}
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/asset/cargo_portal_4x4.mdl',
+			slotId = slotId,
+			transf = zAdjustedTransf,
+			tag = tag
+		}
 
 		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
