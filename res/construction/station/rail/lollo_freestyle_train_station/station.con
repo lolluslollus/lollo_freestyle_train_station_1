@@ -932,8 +932,7 @@ function data()
 				end
 				_addUnderpassSlots()
 
-				-- LOLLO TODO these are too low, you see the passengers float into mid air. Try 6 or 7 metres instead of 4.
-				-- LOLLO TODO also make a higher mesh.
+				-- LOLLO TODO MAYBE place one automatically when... When? When adding a subway?
 				local _addStairs2SubwaySlots = function()
 					if isCargoTerminal then return end
 
