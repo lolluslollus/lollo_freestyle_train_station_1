@@ -85,7 +85,7 @@ helpers.getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
     return newTransf
 end
 
-helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
+helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2, angleYFactor)
     -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
     local pos1 = posTanX2[1][1]
     local pos2 = posTanX2[2][1]
@@ -115,7 +115,7 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFac
                 pos2[2] - pos1[2],
                 0
             }
-        ) -- * (angleYFactor or 1)
+        ) * (angleYFactor or 1)
     )
 
     local transfY = transfUtilsUG.rotY(-angleY)
@@ -125,8 +125,6 @@ helpers.getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFac
 end
 
 helpers.slopedAreas = {
-    -- LOLLO TODO recheck all the sloped stuff, it's new. There will always be some microsteps,
-    -- a skewing transf could be the best option here.
     _hunchLengthRatioToClaimBend = 0.01, -- must be positive
     _hunchToClaimBend = 0.2, -- must be positive
     innerDegrees = {
@@ -139,11 +137,10 @@ helpers.slopedAreas = {
         if not(params.terminals[t].centrePlatformsRelative[i]) then return false end
 
         local platformWidth = params.terminals[t].centrePlatformsRelative[i].width
-
         local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.85
-
         local yShiftOutside = isTrackOnPlatformLeft and -baseYShift or baseYShift
-        local yShiftOutside4StreetAccess = slopedAreaWidth * 2 - 1.8
+
+        local yShiftOutside4StreetAccess = slopedAreaWidth * 2 - 1.2 -- - 1.8
 
         return yShiftOutside, yShiftOutside4StreetAccess
     end,
@@ -235,7 +232,8 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
 
     -- These tricks work to a certain extent, but since I cannot skew or twist my models,
     -- I could work out a new cleaner series of segments to follow, instead of extending the platform sideways.
-    -- It is much cleaner but slow, so we run the calculations in advance in the big script.
+    -- It is cleaner but slow, so we run the calculations in advance in the big script.
+    -- And we still need to tweak it a little.
 
     -- Using multiple thin parallel extensions is slow and brings nothing at all.
 
@@ -333,7 +331,7 @@ local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, ar
                     },
                     -- {
                     -- 	type = 'STROKE_OUTER',
-                    -- 	key = 'shared/asphalt_04.gtex.lua'
+                    -- 	key = _constants.groundFacesStrokeOuterKey
                     -- }
                 }
             }
@@ -351,6 +349,9 @@ local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, ar
 end
 
 helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey)
+    local innerDegree = _getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
+--     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
+    local angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
     -- local waitingAreaShift = params.terminals[nTerminal].isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
     local waitingAreaIndex = 0
 
@@ -363,12 +364,12 @@ helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge
         if safs[ii].leadingIndex > iiN then break end
         if safs[ii].leadingIndex >= ii1 then
             local saf = safs[ii]
-            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(saf.posTanX2)
+            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(saf.posTanX2) --, angleYFactor)
             result.models[#result.models+1] = {
                 id = modelId,
                 transf = transfUtilsUG.mul(
                     myTransf,
-                    { 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
+                    { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformSideBitsZ, 1 }
                 ),
                 tag = tag
             }
@@ -383,7 +384,6 @@ helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge
                         id = waitingAreaModelId,
                         transf = transfUtilsUG.mul(
                             myTransf,
-                            -- { 0, areaWidth * 0.8, 0, 0,  -areaWidth * 0.8, 0, 0, 0,  0, 0, 1, 0,  0, waitingAreaShift, result.laneZs[nTerminal], 1 }
                             { 0, areaWidth * 0.8, 0, 0,  -areaWidth * 0.8, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
                         ),
                         tag = slotUtils.mangleModelTag(nTerminal, true),
@@ -396,98 +396,6 @@ helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge
 
     _doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
 end
-
--- local _getSlopedAreaTerrainCoordinates = function(result, params, nTerminal, nTrackEdge, areaWidth)
---     local waitingAreaScaleFactor = areaWidth * 0.8
-
---     local cpls = result.centrePlatformsRelative[nTerminal]
---     local i1 = math.max(nTrackEdge - 1, 1)
---     local iN = math.min(nTrackEdge + 1, #cpls)
-
---     local terrainCoordinates = {}
---     for i = i1, iN do
---         local cpl = cpls[i]
---         local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
---         local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, i, areaWidth)
---         local traaa = transfUtilsUG.mul(
---             myTransf,
---             { 1.2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
---         )
---         terrainCoordinates[#terrainCoordinates+1] = {
---             transfUtils.getVec123Transformed({-4.75, -areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
---             transfUtils.getVec123Transformed({-4.75, areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
---             transfUtils.getVec123Transformed({4.75, areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
---             transfUtils.getVec123Transformed({4.75, -areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
---         }
---     end
-
---     return terrainCoordinates
--- end
-
--- local _getSlopedAreaTerrainCoordinatesTWEAKED = function(result, params, nTerminal, nTrackEdge, areaWidth)
---     local innerDegree = _getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
---     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-
---     local angleYFactor, waitingAreaPeriod, waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
-
---     local cpls = result.centrePlatformsRelative[nTerminal]
---     local i1 = math.max(nTrackEdge - 1, 1)
---     local iN = math.min(nTrackEdge + 1, #cpls)
-
---     local terrainCoordinates = {}
---     for i = i1, iN do
---         local cpl = cpls[i]
---         local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2, angleYFactor)
---         local yShiftOutside = helpers.slopedAreas.getYShift(params, nTerminal, i, areaWidth)
---         local traaa = transfUtilsUG.mul(
---             myTransf,
---             { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
---         )
---         terrainCoordinates[#terrainCoordinates+1] = {
---             transfUtils.getVec123Transformed({-4.75, -areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
---             transfUtils.getVec123Transformed({-4.75, areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
---             transfUtils.getVec123Transformed({4.75, areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
---             transfUtils.getVec123Transformed({4.75, -areaWidth * 0.5, result.laneZs[nTerminal]}, traaa),
---         }
---     end
-
---     return terrainCoordinates
--- end
-
--- helpers.slopedAreas.doTerrain = function(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
---     local terrainCoordinates = _getSlopedAreaTerrainCoordinates(result, params, nTerminal, nTrackEdge, areaWidth)
---     -- this is prettier
---     -- local terrainCoordinates = _getSlopedAreaTerrainCoordinatesTWEAKED(result, params, nTerminal, nTrackEdge, areaWidth)
---     local faces = {}
---     for _, pos1234 in pairs(terrainCoordinates) do
---         local face = {}
---         for i = 1, 4 do
---             face[i] = { pos1234[i][1], pos1234[i][2], pos1234[i][3], 1 }
---         end
---         faces[#faces+1] = face
---         result.groundFaces[#result.groundFaces + 1] = {
---             face = face, -- LOLLO NOTE Z is ignored here
---             loop = true,
---             modes = {
---                 {
---                     type = 'FILL',
---                     key = groundFacesFillKey,
---                 },
---                 -- {
---                 -- 	type = 'STROKE_OUTER',
---                 -- 	key = 'shared/asphalt_04.gtex.lua'
---                 -- }
---             }
---         }
---     end
---     result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
---         faces = faces,
---         optional = true,
---         slopeHigh = _constants.slopeHigh,
---         slopeLow = _constants.slopeLow,
---         type = 'EQUAL', -- GREATER, LESS
---     }
--- end
 
 local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
     result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
@@ -696,7 +604,7 @@ helpers.lifts = {
                 modes = {
                     {
                         type = 'FILL',
-                        key = 'shared/asphalt_01.gtex.lua' --'shared/asphalt_01.gtex.lua'
+                        key = _constants.groundFacesFillKey --_constants.groundFacesFillKey
                     },
                     --[[                         {
                         type = 'STROKE_INNER',
@@ -705,7 +613,7 @@ helpers.lifts = {
                     ]]
                     {
                         type = 'STROKE_OUTER',
-                        key = 'shared/asphalt_01.gtex.lua' --'street_border.lua'
+                        key = _constants.groundFacesStrokeOuterKey
                     }
                 }
             }
@@ -777,7 +685,6 @@ helpers.doTerrain4Subways = function(result, slotTransf)
             loop = true,
             modes = {
                 {
-                    -- key = 'shared/asphalt_01.gtex.lua'
                     key = 'lollo_freestyle_train_station/hole.lua',
                     type = 'FILL',
                 },
@@ -787,9 +694,7 @@ helpers.doTerrain4Subways = function(result, slotTransf)
                 -- 	type = 'STROKE_INNER',
                 -- },
                 {
-                    -- key = 'street_border.lua'
-                    -- key = 'shared/asphalt_01.gtex.lua',
-                    key = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua',
+                    key = _constants.groundFacesStrokeOuterKey,
                     type = 'STROKE_OUTER',
                 }
             }

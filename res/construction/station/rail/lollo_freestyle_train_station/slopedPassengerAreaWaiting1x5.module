@@ -35,7 +35,7 @@ function data()
 
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 5,
 				_constants.slopedPassengerArea1x5ModelFileName, _constants.passengerWaitingAreaCentredModelFileName,
-				'lollo_freestyle_train_station/era_c_station_tiles.lua')
+				_constants.groundFacesFillKey)
 		end,
 
 		getModelsFn = function(params)

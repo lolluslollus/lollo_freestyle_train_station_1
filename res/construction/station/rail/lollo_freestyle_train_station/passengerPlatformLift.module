@@ -113,7 +113,7 @@ return {
 				modes = {
 					{
 						type = 'FILL',
-						key = 'shared/asphalt_01.gtex.lua' --'shared/asphalt_01.gtex.lua'
+						key = _constants.groundFacesFillKey --_constants.groundFacesFillKey
 					},
 					--[[                         {
 						type = 'STROKE_INNER',
@@ -122,7 +122,7 @@ return {
 					]]
 					{
 						type = 'STROKE_OUTER',
-						key = 'shared/asphalt_01.gtex.lua' --'street_border.lua'
+						key = _constants.groundFacesStrokeOuterKey
 					}
 				}
 			}

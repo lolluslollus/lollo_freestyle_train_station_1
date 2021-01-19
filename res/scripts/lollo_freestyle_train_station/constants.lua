@@ -31,6 +31,9 @@ local constants = {
     slopeHigh = 999,
     slopeLow = 2.5,
 
+    groundFacesFillKey = 'shared/asphalt_02.gtex.lua',
+    groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua',
+
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
     subwayConFileName = 'station/rail/lollo_freestyle_train_station/subway.con',
