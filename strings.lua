@@ -19,11 +19,11 @@ function data()
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweak mod.
+				- If you want large buildings, use assets. There are mods for those.
 				- This mod adds extra bridges (modern era only) to help with elevated stations.
 
 				[h1]Known issues:[/h1]
-				- Module placement is rather free, the player is allowed to do some unrealistic things.
-				- If you want large buildings, use assets. There are mods for those.
+				- Module placement is rather free, the player is allowed to do some unrealistic things. Checks would be too expensive.
 				- Station naming does not work properly.
 				- For now, it's only modern era.
 				- Upgrading tracks works poorly.

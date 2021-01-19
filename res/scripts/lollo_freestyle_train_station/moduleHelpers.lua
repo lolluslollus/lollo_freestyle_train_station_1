@@ -749,7 +749,7 @@ helpers.flatAreas = {
     end
 }
 
-helpers.addPassengerTerminalDeco = function(result, slotTransf, tag, slotId, xShift, yShift)
+helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, xShift, yShift)
     result.models[#result.models + 1] = {
         id = 'station/rail/asset/era_c_double_chair.mdl',
         -- id = 'station/rail/asset/era_c_single_chair.mdl',
@@ -772,17 +772,17 @@ helpers.addPassengerTerminalDeco = function(result, slotTransf, tag, slotId, xSh
     }
 end
 
-helpers.addCargoTerminalDeco = function(result, slotTransf, tag, slotId, xShift, yShift)
+helpers.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, xShift, yShift)
     result.models[#result.models + 1] = {
         id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
         slotId = slotId,
-        transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift , yShift -2.2, _constants.stairsAndRampHeight + 0.0, 1 }),
+        transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift , yShift -4.3, _constants.stairsAndRampHeight + 0.0, 1 }),
         tag = tag
     }
     result.models[#result.models + 1] = {
         id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
         slotId = slotId,
-        transf = transfUtilsUG.mul(slotTransf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift +2.2, _constants.stairsAndRampHeight + 0.0, 1 }),
+        transf = transfUtilsUG.mul(slotTransf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift +4.6, _constants.stairsAndRampHeight + 0.0, 1 }),
         tag = tag
     }
 end

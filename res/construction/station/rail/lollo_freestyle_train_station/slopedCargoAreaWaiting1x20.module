@@ -38,7 +38,7 @@ function data()
 				_constants.slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName,
 				_constants.groundFacesFillKey)
 
-			moduleHelpers.addCargoTerminalDeco(result, slotTransf, tag, slotId, 0, 0)
+			moduleHelpers.addSlopedCargoAreaDeco(result, slotTransf, tag, slotId, 0, 0)
 		end,
 
 		getModelsFn = function(params)
