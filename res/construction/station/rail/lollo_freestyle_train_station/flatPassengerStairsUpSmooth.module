@@ -8,28 +8,28 @@ local vec3 = require "vec3"
 
 
 function data()
-
+-- LOLLO TODO make stairs and ramps up as well.
 return {
 	availability = {
 		yearFrom = 0,
 		yearTo = 0
 	},
 	category = {
-		categories = { "cargo-road-access", },
+		categories = { "passenger-road-access", },
 	},
 	cost = {
 		price = 0,
 	},
 	description = {
-		name = _("FlatCargoRampDownSmoothName"),
-		description = _("FlatCargoRampDownSmoothDesc"),
-		icon = "ui/lollo_freestyle_train_station/flatCargoRampDownSmooth.tga"
+		name = _("FlatPassengerStairsUpSmoothName"),
+		description = _("FlatPassengerStairsUpSmoothDesc"),
+		icon = "ui/lollo_freestyle_train_station/flatPassengerStairsUpSmooth.tga"
 	},
 	metadata = { },
 	order = {
 		value = 1,
 	},
-	type = _constants.flatCargoRampModuleType,
+	type = _constants.flatPassengerStairsModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
@@ -41,7 +41,7 @@ return {
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		result.models[#result.models + 1] = {
-			id = _constants.flatCargoRampDownSmoothModelFileName,
+			id = _constants.flatPassengerStairsUpSmoothModelFileName,
 			slotId = slotId,
 			transf = zAdjustedTransf,
 			tag = tag
@@ -63,8 +63,14 @@ return {
 				{
 					{-1, -2, _constants.platformSideBitsZ, 1},
 					{-1, 2, _constants.platformSideBitsZ, 1},
-					{3.0, 2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-					{3.0, -2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+					{0.0, 2, _constants.platformSideBitsZ, 1},
+					{0.0, -2, _constants.platformSideBitsZ, 1},
+				},
+				{
+					{0.0, -2, _constants.platformSideBitsZ, 1},
+					{0.0, 2, _constants.platformSideBitsZ, 1},
+					{3.0, 2, _constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+					{3.0, -2, _constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
 				}
 			},
 			optional = true,
@@ -82,7 +88,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.flatCargoRampDownSmoothModelFileName,
+				id = _constants.flatPassengerStairsUpSmoothModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

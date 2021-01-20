@@ -56,17 +56,11 @@ return {
 
 		local terrainAlignmentList = {
 			faces = {
-				-- {
-				-- 	{-2, -2, _constants.platformSideBitsZ, 1},
-				-- 	{-2, 2, _constants.platformSideBitsZ, 1},
-				-- 	{-1, 2, _constants.platformSideBitsZ, 1},
-				-- 	{-1, -2, _constants.platformSideBitsZ, 1},
-				-- },
 				{
 					{-1, -2, _constants.platformSideBitsZ, 1},
 					{-1, 2, _constants.platformSideBitsZ, 1},
-					{2.25, 2, -_constants.stairsAndRampHeight, 1},
-					{2.25, -2, -_constants.stairsAndRampHeight, 1},
+					{2.25, 2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+					{2.25, -2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
 				}
 			},
 			optional = true,

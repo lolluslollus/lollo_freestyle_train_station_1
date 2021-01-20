@@ -18,10 +18,12 @@ function data()
                     children = {
                         {
                             materials = {
+                                "lollo_freestyle_train_station/station_concrete_2.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1.mtl",
+                                "lollo_freestyle_train_station/era_c_trainstation_darker_stripes.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_platform_stairs_smooth_2m.msh',
-                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_platform_ramp_smooth_2m.msh',
+                            transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.5, 0, 1.2, 1}
                         },
                     },
                     name = 'RootNode',
@@ -41,12 +43,12 @@ function data()
                             {
                                 { 0, 0, 0 },
                                 { 2.5, 0, 0 },
-                                1.5,
+                                2.0,
                             },
                             {
-                                { 2.5, 0, -_constants.stairsAndRampHeight },
+                                { 2.5, 0, _constants.stairsAndRampHeight },
                                 { 2.5, 0, 0 },
-                                1.5,
+                                2.0,
                             },
                         },
                         transportModes = { 'PERSON', },
