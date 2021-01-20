@@ -26,7 +26,7 @@ function data()
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Checks would be too expensive.
 				- Station naming does not work properly.
 				- For now, it's only modern era.
-				- Upgrading tracks works poorly.
+				- Upgrading tracks works meh.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 

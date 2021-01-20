@@ -423,6 +423,17 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
 
     for i = 1, #params.terminals[t].trackEdgeLists do
         local tel = params.terminals[t].trackEdgeLists[i]
+
+        local overriddenCatenary = tel.catenary
+        if forceCatenary == 1 then overriddenCatenary = false
+        elseif forceCatenary == 2 then overriddenCatenary = true
+        end
+
+        local overriddenTrackType = tel.trackTypeName
+        if forceFast == 1 then overriddenTrackType = 'standard.lua'
+        elseif forceFast == 2 then overriddenTrackType = 'high_speed.lua'
+        end
+
         local newEdgeList = {
             alignTerrain = tel.type == 0 or tel.type == 2, -- only align on ground and in tunnels
             edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf),
@@ -430,8 +441,8 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
             edgeTypeName = tel.edgeTypeName,
             -- freeNodes = {},
             params = {
-                type = forceFast == 0 and tel.trackTypeName or (forceFast == 1 and 'standard.lua' or 'high_speed.lua'),
-                catenary = forceCatenary == 0 and tel.catenary or (forceCatenary == 2 and true or false)
+                catenary = overriddenCatenary,
+                type = overriddenTrackType,
             },
             snapNodes = {},
             tag2nodes = tag2nodes,
