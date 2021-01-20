@@ -970,7 +970,7 @@ function data()
 								table.insert(result.slots, {
 									-- height = 0,
 									id = slotId,
-									spacing = {2.5, 2.5, 1.5, 1.5},
+									spacing = {1, 1, 1, 1},
 									transf = transfUtilsUG.mul(params.inverseMainTransf, extraData.transf),
 									type = _constants.subwayModuleType,
 								})
