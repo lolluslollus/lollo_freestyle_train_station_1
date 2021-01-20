@@ -7,10 +7,10 @@ local helpers = {}
     helpers.getSubwayBoundingInfo = function(length, width)
         return {
             bbMax = {
-                4.5, 0.95, 3
+                4.5, 1.0, 3
             },
             bbMin = {
-                0, -0.95, -4
+                0, -1.0, -4
             },
         }
     end
@@ -19,7 +19,7 @@ local helpers = {}
             params = {
                 halfExtents = {
                     2.25 - _tolerance,
-                    0.95 - _tolerance,
+                    1.0 - _tolerance,
                     3.5 - _tolerance,
                 },
             },
