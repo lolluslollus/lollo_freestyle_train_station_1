@@ -396,7 +396,7 @@ helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge
     _doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
 end
 
-local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
+local _addTrackEdges = function(result, tag2nodes, params, t)
     result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
 
     -- print('_addTrackEdges starting for terminal =', t)
@@ -436,7 +436,7 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
 
         local newEdgeList = {
             alignTerrain = tel.type == 0 or tel.type == 2, -- only align on ground and in tunnels
-            edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, inverseMainTransf),
+            edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, result.inverseMainTransf),
             edgeType = tel.edgeType,
             edgeTypeName = tel.edgeTypeName,
             -- freeNodes = {},
@@ -463,13 +463,13 @@ local _addTrackEdges = function(params, result, inverseMainTransf, tag2nodes, t)
     end
 end
 
-local _addPlatformEdges = function(params, result, inverseMainTransf, tag2nodes, t)
+local _addPlatformEdges = function(result, tag2nodes, params, t)
     for i = 1, #params.terminals[t].platformEdgeLists do
         local pel = params.terminals[t].platformEdgeLists[i]
 
         local newEdgeList = {
             alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
-            edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, inverseMainTransf),
+            edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, result.inverseMainTransf),
             edgeType = pel.edgeType,
             edgeTypeName = pel.edgeTypeName,
             -- freeNodes = {},
@@ -510,7 +510,7 @@ local _getNNodesInTerminalsSoFar = function(params, t)
 end
 
 helpers.edges = {
-    addEdges = function(params, result, inverseMainTransf, tag, t)
+    addEdges = function(result, tag, params, t)
         -- print('moduleHelpers.edges.addEdges starting for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
 
         local nNodesInTerminalSoFar = _getNNodesInTerminalsSoFar(params, t)
@@ -527,8 +527,8 @@ helpers.edges = {
             end
         end
 
-        _addPlatformEdges(params, result, inverseMainTransf, tag2nodes, t)
-        _addTrackEdges(params, result, inverseMainTransf, tag2nodes, t)
+        _addPlatformEdges(result, tag2nodes, params, t)
+        _addTrackEdges(result, tag2nodes, params, t)
 
         -- print('moduleHelpers.edges.addEdges ending for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
     end,
@@ -744,10 +744,7 @@ helpers.flatAreas = {
     end,
 
     addLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-        local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(
-            params.terminals[nTerminal].crossConnectors[nTrackEdge].posTanX2,
-            result.inverseMainTransf
-        )
+        local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
         local lane2AreaTransf = transfUtils.get1MLaneTransf(
             transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
             transfUtils.transf2Position(slotAdjustedTransf)

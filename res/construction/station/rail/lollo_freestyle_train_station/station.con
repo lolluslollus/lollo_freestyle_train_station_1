@@ -441,7 +441,7 @@ function data()
 							local isPreviousUnderpass = i > 1
 								and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
 								or false
-							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, result.inverseMainTransf)
+							local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
 							if not(isUnderpass) and not(isPreviousUnderpass) then
 								if cpl.type == 0 then -- ground
 									if not(_getOccupiedInfo4FlatAreas(t, i))
@@ -735,7 +735,7 @@ function data()
 
 						-- if not(isUnderpass) and not(isPreviousUnderpass) and not(isPlatformLift) and not(isPreviousPlatformLift) then
 						if not(isUnderpass) and not(isPreviousUnderpass) then
-							local crossConnectorPosTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].crossConnectors[i].posTanX2, result.inverseMainTransf)
+							local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
 							local crossConnectorTransf = transfUtilsUG.mul(
 								transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
 								{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1}
@@ -823,9 +823,9 @@ function data()
 
 				local function _addWaitingAreas()
 					if isCargoTerminal then
-						for _, cwas in pairs(params.terminals[t].cargoWaitingAreas) do
+						for _, cwas in pairs(params.terminals[t].cargoWaitingAreasRelative) do
 							for i = 1, #cwas do
-								local posTanX2 = transfUtils.getPosTanX2Transformed(cwas[i].posTanX2, result.inverseMainTransf)
+								local posTanX2 = cwas[i].posTanX2
 								local centreLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 								result.models[#result.models+1] = {
 									id = _constants.cargoWaitingAreaModelId,
@@ -836,8 +836,8 @@ function data()
 						end
 					else
 						if isTrackOnPlatformLeft then
-							for i = 1, #params.terminals[t].leftPlatforms do
-								local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].leftPlatforms[i].posTanX2, result.inverseMainTransf)
+							for i = 1, #params.terminals[t].leftPlatformsRelative do
+								local posTanX2 = params.terminals[t].leftPlatformsRelative[i].posTanX2
 								local leftLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 
 								result.models[#result.models+1] = {
@@ -847,8 +847,8 @@ function data()
 								}
 							end
 						else
-							for i = 1, #params.terminals[t].rightPlatforms do
-								local posTanX2 = transfUtils.getPosTanX2Transformed(params.terminals[t].rightPlatforms[i].posTanX2, result.inverseMainTransf)
+							for i = 1, #params.terminals[t].rightPlatformsRelative do
+								local posTanX2 = params.terminals[t].rightPlatformsRelative[i].posTanX2
 								-- invert the lanes or the passengers will face away from the track when waiting
 								-- local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 								local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[2][1], posTanX2[1][1])

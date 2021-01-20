@@ -35,7 +35,7 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		moduleHelpers.edges.addEdges(params, result, result.inverseMainTransf, tag, nTerminal)
+		moduleHelpers.edges.addEdges(result, tag, params, nTerminal)
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
 
 		result.models[#result.models + 1] = {

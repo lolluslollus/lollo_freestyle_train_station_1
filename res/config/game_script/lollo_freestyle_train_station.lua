@@ -344,6 +344,10 @@ local _actions = {
                 variant = 0,
             },
         }
+        local _getRelativePosTanX2s = function(record)
+            record.posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf)
+            return record
+        end
         local params_newTerminal = {
             isCargo = args.isCargo,
             -- myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
@@ -352,41 +356,47 @@ local _actions = {
             -- centrePlatforms = args.centrePlatforms,
             centrePlatformsRelative = arrayUtils.map(
                 args.centrePlatforms,
-                function(record)
-                    record.posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf)
-                    return record
-                end
-            ),            
+                _getRelativePosTanX2s
+            ),
             -- centrePlatformsFine = args.centrePlatformsFine,
             centrePlatformsFineRelative = arrayUtils.map(
                 args.centrePlatformsFine,
-                function(record)
-                    record.posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf)
-                    return record
-                end
+                _getRelativePosTanX2s
             ),
             trackEdgeListMidIndex = args.trackEdgeListMidIndex,
-            leftPlatforms = args.leftPlatforms,
-            rightPlatforms = args.rightPlatforms,
-            crossConnectors = args.crossConnectors,
-            cargoWaitingAreas = args.cargoWaitingAreas,
+            -- leftPlatforms = args.leftPlatforms,
+            leftPlatformsRelative = arrayUtils.map(
+                args.leftPlatforms,
+                _getRelativePosTanX2s
+            ),
+            -- rightPlatforms = args.rightPlatforms,
+            rightPlatformsRelative = arrayUtils.map(
+                args.rightPlatforms,
+                _getRelativePosTanX2s
+            ),
+            -- crossConnectors = args.crossConnectors,
+            crossConnectorsRelative = arrayUtils.map(
+                args.crossConnectors,
+                _getRelativePosTanX2s
+            ),
+            -- cargoWaitingAreas = args.cargoWaitingAreas,
+            cargoWaitingAreasRelative = {},
             isTrackOnPlatformLeft = args.isTrackOnPlatformLeft,
             -- slopedAreasFine = args.slopedAreasFine,
             slopedAreasFineRelative = {},
         }
 
+        for _, cwas in pairs(args.cargoWaitingAreas) do
+            params_newTerminal.cargoWaitingAreasRelative[#params_newTerminal.cargoWaitingAreasRelative+1] = arrayUtils.map(
+                cwas,
+                _getRelativePosTanX2s
+            )
+        end
         for width, slopedAreasFine4Width in pairs(args.slopedAreasFine) do
             params_newTerminal.slopedAreasFineRelative[width] = arrayUtils.map(
                 slopedAreasFine4Width,
-                function(record)
-                    record.posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf)
-                    return record
-                end
+                _getRelativePosTanX2s
             )
-            -- for _, saf in pairs(slopedAreasFine4Width) do
-            --     params_newTerminal.slopedAreasFineRelative[width][#params_newTerminal.slopedAreasFineRelative[width]+1] = saf
-            --     params_newTerminal.slopedAreasFineRelative[width][#params_newTerminal.slopedAreasFineRelative[width]].posTanX2 = transfUtils.getPosTanX2Transformed(saf.posTanX2, _inverseMainTransf)
-            -- end
         end
         -- print('params_newTerminal =') debugPrint(params_newTerminal)
 
