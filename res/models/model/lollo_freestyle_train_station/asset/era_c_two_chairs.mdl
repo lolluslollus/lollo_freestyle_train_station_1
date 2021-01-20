@@ -1,0 +1,43 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = { 0.090730540454388, 0.5, 0.66909503936768, },
+            bbMin = { -0.32574409246445, -0.5, 0, },
+        },
+        collider = {
+            params = {
+                halfExtents = { 0.20823732018471, 0.5, 0.33454751968384, },
+            },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            type = "BOX",
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    materials = { "station/rail/era_c/era_c_trainstation_details_1.mtl", },
+                                    mesh = "lollo_freestyle_train_station/asset/era_c_two_chairs_lod0.msh",
+                                    name = "era_c_single_chair",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                            },
+                            name = "era_c_single_chair_grp",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 214.53938293457,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+    end
+    

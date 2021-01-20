@@ -15,7 +15,7 @@ function data()
                     children = {
                         {
                             materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
-                            mesh = "station/road/streetstation/lod_0_com_small_new_1.msh",
+                            mesh = "lollo_freestyle_train_station/asset/arrivi.msh",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                         },
                     },

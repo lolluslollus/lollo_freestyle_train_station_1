@@ -90,7 +90,6 @@ local isNumVeryClose = function(num1, num2, significantFigures)
     -- local roundedNum2 = math.floor(num2 * roundingFactor + 0.5)
     -- return roundedNum1 == roundedNum2
     -- but what I really want are the first significant figures, never mind how big the number is
-    -- LOLLO TODO test this THOROUGHLY
     return (_formatString):format(num1) == (_formatString):format(num2)
         or (_formatString):format(num1 * 1.1) == (_formatString):format(num2 * 1.1)
 end

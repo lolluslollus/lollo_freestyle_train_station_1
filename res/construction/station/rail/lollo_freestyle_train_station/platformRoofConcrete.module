@@ -41,12 +41,12 @@ return {
 		local ii1 = nTrackEdge - 1
 		local iiN = nTrackEdge + 1
 		local ceilingCounter = -2
-		for ii = 1, #result.centrePlatformsFineRelative[nTerminal] do
-			local cpf = result.centrePlatformsFineRelative[nTerminal][ii]
+		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
+			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
 			local leadingIndex = cpf.leadingIndex
 			if leadingIndex > iiN then break end
 			if leadingIndex >= ii1 then
-				local platformWidth = params.terminals[nTerminal].centrePlatforms[leadingIndex].width
+				local platformWidth = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex].width
 				local ceilingModelId = platformWidth < 5 and _constants.platformRoofConcreteCeiling2_5MModelFileName or _constants.platformRoofConcreteCeiling5MModelFileName
 
 				local myTransf = transfUtilsUG.mul(
@@ -60,8 +60,8 @@ return {
 				}
 
 				ceilingCounter = ceilingCounter + 1
-				if result.centrePlatformsFineRelative[nTerminal][ii + 2]
-				and result.centrePlatformsFineRelative[nTerminal][ii + 2].leadingIndex <= iiN
+				if params.terminals[nTerminal].centrePlatformsFineRelative[ii + 2]
+				and params.terminals[nTerminal].centrePlatformsFineRelative[ii + 2].leadingIndex <= iiN
 				and math.fmod(ceilingCounter, 4) == 0 then
 					local pillarModelId = platformWidth < 5 and _constants.platformRoofConcretePillar2_5MModelFileName or _constants.platformRoofConcretePillar5MModelFileName
 					result.models[#result.models+1] = {

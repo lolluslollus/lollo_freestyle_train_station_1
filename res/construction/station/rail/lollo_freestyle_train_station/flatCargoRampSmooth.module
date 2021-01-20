@@ -56,7 +56,7 @@ return {
 			{3.5, -2, 0, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, 'shared/asphalt_01.gtex.lua')
+		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, _constants.groundFacesFillKey)
 
 		local terrainAlignmentList = {
 			faces = {

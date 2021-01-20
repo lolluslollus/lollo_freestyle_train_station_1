@@ -34,14 +34,11 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			-- LOLLO TODO consider this alternative: add a thin stripe like the platform to cover up the seam and do the rest like terrain, which is repaintable and has fewer glitches
-			-- moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 5, _constants.slopedCargoArea1x5ModelFileName)
-			-- moduleHelpers.slopedAreas.addWaitingAreas(result, params, nTerminal, nTrackEdge, 20, _constants.cargoWaitingAreaCentredModelFileName)
+			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 20,
+				_constants.slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName,
+				_constants.groundFacesFillKey)
 
-			moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20,
-				_constants.slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
-
-			moduleHelpers.slopedAreas.doTerrain(result, params, nTerminal, nTrackEdge, 20, 'shared/asphalt_02.gtex.lua')
+			moduleHelpers.addSlopedCargoAreaDeco(result, slotTransf, tag, slotId, 0, 0)
 		end,
 
 		getModelsFn = function(params)

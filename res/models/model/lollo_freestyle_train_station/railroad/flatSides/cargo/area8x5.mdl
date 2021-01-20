@@ -63,12 +63,12 @@ function data()
                             {
                                 { 0, 0, 0 },
                                 { 2.5, 0, 0 },
-                                3,
+                                3.0,
                             },
                             {
                                 { 2.5, 0, 0 },
                                 { 2.5, 0, 0 },
-                                3,
+                                3.0,
                             },
                         },
                         transportModes = { 'PERSON', },
@@ -80,12 +80,12 @@ function data()
                             {
                                 { 2.5, 0, 0 },
                                 { 2.5, 0, 0 },
-                                3,
+                                2.0,
                             },
                             {
                                 { 5, 0, -_constants.stairsAndRampHeight },
                                 { 2.5, 0, 0 },
-                                3,
+                                2.0,
                             },
                         },
                         transportModes = { 'PERSON', },

@@ -19,14 +19,14 @@ function data()
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweak mod.
+				- If you want large buildings, use assets. There are mods for those.
 				- This mod adds extra bridges (modern era only) to help with elevated stations.
 
 				[h1]Known issues:[/h1]
-				- Module placement is rather free, the player is allowed to do some unrealistic things.
-				- If you want large buildings, use assets. There are mods for those.
+				- Module placement is rather free, the player is allowed to do some unrealistic things. Checks would be too expensive.
 				- Station naming does not work properly.
 				- For now, it's only modern era.
-				- Upgrading tracks works poorly.
+				- Upgrading tracks works meh.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
@@ -38,14 +38,16 @@ function data()
 			["FlatPassengerStairsSmoothDesc"] = "Smooth passenger stairs leading outside, 2 m. Adjust their height with <m> and <n>.",
 			["FlatPassengerStairsSteepName"] = "Steep passenger stairs",
 			["FlatPassengerStairsSteepDesc"] = "Steep passenger stairs leading outside, 2 m. Adjust their height with <m> and <n>.",
-			["FlatCargoArea5x5Name"] = "5x5 flat side area with stairs, cargo",
-			["FlatCargoArea5x5Desc"] = "Flat side area with stairs leading outside, 5x5 m, cargo style. Good for plopping assets. Adjust its height with <m> and <n>.",
-			["FlatCargoArea8x5Name"] = "8x5 flat side area with stairs, cargo",
-			["FlatCargoArea8x5Desc"] = "Flat side area with stairs leading outside, 8x5 m, cargo style. Good for plopping assets. Adjust its height with <m> and <n>.",
-			["FlatCargoArea8x10Name"] = "8x10 flat side area with stairs, cargo",
-			["FlatCargoArea8x10Desc"] = "Flat side area with stairs leading outside, 8x10 m, cargo style. Good for plopping assets. Adjust its height with <m> and <n>.",
+			["FlatCargoArea5x5Name"] = "5x5 flat side area with ramp, cargo",
+			["FlatCargoArea5x5Desc"] = "Flat side area with ramp leading outside, 5x5 m, cargo style. Good for plopping assets. Adjust its height with <m> and <n>.",
+			["FlatCargoArea8x5Name"] = "8x5 flat side area with ramp, cargo",
+			["FlatCargoArea8x5Desc"] = "Flat side area with ramp leading outside, 8x5 m, cargo style. Good for plopping assets. Adjust its height with <m> and <n>.",
+			["FlatCargoArea8x10Name"] = "8x10 flat side area with ramp, cargo",
+			["FlatCargoArea8x10Desc"] = "Flat side area with ramp leading outside, 8x10 m, cargo style. Good for plopping assets. Adjust its height with <m> and <n>.",
 			["FlatCargoStation8x10Name"] = "8x10 cargo station",
 			["FlatCargoStation8x10Desc"] = "8x10 cargo station. Adjust its height with <m> and <n>.",
+			["FlatCargoStationLower8x10Name"] = "8x10 lower cargo station",
+			["FlatCargoStationLower8x10Desc"] = "8x10 lower cargo station. Adjust its height with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
 			["FlatPassengerArea5x5Name"] = "5x5 flat side area with stairs, passenger",
 			["FlatPassengerArea5x5Desc"] = "Flat side area with stairs leading outside, 5x5 m, passenger style. Good for plopping assets. Adjust its height with <m> and <n>.",
 			["FlatPassengerArea8x5Name"] = "8x5 flat side area with stairs, passenger",
@@ -53,17 +55,17 @@ function data()
 			["FlatPassengerArea8x10Name"] = "8x10 flat side area with stairs, passenger",
 			["FlatPassengerArea8x10Desc"] = "Flat side area with stairs leading outside, 8x10 m, passenger style. Good for plopping assets. Adjust its height with <m> and <n>.",
 			["FlatPassengerStation0MName"] = "Small passenger station",
-			["FlatPassengerStation0MDesc"] = "Small passenger station",
+			["FlatPassengerStation0MDesc"] = "Small passenger station. Repaint its ground with <shift> and a paint tool.",
 			["FlatPassengerStation5MName"] = "Small passenger station, 5 m high",
-			["FlatPassengerStation5MDesc"] = "Small passenger station, to access a platform a bit higher than the road",
+			["FlatPassengerStation5MDesc"] = "Small passenger station, to access a platform a bit higher than the road. Repaint its ground with <shift> and a paint tool.",
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
-			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It does not connect to underpasses. Max height 40 m.",
+			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It does not connect to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
 			["PassengerPlatformLiftName"] = "Passenger lift to a bridge",
-			["PassengerPlatformLiftDesc"] = "Passenger lift to access a platform on a bridge, from below. It connects to underpasses. Max height 40 m.",
+			["PassengerPlatformLiftDesc"] = "Passenger lift to access a platform on a bridge, from below. It connects to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
 			["PassengerStationSquareName"] = "Station square",
-			["PassengerStationSquareDesc"] = "Square between passenger stations and the road",
+			["PassengerStationSquareDesc"] = "Square between passenger stations and the road. Repaint its ground with <shift> and a paint tool.",
 			["PassengerStationSquarePlainName"] = "Plain station square",
-			["PassengerStationSquarePlainDesc"] = "Plain square between passenger stations and the road",
+			["PassengerStationSquarePlainDesc"] = "Plain square between passenger stations and the road. Repaint its ground with <shift> and a paint tool.",
 			["PlatformRoofConcreteName"] = "Concrete platform roof",
 			["PlatformRoofConcreteDesc"] = "Concrete roof for passenger platforms",
 			["PlatformRoofMetalGlassName"] = "Glass platform roof",

@@ -34,10 +34,11 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 10,
-				_constants.slopedCargoArea1x10ModelFileName, _constants.cargoWaitingAreaCentredModelFileName)
+			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 10,
+				_constants.slopedCargoArea1x10ModelFileName, _constants.cargoWaitingAreaCentredModelFileName,
+				_constants.groundFacesFillKey)
 
-			moduleHelpers.slopedAreas.doTerrain(result, params, nTerminal, nTrackEdge, 10, 'shared/asphalt_02.gtex.lua')
+			moduleHelpers.addSlopedCargoAreaDeco(result, slotTransf, tag, slotId, 0, 0)
 		end,
 
 		getModelsFn = function(params)

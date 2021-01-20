@@ -33,10 +33,9 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			moduleHelpers.slopedAreas.addModels(result, tag, params, nTerminal, nTrackEdge, 20,
-			_constants.slopedPassengerArea1x20ModelFileName)
-
-			moduleHelpers.slopedAreas.doTerrain(result, params, nTerminal, nTrackEdge, 20, 'shared/asphalt_02.gtex.lua')
+			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 20,
+				_constants.slopedPassengerArea1x20ModelFileName, nil,
+				_constants.groundFacesFillKey)
 		end,
 
 		getModelsFn = function(params)

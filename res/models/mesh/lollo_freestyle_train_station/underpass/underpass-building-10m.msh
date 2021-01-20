@@ -8,75 +8,75 @@ return {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 5076,
+					offset = 4912,
 				},
 				position = {
 					count = 144,
-					offset = 4644,
+					offset = 4480,
 				},
 				tangent = {
 					count = 144,
-					offset = 4788,
+					offset = 4624,
 				},
 				uv0 = {
 					count = 144,
-					offset = 4932,
+					offset = 4768,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1990_floor_1.mtl", 
+				"station/train/passenger/roof.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
 					count = 1248,
-					offset = 8964,
+					offset = 8800,
 				},
 				position = {
 					count = 1248,
-					offset = 5220,
+					offset = 5056,
 				},
 				tangent = {
 					count = 1248,
-					offset = 6468,
+					offset = 6304,
 				},
 				uv0 = {
 					count = 1248,
-					offset = 7716,
+					offset = 7552,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1920_floor_1.mtl", 
+				"station/train/passenger/walls.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 10356,
+					offset = 10192,
 				},
 				position = {
 					count = 48,
-					offset = 10212,
+					offset = 10048,
 				},
 				tangent = {
 					count = 48,
-					offset = 10260,
+					offset = 10096,
 				},
 				uv0 = {
 					count = 48,
-					offset = 10308,
+					offset = 10144,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1850_floor_1.mtl", 
+				"station/train/passenger/doors.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 396,
+			count = 384,
 			numComp = 3,
-			offset = 4248,
+			offset = 4096,
 		},
 		position = {
 			count = 1248,
@@ -84,14 +84,14 @@ return {
 			offset = 0,
 		},
 		tangent = {
-			count = 1024,
+			count = 880,
 			numComp = 4,
 			offset = 1248,
 		},
 		uv0 = {
-			count = 1976,
+			count = 1968,
 			numComp = 2,
-			offset = 2272,
+			offset = 2128,
 		},
 	},
 }
