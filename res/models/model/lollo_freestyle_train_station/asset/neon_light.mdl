@@ -17,7 +17,7 @@ return {
 				children = {
 					{
 						materials = {
-							"lollo_freestyle_train_station/neon-low.mtl",
+							"lollo_freestyle_train_station/neon_low.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 							-- "lollo_freestyle_train_station/train_all_lights.mtl",
@@ -41,7 +41,7 @@ return {
 				children = {
 					{
 						materials = {
-							"lollo_freestyle_train_station/neon-low.mtl",
+							"lollo_freestyle_train_station/neon_low.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 						},
@@ -62,7 +62,7 @@ return {
 				children = {
 					{
 						materials = {
-							"lollo_freestyle_train_station/neon-low.mtl",
+							"lollo_freestyle_train_station/neon_low.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 							"lollo_freestyle_train_station/rough-alu-2-sides.mtl",
 						},
