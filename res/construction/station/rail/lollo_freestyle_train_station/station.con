@@ -155,11 +155,6 @@ function data()
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
 					-- },
-					-- [_constants.underpassModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
-					-- 	skipCollisionCheck = true,
-					-- }
 				},
                 slots = {},
 				stations = {},
