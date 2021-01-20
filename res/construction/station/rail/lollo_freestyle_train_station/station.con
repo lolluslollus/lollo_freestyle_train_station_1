@@ -20,7 +20,7 @@ end
 -- so we go this way.
 
 -- LOLLO NOTE we need skipCollision = false in the construction
--- coz we don't want to check crazy stuff on a non-grid pattern.
+-- coz we don't want to check for crazy stuff on a non-grid pattern.
 -- However, it can be trouble.
 -- Perhaps you bury the modules into the ground, like with the lorry station?
 -- If I crop the platform tracks outside the station, there are no more collisions!
@@ -31,6 +31,8 @@ end
 -- even a collision-free model with a path can make trouble.
 -- It's also important to assign void bounding boxes and colliders to certain models,
 -- as opposed to not assigning any, which fails to turn off collisions.
+-- When configuring a modular construction, the spacing is vital coz it covers the area that the game checks for collisions,
+-- with own or third objects.
 
 -- LOLLO NOTE we add a "subways" indexed table with the same indexes as params.modules, to hold extra information
 -- that is, the transf. If a module is deleted in the game, its matching subways[] entry may be still around.
