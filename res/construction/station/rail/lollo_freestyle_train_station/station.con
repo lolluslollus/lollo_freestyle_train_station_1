@@ -1383,7 +1383,7 @@ function data()
 			-- trackType = 1,
 			-- print('LOLLO upgradeFn starting, args.slotId =') debugPrint(args.slotId)
 
-			-- LOLLO TODO when hovering on a station with the track upgrade tool,
+			-- LOLLO NOTE when hovering on a station with the track upgrade tool,
 			-- some terminals are recognised and others are not (ie args.slotId = -1)
 			-- This makes upgrading tracks impossible.
 			-- Workaround: let's upgrade them all!
