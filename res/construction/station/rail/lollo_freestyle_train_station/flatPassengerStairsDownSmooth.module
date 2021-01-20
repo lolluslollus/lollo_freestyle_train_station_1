@@ -8,7 +8,7 @@ local vec3 = require "vec3"
 
 
 function data()
-
+-- LOLLO TODO make stairs and ramps up as well.
 return {
 	availability = {
 		yearFrom = 0,
