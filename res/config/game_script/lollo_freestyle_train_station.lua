@@ -15,9 +15,6 @@ local transfUtilsUG = require('transf')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
--- LOLLO TODO check if you really need buildSnappyTracks after joining a subway.
--- Perhaps cleanupStreetGraph will do?
-
 local function _myErrorHandler(err)
     print('lollo freestyle train station ERROR: ', err)
 end
@@ -179,6 +176,7 @@ local _actions = {
         -- two separate nodes in the same place, at each station end.
         -- Here, I remove the neighbour track (edge and node) and replace it
         -- with an identical track, which snaps to the station end node instead.
+        -- The same happens after joining a subway to a station, which also rebuilds the station construction.
         print('buildSnappyTracks starting')
         print('endEntities =') debugPrint(endEntities)
         if endEntities == nil then return end
