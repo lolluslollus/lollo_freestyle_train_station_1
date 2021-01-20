@@ -58,6 +58,7 @@ local _actions = {
         newCon.fileName = _constants.stationConFileName
 
         local newParams = {
+            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.inverseMainTransf, nil, true),
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
             seed = oldCon.params.seed + 1,
@@ -402,6 +403,8 @@ local _actions = {
 
         if oldCon == nil then
             newCon.params = {
+                -- it is not too correct to pass two parameters, one of which can be inferred from the other. However, performance matters more.
+                inverseMainTransf = _inverseMainTransf,
                 mainTransf = _mainTransf,
                 modules = {
                     [params_newModuleKeys[1]] = params_newModuleValues[1],
@@ -422,6 +425,8 @@ local _actions = {
             newCon.name = _('NewStationName') -- LOLLO TODO see if the name can be assigned automatically, as it should
         else
             local newParams = {
+                -- it is not too correct to pass two parameters, one of which can be inferred from the other. However, performance matters more.
+                inverseMainTransf = _inverseMainTransf,
                 mainTransf = _mainTransf,
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
                 seed = oldCon.params.seed + 1,
@@ -489,6 +494,7 @@ local _actions = {
         newCon.fileName = _constants.stationConFileName
 
         local newParams = {
+            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.inverseMainTransf, nil, true),
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
             seed = oldCon.params.seed + 1,

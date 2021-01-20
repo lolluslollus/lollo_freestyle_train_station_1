@@ -436,7 +436,7 @@ local _addTrackEdges = function(result, tag2nodes, params, t)
 
         local newEdgeList = {
             alignTerrain = tel.type == 0 or tel.type == 2, -- only align on ground and in tunnels
-            edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, result.inverseMainTransf),
+            edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf),
             edgeType = tel.edgeType,
             edgeTypeName = tel.edgeTypeName,
             -- freeNodes = {},
@@ -469,7 +469,7 @@ local _addPlatformEdges = function(result, tag2nodes, params, t)
 
         local newEdgeList = {
             alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
-            edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, result.inverseMainTransf),
+            edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, params.inverseMainTransf),
             edgeType = pel.edgeType,
             edgeTypeName = pel.edgeTypeName,
             -- freeNodes = {},

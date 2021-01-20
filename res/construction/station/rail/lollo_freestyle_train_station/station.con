@@ -256,8 +256,6 @@ function data()
 			}
 
 			result.laneZs = {}
-			result.inverseMainTransf = transfUtils.getInverseTransf(params.mainTransf)
-			-- print('inverseMainTransf =') debugPrint(result.inverseMainTransf)
 
 			for t = 1, #params.terminals do
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
@@ -292,7 +290,7 @@ function data()
 					if isCargoTerminal then
 						for ii = 1, #params.terminals[t].centrePlatformsFine, 1 do
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
-							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, params.inverseMainTransf)
 							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
 							if cpf.width < 10 then
@@ -310,7 +308,7 @@ function data()
 					else
 						for ii = 1, #params.terminals[t].centrePlatformsFine, #params.terminals[t].centrePlatformsFine - 1 do
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
-							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, params.inverseMainTransf)
 							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
 							if cpf.width < 5 then
@@ -328,7 +326,7 @@ function data()
 
 						for ii = 2, #params.terminals[t].centrePlatformsFine - 1 do
 							local cpf = params.terminals[t].centrePlatformsFine[ii]
-							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, result.inverseMainTransf)
+							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, params.inverseMainTransf)
 							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
 							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
 							if cpf.width < 5 then
@@ -869,7 +867,7 @@ function data()
 				local _addTerminalSlot = function()
 					local i = params.terminals[t].trackEdgeListMidIndex
 					local tel = params.terminals[t].trackEdgeLists[i]
-					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, result.inverseMainTransf)
+					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf)
 					local unitaryTangent = transfUtils.getPosTanX2Normalised(posTanX2)
 					local myTransf = transfUtilsUG.mul(
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(unitaryTangent),
@@ -973,7 +971,7 @@ function data()
 									-- height = 0,
 									id = slotId,
 									spacing = {2.5, 2.5, 1.5, 1.5},
-									transf = transfUtilsUG.mul(result.inverseMainTransf, extraData.transf),
+									transf = transfUtilsUG.mul(params.inverseMainTransf, extraData.transf),
 									type = _constants.subwayModuleType,
 								})
 							end
@@ -1195,7 +1193,7 @@ function data()
 						elseif subway.transf == nil then
 							print ('ERROR: subway[', slotId, '] has no transf')
 						elseif params.modules[slotId] ~= nil then
-							local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(result.inverseMainTransf, subway.transf2Link))
+							local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(params.inverseMainTransf, subway.transf2Link))
 							local isThisSubwayConnected = false
 							-- connect each subway to the nearest terminal
 							local minDistance = nil
@@ -1227,7 +1225,7 @@ function data()
 								result.models[#result.models+1] = {
 									id = _constants.redMessageModelFileName,
 									-- transf = _constants.idTransf
-									transf = transfUtilsUG.mul(result.inverseMainTransf, subway.transf),
+									transf = transfUtilsUG.mul(params.inverseMainTransf, subway.transf),
 								}
 								result.labelText[#result.models - 1] = { _('SubwayCannotConnect'), _('SubwayCannotConnect') }
 							end
