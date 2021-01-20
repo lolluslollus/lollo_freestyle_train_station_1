@@ -1,0 +1,30 @@
+function data()
+    local _amplification = 0.4
+    return {
+        order = 0,
+        params = {
+            emissive_scale = {
+                emissiveScale = { 6.8 * _amplification, 4.0 * _amplification, 2.0 * _amplification, },
+            },
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            map_emissive = {
+                fileName = "lollo_freestyle_train_station/light_panel_1_stripe_256.tga",
+                type = "TWOD",
+            },
+            polygon_offset = {
+                factor = -1,
+                forceDepthWrite = false,
+                units = -1,
+            },
+            two_sided = {
+                flipNormal = true,
+                twoSided = false,
+            },
+        },
+        type = "EMISSIVE",
+    }
+    end
+    
