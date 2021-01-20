@@ -15,6 +15,9 @@ local transfUtilsUG = require('transf')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
+-- LOLLO TODO check if you really need buildSnappyTracks after joining a subway.
+-- Perhaps cleanupStreetGraph will do?
+
 local function _myErrorHandler(err)
     print('lollo freestyle train station ERROR: ', err)
 end
