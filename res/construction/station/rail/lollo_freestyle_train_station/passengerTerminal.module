@@ -149,7 +149,7 @@ return {
 			if not(isUnderpass(nTerminal, i)) and not(isStairs2Subway(nTerminal, i)) then
 				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 				local platformWidth = cpl.width
-				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 - 0.1 or -platformWidth * 0.2 + 0.1
+				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.1 or -platformWidth * 0.2 - 0.1
 				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 				result.models[#result.models + 1] = {
 					-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
@@ -184,6 +184,7 @@ return {
 						or transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift, _constants.stairsAndRampHeight + 0.0, 1 }),
 					tag = tag
 				}
+				yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.1 or -platformWidth * 0.2 - 0.1
 				result.models[#result.models + 1] = {
 					id = 'station/rail/asset/era_c_trashcan.mdl',
 					slotId = slotId,
