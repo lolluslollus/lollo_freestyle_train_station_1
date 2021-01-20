@@ -21,9 +21,9 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("FlatPassengerStairsSteepName"),
-		description = _("FlatPassengerStairsSteepDesc"),
-		icon = "ui/lollo_freestyle_train_station/flatPassengerStairsSteep.tga"
+		name = _("FlatPassengerStairsDownSteepName"),
+		description = _("FlatPassengerStairsDownSteepDesc"),
+		icon = "ui/lollo_freestyle_train_station/flatPassengerStairsDownSteep.tga"
 	},
 	metadata = { },
 	order = {

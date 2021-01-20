@@ -15,33 +15,29 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "passenger-road-access", },
+		categories = { "cargo-road-access", },
 	},
 	cost = {
 		price = 0,
 	},
 	description = {
-		name = _("FlatPassengerStairsSmoothName"),
-		description = _("FlatPassengerStairsSmoothDesc"),
-		icon = "ui/lollo_freestyle_train_station/flatPassengerStairsSmooth.tga"
+		name = _("FlatCargoRampDownSteepName"),
+		description = _("FlatCargoRampDownSteepDesc"),
+		icon = "ui/lollo_freestyle_train_station/flatCargoRampDownSteep.tga"
 	},
 	metadata = { },
 	order = {
-		value = 1,
+		value = 2,
 	},
-	type = _constants.flatPassengerStairsModuleType,
+	type = _constants.flatCargoRampModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
-		-- in base_config.lua
-		-- Set it into the models, so the game knows what module they belong to.
-
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		result.models[#result.models + 1] = {
-			id = _constants.flatPassengerStairsSmoothModelFileName,
+			id = _constants.flatCargoRampSteepModelFileName,
 			slotId = slotId,
 			transf = zAdjustedTransf,
 			tag = tag
@@ -52,8 +48,8 @@ return {
 		local groundFace = {
 			{-1, -2, 0, 1},
 			{-1, 2, 0, 1},
-			{3.5, 2, 0, 1},
-			{3.5, -2, 0, 1},
+			{2.25, 2, 0, 1},
+			{2.25, -2, 0, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, _constants.groundFacesFillKey)
@@ -69,8 +65,8 @@ return {
 				{
 					{-1, -2, _constants.platformSideBitsZ, 1},
 					{-1, 2, _constants.platformSideBitsZ, 1},
-					{3.5, 2, -_constants.stairsAndRampHeight, 1},
-					{3.5, -2, -_constants.stairsAndRampHeight, 1},
+					{2.25, 2, -_constants.stairsAndRampHeight, 1},
+					{2.25, -2, -_constants.stairsAndRampHeight, 1},
 				}
 			},
 			optional = true,
@@ -88,7 +84,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.flatPassengerStairsSmoothModelFileName,
+				id = _constants.flatCargoRampSteepModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}
