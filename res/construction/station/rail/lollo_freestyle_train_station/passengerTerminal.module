@@ -228,7 +228,7 @@ return {
 					-- id = 'station/rail/asset/era_c_single_chair.mdl',
 					id = 'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
 					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { 0, -transfYZoom, 0, 0,  -transfXZoom, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
+					transf = transfUtilsUG.mul(transf, { 0, transfYZoom, 0, 0,  transfXZoom, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
 					-- transf = isTrackOnPlatformLeft
 					-- 	and transfUtilsUG.mul(transf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 })
 					-- 	or transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
