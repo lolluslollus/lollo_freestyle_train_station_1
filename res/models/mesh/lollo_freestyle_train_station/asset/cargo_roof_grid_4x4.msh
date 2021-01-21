@@ -1,7 +1,7 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, }, 
+		{ 0, },
 	},
 	subMeshes = {
 		{
@@ -24,9 +24,9 @@ return {
 				},
 			},
 			materials = {
-				"railroad/power_pole.mtl", 
+				"railroad/power_pole.mtl",
 			},
-		}, 
+		},
 	},
 	vertexAttr = {
 		normal = {

@@ -8,7 +8,7 @@ return function(height)
         for h = 5, height, 5 do
             zShift4Wall = zShift4Wall - 5
             -- local zedZoom4Wall = h == 5 and 0.5 or 1
-            local zedZoom4Wall = h == 5 and 0.3 or 1
+            local zedZoom4Wall = h == 5 and 0.2 or 1
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  4.5 + _xExtraShift, 2.2, zShift4Wall, 1}
 
             results[#results + 1] = {

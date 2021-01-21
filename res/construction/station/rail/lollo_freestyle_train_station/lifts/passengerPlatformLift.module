@@ -62,40 +62,20 @@ return {
 
 		-- add some deco
 		local _clockY = -2.9 -- 2.8
-		if buildingHeight == 10 then
+		if buildingHeight >= 10 then
 			result.models[#result.models + 1] = {
 				id = 'station/rail/asset/era_c_big_clock.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					slotTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 3, 1 }
-				),
-				tag = tag
-			}
-		elseif buildingHeight >= 15 then
-			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/era_c_big_clock.mdl',
-				slotId = slotId,
-				transf = transfUtilsUG.mul(
-					slotTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 5, 1 }
+					{ 0.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0.5, 0,  0, _clockY, - 4.5, 1 }
 				),
 				tag = tag
 			}
 		end
 
 		local _tableY = 2.2
-		if buildingHeight == 10 then
-			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
-				slotId = slotId,
-				transf = transfUtilsUG.mul(
-					slotTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 4 - buildingHeight, 1 }
-				),
-				tag = tag
-			}
-		elseif buildingHeight >= 15 then
+		if buildingHeight >= 10 then
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
 				slotId = slotId,

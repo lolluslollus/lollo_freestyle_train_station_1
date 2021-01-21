@@ -54,7 +54,7 @@ return {
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		-- print('isTrackOnPlatformLeft =', isTrackOnPlatformLeft)
-		if isTrackOnPlatformLeft then
+		if isTrackOnPlatformLeft then -- LOLLO TODO comment this out after testing
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/icon/green.mdl',
 				slotId = slotId,
@@ -88,6 +88,11 @@ return {
 			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_1m_fluo_magenta.mdl',
 			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_1m_fluo_yellow.mdl',
 		}
+		local _centreModelIds = {
+			'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
+			'station/rail/asset/era_c_trashcan.mdl',
+			'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
+		}
 
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
@@ -99,7 +104,7 @@ return {
 					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
 					{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 1.0, 1 } -- LOLLO TODO restore 1.1 instead of 2.1 when done testing
 				)
-				local myModelId = _subwayLightModelIds[math.random(3)]
+				local myModelId = _subwayLightModelIds[math.random(#_subwayLightModelIds)]
 				result.models[#result.models + 1] = {
 					id = myModelId,
 					slotId = slotId,
@@ -166,9 +171,6 @@ return {
 					id = 'lollo_freestyle_train_station/subway/era_c_perron_number_single_hanging.mdl',
 					slotId = slotId,
 					transf = transfUtilsUG.mul(transf, { -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }),
-					-- transf = isTrackOnPlatformLeft
-					-- 	and transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 3.4, 1 })
-					-- 	or transfUtilsUG.mul(transf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 3.4, 1 }),
 					tag = tag
 				}
 				-- the model index must be in base 0 !
@@ -179,9 +181,6 @@ return {
 					id = 'lollo_freestyle_train_station/asset/era_c_perron_number_single.mdl',
 					slotId = slotId,
 					transf = transfUtilsUG.mul(transf, { -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 3.4, 1 }),
-					-- transf = isTrackOnPlatformLeft
-					-- 	and transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 3.4, 1 })
-					-- 	or transfUtilsUG.mul(transf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 3.4, 1 }),
 					tag = tag
 				}
 				-- the model index must be in base 0 !
@@ -198,20 +197,20 @@ return {
 			if not(isUnderpass(nTerminal, i)) and not(isStairs2Subway(nTerminal, i)) then
 				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 				local platformWidth = cpl.width
-				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.1 or -platformWidth * 0.2 - 0.1
+				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.5 or -platformWidth * 0.2 - 0.5
 				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 				result.models[#result.models + 1] = {
 					-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 					id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.5 + xShift, yShift, result.laneZs[nTerminal] - 0.2, 1 }),
+					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.1 + xShift, yShift, result.laneZs[nTerminal] + 0.1, 1 }),
 					tag = tag
 				}
 				result.models[#result.models + 1] = {
 					-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 					id = 'lollo_freestyle_train_station/asset/partenze.mdl',
 					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.2 + xShift, yShift, result.laneZs[nTerminal] - 0.2, 1 }),
+					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.2 + xShift, yShift, result.laneZs[nTerminal] + 0.1, 1 }),
 					tag = tag
 				}
 			end
@@ -221,24 +220,13 @@ return {
 				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 				local platformWidth = cpl.width
 
-				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.0 or -platformWidth * 0.2 - 0.0
-				-- local transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
 				local transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2)
+				local myModelId = _centreModelIds[math.random(#_centreModelIds)]
+				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.1 or -platformWidth * 0.2 - 0.1
 				result.models[#result.models + 1] = {
-					-- id = 'station/rail/asset/era_c_single_chair.mdl',
-					id = 'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
+					id = myModelId,
 					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { 0, transfYZoom, 0, 0,  transfXZoom, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
-					-- transf = isTrackOnPlatformLeft
-					-- 	and transfUtilsUG.mul(transf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 })
-					-- 	or transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
-					tag = tag
-				}
-				yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.1 or -platformWidth * 0.2 - 0.1
-				result.models[#result.models + 1] = {
-					id = 'station/rail/asset/era_c_trashcan.mdl',
-					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0.3 + xShift, yShift, result.laneZs[nTerminal] - 0.2, 1 }),
+					transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0.3 + xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
 					tag = tag
 				}
 			end

@@ -104,8 +104,8 @@ function data()
 			["SlopedPassengerAreaWaiting1x20Desc"] = "Platform extension, 20 m. It holds extra passengers.",
 			["Stairs2SubwayName"] = "Subway stairs",
 			["Stairs2SubwayDesc"] = "Plop these on underground passenger platforms, to connect them to the subways and the other terminals.",
-			["SubwayDesc"] = "Subway to underground station",
-			["SubwayName"] = "Plop these near a station and join them with the popup. Make sure your station has underpasses and / or subway stairs.",
+			["SubwayName"] = "Subway to underground station",
+			["SubwayDesc"] = "Plop these near a station and join them with the popup. Make sure your station has underpasses and / or subway stairs.",
 			["UnderpassName"] = "Underpass",
 			["UnderpassDesc"] = "Plop these on passenger platforms, to connect them to the subways and the other terminals.",
 
