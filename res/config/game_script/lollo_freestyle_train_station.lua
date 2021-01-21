@@ -44,15 +44,15 @@ local _actions = {
     -- which has the same format as the result of api.cmd.make.buildProposal
     addSubway = function(stationConstructionId, subwayConstructionId, successEventName)
         print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
-        if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then return end
-        if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
+        if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then print('WARNING: invalid stationConstructionId') debugPrint(stationConstructionId) return end
+        if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then print('WARNING: invalid subwayConstructionId') debugPrint(subwayConstructionId) return end
 
         local oldCon = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
         if oldCon == nil then return end
 
         local subwayTransf = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION).transf
-        if subwayTransf == nil then return end
         -- print('subwayTransf =') debugPrint(subwayTransf)
+        if subwayTransf == nil then print('ERROR: no subway transf') return end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName

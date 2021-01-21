@@ -249,6 +249,7 @@ function data()
 				crossConnectorPositions = {},
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
+				liftBottomPositions = {},
 				stairs2SubwayPositions = {},
 				underpassPositions = {},
 				underpassPositionsOnBridge = {},
@@ -373,7 +374,7 @@ function data()
 				local function _addOutsideExtensions()
 					for i = 2, #params.terminals[t].centrePlatformsRelative, 3 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						if cpl.type ~= 2 then -- only on ground and bridges
+						if cpl.type == 0 then -- only on ground
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
@@ -393,38 +394,36 @@ function data()
 								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess)
 							end
 
-							if cpl.type == 0 then -- only on ground
-								if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
-									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 10)
-									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)
-									table.insert(result.slots, {
-										-- height = 0,
-										id = myId,
-										spacing = isTrackOnPlatformLeft and {3, 2, 0, 3} or {2, 3, 3, 0},
-										transf = transfUtilsUG.mul(
-											moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
-										),
-										type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
-									})
-									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess)
-								end
+							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
+								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 10)
+								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)
+								table.insert(result.slots, {
+									-- height = 0,
+									id = myId,
+									spacing = isTrackOnPlatformLeft and {3, 2, 0, 3} or {2, 3, 3, 0},
+									transf = transfUtilsUG.mul(
+										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
+										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+									),
+									type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
+								})
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess)
+							end
 
-								if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
-									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 20)
-									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
-									table.insert(result.slots, {
-										-- height = 0,
-										id = myId,
-										spacing = isTrackOnPlatformLeft and {8, 4, 0, 3} or {4, 8, 3, 0},
-										transf = transfUtilsUG.mul(
-											moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
-										),
-										type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
-									})
-									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess)
-								end
+							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
+								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 20)
+								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
+								table.insert(result.slots, {
+									-- height = 0,
+									id = myId,
+									spacing = isTrackOnPlatformLeft and {8, 4, 0, 3} or {4, 8, 3, 0},
+									transf = transfUtilsUG.mul(
+										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
+										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+									),
+									type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
+								})
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess)
 							end
 						end
 					end
@@ -784,8 +783,6 @@ function data()
 							if result.terminateConstructionHookInfo.stairs2SubwayPositions[t] == nil then result.terminateConstructionHookInfo.stairs2SubwayPositions[t] = {} end
 							result.terminateConstructionHookInfo.stairs2SubwayPositions[t][#result.terminateConstructionHookInfo.stairs2SubwayPositions[t]+1] = {
 								t = t,
-								pos1 = cpl.posTanX2[1][1],
-								pos2 = cpl.posTanX2[2][1],
 								pos2Link = transfUtils.transf2Position(stairs2SubwayTopTransf)
 							}
 						elseif isUnderpass and not(isOnBridge) then
@@ -796,8 +793,6 @@ function data()
 							if result.terminateConstructionHookInfo.underpassPositions[t] == nil then result.terminateConstructionHookInfo.underpassPositions[t] = {} end
 							result.terminateConstructionHookInfo.underpassPositions[t][#result.terminateConstructionHookInfo.underpassPositions[t]+1] = {
 								t = t,
-								pos1 = cpl.posTanX2[1][1],
-								pos2 = cpl.posTanX2[2][1],
 								pos2Link = transfUtils.transf2Position(underpassBottomTransf)
 							}
 						elseif (isUnderpass and isOnBridge) or isPlatformLift then
@@ -810,8 +805,6 @@ function data()
 							end
 							result.terminateConstructionHookInfo.underpassPositionsOnBridge[t][#result.terminateConstructionHookInfo.underpassPositionsOnBridge[t]+1] = {
 								t = t,
-								pos1 = cpl.posTanX2[1][1],
-								pos2 = cpl.posTanX2[2][1],
 								pos2Link = transfUtils.transf2Position(underpassBottomTransf)
 							}
 						end
@@ -998,15 +991,15 @@ function data()
 				-- 	return results
 				-- end
 
-				-- local _getAllPositionsBelowPlatforms = function()
-				-- 	local results = {}
-				-- 	for t = 1, #params.terminals do
-				-- 		results[t] = {}
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] or {})
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
-				-- 	end
-				-- 	return results
-				-- end
+				local _getAllPositionsBelowPlatforms = function()
+					local results = {}
+					for t = 1, #params.terminals do
+						results[t] = {}
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
+					end
+					return results
+				end
 
 				-- xpcall(
 				-- 	function()
@@ -1015,6 +1008,7 @@ function data()
 					local results = {}
 					for t = 1, #params.terminals do
 						results[t] = {}
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
 						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
 						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
 					end
@@ -1109,9 +1103,8 @@ function data()
 						end
 					end
 					_linkAlong(result.terminateConstructionHookInfo.stairs2SubwayPositions)
-					-- local positionsBelowPlatforms = _getAllPositionsBelowPlatforms()
-					-- _linkAlong(positionsBelowPlatforms)
-					_linkAlong(result.terminateConstructionHookInfo.underpassPositions)
+					local positionsBelowPlatforms = _getAllPositionsBelowPlatforms()
+					_linkAlong(positionsBelowPlatforms)
 
 					-- link the underpasses and the stairs 2 subway across terminals, underground
 					-- I link each terminal to 1 other terminal only, the closest with an underpass.

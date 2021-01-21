@@ -541,8 +541,7 @@ local _bridgeHeights = { 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
 helpers.lifts = {
     tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            -- local terrainHeight = cpl.terrainHeight1
-        local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
+        local bridgeHeight = cpl.type == 1 and params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
         local buildingHeight = 0
         if bridgeHeight < _bridgeHeights[1] then
@@ -571,8 +570,7 @@ helpers.lifts = {
 
     tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            -- local terrainHeight = cpl.terrainHeight1
-        local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
+        local bridgeHeight = cpl.type == 1 and params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
         local buildingModelId = 'lollo_freestyle_train_station/lift/'
         if bridgeHeight < _bridgeHeights[1] then
@@ -641,8 +639,7 @@ helpers.lifts = {
 
     tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            -- local terrainHeight = cpl.terrainHeight1
-        local bridgeHeight = cpl.type == 1 and cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
+        local bridgeHeight = cpl.type == 1 and params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
         local buildingModelId = 'lollo_freestyle_train_station/lift/'
         if bridgeHeight < _bridgeHeights[1] then

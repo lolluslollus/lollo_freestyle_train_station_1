@@ -408,6 +408,16 @@ return function(height)
                                 {0, 0, -1},
                                 2.4
                             },
+                            {
+                                {0, -2.0, -height},
+                                {0, 0, -1},
+                                2.4
+                            },
+                            {
+                                {0, -2.0, -height + _constants.underpassZ},
+                                {0, 0, -1},
+                                2.4
+                            },
                         },
                         speedLimit = 20,
                         transportModes = {'PERSON'}
