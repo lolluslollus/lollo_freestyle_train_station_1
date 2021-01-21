@@ -200,7 +200,7 @@ function data()
 			end
 			local _occupySlopedAreas = function(t, i, slotId, slotTypeId, yShift)
 				if params.modules[slotId] ~= nil then
-					_setOccupiedInfo4SlopedAreas(t, i-1, slotTypeId, yShift)
+					if i > 1 then _setOccupiedInfo4SlopedAreas(t, i-1, slotTypeId, yShift) end
 					_setOccupiedInfo4SlopedAreas(t, i, slotTypeId, yShift)
 					if i+1 <= #params.terminals[t].centrePlatformsRelative then _setOccupiedInfo4SlopedAreas(t, i+1, slotTypeId, yShift) end
 					if i+2 <= #params.terminals[t].centrePlatformsRelative then _setOccupiedInfo4SlopedAreas(t, i+2, slotTypeId, yShift) end
@@ -995,15 +995,15 @@ function data()
 				-- 	return results
 				-- end
 
-				local _getAllPositionsBelowPlatforms = function()
-					local results = {}
-					for t = 1, #params.terminals do
-						results[t] = {}
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
-					end
-					return results
-				end
+				-- local _getAllPositionsBelowPlatforms = function()
+				-- 	local results = {}
+				-- 	for t = 1, #params.terminals do
+				-- 		results[t] = {}
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
+				-- 	end
+				-- 	return results
+				-- end
 
 				-- xpcall(
 				-- 	function()
@@ -1018,6 +1018,17 @@ function data()
 					end
 					return results
 				end
+
+				-- local _getAllPositionsUndergroundAndLiftBottoms = function()
+				-- 	local results = {}
+				-- 	for t = 1, #params.terminals do
+				-- 		results[t] = {}
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositions[t] or {})
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
+				-- 	end
+				-- 	return results
+				-- end
 
 				local _getSegmentsBetweenPos2Links = function(positions, tolerancePercent4ShortDistances)
 					local allSegments = {}
@@ -1107,8 +1118,8 @@ function data()
 						end
 					end
 					_linkAlong(result.terminateConstructionHookInfo.stairs2SubwayPositions)
-					local positionsBelowPlatforms = _getAllPositionsBelowPlatforms()
-					_linkAlong(positionsBelowPlatforms)
+					-- _linkAlong(_getAllPositionsBelowPlatforms())
+					_linkAlong(result.terminateConstructionHookInfo.underpassPositions)
 
 					-- link the underpasses and the stairs 2 subway across terminals, underground
 					-- I link each terminal to 1 other terminal only, the closest with an underpass.
@@ -1134,8 +1145,7 @@ function data()
 							end
 						end
 					end
-					local allPositionsUnderground = _getAllPositionsUnderground()
-					local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(allPositionsUnderground, 2.01)
+					local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositionsUnderground(), 2.01)
 					-- print('allPositionsUnderground =') debugPrint(allPositionsUnderground)
 					-- print('shortSegmentsUnderground =') debugPrint(shortSegmentsUnderground)
 					-- print('minDistanceSegmentsUnderground =') debugPrint(minDistanceSegmentsUnderground)
@@ -1182,7 +1192,7 @@ function data()
 				local _linkSubways = function()
 					if not(params.subways) then return end
 					local allPositionsUnderground = _getAllPositionsUnderground()
-					-- print('allPositionsExceptBridge =') debugPrint(allPositionsExceptBridge)
+					-- print('allPositionsUnderground =') debugPrint(allPositionsUnderground)
 
 					for slotId, subway in pairs(params.subways) do
 						if subway == nil then
