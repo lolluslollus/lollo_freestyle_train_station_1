@@ -599,10 +599,10 @@ helpers.lifts = {
 
     doTerrain4SideLifts = function(buildingHeight, slotTransf, result)
         local groundFace = { -- the ground faces ignore z, the alignment lists don't
-            {-1, -6.2, -buildingHeight + _constants.platformSideBitsZ, 1},
-            {-1, 6.2, -buildingHeight + _constants.platformSideBitsZ, 1},
-            {6.0, 6.2, -buildingHeight + _constants.platformSideBitsZ, 1},
-            {6.0, -6.2, -buildingHeight + _constants.platformSideBitsZ, 1},
+            {-1, -6.2, -buildingHeight, 1},
+            {-1, 6.2, -buildingHeight, 1},
+            {6.0, 6.2, -buildingHeight, 1},
+            {6.0, -6.2, -buildingHeight, 1},
         }
         modulesutil.TransformFaces(slotTransf, groundFace)
         table.insert(
