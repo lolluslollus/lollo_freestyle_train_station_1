@@ -32,10 +32,12 @@ return {
 	type = _constants.underpassModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not baseId then return end
+		if not nTerminal or not nTrackEdge or not baseId then return end
 
+		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 		result.models[#result.models + 1] = {
-			id = _constants.underpassBuilding10MModelFileName,
+			-- LOLLO TODO see if we really need this, once we have fattened the bridge bottom
+			id = cpl.type == 1 and _constants.underpassBuildingWBottom10MModelFileName or _constants.underpassBuilding10MModelFileName,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
 			tag = tag

@@ -1,0 +1,171 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 144,
+					offset = 7232,
+				},
+				position = {
+					count = 144,
+					offset = 7088,
+				},
+				tangent = {
+					count = 144,
+					offset = 6944,
+				},
+				uv0 = {
+					count = 144,
+					offset = 7376,
+				},
+			},
+			materials = {
+				"station/train/passenger/roof.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 1248,
+					offset = 10016,
+				},
+				position = {
+					count = 1248,
+					offset = 8768,
+				},
+				tangent = {
+					count = 1248,
+					offset = 7520,
+				},
+				uv0 = {
+					count = 1248,
+					offset = 11264,
+				},
+			},
+			materials = {
+				"station/train/passenger/walls.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 12608,
+				},
+				position = {
+					count = 48,
+					offset = 12560,
+				},
+				tangent = {
+					count = 48,
+					offset = 12512,
+				},
+				uv0 = {
+					count = 48,
+					offset = 12656,
+				},
+			},
+			materials = {
+				"station/train/passenger/doors.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 408,
+					offset = 13520,
+				},
+				position = {
+					count = 408,
+					offset = 13112,
+				},
+				tangent = {
+					count = 408,
+					offset = 12704,
+				},
+				uv0 = {
+					count = 408,
+					offset = 13928,
+				},
+			},
+			materials = {
+				"station/train/passenger/wall1.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 14432,
+				},
+				position = {
+					count = 48,
+					offset = 14384,
+				},
+				tangent = {
+					count = 48,
+					offset = 14336,
+				},
+				uv0 = {
+					count = 48,
+					offset = 14480,
+				},
+			},
+			materials = {
+				"station/train/passenger/ends.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 144,
+					offset = 14816,
+				},
+				position = {
+					count = 144,
+					offset = 14672,
+				},
+				tangent = {
+					count = 144,
+					offset = 14528,
+				},
+				uv0 = {
+					count = 144,
+					offset = 14960,
+				},
+			},
+			materials = {
+				"station/road/streetstation/wall1z.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 732,
+			numComp = 3,
+			offset = 3404,
+		},
+		position = {
+			count = 1596,
+			numComp = 3,
+			offset = 1808,
+		},
+		tangent = {
+			count = 1808,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 2808,
+			numComp = 2,
+			offset = 4136,
+		},
+	},
+}
+end
