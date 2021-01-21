@@ -84,6 +84,7 @@ return {
 		local xShift = 2
 		local transfXZoom = isTrackOnPlatformLeft and -1 or 1
 		local transfYZoom = isTrackOnPlatformLeft and -1 or 1
+
 		local _subwayLightModelIds = {
 			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_1m_fluo_green.mdl',
 			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_1m_fluo_magenta.mdl',
@@ -95,41 +96,56 @@ return {
 			'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
 		}
 
+		-- lights (only in tunnels)
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[cpf.leadingIndex]
-			-- if cpl.width >= 5 and not(cpl.type == 2) then
-			if cpl.width >= 5 and cpl.type == 2 then -- tunnel and 5m platform
-				local yShift = isTrackOnPlatformLeft and 0.12 or -0.12
-				local myTransf = transfUtilsUG.mul(
-					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-					{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 1.0, 1 } -- LOLLO TODO restore 1.1 instead of 2.1 when done testing
-				)
-				local myModelId = _subwayLightModelIds[math.random(#_subwayLightModelIds)]
-				result.models[#result.models + 1] = {
-					id = myModelId,
-					slotId = slotId,
-					transf = myTransf,
-					tag = tag
-				}
+			if cpl.type == 2 then -- tunnel
+				if cpl.width >= 5 or not(isStairs2Subway(nTerminal, cpf.leadingIndex)) then
+					local yShift = 0
+					if cpl.width >= 5 then
+						yShift = isTrackOnPlatformLeft and 0.12 or -0.12
+					else
+						yShift = isTrackOnPlatformLeft and 1.37 or -1.37
+					end
+					local myTransf = transfUtilsUG.mul(
+						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+						{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 1.0, 1 }
+					)
+					local myModelId = _subwayLightModelIds[math.random(#_subwayLightModelIds)]
+					result.models[#result.models + 1] = {
+						id = myModelId,
+						slotId = slotId,
+						transf = myTransf,
+						tag = tag
+					}
+				end
 			end
 		end
+		-- station name plaques
 		for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
-			-- if cpl.width >= 5 and not(cpl.type == 2) then
-			if cpl.width >= 5 and cpl.type == 2 then -- tunnel and 5m platform
-				local yShift = isTrackOnPlatformLeft and 0.22 or -0.22
-				local myTransf = transfUtilsUG.mul(
-					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-					{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 0.5, 1 }
-				)
-				result.models[#result.models + 1] = {
-					id = 'lollo_freestyle_train_station/subway/roof_edge_w_station_name_5m_2m.mdl',
-					slotId = slotId,
-					transf = myTransf,
-					tag = tag
-				}
+			if cpl.type == 2 then -- tunnel
+				if cpl.width >= 5 or not(isStairs2Subway(nTerminal, i)) then
+					local yShift = 0
+					if cpl.width >= 5 then
+						yShift = isTrackOnPlatformLeft and 0.22 or -0.22
+					else
+						yShift = isTrackOnPlatformLeft and 1.47 or -1.47
+					end
+
+					local myTransf = transfUtilsUG.mul(
+						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
+						{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 0.5, 1 }
+					)
+					result.models[#result.models + 1] = {
+						id = 'lollo_freestyle_train_station/subway/roof_edge_w_station_name_5m_2m.mdl',
+						slotId = slotId,
+						transf = myTransf,
+						tag = tag
+					}
+				end
 			else
 				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
@@ -161,21 +177,23 @@ return {
 				}
 			end
 		end
+		-- platform number signs
 		for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
-			-- if cpl.width >= 5 and not(cpl.type == 2) then
-			if cpl.width >= 5 and cpl.type == 2 then -- tunnel and 5m platform
-				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
-				result.models[#result.models + 1] = {
-					id = 'lollo_freestyle_train_station/subway/era_c_perron_number_single_hanging.mdl',
-					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }),
-					tag = tag
-				}
-				-- the model index must be in base 0 !
-				result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+			if cpl.type == 2 then -- tunnel
+				if cpl.width >= 5 or not(isStairs2Subway(nTerminal, i)) then
+					local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
+					result.models[#result.models + 1] = {
+						id = 'lollo_freestyle_train_station/subway/era_c_perron_number_single_hanging.mdl',
+						slotId = slotId,
+						transf = transfUtilsUG.mul(transf, { -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }),
+						tag = tag
+					}
+					-- the model index must be in base 0 !
+					result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+				end
 			elseif not(isUnderpass(nTerminal, i)) and not(isStairs2Subway(nTerminal, i)) then
 				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 				result.models[#result.models + 1] = {
