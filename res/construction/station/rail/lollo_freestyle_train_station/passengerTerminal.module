@@ -71,6 +71,7 @@ return {
 		end
 		local isUnderpass = function(t, i)
 			return params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
 		end
 		local isStairs2Subway = function(t, i)
 			return params.modules[result.mangleId(t, i, _constants.idBases.stairs2SubwaySlotId)] ~= nil
@@ -197,17 +198,15 @@ return {
 			if not(isUnderpass(nTerminal, i)) and not(isStairs2Subway(nTerminal, i)) then
 				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 				local platformWidth = cpl.width
-				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.5 or -platformWidth * 0.2 - 0.5
+				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.1 or -platformWidth * 0.2 - 0.1
 				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 				result.models[#result.models + 1] = {
-					-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 					id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 					slotId = slotId,
 					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.1 + xShift, yShift, result.laneZs[nTerminal] + 0.1, 1 }),
 					tag = tag
 				}
 				result.models[#result.models + 1] = {
-					-- id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
 					id = 'lollo_freestyle_train_station/asset/partenze.mdl',
 					slotId = slotId,
 					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.2 + xShift, yShift, result.laneZs[nTerminal] + 0.1, 1 }),

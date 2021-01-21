@@ -7,45 +7,45 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 984,
-					offset = 2708,
+					count = 336,
+					offset = 976,
 				},
 				position = {
-					count = 984,
-					offset = 4676,
+					count = 336,
+					offset = 1648,
 				},
 				tangent = {
-					count = 984,
-					offset = 3692,
+					count = 336,
+					offset = 1312,
 				},
 				uv0 = {
-					count = 984,
-					offset = 1724,
+					count = 336,
+					offset = 640,
 				},
 			},
 			materials = {
-				"station/road/streetstation/streetstation_1.mtl", 
+				"station/train/passenger/trainstation_1990_floor_1.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 156,
+			count = 72,
 			numComp = 3,
-			offset = 568,
+			offset = 200,
 		},
 		position = {
-			count = 696,
+			count = 288,
 			numComp = 3,
-			offset = 1028,
+			offset = 352,
 		},
 		tangent = {
-			count = 304,
+			count = 80,
 			numComp = 4,
-			offset = 724,
+			offset = 272,
 		},
 		uv0 = {
-			count = 568,
+			count = 200,
 			numComp = 2,
 			offset = 0,
 		},
