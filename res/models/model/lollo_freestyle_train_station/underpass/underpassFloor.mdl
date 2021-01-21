@@ -16,7 +16,7 @@ function data()
                                 "lollo_freestyle_train_station/era_c_trainstation_stripes.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/underpass/plate10x1_4_centred_stripes.msh',
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.025, 1}
                         },
                     },
                     name = 'RootNode',
