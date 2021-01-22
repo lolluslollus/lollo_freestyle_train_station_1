@@ -2,6 +2,9 @@ function data()
     return {
         order = 0,
         params = {
+            albedo_scale = {
+                albedoScale = { 0.8, 0.8, 0.8, },
+            },
             fade_out_range = {
                 fadeOutEndDist = 20000,
                 fadeOutStartDist = 10000,
