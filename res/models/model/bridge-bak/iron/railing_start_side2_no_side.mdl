@@ -1,0 +1,36 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 6, 5.5511151231258e-17, 0, },
+		bbMin = { 0, -0.79999995231628, -2, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 3, 0.39999997615814, 1, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "bridge/iron.mtl", },
+						mesh = "bridge/iron/railing_start_side_no_side/iron_railing_start_side_no_side_lod0.msh",
+						name = "iron_railing_start_side_no_side",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 1500,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

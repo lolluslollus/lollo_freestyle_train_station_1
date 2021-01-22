@@ -1,9 +1,8 @@
 local bridgeutil = require 'bridgeutil'
 
 function data()
---    local dirCustom = 'bridge/'
-    -- local dir = 'bridge/cement/'
-    local dir = 'bridge/lollo_freestyle_train_station/cement_no_pattern/'
+    local dir = 'bridge/cement/'
+    local customDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
 
     local railing = {
         -- dirCustom .. 'railing_rep_side.mdl',

@@ -1,0 +1,36 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 1.5, 4, -6, },
+		bbMin = { -1.5, 0, -7, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 1.5, 2, 0.5, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "bridge/stone.mtl", },
+						mesh = "bridge/stone/pillar_top_rep/stone_pillar_top_rep_lod0.msh",
+						name = "stone_pillar_top_rep",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 900,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

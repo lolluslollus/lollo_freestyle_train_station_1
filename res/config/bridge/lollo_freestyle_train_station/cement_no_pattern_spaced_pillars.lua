@@ -1,18 +1,24 @@
 local bridgeutil = require 'bridgeutil'
 
 function data()
-	local dir = 'bridge/lollo_freestyle_train_station/cement_no_pattern/'
+	local dir = 'bridge/cement/'
+    local customDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
 
 	local railing = {
-		dir .. 'railing_rep_side.mdl',
-		dir .. 'railing_rep_side.mdl',
-		dir .. 'railing_rep_side_no_side.mdl',
-		dir .. 'railing_rep_rep.mdl',
-		dir .. 'railing_rep_rep.mdl',
+		-- customDir .. 'railing_rep_side_glass_deco.mdl',
+		-- customDir .. 'railing_rep_side_glass_deco.mdl',
 
-		dir .. 'railing_rep_side2.mdl',
-		dir .. 'railing_rep_side2.mdl',
-		dir .. 'railing_rep_side2_no_side.mdl',
+		customDir .. 'railing_rep_side_glass_deco_old_fashioned.mdl',
+		customDir .. 'railing_rep_side_glass_deco_old_fashioned.mdl',
+		customDir .. 'railing_rep_side_no_side_old_fashioned.mdl',
+		customDir .. 'railing_rep_rep_old_fashioned.mdl',
+		customDir .. 'railing_rep_rep_old_fashioned.mdl',
+
+		-- customDir .. 'railing_rep_side2_glass_deco.mdl',
+		-- customDir .. 'railing_rep_side2_glass_deco.mdl',
+		customDir .. 'railing_rep_side2_glass_deco_old_fashioned.mdl',
+		customDir .. 'railing_rep_side2_glass_deco_old_fashioned.mdl',
+		customDir .. 'railing_rep_side2_no_side_old_fashioned.mdl',
 	}
 
 	local config = {
@@ -25,7 +31,7 @@ function data()
 	}
 
 	return {
-		name = _('CementBridgeSpacedPillars'),
+		name = _('CementBridgeGlassWallSpacedPillars'),
 		yearFrom = 0,
 		yearTo = 0,
 		carriers = { 'RAIL', 'ROAD' },

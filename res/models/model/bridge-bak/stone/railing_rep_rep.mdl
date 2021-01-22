@@ -1,0 +1,36 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 6, 4, 0, },
+		bbMin = { 0, 0, -2, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 3, 2, 1, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "bridge/stone.mtl", },
+						mesh = "bridge/stone/railing_rep_rep/stone_railing_rep_rep_lod0.msh",
+						name = "stone_railing_rep_rep",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 600
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

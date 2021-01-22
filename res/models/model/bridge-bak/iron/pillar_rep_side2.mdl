@@ -1,0 +1,36 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 1.5, 0, 6, },
+		bbMin = { -1.5, -2, 0, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 1.5, 1, 3, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "bridge/iron.mtl", },
+						mesh = "bridge/iron/pillar_rep_side/iron_pillar_rep_side_lod0.msh",
+						name = "iron_pillar_rep_side",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 1500,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

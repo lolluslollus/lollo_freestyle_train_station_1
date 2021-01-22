@@ -1,0 +1,36 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 6, 4, 0, },
+		bbMin = { 0, 0, -3, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 3, 2, 1.5, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "lollo_freestyle_train_station/bridge/cement.mtl", },
+						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_lod0_old_fashioned.msh",
+						name = "cement_railing_rep_rep",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 600
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end
