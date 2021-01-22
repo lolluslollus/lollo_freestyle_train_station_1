@@ -8,18 +8,18 @@ function data()
 		-- customDir .. 'railing_rep_side_glass_shield.mdl',
 		-- customDir .. 'railing_rep_side_glass_shield.mdl',
 
-		customDir .. 'railing_rep_side_glass_shield_roof_old_fashioned.mdl',
-		customDir .. 'railing_rep_side_glass_shield_old_fashioned.mdl',
-		customDir .. 'railing_rep_side_no_side_old_fashioned.mdl',
-		customDir .. 'railing_rep_rep_roof_old_fashioned.mdl',
-		customDir .. 'railing_rep_rep_old_fashioned.mdl',
+		customDir .. 'railing_rep_side_glass_shield_roof.mdl',
+		customDir .. 'railing_rep_side_glass_shield.mdl',
+		customDir .. 'railing_rep_side_no_side.mdl',
+		customDir .. 'railing_rep_rep_roof.mdl',
+		customDir .. 'railing_rep_rep.mdl',
 
 		-- customDir .. 'railing_rep_side2_glass_shield.mdl',
 		-- customDir .. 'railing_rep_side2_glass_shield.mdl',
 
-		-- customDir .. 'railing_rep_side2_glass_shield_old_fashioned.mdl',
-		-- customDir .. 'railing_rep_side2_glass_shield_old_fashioned.mdl',
-		-- customDir .. 'railing_rep_side2_no_side_old_fashioned.mdl',
+		-- customDir .. 'railing_rep_side2_glass_shield.mdl',
+		-- customDir .. 'railing_rep_side2_glass_shield.mdl',
+		-- customDir .. 'railing_rep_side2_no_side.mdl',
 	}
 
 	local config = {

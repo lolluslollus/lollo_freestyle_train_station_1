@@ -17,7 +17,7 @@ return {
 				children = {
 					{
 						materials = { "lollo_freestyle_train_station/bridge/cement.mtl", },
-						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_lod0_old_fashioned.msh",
+						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_lod0.msh",
 						name = "cement_railing_rep_rep",
 						transf = { 1.01, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 0, 1, },
 					},
