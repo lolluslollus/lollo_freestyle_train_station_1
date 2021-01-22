@@ -146,9 +146,9 @@ function data()
 			["TrackWaypointName"] = "Track End Marker",
 			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter.",
 
-			["CementBridgeGlassWallNoPillars"] = "Concrete bridge with glass shields and no pillars",
-			["CementBridgeGlassWallNormalPillars"] = "Concrete bridge with glass shields",
-			["CementBridgeGlassWallSpacedPillars"] = "Concrete bridge with glass shields and spaced pillars",
+			["CementBridgeGlassWallNoPillars"] = "Concrete bridge with underpasses, glass shields and no pillars",
+			["CementBridgeGlassWallNormalPillars"] = "Concrete bridge with underpasses and glass shields",
+			["CementBridgeGlassWallSpacedPillars"] = "Concrete bridge with underpasses, glass shields and spaced pillars",
 			["CementBridgeNoPillarsNoSides"] = "Concrete bridge with no pillars and low railing",
 			["CementBridgeNormalPillarsNoSides"] = "Concrete bridge with low railing",
 			["CementBridgeSpacedPillarsNoSides"] = "Concrete bridge with spaced pillars and low railing",
