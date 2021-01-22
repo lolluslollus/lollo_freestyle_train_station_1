@@ -8,11 +8,12 @@ function data()
 		-- customDir .. 'railing_rep_side_glass_deco.mdl',
 		-- customDir .. 'railing_rep_side_glass_deco.mdl',
 
-		customDir .. 'railing_rep_side_glass_deco_old_fashioned.mdl',
-		customDir .. 'railing_rep_side_glass_deco_old_fashioned.mdl',
+        -- LOLLO TODO railing_rep_side_glass_deco_old_fashioned.mdl might not need the extra bit I just added
+		customDir .. 'railing_rep_side_glass_deco_old_fashioned.mdl', -- LOLLO TODO this could get a roof
+		customDir .. 'railing_rep_side_glass_deco_old_fashioned.mdl', 
 		customDir .. 'railing_rep_side_no_side_old_fashioned.mdl',
-		customDir .. 'railing_rep_rep_old_fashioned.mdl',
-		customDir .. 'railing_rep_rep_old_fashioned.mdl',
+		customDir .. 'railing_rep_rep_old_fashioned.mdl', -- LOLLO TODO this could get a roof, too
+		customDir .. 'railing_rep_rep_old_fashioned.mdl', -- LOLLO TODO this could use a prettier material now that is so much taller (1.5 m)
 
 		-- customDir .. 'railing_rep_side2_glass_deco.mdl',
 		-- customDir .. 'railing_rep_side2_glass_deco.mdl',
