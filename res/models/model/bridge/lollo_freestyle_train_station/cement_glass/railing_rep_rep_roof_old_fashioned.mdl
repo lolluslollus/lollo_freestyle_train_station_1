@@ -16,8 +16,13 @@ return {
 			node = {
 				children = {
 					{
-						materials = { "lollo_freestyle_train_station/bridge/cement.mtl", },
-						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_lod0_old_fashioned.msh",
+						materials = {
+							"lollo_freestyle_train_station/bridge/cement.mtl",
+							"lollo_freestyle_train_station/rough_alu_medium_grey.mtl",
+							-- 'lollo_freestyle_train_station/icon/red.mtl',
+							"lollo_freestyle_train_station/glass_transparent_rough.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_roof_lod0_old_fashioned.msh",
 						name = "cement_railing_rep_rep",
 						transf = { 1.01, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 0, 1, },
 					},
