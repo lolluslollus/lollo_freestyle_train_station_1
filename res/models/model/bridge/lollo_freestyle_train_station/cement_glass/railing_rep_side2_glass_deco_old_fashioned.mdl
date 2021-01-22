@@ -25,7 +25,7 @@ return {
 						},
 						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_side_glass_shield_old_fashioned_lod0.msh",
 						name = "cement_railing_rep_side",
-						transf = { 1.02, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
+						transf = { 1.01, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
 					},
 				},
 				name = "RootNode",
