@@ -40,7 +40,8 @@ return {
 
 		local ii1 = nTrackEdge - 1
 		local iiN = nTrackEdge + 1
-		local ceilingCounter = -2
+        local ceilingCounter = -2
+        -- LOLLO TODO try using step 2 to double performance
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
 			local leadingIndex = cpf.leadingIndex
