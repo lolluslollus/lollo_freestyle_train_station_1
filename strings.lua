@@ -76,6 +76,8 @@ function data()
 			["PassengerStationSquarePlainDesc"] = "Plain square between passenger stations and the road. Repaint its ground with <shift> and a paint tool.",
 			["PlatformRoofConcreteName"] = "Concrete platform roof",
 			["PlatformRoofConcreteDesc"] = "Concrete roof for passenger platforms",
+			["PlatformRoofIronGlassAluName"] = "Iron and glass roof",
+			["PlatformRoofIronGlassAluDesc"] = "Iron and glass roof for passenger platforms",
 			["PlatformRoofMetalGlassName"] = "Glass platform roof",
 			["PlatformRoofMetalGlassDesc"] = "Glass roof for passenger platforms",
 			["SlopedCargoArea1x5Name"] = "5 m platform extension, cargo style",
