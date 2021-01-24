@@ -86,9 +86,9 @@ return {
 		local transfYZoom = isTrackOnPlatformLeft and -1 or 1
 
 		local _subwayLightModelIds = {
-			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_1m_fluo_green.mdl',
-			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_1m_fluo_magenta.mdl',
-			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_1m_fluo_yellow.mdl',
+			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_2m_fluo_green.mdl',
+			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_2m_fluo_magenta.mdl',
+			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_2m_fluo_yellow.mdl',
 		}
 		local _centreModelIds = {
 			'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
@@ -96,23 +96,24 @@ return {
 			'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
 		}
 
-		 -- LOLLO TODO try using step 2 to double performance
-		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
+		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, 2 do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
             local cpl = params.terminals[nTerminal].centrePlatformsRelative[cpf.leadingIndex]
             if cpl.type == 1 then -- belly to cover pedestrian paths (only on bridges)
 				local yShift = 0
+				local myModelId = 'lollo_freestyle_train_station/bridge_station/belly_5m_2m.mdl'
 				if cpl.width >= 5 then
 					yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				else
 					yShift = isTrackOnPlatformLeft and 1.37 or -1.37
+					myModelId = 'lollo_freestyle_train_station/bridge_station/belly_2_5m_2m.mdl'
 				end
 				local myTransf = transfUtilsUG.mul(
 					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
 					{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 1.0, 1 }
 				)
 				result.models[#result.models + 1] = {
-					id = 'lollo_freestyle_train_station/bridge_station/belly_5m_1m.mdl',
+					id = myModelId,
 					slotId = slotId,
 					transf = myTransf,
 					tag = tag
