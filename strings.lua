@@ -69,7 +69,7 @@ function data()
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
 			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It does not connect to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
 			["PassengerPlatformLiftName"] = "Passenger lift to a bridge",
-			["PassengerPlatformLiftDesc"] = "Passenger lift to access a platform on a bridge, from below. It connects to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
+			["PassengerPlatformLiftDesc"] = "Passenger lift to access a 5 m platform on a bridge, from below. It connects to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
 			["PassengerStationSquareName"] = "Station square",
 			["PassengerStationSquareDesc"] = "Square between passenger stations and the road. Repaint its ground with <shift> and a paint tool.",
 			["PassengerStationSquarePlainName"] = "Plain station square",
