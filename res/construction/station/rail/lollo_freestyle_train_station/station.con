@@ -1187,7 +1187,7 @@ function data()
 						end
 					end
 					-- local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositionsUnderground(), 1.01) --2.01)
-					local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositions_UndergroundTop_GroundBottom(), 1.2) --2.01)
+					local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositions_UndergroundTop_GroundBottom(), 1.5) --2.01)
 					-- print('allPositionsUnderground =') debugPrint(allPositionsUnderground)
 					-- print('shortSegmentsUnderground =') debugPrint(shortSegmentsUnderground)
 					-- print('minDistanceSegmentsUnderground =') debugPrint(minDistanceSegmentsUnderground)
