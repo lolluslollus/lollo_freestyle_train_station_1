@@ -673,7 +673,8 @@ function data()
 										end
 										if i < #params.terminals[t].centrePlatformsRelative
 										and not(isNextUnderpass)
-										and cpl.width > 2.5 -- LOLLO TODO see if U can add some graphical bodge to fit the platform lift on a 2.5 m platform
+										and cpl.width > 2.5 -- LOLLO TODO see if U can bodge-fit the platform lift on a 2.5 m platform:
+										-- it's too broad.
 										and (not(_getOccupiedInfo4FlatAreas(t, i))
 										or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.platformLiftSlotId) then
 											local xyZoomFactor = isTrackOnPlatformLeft and 1 or -1
