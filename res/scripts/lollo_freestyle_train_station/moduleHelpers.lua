@@ -793,4 +793,72 @@ helpers.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, xShif
     }
 end
 
+helpers.doPlatformRoof = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
+    local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+    local transfXZoom = isTrackOnPlatformLeft and -1 or 1
+    local transfYZoom = isTrackOnPlatformLeft and -1 or 1
+
+    local ii1 = nTrackEdge - 1
+    local iiN = nTrackEdge + 1
+    local ceilingCounter = -2
+    local drawNumberSign = 1
+    -- LOLLO TODO try using step 2 to double performance
+    for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
+        local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+        local leadingIndex = cpf.leadingIndex
+        if leadingIndex > iiN then break end
+        if leadingIndex >= ii1 then
+            local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+            local platformWidth = cpl.width
+            local ceilingModelId = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId
+
+            result.models[#result.models+1] = {
+                id = ceilingModelId,
+                transf = transfUtilsUG.mul(
+                    helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformRoofZ, 1 }
+                ),
+                tag = tag
+            }
+
+            ceilingCounter = ceilingCounter + 1
+            if params.terminals[nTerminal].centrePlatformsFineRelative[ii + 1]
+            and params.terminals[nTerminal].centrePlatformsFineRelative[ii + 1].leadingIndex <= iiN
+            and math.fmod(ceilingCounter, 4) == 0 then
+                local myTransf = transfUtilsUG.mul(
+                    helpers.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
+                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformRoofZ, 1 }
+                )
+                local pillarModelId = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId
+                result.models[#result.models+1] = {
+                    id = pillarModelId,
+                    transf = transfUtilsUG.mul(
+                        myTransf,
+                        { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+                    ),
+                    tag = tag,
+                }
+                drawNumberSign = -drawNumberSign
+
+                if drawNumberSign == 1 then
+                    -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+                    local yShift = -platformWidth * 0.5 + 0.20
+                    result.models[#result.models + 1] = {
+                        id = 'lollo_freestyle_train_station/roofs/era_c_perron_number_single_hanging.mdl',
+                        slotId = slotId,
+                        transf = transfUtilsUG.mul(
+                            myTransf,
+                            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                        ),
+                        tag = tag
+                    }
+                    -- the model index must be in base 0 !
+                    result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+                end
+            end
+        end
+    end
+end
+
 return helpers

@@ -7,47 +7,47 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 1032,
-					offset = 5380,
+					count = 768,
+					offset = 3448,
 				},
 				position = {
-					count = 1032,
-					offset = 3316,
+					count = 768,
+					offset = 2680,
 				},
 				tangent = {
-					count = 1032,
-					offset = 4348,
+					count = 768,
+					offset = 1912,
 				},
 				uv0 = {
-					count = 1032,
-					offset = 6412,
+					count = 768,
+					offset = 4216,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/subway/Material.004.mtl", 
+				"station/train/passenger/trainstation_1920_floor_1.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 780,
+			count = 72,
 			numComp = 3,
-			offset = 1840,
+			offset = 1248,
 		},
 		position = {
-			count = 576,
+			count = 480,
 			numComp = 3,
-			offset = 0,
+			offset = 768,
 		},
 		tangent = {
-			count = 1264,
+			count = 768,
 			numComp = 4,
-			offset = 576,
+			offset = 0,
 		},
 		uv0 = {
-			count = 696,
+			count = 592,
 			numComp = 2,
-			offset = 2620,
+			offset = 1320,
 		},
 	},
 }

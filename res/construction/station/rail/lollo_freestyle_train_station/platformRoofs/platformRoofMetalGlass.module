@@ -34,45 +34,9 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-		local transfXZoom = isTrackOnPlatformLeft and -1 or 1
-		local transfYZoom = isTrackOnPlatformLeft and -1 or 1
-
-		local ii1 = nTrackEdge - 1
-		local iiN = nTrackEdge + 1
-        local ceilingCounter = -2
-        -- LOLLO TODO try using step 2 to double performance
-		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
-			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
-			local leadingIndex = cpf.leadingIndex
-			if leadingIndex > iiN then break end
-			if leadingIndex >= ii1 then
-				local platformWidth = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex].width
-				local ceilingModelId = platformWidth < 5 and _constants.platformRoofMetalGlassCeiling2_5MModelFileName or _constants.platformRoofMetalGlassCeiling5MModelFileName
-
-				local myTransf = transfUtilsUG.mul(
-					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-					{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformRoofZ, 1 }
-				)
-				result.models[#result.models+1] = {
-					id = ceilingModelId,
-					transf = myTransf,
-					tag = tag
-				}
-
-				ceilingCounter = ceilingCounter + 1
-				if params.terminals[nTerminal].centrePlatformsFineRelative[ii + 2]
-				and params.terminals[nTerminal].centrePlatformsFineRelative[ii + 2].leadingIndex <= iiN
-				and math.fmod(ceilingCounter, 4) == 0 then
-					local pillarModelId = platformWidth < 5 and _constants.platformRoofMetalGlassPillar2_5MModelFileName or _constants.platformRoofMetalGlassPillar5MModelFileName
-					result.models[#result.models+1] = {
-						id = pillarModelId,
-						transf = myTransf,
-						tag = tag,
-					}
-				end
-			end
-		end
+		moduleHelpers.doPlatformRoof (result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+		_constants.platformRoofMetalGlassCeiling2_5MModelFileName, _constants.platformRoofMetalGlassCeiling5MModelFileName,
+		_constants.platformRoofMetalGlassPillar2_5MModelFileName, _constants.platformRoofMetalGlassPillar5MModelFileName)
 	end,
 
 	getModelsFn = function(params)

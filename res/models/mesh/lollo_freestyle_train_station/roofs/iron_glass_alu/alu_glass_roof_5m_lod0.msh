@@ -8,19 +8,19 @@ return {
 			indices = {
 				normal = {
 					count = 480,
-					offset = 2768,
+					offset = 1808,
 				},
 				position = {
 					count = 480,
-					offset = 2288,
+					offset = 3248,
 				},
 				tangent = {
 					count = 480,
-					offset = 3248,
+					offset = 2288,
 				},
 				uv0 = {
 					count = 480,
-					offset = 1808,
+					offset = 2768,
 				},
 			},
 			materials = {
@@ -30,23 +30,23 @@ return {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 4016,
+					offset = 3728,
 				},
 				position = {
 					count = 144,
-					offset = 3872,
+					offset = 4160,
 				},
 				tangent = {
 					count = 144,
-					offset = 4160,
+					offset = 3872,
 				},
 				uv0 = {
 					count = 144,
-					offset = 3728,
+					offset = 4016,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/bridge/glass.mtl", 
+				"lollo_freestyle_train_station/bridge/glass.002.mtl", 
 			},
 		}, 
 	},
@@ -54,22 +54,22 @@ return {
 		normal = {
 			count = 216,
 			numComp = 3,
-			offset = 840,
+			offset = 0,
 		},
 		position = {
 			count = 384,
 			numComp = 3,
-			offset = 456,
+			offset = 1424,
 		},
 		tangent = {
 			count = 752,
 			numComp = 4,
-			offset = 1056,
+			offset = 216,
 		},
 		uv0 = {
 			count = 456,
 			numComp = 2,
-			offset = 0,
+			offset = 968,
 		},
 	},
 }
