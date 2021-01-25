@@ -54,21 +54,21 @@ return {
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		-- print('isTrackOnPlatformLeft =', isTrackOnPlatformLeft)
-		-- if isTrackOnPlatformLeft then
-		-- 	result.models[#result.models + 1] = {
-		-- 		id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 		slotId = slotId,
-		-- 		transf = slotTransf,
-		-- 		tag = tag
-		-- 	}
-		-- else
-		-- 	result.models[#result.models + 1] = {
-		-- 		id = 'lollo_freestyle_train_station/icon/red.mdl',
-		-- 		slotId = slotId,
-		-- 		transf = slotTransf,
-		-- 		tag = tag
-		-- 	}
-		-- end
+		if isTrackOnPlatformLeft then -- LOLLO TODO comment out after testing
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/icon/green.mdl',
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+		else
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/icon/red.mdl',
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+		end
 		local isUnderpass = function(t, i)
 			return params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
@@ -103,22 +103,23 @@ return {
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
             local cpl = params.terminals[nTerminal].centrePlatformsRelative[cpf.leadingIndex]
             if cpl.type == 1 then -- belly to cover pedestrian paths (only on bridges)
+				-- local yShift = 0
+				-- local yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				local yShift = 0
 				local myModelId = 'lollo_freestyle_train_station/bridge_station/belly_5m_2m.mdl'
 				if cpl.width >= 5 then
-					yShift = isTrackOnPlatformLeft and 0.12 or -0.12
+					-- yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				else
-					yShift = isTrackOnPlatformLeft and 1.37 or -1.37
+					-- yShift = isTrackOnPlatformLeft and 1.37 or -1.37
 					myModelId = 'lollo_freestyle_train_station/bridge_station/belly_2_5m_2m.mdl'
 				end
-				local myTransf = transfUtilsUG.mul(
-					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-					{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 1.0, 1 }
-				)
 				result.models[#result.models + 1] = {
 					id = myModelId,
 					slotId = slotId,
-					transf = myTransf,
+					transf = transfUtilsUG.mul(
+						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+						{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 1.0, 1 }
+					),
 					tag = tag
 				}
 			elseif cpl.type == 2 then -- lights (only in tunnels)
