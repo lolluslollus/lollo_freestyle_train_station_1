@@ -841,7 +841,7 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
                 }
                 drawNumberSign = -drawNumberSign
 
-                if drawNumberSign == 1 then
+                if drawNumberSign == 1 then -- little bodge to prevent overlapping with station name signs
                     -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
                     local yShift = -platformWidth * 0.5 + 0.20
                     result.models[#result.models + 1] = {
