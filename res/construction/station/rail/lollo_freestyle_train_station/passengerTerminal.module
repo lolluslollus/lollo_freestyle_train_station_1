@@ -204,7 +204,8 @@ return {
 			local platformWidth = cpl.width
 			if cpl.type == 2 then -- tunnel
 				if cpl.width >= 5 or not(isStairs2Subway(nTerminal, i)) then
-					local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+					local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 					local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/subway/era_c_perron_number_single_hanging.mdl',
