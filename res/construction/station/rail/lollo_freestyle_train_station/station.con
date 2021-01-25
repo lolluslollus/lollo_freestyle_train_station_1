@@ -675,6 +675,7 @@ function data()
 										and not(isNextUnderpass)
 										and cpl.width > 2.5 -- LOLLO TODO see if U can bodge-fit the platform lift on a 2.5 m platform:
 										-- it's too broad.
+										-- LOLLO TODO platform lifts and underpasses have too many underground cross-connections.
 										and (not(_getOccupiedInfo4FlatAreas(t, i))
 										or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.platformLiftSlotId) then
 											local xyZoomFactor = isTrackOnPlatformLeft and 1 or -1
@@ -1044,6 +1045,7 @@ function data()
 				-- end
 
 				local _getSegmentsBetweenPos2Links = function(positions, tolerancePercent4ShortDistances)
+					-- for each combination of terminals, return the shortest paths
 					local allSegments = {}
 					local minDistanceSegments = {}
 					for t = 1, #params.terminals do
@@ -1158,7 +1160,8 @@ function data()
 							end
 						end
 					end
-					local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositionsUnderground(), 1.2) --2.01)
+					local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositionsUnderground(), 1.01) --2.01)
+					-- local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositionsUnderOrAbovePlatforms(), 1.05) -- 1.2) --2.01)
 					-- print('allPositionsUnderground =') debugPrint(allPositionsUnderground)
 					-- print('shortSegmentsUnderground =') debugPrint(shortSegmentsUnderground)
 					-- print('minDistanceSegmentsUnderground =') debugPrint(minDistanceSegmentsUnderground)
