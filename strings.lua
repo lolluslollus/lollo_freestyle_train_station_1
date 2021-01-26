@@ -11,7 +11,8 @@ function data()
 				- Ground platforms require street access or underpasses in each.
 				In all cases, adjacent platforms are connected together automatically.
 
-				When you delete a freestyle station or one of its terminals, it will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
+				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
+				When you bulldoze the only terminal, the whole station will be bulldozed.
 				
 				[h1]Some handy tips:[/h1]
 				- To visualise the lanes, start the game in debug mode and press <AltGr> + <L>.

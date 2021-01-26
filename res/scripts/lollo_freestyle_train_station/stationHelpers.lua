@@ -787,6 +787,40 @@ local helpers = {
 
         return proposal
     end,
+
+    getNeighbourNodeIdsOfBulldozedTerminal = function(platformEdgeLists, trackEdgeLists)
+        print('getNeighbourNodeIdsOfBulldozedTerminal starting')
+
+        local result = {
+            platforms = {
+                node1 = nil,
+                node2 = nil
+            },
+            tracks = {
+                node1 = nil,
+                node2 = nil
+            }
+        }
+
+        if type(platformEdgeLists) == 'table' and #platformEdgeLists > 0 then
+            result.platforms.node1 = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(platformEdgeLists[1].posTanX2[1][1]), 0.001, api.type.ComponentType.BASE_NODE
+            )[1] -- LOLLO TODO what if it finds two nodes? How do I make sure it will take the best one? Same applies to the brothers below.
+            result.platforms.node2 = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(platformEdgeLists[#platformEdgeLists].posTanX2[2][1]), 0.001, api.type.ComponentType.BASE_NODE
+            )[1]
+        end
+        if type(trackEdgeLists) == 'table' and #trackEdgeLists > 0 then
+            result.tracks.node1 = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(trackEdgeLists[1].posTanX2[1][1]), 0.001, api.type.ComponentType.BASE_NODE
+            )[1]
+            result.tracks.node2 = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(trackEdgeLists[#trackEdgeLists].posTanX2[2][1]), 0.001, api.type.ComponentType.BASE_NODE
+            )[1]
+        end
+        -- print('getNeighbourNodeIdsOfBulldozedTerminal about to return') debugPrint(result)
+        return result
+    end,
 }
 
 local _getStationEndNodeIds = function(con, nTerminal, stationConstructionId)
@@ -826,18 +860,22 @@ local _getStationEndNodeIds = function(con, nTerminal, stationConstructionId)
     if trackNode1Id == nil then
         print('WARNING: could not find tracknode1Id in station construction')
         print('stationConstructionId =') debugPrint(stationConstructionId)
+        print('nTerminal =') debugPrint(nTerminal)
     end
     if trackNode2Id == nil then
         print('WARNING: could not find tracknode2Id in station construction')
         print('stationConstructionId =') debugPrint(stationConstructionId)
+        print('nTerminal =') debugPrint(nTerminal)
     end
     if platformNode1Id == nil then
         print('WARNING: could not find platformnode1Id in station construction')
         print('stationConstructionId =') debugPrint(stationConstructionId)
+        print('nTerminal =') debugPrint(nTerminal)
     end
     if platformNode2Id == nil then
         print('WARNING: could not find platformnode2Id in station construction')
         print('stationConstructionId =') debugPrint(stationConstructionId)
+        print('nTerminal =') debugPrint(nTerminal)
     end
 
     return {
@@ -953,44 +991,6 @@ helpers.getStationEndEntities = function(stationConstructionId)
     end
 
     -- print('getStationEndEntities result =') debugPrint(result)
-    return result
-end
-
-helpers.getNeighbourNodeIdsOfBulldozedStation = function(endEntities4T)
-    print('getNeighbourNodeIdsOfBulldozedStation starting')
-    if endEntities4T == nil
-    or endEntities4T.platforms == nil or endEntities4T.platforms.stationEndNodePositions == nil
-    or endEntities4T.tracks == nil or endEntities4T.tracks.stationEndNodePositions == nil
-    then return nil end
-
-    local result = {
-        platforms = {
-            node1 = endEntities4T.platforms.stationEndNodePositions.node1 ~= nil
-                and edgeUtils.getNearbyObjectIds(
-                    transfUtils.position2Transf(endEntities4T.platforms.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
-                )[1] -- LOLLO TODO what if it finds two nodes? How do I make sure it will take the best one?
-                or nil,
-            node2 = endEntities4T.platforms.stationEndNodePositions.node2 ~= nil
-                and edgeUtils.getNearbyObjectIds(
-                    transfUtils.position2Transf(endEntities4T.platforms.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
-                )[1]
-                or nil
-        },
-        tracks = {
-            node1 = endEntities4T.tracks.stationEndNodePositions.node1 ~= nil
-                and edgeUtils.getNearbyObjectIds(
-                    transfUtils.position2Transf(endEntities4T.tracks.stationEndNodePositions.node1), 0.001, api.type.ComponentType.BASE_NODE
-                )[1]
-                or nil,
-            node2 = endEntities4T.tracks.stationEndNodePositions.node2 ~= nil
-                and edgeUtils.getNearbyObjectIds(
-                    transfUtils.position2Transf(endEntities4T.tracks.stationEndNodePositions.node2), 0.001, api.type.ComponentType.BASE_NODE
-                )[1]
-                or nil
-        }
-    }
-
-    -- print('getNeighbourNodeIdsOfBulldozedStation about to return') debugPrint(result)
     return result
 end
 
