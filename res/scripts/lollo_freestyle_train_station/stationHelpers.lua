@@ -7,69 +7,6 @@ local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
 
-local _getStationEndNodeIds = function(con, nTerminal, stationConstructionId)
-    -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
-    -- print('getStationEndNodesUnsorted, con =') debugPrint(con)
-    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    if not(con) or con.fileName ~= _constants.stationConFileName then
-        return {}
-    end
-
-    local _getNodeId = function(position)
-        -- print('position =') debugPrint(position)
-        -- remember that edge positions are rectangles, so there can be several edges in one position,
-        -- even if they don't touch each other.
-        local nearbyEdgeIds = edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(position), 0.001, api.type.ComponentType.BASE_EDGE)
-        -- print('edgeFunds =') debugPrint(nearbyEdgeIds)
-        local nearbyNodeIds = edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(position), 0.001, api.type.ComponentType.BASE_NODE)
-        -- print('nodeFunds =') debugPrint(nearbyNodeIds)
-        for _, edgeId in pairs(nearbyEdgeIds) do
-            if arrayUtils.arrayHasValue(con.frozenEdges, edgeId) then
-                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                for _, nodeId in pairs(nearbyNodeIds) do
-                    if baseEdge.node0 == nodeId or baseEdge.node1 == nodeId then
-                        return nodeId
-                    end
-                end
-            end
-        end
-        return nil
-    end
-
-    local trackNode1Id = _getNodeId(con.params.terminals[nTerminal].trackEdgeLists[1].posTanX2[1][1])
-    local trackNode2Id = _getNodeId(arrayUtils.getLast(con.params.terminals[nTerminal].trackEdgeLists).posTanX2[2][1])
-    local platformNode1Id = _getNodeId(con.params.terminals[nTerminal].platformEdgeLists[1].posTanX2[1][1])
-    local platformNode2Id = _getNodeId(arrayUtils.getLast(con.params.terminals[nTerminal].platformEdgeLists).posTanX2[2][1])
-
-    if trackNode1Id == nil then
-        print('WARNING: could not find tracknode1Id in station construction')
-        print('stationConstructionId =') debugPrint(stationConstructionId)
-    end
-    if trackNode2Id == nil then
-        print('WARNING: could not find tracknode2Id in station construction')
-        print('stationConstructionId =') debugPrint(stationConstructionId)
-    end
-    if platformNode1Id == nil then
-        print('WARNING: could not find platformnode1Id in station construction')
-        print('stationConstructionId =') debugPrint(stationConstructionId)
-    end
-    if platformNode2Id == nil then
-        print('WARNING: could not find platformnode2Id in station construction')
-        print('stationConstructionId =') debugPrint(stationConstructionId)
-    end
-
-    return {
-        platforms = {
-            node1Id = platformNode1Id,
-            node2Id = platformNode2Id,
-        },
-        tracks = {
-            node1Id = trackNode1Id,
-            node2Id = trackNode2Id,
-        }
-    }
-end
-
 local helpers = {
     getNearbyFreestyleStationsListOLD = function(transf, searchRadius)
         if type(transf) ~= 'table' then return {} end
@@ -851,6 +788,69 @@ local helpers = {
         return proposal
     end,
 }
+
+local _getStationEndNodeIds = function(con, nTerminal, stationConstructionId)
+    -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
+    -- print('getStationEndNodesUnsorted, con =') debugPrint(con)
+    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
+    if not(con) or con.fileName ~= _constants.stationConFileName then
+        return {}
+    end
+
+    local _getNodeId = function(position)
+        -- print('position =') debugPrint(position)
+        -- remember that edge positions are rectangles, so there can be several edges in one position,
+        -- even if they don't touch each other.
+        local nearbyEdgeIds = edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(position), 0.001, api.type.ComponentType.BASE_EDGE)
+        -- print('edgeFunds =') debugPrint(nearbyEdgeIds)
+        local nearbyNodeIds = edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(position), 0.001, api.type.ComponentType.BASE_NODE)
+        -- print('nodeFunds =') debugPrint(nearbyNodeIds)
+        for _, edgeId in pairs(nearbyEdgeIds) do
+            if arrayUtils.arrayHasValue(con.frozenEdges, edgeId) then
+                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                for _, nodeId in pairs(nearbyNodeIds) do
+                    if baseEdge.node0 == nodeId or baseEdge.node1 == nodeId then
+                        return nodeId
+                    end
+                end
+            end
+        end
+        return nil
+    end
+
+    local trackNode1Id = _getNodeId(con.params.terminals[nTerminal].trackEdgeLists[1].posTanX2[1][1])
+    local trackNode2Id = _getNodeId(arrayUtils.getLast(con.params.terminals[nTerminal].trackEdgeLists).posTanX2[2][1])
+    local platformNode1Id = _getNodeId(con.params.terminals[nTerminal].platformEdgeLists[1].posTanX2[1][1])
+    local platformNode2Id = _getNodeId(arrayUtils.getLast(con.params.terminals[nTerminal].platformEdgeLists).posTanX2[2][1])
+
+    if trackNode1Id == nil then
+        print('WARNING: could not find tracknode1Id in station construction')
+        print('stationConstructionId =') debugPrint(stationConstructionId)
+    end
+    if trackNode2Id == nil then
+        print('WARNING: could not find tracknode2Id in station construction')
+        print('stationConstructionId =') debugPrint(stationConstructionId)
+    end
+    if platformNode1Id == nil then
+        print('WARNING: could not find platformnode1Id in station construction')
+        print('stationConstructionId =') debugPrint(stationConstructionId)
+    end
+    if platformNode2Id == nil then
+        print('WARNING: could not find platformnode2Id in station construction')
+        print('stationConstructionId =') debugPrint(stationConstructionId)
+    end
+
+    return {
+        platforms = {
+            node1Id = platformNode1Id,
+            node2Id = platformNode2Id,
+        },
+        tracks = {
+            node1Id = trackNode1Id,
+            node2Id = trackNode2Id,
+        }
+    }
+end
 
 helpers.getStationEndEntities = function(stationConstructionId)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
