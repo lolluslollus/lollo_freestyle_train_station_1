@@ -35,8 +35,12 @@ return {
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+		local modelId = _constants.underpassBuilding10MModelFileName
+		if cpl.type == 1 then modelId = _constants.underpassBuildingWBottom10MModelFileName
+		elseif cpl.type == 2 then modelId = _constants.underpassUndergroundBuilding10MModelFileName
+		end
 		result.models[#result.models + 1] = {
-			id = cpl.type == 1 and _constants.underpassBuildingWBottom10MModelFileName or _constants.underpassBuilding10MModelFileName,
+			id = modelId,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
 			tag = tag

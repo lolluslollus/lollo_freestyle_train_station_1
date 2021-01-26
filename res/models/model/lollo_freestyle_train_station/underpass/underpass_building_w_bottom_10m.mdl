@@ -19,7 +19,7 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/wall_white.mtl',
-                                'lollo_freestyle_train_station/underpass-door.mtl',
+                                'lollo_freestyle_train_station/doors.mtl',
                                 'lollo_freestyle_train_station/station_concrete_1.mtl',
                                 'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/station_concrete_1_z.mtl',
