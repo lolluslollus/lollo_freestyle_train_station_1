@@ -799,12 +799,16 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
     local transfXZoom = isTrackOnPlatformLeft and -1 or 1
     local transfYZoom = isTrackOnPlatformLeft and -1 or 1
 
+    -- LOLLO NOTE setting this to 2 gets a negligible performance boost and uglier joints,
+    -- particularly on slopes and bends
+    local _ceilingStep = 1
+    local _pillarPeriod = 4 -- it would be math.ceil(4 / _ceilingStep)
+
     local ii1 = nTrackEdge - 1
     local iiN = nTrackEdge + 1
     local ceilingCounter = -2
     local drawNumberSign = 1
-    -- LOLLO TODO try using step 2 to double performance
-    for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
+    for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, _ceilingStep do
         local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
         local leadingIndex = cpf.leadingIndex
         if leadingIndex > iiN then break end
@@ -823,9 +827,9 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
             }
 
             ceilingCounter = ceilingCounter + 1
-            if params.terminals[nTerminal].centrePlatformsFineRelative[ii + 1]
-            and params.terminals[nTerminal].centrePlatformsFineRelative[ii + 1].leadingIndex <= iiN
-            and math.fmod(ceilingCounter, 4) == 0 then
+            if params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep]
+            and params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep].leadingIndex <= iiN
+            and math.fmod(ceilingCounter, _pillarPeriod) == 0 then
                 local myTransf = transfUtilsUG.mul(
                     helpers.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformRoofZ, 1 }
