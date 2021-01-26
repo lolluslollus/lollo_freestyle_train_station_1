@@ -27,7 +27,8 @@ function data()
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Checks would be too expensive.
 				- Station naming does not work properly.
 				- For now, it's only modern-ish era.
-				- Upgrading tracks works meh.
+                - Upgrading tracks works meh.
+                - 2.5 m platforms do not agree with bridges, try my naked bridge that comes with the mod.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
