@@ -1023,6 +1023,10 @@ function data()
 
 				local _getAllPositions_UndergroundTop_UndergroundBottom = function()
 					-- LOLLO TODO this could connect an underground underpass to some opposite stairs, no good.
+					-- One way to solve this, and also simplify the game, is to introduce lifts or stairs that go up and down,
+					-- only underground. They would replace underpasses underground, which lok stupid anyway,
+					-- but NOT stairs to subways.
+					-- To complement this, bar 2.5 m platforms underground.
 					local results = {}
 					for t = 1, #params.terminals do
 						results[t] = {}
