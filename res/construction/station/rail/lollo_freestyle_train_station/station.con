@@ -1072,11 +1072,12 @@ function data()
 					-- for each combination of terminals, return the shortest paths
 					local allSegments = {}
 					local minDistanceSegments = {}
-					for t = 1, #params.terminals do
+					local maxT = #params.terminals
+					for t = 1, maxT do
 						local positionsInT = positions[t]
 						if positionsInT ~= nil then
 							for i = 1, #positionsInT do
-								for tt = t + 1, #params.terminals do
+								for tt = t + 1, maxT do
 									local positionsInTT = positions[tt]
 									if positionsInTT ~= nil then
 										for ii = 1, #positionsInTT do
@@ -1116,9 +1117,38 @@ function data()
 						end
 					end
 
+					-- LOLLO TODO MAYBE if I have a segment from A to B and one from B to C, and also a segment from A to C,
+					-- and the latter is not much much shorter than the sum of the other two,
+					-- ignore the latter. The following tries to do that, check it.
+					-- It would be finer if we run it on the short segments and check the position 1 and 2, but too expensive.
+					-- remove long sides of connection triangles
+					for t = 1, maxT do
+						for tt = t + 1, maxT do
+							for ttt = tt + 1, maxT do
+								if minDistanceSegments[t] ~= nil
+								and minDistanceSegments[t][tt] ~= nil and minDistanceSegments[t][ttt] ~= nil
+								and minDistanceSegments[tt] ~= nil
+								and minDistanceSegments[tt][ttt] ~= nil
+								then
+									local t_tt_distance = minDistanceSegments[t][tt].distance
+									local t_ttt_distance = minDistanceSegments[t][ttt].distance
+									local tt_ttt_distance = minDistanceSegments[tt][ttt].distance
+									local maxDistance = math.max(t_tt_distance, t_ttt_distance, tt_ttt_distance)
+									if maxDistance == t_tt_distance then
+										minDistanceSegments[t][tt] = nil
+									elseif maxDistance == t_ttt_distance then
+										minDistanceSegments[t][ttt] = nil
+									elseif maxDistance == tt_ttt_distance then
+										minDistanceSegments[tt][ttt] = nil
+									end
+								end
+							end
+						end
+					end
+
                     local shortSegments = {}
-                    for t = 1, #params.terminals do
-                        for tt = t + 1, #params.terminals do
+                    for t = 1, maxT do
+                        for tt = t + 1, maxT do
 							if minDistanceSegments[t] ~= nil and minDistanceSegments[t][tt] ~= nil then
 								for _, value in pairs(allSegments[t][tt]) do
 									if tolerancePercent4ShortDistances == nil or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
@@ -1130,9 +1160,7 @@ function data()
                             end
                         end
 					end
-					-- LOLLO TODO MAYBE if I have a segment from A to B and one from B to C, and also a segment from A to C,
-					-- and the latter is not much much shorter than the sum of the other two,
-					-- ignore the latter.
+
 					return shortSegments, minDistanceSegments
 					-- return minDistances
 				end
@@ -1168,9 +1196,10 @@ function data()
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
 					local function _linkAcross(segments, maxLinkLength)
-						for t = 1, #params.terminals do
+						local maxT = #params.terminals
+						for t = 1, maxT do
 							if segments[t] ~= nil then
-								for tt = t + 1, #params.terminals do
+								for tt = t + 1, maxT do
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											result.models[#result.models+1] = {
@@ -1211,10 +1240,11 @@ function data()
 
 				local _linkPassengerPlatforms = function(maxLinkLength)
 					-- link the underpasses across terminals, on the ground, if they are close enough
-					for t = 1, #params.terminals do
+					local maxT = #params.terminals
+					for t = 1, maxT do
 						local positionsInT = result.terminateConstructionHookInfo.crossConnectorPositions[t]
 						if positionsInT ~= nil then
-							for tt = t + 1, #params.terminals do
+							for tt = t + 1, maxT do
 								local positionsInTT = result.terminateConstructionHookInfo.crossConnectorPositions[tt]
 								if positionsInTT ~= nil then
 									for i = 1, #positionsInT do
