@@ -355,7 +355,7 @@ function data()
 				local function _addPlatformRoofs()
 					if isCargoTerminal then return end
 
-					for i = 1, #params.terminals[t].centrePlatformsRelative, 3 do
+					for i = 2, #params.terminals[t].centrePlatformsRelative, 3 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						if cpl.type ~= 2 then -- no platform roofs in tunnels
 							local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
