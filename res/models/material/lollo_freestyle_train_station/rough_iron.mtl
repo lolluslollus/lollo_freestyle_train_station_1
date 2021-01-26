@@ -12,6 +12,7 @@ function data()
             },
             map_albedo = {
                 -- fileName = "models/station/rail/era_c/era_c_trainstation_borders_2_albedo.dds",
+                -- LOLLO TODO use something better
                 fileName = "unknown_roughness_1k.tga",
                 type = "TWOD",
                 wrapS = "REPEAT",
