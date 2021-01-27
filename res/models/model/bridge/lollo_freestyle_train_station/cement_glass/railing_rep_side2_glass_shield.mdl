@@ -20,7 +20,7 @@ return {
 						-- mesh = "bridge/cement/railing_rep_side/cement_railing_rep_side_lod0.msh",
 						materials = {
 							"lollo_freestyle_train_station/bridge/cement_no_pattern.mtl",
-							"lollo_freestyle_train_station/rough_alu_medium_grey.mtl",
+							"lollo_freestyle_train_station/rough_alu.mtl",
 							"lollo_freestyle_train_station/glass_transparent_rough.mtl",
 						},
 						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_side_glass_shield_lod0.msh",

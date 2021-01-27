@@ -10,7 +10,8 @@ function data()
                 fadeOutStartDist = 10000,
             },
             map_albedo = {
-                fileName = "models/station/rail/era_c/era_c_trainstation_glass_albedo.dds",
+                -- fileName = "models/station/rail/era_c/era_c_trainstation_glass_albedo.dds",
+                fileName = "lollo_freestyle_train_station/era_c_trainstation_glass_albedo_bc3_no_premul_alpha.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
