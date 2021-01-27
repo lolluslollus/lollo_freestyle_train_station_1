@@ -13,7 +13,8 @@ function data()
             map_albedo = {
                 -- fileName = "models/station/rail/era_c/era_c_trainstation_borders_2_albedo.dds",
                 -- fileName = "unknown_roughness_1k.tga",
-                fileName = "lollo_freestyle_train_station/metal_scratched_007_albedo.tga",
+                -- fileName = "lollo_freestyle_train_station/metal_scratched_007_albedo.tga",
+                fileName = "lollo_freestyle_train_station/metal_scratched_007_albedo_bc1a.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
@@ -21,7 +22,8 @@ function data()
             map_metal_gloss_ao = {
                 -- fileName = "models/station/rail/era_c/era_c_trainstation_borders_2_metal_gloss_ao.dds",
                 -- fileName = "unknown_roughness_1k.tga",
-                fileName = "lollo_freestyle_train_station/metal_scratched_007_metal_gloss_ao.tga",
+                -- fileName = "lollo_freestyle_train_station/metal_scratched_007_metal_gloss_ao.tga",
+                fileName = "lollo_freestyle_train_station/metal_scratched_007_metal_gloss_ao_bc3.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
@@ -29,7 +31,8 @@ function data()
             map_normal = {
                 -- fileName = "models/station/rail/era_c/era_c_trainstation_borders_2_normal.dds",
                 -- fileName = "unknown_roughness_1k.tga",
-                fileName = "lollo_freestyle_train_station/metal_scratched_007_normal.tga",
+                -- fileName = "lollo_freestyle_train_station/metal_scratched_007_normal.tga",
+                fileName = "lollo_freestyle_train_station/metal_scratched_007_normal_bc5.dds",
                 redGreen = true,
                 type = "TWOD",
                 wrapS = "REPEAT",
