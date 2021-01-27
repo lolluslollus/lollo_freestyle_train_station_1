@@ -510,7 +510,7 @@ local _actions = {
         proposal.constructionsToAdd[1] = newCon
 
         proposal.constructionsToRemove = { constructionId }
-        proposal.old2new = { -- LOLLO TODO try this when adding a subway, if it saves calling buildSnappyTracks
+        proposal.old2new = {
             [constructionId] = 0,
         }
 
