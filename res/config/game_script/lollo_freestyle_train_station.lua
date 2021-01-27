@@ -1288,7 +1288,7 @@ function data()
                         (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
                     )
                     print('nodeBetween =') debugPrint(nodeBetween)
-                    -- LOLLO TODO it seems fixed, but keep checking it:
+                    -- LOLLO NOTE it seems fixed, but keep checking it:
                     -- this can screw up the directions. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
                     -- in these cases, split produces something like:
                     -- node0 = 26197,
@@ -1371,6 +1371,7 @@ function data()
                     -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.
                     -- For now, I forbid using platforms of different widths in a station, if any of them is > 5.
                     -- This way, we don't disturb the passenger station, which hasn't got this problem coz it always has the same lanes.
+                    -- We don't want to disturb it coz 2.5 m platforms have problems with bridges and tunnels, in the game.
                     if platformWidth <= 5 then
                         eventArgs.cargoWaitingAreas = {
                             eventArgs.centrePlatforms
