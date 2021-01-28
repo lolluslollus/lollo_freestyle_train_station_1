@@ -13,6 +13,8 @@ local _texts = {
     warningWindowTitle = _('WarningWindowTitle'),
 }
 
+local _windowXShift = -50
+
 local guiHelpers = {
     moveCamera = function(position)
         local cameraData = game.gui.getCamera()
@@ -112,6 +114,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
         )
         layout:addItem(button)
     end
+
     local function addGoBackToWrongObjectButton()
         if not(edgeUtils.isValidAndExistingId(eventArgs.platformWaypoint1Id)) then return end
 
@@ -142,7 +145,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
 
     -- window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x, position.y)
+    window:setPosition(position.x + _windowXShift, position.y)
     window:onClose(
         function()
             if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
@@ -231,7 +234,7 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
 
     window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x, position.y)
+    window:setPosition(position.x + _windowXShift, position.y)
     window:addHideOnCloseHandler()
 end
 

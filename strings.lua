@@ -28,7 +28,7 @@ function data()
 				- Station naming does not work properly.
 				- For now, it's only modern-ish era.
                 - Upgrading tracks works meh.
-                - 2.5 m platforms do not agree with bridges, try my naked bridge that comes with the mod.
+                - 2.5 m platforms do not agree with bridges and tunnels. My pillarless bridge that comes with the mod can help.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
