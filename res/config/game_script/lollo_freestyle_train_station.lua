@@ -1869,7 +1869,7 @@ function data()
                         end
                     elseif name == 'select' then
                         -- LOLLO TODO MAYBE same with stations. Maybe one day.
-                        print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
+                        -- print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
                         -- debugPrint(args)
 
                         _joinSubway(args)

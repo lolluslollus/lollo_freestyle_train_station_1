@@ -42,7 +42,7 @@ return {
 		}
 
 		moduleHelpers.doTerrain4Subways(result, slotTransf)
-		print('subway.module.updateFn ending')
+		-- print('subway.module.updateFn ending')
 	end,
 
 	getModelsFn = function(params)

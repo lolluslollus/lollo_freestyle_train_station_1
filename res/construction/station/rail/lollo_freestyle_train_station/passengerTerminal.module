@@ -275,7 +275,7 @@ return {
 			end
 		end
 
-		print('passengerTerminal.module.updateFn ending')
+		-- print('passengerTerminal.module.updateFn ending')
 	end,
 
 	getModelsFn = function(params)
