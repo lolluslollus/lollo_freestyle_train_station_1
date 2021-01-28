@@ -636,13 +636,24 @@ function data()
 												type = _constants.passengerSideLiftModuleType,
 											})
 											if params.modules[myId] ~= nil then
-												local lane2AreaTransf = transfUtils.get1MLaneTransf(
-													transfUtils.getPositionRaisedBy(myPosTanX2[1][1], _laneZ),
-													transfUtils.transf2Position(myTransf)
+												local underpassBottomTransf = transfUtilsUG.mul(
+													myTransf,
+													{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.underpassZ, 1 }
 												)
+												if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
+													result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
+												end
+												result.terminateConstructionHookInfo.underpassPositionsOnBridge[t][#result.terminateConstructionHookInfo.underpassPositionsOnBridge[t]+1] = {
+													t = t,
+													pos2Link = transfUtils.transf2Position(underpassBottomTransf)
+												}
+
 												result.models[#result.models+1] = {
 													id = _constants.passengerLaneModelId,
-													transf = lane2AreaTransf
+													transf = transfUtils.get1MLaneTransf(
+														transfUtils.getPositionRaisedBy(myPosTanX2[1][1], _laneZ),
+														transfUtils.transf2Position(myTransf)
+													)
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.sideLiftSlotId)
 

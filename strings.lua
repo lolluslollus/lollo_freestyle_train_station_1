@@ -16,6 +16,7 @@ function data()
 				
 				[h1]Some handy tips:[/h1]
 				- To visualise the lanes, start the game in debug mode and press <AltGr> + <L>.
+				- To work underground, use <NumPad 4>.
 				- Very thin paths help with certain setups: those are in my street fine-tuning mod.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
@@ -69,7 +70,7 @@ function data()
 			["FlatPassengerStation5MName"] = "Small passenger station, 5 m high",
 			["FlatPassengerStation5MDesc"] = "Small passenger station, to access a platform a bit higher than the road. Repaint its ground with <shift> and a paint tool.",
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
-			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It does not connect to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
+			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It connects to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
 			["PassengerPlatformLiftName"] = "Passenger lift to a bridge",
 			["PassengerPlatformLiftDesc"] = "Passenger lift to access a 5 m platform on a bridge, from below. It connects to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
 			["PassengerStationSquareName"] = "Station square",

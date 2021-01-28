@@ -395,6 +395,25 @@ return function(height)
                     },
                     height > 0 and
                     {
+                        -- across the hall and into the lift, under the platform
+                        linkable = false,
+                        nodes = {
+                            {
+                                {0, 0, _constants.underpassZ},
+                                {0, -2, 0},
+                                2.4
+                            },
+                            {
+                                {0, -2.0, _constants.underpassZ},
+                                {0, -2, 0},
+                                2.4
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    } or nil,
+                    height > 0 and
+                    {
                         -- straight down
                         linkable = false,
                         nodes = {
@@ -404,12 +423,22 @@ return function(height)
                                 2.4
                             },
                             {
-                                {0, -2.0, -height},
+                                {0, -2.0, math.max(_constants.underpassZ, -height)},
                                 {0, 0, -1},
                                 2.4
                             },
                             {
-                                {0, -2.0, -height},
+                                {0, -2.0, math.max(_constants.underpassZ, -height)},
+                                {0, 0, -1},
+                                2.4
+                            },
+                            {
+                                {0, -2.0, math.min(_constants.underpassZ, -height)},
+                                {0, 0, -1},
+                                2.4
+                            },
+                            {
+                                {0, -2.0, math.min(_constants.underpassZ, -height)},
                                 {0, 0, -1},
                                 2.4
                             },
