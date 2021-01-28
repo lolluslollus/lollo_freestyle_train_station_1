@@ -1172,7 +1172,7 @@ function data()
 					local shortSegmentsOnGround, minDistanceSegmentsOnGround = _getSegmentsBetweenPos2Links(
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
-						1.5  --2.01
+						1.6  --2.01
 					)
 					-- print('shortSegmentsOnGround =') debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround, 20)
@@ -1180,7 +1180,7 @@ function data()
 					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links(
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						1.5  --2.01
+						1.6  --2.01
 					)
 					-- print('shortSegmentsOnBridge =') debugPrint(shortSegmentsOnBridge)
 					_linkAcross(shortSegmentsOnBridge, 20)
@@ -1188,7 +1188,7 @@ function data()
 					local shortSegmentsInTunnel, minDistanceSegmentsInTunnel = _getSegmentsBetweenPos2Links(
 						result.terminateConstructionHookInfo.stairs2SubwayPositions,
 						result.terminateConstructionHookInfo.stairs2SubwayPositions,
-						1.5  --2.01
+						1.6  --2.01
 					)
 					-- print('shortSegmentsInTunnel =') debugPrint(shortSegmentsInTunnel)
 					_linkAcross(shortSegmentsInTunnel, 20)
