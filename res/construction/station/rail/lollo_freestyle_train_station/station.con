@@ -998,18 +998,6 @@ function data()
 				print('terminateConstructionHook starting')
 				-- xpcall(
 				-- 	function()
-				local _getAllPositions_UndergroundTop_BridgeBottom = function()
-					local results = {}
-					for t = 1, #params.terminals do
-						results[t] = {}
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
-						-- the following would be nice but we risk duplicate edges with the routine connecting underpasses on ground with underpasses underground
-						-- arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsUnderground[t] or {})
-					end
-					return results
-				end
-
 				local _getAllPositions_UndergroundTop_GroundBottom = function()
 					local results = {}
 					for t = 1, #params.terminals do
@@ -1021,69 +1009,18 @@ function data()
 					return results
 				end
 
-				local _getAllPositions_UndergroundTop_UndergroundBottom = function()
-					-- This could connect an underground underpass to some opposite stairs, no good.
-					-- One way to solve this, and also simplify the game, is to introduce lifts or stairs that go up and down,
-					-- only underground. They would replace underpasses underground, but NOT stairs to subways.
-					-- To complement this, we could bar 2.5 m platforms underground.
-					-- On the other hand, this would introduce double pos2Link, with added complexity and cost.
-					-- At the end, it is easier to build properly, this is freestyle after all.
-					local results = {}
-					for t = 1, #params.terminals do
-						results[t] = {}
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsUnderground[t] or {})
-					end
-					return results
-				end
-
-				-- local _getAllPositionsBelowPlatforms = function()
-				-- 	local results = {}
-				-- 	for t = 1, #params.terminals do
-				-- 		results[t] = {}
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
-				-- 	end
-				-- 	return results
-				-- end
-
-				-- xpcall(
-				-- 	function()
-
-				-- local _getAllPositionsUnderground = function()
-				-- 	local results = {}
-				-- 	for t = 1, #params.terminals do
-				-- 		results[t] = {}
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsUnderground[t] or {})
-				-- 	end
-				-- 	return results
-				-- end
-
-				-- local _getAllPositionsUndergroundAndLiftBottoms = function()
-				-- 	local results = {}
-				-- 	for t = 1, #params.terminals do
-				-- 		results[t] = {}
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
-				-- 	end
-				-- 	return results
-				-- end
-
-				local _getSegmentsBetweenPos2Links = function(positions, tolerancePercent4ShortDistances)
-					-- for each combination of terminals, return the shortest paths
+				local _getSegmentsBetweenPos2Links = function(positionsA, positionsB, tolerancePercent4ShortDistances)
+					-- for each combination of terminals, return the shortest paths.
+					-- if positionsB exists, connect positionsA to positionsB; otherwise, connect positionsA with each other.
 					local allSegments = {}
 					local minDistanceSegments = {}
 					local maxT = #params.terminals
 					for t = 1, maxT do
-						local positionsInT = positions[t]
+						local positionsInT = positionsA[t]
 						if positionsInT ~= nil then
 							for i = 1, #positionsInT do
 								for tt = t + 1, maxT do
-									local positionsInTT = positions[tt]
+									local positionsInTT = positionsB[tt]
 									if positionsInTT ~= nil then
 										for ii = 1, #positionsInTT do
 											if allSegments[t] == nil then allSegments[t] = {} end
@@ -1220,24 +1157,53 @@ function data()
 							end
 						end
 					end
-					-- local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositionsUnderground(), 1.01) --2.01)
-					local shortSegmentsUnderground, minDistanceSegmentsUnderground = _getSegmentsBetweenPos2Links(_getAllPositions_UndergroundTop_GroundBottom(), 1.5) --2.01)
-					-- print('allPositionsUnderground =') debugPrint(allPositionsUnderground)
-					-- print('shortSegmentsUnderground =') debugPrint(shortSegmentsUnderground)
-					-- print('minDistanceSegmentsUnderground =') debugPrint(minDistanceSegmentsUnderground)
-					_linkAcross(shortSegmentsUnderground)
 
-					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links(result.terminateConstructionHookInfo.underpassPositionsOnBridge, 1.5) --2.01)
-					-- print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
+					local shortSegmentsOnGround, minDistanceSegmentsOnGround = _getSegmentsBetweenPos2Links(
+						result.terminateConstructionHookInfo.underpassPositionsOnGround,
+						result.terminateConstructionHookInfo.underpassPositionsOnGround,
+						1.5  --2.01
+					)
+					-- print('shortSegmentsOnGround =') debugPrint(shortSegmentsOnGround)
+					_linkAcross(shortSegmentsOnGround, 20)
+
+					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links(
+						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
+						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
+						1.5  --2.01
+					)
 					-- print('shortSegmentsOnBridge =') debugPrint(shortSegmentsOnBridge)
-					-- print('minDistanceSegmentsOnBridge =') debugPrint(minDistanceSegmentsOnBridge)
 					_linkAcross(shortSegmentsOnBridge, 20)
 
-					local shortSegments_UndergroundTop_BridgeBottom, minDistanceSegments_UndergroundTop_BridgeBottom = _getSegmentsBetweenPos2Links(_getAllPositions_UndergroundTop_BridgeBottom(), 1.0)
-					_linkAcross(shortSegments_UndergroundTop_BridgeBottom)
-					-- print('shortSegmentsUnderground2Bridge =') debugPrint(shortSegmentsUnderground2Bridge)
+					local shortSegmentsInTunnel, minDistanceSegmentsInTunnel = _getSegmentsBetweenPos2Links(
+						result.terminateConstructionHookInfo.stairs2SubwayPositions,
+						result.terminateConstructionHookInfo.stairs2SubwayPositions,
+						1.5  --2.01
+					)
+					-- print('shortSegmentsInTunnel =') debugPrint(shortSegmentsInTunnel)
+					_linkAcross(shortSegmentsInTunnel, 20)
 
-					local shortSegmentsUnderground2Underground, minDistanceSegmentsUnderground2Underground = _getSegmentsBetweenPos2Links(_getAllPositions_UndergroundTop_UndergroundBottom(), 1.0)
+					local shortSegmentsUnderground2Surface, minDistanceSegmentsUnderground2Surface = _getSegmentsBetweenPos2Links(
+						result.terminateConstructionHookInfo.underpassPositionsOnGround,
+						result.terminateConstructionHookInfo.stairs2SubwayPositions,
+						1.5 -- 2.01
+					)
+					-- print('shortSegmentsUnderground2Surface =') debugPrint(shortSegmentsUnderground2Surface)
+					_linkAcross(shortSegmentsUnderground2Surface)
+
+					local shortSegments_UndergroundTop_BridgeBottom, minDistanceSegments_UndergroundTop_BridgeBottom = _getSegmentsBetweenPos2Links(
+						result.terminateConstructionHookInfo.liftBottomPositions,
+						result.terminateConstructionHookInfo.stairs2SubwayPositions,
+						1.0
+					)
+					-- print('shortSegments_UndergroundTop_BridgeBottom =') debugPrint(shortSegments_UndergroundTop_BridgeBottom)
+					_linkAcross(shortSegments_UndergroundTop_BridgeBottom)
+
+					local shortSegmentsUnderground2Underground, minDistanceSegmentsUnderground2Underground = _getSegmentsBetweenPos2Links(
+						result.terminateConstructionHookInfo.stairs2SubwayPositions,
+						result.terminateConstructionHookInfo.underpassPositionsUnderground,
+						1.0
+					)
+					-- print('shortSegmentsUnderground2Underground =') debugPrint(shortSegmentsUnderground2Underground)
 					_linkAcross(shortSegmentsUnderground2Underground)
 				end
 				_linkUnderpassesAndStairs()
