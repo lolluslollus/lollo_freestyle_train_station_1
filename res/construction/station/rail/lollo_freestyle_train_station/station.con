@@ -1019,7 +1019,7 @@ function data()
 					return results
 				end
 
-				local _getSegmentsBetweenPos2Links = function(positionsA, positionsB, tolerancePercent4ShortDistances, isOutputMessages)
+				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, tolerancePercent4ShortDistances, isOutputMessages)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
 					local allSegments = {}
@@ -1028,14 +1028,14 @@ function data()
 					for t = 1, maxT do
 						local positionsInT = positionsA[t]
 						if positionsInT ~= nil then
-							for i = 1, #positionsInT do
-								for tt = 1, maxT do
-									if t ~= tt then
-										local t1 = math.min(t, tt)
-										local t2 = math.max(t, tt)
-										if minDistanceSegments[t1] == nil or minDistanceSegments[t1][t2] == nil then -- avoid repeating the same thing twice
-											local positionsInTT = positionsB[tt]
-											if positionsInTT ~= nil then
+							for tt = 1, maxT do
+								if t ~= tt then
+									local t1 = math.min(t, tt)
+									local t2 = math.max(t, tt)
+									if minDistanceSegments[t1] == nil or minDistanceSegments[t1][t2] == nil then -- avoid repeating the same thing twice
+										local positionsInTT = positionsB[tt]
+										if positionsInTT ~= nil then
+											for i = 1, #positionsInT do
 												for ii = 1, #positionsInTT do
 													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
 
@@ -1081,6 +1081,7 @@ function data()
 					-- It would be finer if we run it on the short segments and check the position 1 and 2, but too expensive.
 					-- remove long sides of connection triangles
 					if isOutputMessages then
+						print('allSegments before triangles=') debugPrint(allSegments)
 						print('minDistanceSegments before triangles=') debugPrint(minDistanceSegments)
 					end
 					for t = 1, maxT do
@@ -1179,49 +1180,50 @@ function data()
 						end
 					end
 
-					local shortSegmentsOnGround, minDistanceSegmentsOnGround = _getSegmentsBetweenPos2Links(
+					local shortSegmentsOnGround, minDistanceSegmentsOnGround = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
-						2.01
+						1.80
 					)
 					-- print('shortSegmentsOnGround =') debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround, 20)
 
-					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links(
+					-- print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
+					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						2.01
+						1.80 -- , true
 					)
 					-- print('shortSegmentsOnBridge =') debugPrint(shortSegmentsOnBridge)
 					_linkAcross(shortSegmentsOnBridge, 20)
 
-					local shortSegmentsInTunnel, minDistanceSegmentsInTunnel = _getSegmentsBetweenPos2Links(
+					local shortSegmentsInTunnel, minDistanceSegmentsInTunnel = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.stairs2SubwayPositions,
 						result.terminateConstructionHookInfo.stairs2SubwayPositions,
-						2.01
+						1.80
 					)
 					-- print('shortSegmentsInTunnel =') debugPrint(shortSegmentsInTunnel)
 					_linkAcross(shortSegmentsInTunnel, 20)
 
-					local shortSegmentsUnderground2Surface, minDistanceSegmentsUnderground2Surface = _getSegmentsBetweenPos2Links(
+					local shortSegmentsUnderground2Surface, minDistanceSegmentsUnderground2Surface = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						result.terminateConstructionHookInfo.stairs2SubwayPositions,
-						1.5 -- 2.01
+						1.01
 					)
 					-- print('shortSegmentsUnderground2Surface =') debugPrint(shortSegmentsUnderground2Surface)
 					_linkAcross(shortSegmentsUnderground2Surface)
 
-					print('result.terminateConstructionHookInfo.liftBottomPositions =') debugPrint(result.terminateConstructionHookInfo.liftBottomPositions)
-					print('result.terminateConstructionHookInfo.stairs2SubwayPositions =') debugPrint(result.terminateConstructionHookInfo.stairs2SubwayPositions)
-					local shortSegments_UndergroundTop_BridgeBottom, minDistanceSegments_UndergroundTop_BridgeBottom = _getSegmentsBetweenPos2Links(
+					-- print('result.terminateConstructionHookInfo.liftBottomPositions =') debugPrint(result.terminateConstructionHookInfo.liftBottomPositions)
+					-- print('result.terminateConstructionHookInfo.stairs2SubwayPositions =') debugPrint(result.terminateConstructionHookInfo.stairs2SubwayPositions)
+					local shortSegments_UndergroundTop_BridgeBottom, minDistanceSegments_UndergroundTop_BridgeBottom = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.liftBottomPositions,
 						result.terminateConstructionHookInfo.stairs2SubwayPositions,
-						1.01, true
+						1.01 -- , true
 					)
-					print('shortSegments_UndergroundTop_BridgeBottom =') debugPrint(shortSegments_UndergroundTop_BridgeBottom)
+					-- print('shortSegments_UndergroundTop_BridgeBottom =') debugPrint(shortSegments_UndergroundTop_BridgeBottom)
 					_linkAcross(shortSegments_UndergroundTop_BridgeBottom)
 
-					local shortSegmentsUnderground2Underground, minDistanceSegmentsUnderground2Underground = _getSegmentsBetweenPos2Links(
+					local shortSegmentsUnderground2Underground, minDistanceSegmentsUnderground2Underground = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.stairs2SubwayPositions,
 						result.terminateConstructionHookInfo.underpassPositionsUnderground,
 						1.01
