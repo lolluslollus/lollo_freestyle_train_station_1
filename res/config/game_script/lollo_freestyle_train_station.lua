@@ -15,6 +15,9 @@ local transfUtilsUG = require('transf')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
+-- LOLLO TODO when plopping a track marker immediately next to a piece of track, which is part of a double switch with another track,
+-- build snappy tracks will fail.
+
 local function _myErrorHandler(err)
     print('lollo freestyle train station ERROR: ', err)
 end
@@ -476,7 +479,7 @@ local _actions = {
         )
     end,
 
-    removeTerminal = function(constructionId, nTerminalToRemove, successEventName)
+    removeTerminal = function(constructionId, nTerminalToRemove, nRemainingTerminals, successEventName)
         print('removeTerminal starting, constructionId =', constructionId)
 
         local oldCon = edgeUtils.isValidAndExistingId(constructionId)
@@ -544,6 +547,7 @@ local _actions = {
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
                     local eventArgs = {
+                        nRemainingTerminals = nRemainingTerminals,
                         removedTerminalEdgeLists = removedTerminalEdgeLists,
                         stationConstructionId = result.resultEntities[1]
                     }
@@ -894,7 +898,7 @@ local _actions = {
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
-                    print('command callback firing for split, success =', success, 'result =') debugPrint(result)
+                    print('command callback firing for split, success =', success) --, 'result =') debugPrint(result)
                     if success and successEventName ~= nil then
                         -- print('successEventName =') debugPrint(successEventName)
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
@@ -1444,17 +1448,19 @@ function data()
                 )
             elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
                 _actions.removeTerminal(
-                    args.constructionId,
+                    args.stationConstructionId,
                     args.nTerminalToRemove,
+                    args.nRemainingTerminals,
                     _eventNames.REBUILD_1_TRACK_REQUESTED
                 )
             elseif name == _eventNames.REBUILD_1_TRACK_REQUESTED then
-                if type(args.removedTerminalEdgeLists) ~= 'table' or type(args.removedTerminalEdgeLists.trackEdgeLists) ~= 'table' then
-                    print('ERROR: args.removedTerminalEdgeLists.trackEdgeLists not available')
-                    return
-                end
                 if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
                     print('ERROR: args.stationConstructionId not valid')
+                    return
+                end
+                if type(args.removedTerminalEdgeLists) ~= 'table' or type(args.removedTerminalEdgeLists.trackEdgeLists) ~= 'table' then
+                    _actions.bulldozeStation(args.stationConstructionId)
+                    print('ERROR: args.removedTerminalEdgeLists.trackEdgeLists not available')
                     return
                 end
                 _actions.rebuildOneTerminalTracks(
@@ -1462,7 +1468,7 @@ function data()
                     args.removedTerminalEdgeLists.platformEdgeLists,
                     stationHelpers.getNeighbourNodeIdsOfBulldozedTerminal(args.removedTerminalEdgeLists.platformEdgeLists, args.removedTerminalEdgeLists.trackEdgeLists),
                     args.stationConstructionId,
-                    _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED
+                    args.nRemainingTerminals > 0 and _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED or _eventNames.BULLDOZE_STATION_REQUESTED
                 )
             elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
                 if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
@@ -1473,7 +1479,7 @@ function data()
                     stationHelpers.getStationEndEntities(args.stationConstructionId)
                 )
             elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
-                _actions.bulldozeStation(args.constructionId)
+                _actions.bulldozeStation(args.stationConstructionId)
             elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
                 if not(edgeUtils.isValidAndExistingId(args.join2StationId))
                 or not(edgeUtils.isValidAndExistingId(args.subwayId)) then
@@ -1543,7 +1549,7 @@ function data()
                                         end
                                         -- a terminal was bulldozed
                                         if #remainingTerminalIds < #con.params.terminals then
-                                            if #remainingTerminalIds > 0 then
+                                            -- if #remainingTerminalIds > 0 then
                                                 local nTerminalToRemove = -1
                                                 for t = 1, #con.params.terminals do
                                                     if not(arrayUtils.arrayHasValue(remainingTerminalIds, t)) then
@@ -1558,24 +1564,25 @@ function data()
                                                         _eventId,
                                                         _eventNames.REMOVE_TERMINAL_REQUESTED,
                                                         {
-                                                            constructionId = constructionId,
+                                                            stationConstructionId = constructionId,
+                                                            nRemainingTerminals = #remainingTerminalIds,
                                                             nTerminalToRemove = nTerminalToRemove
                                                         }
                                                     ))
                                                 else
                                                     print('ERROR: cannot find id of deleted terminal')
                                                 end
-                                            else
-                                                -- last terminal removed: pull down the station
-                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                    string.sub(debug.getinfo(1, 'S').source, 1),
-                                                    _eventId,
-                                                    _eventNames.BULLDOZE_STATION_REQUESTED,
-                                                    {
-                                                        constructionId = constructionId,
-                                                    }
-                                                ))
-                                            end
+                                            -- else
+                                            --     -- last terminal removed: pull down the station
+                                            --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                            --         string.sub(debug.getinfo(1, 'S').source, 1),
+                                            --         _eventId,
+                                            --         _eventNames.BULLDOZE_STATION_REQUESTED,
+                                            --         {
+                                            --             constructionId = constructionId,
+                                            --         }
+                                            --     ))
+                                            -- end
                                         end
                                     end
                                 end
