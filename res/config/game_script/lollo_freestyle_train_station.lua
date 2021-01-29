@@ -1196,8 +1196,8 @@ function data()
                     )
                     return
                 end
-                print('at least two track edges found')
 
+                print('at least two track edges found')
                 local platformEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
                     args.splitPlatformNode1Id,
                     args.splitPlatformNode2Id
@@ -1228,10 +1228,12 @@ function data()
                 print('at least two platform edges found')
 
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'splitPlatformNode1Id', 'splitPlatformNode2Id', 'splitTrackNode1Id', 'splitTrackNode2Id', })
+                -- print('track bulldoze requested, platformEdgeIdsBetweenNodeIds =') debugPrint(platformEdgeIdsBetweenNodeIds)
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds)
-                print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
+                -- print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
+                -- print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
-                print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
+                -- print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
                 local totalLength = 0
                 local trackLengths = {}
                 for i = 1, #eventArgs.trackEdgeList do
@@ -1661,12 +1663,12 @@ function data()
                                     end
 
                                     -- make sure the waypoints are on connected tracks
-                                    local contiguousTrackEdgeIds = stationHelpers.getTrackEdgeIdsBetweenEdgeIds(
+                                    local contiguousTrackEdgeProps = stationHelpers.getTrackEdgePropsBetweenEdgeIds(
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId)
                                     )
-                                    print('contiguous track edges =') debugPrint(contiguousTrackEdgeIds)
-                                    if #contiguousTrackEdgeIds < 1 then
+                                    print('contiguous track edges =') debugPrint(contiguousTrackEdgeProps)
+                                    if #contiguousTrackEdgeProps < 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('WaypointsNotConnected'), newWaypointId, similarObjectIdsInAnyEdges)
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1681,7 +1683,8 @@ function data()
                                     end
 
                                     -- make sure the waypoints are not overlapping existing station tracks or platforms, for any sort of station
-                                    for __, edgeId in pairs(contiguousTrackEdgeIds) do -- don't use _ here, we call it below to translate the message!
+                                    for __, obj in pairs(contiguousTrackEdgeProps) do -- don't use _ here, we call it below to translate the message!
+                                        local edgeId = obj.entity
                                         local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
                                         if edgeUtils.isValidAndExistingId(conId) then
                                             local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
@@ -1706,7 +1709,8 @@ function data()
                                     -- on the other hand, different platform widths make trouble with cargo, which has multiple waiting areas:
                                     -- let's check if they are different only if one is > 5, which only happens with cargo.
                                     local trackDistances = {}
-                                    for _, edgeId in pairs(contiguousTrackEdgeIds) do
+                                    for _, obj in pairs(contiguousTrackEdgeProps) do
+                                        local edgeId = obj.entity
                                         local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
                                         local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
                                         arrayUtils.addUnique(trackDistances, baseEdgeProperties.trackDistance)

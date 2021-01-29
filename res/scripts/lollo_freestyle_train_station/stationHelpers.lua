@@ -155,6 +155,7 @@ local helpers = {
             -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
             if i == 1 then
                 if i < #edgeIds then
+                    -- print('nextBaseEdgeId =') debugPrint(edgeIds[i + 1])
                     local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
                     if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
                 end
@@ -994,10 +995,10 @@ helpers.getStationEndEntities = function(stationConstructionId)
     return result
 end
 
-helpers.getTrackEdgeIdsBetweenEdgeIds = function(_edge1Id, _edge2Id)
+helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
     -- this function returns the ids in the right sequence, but their node0 and node1 may be scrambled,
     -- depending how the user laid the tracks
-    print('getTrackEdgeIdsBetweenEdgeIds starting, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
+    print('getTrackEdgeIdsBetweenEdgeIdsOLD starting, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
     -- the output is sorted by sequence, from edge1 to edge2
     print('one, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
     if not(edgeUtils.isValidAndExistingId(_edge1Id)) then return {} end
@@ -1183,7 +1184,11 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
         end
     end
 
-    local trackEdgeIdsBetweenEdgeIds = helpers.getTrackEdgeIdsBetweenEdgeIds(adjacentEdge1Ids[1], adjacentEdge2Ids[1])
+    local trackEdgePropsBetweenEdgeIds = helpers.getTrackEdgePropsBetweenEdgeIds(adjacentEdge1Ids[1], adjacentEdge2Ids[1])
+    local trackEdgeIdsBetweenEdgeIds = {}
+    for _, value in pairs(trackEdgePropsBetweenEdgeIds) do
+        trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds+1] = value.entity
+    end
     print('trackEdgeIdsBetweenEdgeIds before pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
     -- print('adjacentEdge1Ids =') debugPrint(adjacentEdge1Ids)
     -- print('adjacentEdge2Ids =') debugPrint(adjacentEdge2Ids)
@@ -1229,90 +1234,81 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     return trackEdgeIdsBetweenEdgeIds
 end
 
-helpers.getTrackEdgeIdsBetweenEdgeIdsBROKEN = function(edge1Id, edge2Id)
-    print('edge1Id =')
-    debugPrint(edge1Id)
-    print('edge2Id =')
-    debugPrint(edge2Id)
-    local edge1IdTyped = api.type.EdgeId.new()
-    edge1IdTyped.entity = edge1Id
-    local edge2IdTyped = api.type.EdgeId.new()
-    edge2IdTyped.entity = edge2Id
-    print('edge1IdTyped =')
-    debugPrint(edge1IdTyped)
-    print('edge2IdTyped =')
-    debugPrint(edge2IdTyped)
-    local edgeIdDir1 = api.type.EdgeIdDirAndLength.new(edge1IdTyped, true, 10)
-    -- local edgeIdDir2 = api.type.EdgeIdDirAndLength.new(edge2IdTyped, true, 10)
-    print('edgeIdDir1 =')
-    debugPrint(edgeIdDir1)
-    local baseEdge1 = api.engine.getComponent(
-        edge1Id,
-        api.type.ComponentType.BASE_EDGE
-    )
-    local baseEdge2 = api.engine.getComponent(
-        edge2Id,
-        api.type.ComponentType.BASE_EDGE
-    )
-    print('baseEdge1 =')
-    debugPrint(baseEdge1)
-    print('baseEdge2 =')
-    debugPrint(baseEdge2)
-    local node1Typed = api.type.NodeId.new()
-    node1Typed.entity = baseEdge2.node0
-    local node2Typed = api.type.NodeId.new()
-    node2Typed.entity = baseEdge2.node1
+helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
+    -- this function returns the ids in the right sequence, but their node0 and node1 may be scrambled,
+    -- depending how the user laid the tracks. The output is a table of objects like
+    -- [6] = {
+    --     new = nil,
+    --     entity = 502451,
+    --     index = 0, -- this probably points at the edge direction, which depends on how the edge was laid
+    --   }
+    -- the output is sorted by sequence, from edge1 to edge2
 
-    print('edgeIdDir1 =')
-    debugPrint(edgeIdDir1)
-    print('node1Typed =')
-    debugPrint(node1Typed)
-    print('node2Typed =')
-    debugPrint(node2Typed)
-    -- UG TODO this dumps without useful messages: ask UG
-    local path = api.engine.util.pathfinding.findPath(
-        { edgeIdDir1 },
-        { node1Typed },
+    -- edge1Id = 131640
+    -- edge2Id = 386283
+    local _getCleanPath = function(myPath)
+        -- UG TODO the path contains node ids, which should not be there: clean them out
+        -- this is also useful to output a lua table instead of userdata
+        local results = {}
+        for _, value in pairs(myPath) do
+            if edgeUtils.isValidAndExistingId(value.entity)
+            and api.engine.getComponent(value.entity, api.type.ComponentType.BASE_EDGE) ~= nil then
+                results[#results+1] = { entity = value.entity, index = value.index }
+            else
+                print('WARNING: findPath added something that is not an edge') debugPrint(value)
+            end
+        end
+        return results
+    end
+
+    local _isIdInPath = function(myPath, id)
+        for _, value in pairs(myPath) do
+            if value.entity == id then return true end
+        end
+        return false
+    end
+
+    print('getTrackEdgePropsBetweenEdgeIds starting')
+    print('edge1Id =') debugPrint(edge1Id)
+    print('edge2Id =') debugPrint(edge2Id)
+    local edge1IdTyped = api.type.EdgeId.new(edge1Id, 0)
+    local edgeIdDir1False = api.type.EdgeIdDirAndLength.new(edge1IdTyped, false, 0)
+    local edgeIdDir1True = api.type.EdgeIdDirAndLength.new(edge1IdTyped, true, 0)
+    local baseEdge2 = api.engine.getComponent(edge2Id, api.type.ComponentType.BASE_EDGE)
+    local node2Typed = api.type.NodeId.new(baseEdge2.node0, 0)
+    local myPath = api.engine.util.pathfinding.findPath(
+        { edgeIdDir1False, edgeIdDir1True },
+        { node2Typed },
         {
             api.type.enum.TransportMode.TRAIN,
-            api.type.enum.TransportMode.ELECTRIC_TRAIN
+            -- api.type.enum.TransportMode.ELECTRIC_TRAIN
         },
-        500.0
+        _constants.maxWaypointDistance
     )
-    -- online example (outdated and generally useless):
-    -- Find a path from two edges of the street entity 170679 to the nodes of the street entity 171540:
-    print('path =')
-    debugPrint(path)
+    if #myPath > 0 and _isIdInPath(myPath, edge2Id) then
+        -- print('path =') debugPrint(myPath)
+        -- print('clean path =') debugPrint(_getCleanPath(myPath))
+        return _getCleanPath(myPath)
+    end
 
-    -- local e1 = api.type.EdgeId.new(170679, 0)
-    -- local e2 = api.type.EdgeId.new(170679, 1)
-    -- local n1 = api.type.NodeId.new(171540, 0)
-    -- local n2 = api.type.NodeId.new(171540, 1)
-    -- local n3 = api.type.NodeId.new(171540, 2)
-    -- local n4 = api.type.NodeId.new(171540, 3)
-    local e1 = api.type.EdgeId.new(edge1Id, 0)
-    local e2 = api.type.EdgeId.new(edge1Id, 1)
-    local n1 = api.type.NodeId.new(edge2Id, 0)
-    local n2 = api.type.NodeId.new(edge2Id, 1)
-    -- local n3 = api.type.NodeId.new(edge2Id, 2)
-    -- local n4 = api.type.NodeId.new(edge2Id, 3)
-
-    -- g = api.engine.getComponent(171540, api.type.ComponentType.TRANSPORT_NETWORK)
-
-    local z = api.engine.util.pathfinding.findPath(
+    node2Typed = api.type.NodeId.new(baseEdge2.node1, 0)
+    print('trying again with node2Typed =') debugPrint(node2Typed)
+    myPath = api.engine.util.pathfinding.findPath(
+        { edgeIdDir1False, edgeIdDir1True },
+        { node2Typed },
         {
-            api.type.EdgeIdDirAndLength.new(e1, true, .0),
-            api.type.EdgeIdDirAndLength.new(e2, true, .0),
+            api.type.enum.TransportMode.TRAIN,
+            -- api.type.enum.TransportMode.ELECTRIC_TRAIN
         },
-        {
-            n1, n2 --, n3, n4
-        },
-        {},
-        1000
+        _constants.maxWaypointDistance
     )
-    print('z =')
-    debugPrint(z)
-    return {}
+    if #myPath < 1 or not(_isIdInPath(myPath, edge2Id)) then print('WARNING: cannot find a path including both edges') return {} end
+    -- print('path =') debugPrint(myPath)
+    -- print('clean path =') debugPrint(_getCleanPath(myPath))
+    return _getCleanPath(myPath)
+    -- if path[#path].entity ~= edge2Id then -- NO!
+    --     path[#path+1] = {new = nil, entity = edge2Id, index = 0}
+    -- end
 end
 
 helpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid = function(eventArgs)
