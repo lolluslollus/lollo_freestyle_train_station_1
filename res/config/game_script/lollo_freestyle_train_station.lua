@@ -180,54 +180,65 @@ local _actions = {
         print('endEntities =') debugPrint(endEntities)
         if endEntities == nil then return end
 
-        local proposal = api.type.SimpleProposal.new()
-        local isProposalPopulated = false
-        local nNewEntities = 0
-
-        local _replaceSegment = function(edgeId, endEntities4T_plOrTr)
-            local newSegment = api.type.SegmentAndEntity.new()
-            nNewEntities = nNewEntities - 1
-            newSegment.entity = nNewEntities
-
-            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
-                newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
-                newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            else
-                newSegment.comp.node0 = baseEdge.node0
-            end
-
-            if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
-                newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
-                newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            else
-                newSegment.comp.node1 = baseEdge.node1
-            end
-
-            newSegment.comp.tangent0.x = baseEdge.tangent0.x
-            newSegment.comp.tangent0.y = baseEdge.tangent0.y
-            newSegment.comp.tangent0.z = baseEdge.tangent0.z
-            newSegment.comp.tangent1.x = baseEdge.tangent1.x
-            newSegment.comp.tangent1.y = baseEdge.tangent1.y
-            newSegment.comp.tangent1.z = baseEdge.tangent1.z
-            newSegment.comp.type = baseEdge.type
-            newSegment.comp.typeIndex = baseEdge.typeIndex
-            newSegment.comp.objects = baseEdge.objects
-            -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-            newSegment.type = _constants.railEdgeType
-            local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-            newSegment.trackEdge.trackType = baseEdgeTrack.trackType
-            newSegment.trackEdge.catenary = baseEdgeTrack.catenary
-
-            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
-            proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
-            isProposalPopulated = true
-        end
-
         for _, endEntities4T in pairs(endEntities) do
-            -- for each terminal
+            -- we make a build proposal for each terminal, so if one fails we still get the others
+            local proposal = api.type.SimpleProposal.new()
+            local isProposalPopulated = false
+            local nNewEntities = 0
+
+            local _replaceSegment = function(edgeId, endEntities4T_plOrTr)
+                local newSegment = api.type.SegmentAndEntity.new()
+                nNewEntities = nNewEntities - 1
+                newSegment.entity = nNewEntities
+    
+                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+                    newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
+                elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+                    newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
+                else
+                    newSegment.comp.node0 = baseEdge.node0
+                end
+    
+                if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+                    newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
+                elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+                    newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
+                else
+                    newSegment.comp.node1 = baseEdge.node1
+                end
+    
+                newSegment.comp.tangent0.x = baseEdge.tangent0.x
+                newSegment.comp.tangent0.y = baseEdge.tangent0.y
+                newSegment.comp.tangent0.z = baseEdge.tangent0.z
+                newSegment.comp.tangent1.x = baseEdge.tangent1.x
+                newSegment.comp.tangent1.y = baseEdge.tangent1.y
+                newSegment.comp.tangent1.z = baseEdge.tangent1.z
+                newSegment.comp.type = baseEdge.type
+                newSegment.comp.typeIndex = baseEdge.typeIndex
+                newSegment.comp.objects = baseEdge.objects
+                -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+                newSegment.type = _constants.railEdgeType
+                local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
+    
+                if baseEdgeTrack ~= nil then
+                    newSegment.trackEdge.trackType = baseEdgeTrack.trackType
+                    newSegment.trackEdge.catenary = baseEdgeTrack.catenary
+                elseif baseEdgeStreet ~= nil then
+                    print('edgeId', edgeId, 'is street')
+                    newSegment.streetEdge.streetType = baseEdgeStreet.streetType
+                    newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
+                    newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
+                    -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
+                    -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
+                end
+    
+                proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+                proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
+                isProposalPopulated = true
+            end
+
             for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
                 _replaceSegment(edgeId, endEntities4T.tracks)
             end
@@ -257,24 +268,29 @@ local _actions = {
                 proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.platforms.disjointNeighbourNodeIds.node2Id
                 isProposalPopulated = true
             end
-        end
 
-        if not(isProposalPopulated) then return end
+            if isProposalPopulated then
+                local context = api.type.Context:new()
+                -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+                -- context.cleanupStreetGraph = true -- default is false
+                -- context.gatherBuildings = false -- default is false
+                -- context.gatherFields = true -- default is true
+                -- context.player = api.engine.util.getPlayer()
 
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-        -- context.cleanupStreetGraph = true -- default is false
-        -- context.gatherBuildings = false -- default is false
-        -- context.gatherFields = true -- default is true
-        -- context.player = api.engine.util.getPlayer()
+                local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+                -- print('expectedResult =') debugPrint(expectedResult)
 
-        api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-            function(result, success)
-                print('buildSnappyTracks callback, success =', success)
-                -- debugPrint(result)
+                if not(expectedResult.errorState.critical) then
+                    api.cmd.sendCommand(
+                        api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                        function(result, success)
+                            print('buildSnappyTracks callback, success =', success)
+                            -- debugPrint(result)
+                        end
+                    )
+                end
             end
-        )
+        end
     end,
 
     buildStation = function(successEventName, args)
@@ -861,12 +877,13 @@ local _actions = {
         local tanSign = isNodeBetweenOrientatedLikeMyEdge and 1 or -1
 
         local context = api.type.Context:new()
-        context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
         -- context.cleanupStreetGraph = true -- default is false, true may shift the new nodes after the split, which makes them impossible for us to recognise.
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
 
+        -- mustSplit = true -- LOLLO TODO remove after testing
         -- the split may occur at the end of an edge - in theory, but I could not make it happen in practise.
         if distance0 == 0 or distance1 == 0 or (not(mustSplit) and (distance0 < _constants.minSplitDistance or distance1 < _constants.minSplitDistance)) then
             -- we use this to avoid unnecessary splits, unless they must happen
@@ -877,16 +894,16 @@ local _actions = {
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
-                    print('command callback firing for split, success =', success)
+                    print('command callback firing for split, success =', success, 'result =') debugPrint(result)
                     if success and successEventName ~= nil then
                         -- print('successEventName =') debugPrint(successEventName)
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                         if not(stringUtils.isNullOrEmptyString(newArgName)) then
                             local splitNodeId = -1
-                            if distance0 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1
-                            elseif distance1 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0
-                            elseif distance0 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1
-                            elseif distance1 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0
+                            if distance0 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 print('8one')
+                            elseif distance1 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 print('8two')
+                            elseif distance0 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 print('8three')
+                            elseif distance1 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 print('8four')
                             else
                                 print('ERROR: impossible condition, distance0 =') debugPrint(distance0)
                                 print('distance1 =') debugPrint(distance1)
@@ -1228,10 +1245,10 @@ function data()
                 print('at least two platform edges found')
 
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'splitPlatformNode1Id', 'splitPlatformNode2Id', 'splitTrackNode1Id', 'splitTrackNode2Id', })
-                -- print('track bulldoze requested, platformEdgeIdsBetweenNodeIds =') debugPrint(platformEdgeIdsBetweenNodeIds)
+                print('track bulldoze requested, platformEdgeIdsBetweenNodeIds =') debugPrint(platformEdgeIdsBetweenNodeIds)
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds)
                 -- print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
-                -- print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
+                print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                 -- print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
                 local totalLength = 0

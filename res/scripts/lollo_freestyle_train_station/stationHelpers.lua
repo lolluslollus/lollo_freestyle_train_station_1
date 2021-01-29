@@ -988,10 +988,14 @@ helpers.getStationEndEntities = function(stationConstructionId)
         result[t].platforms.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(endNodeIds4T.platforms.node1Id)
         result[t].platforms.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(endNodeIds4T.platforms.node2Id)
 
-        result[t].tracks.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node1Id})
-        result[t].tracks.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node2Id})
-        result[t].platforms.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node1Id})
-        result[t].platforms.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node2Id})
+        -- result[t].tracks.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node1Id})
+        -- result[t].tracks.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node2Id})
+        -- result[t].platforms.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node1Id})
+        -- result[t].platforms.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node2Id})
+        result[t].tracks.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node1Id})
+        result[t].tracks.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node2Id})
+        result[t].platforms.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node1Id})
+        result[t].platforms.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node2Id})
     end
 
     -- print('getStationEndEntities result =') debugPrint(result)
@@ -1294,6 +1298,7 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
 
     node2Typed = api.type.NodeId.new(baseEdge2.node1, 0)
     print('trying again with node2Typed =') debugPrint(node2Typed)
+    print('so far, I have found path =') debugPrint(myPath)
     myPath = api.engine.util.pathfinding.findPath(
         { edgeIdDir1False, edgeIdDir1True },
         { node2Typed },
@@ -1303,7 +1308,10 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
         },
         _constants.maxWaypointDistance
     )
-    if #myPath < 1 or not(_isIdInPath(myPath, edge2Id)) then print('WARNING: cannot find a path including both edges') return {} end
+    if #myPath < 1 or not(_isIdInPath(myPath, edge2Id)) then
+        print('WARNING: cannot find a path including both edges, all I found was ') debugPrint(myPath)
+        return {}
+    end
     -- print('path =') debugPrint(myPath)
     -- print('clean path =') debugPrint(_getCleanPath(myPath))
     return _getCleanPath(myPath)
