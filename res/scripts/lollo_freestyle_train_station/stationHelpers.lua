@@ -269,7 +269,7 @@ local helpers = {
         end
 
         local results = {}
-        local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+        local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
         local _baseEdgeFirst = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
         local _baseEdgeLast = api.engine.getComponent(contiguousEdgeIds[#contiguousEdgeIds], api.type.ComponentType.BASE_EDGE)
         if _hasOnlyOneEdgeOfType1(_baseEdgeFirst.node0, _map) then
@@ -923,7 +923,7 @@ helpers.getStationEndEntities = function(stationConstructionId)
             and api.engine.getComponent(endNodeIds4T.platforms.node2Id, api.type.ComponentType.BASE_NODE).position
             or nil
 
-        local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+        -- local _map = api.engine.system.streetSystem.getNode2SegmentMap()
 
         result[t] = {
             tracks = {
@@ -1055,7 +1055,7 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
         return {}
     end
 
-    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
 
     local _getEdgesBetween1and2 = function(node0Or1FieldName)
         local baseEdge1 = _baseEdge1
@@ -1148,7 +1148,7 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     if _node1Id == _node2Id then return {} end
     print('THREE')
 
-    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
     local adjacentEdge1Ids = {}
     local adjacentEdge2Ids = {}
     local _fetchAdjacentEdges = function()
@@ -1251,18 +1251,40 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
     --   }
     -- the output is sorted by sequence, from edge1 to edge2
 
+    local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
+
     local _getCleanPath = function(myPath)
         -- UG TODO the path contains node ids, which should not be there: clean them out
         -- this is also useful to output a lua table instead of userdata
         local results = {}
+        -- local index = 0
         for _, value in pairs(myPath) do
-            if edgeUtils.isValidAndExistingId(value.entity)
-            and api.engine.getComponent(value.entity, api.type.ComponentType.BASE_EDGE) ~= nil then
-                results[#results+1] = { entity = value.entity, index = value.index }
-            else
-                print('WARNING: findPath added something that is not an edge') debugPrint(value)
-            end
+            -- index = index + 1
+            -- if edgeUtils.isValidAndExistingId(value.entity) then
+                local baseEdge = api.engine.getComponent(value.entity, api.type.ComponentType.BASE_EDGE)
+                if baseEdge ~= nil then
+                    -- bar any paths containing joints, allow joints at the ends
+                    -- if index == 1
+                    -- or index == #myPath
+                    -- or ((_map[baseEdge.node0] == nil or #_map[baseEdge.node0] < 3)
+                    --     and (_map[baseEdge.node1] == nil or #_map[baseEdge.node1] < 3))
+                    -- then
+                        results[#results+1] = { entity = value.entity, index = value.index }
+                    -- else
+                    --     return {}
+                    -- end
+                    -- print('_map[baseEdge.node0] =') debugPrint(_map[baseEdge.node0])
+                -- else
+                --     print('WARNING: findPath added something that is not an edge') debugPrint(value)
+                end
+            -- end
         end
+
+        -- for i = 2, #results-1 do
+        --     local baseEdge = api.engine.getComponent(results[i].entity, api.type.ComponentType.BASE_EDGE)
+        --     if _map[baseEdge.node0] ~= nil and #_map[baseEdge.node0] > 2 then return {} end
+        --     if _map[baseEdge.node1] ~= nil and #_map[baseEdge.node1] > 2 then return {} end
+        -- end
         return results
     end
 
@@ -1274,8 +1296,8 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
     end
 
     print('getTrackEdgePropsBetweenEdgeIds starting')
-    print('edge1Id =') debugPrint(edge1Id)
-    print('edge2Id =') debugPrint(edge2Id)
+    print('edge1Id =', edge1Id)
+    print('edge2Id =', edge2Id)
     local edge1IdTyped = api.type.EdgeId.new(edge1Id, 0)
     local edgeIdDir1False = api.type.EdgeIdDirAndLength.new(edge1IdTyped, false, 0)
     local edgeIdDir1True = api.type.EdgeIdDirAndLength.new(edge1IdTyped, true, 0)
@@ -1290,15 +1312,14 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
         },
         _constants.maxWaypointDistance
     )
+    print('path =') debugPrint(myPath)
+    print('clean path =') debugPrint(_getCleanPath(myPath))
     if #myPath > 0 and _isIdInPath(myPath, edge2Id) then
-        -- print('path =') debugPrint(myPath)
-        -- print('clean path =') debugPrint(_getCleanPath(myPath))
         return _getCleanPath(myPath)
     end
 
     node2Typed = api.type.NodeId.new(baseEdge2.node1, 0)
     print('trying again with node2Typed =') debugPrint(node2Typed)
-    print('so far, I have found path =') debugPrint(myPath)
     myPath = api.engine.util.pathfinding.findPath(
         { edgeIdDir1False, edgeIdDir1True },
         { node2Typed },
@@ -1312,8 +1333,8 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
         print('WARNING: cannot find a path including both edges, all I found was ') debugPrint(myPath)
         return {}
     end
-    -- print('path =') debugPrint(myPath)
-    -- print('clean path =') debugPrint(_getCleanPath(myPath))
+    print('now I have path =') debugPrint(myPath)
+    print('clean path =') debugPrint(_getCleanPath(myPath))
     return _getCleanPath(myPath)
     -- if path[#path].entity ~= edge2Id then -- NO!
     --     path[#path+1] = {new = nil, entity = edge2Id, index = 0}

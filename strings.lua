@@ -183,7 +183,7 @@ function data()
 			["WarningWindowTitle"] = "Warning",
 			["WaypointAlreadyBuilt"] = "You can only build two markers",
 			["WaypointsCrossStation"] = "You cannot cross an existing station",
-			["WaypointsNotConnected"] = "This markers is not connected to its twin or there is a station between",
+			["WaypointsNotConnected"] = "This markers is not connected to its twin or there is a station or a joint between",
 			["WaypointsTooFar"] = "Too far from its twin",
 		},
 	}

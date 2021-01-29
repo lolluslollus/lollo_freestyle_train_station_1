@@ -909,6 +909,7 @@ local _actions = {
                                 print('distance1 =') debugPrint(distance1)
                                 print('isNodeBetweenOrientatedLikeMyEdge =') debugPrint(isNodeBetweenOrientatedLikeMyEdge)
                             end
+                            print('splitEdgeRemovingObject is about to raise its event with splitNodeId =', splitNodeId or 'NIL')
                             eventArgs[newArgName] = splitNodeId
                         end
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(

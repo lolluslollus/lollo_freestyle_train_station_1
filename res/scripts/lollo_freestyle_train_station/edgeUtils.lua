@@ -742,7 +742,7 @@ helper.track.getConnectedEdgeIds = function(nodeIds)
     -- print('getConnectedEdgeIds starting')
     if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
 
-    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
     local results = {}
 
     for _, nodeId in pairs(nodeIds) do
@@ -750,6 +750,7 @@ helper.track.getConnectedEdgeIds = function(nodeIds)
             local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
             if connectedEdgeIdsUserdata ~= nil then
                 for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
+                    -- getNode2TrackEdgeMap returns the same as getNode2SegmentMap, so we check it ourselves
                     if api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK) ~= nil then
                         arrayUtils.addUnique(results, edgeId)
                     end
@@ -815,7 +816,7 @@ helper.track.getContiguousEdges = function(edgeId, acceptedTrackTypes)
 
     local _baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
     local _edgeId = edgeId
-    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
     local results = { edgeId }
 
     _calcContiguousEdges(_edgeId, _baseEdge.node0, _map, true, results)
