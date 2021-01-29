@@ -9,36 +9,25 @@ local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
--- LOLLO NOTE you can only update the state from the worker thread
--- local state = nil
-
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
 -- LOLLO TODO when plopping a track marker immediately next to a piece of track, which is part of a double switch with another track,
--- build snappy tracks will fail.
+-- build snappy tracks might fail.
+
+-- LOLLO TODO build a station with two tracks and two platforms, then some switches just outside.
+-- build snappy tracks will have trouble: disjointNeighbourEdgeIds may contain track edges when doing platforms, and maybe viceversa, too.
+-- Check it.
 
 local function _myErrorHandler(err)
     print('lollo freestyle train station ERROR: ', err)
 end
 
-local _eventId = '__lolloFreestyleTrainStation__'
-local _eventNames = {
-    BUILD_SNAPPY_TRACKS_REQUESTED = 'buildSnappyTracksRequested',
-    BUILD_STATION_REQUESTED = 'buildStationRequested',
-    BULLDOZE_MARKER_REQUESTED = 'bulldozeMarkerRequested',
-    BULLDOZE_STATION_REQUESTED = 'bulldozeStationRequested',
-    PLATFORM_MARKER_BUILT = 'platformMarkerBuilt',
-    PLATFORM_WAYPOINT_1_SPLIT_REQUESTED = 'platformWaypoint1SplitRequested',
-    PLATFORM_WAYPOINT_2_SPLIT_REQUESTED = 'platformWaypoint2SplitRequested',
-    REBUILD_1_TRACK_REQUESTED = 'rebuild1TrackRequested',
-    REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
-    SUBWAY_JOIN_REQUESTED = 'subwayJoinRequested',
-    TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
-    TRACK_WAYPOINT_1_SPLIT_REQUESTED = 'trackWaypoint1SplitRequested',
-    TRACK_WAYPOINT_2_SPLIT_REQUESTED = 'trackWaypoint2SplitRequested',
-    WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
-}
+-- LOLLO NOTE you can only update the state from the worker thread
+local state = {}
+
+local _eventId = _constants.eventData.eventId
+local _eventNames = _constants.eventData.eventNames
 
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
@@ -183,6 +172,9 @@ local _actions = {
         print('endEntities =') debugPrint(endEntities)
         if endEntities == nil then return end
 
+        local isAnyPlatformFailed = false
+        local isAnyTrackFailed = false
+
         for _, endEntities4T in pairs(endEntities) do
             -- we make a build proposal for each terminal, so if one fails we still get the others
             local proposal = api.type.SimpleProposal.new()
@@ -242,12 +234,6 @@ local _actions = {
                 isProposalPopulated = true
             end
 
-            for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
-                _replaceSegment(edgeId, endEntities4T.tracks)
-            end
-            for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge2Ids) do
-                _replaceSegment(edgeId, endEntities4T.tracks)
-            end
             for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
                 _replaceSegment(edgeId, endEntities4T.platforms)
             end
@@ -255,14 +241,6 @@ local _actions = {
                 _replaceSegment(edgeId, endEntities4T.platforms)
             end
 
-            if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node1Id) then
-                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.tracks.disjointNeighbourNodeIds.node1Id
-                isProposalPopulated = true
-            end
-            if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node2Id) then
-                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.tracks.disjointNeighbourNodeIds.node2Id
-                isProposalPopulated = true
-            end
             if edgeUtils.isValidAndExistingId(endEntities4T.platforms.disjointNeighbourNodeIds.node1Id) then
                 proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.platforms.disjointNeighbourNodeIds.node1Id
                 isProposalPopulated = true
@@ -281,18 +259,65 @@ local _actions = {
                 -- context.player = api.engine.util.getPlayer()
 
                 local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
-                -- print('expectedResult =') debugPrint(expectedResult)
-
-                if not(expectedResult.errorState.critical) then
+                if expectedResult.errorState.critical then
+                    print('expectedResult =') debugPrint(expectedResult)
+                    isAnyPlatformFailed = true
+                else
                     api.cmd.sendCommand(
                         api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                         function(result, success)
                             print('buildSnappyTracks callback, success =', success)
-                            -- debugPrint(result)
                         end
                     )
                 end
             end
+
+            proposal = api.type.SimpleProposal.new()
+            isProposalPopulated = false
+            nNewEntities = 0
+
+            for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
+                _replaceSegment(edgeId, endEntities4T.tracks)
+            end
+            for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge2Ids) do
+                _replaceSegment(edgeId, endEntities4T.tracks)
+            end
+
+            if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node1Id) then
+                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.tracks.disjointNeighbourNodeIds.node1Id
+                isProposalPopulated = true
+            end
+            if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node2Id) then
+                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.tracks.disjointNeighbourNodeIds.node2Id
+                isProposalPopulated = true
+            end
+
+            if isProposalPopulated then
+                local context = api.type.Context:new()
+                -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+                -- context.cleanupStreetGraph = true -- default is false
+                -- context.gatherBuildings = false -- default is false
+                -- context.gatherFields = true -- default is true
+                -- context.player = api.engine.util.getPlayer()
+
+                local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+                if expectedResult.errorState.critical then
+                    print('expectedResult =') debugPrint(expectedResult)
+                    isAnyTrackFailed = true
+                else
+                    api.cmd.sendCommand(
+                        api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                        function(result, success)
+                            print('buildSnappyTracks callback, success =', success)
+                        end
+                    )
+                end
+            end
+        end
+
+        if isAnyTrackFailed then
+            -- cannot call the popup from the worker thread
+            state.isShowBuildSnappyTracksFailed = true
         end
     end,
 
@@ -1095,7 +1120,10 @@ function data()
             -- if you remove it, it won't crash.
             -- debugPrint(args)
 
-            if name == _eventNames.BULLDOZE_MARKER_REQUESTED then
+            if name == _eventNames.HIDE_WARNINGS then
+                state.isShowBuildSnappyTracksFailed = false
+                guiHelpers.isShowingWarning = false
+            elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
                 _actions.bulldozeMarker(args.platformMarkerConstructionEntityId)
             elseif name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
                 -- game.interface.bulldoze(args.waypointId) -- dumps
@@ -1909,28 +1937,25 @@ function data()
         end,
         -- update = function()
         -- end,
-        -- guiUpdate = function()
-        -- end,
-        -- save = function()
-        --     -- only fires when the worker thread changes the state
-        --     if not state then state = {} end
-        --     if not state.trackWaypoint1Id then state.trackWaypoint1Id = nil end
-        --     if not state.trackWaypoint2Id then state.trackWaypoint2Id = nil end
-        --     return state
-        -- end,
-        -- load = function(loadedState)
-        --     -- fires once in the worker thread, at game load, and many times in the UI thread
-        --     if loadedState then
-        --         state = {}
-        --         state.trackWaypoint1Id = loadedState.trackWaypoint1Id or nil
-        --         state.trackWaypoint2Id = loadedState.trackWaypoint2Id or nil
-        --     else
-        --         state = {
-        --             trackWaypoint1Id = nil,
-        --             trackWaypoint2Id = nil
-        --         }
-        --     end
-        --     -- commonData.set(state)
-        -- end,
+        guiUpdate = function()
+            if state.isShowBuildSnappyTracksFailed and not(guiHelpers.isShowingWarning) then guiHelpers.showWarningWindowWithState(_('BuildSnappyTracksFailed')) end
+        end,
+        save = function()
+            -- only fires when the worker thread changes the state
+            if not state then state = {} end
+            if not state.isShowBuildSnappyTracksFailed then state.isShowBuildSnappyTracksFailed = false end
+            return state
+        end,
+        load = function(loadedState)
+            -- fires once in the worker thread, at game load, and many times in the UI thread
+            if loadedState then
+                state = {}
+                state.isShowBuildSnappyTracksFailed = loadedState.isShowBuildSnappyTracksFailed or false
+            else
+                state = {
+                    isShowBuildSnappyTracksFailed = false,
+                }
+            end
+        end,
     }
 end

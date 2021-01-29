@@ -1329,12 +1329,13 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
         },
         _constants.maxWaypointDistance
     )
+
+    print('now I have path =') debugPrint(myPath)
+    print('now I have clean path =') debugPrint(_getCleanPath(myPath))
     if #myPath < 1 or not(_isIdInPath(myPath, edge2Id)) then
         print('WARNING: cannot find a path including both edges, all I found was ') debugPrint(myPath)
         return {}
     end
-    print('now I have path =') debugPrint(myPath)
-    print('clean path =') debugPrint(_getCleanPath(myPath))
     return _getCleanPath(myPath)
     -- if path[#path].entity ~= edge2Id then -- NO!
     --     path[#path+1] = {new = nil, entity = edge2Id, index = 0}

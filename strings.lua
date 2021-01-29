@@ -15,7 +15,8 @@ function data()
 				When you bulldoze the station, everything will be bulldozed.
 				
 				[h1]Some handy tips:[/h1]
-				- To visualise the lanes, start the game in debug mode and press <AltGr> + <L>.
+				- Platforms are tracks and they can also suffer from micro splits, very difficult to see.
+				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
 				- To work underground, use <NumPad 4>.
 				- Very thin paths help with certain setups: those are in my street fine-tuning mod.
 				- Sound effects for stations are in my dedicated mod.
@@ -149,7 +150,7 @@ function data()
 			["EraCPassengerPlatform2_5MName"] = "2.5 m passenger platform, era C",
 			["EraCPassengerPlatform2_5MDesc"] = "Passenger platforms to be laid as tracks, 2.5 m wide, era C. The best choice for stations on ground. They are in fact slow train tracks; they are not meant to be crossed.",
 			["TrackWaypointName"] = "Track End Marker",
-			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter.",
+			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter, but don't put it too close to a switch.",
 
 			["CementBridgeGlassWallNoPillars"] = "Concrete bridge with underpasses, glass shields and no pillars",
 			["CementBridgeGlassWallNormalPillars"] = "Concrete bridge with underpasses and glass shields",
@@ -170,6 +171,7 @@ function data()
 			["passenger-up-and-down"] = "Up and down",
 
 			["BuildMoreWaypoints"] = "Plop two track markers and two platform markers to build a freestyle station",
+			["BuildSnappyTracksFailed"] = "Fix the station connections to the adjacent tracks, the game cannot do it for you this time",
 			["DifferentPlatformWidths"] = "Avoid different track widths with cargo stations",
 			["GoBack"] = "Go back",
 			["GoThere"] = "Go there",

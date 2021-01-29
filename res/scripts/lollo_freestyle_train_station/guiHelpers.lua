@@ -1,8 +1,13 @@
+local _constants = require('lollo_freestyle_train_station.constants')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
+local _eventId = _constants.eventData.eventId
+local _eventNames = _constants.eventData.eventNames
+
 local _stationPickerWindowId = 'lollo_freestyle_station_picker_window'
-local _warningWindowId = 'lollo_freestyle_station_warning_window'
+local _warningWindowWithGotoId = 'lollo_freestyle_station_warning_window_with_goto'
+local _warningWindowWithStateId = 'lollo_freestyle_station_warning_window_with_state'
 
 local _texts = {
     goBack = _('GoBack'),
@@ -13,9 +18,10 @@ local _texts = {
     warningWindowTitle = _('WarningWindowTitle'),
 }
 
-local _windowXShift = -50
+local _windowXShift = -100
 
 local guiHelpers = {
+    isShowingWarning = false,
     moveCamera = function(position)
         local cameraData = game.gui.getCamera()
         game.gui.setCamera({position[1], position[2], cameraData[3], cameraData[4], cameraData[5]})
@@ -163,10 +169,10 @@ end
 
 guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObjectsIds)
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
-    local window = api.gui.util.getById(_warningWindowId)
+    local window = api.gui.util.getById(_warningWindowWithGotoId)
     if window == nil then
         window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
-        window:setId(_warningWindowId)
+        window:setId(_warningWindowWithGotoId)
     else
         window:setContent(layout)
         window:setVisible(true, false)
@@ -238,12 +244,43 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
     window:addHideOnCloseHandler()
 end
 
+guiHelpers.showWarningWindowWithState = function(text)
+    guiHelpers.isShowingWarning = true
+    local layout = api.gui.layout.BoxLayout.new('VERTICAL')
+    local window = api.gui.util.getById(_warningWindowWithStateId)
+    if window == nil then
+        window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
+        window:setId(_warningWindowWithStateId)
+    else
+        window:setContent(layout)
+        window:setVisible(true, false)
+    end
+
+    layout:addItem(api.gui.comp.TextView.new(text))
+
+    window:setHighlighted(true)
+    local position = api.gui.util.getMouseScreenPos()
+    window:setPosition(position.x + _windowXShift, position.y)
+    -- window:addHideOnCloseHandler()
+    window:onClose(
+        function()
+            window:setVisible(false, false)
+            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                string.sub(debug.getinfo(1, 'S').source, 1),
+                _eventId,
+                _eventNames.HIDE_WARNINGS,
+                {}
+            ))
+        end
+    )
+end
+
 guiHelpers.hideAllWarnings = function()
     local window = api.gui.util.getById(_stationPickerWindowId)
     if window ~= nil then
         window:setVisible(false, false)
     end
-    window = api.gui.util.getById(_warningWindowId)
+    window = api.gui.util.getById(_warningWindowWithGotoId)
     if window ~= nil then
         window:setVisible(false, false)
     end

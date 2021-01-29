@@ -7,6 +7,27 @@ local constants = {
     invisiblePlatformTracksCategory = 'invisible-platform-tracks',
     passengerPlatformTracksCategory = 'passenger-platform-tracks',
 
+    eventData = {
+        eventId = '__lolloFreestyleTrainStation__',
+        eventNames = {
+            BUILD_SNAPPY_TRACKS_REQUESTED = 'buildSnappyTracksRequested',
+            BUILD_STATION_REQUESTED = 'buildStationRequested',
+            BULLDOZE_MARKER_REQUESTED = 'bulldozeMarkerRequested',
+            BULLDOZE_STATION_REQUESTED = 'bulldozeStationRequested',
+            HIDE_WARNINGS = 'hideWarnings',
+            PLATFORM_MARKER_BUILT = 'platformMarkerBuilt',
+            PLATFORM_WAYPOINT_1_SPLIT_REQUESTED = 'platformWaypoint1SplitRequested',
+            PLATFORM_WAYPOINT_2_SPLIT_REQUESTED = 'platformWaypoint2SplitRequested',
+            REBUILD_1_TRACK_REQUESTED = 'rebuild1TrackRequested',
+            REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
+            SUBWAY_JOIN_REQUESTED = 'subwayJoinRequested',
+            TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
+            TRACK_WAYPOINT_1_SPLIT_REQUESTED = 'trackWaypoint1SplitRequested',
+            TRACK_WAYPOINT_2_SPLIT_REQUESTED = 'trackWaypoint2SplitRequested',
+            WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
+        }
+    },
+
     stairsAndRampHeight = 1.2,
     platformHeight = 1.2,
     platformSideBitsZ = -0.10, -- a bit lower than the platform, to look good in bends
