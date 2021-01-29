@@ -109,9 +109,9 @@ local _actions = {
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
         proposal.constructionsToRemove = { stationConstructionId, subwayConstructionId }
-        proposal.old2new = {
-            [stationConstructionId] = 0,
-        }
+        -- proposal.old2new = {
+        --     [stationConstructionId] = 0,
+        -- }
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true
@@ -428,9 +428,9 @@ local _actions = {
         proposal.constructionsToAdd[1] = newCon
         if edgeUtils.isValidAndExistingId(args.join2StationId) then
             proposal.constructionsToRemove = { args.join2StationId }
-            proposal.old2new = {
-                [args.join2StationId] = 0,
-            }
+            -- proposal.old2new = {
+            --     [args.join2StationId] = 0,
+            -- }
         end
 
         local context = api.type.Context:new()
@@ -510,9 +510,9 @@ local _actions = {
         proposal.constructionsToAdd[1] = newCon
 
         proposal.constructionsToRemove = { constructionId }
-        proposal.old2new = {
-            [constructionId] = 0,
-        }
+        -- proposal.old2new = {
+        --     [constructionId] = 0,
+        -- }
 
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- true gives smoother z, default is false
