@@ -738,6 +738,29 @@ helper.street.getNearestEdgeId = function(transf)
 end
 
 helper.track = {}
+helper.track.getConnectedEdgeIds = function(nodeIds)
+    -- print('getConnectedEdgeIds starting')
+    if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
+
+    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local results = {}
+
+    for _, nodeId in pairs(nodeIds) do
+        if helper.isValidAndExistingId(nodeId) then
+            local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
+            if connectedEdgeIdsUserdata ~= nil then
+                for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
+                    if api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK) ~= nil then
+                        arrayUtils.addUnique(results, edgeId)
+                    end
+                end
+            end
+        end
+    end
+
+    -- print('getConnectedEdgeIds is about to return') debugPrint(results)
+    return results
+end
 helper.track.getContiguousEdges = function(edgeId, acceptedTrackTypes)
     local _calcContiguousEdges = function(firstEdgeId, firstNodeId, map, isInsertFirst, results)
         local refEdgeId = firstEdgeId
