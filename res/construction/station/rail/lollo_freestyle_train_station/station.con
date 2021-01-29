@@ -1205,6 +1205,7 @@ function data()
 					-- print('shortSegmentsInTunnel =') debugPrint(shortSegmentsInTunnel)
 					_linkAcross(shortSegmentsInTunnel, 20)
 
+                    -- LOLLO TODO MAYBE link the following only once, like with subways
 					local shortSegmentsUnderground2Surface, minDistanceSegmentsUnderground2Surface = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						result.terminateConstructionHookInfo.stairs2SubwayPositions,
