@@ -1244,8 +1244,6 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
     --   }
     -- the output is sorted by sequence, from edge1 to edge2
 
-    -- edge1Id = 131640
-    -- edge2Id = 386283
     local _getCleanPath = function(myPath)
         -- UG TODO the path contains node ids, which should not be there: clean them out
         -- this is also useful to output a lua table instead of userdata
