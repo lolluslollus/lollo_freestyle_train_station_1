@@ -6,11 +6,11 @@ function data()
                 albedoScale = { 1, 1, 1, },
             },
             alpha_scale = {
-                alphaScale = 0.45,
+                alphaScale = 0.5,
             },
             alpha_test = {
-                alphaThreshold = 0.5,
-                cutout = false,
+                alphaThreshold = 0.75,
+                cutout = true,
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
@@ -73,7 +73,7 @@ function data()
             },
             polygon_offset = {
                 factor = 0,
-                forceDepthWrite = true,
+                forceDepthWrite = false,
                 units = 0,
             },
             two_sided = {
