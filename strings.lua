@@ -23,14 +23,14 @@ function data()
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweak mod.
 				- If you want large buildings, use assets. There are mods for those.
-				- This mod adds extra bridges to help with elevated stations.
+                - This mod adds extra bridges to help with elevated stations.
+                - 2.5 m platforms do not agree with bridges and tunnels. Pillarless bridges can help.
 
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Checks would be too expensive.
 				- Station naming does not work properly.
 				- For now, it's only modern-ish era.
                 - Upgrading tracks works meh.
-                - 2.5 m platforms do not agree with bridges and tunnels. My pillarless bridge that comes with the mod can help.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
