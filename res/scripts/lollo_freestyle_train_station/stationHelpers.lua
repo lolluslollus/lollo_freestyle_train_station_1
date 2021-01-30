@@ -1139,6 +1139,8 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
     return {}
 end
 
+-- LOLLO TODO sometimes, this function returns an empty array when it could actually
+-- return something useful
 helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     print('getTrackEdgeIdsBetweenNodeIds starting')
     print('node1Id =', _node1Id)
