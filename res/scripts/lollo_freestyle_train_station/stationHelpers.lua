@@ -1141,7 +1141,7 @@ end
 
 -- LOLLO TODO sometimes, this function returns an empty array when it could actually
 -- return something useful
-helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
+helpers.getTrackEdgeIdsBetweenNodeIdsOLD = function(_node1Id, _node2Id)
     print('getTrackEdgeIdsBetweenNodeIds starting')
     print('node1Id =', _node1Id)
     print('node2Id =', _node2Id)
@@ -1243,6 +1243,132 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     -- end
     print('trackEdgeIdsBetweenEdgeIds after pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
     return trackEdgeIdsBetweenEdgeIds
+end
+
+helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
+    print('getTrackEdgeIdsBetweenNodeIds starting')
+    print('node1Id =', _node1Id) print('node2Id =', _node2Id)
+    print('ONE')
+    if not(edgeUtils.isValidAndExistingId(_node1Id)) then return {} end
+    print('ONE AND A HALF')
+    if not(edgeUtils.isValidAndExistingId(_node2Id)) then return {} end
+    print('TWO')
+    if _node1Id == _node2Id then return {} end
+    print('THREE')
+
+    local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
+    local adjacentEdge1Ids = {}
+    local adjacentEdge2Ids = {}
+    local _fetchAdjacentEdges = function()
+        local adjacentEdge1IdsUserdata = _map[_node1Id] -- userdata
+        local adjacentEdge2IdsUserdata = _map[_node2Id] -- userdata
+        if adjacentEdge1IdsUserdata == nil then
+            print('Warning: FOUR')
+            return false
+        else
+            for _, edgeId in pairs(adjacentEdge1IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
+                -- arrayUtils.addUnique(adjacentEdge1Ids, edgeId)
+                adjacentEdge1Ids[#adjacentEdge1Ids+1] = edgeId
+            end
+            print('FIVE')
+        end
+        if adjacentEdge2IdsUserdata == nil then
+            print('Warning: SIX')
+            return false
+        else
+            for _, edgeId in pairs(adjacentEdge2IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
+                -- arrayUtils.addUnique(adjacentEdge2Ids, edgeId)
+                adjacentEdge2Ids[#adjacentEdge2Ids+1] = edgeId
+            end
+            print('SEVEN')
+        end
+
+        return true
+    end
+
+    if not(_fetchAdjacentEdges()) then print('FOUR OR SIX') return {} end
+    if #adjacentEdge1Ids < 1 or #adjacentEdge2Ids < 1 then print('Warning: EIGHT') return {} end
+
+    if #adjacentEdge1Ids == 1 and #adjacentEdge2Ids == 1 then
+        if adjacentEdge1Ids[1] == adjacentEdge2Ids[1] then
+            print('NINE')
+            return { adjacentEdge1Ids[1] }
+        else
+            print('TEN')
+        end
+    end
+    -- print('adjacentEdge1Ids =') debugPrint(adjacentEdge1Ids)
+    -- print('adjacentEdge2Ids =') debugPrint(adjacentEdge2Ids)
+
+    local _getTrackEdgePropsBetweenEdgeAndNode = function(edgeId, nodeId)
+        local edge1IdTyped = api.type.EdgeId.new(edgeId, 0)
+        local edgeIdDir1False = api.type.EdgeIdDirAndLength.new(edge1IdTyped, false, 0)
+        local edgeIdDir1True = api.type.EdgeIdDirAndLength.new(edge1IdTyped, true, 0)
+        local node2Typed = api.type.NodeId.new(nodeId, 0)
+        local myPath = api.engine.util.pathfinding.findPath(
+            { edgeIdDir1False, edgeIdDir1True },
+            { node2Typed },
+            {
+                api.type.enum.TransportMode.TRAIN,
+                -- api.type.enum.TransportMode.ELECTRIC_TRAIN
+            },
+            _constants.maxWaypointDistance
+        )
+        local results = {}
+        for _, value in pairs(myPath) do
+            -- remove non-edge funds, this api can add some nodes to its output. UG TODO.
+            local baseEdge = api.engine.getComponent(value.entity, api.type.ComponentType.BASE_EDGE)
+            if baseEdge ~= nil then
+                results[#results+1] = value.entity
+            end
+        end
+        return results
+    end
+
+    local trackEdgeIdsBetweenEdgeIds = _getTrackEdgePropsBetweenEdgeAndNode(adjacentEdge1Ids[1], _node2Id)
+    print('trackEdgeIdsBetweenEdgeIds before pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    -- remove edges adjacent to but outside node1 and node2
+
+    -- for _, edgeId in pairs(trackEdgeIdsBetweenEdgeIds) do
+    --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    --     print('base edge = ', edgeId) debugPrint(baseEdge)
+    -- end
+
+    local isExit = false
+    while not(isExit) do
+        if #trackEdgeIdsBetweenEdgeIds > 1
+        and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[1])
+        and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[2]) then
+            print('ELEVEN')
+            table.remove(trackEdgeIdsBetweenEdgeIds, 1)
+            print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+        else
+            print('TWELVE')
+            isExit = true
+        end
+    end
+    -- isExit = false
+    -- while not(isExit) do
+    --     if #trackEdgeIdsBetweenEdgeIds > 1
+    --     and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
+    --     and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
+    --         print('THIRTEEN HALF')
+    --         table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
+    --         print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    --     else
+    --         print('FOURTEEN')
+    --         isExit = true
+    --     end
+    -- end
+
+    -- for _, edgeId in pairs(trackEdgeIdsBetweenEdgeIds) do
+    --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    --     print('base edge = ', edgeId) debugPrint(baseEdge)
+    -- end
+    print('trackEdgeIdsBetweenEdgeIds after pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    if arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds]) then return trackEdgeIdsBetweenEdgeIds end
+    print('Warning: the last edge does not connect, this should never happen')
+    return {}
 end
 
 helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
