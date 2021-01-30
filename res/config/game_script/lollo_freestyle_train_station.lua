@@ -12,13 +12,6 @@ local transfUtilsUG = require('transf')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
--- LOLLO TODO when plopping a track marker immediately next to a piece of track, which is part of a double switch with another track,
--- build snappy tracks might fail.
-
--- LOLLO TODO build a station with two tracks and two platforms, then some switches just outside.
--- build snappy tracks will have trouble: disjointNeighbourEdgeIds may contain track edges when doing platforms, and maybe viceversa, too.
--- Check it.
-
 local function _myErrorHandler(err)
     print('lollo freestyle train station ERROR: ', err)
 end
