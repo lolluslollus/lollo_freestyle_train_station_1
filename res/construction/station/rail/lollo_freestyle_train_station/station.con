@@ -923,7 +923,7 @@ function data()
 				local _addUnderpassSlots = function()
 					-- add underpass slots, skipping the ends.
 					if not(isCargoTerminal) then
-						for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 4 do
+						for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
 							local cpl = params.terminals[t].centrePlatformsRelative[i]
 							local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
 							table.insert(result.slots, {
@@ -955,7 +955,7 @@ function data()
 				local _addStairs2SubwaySlots = function()
 					if isCargoTerminal then return end
 
-					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 4 do
+					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						if cpl.type == 2 then -- only in tunnels
 							table.insert(result.slots, {
