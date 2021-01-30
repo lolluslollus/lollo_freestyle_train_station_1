@@ -1142,7 +1142,7 @@ end
 -- LOLLO TODO sometimes, this function returns an empty array when it could actually
 -- return something useful
 helpers.getTrackEdgeIdsBetweenNodeIdsOLD = function(_node1Id, _node2Id)
-    print('getTrackEdgeIdsBetweenNodeIds starting')
+    print('getTrackEdgeIdsBetweenNodeIdsOLD starting')
     print('node1Id =', _node1Id)
     print('node2Id =', _node2Id)
     print('ONE')
