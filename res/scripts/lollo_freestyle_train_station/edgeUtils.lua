@@ -616,6 +616,7 @@ helper.getObjectPosition = function(objectId)
     -- print('fatInstances[3]', fatInstances[3] and true) -- always nil
     -- print('objectTransf =')
     -- debugPrint(objectTransf)
+    -- LOLLO TODO try calling directly fatInstance[1].transf[13] to get trasnlate x, so as y and z
     return {
         [1] = objectTransf[13],
         [2] = objectTransf[14],

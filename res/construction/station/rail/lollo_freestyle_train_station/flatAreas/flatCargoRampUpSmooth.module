@@ -27,7 +27,7 @@ return {
 	},
 	metadata = { },
 	order = {
-		value = 1,
+		value = 4,
 	},
 	type = _constants.flatCargoRampModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
