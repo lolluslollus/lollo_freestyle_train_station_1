@@ -154,7 +154,7 @@ function data()
 			["EraCPassengerPlatform2_5MName"] = "2.5 m passenger platform, era C",
 			["EraCPassengerPlatform2_5MDesc"] = "Passenger platforms to be laid as tracks, 2.5 m wide, era C. The best choice for stations on ground. They are in fact slow train tracks; they are not meant to be crossed.",
 			["TrackWaypointName"] = "Track End Marker",
-			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter.",
+			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter. Close semaphores can interfere, you may want to remove them and put them back once the station is laid out.",
 
 			["CementBridgeGlassWallNoPillars"] = "Concrete bridge with underpasses, glass shields and no pillars",
 			["CementBridgeGlassWallNormalPillars"] = "Concrete bridge with underpasses and glass shields",
