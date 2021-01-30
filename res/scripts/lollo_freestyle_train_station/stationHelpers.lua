@@ -975,7 +975,7 @@ helpers.getStationEndEntities = function(stationConstructionId)
                 0.001,
                 api.type.ComponentType.BASE_NODE
             )
-            print('getDisjointNeighbourNodes found') debugPrint(nearbyNodeIds)
+            -- print('getDisjointNeighbourNodes found') debugPrint(nearbyNodeIds)
             for _, nearbyNodeId in pairs(nearbyNodeIds) do
                 if edgeUtils.isValidAndExistingId(nearbyNodeId)
                 and nearbyNodeId ~= stationNodeId
