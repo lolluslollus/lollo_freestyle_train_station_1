@@ -98,6 +98,7 @@ helper.getNearbyObjectIds = function(transf, searchRadius, componentType)
 
         results[#results+1] = entity
     end
+    -- LOLLO NOTE nodes may have a bounding box: for them, we check the position only
     local callback4Nodes = function(entity, boundingVolume)
         -- print('callback0 found entity', entity)
         -- print('boundingVolume =')
