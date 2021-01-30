@@ -490,6 +490,7 @@ local _actions = {
                 print('build station callback, success =', success)
                 -- debugPrint(result)
                 if success and successEventName ~= nil then
+                    print('stationConstructionId = ', result.resultEntities[1])
                     print('buildStation callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1074,9 +1075,6 @@ local _actions = {
                         0.001,
                         api.type.ComponentType.BASE_NODE
                     )
-                    -- edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(addedNodePosition), 0, api.type.ComponentType.BASE_NODE)
-                    -- edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(addedNodePosition), 2, api.type.ComponentType.BASE_NODE)
-                    -- edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(addedNodePosition), 0.5, api.type.ComponentType.BASE_NODE)
                     print('addedNodeIds =') debugPrint(addedNodeIds)
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                     if not(stringUtils.isNullOrEmptyString(newArgName)) then
