@@ -12,7 +12,6 @@ function data()
 	t.yearTo = -1
 
 	-- sets the width of the terrain enbankment, all out (ie including ballastCutOff).
-	-- It can override trackDistance!
 	t.shapeWidth = 1.5 -- 2.7 -- was 4.0 -- sets the width of the terrain enbankment, all out (ie including ballastCutOff)
 	t.shapeStep = 4.0 -- was 4, you can use 2 for smoother bends
 	t.shapeSleeperStep = 8.0 / 12.0
