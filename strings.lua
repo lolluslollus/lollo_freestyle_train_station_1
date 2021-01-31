@@ -25,7 +25,7 @@ function data()
 				- Extra ground textures are in my terrain tweak mod.
 				- If you want large buildings, use assets. There are mods for those.
                 - This mod adds extra bridges to help with elevated stations.
-                - 2.5 m platforms do not agree with bridges and tunnels. Pillarless bridges can help.
+                - 2.5 m platforms do not agree with bridges and tunnels. Pillarless bridges can help, tunnels can't be helped.
 
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Checks would be too expensive.
