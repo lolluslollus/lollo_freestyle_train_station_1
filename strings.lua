@@ -3,18 +3,23 @@ function data()
 		en = {
 			["DESC"] = [[
 				A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
-				Lay them alongside normal tracks, then place two platform markers and two track markers where you want the station to end. Now click your station to open the configuration menu and add some street access.
+
+				[h1]Instructions[/h1]
+				Lay platforms alongside normal tracks, then place a platform marker and a track marker where you want the platform and the track to end. Repeat for the other end.
+				Trains will stop at the mid point between your track markers.
+Now click your station to open the configuration menu and add some street access.
 				
 				Platforms must be connected to roads, as usual. In particular:
-				- Underground platforms require stairs or underpasses in each and at least one subway entrance placed nearby, connected to a road. Alternatives to a subway are an overground platform with an underpass, or a bridge platform with a lift, connected to a road.
-				- Platforms on a bridge require a lift or an underpass in each.
-				- Ground platforms require street access or underpasses in each.
+				- Each underground platform requires stairs or an underpass. Place them close or they won't work.
+				- Each adjacent set of underground platforms also requires a subway entrance, or an overground platform with an underpass, or a bridge platform with a lift, connected to a road.
+				- Each platform on a bridge requires a lift or an underpass. Place them close or they won't work.
+				- Each ground platform requires street access or an underpass. Place your underpasses close or they won't work.
 				Adjacent platforms are connected together automatically. If you added extra platforms or space between, you will have to connect them by hand instead: use a suitable street type and <shift>.
 
 				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
 				When you bulldoze the station, everything will be bulldozed.
 				
-				[h1]Some handy tips:[/h1]
+				[h1]Tips:[/h1]
 				- Platforms are tracks and they can also suffer from micro splits, very difficult to see.
 				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
 				- To work underground, use <NumPad 4>.
@@ -28,10 +33,11 @@ function data()
                 - 2.5 m platforms do not agree with bridges and tunnels. Pillarless bridges can help, tunnels can't be helped.
 
 				[h1]Known issues:[/h1]
-				- Module placement is rather free, the player is allowed to do some unrealistic things. Checks would be too expensive.
+				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
 				- Station naming does not work properly.
 				- For now, it's only modern-ish era.
-                - Upgrading tracks works meh.
+				- Upgrading tracks works meh.
+				- 2.5 m platforms do not agree with bridges and tunnels.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
