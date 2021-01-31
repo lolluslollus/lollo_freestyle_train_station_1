@@ -9,7 +9,7 @@ function data()
 				- Underground platforms require stairs or underpasses in each and at least one subway entrance placed nearby, connected to a road. Alternatives to a subway are an overground platform with an underpass, or a bridge platform with a lift, connected to a road.
 				- Platforms on a bridge require a lift or an underpass in each.
 				- Ground platforms require street access or underpasses in each.
-				In all cases, adjacent platforms are connected together automatically.
+				Adjacent platforms are connected together automatically. If you added extra platforms or space between, you will have to connect them by hand instead: use a suitable street type and <shift>.
 
 				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
 				When you bulldoze the station, everything will be bulldozed.
@@ -19,6 +19,7 @@ function data()
 				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
 				- To work underground, use <NumPad 4>.
 				- Very thin paths help with certain setups: those are in my street fine-tuning mod.
+				- You can add extra platforms. They will not become part of the station and they won't be connected automatically. Add extra connections with a very thin path, helping yourself with <shift>.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweak mod.
