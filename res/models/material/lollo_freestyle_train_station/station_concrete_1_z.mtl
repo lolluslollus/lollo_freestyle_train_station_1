@@ -45,15 +45,17 @@ function data()
             },
             operation_1 = {
                 mode = "WORLD_XY",
+                -- mode = "NORMAL",
                 op = "OVERLAY",
                 opacity = 0.75,
-                scale = { 0.15000000596046, 0.15000000596046, },
+                scale = { 0.01, 0.01, },
             },
             operation_2 = {
                 mode = "WORLD_XY",
+                -- mode = "NORMAL",
                 op = "MULTIPLICATION",
                 opacity = 0.15,
-                scale = { 0.34999999403954, 0.34999999403954, },
+                scale = { 0.08, 0.08, },
             },
             -- LOLLO NOTE this material has a twin with the same name plus "_z".
             -- when they overlap, one wins and the other won't attempt to compete:
