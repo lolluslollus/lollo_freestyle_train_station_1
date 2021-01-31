@@ -786,7 +786,7 @@ function data()
 						local isStairs2Subway = params.modules[result.mangleId(t, i, _constants.idBases.stairs2SubwaySlotId)] ~= nil
 
 						local centreLaneTransf = transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
-						local myModelId = _constants.passengerLaneModelId
+						local myModelId = _constants.passengerLaneLinkableModelId -- _constants.passengerLaneModelId
 						if isPlatformLift then myModelId = _constants.passengerLaneLiftModelId
 						elseif isUnderpass then myModelId = _constants.passengerLaneUnderpassModelId
 						elseif isStairs2Subway then myModelId = _constants.passengerLaneStairs2SubwayModelId
