@@ -10,105 +10,105 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 1432,
+					offset = 1248,
 				},
 				position = {
 					count = 48,
-					offset = 1384,
+					offset = 1200,
 				},
 				tangent = {
 					count = 48,
-					offset = 1288,
+					offset = 1104,
 				},
 				uv0 = {
 					count = 48,
-					offset = 1336,
+					offset = 1152,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1990_floor_1.mtl", 
+				"station/train/passenger/tiles.mtl", 
 			},
 		},
 		{
 			indices = {
 				normal = {
-					count = 288,
-					offset = 2344,
+					count = 240,
+					offset = 2016,
 				},
 				position = {
-					count = 288,
-					offset = 2056,
+					count = 240,
+					offset = 1776,
 				},
 				tangent = {
-					count = 288,
-					offset = 1480,
+					count = 240,
+					offset = 1296,
 				},
 				uv0 = {
-					count = 288,
-					offset = 1768,
+					count = 240,
+					offset = 1536,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1850_floor_1.mtl", 
+				"station/train/passenger/edge.mtl", 
 			},
 		},
 		{
 			indices = {
 				normal = {
 					count = 48,
-					offset = 2776,
+					offset = 2400,
 				},
 				position = {
 					count = 48,
-					offset = 2728,
+					offset = 2352,
 				},
 				tangent = {
 					count = 48,
-					offset = 2632,
+					offset = 2256,
 				},
 				uv0 = {
 					count = 48,
-					offset = 2680,
+					offset = 2304,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1991_floor_1.mtl", 
+				"station/train/passenger/tiles_high_priority.mtl", 
 			},
 		},
 		{
 			indices = {
 				normal = {
-					count = 288,
-					offset = 3688,
+					count = 192,
+					offset = 3024,
 				},
 				position = {
-					count = 288,
-					offset = 3400,
+					count = 192,
+					offset = 2832,
 				},
 				tangent = {
-					count = 288,
-					offset = 2824,
+					count = 192,
+					offset = 2448,
 				},
 				uv0 = {
-					count = 288,
-					offset = 3112,
+					count = 192,
+					offset = 2640,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1851_floor_1.mtl", 
+				"station/train/passenger/edge_high_priority.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 180,
+			count = 132,
 			numComp = 3,
-			offset = 1108,
+			offset = 972,
 		},
 		position = {
-			count = 444,
+			count = 396,
 			numComp = 3,
-			offset = 664,
+			offset = 576,
 		},
 		tangent = {
 			count = 144,
@@ -116,7 +116,7 @@ return {
 			offset = 0,
 		},
 		uv0 = {
-			count = 520,
+			count = 432,
 			numComp = 2,
 			offset = 144,
 		},

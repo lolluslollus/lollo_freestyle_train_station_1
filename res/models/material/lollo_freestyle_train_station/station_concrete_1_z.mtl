@@ -55,17 +55,16 @@ function data()
                 -- mode = "NORMAL",
                 op = "MULTIPLICATION",
                 opacity = 0.15,
-                scale = { 0.08, 0.08, },
+                scale = { 0.02, 0.02, },
             },
             -- LOLLO NOTE this material has a twin with the same name plus "_z".
             -- when they overlap, one wins and the other won't attempt to compete:
             -- this is the z-shift.
-            -- However, this brings about a graphical glitch, which draws a pixel-thin line at the seams.
-            -- polygon_offset = {
-            --     factor = -1,
-            --     forceDepthWrite = true,
-            --     units = -1,
-            -- },
+            polygon_offset = {
+                factor = -1,
+                forceDepthWrite = true,
+                units = -1,
+            },
             two_sided = {
                 flipNormal = true,
                 twoSided = false,

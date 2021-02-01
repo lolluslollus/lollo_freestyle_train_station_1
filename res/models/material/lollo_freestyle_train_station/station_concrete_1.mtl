@@ -55,13 +55,13 @@ function data()
                 -- mode = "NORMAL",
                 op = "MULTIPLICATION",
                 opacity = 0.15,
-                scale = { 0.08, 0.08, },
+                scale = { 0.02, 0.02, },
             },
-            -- polygon_offset = {
-            --     factor = 0,
-            --     forceDepthWrite = false,
-            --     units = 0,
-            -- },
+            polygon_offset = {
+                factor = 0,
+                forceDepthWrite = false,
+                units = 0,
+            },
             two_sided = {
                 flipNormal = true,
                 twoSided = false,
