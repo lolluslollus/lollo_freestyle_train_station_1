@@ -25,10 +25,11 @@ function data()
 				When you bulldoze the station, everything will be bulldozed.
 				
 				[h1]Tips:[/h1]
-				- Platforms are tracks and they can also suffer from micro splits, very difficult to see.
+                - Platforms are tracks and they can also suffer from micro splits, very difficult to see.
 				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
 				- To work underground, use <NumPad 4>.
-				- Very thin paths help with certain setups: those are in my street fine-tuning mod.
+                - Platforms, being tracks, only carry passengers or cargo if they are part of a terminal.
+                - Very thin paths help with certain setups: those are in my street fine-tuning mod.
 				- You can add extra platforms. They will not become part of the station and they won't be connected automatically. Add extra connections with a very thin path, helping yourself with <shift>.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
