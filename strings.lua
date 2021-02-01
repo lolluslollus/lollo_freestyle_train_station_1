@@ -6,19 +6,19 @@ function data()
 
                 [h1]Instructions[/h1]
                 Lay platforms alongside normal tracks, then place a platform marker and a track marker where you want the platform and the track to end. Repeat at the other end.
-                Now you have built a terminal, trains will stop at the mid point between your track markers.
-                Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. Currently, you can have up to 12 terminals in one station.
+                Now you have built a terminal, trains will stop between your track markers.
+                Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
 
-                Now click your station to open the configuration menu and add some connections. As usual in this game, platforms must be connected to roads. In particular:
-                - Every set of adjacent ground platforms requires street access or an underpass.
+                Now click your station to open the configuration menu and add some road connections. In particular:
+                - Every set of adjacent ground platforms requires street access or an underpass. This is like the stock stations.
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
                 - Every bridge level requires a lift.
                 - Every set of adjacent underground platforms requires stairs to go up.
-                - Every underground level requires a subway entrance, or a ground platform with an underpass, or a bridge platform with a lift, or a higher underground level with an underpass.
-                - If you have multiple underground levels, you can add underpasses on the higher platforms, which will connect to stairs on the lower platforms.
+                - Every underground level requires a subway entrance, or a ground platform with an underpass, or a bridge platform with a lift, or a higher underground level with stairs down.
+                - If you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels.
 
                 Adjacent platforms are connected together automatically. If you added extra platforms or space between, you will have to connect them by hand instead: use a suitable street type and <shift>. Avoid this underground and on bridges, keep it simple.
-                You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, connect the platform by hand with a suitable street type and <shift>.
+                You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, connect the platform ends by hand with a suitable street type and <shift>.
                 If you have a group of adjacent platforms and tracks, try to place your underpasses (or stairs if you are underground) opposite to one another.
 
 				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
