@@ -173,8 +173,14 @@ local _actions = {
             local proposal = api.type.SimpleProposal.new()
             local isProposalPopulated = false
             local nNewEntities = 0
+            local isSuccess = true
 
-            local _replaceSegment = function(edgeId, endEntities4T_plOrTr)
+            local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr)
+                if not(edgeUtils.isValidAndExistingId(edgeId)) then
+                    print('Warning: invalid entity in buildSnappyTracks')
+                    return false
+                end
+
                 local newSegment = api.type.SegmentAndEntity.new()
                 nNewEntities = nNewEntities - 1
                 newSegment.entity = nNewEntities
@@ -225,13 +231,14 @@ local _actions = {
                 proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
                 proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
                 isProposalPopulated = true
+                return true
             end
 
             for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
-                _replaceSegment(edgeId, endEntities4T.platforms)
+                isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.platforms)
             end
             for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge2Ids) do
-                _replaceSegment(edgeId, endEntities4T.platforms)
+                isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.platforms)
             end
 
             if edgeUtils.isValidAndExistingId(endEntities4T.platforms.disjointNeighbourNodeIds.node1Id) then
@@ -243,37 +250,43 @@ local _actions = {
                 isProposalPopulated = true
             end
 
-            if isProposalPopulated then
-                local context = api.type.Context:new()
-                -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-                -- context.cleanupStreetGraph = true -- default is false
-                -- context.gatherBuildings = false -- default is false
-                -- context.gatherFields = true -- default is true
-                -- context.player = api.engine.util.getPlayer()
+            -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
+            if isSuccess then
+                if isProposalPopulated then
+                    local context = api.type.Context:new()
+                    -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+                    -- context.cleanupStreetGraph = true -- default is false
+                    -- context.gatherBuildings = false -- default is false
+                    -- context.gatherFields = true -- default is true
+                    -- context.player = api.engine.util.getPlayer()
 
-                local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
-                if expectedResult.errorState.critical then
-                    print('expectedResult =') debugPrint(expectedResult)
-                    isAnyPlatformFailed = true
-                else
-                    api.cmd.sendCommand(
-                        api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-                        function(result, success)
-                            print('buildSnappyTracks callback, success =', success)
-                        end
-                    )
+                    local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+                    if expectedResult.errorState.critical then
+                        print('expectedResult =') debugPrint(expectedResult)
+                        isAnyPlatformFailed = true
+                    else
+                        api.cmd.sendCommand(
+                            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                            function(result, success)
+                                print('buildSnappyTracks callback, success =', success)
+                            end
+                        )
+                    end
                 end
+            else
+                isAnyPlatformFailed = true
             end
 
             proposal = api.type.SimpleProposal.new()
             isProposalPopulated = false
             nNewEntities = 0
+            isSuccess = true
 
             for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
-                _replaceSegment(edgeId, endEntities4T.tracks)
+                isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.tracks)
             end
             for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge2Ids) do
-                _replaceSegment(edgeId, endEntities4T.tracks)
+                isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.tracks)
             end
 
             if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node1Id) then
@@ -285,26 +298,30 @@ local _actions = {
                 isProposalPopulated = true
             end
 
-            if isProposalPopulated then
-                local context = api.type.Context:new()
-                -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-                -- context.cleanupStreetGraph = true -- default is false
-                -- context.gatherBuildings = false -- default is false
-                -- context.gatherFields = true -- default is true
-                -- context.player = api.engine.util.getPlayer()
+            if isSuccess then
+                if isProposalPopulated then
+                    local context = api.type.Context:new()
+                    -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+                    -- context.cleanupStreetGraph = true -- default is false
+                    -- context.gatherBuildings = false -- default is false
+                    -- context.gatherFields = true -- default is true
+                    -- context.player = api.engine.util.getPlayer()
 
-                local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
-                if expectedResult.errorState.critical then
-                    print('expectedResult =') debugPrint(expectedResult)
-                    isAnyTrackFailed = true
-                else
-                    api.cmd.sendCommand(
-                        api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-                        function(result, success)
-                            print('buildSnappyTracks callback, success =', success)
-                        end
-                    )
+                    local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+                    if expectedResult.errorState.critical then
+                        print('expectedResult =') debugPrint(expectedResult)
+                        isAnyTrackFailed = true
+                    else
+                        api.cmd.sendCommand(
+                            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                            function(result, success)
+                                print('buildSnappyTracks callback, success =', success)
+                            end
+                        )
+                    end
                 end
+            else
+                isAnyTrackFailed = true
             end
         end
 
