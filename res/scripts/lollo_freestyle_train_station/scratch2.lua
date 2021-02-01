@@ -1,5 +1,13 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
+local tab1 = {1, 2, 3, 4, 5}
+local index = 0
+for _, value in pairs(tab1) do
+    index = index + 1
+    if index == 2 or index == 4 then tab1[index] = nil end
+end
+local dummy = 123
+
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local aaa = { 1, 0, 0, 0,
