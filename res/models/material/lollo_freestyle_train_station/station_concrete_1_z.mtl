@@ -60,6 +60,8 @@ function data()
             -- LOLLO NOTE this material has a twin with the same name plus "_z".
             -- when they overlap, one wins and the other won't attempt to compete:
             -- this is the z-shift.
+            -- I tried adding a low prio material to the platform (inner) sides,
+            -- but it does not make things better.
             polygon_offset = {
                 factor = -1,
                 forceDepthWrite = true,
