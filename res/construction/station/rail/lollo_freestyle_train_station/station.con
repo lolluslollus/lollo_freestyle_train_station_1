@@ -250,10 +250,10 @@ function data()
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
 				liftBottomPositions = {},
-				stairs2SubwayPositions = {},
+				tunnelStairsTopPositions = {},
+				tunnelStairsBottomPositions = {},
 				underpassPositionsOnGround = {},
 				underpassPositionsOnBridge = {},
-				underpassPositionsUnderground = {},
 				vehicleNodes = {}
 			}
 
@@ -779,11 +779,11 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatformsRelative - 1 do -- skip the outermost edges to avoid collisions, the game is very picky here.
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local isUnderground = cpl.type == 2
+						local isInTunnel = cpl.type == 2
 						local isOnBridge = cpl.type == 1
-						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
 						local isStairs2Subway = params.modules[result.mangleId(t, i, _constants.idBases.stairs2SubwaySlotId)] ~= nil
+						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 
 						local centreLaneTransf = transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
 						local myModelId = _constants.passengerLaneLinkableModelId -- _constants.passengerLaneModelId
@@ -797,44 +797,72 @@ function data()
 						}
 
 						if isStairs2Subway then
-							local stairs2SubwayTopTransf = transfUtilsUG.mul(
-								centreLaneTransf,
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.stairs2SubwayZ, 1 }
-							)
-							if result.terminateConstructionHookInfo.stairs2SubwayPositions[t] == nil then result.terminateConstructionHookInfo.stairs2SubwayPositions[t] = {} end
-							result.terminateConstructionHookInfo.stairs2SubwayPositions[t][#result.terminateConstructionHookInfo.stairs2SubwayPositions[t]+1] = {
-								t = t,
-								pos2Link = transfUtils.transf2Position(stairs2SubwayTopTransf)
-							}
-						elseif isUnderpass and not(isOnBridge) then
-							local underpassBottomTransf = transfUtilsUG.mul(
-								centreLaneTransf,
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
-							)
-							if isUnderground then
-								if result.terminateConstructionHookInfo.underpassPositionsUnderground[t] == nil then result.terminateConstructionHookInfo.underpassPositionsUnderground[t] = {} end
-								result.terminateConstructionHookInfo.underpassPositionsUnderground[t][#result.terminateConstructionHookInfo.underpassPositionsUnderground[t]+1] = {
-									t = t,
-									pos2Link = transfUtils.transf2Position(underpassBottomTransf)
-								}
-							else
-								if result.terminateConstructionHookInfo.underpassPositionsOnGround[t] == nil then result.terminateConstructionHookInfo.underpassPositionsOnGround[t] = {} end
-								result.terminateConstructionHookInfo.underpassPositionsOnGround[t][#result.terminateConstructionHookInfo.underpassPositionsOnGround[t]+1] = {
-									t = t,
-									pos2Link = transfUtils.transf2Position(underpassBottomTransf)
-								}
+							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
+								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
 							end
+							result.terminateConstructionHookInfo.tunnelStairsTopPositions[t][#result.terminateConstructionHookInfo.tunnelStairsTopPositions[t]+1] = {
+								t = t,
+								pos2Link = transfUtils.transf2Position(
+									transfUtilsUG.mul(
+										centreLaneTransf,
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.stairs2SubwayZ, 1 }
+									)
+								)
+							}
+						elseif isUnderpass and isInTunnel then
+							if result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] == nil then
+								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] = {}
+							end
+							result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t][#result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t]+1] = {
+								t = t,
+								pos2Link = transfUtils.transf2Position(
+									transfUtilsUG.mul(
+										centreLaneTransf,
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+									)
+								)
+							}
+							result.models[#result.models+1] = {
+								id = _constants.passengerLaneStairs2SubwayModelId,
+								transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+							}
+							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
+								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
+							end
+							result.terminateConstructionHookInfo.tunnelStairsTopPositions[t][#result.terminateConstructionHookInfo.tunnelStairsTopPositions[t]+1] = {
+								t = t,
+								pos2Link = transfUtils.transf2Position(
+									transfUtilsUG.mul(
+										centreLaneTransf,
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.stairs2SubwayZ, 1 }
+									)
+								)
+							}
 						elseif (isUnderpass and isOnBridge) or isPlatformLift then
-							local underpassBottomTransf = transfUtilsUG.mul(
-								centreLaneTransf,
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
-							)
 							if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
 								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
 							end
 							result.terminateConstructionHookInfo.underpassPositionsOnBridge[t][#result.terminateConstructionHookInfo.underpassPositionsOnBridge[t]+1] = {
 								t = t,
-								pos2Link = transfUtils.transf2Position(underpassBottomTransf)
+								pos2Link = transfUtils.transf2Position(
+									transfUtilsUG.mul(
+										centreLaneTransf,
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+									)
+								)
+							}
+						elseif isUnderpass then
+							if result.terminateConstructionHookInfo.underpassPositionsOnGround[t] == nil then
+								result.terminateConstructionHookInfo.underpassPositionsOnGround[t] = {}
+							end
+							result.terminateConstructionHookInfo.underpassPositionsOnGround[t][#result.terminateConstructionHookInfo.underpassPositionsOnGround[t]+1] = {
+								t = t,
+								pos2Link = transfUtils.transf2Position(
+									transfUtilsUG.mul(
+										centreLaneTransf,
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+									)
+								)
 							}
 						end
 					end
@@ -1014,7 +1042,7 @@ function data()
 					for t = 1, #params.terminals do
 						results[t] = {}
 						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.stairs2SubwayPositions[t] or {})
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
 					end
 					return results
 				end
@@ -1150,7 +1178,7 @@ function data()
 							end
 						end
 					end
-					_linkAlong(result.terminateConstructionHookInfo.stairs2SubwayPositions)
+					_linkAlong(result.terminateConstructionHookInfo.tunnelStairsTopPositions)
 					_linkAlong(result.terminateConstructionHookInfo.underpassPositionsOnGround)
 
 					-- link the underpasses and the stairs 2 subway across terminals, underground
@@ -1182,40 +1210,40 @@ function data()
 					local shortSegmentsOnGround, minDistanceSegmentsOnGround = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
-						2.01
+						1.42
 					)
 
 					-- print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
 					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						2.01 -- , true
+						1.42 -- , true
 					)
 
 					local shortSegmentsTunnelTops2Tops, minDistanceSegmentsInTunnel = _getSegmentsBetweenPos2Links_AcrossTerminals(
-						result.terminateConstructionHookInfo.stairs2SubwayPositions,
-						result.terminateConstructionHookInfo.stairs2SubwayPositions,
-						2.01
+						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
+						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
+						1.42
 					)
 
                     -- LOLLO TODO MAYBE link the following only once, like with subways
 					local shortSegmentsTunnelTops2Surface, minDistanceSegmentsUnderground2Surface = _getSegmentsBetweenPos2Links_AcrossTerminals(
-                        result.terminateConstructionHookInfo.stairs2SubwayPositions,
+                        result.terminateConstructionHookInfo.tunnelStairsTopPositions,
                         result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						1.01
 					)
 
 					-- print('result.terminateConstructionHookInfo.liftBottomPositions =') debugPrint(result.terminateConstructionHookInfo.liftBottomPositions)
-					-- print('result.terminateConstructionHookInfo.stairs2SubwayPositions =') debugPrint(result.terminateConstructionHookInfo.stairs2SubwayPositions)
+					-- print('result.terminateConstructionHookInfo.tunnelStairsTopPositions =') debugPrint(result.terminateConstructionHookInfo.tunnelStairsTopPositions)
 					local shortSegmentsTunnelTops2BridgeBottoms, minDistanceSegments_UndergroundTop_BridgeBottom = _getSegmentsBetweenPos2Links_AcrossTerminals(
-                        result.terminateConstructionHookInfo.stairs2SubwayPositions,
+                        result.terminateConstructionHookInfo.tunnelStairsTopPositions,
                         result.terminateConstructionHookInfo.liftBottomPositions,
 						1.01 -- , true
 					)
 
 					local shortSegmentsTunnelTops2Bottoms, minDistanceSegmentsUnderground2Underground = _getSegmentsBetweenPos2Links_AcrossTerminals(
-                        result.terminateConstructionHookInfo.stairs2SubwayPositions,
-                        result.terminateConstructionHookInfo.underpassPositionsUnderground,
+                        result.terminateConstructionHookInfo.tunnelStairsTopPositions,
+                        result.terminateConstructionHookInfo.tunnelStairsBottomPositions,
                         1.01 -- , true
                     )
                     -- LOLLO TODO remove duplicate up-down connectors, done, check it.
@@ -1226,28 +1254,43 @@ function data()
                     -- and relying on the user placing stairs opposite, ie close.
                     -- We'd get a better approximation if tops and bottoms were all together,
                     -- ie only using one module with underpasses and stairs together.
-                    local index = 0
-                    for _, top2Bottom in pairs(shortSegmentsTunnelTops2Bottoms) do
-                        index = index + 1
-                        if shortSegmentsTunnelTops2Tops[top2Bottom.t] and shortSegmentsTunnelTops2Tops[top2Bottom.t][top2Bottom.tt] then
-                            local isTop2BottomTheShortest = true
-                            for _, top2Top in pairs(shortSegmentsTunnelTops2Tops[top2Bottom.t][top2Bottom.tt]) do
-                                if top2Top ~= nil then
-                                    if top2Bottom.distance > top2Top.distance then
-                                        isTop2BottomTheShortest = false
-                                        break
-                                    end
-                                end
-                            end
-                            if isTop2BottomTheShortest then
-                                print('top2bottom wins')
-                                shortSegmentsTunnelTops2Tops[top2Bottom.t][top2Bottom.tt] = {}
-                            else
-                                print('top2top wins')
-                                shortSegmentsTunnelTops2Bottoms[index] = {}
-                            end
-                        end
-                    end
+					-- local t = 0
+					local maxT = #params.terminals
+					-- print('shortSegmentsTunnelTops2Bottoms =') debugPrint(shortSegmentsTunnelTops2Bottoms)
+					-- print('shortSegmentsTunnelTops2Tops =') debugPrint(shortSegmentsTunnelTops2Tops)
+					for t = 1, maxT do
+						local top2BottomsT = shortSegmentsTunnelTops2Bottoms[t]
+						if top2BottomsT ~= nil then
+							for tt = t+1, maxT do
+								local top2BottomsT_TT = top2BottomsT[tt]
+								if top2BottomsT_TT ~= nil then
+									local minDistanceTops2BottomsT_TT = nil
+									for _, top2Bottom in pairs(top2BottomsT_TT) do
+										if minDistanceTops2BottomsT_TT == nil or minDistanceTops2BottomsT_TT > top2Bottom.distance then
+											minDistanceTops2BottomsT_TT = top2Bottom.distance
+										end
+									end
+									local minDistanceTops2TopsT_TT = nil
+									if shortSegmentsTunnelTops2Tops[t] and shortSegmentsTunnelTops2Tops[t][tt] then
+										for _, top2Top in pairs(shortSegmentsTunnelTops2Tops[t][tt]) do
+											if minDistanceTops2TopsT_TT == nil or minDistanceTops2TopsT_TT > top2Top.distance then
+												minDistanceTops2TopsT_TT = top2Top.distance
+											end
+										end
+									end
+									if minDistanceTops2BottomsT_TT ~= nil and minDistanceTops2TopsT_TT ~= nil then
+										if minDistanceTops2BottomsT_TT < minDistanceTops2TopsT_TT then
+											shortSegmentsTunnelTops2Tops[t][tt] = {}
+										else
+											shortSegmentsTunnelTops2Bottoms[t][tt] = {}
+										end
+									end
+								end
+							end
+						end
+					end
+					-- print('shortSegmentsTunnelTops2Bottoms =') debugPrint(shortSegmentsTunnelTops2Bottoms)
+					-- print('shortSegmentsTunnelTops2Tops =') debugPrint(shortSegmentsTunnelTops2Tops)
 
                     -- print('shortSegmentsOnGround =') debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
