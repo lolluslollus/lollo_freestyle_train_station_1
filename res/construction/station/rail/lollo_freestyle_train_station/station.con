@@ -218,11 +218,6 @@ function data()
 						myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_20m_wide.mdl'
 					end
 				else
-					-- if width < 5 then
-					-- 	myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide.mdl'
-					-- else
-					-- 	myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5m_wide.mdl'
-					-- end
 					if width < 5 then
 						myModelId = isTrackOnPlatformLeft
 							and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
@@ -288,67 +283,6 @@ function data()
 							transf = myTransf
 						}
 					end
-					--[[
-					if isCargoTerminal then
-						for ii = 1, #params.terminals[t].centrePlatformsFine, 1 do
-							local cpf = params.terminals[t].centrePlatformsFine[ii]
-							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, params.inverseMainTransf)
-							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
-							if cpf.width < 10 then
-								myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_5m_wide.mdl'
-							elseif cpf.width < 20 then
-								myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_10m_wide.mdl'
-							else
-								myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_20m_wide.mdl'
-							end
-							result.models[#result.models+1] = {
-								id = myModelId,
-								transf = myTransf
-							}
-						end
-					else
-						for ii = 1, #params.terminals[t].centrePlatformsFine, #params.terminals[t].centrePlatformsFine - 1 do
-							local cpf = params.terminals[t].centrePlatformsFine[ii]
-							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, params.inverseMainTransf)
-							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
-							if cpf.width < 5 then
-								result.models[#result.models+1] = {
-									id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_2_5m_wide.mdl',
-									transf = myTransf
-								}
-							else
-								result.models[#result.models+1] = {
-									id = 'lollo_freestyle_train_station/railroad/track/era_c_passenger_platform_1m_base_5m_wide.mdl',
-									transf = myTransf
-								}
-							end
-						end
-
-						for ii = 2, #params.terminals[t].centrePlatformsFine - 1 do
-							local cpf = params.terminals[t].centrePlatformsFine[ii]
-							local posTanX2 = transfUtils.getPosTanX2Transformed(cpf.posTanX2, params.inverseMainTransf)
-							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2)
-							local myModelId = _getPlatformModelId(true, isTrackOnPlatformLeft, cpf.width, cpf.era)
-							if cpf.width < 5 then
-								result.models[#result.models+1] = {
-									id = isTrackOnPlatformLeft
-										and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
-										or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl',
-									transf = myTransf
-								}
-							elseif cpf.width < 10 then
-								result.models[#result.models+1] = {
-									id = isTrackOnPlatformLeft
-										and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
-										or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl',
-									transf = myTransf
-								}
-							end
-						end
-					end
-					]]
 				end
 				_addPlatform()
 
