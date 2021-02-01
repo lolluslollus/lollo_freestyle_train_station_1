@@ -21,26 +21,21 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("UnderpassName"),
-		description = _("UnderpassDesc"),
-		icon = "ui/lollo_freestyle_train_station/underpass.tga"
+		name = _("TunnelStairsUpDownName"),
+		description = _("TunnelStairsUpDownDesc"),
+		icon = "ui/lollo_freestyle_train_station/tunnelStairsUpDown.tga"
 	},
 	metadata = { },
 	order = {
-		value = 40,
+		value = 51,
 	},
-	type = _constants.underpassModuleType,
+	type = _constants.tunnelStairsUpDownModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not nTrackEdge or not baseId then return end
+		if not nTerminal or not baseId then return end
 
-		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-		local modelId = _constants.underpassBuilding10MModelFileName
-		if cpl.type == 1 then modelId = _constants.underpassBuildingWBottom10MModelFileName
-		-- elseif cpl.type == 2 then modelId = _constants.tunnelStairsUpDownModelId
-		end
 		result.models[#result.models + 1] = {
-			id = modelId,
+			id = _constants.tunnelStairsUpDownModelId,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
 			tag = tag
@@ -50,7 +45,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.underpassBuilding10MModelFileName,
+				id = _constants.tunnelStairsUpDownModelId,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

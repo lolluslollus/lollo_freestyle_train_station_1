@@ -21,21 +21,21 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("Stairs2SubwayName"),
-		description = _("Stairs2SubwayDesc"),
-		icon = "ui/lollo_freestyle_train_station/stairs2Subway.tga"
+		name = _("TunnelStairsUpName"),
+		description = _("TunnelStairsUpDesc"),
+		icon = "ui/lollo_freestyle_train_station/tunnelStairsUp.tga"
 	},
 	metadata = { },
 	order = {
 		value = 50,
 	},
-	type = _constants.stairs2SubwayModuleType,
+	type = _constants.tunnelStairsUpModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
 		result.models[#result.models + 1] = {
-			id = _constants.stairs2SubwayModelId,
+			id = _constants.tunnelStairsUpModelId,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
 			tag = tag
@@ -45,7 +45,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.stairs2SubwayModelId,
+				id = _constants.tunnelStairsUpModelId,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

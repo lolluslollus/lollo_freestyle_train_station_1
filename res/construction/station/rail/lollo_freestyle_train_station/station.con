@@ -782,21 +782,23 @@ function data()
 						local isInTunnel = cpl.type == 2
 						local isOnBridge = cpl.type == 1
 						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
-						local isStairs2Subway = params.modules[result.mangleId(t, i, _constants.idBases.stairs2SubwaySlotId)] ~= nil
+						local isStairsUp = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
+						local isStairsUpDown = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 
 						local centreLaneTransf = transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
 						local myModelId = _constants.passengerLaneLinkableModelId -- _constants.passengerLaneModelId
 						if isPlatformLift then myModelId = _constants.passengerLaneLiftModelId
 						elseif isUnderpass then myModelId = _constants.passengerLaneUnderpassModelId
-						elseif isStairs2Subway then myModelId = _constants.passengerLaneStairs2SubwayModelId
+						elseif isStairsUp then myModelId = _constants.passengerLaneTunnelStairsUpModelId
+						elseif isStairsUpDown then myModelId = _constants.passengerLaneTunnelStairsUpDownModelId
 						end
 						result.models[#result.models+1] = {
 							id = myModelId,
 							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
 						}
 
-						if isStairs2Subway then
+						if isStairsUp then
 							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
 							end
@@ -805,11 +807,11 @@ function data()
 								pos2Link = transfUtils.transf2Position(
 									transfUtilsUG.mul(
 										centreLaneTransf,
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.stairs2SubwayZ, 1 }
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
 									)
 								)
 							}
-						elseif isUnderpass and isInTunnel then
+						elseif isStairsUpDown then
 							if result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] == nil then
 								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] = {}
 							end
@@ -822,10 +824,6 @@ function data()
 									)
 								)
 							}
-							result.models[#result.models+1] = {
-								id = _constants.passengerLaneStairs2SubwayModelId,
-								transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
-							}
 							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
 							end
@@ -834,7 +832,7 @@ function data()
 								pos2Link = transfUtils.transf2Position(
 									transfUtilsUG.mul(
 										centreLaneTransf,
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.stairs2SubwayZ, 1 }
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
 									)
 								)
 							}
@@ -948,21 +946,40 @@ function data()
 				end
 				_addTerminalSlot()
 
-				local _addUnderpassSlots = function()
-					-- add underpass slots, skipping the ends.
-					if not(isCargoTerminal) then
-						for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
-							local cpl = params.terminals[t].centrePlatformsRelative[i]
+				local _addUpDownSlots = function()
+					if isCargoTerminal then return end
+
+					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
+						local cpl = params.terminals[t].centrePlatformsRelative[i]
+						local mySpacing = {3, -0.1, 1, 1}
+						local myTransf = transfUtilsUG.mul(
+								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
+								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+							)
+						if cpl.type == 2 then -- tunnels
+							-- LOLLO TODO MAYBE place one automatically when... When? When adding a subway?
+							table.insert(result.slots, {
+								-- height = 0,
+								id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId),
+								spacing = mySpacing,
+								transf = myTransf,
+								type = _constants.tunnelStairsUpModuleType,
+							})
+							table.insert(result.slots, {
+								-- height = 0,
+								id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId),
+								spacing = mySpacing,
+								transf = myTransf,
+								type = _constants.tunnelStairsUpDownModuleType,
+							})
+						else -- ground and bridges
 							local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
 							table.insert(result.slots, {
 								-- height = 0,
 								id = myId,
 								-- shape 0 1 2 3, only graphical
-								spacing = {3, -0.1, 1, 1},
-								transf = transfUtilsUG.mul(
-									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
-									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-								),
+								spacing = mySpacing,
+								transf = myTransf,
 								type = _constants.underpassModuleType,
 							})
 							if params.modules[myId] ~= nil then
@@ -977,29 +994,7 @@ function data()
 						end
 					end
 				end
-				_addUnderpassSlots()
-
-				-- LOLLO TODO MAYBE place one automatically when... When? When adding a subway?
-				local _addStairs2SubwaySlots = function()
-					if isCargoTerminal then return end
-
-					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
-						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						if cpl.type == 2 then -- only in tunnels
-							table.insert(result.slots, {
-								-- height = 0,
-								id = result.mangleId(t, i, _constants.idBases.stairs2SubwaySlotId),
-								spacing = {3, -0.1, 1, 1},
-								transf = transfUtilsUG.mul(
-									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
-									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-								),
-								type = _constants.stairs2SubwayModuleType,
-							})
-						end
-					end
-				end
-				_addStairs2SubwaySlots()
+				_addUpDownSlots()
 			end -- loop over terminals
 
 			local _addSubwaySlots = function()
@@ -1246,15 +1241,12 @@ function data()
                         result.terminateConstructionHookInfo.tunnelStairsBottomPositions,
                         1.01 -- , true
                     )
-                    -- LOLLO TODO remove duplicate up-down connectors, done, check it.
+                    -- Remove redundant up-down connectors.
                     -- There could be trouble with a steep underground station with two levels:
                     -- the stairs of a platform may try to join the underpass of its opposite twin,
                     -- and we cannot just check the height of either coz there is too much freedom.
-                    -- We try to get past it choosing the shortest path
-                    -- and relying on the user placing stairs opposite, ie close.
-                    -- We'd get a better approximation if tops and bottoms were all together,
-                    -- ie only using one module with underpasses and stairs together.
-					-- local t = 0
+					-- We try to get past it choosing the shortest path and always associating stairs down to stairs up
+					-- - we never have stairs down without stairs up.
 					local maxT = #params.terminals
 					-- print('shortSegmentsTunnelTops2Bottoms =') debugPrint(shortSegmentsTunnelTops2Bottoms)
 					-- print('shortSegmentsTunnelTops2Tops =') debugPrint(shortSegmentsTunnelTops2Tops)

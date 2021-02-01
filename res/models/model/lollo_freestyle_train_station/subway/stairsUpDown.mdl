@@ -20,7 +20,7 @@ function data()
                                 'lollo_freestyle_train_station/wall_white.mtl',
                                 'lollo_freestyle_train_station/doors.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/underpass/underpass-underground-building-10m.msh',
+                            mesh = 'lollo_freestyle_train_station/subway/stairs_up_down_10m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1}
                         },
                     },
