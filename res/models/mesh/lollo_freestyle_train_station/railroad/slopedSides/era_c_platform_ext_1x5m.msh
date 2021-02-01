@@ -1,7 +1,9 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, 0, }, 
+		{
+			0, 0, 0, 0, 
+		}, 
 	},
 	subMeshes = {
 		{
@@ -12,7 +14,7 @@ return {
 				},
 				position = {
 					count = 48,
-					offset = 744,
+					offset = 792,
 				},
 				tangent = {
 					count = 48,
@@ -20,55 +22,80 @@ return {
 				},
 				uv0 = {
 					count = 48,
-					offset = 792,
+					offset = 744,
 				},
 			},
 			materials = {
 				"station/train/passenger/tiles.mtl", 
 			},
-		}, {
+		},
+		{
 			indices = {
 				normal = {
-					count = 252,
-					offset = 1644,
+					count = 144,
+					offset = 1320,
 				},
 				position = {
-					count = 252,
-					offset = 1140,
+					count = 144,
+					offset = 1176,
 				},
 				tangent = {
-					count = 252,
+					count = 144,
 					offset = 888,
 				},
 				uv0 = {
-					count = 252,
-					offset = 1392,
+					count = 144,
+					offset = 1032,
 				},
 			},
 			materials = {
 				"station/train/passenger/edge.mtl", 
 			},
-		}, {
+		},
+		{
 			indices = {
 				normal = {
 					count = 48,
-					offset = 2040,
+					offset = 1608,
 				},
 				position = {
 					count = 48,
-					offset = 1944,
+					offset = 1560,
 				},
 				tangent = {
 					count = 48,
-					offset = 1896,
+					offset = 1464,
 				},
 				uv0 = {
 					count = 48,
-					offset = 1992,
+					offset = 1512,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/railroad/slopedSides/tilesZ.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 1944,
+				},
+				position = {
+					count = 96,
+					offset = 1848,
+				},
+				tangent = {
+					count = 96,
+					offset = 1656,
+				},
+				uv0 = {
+					count = 96,
+					offset = 1752,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/slopedSides/edgeZ.mtl", 
 			},
 		}, 
 	},
@@ -81,7 +108,7 @@ return {
 		position = {
 			count = 252,
 			numComp = 3,
-			offset = 64,
+			offset = 384,
 		},
 		tangent = {
 			count = 64,
@@ -91,7 +118,7 @@ return {
 		uv0 = {
 			count = 320,
 			numComp = 2,
-			offset = 316,
+			offset = 64,
 		},
 	},
 }
