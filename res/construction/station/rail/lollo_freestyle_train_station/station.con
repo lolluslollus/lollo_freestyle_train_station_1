@@ -1213,35 +1213,38 @@ function data()
 						1.01 -- , true
 					)
 
-                    -- LOLLO TODO only link underground underpasses to stairs2Subways that are lower, to avoig ugly crossings in the air.
-                    -- done it, check it
 					local shortSegmentsTunnelTops2Bottoms, minDistanceSegmentsUnderground2Underground = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.stairs2SubwayPositions,
                         result.terminateConstructionHookInfo.underpassPositionsUnderground,
                         1.01 -- , true
                     )
                     -- LOLLO TODO remove duplicate up-down connectors, done, check it.
-                    -- There could still be trouble with a steep underground station with two levels:
+                    -- There could be trouble with a steep underground station with two levels:
                     -- the stairs of a platform may try to join the underpass of its opposite twin,
-                    -- if the latter is higher. We try to get past it choosing the shortest path
+                    -- and we cannot just check the height of either coz there is too much freedom.
+                    -- We try to get past it choosing the shortest path
                     -- and relying on the user placing stairs opposite, ie close.
+                    -- We'd get a better approximation if tops and bottoms were all together,
+                    -- ie only using one module with underpasses and stairs together.
                     local index = 0
                     for _, top2Bottom in pairs(shortSegmentsTunnelTops2Bottoms) do
                         index = index + 1
                         if shortSegmentsTunnelTops2Tops[top2Bottom.t] and shortSegmentsTunnelTops2Tops[top2Bottom.t][top2Bottom.tt] then
                             local isTop2BottomTheShortest = true
                             for _, top2Top in pairs(shortSegmentsTunnelTops2Tops[top2Bottom.t][top2Bottom.tt]) do
-                                if top2Bottom.distance > top2Top.distance then
-                                    isTop2BottomTheShortest = false
-                                    break
+                                if top2Top ~= nil then
+                                    if top2Bottom.distance > top2Top.distance then
+                                        isTop2BottomTheShortest = false
+                                        break
+                                    end
                                 end
                             end
                             if isTop2BottomTheShortest then
                                 print('top2bottom wins')
-                                shortSegmentsTunnelTops2Tops[top2Bottom.t][top2Bottom.tt] = nil
+                                shortSegmentsTunnelTops2Tops[top2Bottom.t][top2Bottom.tt] = {}
                             else
                                 print('top2top wins')
-                                shortSegmentsTunnelTops2Bottoms[index] = nil
+                                shortSegmentsTunnelTops2Bottoms[index] = {}
                             end
                         end
                     end
