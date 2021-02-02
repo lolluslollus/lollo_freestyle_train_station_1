@@ -648,6 +648,34 @@ helper.getConnectedEdgeIds = function(nodeIds)
     return results
 end
 
+helper.getEdgeIdsConnectedToEdgeId = function(edgeId)
+    -- print('getEdgeIdsConnectedToEdgeId starting')
+    if not(helper.isValidAndExistingId(edgeId)) then return {} end
+    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    if baseEdge == nil then return {} end
+
+    local nodeIds = { baseEdge.node0, baseEdge.node1 }
+
+    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local results = {}
+
+    for _, nodeId in pairs(nodeIds) do
+        if helper.isValidAndExistingId(nodeId) then
+            local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
+            if connectedEdgeIdsUserdata ~= nil then
+                for _, connectedEdgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
+                    if connectedEdgeId ~= edgeId and helper.isValidAndExistingId(connectedEdgeId) then
+                        arrayUtils.addUnique(results, connectedEdgeId)
+                    end
+                end
+            end
+        end
+    end
+
+    -- print('getEdgeIdsConnectedToEdgeId is about to return') debugPrint(results)
+    return results
+end
+
 helper.isNumVeryClose = function(num1, num2, significantFigures)
     return transfUtils.isNumVeryClose(num1, num2, significantFigures)
 end

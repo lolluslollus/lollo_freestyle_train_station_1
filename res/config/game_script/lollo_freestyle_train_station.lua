@@ -175,11 +175,21 @@ local _actions = {
             local nNewEntities = 0
             local isSuccess = true
 
+            local _addNodeToRemove = function(nodeId)
+                if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove)) then
+                    proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeId
+                    isProposalPopulated = true
+                end
+            end
+
             local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr)
+                print('_tryReplaceSegment starting with edgeId =', edgeId or 'NIL')
                 if not(edgeUtils.isValidAndExistingId(edgeId)) then
-                    print('Warning: invalid entity in buildSnappyTracks')
+                    print('Warning: invalid edgeId in buildSnappyTracks')
                     return false
                 end
+
+                print('valid edgeId in buildSnappyTracks, going ahead')
 
                 local newSegment = api.type.SegmentAndEntity.new()
                 nNewEntities = nNewEntities - 1
@@ -188,18 +198,28 @@ local _actions = {
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
                 if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
                     newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
+                    _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
+                    print('eleven')
                 elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
                     newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
+                    _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
+                    print('twelve')
                 else
                     newSegment.comp.node0 = baseEdge.node0
+                    print('thirteen')
                 end
     
                 if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
                     newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
+                    _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
+                    print('fourteen')
                 elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
                     newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
+                    _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
+                    print('fifteen')
                 else
                     newSegment.comp.node1 = baseEdge.node1
+                    print('sixteen')
                 end
     
                 newSegment.comp.tangent0.x = baseEdge.tangent0.x
@@ -235,21 +255,17 @@ local _actions = {
             end
 
             for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
+                if not(isSuccess) then break end
                 isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.platforms)
             end
             for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge2Ids) do
+                if not(isSuccess) then break end
                 isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.platforms)
             end
 
-            if edgeUtils.isValidAndExistingId(endEntities4T.platforms.disjointNeighbourNodeIds.node1Id) then
-                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.platforms.disjointNeighbourNodeIds.node1Id
-                isProposalPopulated = true
-            end
-            if edgeUtils.isValidAndExistingId(endEntities4T.platforms.disjointNeighbourNodeIds.node2Id) then
-                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.platforms.disjointNeighbourNodeIds.node2Id
-                isProposalPopulated = true
-            end
-
+            -- LOLLO TODO as it is now, it deals with appended terminals as long as there is a bit in between.
+            -- However, this bit in between is replaced to snap to terminal 1 and replaced again to snap to terminal 2.
+            -- The second time it has a new id, so I don't snap it, which is ugly.
             -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
             if isSuccess then
                 if isProposalPopulated then
@@ -283,19 +299,12 @@ local _actions = {
             isSuccess = true
 
             for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
+                if not(isSuccess) then break end
                 isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.tracks)
             end
             for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge2Ids) do
+                if not(isSuccess) then break end
                 isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.tracks)
-            end
-
-            if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node1Id) then
-                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.tracks.disjointNeighbourNodeIds.node1Id
-                isProposalPopulated = true
-            end
-            if edgeUtils.isValidAndExistingId(endEntities4T.tracks.disjointNeighbourNodeIds.node2Id) then
-                proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = endEntities4T.tracks.disjointNeighbourNodeIds.node2Id
-                isProposalPopulated = true
             end
 
             if isSuccess then
@@ -904,7 +913,6 @@ local _actions = {
         -- print('node0 =') debugPrint(node0)
         -- print('node1 =') debugPrint(node1)
 
-        -- local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZVeryClose(nodeBetween.refPosition0, node0.position)
         if not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)) and not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node1.position)) then
             print('WARNING: splitEdge cannot find the nodes')
         end
@@ -923,7 +931,6 @@ local _actions = {
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
 
-        -- mustSplit = true -- LOLLO TODO remove after testing
         -- the split may occur at the end of an edge - in theory, but I could not make it happen in practise.
         if distance0 == 0 or distance1 == 0 or (not(mustSplit) and (distance0 < _constants.minSplitDistance or distance1 < _constants.minSplitDistance)) then
             -- we use this to avoid unnecessary splits, unless they must happen
@@ -1694,6 +1701,60 @@ function data()
                                         return false
                                     end
 
+                                    local newWaypointPosition = edgeUtils.getObjectPosition(newWaypointId)
+                                    -- make sure the waypoint is not too close to station end nodes, or the game will complain later with it != components.end()
+                                    local endEdgeIds = edgeUtils.getEdgeIdsConnectedToEdgeId(lastBuiltEdgeId)
+                                    local _minDistance = _constants.minSplitDistance * 2
+                                    -- print('endEdgeIds =') debugPrint(endEdgeIds)
+                                    for ___, edgeId in pairs(endEdgeIds) do
+                                        local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
+                                        -- print('conId =', conId or 'NIL')
+                                        -- and it belongs to a construction
+                                        if edgeUtils.isValidAndExistingId(conId) then
+                                            local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                                            -- and the construction is a station, freestyle or otherwise
+                                            if con ~= nil then
+                                                if (type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName) then
+                                                    local stationEndEntities = stationHelpers.getStationEndEntities(conId)
+                                                    -- print('stationEndEntities =') debugPrint(stationEndEntities)
+                                                    -- if any end nodes are too close to my waypoint
+                                                    for __, stationEndEntities4T in pairs(stationEndEntities) do
+                                                        if transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
+                                                        or transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
+                                                        or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
+                                                        or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
+                                                        then
+                                                            guiHelpers.showWarningWindowWithGoto(_('WaypointsTooCloseToStation'), newWaypointId)
+                                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                                _eventId,
+                                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                                {
+                                                                    edgeId = lastBuiltEdgeId,
+                                                                    waypointId = newWaypointId,
+                                                                }
+                                                            ))
+                                                            return false
+                                                        end
+                                                    end
+                                                else -- if con.stations ~= nil and #con.stations > 0 then
+                                                    -- no knowledge of end nodes: just forbid the waypoint
+                                                    guiHelpers.showWarningWindowWithGoto(_('WaypointsTooCloseToStation'), newWaypointId)
+                                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                        string.sub(debug.getinfo(1, 'S').source, 1),
+                                                        _eventId,
+                                                        _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                        {
+                                                            edgeId = lastBuiltEdgeId,
+                                                            waypointId = newWaypointId,
+                                                        }
+                                                    ))
+                                                    return false
+                                                end
+                                            end
+                                        end
+                                    end
+
                                     if #similarObjectIdsInAnyEdges < 2 then
                                         -- not ready yet
                                         -- guiHelpers.showWarningWindowWithGoto(_('BuildMoreWaypoints'), newWaypointId)
@@ -1702,7 +1763,6 @@ function data()
 
                                     local twinWaypointId =
                                         newWaypointId == similarObjectIdsInAnyEdges[1] and similarObjectIdsInAnyEdges[2] or similarObjectIdsInAnyEdges[1]
-                                    local newWaypointPosition = edgeUtils.getObjectPosition(newWaypointId)
                                     local twinWaypointPosition = edgeUtils.getObjectPosition(twinWaypointId)
 
                                     -- forbid building waypoints too far apart, which would make the station too large
