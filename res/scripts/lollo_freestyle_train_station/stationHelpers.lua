@@ -902,7 +902,7 @@ local _getStationEndEntities4T = function(con, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        print('ERROR: getStationEndEntities con.fileName =') debugPrint(con.fileName)
+        print('ERROR: _getStationEndEntities4T con.fileName =') debugPrint(con.fileName)
         return nil
     end
 
@@ -1038,7 +1038,7 @@ local _getStationEndEntities4T = function(con, t)
         result.tracks.disjointNeighbourEdgeIds.edge1Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node1Id)
         result.tracks.disjointNeighbourEdgeIds.edge2Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node2Id)
 
-    -- print('getStationEndEntities result =') debugPrint(result)
+    -- print('_getStationEndEntities4T result =') debugPrint(result)
     return result
 end
 
@@ -1068,7 +1068,7 @@ end
 
 helpers.getStationEndEntities4T = function(stationConstructionId, t)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        print('ERROR: getStationEndEntities invalid stationConstructionId') debugPrint(stationConstructionId)
+        print('ERROR: getStationEndEntities4T invalid stationConstructionId') debugPrint(stationConstructionId)
         return nil
     end
 
@@ -1076,7 +1076,7 @@ helpers.getStationEndEntities4T = function(stationConstructionId, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        print('ERROR: getStationEndEntities con.fileName =') debugPrint(con.fileName)
+        print('ERROR: getStationEndEntities4T con.fileName =') debugPrint(con.fileName)
         return nil
     end
 
