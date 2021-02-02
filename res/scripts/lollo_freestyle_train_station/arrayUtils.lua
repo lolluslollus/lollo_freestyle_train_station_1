@@ -1,7 +1,7 @@
 local arrayUtils = {}
 
 arrayUtils.arrayHasValue = function(tab, val)
-    for i, v in ipairs(tab) do
+    for _, v in pairs(tab) do
         if v == val then
             return true
         end
