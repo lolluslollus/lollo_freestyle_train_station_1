@@ -43,7 +43,7 @@ function data()
 				- Station naming does not work properly.
 				- For now, it's only modern-ish era.
 				- Upgrading tracks works meh.
-				- 2.5 m platforms do not agree with bridges and tunnels.
+				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
 			]],
 			["NAME"] = "Freestyle train station EXPERIMENTAL",
 
