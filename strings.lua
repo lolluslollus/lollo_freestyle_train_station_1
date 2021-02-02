@@ -5,7 +5,8 @@ function data()
 				A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
 
                 [h1]Instructions[/h1]
-                Lay platforms alongside normal tracks, then place a platform marker and a track marker where you want the platform and the track to end. Repeat at the other end.
+				Lay platforms alongside normal tracks, then place a platform marker and a track marker where you want the platform and the track to end. Repeat at the other end.
+				WAIT A MOMENT and let the computer think.
                 Now you have built a terminal, trains will stop between your track markers.
                 Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
 
