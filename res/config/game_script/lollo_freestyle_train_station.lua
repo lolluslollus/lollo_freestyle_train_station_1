@@ -176,7 +176,7 @@ local _actions = {
             local isSuccess = true
 
             local _addNodeToRemove = function(nodeId)
-                if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove)) then
+                if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove, nodeId)) then
                     proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeId
                     isProposalPopulated = true
                 end
@@ -249,7 +249,9 @@ local _actions = {
                 end
     
                 proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
-                proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
+                if not(arrayUtils.arrayHasValue(proposal.streetProposal.edgesToRemove, edgeId)) then
+                    proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
+                end
                 isProposalPopulated = true
                 return true
             end
