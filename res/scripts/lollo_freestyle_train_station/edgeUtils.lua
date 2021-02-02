@@ -652,26 +652,24 @@ helper.isNumVeryClose = function(num1, num2, significantFigures)
     return transfUtils.isNumVeryClose(num1, num2, significantFigures)
 end
 
-helper.isXYZVeryClose = function(xyz1, xyz2, roundingFactor)
-    if not(roundingFactor) then roundingFactor = 1000.0 end
+helper.isXYZVeryClose = function(xyz1, xyz2, significantFigures)
     if (type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata')
     or (type(xyz2) ~= 'table' and type(xyz2) ~= 'userdata')
-    or type(xyz1.x) ~= 'number' or type(xyz1.y) ~= 'number' or type(xyz1.z) ~= 'number'
-    or type(xyz2.x) ~= 'number' or type(xyz2.y) ~= 'number' or type(xyz2.z) ~= 'number'
     then return false end
 
-    local roundedXYZ1 = {
-        x = math.ceil(xyz1.x * roundingFactor),
-        y = math.ceil(xyz1.y * roundingFactor),
-        z = math.ceil(xyz1.z * roundingFactor),
-    }
-    local roundedXYZ2 = {
-        x = math.ceil(xyz2.x * roundingFactor),
-        y = math.ceil(xyz2.y * roundingFactor),
-        z = math.ceil(xyz2.z * roundingFactor),
-    }
+    local X1 = xyz1.x or xyz1[1]
+    local Y1 = xyz1.y or xyz1[2]
+    local Z1 = xyz1.z or xyz1[3]
+    local X2 = xyz2.x or xyz2[1]
+    local Y2 = xyz2.y or xyz2[2]
+    local Z2 = xyz2.z or xyz2[3]
 
-    return roundedXYZ1.x == roundedXYZ2.x and roundedXYZ1.y == roundedXYZ2.y and roundedXYZ1.z == roundedXYZ2.z
+    if type(X1) ~= 'number' or type(Y1) ~= 'number' or type(Z1) ~= 'number' then return false end
+    if type(X2) ~= 'number' or type(Y2) ~= 'number' or type(Z2) ~= 'number' then return false end
+
+    return transfUtils.isNumVeryClose(X1, X2, significantFigures)
+    and transfUtils.isNumVeryClose(Y1, Y2, significantFigures)
+    and transfUtils.isNumVeryClose(Z1, Z2, significantFigures)
 end
 
 helper.isXYZSame = function(xyz1, xyz2)
