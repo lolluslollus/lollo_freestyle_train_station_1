@@ -268,6 +268,7 @@ local _actions = {
             -- LOLLO TODO as it is now, it deals with appended terminals as long as there is a bit in between.
             -- However, this bit in between is replaced to snap to terminal 1 and replaced again to snap to terminal 2.
             -- The second time it has a new id, so I don't snap it, which is ugly.
+            -- A solution would be to update endEntities in those cases, and raise the event once per terminal in a tidy queue.
             -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
             if isSuccess then
                 if isProposalPopulated then

@@ -946,7 +946,6 @@ helpers.getStationEndEntities = function(stationConstructionId)
     -- print('frozenNodes with neighbours =') debugPrint(frozenNodeIds)
 
     local result = {}
-    -- local allStationEndNodeIds = {}
     for t = 1, #con.params.terminals do
         local endNodeIds4T = _getStationEndNodeIds(con, t, frozenEdgeIds, frozenNodeIds, stationConstructionId)
         -- print('endNodeIds4T =') debugPrint(endNodeIds4T)
@@ -963,8 +962,6 @@ helpers.getStationEndEntities = function(stationConstructionId)
         local trackNode2Position = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node2Id)
             and api.engine.getComponent(endNodeIds4T.tracks.node2Id, api.type.ComponentType.BASE_NODE).position
             or nil
-
-        -- local _map = api.engine.system.streetSystem.getNode2SegmentMap()
 
         result[t] = {
             platforms = {
@@ -1008,13 +1005,7 @@ helpers.getStationEndEntities = function(stationConstructionId)
                 }
             },
         }
-        -- allStationEndNodeIds[#allStationEndNodeIds+1] = endNodeIds4T.platforms.node1Id
-        -- allStationEndNodeIds[#allStationEndNodeIds+1] = endNodeIds4T.platforms.node2Id
-        -- allStationEndNodeIds[#allStationEndNodeIds+1] = endNodeIds4T.tracks.node1Id
-        -- allStationEndNodeIds[#allStationEndNodeIds+1] = endNodeIds4T.tracks.node2Id
-    end
 
-    for t = 1, #con.params.terminals do
         local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePosition)
             if not(edgeUtils.isValidAndExistingId(stationNodeId)) or stationNodePosition == nil then return nil end
 
@@ -1028,8 +1019,6 @@ helpers.getStationEndEntities = function(stationConstructionId)
                 if edgeUtils.isValidAndExistingId(nearbyNodeId)
                 and nearbyNodeId ~= stationNodeId
                 and not(arrayUtils.arrayHasValue(frozenNodeIds, nearbyNodeId))
-                -- the user might attempt to attach a terminal to another one by the length. If that happens, we cannot count the attached node as disjoint because we cannot touch it at all.
-                -- and not(arrayUtils.arrayHasValue(allStationEndNodeIds, nearbyNodeId))
                 then
                     return nearbyNodeId
                 end
@@ -1051,7 +1040,7 @@ helpers.getStationEndEntities = function(stationConstructionId)
             end
             return results
         end
-        
+
         -- result[t].platforms.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node1Id})
         -- result[t].platforms.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result[t].platforms.disjointNeighbourNodeIds.node2Id})
         -- result[t].tracks.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result[t].tracks.disjointNeighbourNodeIds.node1Id})
