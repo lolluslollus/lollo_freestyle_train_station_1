@@ -450,9 +450,11 @@ local _addTrackEdges = function(result, tag2nodes, params, t)
         }
 
         if i == 1 then
+            -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
             newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
         end
         if i == #params.terminals[t].trackEdgeLists then
+            -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
             newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
         end
 
@@ -484,9 +486,11 @@ local _addPlatformEdges = function(result, tag2nodes, params, t)
         }
 
         if i == 1 then
+            -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
             newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
         end
         if i == #params.terminals[t].platformEdgeLists then
+            -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
             newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
         end
 
