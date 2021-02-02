@@ -923,6 +923,87 @@ local _actions = {
     end,
 }
 
+local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr, proposal, nNewEntities)
+    print('_tryReplaceSegment starting with edgeId =', edgeId or 'NIL')
+
+    local _addNodeToRemove = function(nodeId)
+        if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove, nodeId)) then
+            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeId
+        end
+    end
+
+    if not(edgeUtils.isValidAndExistingId(edgeId)) then
+        print('Warning: invalid edgeId in _tryReplaceSegment')
+        return false, nNewEntities
+    end
+
+    -- print('valid edgeId in _tryReplaceSegment, going ahead')
+
+    local newSegment = api.type.SegmentAndEntity.new()
+    local nNewEntities_ = nNewEntities - 1
+    newSegment.entity = nNewEntities_
+
+    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+        newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
+        _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
+        -- print('twenty-one')
+    elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+        newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
+        _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
+        -- print('twenty-two')
+    else
+        newSegment.comp.node0 = baseEdge.node0
+        -- print('twenty-three')
+    end
+
+    if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+        newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
+        _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
+        -- print('twenty-four')
+    elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+        newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
+        _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
+        -- print('twenty-five')
+    else
+        newSegment.comp.node1 = baseEdge.node1
+        -- print('twenty-six')
+    end
+
+    newSegment.comp.tangent0.x = baseEdge.tangent0.x
+    newSegment.comp.tangent0.y = baseEdge.tangent0.y
+    newSegment.comp.tangent0.z = baseEdge.tangent0.z
+    newSegment.comp.tangent1.x = baseEdge.tangent1.x
+    newSegment.comp.tangent1.y = baseEdge.tangent1.y
+    newSegment.comp.tangent1.z = baseEdge.tangent1.z
+    newSegment.comp.type = baseEdge.type
+    newSegment.comp.typeIndex = baseEdge.typeIndex
+    newSegment.comp.objects = baseEdge.objects
+    -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+    newSegment.type = _constants.railEdgeType
+    local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+    local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
+
+    if baseEdgeTrack ~= nil then
+        newSegment.trackEdge.trackType = baseEdgeTrack.trackType
+        newSegment.trackEdge.catenary = baseEdgeTrack.catenary
+    elseif baseEdgeStreet ~= nil then
+        print('Warning: edgeId', edgeId, 'is street')
+        newSegment.streetEdge.streetType = baseEdgeStreet.streetType
+        newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
+        newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
+        -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
+        -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
+    end
+
+    proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+    if not(arrayUtils.arrayHasValue(proposal.streetProposal.edgesToRemove, edgeId)) then
+        proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
+    end
+
+    return true, nNewEntities_
+end
+
 _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     -- we make a build proposal for each terminal, so if one fails we still get the others
     -- LOLLO NOTE after building the station, never mind how well you placed it,
@@ -932,8 +1013,13 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     -- Here, I remove the neighbour track (edge and node) and replace it
     -- with an identical track, which snaps to the station end node instead.
     -- The same happens after joining a subway to a station, which also rebuilds the station construction.
+
+    -- The station deals with appended terminals (one after the other, along the same track) as long as there is a bit in between.
+    -- However, this bit in between is replaced once to snap to terminal 1 and replaced again to snap to terminal 2.
+    -- The second time it has a new id, so I can only snap it if I reread the station end entities, in a tidy queue.
+
     print('buildSnappyPlatforms starting')
-    if type(t) ~= 'number' or type(tMax) ~= 'number' then print('buildSnappyPlatforms received wrong t or tMax') debugPrint(t) debugPrint(tMax) return end
+    if type(t) ~= 'number' or type(tMax) ~= 'number' then print('Warning: buildSnappyPlatforms received wrong t or tMax') debugPrint(t) debugPrint(tMax) return end
     if t > tMax then print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
@@ -943,129 +1029,43 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     local isAnyPlatformFailed = false
 
     local proposal = api.type.SimpleProposal.new()
-    local isProposalPopulated = false
     local nNewEntities = 0
     local isSuccess = true
 
-    local _addNodeToRemove = function(nodeId)
-        if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove, nodeId)) then
-            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeId
-            isProposalPopulated = true
-        end
-    end
-
-    local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr)
-        print('_tryReplaceSegment starting with edgeId =', edgeId or 'NIL')
-        if not(edgeUtils.isValidAndExistingId(edgeId)) then
-            print('Warning: invalid edgeId in buildSnappyPlatforms')
-            return false
-        end
-
-        print('valid edgeId in buildSnappyPlatforms, going ahead')
-
-        local newSegment = api.type.SegmentAndEntity.new()
-        nNewEntities = nNewEntities - 1
-        newSegment.entity = nNewEntities
-
-        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-        if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
-            newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
-            print('eleven')
-        elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
-            newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
-            print('twelve')
-        else
-            newSegment.comp.node0 = baseEdge.node0
-            print('thirteen')
-        end
-
-        if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
-            newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
-            print('fourteen')
-        elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
-            newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
-            print('fifteen')
-        else
-            newSegment.comp.node1 = baseEdge.node1
-            print('sixteen')
-        end
-
-        newSegment.comp.tangent0.x = baseEdge.tangent0.x
-        newSegment.comp.tangent0.y = baseEdge.tangent0.y
-        newSegment.comp.tangent0.z = baseEdge.tangent0.z
-        newSegment.comp.tangent1.x = baseEdge.tangent1.x
-        newSegment.comp.tangent1.y = baseEdge.tangent1.y
-        newSegment.comp.tangent1.z = baseEdge.tangent1.z
-        newSegment.comp.type = baseEdge.type
-        newSegment.comp.typeIndex = baseEdge.typeIndex
-        newSegment.comp.objects = baseEdge.objects
-        -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-        newSegment.type = _constants.railEdgeType
-        local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-        local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
-
-        if baseEdgeTrack ~= nil then
-            newSegment.trackEdge.trackType = baseEdgeTrack.trackType
-            newSegment.trackEdge.catenary = baseEdgeTrack.catenary
-        elseif baseEdgeStreet ~= nil then
-            print('Warning: edgeId', edgeId, 'is street')
-            newSegment.streetEdge.streetType = baseEdgeStreet.streetType
-            newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
-            newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
-            -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
-            -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
-        end
-
-        proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
-        if not(arrayUtils.arrayHasValue(proposal.streetProposal.edgesToRemove, edgeId)) then
-            proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
-        end
-        isProposalPopulated = true
-        return true
-    end
-
     for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
-        isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.platforms)
+        isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
+        -- print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
     end
     for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge2Ids) do
         if not(isSuccess) then break end
-        isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.platforms)
+        isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
+        -- print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
     end
 
-    -- LOLLO TODO as it is now, it deals with appended terminals as long as there is a bit in between.
-    -- However, this bit in between is replaced to snap to terminal 1 and replaced again to snap to terminal 2.
-    -- The second time it has a new id, so I don't snap it, which is ugly.
-    -- A solution would be to update endEntities in those cases, and raise the event once per terminal in a tidy queue.
-    -- Done it, check it!
+    -- print('proposal =') debugPrint(proposal)
     -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
     if isSuccess then
-        if isProposalPopulated then
-            local context = api.type.Context:new()
-            -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-            -- context.cleanupStreetGraph = true -- default is false
-            -- context.gatherBuildings = false -- default is false
-            -- context.gatherFields = true -- default is true
-            -- context.player = api.engine.util.getPlayer()
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = false -- default is false
+        -- context.gatherFields = true -- default is true
+        -- context.player = api.engine.util.getPlayer()
 
-            local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
-            if expectedResult.errorState.critical then
-                print('expectedResult =') debugPrint(expectedResult)
-                isAnyPlatformFailed = true
-                _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
-            else
-                api.cmd.sendCommand(
-                    api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-                    function(result, success)
-                        print('buildSnappyPlatforms callback, success =', success)
-                        _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
-                    end
-                )
-            end
+        local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+        if expectedResult.errorState.critical then
+            print('expectedResult =') debugPrint(expectedResult)
+            isAnyPlatformFailed = true
+            _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
+        else
+            api.cmd.sendCommand(
+                api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                function(result, success)
+                    print('buildSnappyPlatforms callback, success =', success)
+                    _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
+                end
+            )
         end
     else
         isAnyPlatformFailed = true
@@ -1074,16 +1074,9 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
 end
 
 _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
-    -- we make a build proposal for each terminal, so if one fails we still get the others
-    -- LOLLO NOTE after building the station, never mind how well you placed it,
-    -- its end nodes won't snap to the adjacent tracks.
-    -- AltGr + L will show a red dot, and here is the catch: there are indeed
-    -- two separate nodes in the same place, at each station end.
-    -- Here, I remove the neighbour track (edge and node) and replace it
-    -- with an identical track, which snaps to the station end node instead.
-    -- The same happens after joining a subway to a station, which also rebuilds the station construction.
+    -- see the comments in buildSnappyPlatforms
     print('buildSnappyTracks starting')
-    if type(t) ~= 'number' or type(tMax) ~= 'number' then print('buildSnappyTracks received wrong t or tMax') debugPrint(t) debugPrint(tMax) return end
+    if type(t) ~= 'number' or type(tMax) ~= 'number' then print('Warning: buildSnappyTracks received wrong t or tMax') debugPrint(t) debugPrint(tMax) return end
     if t > tMax then print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
@@ -1093,124 +1086,39 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     local isAnyTrackFailed = false
 
     local proposal = api.type.SimpleProposal.new()
-    local isProposalPopulated = false
     local nNewEntities = 0
     local isSuccess = true
 
-    local _addNodeToRemove = function(nodeId)
-        if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove, nodeId)) then
-            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeId
-            isProposalPopulated = true
-        end
-    end
-
-    -- LOLLO TODO avoid duplicated code
-    local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr)
-        print('_tryReplaceSegment starting with edgeId =', edgeId or 'NIL')
-        if not(edgeUtils.isValidAndExistingId(edgeId)) then
-            print('Warning: invalid edgeId in buildSnappyTracks')
-            return false
-        end
-
-        print('valid edgeId in buildSnappyTracks, going ahead')
-
-        local newSegment = api.type.SegmentAndEntity.new()
-        nNewEntities = nNewEntities - 1
-        newSegment.entity = nNewEntities
-
-        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-        if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
-            newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
-            print('twenty-one')
-        elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
-            newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
-            print('twenty-two')
-        else
-            newSegment.comp.node0 = baseEdge.node0
-            print('twenty-three')
-        end
-
-        if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
-            newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
-            print('twenty-four')
-        elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
-            newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
-            print('twenty-five')
-        else
-            newSegment.comp.node1 = baseEdge.node1
-            print('twenty-six')
-        end
-
-        newSegment.comp.tangent0.x = baseEdge.tangent0.x
-        newSegment.comp.tangent0.y = baseEdge.tangent0.y
-        newSegment.comp.tangent0.z = baseEdge.tangent0.z
-        newSegment.comp.tangent1.x = baseEdge.tangent1.x
-        newSegment.comp.tangent1.y = baseEdge.tangent1.y
-        newSegment.comp.tangent1.z = baseEdge.tangent1.z
-        newSegment.comp.type = baseEdge.type
-        newSegment.comp.typeIndex = baseEdge.typeIndex
-        newSegment.comp.objects = baseEdge.objects
-        -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-        newSegment.type = _constants.railEdgeType
-        local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-        local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
-
-        if baseEdgeTrack ~= nil then
-            newSegment.trackEdge.trackType = baseEdgeTrack.trackType
-            newSegment.trackEdge.catenary = baseEdgeTrack.catenary
-        elseif baseEdgeStreet ~= nil then
-            print('Warning: edgeId', edgeId, 'is street')
-            newSegment.streetEdge.streetType = baseEdgeStreet.streetType
-            newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
-            newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
-            -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
-            -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
-        end
-
-        proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
-        if not(arrayUtils.arrayHasValue(proposal.streetProposal.edgesToRemove, edgeId)) then
-            proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
-        end
-        isProposalPopulated = true
-        return true
-    end
-
     for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
-        isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.tracks)
+        isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
     end
     for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge2Ids) do
         if not(isSuccess) then break end
-        isSuccess = isSuccess and _tryReplaceSegment(edgeId, endEntities4T.tracks)
+        isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
     end
 
     if isSuccess then
-        if isProposalPopulated then
-            local context = api.type.Context:new()
-            -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-            -- context.cleanupStreetGraph = true -- default is false
-            -- context.gatherBuildings = false -- default is false
-            -- context.gatherFields = true -- default is true
-            -- context.player = api.engine.util.getPlayer()
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = false -- default is false
+        -- context.gatherFields = true -- default is true
+        -- context.player = api.engine.util.getPlayer()
 
-            local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
-            if expectedResult.errorState.critical then
-                print('expectedResult =') debugPrint(expectedResult)
-                isAnyTrackFailed = true
-                _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
-            else
-                api.cmd.sendCommand(
-                    api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-                    function(result, success)
-                        print('buildSnappyTracks callback, success =', success)
-                        _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
-                    end
-                )
-            end
+        local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+        if expectedResult.errorState.critical then
+            print('expectedResult =') debugPrint(expectedResult)
+            isAnyTrackFailed = true
+            _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
+        else
+            api.cmd.sendCommand(
+                api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                function(result, success)
+                    print('buildSnappyTracks callback, success =', success)
+                    _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
+                end
+            )
         end
     else
         isAnyTrackFailed = true
