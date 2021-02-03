@@ -3,7 +3,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 0.95, 1, 1, },
+                albedoScale = { 1.15, 1.2, 1.2, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
@@ -46,7 +46,7 @@ function data()
             operation_1 = {
                 mode = "WORLD_XY",
                 -- mode = "NORMAL",
-                op = "OVERLAY",
+                op = "NO_OP",
                 opacity = 0.75,
                 scale = { 0.01, 0.01, },
             },

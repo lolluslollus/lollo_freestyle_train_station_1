@@ -211,11 +211,11 @@ function data()
 				local myModelId = ''
 				if isCargo then
 					if width < 10 then
-						myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_5m_wide.mdl'
+						myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_5m_wide.mdl'
 					elseif width < 20 then
-						myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_10m_wide.mdl'
+						myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_10m_wide.mdl'
 					else
-						myModelId = 'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_1m_base_20m_wide.mdl'
+						myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_20m_wide.mdl'
 					end
 				else
 					if width < 5 then

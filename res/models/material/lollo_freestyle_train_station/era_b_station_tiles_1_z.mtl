@@ -46,7 +46,7 @@ return {
 		operation_1 = {
 			mode = "WORLD_XY",
 			op = "OVERLAY",
-			opacity = 0.69999998807907,
+			opacity = 0.2,
 			scale = { 0.40000000596046, 0.40000000596046, },
 		},
 		operation_2 = {

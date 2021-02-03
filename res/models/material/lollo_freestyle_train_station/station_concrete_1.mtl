@@ -2,6 +2,7 @@ function data()
     return {
         order = 0,
         params = {
+            -- LOLLO TODO this is mushy, find better concrete
             albedo_scale = {
                 albedoScale = { 1, 1, 1, },
             },

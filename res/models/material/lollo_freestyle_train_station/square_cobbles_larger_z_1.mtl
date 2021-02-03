@@ -2,7 +2,6 @@ function data()
 return {
 	order = 0,
 	params = {
-		-- LOLLO TODO this is mushy, find better large cobbles
 		albedo_scale = {
 			albedoScale = { 1.02, 1, 1, },
 		},
@@ -60,9 +59,9 @@ return {
 			scale = { 0.10000000149012, 0.10000000149012, },
 		},
 		polygon_offset = {
-			factor = 0,
+			factor = 1,
 			forceDepthWrite = false,
-			units = 0,
+			units = 1,
 		},
 		two_sided = {
 			flipNormal = true,
