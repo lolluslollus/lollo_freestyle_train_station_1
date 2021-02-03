@@ -9,12 +9,7 @@ function data()
                 node = {
                     children = {
                         {
-                            materials = {
-                                "lollo_freestyle_train_station/era_b_station_tiles_1.mtl",
-                                "lollo_freestyle_train_station/square_cobbles_larger.mtl",
-                                "lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl",
-                                "lollo_freestyle_train_station/square_cobbles_larger_z.mtl",
-                            },
+                            materials = _mdlHelpers.getPlatformTrackEraBMaterials(),
                             mesh = "lollo_freestyle_train_station/railroad/track/era_c_platform_1m_long_5m_wide_1_2m_high_z.msh",
                             transf = { _mdlHelpers.getPlatformStretchFactor(1, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                         },
