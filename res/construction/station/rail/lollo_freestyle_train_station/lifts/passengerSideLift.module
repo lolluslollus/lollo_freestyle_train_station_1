@@ -130,7 +130,8 @@ return {
 			}
 		end
 
-		moduleHelpers.lifts.doTerrain4SideLifts(buildingHeight, slotTransf, result, _constants.era_c_groundFacesFillKey)
+		moduleHelpers.lifts.doTerrain4SideLifts(buildingHeight, slotTransf, result,
+		_constants.era_c_groundFacesFillKey, _constants.era_c_groundFacesStrokeOuterKey)
 	end,
 
 	getModelsFn = function(params)

@@ -41,7 +41,7 @@ return {
 			tag = tag
 		}
 
-		moduleHelpers.doTerrain4Subways(result, slotTransf)
+		moduleHelpers.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 		-- print('subway.module.updateFn ending')
 	end,
 

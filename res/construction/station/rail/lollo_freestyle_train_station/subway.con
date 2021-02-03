@@ -49,7 +49,7 @@ function data()
             --		result.terminalGroups = {}
             --		result.terrainAlignmentLists = {}
 
-            moduleHelpers.doTerrain4Subways(result)
+            moduleHelpers.doTerrain4Subways(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
 
             return result
         end,

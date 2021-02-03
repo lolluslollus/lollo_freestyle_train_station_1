@@ -328,10 +328,6 @@ local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, ar
                         type = 'FILL',
                         key = groundFacesFillKey,
                     },
-                    -- {
-                    -- 	type = 'STROKE_OUTER',
-                    -- 	key = _constants.groundFacesStrokeOuterKey
-                    -- }
                 }
             }
         end
@@ -601,7 +597,7 @@ helpers.lifts = {
         return buildingModelId
     end,
 
-    doTerrain4SideLifts = function(buildingHeight, slotTransf, result, groundFacesFillKey)
+    doTerrain4SideLifts = function(buildingHeight, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
         local groundFace = { -- the ground faces ignore z, the alignment lists don't
             {-1, -6.2, -buildingHeight, 1},
             {-1, 6.2, -buildingHeight, 1},
@@ -618,14 +614,9 @@ helpers.lifts = {
                         type = 'FILL',
                         key = groundFacesFillKey
                     },
-                    --[[                         {
-                        type = 'STROKE_INNER',
-                        key = 'shared/asphalt_01.gtex.lua',
-                    },
-                    ]]
                     {
                         type = 'STROKE_OUTER',
-                        key = _constants.groundFacesStrokeOuterKey
+                        key = groundFacesStrokeOuterKey
                     }
                 }
             }
@@ -671,7 +662,7 @@ helpers.lifts = {
     end,
 }
 
-helpers.doTerrain4Subways = function(result, slotTransf)
+helpers.doTerrain4Subways = function(result, slotTransf, groundFacesStrokeOuterKey)
     local groundFace = { -- the ground faces ignore z, the alignment lists don't
         {0.0, -0.95, 0, 1},
         {0.0, 0.95, 0, 1},
@@ -699,13 +690,8 @@ helpers.doTerrain4Subways = function(result, slotTransf)
                     key = 'lollo_freestyle_train_station/hole.lua',
                     type = 'FILL',
                 },
-                -- {
-                -- 	-- key = 'shared/asphalt_01.gtex.lua',
-                -- 	key = 'lollo_freestyle_train_station/hole.lua',
-                -- 	type = 'STROKE_INNER',
-                -- },
                 {
-                    key = _constants.groundFacesStrokeOuterKey,
+                    key = groundFacesStrokeOuterKey,
                     type = 'STROKE_OUTER',
                 }
             }

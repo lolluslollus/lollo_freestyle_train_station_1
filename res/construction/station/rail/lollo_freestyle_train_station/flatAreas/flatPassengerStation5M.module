@@ -81,14 +81,9 @@ return {
 						type = 'FILL',
 						key = _constants.era_c_groundFacesFillKey
 					},
-					--[[                         {
-						type = 'STROKE_INNER',
-						key = 'shared/asphalt_01.gtex.lua',
-					},
-					]]
 					{
 						type = 'STROKE_OUTER',
-						key = _constants.groundFacesStrokeOuterKey
+						key = _constants.era_c_groundFacesStrokeOuterKey
 					}
 				}
 			}

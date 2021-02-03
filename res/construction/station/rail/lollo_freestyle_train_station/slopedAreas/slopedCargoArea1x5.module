@@ -2,6 +2,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
+local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 -- local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 -- local transfUtilsUG = require "transf"
 -- local vec3 = require "vec3"
@@ -33,9 +34,17 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
+			-- LOLLO TODO do the same as here to provide the right model and the right ground texture to flat and sloped area modules
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local myModelId = _constants.slopedEraCCargoArea1x5ModelFileName
+			if cpl.era == trackUtils.eras.era_a.prepend then
+				myModelId = _constants.slopedEraACargoArea1x5ModelFileName
+			elseif cpl.era == trackUtils.eras.era_b.prepend then
+				myModelId = _constants.slopedEraBCargoArea1x5ModelFileName
+			end
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 5,
-				_constants.slopedEraCCargoArea1x5ModelFileName, nil,
-				_constants.groundFacesFillKey)
+				myModelId, nil,
+				_constants.era_c_groundFacesFillKey)
 		end,
 
 		getModelsFn = function(params)
