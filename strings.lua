@@ -11,7 +11,7 @@ function data()
                 Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
 
                 Now click your station to open the configuration menu and add some connections.
-                - Adjacent platforms are connected together automatically. If you added extra platforms or space between, you will have to connect them by hand instead: use a suitable street type and <shift>. Avoid this underground and on bridges, keep it simple.
+                - Adjacent platforms are connected together automatically. If you added extra platforms or space between, you will have to connect them by hand instead: use a suitable street type and <shift>. Avoid this with tunnels and bridges, keep it simple.
                 - Every set of adjacent ground platforms requires street access or an underpass. This is like the stock stations.
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
                 - Every bridge level requires a lift.
@@ -20,7 +20,7 @@ function data()
                 - If you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels.
 
                 You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, connect the platform ends by hand with a suitable street type and <shift>.
-                If you have a group of adjacent platforms and tracks, try to place your underpasses (or stairs if you are underground) opposite to one another.
+                If you have a group of adjacent platforms and tracks, try to place your underpasses (or stairs if you are in a tunnel) opposite to one another.
 
 				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
 				When you bulldoze the station, everything will be bulldozed.
