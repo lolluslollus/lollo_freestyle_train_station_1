@@ -2,26 +2,26 @@ local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
 
 function data()
     return {
-        boundingInfo = _mdlHelpers.getTrackBoundingInfo(2, 5, 1.2),
-        collider = _mdlHelpers.getTrackCollider(2, 5, 1.2),
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
         lods = {
             {
                 node = {
                     children = {
                         {
                             materials = {
-                                "lollo_freestyle_train_station/station_concrete_3.mtl",
-                                "lollo_freestyle_train_station/station_concrete_1.mtl",
-                                "lollo_freestyle_train_station/station_concrete_3_z.mtl",
-                                "lollo_freestyle_train_station/station_concrete_1_z.mtl",
+                                "lollo_freestyle_train_station/era_b_station_tiles_1.mtl",
+                                "lollo_freestyle_train_station/square_cobbles.mtl",
+                                "lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl",
+                                "lollo_freestyle_train_station/square_cobbles_z.mtl",
                             },
-                            mesh = "lollo_freestyle_train_station/railroad/track/era_c_platform_2m_long_5m_wide_1_2m_high_z.msh",
-                            transf = { _mdlHelpers.getPlatformStretchFactor(2, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                            mesh = "lollo_freestyle_train_station/railroad/track/era_c_platform_1m_long_5m_wide_1_2m_high_z.msh",
+                            transf = { _mdlHelpers.getPlatformStretchFactor(1, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                         },
                         -- {
                         --     materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},
                         --     mesh = 'asset/icon/lod_0_icon_pointer.msh',
-                        --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0.3, 0, 0,  0, 1.2, 1}
+                        --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0.15, 0, 0,  0, 1.2, 1}
                         -- },
                     },
                     name = "RootNode",

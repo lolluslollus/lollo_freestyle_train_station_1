@@ -10,9 +10,9 @@ function data()
                     children = {
                         {
                             materials = {
-                                "lollo_freestyle_train_station/station_concrete_2.mtl",
+                                "lollo_freestyle_train_station/station_concrete_3.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1.mtl",
-                                "lollo_freestyle_train_station/station_concrete_2_z.mtl",
+                                "lollo_freestyle_train_station/station_concrete_3_z.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1_z.mtl",
                             },
                             mesh = "lollo_freestyle_train_station/railroad/track/era_c_platform_2m_long_5m_wide_1_2m_high_z.msh",

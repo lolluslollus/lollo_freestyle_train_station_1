@@ -30,12 +30,16 @@ function data()
                 wrapT = "REPEAT",
             },
             map_op_1 = {
-                fileName = "unknown_texture.tga",
+                fileName = "models/industry/overlay_textures/small_08.tga",
                 type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
             },
             map_op_2 = {
-                fileName = "unknown_texture.tga",
+                fileName = "models/industry/overlay_textures/big_02.tga",
                 type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
             },
             normal_scale = {
                 normalScale = 1,
