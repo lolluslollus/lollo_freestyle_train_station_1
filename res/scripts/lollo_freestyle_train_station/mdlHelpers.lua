@@ -57,9 +57,9 @@ local helpers = {}
     helpers.getPlatformTrackEraBCargoMaterials = function()
         return {
             'lollo_freestyle_train_station/station_concrete_3.mtl',
-            'lollo_freestyle_train_station/square_cobbles_larger.mtl',
+            'lollo_freestyle_train_station/square_cobbles_large.mtl',
             'lollo_freestyle_train_station/station_concrete_3_z.mtl',
-            'lollo_freestyle_train_station/square_cobbles_larger_z.mtl',
+            'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
         }
     end
 
@@ -84,9 +84,9 @@ local helpers = {}
     helpers.getPlatformTrackEraBPassengerMaterials = function()
         return {
             'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
-            'lollo_freestyle_train_station/square_cobbles_larger.mtl',
+            'lollo_freestyle_train_station/square_cobbles_large.mtl',
             'lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl',
-            'lollo_freestyle_train_station/square_cobbles_larger_z.mtl',
+            'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
         }
     end
 
