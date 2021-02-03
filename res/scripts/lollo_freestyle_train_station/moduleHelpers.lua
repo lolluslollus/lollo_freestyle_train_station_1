@@ -601,7 +601,7 @@ helpers.lifts = {
         return buildingModelId
     end,
 
-    doTerrain4SideLifts = function(buildingHeight, slotTransf, result)
+    doTerrain4SideLifts = function(buildingHeight, slotTransf, result, groundFacesFillKey)
         local groundFace = { -- the ground faces ignore z, the alignment lists don't
             {-1, -6.2, -buildingHeight, 1},
             {-1, 6.2, -buildingHeight, 1},
@@ -616,7 +616,7 @@ helpers.lifts = {
                 modes = {
                     {
                         type = 'FILL',
-                        key = _constants.groundFacesFillKey --_constants.groundFacesFillKey
+                        key = groundFacesFillKey
                     },
                     --[[                         {
                         type = 'STROKE_INNER',

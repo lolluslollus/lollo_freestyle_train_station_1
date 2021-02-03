@@ -36,7 +36,7 @@ function data()
 
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 20,
 				_constants.slopedEraCCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName,
-				_constants.groundFacesFillKey)
+				_constants.era_c_groundFacesFillKey)
 
 			moduleHelpers.addSlopedCargoAreaDecoEraC(result, slotTransf, tag, slotId, 0, 0)
 		end,

@@ -53,7 +53,7 @@ return {
 			{6, -3.5, 0, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, _constants.groundFacesFillKey)
+		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, _constants.era_c_groundFacesFillKey)
 
 		local terrainAlignmentList = {
 			faces = {

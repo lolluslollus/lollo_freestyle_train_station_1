@@ -47,7 +47,7 @@ return {
 			tag = tag
 		}
 
-		moduleHelpers.lifts.doTerrain4SideLifts(buildingHeight, slotTransf, result)
+		moduleHelpers.lifts.doTerrain4SideLifts(buildingHeight, slotTransf, result, _constants.era_c_groundFacesFillKey)
 	end,
 
 	getModelsFn = function(params)

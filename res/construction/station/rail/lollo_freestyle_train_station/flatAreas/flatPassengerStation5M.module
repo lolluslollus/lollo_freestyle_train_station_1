@@ -79,7 +79,7 @@ return {
 				modes = {
 					{
 						type = 'FILL',
-						key = _constants.groundFacesFillKey --_constants.groundFacesFillKey
+						key = _constants.era_c_groundFacesFillKey
 					},
 					--[[                         {
 						type = 'STROKE_INNER',
