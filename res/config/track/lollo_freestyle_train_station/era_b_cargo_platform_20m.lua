@@ -79,12 +79,12 @@ function data()
 	t.railModel = "lollo_freestyle_train_station/empty.mdl"
     -- t.sleeperModel = "railroad/tracks/single_sleeper_base.mdl"
 	-- t.sleeperModel = "lollo_freestyle_train_station/empty.mdl"
-	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_c_cargo_sleeper_20m_wide.mdl"
+	t.sleeperModel = "lollo_freestyle_train_station/railroad/track/era_b_cargo_sleeper_20m_wide.mdl"
 	t.trackStraightModel = {
-		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_2m_base_20m_wide.mdl', --"railroad/tracks/2m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_4m_base_20m_wide.mdl', --"railroad/tracks/4m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_8m_base_20m_wide.mdl', --"railroad/tracks/8m_base.mdl",
-		'lollo_freestyle_train_station/railroad/track/era_c_cargo_platform_16m_base_20m_wide.mdl', --"railroad/tracks/16m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_b_cargo_platform_2m_base_20m_wide.mdl', --"railroad/tracks/2m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_b_cargo_platform_4m_base_20m_wide.mdl', --"railroad/tracks/4m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_b_cargo_platform_8m_base_20m_wide.mdl', --"railroad/tracks/8m_base.mdl",
+		'lollo_freestyle_train_station/railroad/track/era_b_cargo_platform_16m_base_20m_wide.mdl', --"railroad/tracks/16m_base.mdl",
 	}
 
 	t.maintenanceCost = 0.0   -- [$/m/M] per meter and month

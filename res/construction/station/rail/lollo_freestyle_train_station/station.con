@@ -229,15 +229,13 @@ function data()
 					end
 				end
 
-				-- LOLLO TODO in future, when we have the models, we can use this
-				-- if era == trackUtils.eras.era_a then
-				-- 	return myModelId:gsub(trackUtils.eras.era_c, trackUtils.eras.era_a)
-				-- elseif era == trackUtils.eras.era_b then
-				-- 	return myModelId:gsub(trackUtils.eras.era_c, trackUtils.eras.era_b)
-				-- else
-				-- 	return myModelId
-				-- end
-				return myModelId
+				if era == trackUtils.eras.era_a then
+					return myModelId:gsub(trackUtils.eras.era_c, trackUtils.eras.era_a)
+				elseif era == trackUtils.eras.era_b then
+					return myModelId:gsub(trackUtils.eras.era_c, trackUtils.eras.era_b)
+				else
+					return myModelId
+				end
 			end
 
 			result.terminateConstructionHookInfo = {
