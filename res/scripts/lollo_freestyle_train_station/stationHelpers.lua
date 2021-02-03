@@ -906,11 +906,11 @@ local _getStationEndEntities4T = function(con, t)
         return nil
     end
 
-    local conTransf = transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
     local frozenEdgeIds = arrayUtils.cloneDeepOmittingFields(con.frozenEdges, {}, true)
     local frozenNodeIds = arrayUtils.cloneDeepOmittingFields(con.frozenNodes, {}, true)
     -- get all stations, not only mine? It does not seem necessary for now, and we also bar building close to a station, on top of it.
     -- This thing here works, just in case.
+    -- local conTransf = transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
     -- print('frozenEdges first =') debugPrint(frozenEdgeIds)
     -- print('frozenNodes first =') debugPrint(frozenNodeIds)
     -- local nearbyStations = helpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
@@ -1013,30 +1013,29 @@ local _getStationEndEntities4T = function(con, t)
         end
         return nil
     end
-        result.platforms.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node1Id, result.platforms.stationEndNodePositions.node1)
-        result.platforms.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node2Id, result.platforms.stationEndNodePositions.node2)
-        result.tracks.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node1Id, result.tracks.stationEndNodePositions.node1)
-        result.tracks.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node2Id, result.tracks.stationEndNodePositions.node2)
+    result.platforms.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node1Id, result.platforms.stationEndNodePositions.node1)
+    result.platforms.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node2Id, result.platforms.stationEndNodePositions.node2)
+    result.tracks.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node1Id, result.tracks.stationEndNodePositions.node1)
+    result.tracks.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node2Id, result.tracks.stationEndNodePositions.node2)
 
-        local _getDisjointNeighbourEdgeIds = function(nodeId)
-            local results = {}
-            local connectedEdgeIds = edgeUtils.getConnectedEdgeIds({nodeId})
-            for _, edgeId in pairs(connectedEdgeIds) do
-                if not(arrayUtils.arrayHasValue(frozenEdgeIds, edgeId)) then
-                    results[#results+1] = edgeId
-                end
+    local _getDisjointNeighbourEdgeIds = function(nodeId)
+        local results = {}
+        local connectedEdgeIds = edgeUtils.getConnectedEdgeIds({nodeId})
+        for _, edgeId in pairs(connectedEdgeIds) do
+            if not(arrayUtils.arrayHasValue(frozenEdgeIds, edgeId)) then
+                results[#results+1] = edgeId
             end
-            return results
         end
-
-        -- result.platforms.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result.platforms.disjointNeighbourNodeIds.node1Id})
-        -- result.platforms.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result.platforms.disjointNeighbourNodeIds.node2Id})
-        -- result.tracks.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result.tracks.disjointNeighbourNodeIds.node1Id})
-        -- result.tracks.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result.tracks.disjointNeighbourNodeIds.node2Id})
-        result.platforms.disjointNeighbourEdgeIds.edge1Ids = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node1Id)
-        result.platforms.disjointNeighbourEdgeIds.edge2Ids = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node2Id)
-        result.tracks.disjointNeighbourEdgeIds.edge1Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node1Id)
-        result.tracks.disjointNeighbourEdgeIds.edge2Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node2Id)
+        return results
+    end
+    -- result.platforms.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result.platforms.disjointNeighbourNodeIds.node1Id})
+    -- result.platforms.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result.platforms.disjointNeighbourNodeIds.node2Id})
+    -- result.tracks.disjointNeighbourEdgeIds.edge1Ids = edgeUtils.track.getConnectedEdgeIds({result.tracks.disjointNeighbourNodeIds.node1Id})
+    -- result.tracks.disjointNeighbourEdgeIds.edge2Ids = edgeUtils.track.getConnectedEdgeIds({result.tracks.disjointNeighbourNodeIds.node2Id})
+    result.platforms.disjointNeighbourEdgeIds.edge1Ids = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node1Id)
+    result.platforms.disjointNeighbourEdgeIds.edge2Ids = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node2Id)
+    result.tracks.disjointNeighbourEdgeIds.edge1Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node1Id)
+    result.tracks.disjointNeighbourEdgeIds.edge2Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node2Id)
 
     -- print('_getStationEndEntities4T result =') debugPrint(result)
     return result
