@@ -782,7 +782,7 @@ helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, x
     }
 end
 
-helpers.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, xShift, yShift)
+helpers.addSlopedCargoAreaDecoEraC = function(result, slotTransf, tag, slotId, xShift, yShift)
     result.models[#result.models + 1] = {
         id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
         slotId = slotId,

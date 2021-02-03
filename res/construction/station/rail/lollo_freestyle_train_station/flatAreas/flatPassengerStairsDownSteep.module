@@ -37,7 +37,7 @@ return {
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		result.models[#result.models + 1] = {
-			id = _constants.flatPassengerStairsDownSteepModelFileName,
+			id = _constants.flatEraCPassengerStairsDownSteepModelFileName,
 			slotId = slotId,
 			transf = zAdjustedTransf,
 			tag = tag
@@ -78,7 +78,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.flatPassengerStairsDownSteepModelFileName,
+				id = _constants.flatEraCPassengerStairsDownSteepModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

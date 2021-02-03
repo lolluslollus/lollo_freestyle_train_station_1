@@ -34,7 +34,7 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 10,
-				_constants.slopedCargoArea1x10ModelFileName, nil,
+				_constants.slopedEraCCargoArea1x10ModelFileName, nil,
 				_constants.groundFacesFillKey)
 		end,
 
@@ -42,7 +42,7 @@ function data()
 			local results = {}
 			for y = -5, 5 do
 				results[#results+1] = {
-					id = _constants.slopedCargoArea1x10ModelFileName,
+					id = _constants.slopedEraCCargoArea1x10ModelFileName,
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end
