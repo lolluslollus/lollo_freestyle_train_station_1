@@ -59,9 +59,9 @@ return {
 			scale = { 0.10000000149012, 0.10000000149012, },
 		},
 		polygon_offset = {
-			factor = 1,
+			factor = 0,
 			forceDepthWrite = false,
-			units = 1,
+			units = 0,
 		},
 		two_sided = {
 			flipNormal = true,
