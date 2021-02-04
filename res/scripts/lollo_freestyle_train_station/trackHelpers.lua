@@ -3,9 +3,9 @@ local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 local helpers = {
     eras = {
-        era_a = { prepend = 'era_a_', startYear = 1850 },
-        era_b = { prepend = 'era_b_', startYear = 1920 },
-        era_c = { prepend = 'era_c_', startYear = 1980 },
+        era_a = { prefix = 'era_a_', startYear = 1850 },
+        era_b = { prefix = 'era_b_', startYear = 1920 },
+        era_c = { prefix = 'era_c_', startYear = 1980 },
     },
     getInvisibleTwinFileName = function(trackFileName)
         local result = stringUtils.stringContains(trackFileName, '_cargo_')
@@ -65,15 +65,15 @@ helpers.getAllPlatformTrackTypes = function()
 end
 
 helpers.getEra = function (trackTypeIndex)
-    if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return helpers.eras.era_c.prepend end
+    if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return helpers.eras.era_c.prefix end
 
     local fileName = api.res.trackTypeRep.getFileName(trackTypeIndex)
-    if stringUtils.stringContains(fileName, helpers.eras.era_a.prepend) then return helpers.eras.era_a.prepend
-    elseif stringUtils.stringContains(fileName, helpers.eras.era_b.prepend) then return helpers.eras.era_b.prepend
-    elseif stringUtils.stringContains(fileName, helpers.eras.era_c.prepend) then return helpers.eras.era_c.prepend
+    if stringUtils.stringContains(fileName, helpers.eras.era_a.prefix) then return helpers.eras.era_a.prefix
+    elseif stringUtils.stringContains(fileName, helpers.eras.era_b.prefix) then return helpers.eras.era_b.prefix
+    elseif stringUtils.stringContains(fileName, helpers.eras.era_c.prefix) then return helpers.eras.era_c.prefix
     end
 
-    return helpers.eras.era_c.prepend
+    return helpers.eras.era_c.prefix
 end
 
 helpers.getTrackAvailability = function(trackFileName)

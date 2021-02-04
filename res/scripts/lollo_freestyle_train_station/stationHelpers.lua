@@ -426,7 +426,7 @@ local helpers = {
                 edgeResults[#edgeResults].type = pel.type
                 edgeResults[#edgeResults].typeIndex = pel.typeIndex
                 edgeResults[#edgeResults].width = pel.width or 0
-                edgeResults[#edgeResults].era = pel.era or trackUtils.eras.era_c.prepend
+                edgeResults[#edgeResults].era = pel.era or trackUtils.eras.era_c.prefix
 
                 lengthCovered = nodeBetween.refDistance0
                 previousNodeBetween = nodeBetween

@@ -10,7 +10,9 @@ local vec3 = require "vec3"
 local vec4 = require "vec4"
 
 
-local helpers = {}
+local helpers = {
+    eras = trackUtils.eras
+}
 
 helpers.getGroundFace = function(face, key)
     return {
