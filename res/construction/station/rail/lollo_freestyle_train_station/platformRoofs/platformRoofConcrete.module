@@ -11,7 +11,7 @@ local vec3 = require "vec3"
 function data()
 return {
 	availability = {
-		yearFrom = 1920,
+		yearFrom = moduleHelpers.eras.era_b.startYear,
 		yearTo = 0
 	},
 	category = {
