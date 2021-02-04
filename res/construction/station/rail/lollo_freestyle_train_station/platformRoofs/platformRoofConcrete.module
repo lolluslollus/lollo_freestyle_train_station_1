@@ -11,7 +11,7 @@ local vec3 = require "vec3"
 function data()
 return {
 	availability = {
-		yearFrom = 0,
+		yearFrom = 1920,
 		yearTo = 0
 	},
 	category = {
