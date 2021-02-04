@@ -283,6 +283,7 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
 end
 
 local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey, isGroundLevel)
+    -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
     local terrainCoordinates = {}
 
     local i1 = nTrackEdge - 1
@@ -330,6 +331,10 @@ local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, ar
                         type = 'FILL',
                         key = groundFacesFillKey,
                     },
+                    {
+                    	type = 'STROKE_OUTER',
+                    	key = groundFacesFillKey
+                    }
                 }
             }
         end
