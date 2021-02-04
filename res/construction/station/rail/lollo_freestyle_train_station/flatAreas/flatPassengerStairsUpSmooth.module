@@ -40,7 +40,7 @@ return {
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		result.models[#result.models + 1] = {
-			id = _constants.flatEraCPassengerStairsUpSmoothModelFileName,
+			id = _constants.era_c_flatPassengerStairsUpSmoothModelFileName,
 			slotId = slotId,
 			transf = zAdjustedTransf,
 			tag = tag
@@ -87,7 +87,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.flatEraCPassengerStairsUpSmoothModelFileName,
+				id = _constants.era_c_flatPassengerStairsUpSmoothModelFileName,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

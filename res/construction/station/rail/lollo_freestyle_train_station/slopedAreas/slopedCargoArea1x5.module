@@ -36,15 +36,8 @@ function data()
 
 			-- LOLLO TODO do the same as here to provide the right model and the right ground texture to flat and sloped area modules
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local myGroundFacesFillKey = _constants.era_c_groundFacesFillKey
-			local myModelId = _constants.slopedEraCCargoArea1x5ModelFileName
-			if cpl.era == trackUtils.eras.era_a.prepend then
-				myGroundFacesFillKey = _constants.era_a_groundFacesFillKey
-				myModelId = _constants.slopedEraACargoArea1x5ModelFileName
-			elseif cpl.era == trackUtils.eras.era_b.prepend then
-				myGroundFacesFillKey = _constants.era_b_groundFacesFillKey
-				myModelId = _constants.slopedEraBCargoArea1x5ModelFileName
-			end
+			local myGroundFacesFillKey = _constants[(cpl.era or trackUtils.eras.era_c.prepend) .. 'groundFacesFillKey']
+			local myModelId = _constants[(cpl.era or trackUtils.eras.era_c.prepend) .. 'slopedCargoArea1x5ModelFileName']
 
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 5,
 				myModelId, nil, myGroundFacesFillKey)
@@ -54,7 +47,7 @@ function data()
 			local results = {}
 			for y = -2, 2 do
 				results[#results+1] = {
-					id = _constants.slopedEraCCargoArea1x5ModelFileName,
+					id = _constants.era_c_slopedCargoArea1x5ModelFileName,
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end

@@ -34,7 +34,7 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 5,
-				_constants.slopedEraCPassengerArea1x5ModelFileName, _constants.passengerWaitingAreaCentredModelFileName,
+				_constants.era_c_slopedPassengerArea1x5ModelFileName, _constants.passengerWaitingAreaCentredModelFileName,
 				_constants.era_c_groundFacesFillKey)
 
 			moduleHelpers.addSlopedPassengerAreaDeco(result, slotTransf, tag, slotId, 0.9, 0.0)
@@ -44,7 +44,7 @@ function data()
 			local results = {}
 			for y = -2, 2 do
 				results[#results+1] = {
-					id = _constants.slopedEraCPassengerArea1x5ModelFileName,
+					id = _constants.era_c_slopedPassengerArea1x5ModelFileName,
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end
