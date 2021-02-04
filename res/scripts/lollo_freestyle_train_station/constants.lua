@@ -52,10 +52,10 @@ local constants = {
     slopeHigh = 999,
     slopeLow = 2.5,
 
-    era_a_groundFacesFillKey = 'lollo_freestyle_train_station/gravel_02_high_priority.lua', -- 'shared/gravel_02.gtex.lua',
+    era_a_groundFacesFillKey = 'lollo_freestyle_train_station/gravel_03_high_priority.lua', -- 'shared/gravel_02.gtex.lua',
     era_b_groundFacesFillKey = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua', -- 'shared/asphalt_01.gtex.lua',
     era_c_groundFacesFillKey = 'lollo_freestyle_train_station/asphalt_02_high_priority.lua', -- 'shared/asphalt_02.gtex.lua',
-    era_a_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/gravel_02_high_priority.lua',
+    era_a_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/gravel_03_high_priority.lua',
     era_b_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua',
     era_c_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_02_high_priority.lua',
 

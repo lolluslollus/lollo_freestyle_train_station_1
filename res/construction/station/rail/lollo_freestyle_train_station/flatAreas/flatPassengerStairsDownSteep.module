@@ -36,8 +36,12 @@ return {
 
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
+		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+		local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
+		local myModelId = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'flatPassengerStairsDownSteepModelFileName']
+
 		result.models[#result.models + 1] = {
-			id = _constants.era_c_flatPassengerStairsDownSteepModelFileName,
+			id = myModelId,
 			slotId = slotId,
 			transf = zAdjustedTransf,
 			tag = tag
@@ -52,7 +56,7 @@ return {
 			{2.25, -2, 0, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, _constants.era_c_groundFacesFillKey)
+		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
 
 		local terrainAlignmentList = {
 			faces = {

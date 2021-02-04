@@ -38,6 +38,10 @@ return {
 			slotTransf,
 			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
 		)
+
+		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+		local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
+
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl',
 			slotId = slotId,
@@ -79,11 +83,11 @@ return {
 				modes = {
 					{
 						type = 'FILL',
-						key = _constants.era_c_groundFacesFillKey
+						key = myGroundFacesFillKey
 					},
 					{
 						type = 'STROKE_OUTER',
-						key = _constants.era_c_groundFacesStrokeOuterKey
+						key = myGroundFacesFillKey
 					}
 				}
 			}

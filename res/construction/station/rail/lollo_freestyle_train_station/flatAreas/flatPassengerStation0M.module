@@ -38,6 +38,10 @@ return {
 			slotTransf,
 			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
 		)
+
+		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+		local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
+
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/lift/side_lifts_9_5_0.mdl',
 			slotId = slotId,
@@ -51,6 +55,8 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				buildingTransf,
+				-- LOLLO TODO see if you can use result.laneZs[nTerminal] instead of -_constants.stairsAndRampHeight, across the app.
+				-- This would help with platforms of different heights.
 				{ 0, 1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.45, -3.5, -_constants.stairsAndRampHeight, 1 }
 			),
 			tag = tag
@@ -79,11 +85,11 @@ return {
 				modes = {
 					{
 						type = 'FILL',
-						key = _constants.era_c_groundFacesFillKey
+						key = myGroundFacesFillKey
 					},
 					{
 						type = 'STROKE_OUTER',
-						key = _constants.era_c_groundFacesStrokeOuterKey
+						key = myGroundFacesFillKey
 					}
 				}
 			}
