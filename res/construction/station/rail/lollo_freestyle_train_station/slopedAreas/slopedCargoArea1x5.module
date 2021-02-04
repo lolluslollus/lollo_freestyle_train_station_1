@@ -33,7 +33,6 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			-- LOLLO TODO do the same as here to provide the right model and the right ground texture to flat and sloped area modules
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
 			local myModelId = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'slopedCargoArea1x5ModelFileName']

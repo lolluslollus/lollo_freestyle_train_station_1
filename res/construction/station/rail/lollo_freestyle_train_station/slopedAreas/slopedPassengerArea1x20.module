@@ -33,9 +33,13 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
+			local myModelId = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'slopedPassengerArea1x20ModelFileName']
+
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 20,
-				_constants.era_c_slopedPassengerArea1x20ModelFileName, nil,
-				_constants.era_c_groundFacesFillKey)
+				myModelId, nil,
+				myGroundFacesFillKey)
 		end,
 
 		getModelsFn = function(params)

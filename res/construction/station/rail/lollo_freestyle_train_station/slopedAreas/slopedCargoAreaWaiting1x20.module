@@ -34,9 +34,13 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
+			local myModelId = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'slopedCargoArea1x20ModelFileName']
+
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 20,
-				_constants.era_c_slopedCargoArea1x20ModelFileName, _constants.cargoWaitingAreaCentredModelFileName,
-				_constants.era_c_groundFacesFillKey)
+				myModelId, _constants.cargoWaitingAreaCentredModelFileName,
+				myGroundFacesFillKey)
 
 			moduleHelpers.addSlopedCargoAreaDecoEraC(result, slotTransf, tag, slotId, 0, 0)
 		end,
