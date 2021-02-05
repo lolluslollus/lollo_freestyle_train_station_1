@@ -19,15 +19,9 @@ function data()
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    materials = { "station/rail/era_b/station_detail_1.mtl", },
-                                    mesh = "lollo_freestyle_train_station/asset/era_b_two_chairs_lod0.msh",
-                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-                                },
-                            },
-                            name = "era_a_double_chair_grp",
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                            materials = { "station/rail/era_b/station_detail_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/era_b_two_chairs_lod0.msh",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.1, 1, },
                         },
                     },
                     name = "RootNode",
