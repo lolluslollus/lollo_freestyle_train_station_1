@@ -1,0 +1,76 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = { 2.8306999206543, 0.052642997354269, 3.3516299724579, },
+            bbMin = { -2.8306999206543, -0.052642997354269, -1.7881393432617e-07, },
+        },
+        collider = {
+            params = {
+                halfExtents = { 2.8306999206543, 0.052642997354269, 1.6758151054382, },
+            },
+            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+            type = "BOX",
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = { "station/rail/era_b/station_detail_2.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/era_b_station_sign_lod0.msh",
+                            name = "name_board",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 250,
+            },
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = "CENTER",
+                        alpha = 1,
+                        alphaMode = "BLEND",
+                        childId = "RootNode",
+                        color = { 0, 0, 0, },
+                        filter = "NONE",
+                        fitting = "SCALE",
+                        font = "",
+                        nLines = 1,
+                        params = { },
+                        renderMode = "STD",
+                        size = { 4.5999999046326, 0.5, },
+                        transf = { 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.2999999523163, -0.025000000372529, 2.2000000476837, 1, },
+                        type = "STATION_NAME",
+                        verticalAlignment = "CENTER",
+                    },
+                    {
+                        alignment = "CENTER",
+                        alpha = 1,
+                        alphaMode = "BLEND",
+                        childId = "RootNode",
+                        color = { 0, 0, 0, },
+                        filter = "NONE",
+                        fitting = "SCALE",
+                        font = "",
+                        nLines = 1,
+                        params = { },
+                        renderMode = "STD",
+                        size = { 4.5999999046326, 0.5, },
+                        transf = { -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 2.2999999523163, 0.025000000372529, 2.2000000476837, 1, },
+                        type = "STATION_NAME",
+                        verticalAlignment = "CENTER",
+                    },
+                },
+            },
+        },
+        version = 1,
+    }
+    end
+    

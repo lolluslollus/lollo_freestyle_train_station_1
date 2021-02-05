@@ -209,11 +209,9 @@ return function(height)
                                 {
                                     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                                     mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_lod0.msh',
-                                    name = 'era_c_station_name',
                                     transf = idTransf
                                 }
                             },
-                            name = 'era_c_station_name_grp',
                             --transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                             transf = {1.4, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, -0.9, 1}
                         }

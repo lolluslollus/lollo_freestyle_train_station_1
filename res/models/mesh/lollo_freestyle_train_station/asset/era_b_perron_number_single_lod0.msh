@@ -7,69 +7,69 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 1248,
-					offset = 10900,
+					count = 2496,
+					offset = 12996,
 				},
 				position = {
-					count = 1248,
-					offset = 8404,
+					count = 2496,
+					offset = 15492,
 				},
 				tangent = {
-					count = 1248,
-					offset = 7156,
+					count = 2496,
+					offset = 10500,
 				},
 				uv0 = {
-					count = 1248,
-					offset = 9652,
+					count = 2496,
+					offset = 17988,
 				},
 			},
 			materials = {
-				"station/train/passenger/pillar.mtl", 
+				"station/train/passenger/one.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
-					count = 1824,
-					offset = 17620,
+					count = 1224,
+					offset = 21708,
 				},
 				position = {
-					count = 1824,
-					offset = 13972,
+					count = 1224,
+					offset = 22932,
 				},
 				tangent = {
-					count = 1824,
-					offset = 12148,
+					count = 1224,
+					offset = 20484,
 				},
 				uv0 = {
-					count = 1824,
-					offset = 15796,
+					count = 1224,
+					offset = 24156,
 				},
 			},
 			materials = {
-				"station/train/passenger/number.mtl", 
+				"station/train/passenger/two.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 696,
+			count = 1020,
 			numComp = 3,
-			offset = 6460,
+			offset = 5248,
 		},
 		position = {
-			count = 1740,
+			count = 2088,
 			numComp = 3,
-			offset = 2816,
+			offset = 6268,
 		},
 		tangent = {
-			count = 2816,
+			count = 5248,
 			numComp = 4,
 			offset = 0,
 		},
 		uv0 = {
-			count = 1904,
+			count = 2144,
 			numComp = 2,
-			offset = 4556,
+			offset = 8356,
 		},
 	},
 }

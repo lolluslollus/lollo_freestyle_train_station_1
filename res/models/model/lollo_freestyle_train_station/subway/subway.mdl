@@ -41,7 +41,6 @@ function data()
                         {
                             materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                             mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_perched_lod0.msh',
-                            name = 'era_c_station_name',
                             transf = {0, -0.6, 0, 0,  1, 0, 0, 0,  0, 0, 0.6, 0,  0.14, 0.0, 2.90, 1}
                         }
                     },
@@ -70,7 +69,6 @@ function data()
                         {
                             materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                             mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_perched_lod1.msh',
-                            name = 'era_c_station_name',
                             transf = {0, -0.6, 0, 0,  1, 0, 0, 0,  0, 0, 0.6, 0,  0.14, 0.0, 2.90, 1}
                         }
                     },

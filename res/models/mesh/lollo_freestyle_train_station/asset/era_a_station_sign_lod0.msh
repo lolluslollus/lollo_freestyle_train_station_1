@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 16464,
+					offset = 51744,
+				},
+				position = {
+					count = 16464,
+					offset = 68208,
+				},
+				tangent = {
+					count = 16464,
+					offset = 35280,
+				},
+				uv0 = {
+					count = 16464,
+					offset = 84672,
+				},
+			},
+			materials = {
+				"station/road/streetstation/streetstation_1.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 3492,
+			numComp = 3,
+			offset = 13632,
+		},
+		position = {
+			count = 8412,
+			numComp = 3,
+			offset = 17124,
+		},
+		tangent = {
+			count = 13632,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 9744,
+			numComp = 2,
+			offset = 25536,
+		},
+	},
+}
+end

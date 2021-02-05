@@ -22,10 +22,10 @@ function data()
                             children = {
                                 {
                                     materials = {
-                                        "station/rail/era_c/era_c_trainstation_assets.mtl",
-                                        "station/rail/era_c/era_c_trainstation_assets.mtl",
+                                        "station/rail/era_a/era_a_trainstation_detail_1.mtl",
+                                        "station/rail/era_a/era_a_trainstation_assets.mtl",
                                     },
-                                    mesh = "lollo_freestyle_train_station/asset/era_c_perron_number_single_lod0.msh",
+                                    mesh = "lollo_freestyle_train_station/asset/era_a_perron_number_single_lod0.msh",
                                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                                 },
                             },
@@ -44,8 +44,8 @@ function data()
             labelList = {
                 labels = {
                     {
-                        transf = { 0, 1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, -0.13, -1.52, 3.8, 1, },
-                        size = { 0.5, 0.5 },
+                        transf = { 0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 0,  0.015, -0.68, 3.06, 1, },
+                        size = { 0.4, 0.4 },
                         type = "CUSTOM",
                         alignment = "CENTER",
                         verticalAlignment = "CENTER",
@@ -54,8 +54,8 @@ function data()
                         childId = "RootNode",
                     },
                     {
-                        transf = { 0, -1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, -0.333, -1.02, 3.8, 1, },
-                        size = { 0.5, 0.5 },
+                        transf = { 0, -1, 0, 0,  0, 0, 1, 0,  1, 0, 0, 0,  -0.015, -0.28, 3.06, 1, },
+                        size = { 0.4, 0.4 },
                         type = "CUSTOM",
                         alignment = "CENTER",
                         verticalAlignment = "CENTER",
