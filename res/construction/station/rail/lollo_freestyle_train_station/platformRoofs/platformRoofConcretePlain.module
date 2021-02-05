@@ -11,7 +11,7 @@ local vec3 = require "vec3"
 function data()
 return {
 	availability = {
-		yearFrom = moduleHelpers.eras.era_c.startYear,
+		yearFrom = moduleHelpers.eras.era_b.startYear,
 		yearTo = 0
 	},
 	category = {
@@ -21,34 +21,34 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("PlatformRoofConcreteName"),
-		description = _("PlatformRoofConcreteDesc"),
-		icon = "ui/lollo_freestyle_train_station/platformRoofConcrete.tga"
+		name = _("PlatformRoofConcretePlainName"),
+		description = _("PlatformRoofConcretePlainDesc"),
+		icon = "ui/lollo_freestyle_train_station/platformRoofConcretePlain.tga"
 	},
 	metadata = { },
 	order = {
-		value = 11,
+		value = 14,
 	},
 	type = _constants.platformRoofModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		moduleHelpers.doPlatformRoof (result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-		_constants.platformRoofConcreteCeiling2_5MModelFileName, _constants.platformRoofConcreteCeiling5MModelFileName,
-		_constants.platformRoofConcretePillar2_5MModelFileName, _constants.platformRoofConcretePillar5MModelFileName)
+		moduleHelpers.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+		_constants.platformRoofConcretePlainCeiling2_5MModelFileName, _constants.platformRoofConcretePlainCeiling5MModelFileName,
+		_constants.platformRoofConcretePlainPillar2_5MModelFileName, _constants.platformRoofConcretePlainPillar5MModelFileName)
 	end,
 
 	getModelsFn = function(params)
 		local results = {}
 		for y = -2, 2 do
 			results[#results+1] = {
-				id = _constants.platformRoofConcreteCeiling2_5MModelFileName,
+				id = _constants.platformRoofConcretePlainCeiling2_5MModelFileName,
 				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 			}
 		end
 		results[#results+1] = {
-			id = _constants.platformRoofConcretePillar2_5MModelFileName,
+			id = _constants.platformRoofConcretePlainPillar2_5MModelFileName,
 			transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 		}
 	return results
