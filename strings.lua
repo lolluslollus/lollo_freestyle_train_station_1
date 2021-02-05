@@ -99,6 +99,8 @@ function data()
 			["PlatformRoofConcreteDesc"] = "Concrete roof with tendons for passenger platforms",
 			["PlatformRoofConcretePlainName"] = "Concrete platform roof, plain",
 			["PlatformRoofConcretePlainDesc"] = "Concrete roof for passenger platforms",
+			["PlatformRoofIronName"] = "Iron roof",
+			["PlatformRoofIronDesc"] = "Iron roof for passenger platforms",
 			["PlatformRoofIronGlassAluName"] = "Iron and glass roof",
 			["PlatformRoofIronGlassAluDesc"] = "Iron and glass roof for passenger platforms",
 			["PlatformRoofMetalGlassName"] = "Glass platform roof",
