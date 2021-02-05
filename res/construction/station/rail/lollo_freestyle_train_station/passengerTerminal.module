@@ -134,7 +134,7 @@ return {
 					),
 					tag = tag
 				}
-			elseif cpl.type == 2 then -- lights (only in tunnels)
+			elseif cpl.type == 2 then -- lights (only in tunnels) -- LOLLO TODO make these for era a and b
 				if cpl.width >= 5 or not(isStairs(nTerminal, cpf.leadingIndex)) then
 					local yShift = 0
 					if cpl.width >= 5 then
@@ -161,7 +161,7 @@ return {
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
 			local era = cpl.era or moduleHelpers.eras.era_c.prefix
-			if cpl.type == 2 then -- tunnel
+			if cpl.type == 2 then -- tunnel -- LOLLO TODO make these for era a and b
 				if cpl.width >= 5 or not(isStairs(nTerminal, i)) then
 					local yShift = 0
 					if cpl.width >= 5 then
@@ -213,7 +213,7 @@ return {
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
 			local era = cpl.era or moduleHelpers.eras.era_c.prefix
-			if cpl.type == 2 then -- tunnel
+			if cpl.type == 2 then -- tunnel -- LOLLO TODO make these for era a and b
 				if cpl.width >= 5 or not(isStairs(nTerminal, i)) then
 					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
 					local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
