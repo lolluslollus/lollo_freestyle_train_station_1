@@ -3,14 +3,14 @@ return {
 	order = 0,
 	params = {
 		albedo_scale = {
-			albedoScale = { 0.2, 0.1, 0.1, },
+			albedoScale = { 1, 1, 1, },
 		},
 		fade_out_range = {
 			fadeOutEndDist = 20000,
 			fadeOutStartDist = 10000,
 		},
 		map_albedo = {
-			fileName = "models/station/rail/era_c/era_c_trainstation_assets_albedo.dds",
+			fileName = "lollo_freestyle_train_station/era_b_station_signs_albedo.dds",
 			type = "TWOD",
 		},
 		map_metal_gloss_ao = {
