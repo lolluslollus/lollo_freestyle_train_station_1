@@ -835,10 +835,7 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
                 if cpf.type ~= 2 then
                     result.models[#result.models+1] = {
                         id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
-                        transf = transfUtilsUG.mul(
-                            myTransf,
-                            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-                        ),
+                        transf = myTransf,
                         tag = tag,
                     }
                 end
