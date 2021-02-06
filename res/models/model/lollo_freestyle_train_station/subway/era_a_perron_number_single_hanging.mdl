@@ -12,7 +12,7 @@ function data()
                             children = {
                                 {
                                     materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
-                                    mesh = "lollo_freestyle_train_station/roofs/era_a_perron_number_single_hanging.msh",
+                                    mesh = "lollo_freestyle_train_station/subway/era_a_perron_number_single_hanging.msh",
                                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                                 },
                             },
