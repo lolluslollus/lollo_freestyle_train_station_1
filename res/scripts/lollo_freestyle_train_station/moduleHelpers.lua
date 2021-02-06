@@ -846,9 +846,9 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
                     -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
                     if cpf.type ~= 2 then
                         local yShift = -platformWidth * 0.5 + 0.20
-                        local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_single_hanging.mdl'
-                        if era == helpers.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_single_hanging.mdl'
-                        elseif era == helpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_single_hanging.mdl'
+                        local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                        if era == helpers.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                        elseif era == helpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
                         end
                         result.models[#result.models + 1] = {
                             id = perronNumberModelId,
