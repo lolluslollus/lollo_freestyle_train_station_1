@@ -1,0 +1,98 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 1320,
+					offset = 3592,
+				},
+				position = {
+					count = 1320,
+					offset = 2272,
+				},
+				tangent = {
+					count = 1320,
+					offset = 6232,
+				},
+				uv0 = {
+					count = 1320,
+					offset = 4912,
+				},
+			},
+			materials = {
+				"asset/lamp_old.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 168,
+					offset = 7720,
+				},
+				position = {
+					count = 168,
+					offset = 7552,
+				},
+				tangent = {
+					count = 168,
+					offset = 8056,
+				},
+				uv0 = {
+					count = 168,
+					offset = 7888,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/asset/light.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 144,
+					offset = 8368,
+				},
+				position = {
+					count = 144,
+					offset = 8224,
+				},
+				tangent = {
+					count = 144,
+					offset = 8656,
+				},
+				uv0 = {
+					count = 144,
+					offset = 8512,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/asset/iron.005.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 744,
+			numComp = 3,
+			offset = 912,
+		},
+		position = {
+			count = 912,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 384,
+			numComp = 4,
+			offset = 1888,
+		},
+		uv0 = {
+			count = 232,
+			numComp = 2,
+			offset = 1656,
+		},
+	},
+}
+end

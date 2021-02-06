@@ -89,7 +89,13 @@ return {
 		local transfXZoom = isTrackOnPlatformLeft and -1 or 1
 		local transfYZoom = isTrackOnPlatformLeft and -1 or 1
 
-		local _subwayLightModelIds = {
+		local era_a_subwayLightModelIds = {
+			'lollo_freestyle_train_station/subway/era_a_lamp_hanging.mdl',
+		}
+		local era_b_subwayLightModelIds = {
+			'lollo_freestyle_train_station/subway/era_b_lamp_hanging.mdl',
+		}
+		local era_c_subwayLightModelIds = {
 			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_2m_fluo_green.mdl',
 			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_2m_fluo_magenta.mdl',
 			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_2m_fluo_yellow.mdl',
@@ -134,7 +140,7 @@ return {
 					),
 					tag = tag
 				}
-			elseif cpl.type == 2 then -- lights (only in tunnels) -- LOLLO TODO make these for era a and b
+			elseif cpl.type == 2 then -- lights (only in tunnels)
 				if cpl.width >= 5 or not(isStairs(nTerminal, cpf.leadingIndex)) then
 					local yShift = 0
 					if cpl.width >= 5 then
@@ -146,9 +152,13 @@ return {
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
 						{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 1.0, 1 }
 					)
-					local myModelId = _subwayLightModelIds[math.random(#_subwayLightModelIds)]
+					local lightsModelId = nil
+					if era == moduleHelpers.eras.era_c.prefix then lightsModelId = era_c_subwayLightModelIds[math.random(#era_c_subwayLightModelIds)]
+					elseif era == moduleHelpers.eras.era_b.prefix then lightsModelId = era_b_subwayLightModelIds[1]
+					elseif era == moduleHelpers.eras.era_a.prefix then lightsModelId = era_a_subwayLightModelIds[1]
+					end
 					result.models[#result.models + 1] = {
-						id = myModelId,
+						id = lightsModelId,
 						slotId = slotId,
 						transf = myTransf,
 						tag = tag
@@ -161,7 +171,7 @@ return {
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
 			local era = cpl.era or moduleHelpers.eras.era_c.prefix
-			if cpl.type == 2 then -- tunnel -- LOLLO TODO make these for era a and b
+			if cpl.type == 2 then -- tunnel
 				if cpl.width >= 5 or not(isStairs(nTerminal, i)) then
 					local yShift = 0
 					if cpl.width >= 5 then
@@ -174,8 +184,12 @@ return {
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 						{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 0.5, 1 }
 					)
+					local stationSignModelId = 'lollo_freestyle_train_station/subway/roof_edge_w_station_name_5m_2m.mdl'
+					if era == moduleHelpers.eras.era_b.prefix then stationSignModelId = 'lollo_freestyle_train_station/subway/era_b_station_sign_single.mdl'
+					elseif era == moduleHelpers.eras.era_a.prefix then stationSignModelId = 'lollo_freestyle_train_station/subway/era_a_station_sign_double.mdl'
+					end
 					result.models[#result.models + 1] = {
-						id = 'lollo_freestyle_train_station/subway/roof_edge_w_station_name_5m_2m.mdl',
+						id = stationSignModelId,
 						slotId = slotId,
 						transf = myTransf,
 						tag = tag
@@ -213,14 +227,14 @@ return {
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
 			local era = cpl.era or moduleHelpers.eras.era_c.prefix
-			if cpl.type == 2 then -- tunnel -- LOLLO TODO make these for era a and b
+			if cpl.type == 2 then -- tunnel
 				if cpl.width >= 5 or not(isStairs(nTerminal, i)) then
 					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
 					local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 					local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 					local perronNumberModelId = 'lollo_freestyle_train_station/subway/era_c_perron_number_single_hanging.mdl'
 					if era == moduleHelpers.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/subway/era_a_perron_number_single_hanging.mdl'
-					elseif era == moduleHelpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/subway/era_b_perron_number_single_hanging.mdl'
+					elseif era == moduleHelpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/subway/era_b_perron_number_hanging_plain.mdl'
 					end
 					result.models[#result.models + 1] = {
 						id = perronNumberModelId,
