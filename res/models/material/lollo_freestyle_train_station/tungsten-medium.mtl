@@ -1,0 +1,31 @@
+function data()
+    return {
+        order = 0,
+        params = {
+            emissive_scale = {
+                emissiveScale = { 200, 80, 50, },
+            },
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            map_emissive = {
+                -- fileName = "models/vehicle/train/emissive/train_all_lights.dds",
+                -- fileName = "transparent.tga",
+                fileName = "unknown_albedo_1k.dds",
+                type = "TWOD",
+            },
+            polygon_offset = {
+                factor = -1,
+                forceDepthWrite = false,
+                units = -1,
+            },
+            two_sided = {
+                flipNormal = true,
+                twoSided = false,
+            },
+        },
+        type = "EMISSIVE",
+    }
+    end
+    

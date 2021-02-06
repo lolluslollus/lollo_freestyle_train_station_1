@@ -1,0 +1,38 @@
+function data()
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        -- boundingInfo = {
+        --     bbMax = { 0.15744599699974, 0.18180300295353, 4.2447190284729, },
+        --     bbMin = { -0.15744599699974, -0.18180300295353, -0.20115199685097, },
+        -- },
+        -- collider = {
+        --     params = { },
+        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+        --     type = "MESH",
+        -- },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "lollo_freestyle_train_station/asset/lamp_old.mtl",
+                                'lollo_freestyle_train_station/tungsten-medium.mtl',
+                            },
+                            mesh = "lollo_freestyle_train_station/asset/era_a_lamp_wall_lod_0.msh",
+                            transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 250,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+    end
