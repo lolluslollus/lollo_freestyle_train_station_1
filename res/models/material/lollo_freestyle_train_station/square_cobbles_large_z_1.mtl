@@ -59,7 +59,7 @@ return {
 			scale = { 0.10000000149012, 0.10000000149012, },
 		},
 		polygon_offset = {
-			factor = 0, -- LOLLO TODO see how you can use these low priority materials without them disappearing behind the grass
+			factor = 0,
 			forceDepthWrite = false,
 			units = 0,
 		},
