@@ -86,6 +86,9 @@ local constants = {
     platformRoofModuleType = 'freestyleTrainStationPlatformRoof',
     cargoTerminalModuleType = 'freestyleTrainStationCargoTerminal',
     passengerTerminalModuleType = 'freestyleTrainStationPassengerTerminal',
+    era_a_platformModuleType = 'freestyleTrainStationPlatformEraA',
+    era_b_platformModuleType = 'freestyleTrainStationPlatformEraB',
+    era_c_platformModuleType = 'freestyleTrainStationPlatformEraC',
     underpassModuleType = 'freestyleTrainStationUnderpass',
     subwayModuleType = 'freestyleTrainStationSubway',
     trackSpeedModuleType = 'freestyleTrainStationTrackSpeed',
@@ -216,7 +219,7 @@ local constants = {
     emptyModelFileName = 'lollo_freestyle_train_station/empty.mdl',
 
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
-    passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module',
+    passengerTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/passengerTerminal.module', 
     subwayModuleFileName = 'station/rail/lollo_freestyle_train_station/subway.module',
     trackSpeedSlowModuleFileName = 'station/rail/lollo_freestyle_train_station/trackSpeedSlow.module',
     trackSpeedFastModuleFileName = 'station/rail/lollo_freestyle_train_station/trackSpeedFast.module',
@@ -255,6 +258,9 @@ local constants = {
         trackElectrificationSlotId = 60000000,
         trackSpeedSlotId = 61000000,
         platformRoofSlotId = 70000000,
+        platformEraASlotId = 80000000,
+        platformEraBSlotId = 81000000,
+        platformEraCSlotId = 82000000,
     },
     idTransf = {
         1, 0, 0, 0,

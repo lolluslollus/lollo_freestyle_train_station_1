@@ -120,7 +120,8 @@ return {
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, 2 do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[cpf.leadingIndex]
-			local era = cpl.era or moduleHelpers.eras.era_c.prefix
+			-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
+			local era = moduleHelpers.getEra(params, nTerminal, cpf.leadingIndex)
             if cpl.type == 1 then -- belly to cover pedestrian paths (only on bridges)
 				-- local yShift = 0
 				-- local yShift = isTrackOnPlatformLeft and 0.12 or -0.12
@@ -154,9 +155,9 @@ return {
 						{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 1.0, 1 }
 					)
 					local lightsModelId = nil
-					if era == moduleHelpers.eras.era_c.prefix then lightsModelId = era_c_subwayLightModelIds[math.random(#era_c_subwayLightModelIds)]
+					if era == moduleHelpers.eras.era_a.prefix then lightsModelId = era_a_subwayLightModelIds[1]
 					elseif era == moduleHelpers.eras.era_b.prefix then lightsModelId = era_b_subwayLightModelIds[math.random(#era_b_subwayLightModelIds)]
-					elseif era == moduleHelpers.eras.era_a.prefix then lightsModelId = era_a_subwayLightModelIds[1]
+					else lightsModelId = era_c_subwayLightModelIds[math.random(#era_c_subwayLightModelIds)]
 					end
 					result.models[#result.models + 1] = {
 						id = lightsModelId,
@@ -171,7 +172,8 @@ return {
 		for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
-			local era = cpl.era or moduleHelpers.eras.era_c.prefix
+			-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
+			local era = moduleHelpers.getEra(params, nTerminal, i)
 			if cpl.type == 2 then -- tunnel
 				if cpl.width >= 5 or not(isStairs(nTerminal, i)) then
 					local yShift = 0
@@ -227,7 +229,8 @@ return {
 		for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
-			local era = cpl.era or moduleHelpers.eras.era_c.prefix
+			-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
+			local era = moduleHelpers.getEra(params, nTerminal, i)
 			if cpl.type == 2 then -- tunnel
 				if cpl.width >= 5 or not(isStairs(nTerminal, i)) then
 					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
@@ -283,7 +286,8 @@ return {
 		for i = 2, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
 			if not(isUnderpass(nTerminal, i)) and not(isStairs(nTerminal, i)) then
 				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
-				local era = cpl.era or moduleHelpers.eras.era_c.prefix
+				-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
+				local era = moduleHelpers.getEra(params, nTerminal, i)
 				local platformWidth = cpl.width
 				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.1 or -platformWidth * 0.2 - 0.1
 				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
@@ -321,7 +325,8 @@ return {
 		for i = 2, #params.terminals[nTerminal].centrePlatformsRelative - 1, 1 do
 			if not(isUnderpass(nTerminal, i)) and not(isStairs(nTerminal, i)) then
 				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
-				local era = cpl.era or moduleHelpers.eras.era_c.prefix
+				-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
+				local era = moduleHelpers.getEra(params, nTerminal, i)
 				local platformWidth = cpl.width
 
 				local transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2)

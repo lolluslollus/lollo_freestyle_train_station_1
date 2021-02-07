@@ -811,7 +811,8 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
         if leadingIndex > iiN then break end
         if leadingIndex >= ii1 then
             local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-            local era = cpl.era or helpers.eras.era_c.prefix
+            -- local era = cpl.era or helpers.eras.era_c.prefix
+            local era = helpers.getEra(params, nTerminal, leadingIndex)
             local platformWidth = cpl.width
 
             if cpf.type ~= 2 then
@@ -866,6 +867,22 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
             end
         end
     end
+end
+
+helpers.getEra = function(params, nTerminal, nTrackEdge)
+    local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+    local era = cpl.era or helpers.eras.era_c.prefix
+    if params.modules then
+        if params.modules[slotUtils.mangleId(nTerminal, 0, _constants.idBases.platformEraASlotId)] then
+            era = helpers.eras.era_a.prefix
+        elseif params.modules[slotUtils.mangleId(nTerminal, 0, _constants.idBases.platformEraBSlotId)] then
+            era = helpers.eras.era_b.prefix
+        elseif params.modules[slotUtils.mangleId(nTerminal, 0, _constants.idBases.platformEraCSlotId)] then
+            era = helpers.eras.era_c.prefix
+        end
+    end
+
+    return era
 end
 
 return helpers

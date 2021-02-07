@@ -277,7 +277,8 @@ function data()
 				local function _addPlatform()
 					for _, cpf in pairs(params.terminals[t].centrePlatformsFineRelative) do
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
-						local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.era)
+						local era = moduleHelpers.getEra(params, t, cpf.leadingIndex)
+						local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, era)
 						result.models[#result.models+1] = {
 							id = myModelId,
 							transf = myTransf
@@ -877,6 +878,27 @@ function data()
 						transf = myTransf,
 						type = _constants.trackSpeedModuleType
 					})
+					table.insert(result.slots, {
+						-- height = 0,
+						id = result.mangleId(t, 0, _constants.idBases.platformEraASlotId),
+						spacing = {0, 0, 0, 0},
+						transf = myTransf,
+						type = _constants.era_a_platformModuleType
+					})
+					table.insert(result.slots, {
+						-- height = 0,
+						id = result.mangleId(t, 0, _constants.idBases.platformEraBSlotId),
+						spacing = {0, 0, 0, 0},
+						transf = myTransf,
+						type = _constants.era_b_platformModuleType
+					})
+					table.insert(result.slots, {
+						-- height = 0,
+						id = result.mangleId(t, 0, _constants.idBases.platformEraCSlotId),
+						spacing = {0, 0, 0, 0},
+						transf = myTransf,
+						type = _constants.era_c_platformModuleType
+					})
 				end
 				_addTerminalSlot()
 
@@ -885,7 +907,8 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local era = cpl.era or moduleHelpers.eras.era_c.prefix
+						-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
+						local era = moduleHelpers.getEra(params, t, i)
 						local mySpacing = {3, -0.1, 1, 1}
 						local myTransf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
@@ -1430,6 +1453,23 @@ function data()
 			-- end
 
 			if change.added then
+				-- remove the older platform era modules whenever one is added, in each terminal
+				local nTerminalNew, _, baseIdNew = slotHelpers.demangleId(change.slotId)
+				if baseIdNew == _constants.idBases.platformEraASlotId
+				or baseIdNew == _constants.idBases.platformEraBSlotId
+				or baseIdNew == _constants.idBases.platformEraCSlotId
+				then
+					for slotIdOld, _ in pairs(modules) do
+						local nTerminalOld, _, baseIdOld = slotHelpers.demangleId(slotIdOld)
+						if nTerminalOld == nTerminalNew
+						and (baseIdOld == _constants.idBases.platformEraASlotId
+							or baseIdOld == _constants.idBases.platformEraBSlotId
+							or baseIdOld == _constants.idBases.platformEraCSlotId)
+						then
+							modules[slotIdOld] = nil
+						end
+					end
+				end
 				modules[change.slotId] = change.module
 			else
 				-- bar removal of modules for upgrading tracks...

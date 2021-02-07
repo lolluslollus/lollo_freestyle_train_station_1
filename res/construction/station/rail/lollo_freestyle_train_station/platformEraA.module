@@ -1,0 +1,46 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = moduleHelpers.eras.era_b.startYear,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-platform-roofs", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _('PlatformEraASwitcherName'),
+			description = _('PlatformEraASwitcherDesc'),
+			icon = "ui/lollo_freestyle_train_station/PlatformEraASwitcher.tga"
+		},
+		metadata = { },
+		order = {
+			value = 21,
+		},
+		type = _constants.era_a_platformModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			-- print('trackSpeedUndefined.module.updateFn ending')
+			-- result.models[#result.models + 1] = {
+			-- 	id = _constants.emptyModelFileName,
+			-- 	slotId = slotId,
+			-- 	transf = slotTransf,
+			-- 	tag = tag
+			-- }
+		end,
+
+		getModelsFn = function(params)
+			return {
+				-- {
+				-- 	id = _constants.emptyModelFileName,
+				-- 	transf = _constants.idTransf,
+				-- },
+			}
+		end
+	}
+end
