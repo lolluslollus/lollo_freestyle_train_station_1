@@ -34,7 +34,7 @@ function data()
             labelList = {
                 labels = {
                     {
-                        transf = { 0, 1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0.1, -0.25, -0.19, 1, },
+                        transf = { 0, 1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0.03, -0.25, -0.19, 1, },
                         size = { 0.5, 0.5 },
                         type = "CUSTOM",
                         alignment = "CENTER",
@@ -45,7 +45,7 @@ function data()
                         childId = "RootNode",
                     },
                     {
-                        transf = { 0, -1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, -0.1, 0.25, -0.19, 1, },
+                        transf = { 0, -1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, -0.03, 0.25, -0.19, 1, },
                         size = { 0.5, 0.5 },
                         type = "CUSTOM",
                         alignment = "CENTER",
