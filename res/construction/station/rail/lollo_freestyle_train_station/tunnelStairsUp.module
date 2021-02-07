@@ -34,8 +34,14 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
+		local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+		local modelId = nil
+		if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_tunnelStairsUpModelId
+		elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_tunnelStairsUpModelId
+		else modelId = _constants.era_c_tunnelStairsUpModelId
+		end
 		result.models[#result.models + 1] = {
-			id = _constants.tunnelStairsUpModelId,
+			id = modelId,
 			slotId = slotId,
 			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
 			tag = tag
@@ -45,7 +51,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.tunnelStairsUpModelId,
+				id = _constants.era_c_tunnelStairsUpModelId,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}
