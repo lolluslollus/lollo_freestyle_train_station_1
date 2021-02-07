@@ -168,7 +168,9 @@ local constants = {
     era_c_slopedPassengerArea1x20ModelFileName = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/area1x20.mdl',
 
     terminalModelFileName = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
-    underpassGroundModelFileName = 'lollo_freestyle_train_station/underpass/underpassFloor.mdl',
+    era_a_underpassGroundModelFileName = 'lollo_freestyle_train_station/underpass/era_a_underpassFloor.mdl',
+    era_b_underpassGroundModelFileName = 'lollo_freestyle_train_station/underpass/era_b_underpassFloor.mdl',
+    era_c_underpassGroundModelFileName = 'lollo_freestyle_train_station/underpass/era_c_underpassFloor.mdl',
     underpassBuildingWBottom10MModelFileName = 'lollo_freestyle_train_station/underpass/underpass_building_w_bottom_10m.mdl',
     underpassBuilding10MModelFileName = 'lollo_freestyle_train_station/underpass/underpass_building_10m.mdl',
     trackWaypointModelId = 'lollo_freestyle_train_station/railroad/track_waypoint.mdl',

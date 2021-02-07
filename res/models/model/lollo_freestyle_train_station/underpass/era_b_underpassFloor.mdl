@@ -1,0 +1,31 @@
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "lollo_freestyle_train_station/hole.mtl",
+                                "lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/underpass/plate10x1_4_centred_stripes.msh',
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.025, 1}
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

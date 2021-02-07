@@ -10,10 +10,8 @@ function data()
                     children = {
                         {
                             materials = {
-                                -- "lollo_freestyle_train_station/glass.mtl",
-                                -- "lollo_freestyle_train_station/glass-dark.mtl",
                                 "lollo_freestyle_train_station/hole.mtl",
-                                "lollo_freestyle_train_station/era_c_trainstation_stripes.mtl",
+                                "lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/underpass/plate10x1_4_centred_stripes.msh',
                             transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.025, 1}

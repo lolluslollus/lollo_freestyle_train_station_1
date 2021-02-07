@@ -885,6 +885,7 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
+						local era = cpl.era or moduleHelpers.eras.era_c.prefix
 						local mySpacing = {3, -0.1, 1, 1}
 						local myTransf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
@@ -917,8 +918,12 @@ function data()
 								type = _constants.underpassModuleType,
 							})
 							if params.modules[myId] ~= nil then
+								local underpassFloorModelId = _constants.era_c_underpassGroundModelFileName
+								if era == moduleHelpers.eras.era_b.prefix then underpassFloorModelId = _constants.era_b_underpassGroundModelFileName
+								elseif era == moduleHelpers.eras.era_a.prefix then underpassFloorModelId = _constants.era_a_underpassGroundModelFileName
+								end
 								result.models[#result.models+1] = {
-									id = _constants.underpassGroundModelFileName,
+									id = underpassFloorModelId,
 									transf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
