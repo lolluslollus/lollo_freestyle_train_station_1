@@ -18,8 +18,8 @@ function data()
                     children = {
                         {
                             materials = {
-                                "lollo_freestyle_train_station/asset/lamp_old.mtl",
-                                'lollo_freestyle_train_station/tungsten-medium.mtl',
+                                "lollo_freestyle_train_station/rough_alu.mtl",
+                                'lollo_freestyle_train_station/tungsten-low.mtl',
                                 "lollo_freestyle_train_station/rough_iron.mtl",
                             },
                             mesh = "lollo_freestyle_train_station/subway/era_b_lamp_hanging_lod_0.msh",

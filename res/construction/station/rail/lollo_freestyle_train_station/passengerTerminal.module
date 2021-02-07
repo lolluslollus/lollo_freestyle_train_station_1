@@ -93,7 +93,8 @@ return {
 			'lollo_freestyle_train_station/subway/era_a_lamp_hanging.mdl',
 		}
 		local era_b_subwayLightModelIds = {
-			'lollo_freestyle_train_station/subway/era_b_lamp_hanging.mdl',
+			'lollo_freestyle_train_station/subway/era_b_lamp_hanging_orange.mdl',
+			'lollo_freestyle_train_station/subway/era_b_lamp_hanging_reddish.mdl',
 		}
 		local era_c_subwayLightModelIds = {
 			'lollo_freestyle_train_station/subway/roof_edge_w_light_5m_2m_fluo_green.mdl',
@@ -154,7 +155,7 @@ return {
 					)
 					local lightsModelId = nil
 					if era == moduleHelpers.eras.era_c.prefix then lightsModelId = era_c_subwayLightModelIds[math.random(#era_c_subwayLightModelIds)]
-					elseif era == moduleHelpers.eras.era_b.prefix then lightsModelId = era_b_subwayLightModelIds[1]
+					elseif era == moduleHelpers.eras.era_b.prefix then lightsModelId = era_b_subwayLightModelIds[math.random(#era_b_subwayLightModelIds)]
 					elseif era == moduleHelpers.eras.era_a.prefix then lightsModelId = era_a_subwayLightModelIds[1]
 					end
 					result.models[#result.models + 1] = {
