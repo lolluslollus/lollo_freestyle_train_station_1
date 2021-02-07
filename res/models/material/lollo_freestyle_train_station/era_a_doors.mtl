@@ -27,7 +27,7 @@ function data()
             },
             map_metal_gloss_ao = {
                 -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_metal_gloss_ao.tga",
-                fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_metal_gloss_ao_bc3.dds",
+                fileName = "lollo_freestyle_train_station/metal_glass_diamonds_002_metal_gloss_ao_bc3.dds",
                 type = "TWOD",
                 -- wrapS = "CLAMP_TO_EDGE",
                 -- wrapT = "CLAMP_TO_EDGE",
@@ -36,7 +36,7 @@ function data()
             },
             map_normal = {
                 -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_normal.tga",
-                fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_normal_bc5.dds",
+                fileName = "lollo_freestyle_train_station/metal_glass_diamonds_002_normal_bc5.dds",
                 redGreen = true,
                 type = "TWOD",
                 -- wrapS = "CLAMP_TO_EDGE",
