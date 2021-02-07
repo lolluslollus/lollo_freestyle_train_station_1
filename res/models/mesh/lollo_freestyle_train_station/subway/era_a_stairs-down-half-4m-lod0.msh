@@ -10,115 +10,115 @@ return {
 			indices = {
 				normal = {
 					count = 936,
-					offset = 9784,
+					offset = 51360,
 				},
 				position = {
 					count = 936,
-					offset = 8848,
+					offset = 50424,
 				},
 				tangent = {
 					count = 936,
-					offset = 6976,
+					offset = 52296,
 				},
 				uv0 = {
 					count = 936,
-					offset = 7912,
+					offset = 53232,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1990_floor_1.mtl", 
+				"station/train/passenger/walls.mtl", 
 			},
 		},
 		{
 			indices = {
 				normal = {
 					count = 936,
-					offset = 13528,
+					offset = 55104,
 				},
 				position = {
 					count = 936,
-					offset = 12592,
+					offset = 54168,
 				},
 				tangent = {
 					count = 936,
-					offset = 10720,
+					offset = 56040,
 				},
 				uv0 = {
 					count = 936,
-					offset = 11656,
+					offset = 56976,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1920_floor_1.mtl", 
+				"station/train/passenger/floor.mtl", 
 			},
 		},
 		{
 			indices = {
 				normal = {
 					count = 48,
-					offset = 14608,
+					offset = 57960,
 				},
 				position = {
 					count = 48,
-					offset = 14560,
+					offset = 57912,
 				},
 				tangent = {
 					count = 48,
-					offset = 14464,
+					offset = 58008,
 				},
 				uv0 = {
 					count = 48,
-					offset = 14512,
+					offset = 58056,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/subway/Material.003.mtl", 
+				"lollo_freestyle_train_station/subway/hole.mtl", 
 			},
 		},
 		{
 			indices = {
 				normal = {
-					count = 1728,
-					offset = 19840,
+					count = 20160,
+					offset = 78264,
 				},
 				position = {
-					count = 1728,
-					offset = 18112,
+					count = 20160,
+					offset = 58104,
 				},
 				tangent = {
-					count = 1728,
-					offset = 14656,
+					count = 20160,
+					offset = 98424,
 				},
 				uv0 = {
-					count = 1728,
-					offset = 16384,
+					count = 20160,
+					offset = 118584,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/subway/Material.004.mtl", 
+				"lollo_freestyle_train_station/subway/iron.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 1872,
+			count = 9360,
 			numComp = 3,
-			offset = 5104,
+			offset = 11904,
 		},
 		position = {
-			count = 2640,
+			count = 11904,
 			numComp = 3,
-			offset = 2464,
-		},
-		tangent = {
-			count = 560,
-			numComp = 4,
 			offset = 0,
 		},
+		tangent = {
+			count = 21168,
+			numComp = 4,
+			offset = 21264,
+		},
 		uv0 = {
-			count = 1904,
+			count = 7992,
 			numComp = 2,
-			offset = 560,
+			offset = 42432,
 		},
 	},
 }
