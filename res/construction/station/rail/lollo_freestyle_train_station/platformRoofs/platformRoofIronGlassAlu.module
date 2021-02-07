@@ -15,7 +15,7 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "passenger-platform-roofs", },
+		categories = { "deco", },
 	},
 	cost = {
 		price = 0,
