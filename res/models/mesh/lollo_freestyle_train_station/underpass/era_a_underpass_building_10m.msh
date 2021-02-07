@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 264,
+					offset = 4920,
+				},
+				position = {
+					count = 264,
+					offset = 4656,
+				},
+				tangent = {
+					count = 264,
+					offset = 5184,
+				},
+				uv0 = {
+					count = 264,
+					offset = 5448,
+				},
+			},
+			materials = {
+				"station/train/passenger/roof.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 1248,
+					offset = 6960,
+				},
+				position = {
+					count = 1248,
+					offset = 5712,
+				},
+				tangent = {
+					count = 1248,
+					offset = 8208,
+				},
+				uv0 = {
+					count = 1248,
+					offset = 9456,
+				},
+			},
+			materials = {
+				"station/train/passenger/walls.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 360,
+					offset = 11064,
+				},
+				position = {
+					count = 360,
+					offset = 10704,
+				},
+				tangent = {
+					count = 360,
+					offset = 11424,
+				},
+				uv0 = {
+					count = 360,
+					offset = 11784,
+				},
+			},
+			materials = {
+				"station/train/passenger/iron_deco.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 12192,
+				},
+				position = {
+					count = 48,
+					offset = 12144,
+				},
+				tangent = {
+					count = 48,
+					offset = 12240,
+				},
+				uv0 = {
+					count = 48,
+					offset = 12288,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/underpass/glass_deco.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 516,
+			numComp = 3,
+			offset = 1428,
+		},
+		position = {
+			count = 1428,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 1024,
+			numComp = 4,
+			offset = 1944,
+		},
+		uv0 = {
+			count = 1688,
+			numComp = 2,
+			offset = 2968,
+		},
+	},
+}
+end

@@ -1,0 +1,39 @@
+function data()
+    return {
+        boundingInfo = {
+            bbMax = {4.9, 0.85, 2.1},
+            bbMin = {-4.9, -0.85, -0.1}
+        },
+        collider = {
+            params = {
+                halfExtents = {4.9, 0.85, 1.1}
+            },
+            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1.0, 1},
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/wall_white.mtl',
+                                'lollo_freestyle_train_station/era_c_doors.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/underpass/era_c_underpass_building_10m.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1}
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

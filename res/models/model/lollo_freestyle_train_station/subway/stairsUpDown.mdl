@@ -18,7 +18,7 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/wall_white.mtl',
-                                'lollo_freestyle_train_station/doors.mtl',
+                                'lollo_freestyle_train_station/era_c_doors.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/subway/stairs_up_down_10m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1}

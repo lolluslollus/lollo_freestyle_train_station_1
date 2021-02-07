@@ -51,7 +51,7 @@ function data()
                             children = {
                                 {
                                     -- front doors
-                                    materials = {'lollo_freestyle_train_station/doors.mtl'}, -- glass with a hint of colour
+                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'}, -- glass with a hint of colour
                                     -- materials = {'station/rail/era_c/era_c_trainstation_glass_milk.mtl'},
                                     -- materials = {'station/rail/era_c/era_c_trainstation_details_1.mtl'},
 
@@ -72,7 +72,7 @@ function data()
                                 },
                                 {
                                     --rear doors
-                                    materials = {'lollo_freestyle_train_station/doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
                                     name = 'oil_refinery_wall_large',
                                     transf = rearBelowTransf
@@ -162,14 +162,14 @@ function data()
                             children = {
                                 {
                                     -- front doors
-                                    materials = {'lollo_freestyle_train_station/doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
                                     name = 'oil_refinery_wall_large',
                                     transf = frontBelowTransf
                                 },
                                 {
                                     --rear doors
-                                    materials = {'lollo_freestyle_train_station/doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
                                     name = 'oil_refinery_wall_large',
                                     transf = rearBelowTransf
@@ -214,14 +214,14 @@ function data()
                                 -- below the platform
                                 {
                                     -- front doors
-                                    materials = {'lollo_freestyle_train_station/doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
                                     name = 'oil_refinery_wall_large',
                                     transf = frontBelowTransf
                                 },
                                 {
                                     --rear doors
-                                    materials = {'lollo_freestyle_train_station/doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
                                     name = 'oil_refinery_wall_large',
                                     transf = rearBelowTransf

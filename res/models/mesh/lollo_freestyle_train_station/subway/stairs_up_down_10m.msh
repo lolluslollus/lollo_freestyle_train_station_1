@@ -46,7 +46,7 @@ return {
 				},
 			},
 			materials = {
-				"station/train/passenger/doors.mtl", 
+				"station/train/passenger/era_c_doors.mtl", 
 			},
 		}, 
 	},
