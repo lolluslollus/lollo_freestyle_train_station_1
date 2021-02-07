@@ -9,10 +9,10 @@ function data()
                 alphaMode = 'BLEND',
                 childId = 'RootNode',
                 fitting = 'SCALE',
-                nLines = 1,
+                nLines = 2,
                 -- renderMode = "EMISSIVE",
                 size = {2.5, 0.6},
-                transf = { 0, -0.6, 0, 0,  0, 0, 0.6, 0,  -0.6, 0, 0, 0,  -0.09, 0.74, 3.10, 1, },
+                transf = { 0, -0.6, 0, 0,  0, 0, 0.65, 0,  -1, 0, 0, 0,  -0.09, 0.76, 3.05, 1, },
                 type = 'STATION_NAME',
                 verticalAlignment = 'CENTER'
             }
