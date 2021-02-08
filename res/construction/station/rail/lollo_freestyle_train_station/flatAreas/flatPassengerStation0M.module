@@ -40,7 +40,9 @@ return {
 		)
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-		local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
+        local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+
+		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/lift/side_lifts_9_5_0.mdl',

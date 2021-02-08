@@ -34,8 +34,10 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
-			local myModelId = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'slopedCargoArea1x10ModelFileName']
+            local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+
+			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
+			local myModelId = _constants[era .. 'slopedCargoArea1x10ModelFileName']
 
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 10,
 				myModelId, nil,

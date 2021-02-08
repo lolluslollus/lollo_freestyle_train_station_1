@@ -41,8 +41,10 @@ return {
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-		local myGroundFacesFillKey = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'groundFacesFillKey']
-		local myModelId = _constants[(cpl.era or moduleHelpers.eras.era_c.prefix) .. 'flatCargoRampUpSmoothModelFileName']
+        local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+
+		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
+		local myModelId = _constants[era .. 'flatCargoRampUpSmoothModelFileName']
 
 		result.models[#result.models + 1] = {
 			id = myModelId,
