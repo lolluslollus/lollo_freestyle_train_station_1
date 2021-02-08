@@ -1,0 +1,76 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 528,
+					offset = 2916,
+				},
+				position = {
+					count = 528,
+					offset = 2388,
+				},
+				tangent = {
+					count = 528,
+					offset = 1860,
+				},
+				uv0 = {
+					count = 528,
+					offset = 3444,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge/dark.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 384,
+					offset = 4740,
+				},
+				position = {
+					count = 384,
+					offset = 4356,
+				},
+				tangent = {
+					count = 384,
+					offset = 3972,
+				},
+				uv0 = {
+					count = 384,
+					offset = 5124,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/roofs/iron_glass_alu/light.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 252,
+			numComp = 3,
+			offset = 960,
+		},
+		position = {
+			count = 576,
+			numComp = 3,
+			offset = 384,
+		},
+		tangent = {
+			count = 384,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 648,
+			numComp = 2,
+			offset = 1212,
+		},
+	},
+}
+end
