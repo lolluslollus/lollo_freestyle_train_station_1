@@ -19,18 +19,12 @@ function data()
 			node = {
 				children = {
 					{
-						children = {
-							{
-								materials = { 
-									"lollo_freestyle_train_station/rough_iron.mtl",
-									"lollo_freestyle_train_station/rough_iron.mtl",
-									"lollo_freestyle_train_station/tungsten-low.mtl",
-								},
-								mesh = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps_lod0.msh',
-								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-							},
+						materials = {
+							"lollo_freestyle_train_station/rough_iron.mtl",
+							"lollo_freestyle_train_station/rough_iron.mtl",
+							"lollo_freestyle_train_station/tungsten-low.mtl",
 						},
-						name = 'lamps_exp',
+						mesh = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps_lod0.msh',
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
 				},
@@ -45,7 +39,7 @@ function data()
 			node = {
 				children = {
 					{
-						materials = { 
+						materials = {
 							-- 'station/rail/cargo/cargo_assets_1.mtl',
 							"lollo_freestyle_train_station/rough_iron.mtl",
 							"lollo_freestyle_train_station/rough_iron.mtl",
