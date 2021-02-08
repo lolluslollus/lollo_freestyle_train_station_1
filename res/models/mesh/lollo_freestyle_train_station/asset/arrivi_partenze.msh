@@ -1,7 +1,7 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, }, 
+		{ 0, },
 	},
 	subMeshes = {
 		{
@@ -24,7 +24,7 @@ return {
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1990_floor_1.mtl", 
+				"station/train/passenger/trainstation_1990_floor_1.mtl",
 			},
 		}, 
 	},
