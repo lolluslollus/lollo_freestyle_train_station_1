@@ -65,7 +65,7 @@ return {
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.2 or -platformWidth * 0.5 + 0.2
 			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/cargo_sign_nr_r.mdl',
+				id = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = tag
@@ -80,7 +80,7 @@ return {
 			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 			result.models[#result.models + 1] = {
 				-- id = 'lollo_freestyle_train_station/asset/cargo_lamps.mdl',
-				id = 'lollo_freestyle_train_station/asset/cargo_lamps_sodium.mdl',
+				id = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_sodium.mdl',
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = tag

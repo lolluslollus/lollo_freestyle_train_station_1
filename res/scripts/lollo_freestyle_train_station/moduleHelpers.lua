@@ -798,6 +798,7 @@ helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, p
 end
 
 helpers.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, cplPosTanX2, xShift, yShift)
+    -- unlike passenger waiting areas, these tilt the assets. We live with it for the sake of performance.
     result.models[#result.models + 1] = {
         id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
         slotId = slotId,
