@@ -33,7 +33,7 @@ function data()
 
 	return {
 		name = _('CementBridgeGlassWallNoPillars'),
-		yearFrom = 0,
+		yearFrom = 1960,
 		yearTo = 0,
 		carriers = { 'RAIL', 'ROAD' },
 		speedLimit = 320.0 / 3.6,
