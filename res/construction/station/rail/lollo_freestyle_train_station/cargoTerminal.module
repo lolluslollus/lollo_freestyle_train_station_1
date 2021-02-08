@@ -75,12 +75,17 @@ return {
 		end
 		for i = 2, #params.terminals[nTerminal].centrePlatformsRelative - 1, 4 do
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
+			local era = moduleHelpers.getEraPrefix(params, nTerminal, i)
 			local platformWidth = cpl.width
 			local yShift = 0 -- isTrackOnPlatformLeft and platformWidth + 1.0 or -platformWidth - 1.0
 			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
+			local lampsModelId = nil
+			if era == moduleHelpers.eras.era_a.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps.mdl'
+			elseif era == moduleHelpers.eras.era_b.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_b_cargo_lamps.mdl'
+			else lampsModelId = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_sodium.mdl'
+			end
 			result.models[#result.models + 1] = {
-				-- id = 'lollo_freestyle_train_station/asset/cargo_lamps.mdl',
-				id = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_sodium.mdl',
+				id = lampsModelId,
 				slotId = slotId,
 				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
 				tag = tag
