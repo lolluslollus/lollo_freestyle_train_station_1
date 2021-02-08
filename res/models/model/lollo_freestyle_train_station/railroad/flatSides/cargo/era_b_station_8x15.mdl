@@ -1,0 +1,96 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    return {
+        boundingInfo = {
+            bbMax = { 7.5, -4, 5.1, },
+            bbMin = { -4, 4, 0, },
+        },
+        collider = {
+            params = {
+                halfExtents = { 5.7, 4, 2.5, },
+            },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.7, 0, 2.5, 1, },
+            type = 'BOX',
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "lollo_freestyle_train_station/era_a_cargo_station_8x15.mtl"
+                            },
+                            mesh = "lollo_freestyle_train_station/railroad/flatSides/era_b_cargo_station_8x15.msh",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        linkable = false,
+                        nodes = {
+                            {
+                                { 0, 0, 0 },
+                                { 2.5, 0, 0 },
+                                2.0,
+                            },
+                            {
+                                { 2.5, 0, 0 },
+                                { 2.5, 0, 0 },
+                                2.0,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                    {
+                        linkable = false,
+                        nodes = {
+                            {
+                                { 2.5, 0, 0 },
+                                { 2.5, 0, 0 },
+                                2.0,
+                            },
+                            {
+                                { 5, 0, -_constants.stairsAndRampHeight },
+                                { 2.5, 0, 0 },
+                                2.0,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                    {
+                        linkable = true,
+                        nodes = {
+                            {
+                                { 5, 0, -_constants.stairsAndRampHeight },
+                                { 2.5, 0, 0 },
+                                2.0,
+                            },
+                            {
+                                { 7.5, 0, -_constants.stairsAndRampHeight },
+                                { 2.5, 0, 0 },
+                                2.0,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = { },
+            },
+        },
+        version = 1,
+    }
+    end
+    

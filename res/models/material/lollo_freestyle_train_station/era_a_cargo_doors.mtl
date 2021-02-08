@@ -1,0 +1,89 @@
+function data()
+    return {
+        order = 0,
+        params = {
+            -- albedo_scale = {
+            --     albedoScale = { 1, 1, 1, },
+            -- },
+            -- alpha_scale = {
+            --     alphaScale = 0.5,
+            -- },
+            -- alpha_test = {
+            --     alphaThreshold = 0.75,
+            --     cutout = true,
+            -- },
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            -- map_albedo_opacity = {
+            map_albedo = {
+                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_albedo.tga",
+                fileName = "lollo_freestyle_train_station/era_a_cargo_doors_albedo.dds",
+                type = "TWOD",
+                -- wrapS = "CLAMP_TO_EDGE",
+                -- wrapT = "CLAMP_TO_EDGE",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_metal_gloss_ao = {
+                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_metal_gloss_ao.tga",
+                fileName = "lollo_freestyle_train_station/era_a_cargo_doors_metal_gloss_ao.dds",
+                type = "TWOD",
+                -- wrapS = "CLAMP_TO_EDGE",
+                -- wrapT = "CLAMP_TO_EDGE",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_normal = {
+                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_normal.tga",
+                fileName = "lollo_freestyle_train_station/era_a_cargo_doors_normal.dds",
+                redGreen = true,
+                type = "TWOD",
+                -- wrapS = "CLAMP_TO_EDGE",
+                -- wrapT = "CLAMP_TO_EDGE",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_1 = {
+                fileName = "models/industry/overlay_textures/big_02.tga",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_2 = {
+                fileName = "models/industry/overlay_textures/small_08.tga",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            normal_scale = {
+                normalScale = 1,
+            },
+            operation_1 = {
+                mode = "WORLD_XY",
+                op = "OVERLAY",
+                opacity = 0.64999997615814,
+                scale = { 0.8, 0.8, },
+            },
+            operation_2 = {
+                mode = "WORLD_XY",
+                op = "MULTIPLICATION",
+                opacity = 0.2,
+                scale = { 0.35, 0.35, },
+            },
+            polygon_offset = {
+                factor = 0,
+                forceDepthWrite = false,
+                units = 0,
+            },
+            two_sided = {
+                flipNormal = true,
+                twoSided = false,
+            },
+        },
+        -- type = "PHYS_TRANSPARENT_NRML_MAP_OP",
+        type = "PHYSICAL_NRML_MAP_OP",
+    }
+    end
+    

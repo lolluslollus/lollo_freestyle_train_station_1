@@ -1,0 +1,76 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 5112,
+					offset = 9636,
+				},
+				position = {
+					count = 5112,
+					offset = 24972,
+				},
+				tangent = {
+					count = 5112,
+					offset = 19860,
+				},
+				uv0 = {
+					count = 5112,
+					offset = 14748,
+				},
+			},
+			materials = {
+				"station.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 48,
+					offset = 30084,
+				},
+				position = {
+					count = 48,
+					offset = 30228,
+				},
+				tangent = {
+					count = 48,
+					offset = 30180,
+				},
+				uv0 = {
+					count = 48,
+					offset = 30132,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/flatSides/ doors.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 1056,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 3180,
+			numComp = 3,
+			offset = 6456,
+		},
+		tangent = {
+			count = 2992,
+			numComp = 4,
+			offset = 3464,
+		},
+		uv0 = {
+			count = 2408,
+			numComp = 2,
+			offset = 1056,
+		},
+	},
+}
+end
