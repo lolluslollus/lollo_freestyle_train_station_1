@@ -41,7 +41,7 @@ function data()
 				myModelId, _constants.passengerWaitingAreaCentredModelFileName,
 				myGroundFacesFillKey)
 
-			moduleHelpers.addSlopedPassengerAreaDeco(result, slotTransf, tag, slotId, 0.9, 0.0)
+			moduleHelpers.addSlopedPassengerAreaDeco(result, slotTransf, tag, slotId, 0.9, 0.0, cpl.era)
 		end,
 
 		getModelsFn = function(params)

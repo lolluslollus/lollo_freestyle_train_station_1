@@ -752,27 +752,67 @@ helpers.flatAreas = {
     end
 }
 
-helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, xShift, yShift)
-    result.models[#result.models + 1] = {
-        id = 'station/rail/asset/era_c_double_chair.mdl',
-        -- id = 'station/rail/asset/era_c_single_chair.mdl',
-        -- id = 'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
-        slotId = slotId,
-        transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.0, 1 }),
-        tag = tag
-    }
-    result.models[#result.models + 1] = {
-        id = 'station/rail/asset/era_c_trashcan.mdl',
-        slotId = slotId,
-        transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, 1.1, 1 }),
-        tag = tag
-    }
-    result.models[#result.models + 1] = {
-        id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
-        slotId = slotId,
-        transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, _constants.stairsAndRampHeight + 0.0, 1 }),
-        tag = tag
-    }
+helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, xShift, yShift, era)
+    -- LOLLO TODO test this era-dependent thing, it's new
+    if era == helpers.eras.era_a.prefix then
+        result.models[#result.models + 1] = {
+            id = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.0, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = 'station/rail/asset/era_a_trashcan.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, 1.1, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, _constants.stairsAndRampHeight + 0.0, 1 }),
+            tag = tag
+        }
+    elseif era == helpers.eras.era_b.prefix then
+        result.models[#result.models + 1] = {
+            id = 'lollo_freestyle_train_station/asset/era_b_four_chairs.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.0, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = 'station/rail/asset/era_b_trashcan.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, 1.1, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, _constants.stairsAndRampHeight + 0.0, 1 }),
+            tag = tag
+        }
+    else
+        result.models[#result.models + 1] = {
+            id = 'station/rail/asset/era_c_double_chair.mdl',
+            -- id = 'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.0, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = 'station/rail/asset/era_c_trashcan.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, 1.1, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, _constants.stairsAndRampHeight + 0.0, 1 }),
+            tag = tag
+        }
+    end
 end
 
 helpers.addSlopedCargoAreaDecoEraC = function(result, slotTransf, tag, slotId, xShift, yShift)
