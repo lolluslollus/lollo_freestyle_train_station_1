@@ -18,7 +18,7 @@ return {
 					{
 						materials = {
 							"lollo_freestyle_train_station/bridge/cement.mtl",
-							"lollo_freestyle_train_station/rough_alu.mtl",
+							"lollo_freestyle_train_station/metal/rough_alu.mtl",
 							-- 'lollo_freestyle_train_station/icon/red.mtl',
 							"lollo_freestyle_train_station/glass_transparent_rough.mtl",
 						},

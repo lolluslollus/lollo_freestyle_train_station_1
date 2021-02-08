@@ -295,27 +295,27 @@ return {
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.2 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.7 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 						tag = tag
 					}
 				elseif era == moduleHelpers.eras.era_b.prefix then
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.2 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.7 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 						tag = tag
 					}
 				else
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.1 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.6 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 						tag = tag
 					}
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/partenze.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.4 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.9 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 						tag = tag
 					}
 				end

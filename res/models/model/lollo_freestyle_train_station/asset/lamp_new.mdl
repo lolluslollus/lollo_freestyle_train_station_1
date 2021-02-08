@@ -19,7 +19,7 @@ function data()
 					{
 						materials = {
 							"asset/lamp_new.mtl",
-							"lollo_freestyle_train_station/neon_low.mtl",
+							"lollo_freestyle_train_station/emissive/neon_low.mtl",
 						},
 						mesh = "lollo_freestyle_train_station/asset/lamp_new_lod_0.msh",
 						transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -37,7 +37,7 @@ function data()
 					{
 						materials = {
 							"asset/lamp_new.mtl",
-							"lollo_freestyle_train_station/neon_low.mtl",
+							"lollo_freestyle_train_station/emissive/neon_low.mtl",
 						},
 						mesh = "lollo_freestyle_train_station/asset/lamp_new_lod_1.msh",
 						transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },

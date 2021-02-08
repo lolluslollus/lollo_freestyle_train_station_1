@@ -24,7 +24,7 @@ return {
 				},
 			},
 			materials = {
-				"railroad/power_pole.mtl", 
+				"railroad/metal/power_pole.mtl", 
 			},
 		}, 
 	},

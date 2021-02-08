@@ -10,7 +10,7 @@ function data()
 				node = {
 					children = {
 						{
-							materials = { 'lollo_freestyle_train_station/power_pole.mtl' },
+							materials = { 'lollo_freestyle_train_station/metal/power_pole.mtl' },
 							mesh = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.msh',
 							transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2, -2, 0, 1, },
 						},

@@ -18,9 +18,9 @@ function data()
                         {
                             materials = {
                                 -- 'lollo_freestyle_train_station/wall_grey.mtl',
-                                'lollo_freestyle_train_station/metal_ceiling_vintage_002.mtl',
-                                'lollo_freestyle_train_station/metal_ceiling_vintage_001.mtl',
-                                'lollo_freestyle_train_station/metal_deco_002_repeat.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
+                                'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl',
                                 'lollo_freestyle_train_station/era_a_doors.mtl'
                             },
                             mesh = 'lollo_freestyle_train_station/underpass/era_a_underpass_building_10m.msh',

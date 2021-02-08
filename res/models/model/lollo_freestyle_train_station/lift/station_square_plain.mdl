@@ -31,7 +31,7 @@ function data()
                                     -- lamp left
                                     materials = {
                                         "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/neon_low.mtl",
+                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
                                     },
                                     mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_0.msh',
                                     transf = _lampLeftTransf
@@ -40,7 +40,7 @@ function data()
                                     -- lamp right
                                     materials = {
                                         "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/neon_low.mtl",
+                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
                                     },
                                     mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_0.msh',
                                     transf = _lampRightTransf
@@ -108,7 +108,7 @@ function data()
                                     -- lamp left
                                     materials = {
                                         "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/neon_low.mtl",
+                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
                                     },
                                     mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
                                     transf = _lampLeftTransf
@@ -117,7 +117,7 @@ function data()
                                     -- lamp right
                                     materials = {
                                         "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/neon_low.mtl",
+                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
                                     },
                                     mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
                                     transf = _lampRightTransf
