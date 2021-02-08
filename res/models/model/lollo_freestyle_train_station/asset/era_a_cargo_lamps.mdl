@@ -1,0 +1,69 @@
+function data()
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+	-- boundingInfo = {
+	-- 	bbMax = { 0.30899995565414, 1.558557510376, 5.868420124054, },
+	-- 	bbMin = { -0.30899995565414, -1.558557510376, 0, },
+	-- },
+	-- collider = {
+	-- 	params = {
+	-- 		halfExtents = { 0.30899995565414, 1.558557510376, 2.934210062027, },
+	-- 	},
+	-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+	-- 	type = 'BOX',
+	-- },
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								materials = { 
+									"lollo_freestyle_train_station/rough_iron.mtl",
+									"lollo_freestyle_train_station/rough_iron.mtl",
+									"lollo_freestyle_train_station/tungsten-low.mtl",
+								},
+								mesh = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps_lod0.msh',
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+							},
+						},
+						name = 'lamps_exp',
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = 'RootNode',
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 60.0,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = { 
+							-- 'station/rail/cargo/cargo_assets_1.mtl',
+							"lollo_freestyle_train_station/rough_iron.mtl",
+							"lollo_freestyle_train_station/rough_iron.mtl",
+							"lollo_freestyle_train_station/tungsten-low.mtl",
+						},
+						mesh = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps_lod1.msh',
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = 'RootNode',
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 60.0,
+			visibleTo = 800.0,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end
