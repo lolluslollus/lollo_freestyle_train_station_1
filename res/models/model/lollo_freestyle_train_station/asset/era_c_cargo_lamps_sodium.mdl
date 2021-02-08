@@ -21,11 +21,6 @@ function data()
 					{
 						children = {
 							{
-                                -- LOLLO NOTE the original model has those animations and scales down the
-                                -- emissive materials by 1e-4, producing no light.
-                                -- If I take away the scaling, the animations will make trouble on certain machines.
-                                -- Taking away the scaling and the animation does the trick.
-								-- materials = { "station/rail/cargo/emissive.mtl", },
 								materials = { 'lollo_freestyle_train_station/sodium-medium.mtl' },
 								mesh = "station/rail/asset/cargo_lamps/lamps_emissive_a_lod0.msh",
 								name = "lamps_emissive_a",
