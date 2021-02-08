@@ -3,7 +3,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
 -- local transfUtils = require('lollo_freestyle_train_station.transfUtils')
--- local transfUtilsUG = require "transf"
+local transfUtilsUG = require "transf"
 -- local vec3 = require "vec3"
 
 
@@ -34,7 +34,7 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+            local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'slopedPassengerArea1x5ModelFileName']
@@ -43,7 +43,7 @@ function data()
 				myModelId, _constants.passengerWaitingAreaCentredModelFileName,
 				myGroundFacesFillKey)
 
-			moduleHelpers.addSlopedPassengerAreaDeco(result, slotTransf, tag, slotId, 0.9, 0.0, era)
+			moduleHelpers.addSlopedPassengerAreaDeco(result, slotTransf, tag, slotId, params, nTerminal, cpl.posTanX2, 0.9, 0.0, era)
 		end,
 
 		getModelsFn = function(params)

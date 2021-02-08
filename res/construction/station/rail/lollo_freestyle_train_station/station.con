@@ -277,7 +277,7 @@ function data()
 				local function _addPlatform()
 					for _, cpf in pairs(params.terminals[t].centrePlatformsFineRelative) do
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
-						local era = moduleHelpers.getEra(params, t, cpf.leadingIndex)
+						local era = moduleHelpers.getEraPrefix(params, t, cpf.leadingIndex)
 						local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, era)
 						result.models[#result.models+1] = {
 							id = myModelId,
@@ -908,7 +908,7 @@ function data()
 					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
-						local era = moduleHelpers.getEra(params, t, i)
+						local era = moduleHelpers.getEraPrefix(params, t, i)
 						local mySpacing = {3, -0.1, 1, 1}
 						local myTransf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),

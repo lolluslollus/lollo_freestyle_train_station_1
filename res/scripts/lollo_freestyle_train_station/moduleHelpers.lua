@@ -752,69 +752,52 @@ helpers.flatAreas = {
     end
 }
 
-helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, xShift, yShift, era)
+helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, cplPosTanX2, xShift, yShift, era)
+    local chairsModelId = nil
+    local binModelId = nil
+    local arrivalsModelId = nil
     if era == helpers.eras.era_a.prefix then
-        result.models[#result.models + 1] = {
-            id = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.0, 1 }),
-            tag = tag
-        }
-        result.models[#result.models + 1] = {
-            id = 'station/rail/asset/era_a_trashcan.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, 1.1, 1 }),
-            tag = tag
-        }
-        result.models[#result.models + 1] = {
-            id = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, _constants.stairsAndRampHeight + 0.0, 1 }),
-            tag = tag
-        }
+        chairsModelId = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl'
+        binModelId = 'station/rail/asset/era_a_trashcan.mdl'
+        arrivalsModelId = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl'
     elseif era == helpers.eras.era_b.prefix then
-        result.models[#result.models + 1] = {
-            id = 'lollo_freestyle_train_station/asset/era_b_four_chairs.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.0, 1 }),
-            tag = tag
-        }
-        result.models[#result.models + 1] = {
-            id = 'station/rail/asset/era_b_trashcan.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, 1.1, 1 }),
-            tag = tag
-        }
-        result.models[#result.models + 1] = {
-            id = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, _constants.stairsAndRampHeight + 0.0, 1 }),
-            tag = tag
-        }
+        chairsModelId = 'lollo_freestyle_train_station/asset/era_b_four_chairs.mdl'
+        binModelId = 'station/rail/asset/era_b_trashcan.mdl'
+        arrivalsModelId = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl'
     else
-        result.models[#result.models + 1] = {
-            id = 'station/rail/asset/era_c_double_chair.mdl',
-            -- id = 'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.1, 1 }),
-            tag = tag
-        }
-        result.models[#result.models + 1] = {
-            id = 'station/rail/asset/era_c_trashcan.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight, 1 }),
-            tag = tag
-        }
-        result.models[#result.models + 1] = {
-            id = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl',
-            slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, _constants.stairsAndRampHeight + 0.0, 1 }),
-            tag = tag
-        }
+        chairsModelId = 'lollo_freestyle_train_station/asset/era_c_four_chairs.mdl'
+        binModelId = 'station/rail/asset/era_c_trashcan.mdl'
+        arrivalsModelId = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl'
     end
+
+    local isTrackOnPlatformLeftSign = params.terminals[nTerminal].isTrackOnPlatformLeft and 1 or -1
+    local verticalTransf = helpers.getPlatformObjectTransf_AlwaysVertical(cplPosTanX2)
+    local decoTransf = transfUtilsUG.mul(
+        verticalTransf,
+        { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  isTrackOnPlatformLeftSign * (verticalTransf[13] - slotTransf[13]), isTrackOnPlatformLeftSign * (verticalTransf[14] - slotTransf[14]), 0, 1 }
+    )
+
+    result.models[#result.models + 1] = {
+        id = chairsModelId,
+        slotId = slotId,
+        transf = transfUtilsUG.mul(decoTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        tag = tag
+    }
+    result.models[#result.models + 1] = {
+        id = binModelId,
+        slotId = slotId,
+        transf = transfUtilsUG.mul(decoTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.4 + xShift, yShift - 1, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        tag = tag
+    }
+    result.models[#result.models + 1] = {
+        id = arrivalsModelId,
+        slotId = slotId,
+        transf = transfUtilsUG.mul(decoTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        tag = tag
+    }
 end
 
-helpers.addSlopedCargoAreaDecoEraC = function(result, slotTransf, tag, slotId, xShift, yShift)
+helpers.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, cplPosTanX2, xShift, yShift)
     result.models[#result.models + 1] = {
         id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
         slotId = slotId,
@@ -851,7 +834,7 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
         if leadingIndex >= ii1 then
             local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
             -- local era = cpl.era or helpers.eras.era_c.prefix
-            local era = helpers.getEra(params, nTerminal, leadingIndex)
+            local era = helpers.getEraPrefix(params, nTerminal, leadingIndex)
             local platformWidth = cpl.width
 
             if cpf.type ~= 2 then
@@ -908,20 +891,20 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
     end
 end
 
-helpers.getEra = function(params, nTerminal, nTrackEdge)
+helpers.getEraPrefix = function(params, nTerminal, nTrackEdge)
     local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-    local era = cpl.era or helpers.eras.era_c.prefix
+    local result = cpl.era or helpers.eras.era_c.prefix
     if params.modules then
         if params.modules[slotUtils.mangleId(nTerminal, 0, _constants.idBases.platformEraASlotId)] then
-            era = helpers.eras.era_a.prefix
+            result = helpers.eras.era_a.prefix
         elseif params.modules[slotUtils.mangleId(nTerminal, 0, _constants.idBases.platformEraBSlotId)] then
-            era = helpers.eras.era_b.prefix
+            result = helpers.eras.era_b.prefix
         elseif params.modules[slotUtils.mangleId(nTerminal, 0, _constants.idBases.platformEraCSlotId)] then
-            era = helpers.eras.era_c.prefix
+            result = helpers.eras.era_c.prefix
         end
     end
 
-    return era
+    return result
 end
 
 return helpers

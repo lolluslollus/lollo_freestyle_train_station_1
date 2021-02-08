@@ -33,7 +33,7 @@ return {
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 
-		local era = moduleHelpers.getEra(params, 1, 1)
+		local era = moduleHelpers.getEraPrefix(params, 1, 1)
 		local modelId = nil
 		if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_subwayModelId
 		elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_subwayModelId

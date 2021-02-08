@@ -4,12 +4,12 @@ function data()
         boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
         collider = _mdlHelpers.getVoidCollider(),
         -- boundingInfo = {
-        --     bbMax = { 0.31792116165161, 0.5, 0.87855571508408, },
-        --     bbMin = { -0.31792116165161, -0.5, 0, },
+        --     bbMax = { 0.48037180304527, 1, 0.66909503936768, },
+        --     bbMin = { -0.48037180304527, -1, 4.4408920985006e-16, },
         -- },
         -- collider = {
         --     params = {
-        --         halfExtents = { 0.31792116165161, 0.5, 0.43927785754204, },
+        --         halfExtents = { 0.48037180304527, 1, 0.33454751968384, },
         --     },
         --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
         --     type = "BOX",
@@ -19,9 +19,9 @@ function data()
                 node = {
                     children = {
                         {
-                            materials = { "station/rail/era_a/era_a_trainstation_detail_1.mtl", },
-                            mesh = "lollo_freestyle_train_station/asset/era_a_two_chairs_lod0.msh",
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.02, 1, },
+                            materials = { "station/rail/era_c/era_c_trainstation_details_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/era_c_four_chairs_lod0.msh",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                         },
                     },
                     name = "RootNode",

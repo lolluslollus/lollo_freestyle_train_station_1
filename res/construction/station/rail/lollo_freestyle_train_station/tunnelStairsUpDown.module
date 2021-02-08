@@ -34,7 +34,7 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 		local modelId = nil
 		if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_tunnelStairsUpDownModelId
 		elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_tunnelStairsUpDownModelId

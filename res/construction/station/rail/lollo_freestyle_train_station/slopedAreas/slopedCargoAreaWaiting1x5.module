@@ -35,7 +35,7 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+            local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'slopedCargoArea1x5ModelFileName']
@@ -44,7 +44,7 @@ function data()
 				myModelId, _constants.cargoWaitingAreaCentredModelFileName,
 				myGroundFacesFillKey)
 
-			moduleHelpers.addSlopedCargoAreaDecoEraC(result, slotTransf, tag, slotId, 0, 0)
+			moduleHelpers.addSlopedCargoAreaDeco(result, slotTransf, tag, slotId, params, nTerminal, cpl.posTanX2, 0, 0)
 		end,
 
 		getModelsFn = function(params)

@@ -54,7 +54,7 @@ function data()
                             --     },
                             -- },
                             materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
-                            mesh = "station/road/streetstation/lod_0_com_round_old_1.msh",
+                            mesh = "lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.msh",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -0.1, 1, },
                         },
                     },

@@ -40,7 +40,7 @@ return {
 		)
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+        local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 

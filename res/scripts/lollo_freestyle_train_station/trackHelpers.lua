@@ -64,7 +64,7 @@ helpers.getAllPlatformTrackTypes = function()
     return results
 end
 
-helpers.getEra = function (trackTypeIndex)
+helpers.getEraPrefix = function (trackTypeIndex)
     if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return helpers.eras.era_c.prefix end
 
     local fileName = api.res.trackTypeRep.getFileName(trackTypeIndex)

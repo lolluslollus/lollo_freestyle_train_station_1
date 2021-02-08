@@ -37,7 +37,7 @@ return {
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local era = moduleHelpers.getEra(params, nTerminal, nTrackEdge)
+        local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 		local myModelId = _constants[era .. 'flatCargoStation8x10ModelFileName']

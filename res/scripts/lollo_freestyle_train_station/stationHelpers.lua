@@ -199,7 +199,7 @@ local helpers = {
                 typeIndex = baseEdge.typeIndex, -- -1 on ground, 0 tunnel / cement bridge, 1 steel bridge, 2 stone bridge, 3 suspension bridge
                 edgeTypeName = _getEdgeTypeName(baseEdge.type, baseEdge.typeIndex), -- same as above but in a format constructions understand
                 width = baseEdgeProperties.trackDistance,
-                era = trackUtils.getEra(baseEdgeTrack.trackType)
+                era = trackUtils.getEraPrefix(baseEdgeTrack.trackType)
             }
             results[#results+1] = result
         end
