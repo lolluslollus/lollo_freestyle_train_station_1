@@ -753,7 +753,6 @@ helpers.flatAreas = {
 }
 
 helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, xShift, yShift, era)
-    -- LOLLO TODO test this era-dependent thing, it's new
     if era == helpers.eras.era_a.prefix then
         result.models[#result.models + 1] = {
             id = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl',
@@ -797,13 +796,13 @@ helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, x
             id = 'station/rail/asset/era_c_double_chair.mdl',
             -- id = 'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
             slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.0, 1 }),
+            transf = transfUtilsUG.mul(slotTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight + 0.1, 1 }),
             tag = tag
         }
         result.models[#result.models + 1] = {
             id = 'station/rail/asset/era_c_trashcan.mdl',
             slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, 1.1, 1 }),
+            transf = transfUtilsUG.mul(slotTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  1.0 + xShift, yShift - 1, _constants.stairsAndRampHeight, 1 }),
             tag = tag
         }
         result.models[#result.models + 1] = {
