@@ -575,11 +575,12 @@ helpers.lifts = {
         return buildingHeight
     end,
 
-    tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge)
+    tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge, eraPrefix)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
         local bridgeHeight = cpl.type == 1 and params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
         local buildingModelId = 'lollo_freestyle_train_station/lift/'
+        if eraPrefix == helpers.eras.era_b.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_b_' end
         if bridgeHeight < _bridgeHeights[1] then
             buildingModelId = buildingModelId .. 'side_lifts_9_5_5.mdl'
         elseif bridgeHeight < _bridgeHeights[2] then

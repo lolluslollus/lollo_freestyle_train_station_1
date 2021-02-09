@@ -11,7 +11,7 @@ function data()
 
 return {
 	availability = {
-		yearFrom = 0,
+		yearFrom = moduleHelpers.eras.era_b.startYear,
 		yearTo = 0
 	},
 	category = {

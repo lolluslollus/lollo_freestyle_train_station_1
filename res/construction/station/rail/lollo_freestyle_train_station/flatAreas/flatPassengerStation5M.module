@@ -44,8 +44,14 @@ return {
 
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 
+		local stationModelId = nil
+		if era == moduleHelpers.eras.era_b.prefix then
+			stationModelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_9_5_5.mdl'
+		else
+			stationModelId = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl'
+		end
 		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl',
+			id = stationModelId,
 			slotId = slotId,
 			transf = buildingTransf,
 			tag = tag

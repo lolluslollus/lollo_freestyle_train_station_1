@@ -11,7 +11,7 @@ function data()
 
 return {
 	availability = {
-		yearFrom = 0,
+		yearFrom = moduleHelpers.eras.era_b.startYear,
 		yearTo = 0
 	},
 	category = {
@@ -37,10 +37,10 @@ return {
 		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
 		-- in base_config.lua
 		-- Set it into the models so the game knows what module they belong to.
-
+		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
-		local buildingModelId = moduleHelpers.lifts.tryGetSideLiftModelId(params, nTerminal, nTrackEdge)
+		local buildingModelId = moduleHelpers.lifts.tryGetSideLiftModelId(params, nTerminal, nTrackEdge, era)
 		if not(buildingModelId) then return end
 
 		local buildingTransf = transfUtilsUG.mul(
@@ -64,9 +64,10 @@ return {
 
 		-- add some deco
 		local _clockY = -4.3
+		local clockModelId = era == moduleHelpers.eras.era_b.prefix and 'station/rail/asset/era_a_big_clock.mdl' or 'station/rail/asset/era_c_big_clock.mdl'
 		if buildingHeight == 10 then
 			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/era_c_big_clock.mdl',
+				id = clockModelId,
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
@@ -76,7 +77,7 @@ return {
 			}
 		elseif buildingHeight >= 15 then
 			result.models[#result.models + 1] = {
-				id = 'station/rail/asset/era_c_big_clock.mdl',
+				id = clockModelId,
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					buildingTransf,
@@ -86,27 +87,29 @@ return {
 			}
 		end
 
-		local _tableY = 0.8
-		if buildingHeight == 10 then
-			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
-				slotId = slotId,
-				transf = transfUtilsUG.mul(
-					buildingTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 4.2 - buildingHeight, 1 }
-				),
-				tag = tag
-			}
-		elseif buildingHeight >= 15 then
-			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
-				slotId = slotId,
-				transf = transfUtilsUG.mul(
-					buildingTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 3.5 - buildingHeight, 1 }
-				),
-				tag = tag
-			}
+		if era ~= moduleHelpers.eras.era_b.prefix then
+			local _tableY = 0.8
+			if buildingHeight == 10 then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
+					slotId = slotId,
+					transf = transfUtilsUG.mul(
+						buildingTransf,
+						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 4.2 - buildingHeight, 1 }
+					),
+					tag = tag
+				}
+			elseif buildingHeight >= 15 then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
+					slotId = slotId,
+					transf = transfUtilsUG.mul(
+						buildingTransf,
+						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 3.5 - buildingHeight, 1 }
+					),
+					tag = tag
+				}
+			end
 		end
 
 		if buildingHeight > 0 then
