@@ -18,6 +18,8 @@ return {
 			-- fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_metal_gloss_ao.tga",
 			fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_metal_gloss_ao.dds",
 			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
 		},
 		map_normal = {
 			-- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_normal.tga",
@@ -25,8 +27,6 @@ return {
 			fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_normal.dds",
 			redGreen = true,
 			type = "TWOD",
-			-- wrapS = "CLAMP_TO_EDGE",
-			-- wrapT = "CLAMP_TO_EDGE",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
 		},
