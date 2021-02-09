@@ -30,12 +30,15 @@ return {
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
 		},
+		normal_scale = {
+			normalScale = 1,
+		},
 		polygon_offset = {
 			factor = 0,
 			units = 0,
 		},
 		two_sided = {
-			flipNormal = false,
+			flipNormal = true,
 			twoSided = false,
 		},
 	},
