@@ -17,7 +17,6 @@ function data()
                 node = {
                     children = {
                         {
-                            -- LOLLO TODO make normal map and metal gloss for the new station
                             materials = {
                                 "lollo_freestyle_train_station/era_a_cargo_station_8x15.mtl",
                                 "lollo_freestyle_train_station/era_a_cargo_doors.mtl",
@@ -36,8 +35,6 @@ function data()
                 node = {
                     children = {
                         {
-                                                        -- LOLLO TODO make lod1 for the new station
-                            -- LOLLO TODO make normal map and metal gloss for the new station
                             materials = {
                                 "lollo_freestyle_train_station/era_a_cargo_station_8x15.mtl",
                                 "lollo_freestyle_train_station/era_a_cargo_doors.mtl",

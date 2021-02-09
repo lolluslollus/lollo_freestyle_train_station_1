@@ -8,19 +8,19 @@ return {
 			indices = {
 				normal = {
 					count = 5160,
-					offset = 9476,
+					offset = 8672,
 				},
 				position = {
 					count = 5160,
-					offset = 24956,
+					offset = 18992,
 				},
 				tangent = {
 					count = 5160,
-					offset = 19796,
+					offset = 24152,
 				},
 				uv0 = {
 					count = 5160,
-					offset = 14636,
+					offset = 13832,
 				},
 			},
 			materials = {
@@ -30,24 +30,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 1056,
+			count = 780,
 			numComp = 3,
 			offset = 0,
 		},
 		position = {
 			count = 3180,
 			numComp = 3,
-			offset = 6296,
+			offset = 3156,
 		},
 		tangent = {
-			count = 2864,
+			count = 2336,
 			numComp = 4,
-			offset = 3432,
+			offset = 6336,
 		},
 		uv0 = {
 			count = 2376,
 			numComp = 2,
-			offset = 1056,
+			offset = 780,
 		},
 	},
 }

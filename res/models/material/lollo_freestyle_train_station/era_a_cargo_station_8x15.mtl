@@ -7,14 +7,28 @@ return {
 			fadeOutStartDist = 10000,
 		},
 		map_albedo = {
-			fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15.tga",
+			-- fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_albedo.tga",
+			fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_albedo.dds",
 			type = "TWOD",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
 		},
 		map_metal_gloss_ao = {
-			fileName = "default_metal_gloss_ao.tga",
+			-- fileName = "default_metal_gloss_ao.tga",
+			-- fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_metal_gloss_ao.tga",
+			fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_metal_gloss_ao.dds",
 			type = "TWOD",
+		},
+		map_normal = {
+			-- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_normal.tga",
+			-- fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_normal.tga",
+			fileName = "lollo_freestyle_train_station/era_a_cargo_station_8x15_normal.dds",
+			redGreen = true,
+			type = "TWOD",
+			-- wrapS = "CLAMP_TO_EDGE",
+			-- wrapT = "CLAMP_TO_EDGE",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
 		},
 		polygon_offset = {
 			factor = 0,
@@ -25,6 +39,6 @@ return {
 			twoSided = false,
 		},
 	},
-	type = "PHYSICAL",
+	type = "PHYSICAL_NRML_MAP",
 }
 end
