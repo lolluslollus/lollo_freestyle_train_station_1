@@ -13,10 +13,10 @@ return function(height, era)
             shaft = 'lollo_freestyle_train_station/shaft.mtl',
             stationSign = "lollo_freestyle_train_station/asset/era_b_station_signs.mtl",
             tiles = 'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
-            wallGrey = 'lollo_freestyle_train_station/wall_marble_1.mtl',
-            wallGreyDeco = 'lollo_freestyle_train_station/wall_marble_1.mtl',
-            wallWhite = 'lollo_freestyle_train_station/wall_marble_2.mtl',
-            wallWhiteDeco = 'lollo_freestyle_train_station/wall_marble_2.mtl',
+            wallGrey = 'lollo_freestyle_train_station/wall_marble_2.mtl',
+            wallGreyDeco = 'lollo_freestyle_train_station/wall_marble_2.mtl',
+            wallWhite = 'lollo_freestyle_train_station/wall_marble_1.mtl',
+            wallWhiteDeco = 'lollo_freestyle_train_station/wall_marble_1.mtl',
         },
         era_c = {
             shaft = 'lollo_freestyle_train_station/shaft.mtl',
@@ -235,7 +235,7 @@ return function(height, era)
                                 _materials.wallGreyDeco
                             },
                             --materials = { "asset/roof/asset_roof_decor1.mtl", },
-                            mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x5_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_c_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
                         },
                         {
@@ -297,7 +297,7 @@ return function(height, era)
                                 _materials.shaft,
                                 _materials.wallGreyDeco
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x5_lod1.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_c_side_lift_top_9x5x5_lod1.msh',
                             transf = topTransf
                         },
                     },
@@ -331,7 +331,7 @@ return function(height, era)
                                 _materials.shaft,
                                 _materials.wallGreyDeco
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x5_lod1.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_c_side_lift_top_9x5x5_lod1.msh',
                             transf = topTransf
                         },
                     },
