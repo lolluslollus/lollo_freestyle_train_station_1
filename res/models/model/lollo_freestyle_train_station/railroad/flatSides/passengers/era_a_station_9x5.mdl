@@ -4,9 +4,8 @@ local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "el
 local height = 0
 local zedShift4groundRoof = -height + 2.9 -- - height * .6 + 2.60
 
-local buildingTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -4.5 + _xExtraShift, 0.75, 0.707 - 0.8, 1}
+local buildingTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _xExtraShift, 0, 0.707 - 0.8, 1}
 
-local stairsTransf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 local stationMainTransf = {.6, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 function data()
@@ -31,44 +30,40 @@ function data()
                 node = {
                     children = {
                         {
-                            -- stairs to platform
-                            materials = { "lollo_freestyle_train_station/station_concrete_1.mtl", },
-                            mesh = "lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_platform_stairs_smooth_2m.msh",
-                            transf = stairsTransf
-                        },
-                        {
                             -- ticket machine left
                             materials = {'station/road/streetstation/streetstation_1.mtl'},
-                            mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
+                            mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
                             name = 'tickets_era_c_1',
-                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.0, -0.68, -_constants.stairsAndRampHeight, 1}
+                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.65, -3.68, -1.3, 1}
                         },
                         {
                             -- ticket machine right
                             materials = {'station/road/streetstation/streetstation_1.mtl'},
-                            mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
+                            mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
                             name = 'tickets_era_c_1',
-                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.0, -0.68, -_constants.stairsAndRampHeight, 1}
+                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.65, -3.68, -1.3, 1}
                         },
                         {
                             -- building
                             materials = {
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2_2_sides.mtl',
+                                'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
                                 -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x6.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x6.msh',
                             transf = buildingTransf
                         },
                         {
                             children = {
                                 {
-                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
-                                    mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_lod0.msh',
+                                    materials = { "lollo_freestyle_train_station/asset/era_b_station_signs.mtl", },
+                                    mesh = 'lollo_freestyle_train_station/asset/era_b_single_station_name_lod0.msh',
                                     transf = idTransf
                                 }
                             },
-                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, 4.3 -_constants.stairsAndRampHeight, 1}
+                            transf = {1.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -5.1, 3.7, 1}
                         }
                     },
                     name = 'RootNode',
@@ -84,11 +79,13 @@ function data()
                         {
                             -- building
                             materials = {
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
                                 -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x6.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x6.msh',
                             transf = buildingTransf
                         },
                     },
@@ -110,8 +107,8 @@ function data()
                         fitting = 'SCALE',
                         nLines = 2,
                         -- renderMode = "EMISSIVE",
-                        size = {6, 0.7},
-                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -3.0, -4.333, 3.33, 1},
+                        size = {4.5, 0.7},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -2.28, -5.133, 3.38, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }
