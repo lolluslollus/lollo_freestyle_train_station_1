@@ -3,16 +3,10 @@ local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "el
 
 local height = 0
 local zedShift4groundRoof = -height + 2.9 -- - height * .6 + 2.60
--- local groundRoofTransf = {0.3, 0, 0, 0,  0, 0.05, 0, 0,  0, 0, 0.07, 0,  0, -4.1, zedShift4groundRoof, 1}
 
-local topTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -4.5 + _xExtraShift, 0.75, 0.707 - 0.8, 1}
+local buildingTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -4.5 + _xExtraShift, 0.75, 0.707 - 0.8, 1}
 
 local stairsTransf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
-local roofTransf = {0.876, 0, 0, 0,  0, 0, 2.8, 0,  0, 1.50, 0, 0,  0.0, -4.24, 3.7, 1}
---local solarOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.1, 5.25, 1}
--- local solarTwoTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.4, 5.25, 1}
--- local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, -2, 5.3, 1}
--- local ventTwoTransf = {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -6, -2, 5.3, 1}
 local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 local stationMainTransf = {.6, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 function data()
@@ -36,27 +30,8 @@ function data()
                 node = {
                     children = {
                         {
-                            -- flat roof
-                            --materials = { "industry/oil_refinery/era_a/wall_2.mtl", },
-                            --materials = {'lollo_trainstation_wall_grey.mtl',},
-                            --materials = { "station/rail/era_c/era_c_trainstation_roof_white.mtl", },
-                            --materials = { "station/rail/era_c/era_c_trainstation_glass_milk.mtl", },
-                            --materials = { "asset/roof/asset_roof_decor1.mtl", },
-                            --materials = { "asset/roof/asset_roof_decor1.mtl", },
-                            --materials = { "industry/chemical_plant/wall_1.mtl", },
-                            --materials = { "industry/goods_factory/goods_factory_roof1.mtl", },
-                            --materials = { "industry/machines_factory/wall_1.mtl", },
-                            --materials = {'industry/machines_factory/roof_2.mtl'},
-                            materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl'},
-                            mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                            transf = roofTransf
-                        },
-                        {
                             -- stairs to platform
-                            -- materials = { "station/train/passenger/trainstation_1990_borders_2.mtl", },
-                            -- materials = {'station/road/streetstation/streetstation_perron_base_new.mtl'},
                             materials = { "lollo_freestyle_train_station/station_concrete_1.mtl", },
-                            -- mesh = "station/train/passenger/1990/lod_0_stairs_2m.msh",
                             mesh = "lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_platform_stairs_smooth_2m.msh",
                             transf = stairsTransf
                         },
@@ -75,11 +50,14 @@ function data()
                             transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.0, -0.68, -_constants.stairsAndRampHeight, 1}
                         },
                         {
-                            -- top
-                            -- materials = { 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl', },
-                            materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl'},
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x6_2top.msh',
-                            transf = topTransf
+                            -- building
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x6.msh',
+                            transf = buildingTransf
                         },
                         {
                             children = {
@@ -103,16 +81,14 @@ function data()
                 node = {
                     children = {
                         {
-                            -- flat roof
-                            materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl'},
-                            mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                            transf = roofTransf
-                        },
-                        {
-                            -- top
-                            materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl'},
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x6_2top.msh',
-                            transf = topTransf
+                            -- building
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x6.msh',
+                            transf = buildingTransf
                         },
                     },
                     name = 'RootNode',
@@ -131,11 +107,10 @@ function data()
                         alphaMode = 'BLEND',
                         childId = 'RootNode',
                         fitting = 'SCALE',
-                        nLines = 1,
+                        nLines = 2,
                         -- renderMode = "EMISSIVE",
-                        size = {5.2, .6},
-                        --transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -5.333, .23, 1},
-                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.8, -4.333, 4.66 -_constants.stairsAndRampHeight, 1},
+                        size = {6, 0.7},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -3.0, -4.333, 3.33, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }

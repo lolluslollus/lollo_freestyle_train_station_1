@@ -1,5 +1,8 @@
-return function(height)
+local moduleHelpers = require "moduleHelpers"
+return function(height, era)
     local _constants = require('lollo_freestyle_train_station.constants')
+    local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+    local _era = era or moduleHelpers.eras.era_c.prefix
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
 
     -- local roofTransf = {1.46, 0, 0, 0,  0, 0, 3.0, 0,  0, 1.55, 0, 0,  0.0, -4.24, 3.7, 1}
@@ -45,7 +48,7 @@ return function(height)
     local _wallsBelowThePlatformLod0 = _getWallsBelowPlatform(0)
     local _wallsBelowThePlatformLod1 = _getWallsBelowPlatform(1)
 
-    local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -4.1, 2.9 - height, 1}
+    -- local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -4.1, 2.9 - height, 1}
 
     local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5 + _xExtraShift, 0.75, 3.2 - height, 1}
 
@@ -85,33 +88,33 @@ return function(height)
                         {
                             children = {
                                 -- above the platform
-                                {
+                                _era == _moduleHelpers.eras.era_c.prefix and {
                                     -- ticket machine upstairs right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                                     name = 'tickets_era_c_1',
                                     transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 6.3, -1.5, 0, 1}
-                                },
-                                {
+                                } or nil,
+                                _era == _moduleHelpers.eras.era_c.prefix and {
                                     -- ticket machine upstairs left
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                                     name = 'tickets_era_c_1',
                                     transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.25, -2.7, 0, 1}
-                                },
+                                } or nil,
                                 -- ground level
-                                {
-                                    -- entrance roof
-                                    materials = {
-                                        'station/rail/era_c/era_c_trainstation_borders_1.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_white.mtl',
-                                        'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
-                                    },
-                                    mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
-                                    name = 'station_3_roof_perron_side',
-                                    transf = groundRoofTransf
-                                },
+                                -- {
+                                --     -- entrance roof
+                                --     materials = {
+                                --         'station/rail/era_c/era_c_trainstation_borders_1.mtl',
+                                --         'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
+                                --         'station/rail/era_c/era_c_trainstation_roof_white.mtl',
+                                --         'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
+                                --     },
+                                --     mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
+                                --     name = 'station_3_roof_perron_side',
+                                --     transf = groundRoofTransf
+                                -- },
                                 {
                                     -- ticket machine downstairs right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},

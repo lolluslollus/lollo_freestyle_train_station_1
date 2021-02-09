@@ -6,11 +6,11 @@ return {
 			albedoScale = { 1, 1, 1, },
 		},
 		alpha_scale = {
-			alphaScale = 1.5,
+			alphaScale = 1.0,
 		},
 		alpha_test = {
 			alphaThreshold = 0.5,
-			cutout = false,
+			cutout = true,
 		},
 		fade_out_range = {
 			fadeOutEndDist = 20000,
@@ -18,7 +18,8 @@ return {
 		},
 		map_albedo_opacity = {
 			-- fileName = "lollo_freestyle_train_station/doors_wood_glass_transparent.tga",
-			fileName = "lollo_freestyle_train_station/doors_wood_glass_transparent_albedo_bc1a.dds",
+			-- fileName = "lollo_freestyle_train_station/doors_wood_glass_transparent_albedo_bc1a.dds",
+			fileName = "lollo_freestyle_train_station/doors_wood_glass_transparent_albedo_bce_no_premul_alpha.dds",
 			type = "TWOD",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
