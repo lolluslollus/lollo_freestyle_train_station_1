@@ -19,7 +19,7 @@ function data()
                         {
                             materials = {
                                 "lollo_freestyle_train_station/asset/lamp_old.mtl",
-                                'lollo_freestyle_train_station/emissive/tungsten-low.mtl',
+                                'lollo_freestyle_train_station/emissive/tungsten_low.mtl',
                             },
                             mesh = "lollo_freestyle_train_station/asset/era_a_lamp_wall_lod_0.msh",
                             transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
