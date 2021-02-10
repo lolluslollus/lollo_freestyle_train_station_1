@@ -164,7 +164,7 @@ return {
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/railroad/flatSides/windows.mtl", 
+				"lollo_freestyle_train_station/railroad/flatSides/roof_concrete_2.mtl", 
 			},
 		}, 
 	},
