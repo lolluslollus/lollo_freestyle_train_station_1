@@ -1,0 +1,163 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
+
+local height = 0
+local zedShift4groundRoof = -height + 2.9 -- - height * .6 + 2.60
+
+local buildingTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _xExtraShift, 0, 0.707 - 0.8, 1}
+
+local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+local stationMainTransf = {.6, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+function data()
+    return {
+        boundingInfo = {
+            bbMax = {4.4, 0.3, 5.0}, -- this would be the building without vents or tunnel awereness
+            -- bbMin = {-4.4, -4.2, 0} -- this would be the building without vents or tunnel awereness
+            bbMin = {-4.4, -4.2, -1.5} -- a bit lower to protect the floor from tunnels
+        },
+        collider = {
+            params = {
+                -- halfExtents = {4.4, 2.25, 2.5} -- this would be the building without vents or tunnel awereness
+                halfExtents = {4.4, 2.25, 5.5} -- a bit taller to protect the floor from tunnels
+            },
+            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.95, 2.5, 1 }, -- this would be the building without vents
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.95, 1.0, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            -- ticket machine left
+                            materials = {'station/road/streetstation/streetstation_1.mtl'},
+                            mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
+                            name = 'tickets_era_c_1',
+                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.65, -3.68, -1.3, 1}
+                        },
+                        {
+                            -- ticket machine right
+                            materials = {'station/road/streetstation/streetstation_1.mtl'},
+                            mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
+                            name = 'tickets_era_c_1',
+                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.65, -3.68, -1.3, 1}
+                        },
+                        {
+                            -- building
+                            materials = {
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2_2_sides.mtl',
+                                'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/roof_tiles_4.mtl',
+                                'lollo_freestyle_train_station/windows.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_b_station_9x5x8.msh',
+                            transf = buildingTransf
+                        },
+                        {
+                            children = {
+                                {
+                                    materials = { "lollo_freestyle_train_station/asset/era_b_station_signs.mtl", },
+                                    mesh = 'lollo_freestyle_train_station/asset/era_b_single_station_name_lod0.msh',
+                                    transf = idTransf
+                                }
+                            },
+                            transf = {1.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -7.1, 4.05, 1}
+                        }
+                    },
+                    name = 'RootNode',
+                    transf = idTransf
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 200
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            -- building
+                            materials = {
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/roof_tiles_4.mtl',
+                                'lollo_freestyle_train_station/windows.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_b_station_9x5x8.msh',
+                            transf = buildingTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = idTransf
+                },
+                static = false,
+                visibleFrom = 200,
+                visibleTo = 3500
+            },
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = 'CENTER',
+                        alphaMode = 'BLEND',
+                        childId = 'RootNode',
+                        fitting = 'SCALE',
+                        nLines = 2,
+                        -- renderMode = "EMISSIVE",
+                        size = {4.5, 0.7},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -2.28, -7.133, 3.73, 1},
+                        type = 'STATION_NAME',
+                        verticalAlignment = 'CENTER'
+                    }
+                }
+            },
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        -- down the stairs
+                        linkable = false,
+                        nodes = {
+                            {
+                                {0, 0, 0},
+                                {0, -1, 0},
+                                2.4
+                            },
+                            {
+                                {0, -2.0, -_constants.stairsAndRampHeight},
+                                {0, -1, 0},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- out to the front
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -2.0, -_constants.stairsAndRampHeight},
+                                {0, -5.5, 0},
+                                2.4
+                            },
+                            {
+                                {0, -7.5, -_constants.stairsAndRampHeight},
+                                {0, -5.5, 0},
+                                2.4
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                },
+                runways = {},
+                terminals = {}
+            }
+        },
+        version = 1
+    }
+end

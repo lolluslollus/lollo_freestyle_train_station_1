@@ -50,9 +50,8 @@ function data()
                                 'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
                                 'lollo_freestyle_train_station/wall_stucco_1.mtl',
                                 'lollo_freestyle_train_station/roof_tiles_4.mtl',
-                                'lollo_freestyle_train_station/windows.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x7.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x6.msh',
                             transf = buildingTransf
                         },
                         {
@@ -63,7 +62,7 @@ function data()
                                     transf = idTransf
                                 }
                             },
-                            transf = {1.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -5.3, 4.05, 1}
+                            transf = {1.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -5.1, 4.05, 1}
                         }
                     },
                     name = 'RootNode',
@@ -84,9 +83,8 @@ function data()
                                 'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
                                 'lollo_freestyle_train_station/wall_stucco_1.mtl',
                                 'lollo_freestyle_train_station/roof_tiles_4.mtl',
-                                'lollo_freestyle_train_station/windows.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x7.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x6.msh',
                             transf = buildingTransf
                         },
                     },
@@ -110,7 +108,7 @@ function data()
                         nLines = 2,
                         -- renderMode = "EMISSIVE",
                         size = {3.0, 0.56},
-                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -1.52, -5.333, 3.79, 1},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -1.52, -5.133, 3.79, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }
@@ -142,42 +140,14 @@ function data()
                         nodes = {
                             {
                                 {0, -2.0, -_constants.stairsAndRampHeight},
-                                {0, -1, 0},
+                                {0, -3.5, 0},
                                 2.4
                             },
                             {
-                                {0, -4, -_constants.stairsAndRampHeight},
-                                {0, -1, 0},
+                                {0, -5.5, -_constants.stairsAndRampHeight},
+                                {0, -3.5, 0},
                                 2.4
                             }
-                        },
-                        speedLimit = 20,
-                        transportModes = {'PERSON'}
-                    },
-                    {
-                        -- sideways, to connect extra elements
-                        linkable = true,
-                        nodes = {
-                            {
-                                {-4.5, -2.0, -_constants.stairsAndRampHeight},
-                                {1, 0, 0},
-                                2.4
-                            },
-                            {
-                                {0, -2.0, -_constants.stairsAndRampHeight},
-                                {1, 0, 0},
-                                2.4
-                            },
-                            {
-                                {0, -2.0, -_constants.stairsAndRampHeight},
-                                {1, 0, 0},
-                                2.4
-                            },
-                            {
-                                {4.5, -2.0, -_constants.stairsAndRampHeight},
-                                {1, 0, 0},
-                                2.4
-                            },
                         },
                         speedLimit = 20,
                         transportModes = {'PERSON'}
