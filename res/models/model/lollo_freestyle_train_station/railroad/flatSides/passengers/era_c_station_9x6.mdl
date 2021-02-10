@@ -47,11 +47,11 @@ function data()
                         {
                             -- building
                             materials = {
-                                'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/wall_marble_2_2_sides.mtl',
-                                'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
-                                'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/roof_tiles_4.mtl',
+                                'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/wall_bricks_2_sides.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/wall_stucco_2.mtl',
+                                'lollo_freestyle_train_station/roof_tiles_concrete.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_b_station_9x5x6.msh',
                             transf = buildingTransf
@@ -80,11 +80,11 @@ function data()
                         {
                             -- building
                             materials = {
-                                'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/wall_marble_2.mtl',
-                                'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
-                                'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/roof_tiles_4.mtl',
+                                'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/wall_bricks.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/wall_stucco_2.mtl',
+                                'lollo_freestyle_train_station/roof_tiles_concrete.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_b_station_9x5x6.msh',
                             transf = buildingTransf
