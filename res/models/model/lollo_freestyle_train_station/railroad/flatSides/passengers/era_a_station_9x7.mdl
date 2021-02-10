@@ -54,7 +54,7 @@ function data()
                                 'lollo_freestyle_train_station/roof_tiles_4.mtl',
                                 'lollo_freestyle_train_station/windows.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x6.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x7.msh',
                             transf = buildingTransf
                         },
                         {
@@ -89,7 +89,7 @@ function data()
                                 'lollo_freestyle_train_station/roof_tiles_3.mtl',
                                 'lollo_freestyle_train_station/windows.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x6.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_station_9x5x7.msh',
                             transf = buildingTransf
                         },
                     },
