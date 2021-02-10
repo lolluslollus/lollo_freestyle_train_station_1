@@ -86,7 +86,7 @@ function data()
                                 'lollo_freestyle_train_station/wall_stucco_2.mtl',
                                 'lollo_freestyle_train_station/roof_tiles_concrete.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_b_passenger_station_9x5x6_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_passenger_station_9x5x6_lod1.msh',
                             transf = buildingTransf
                         },
                     },
@@ -95,7 +95,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 200,
-                visibleTo = 3500
+                visibleTo = 2000
             },
         },
         metadata = {
