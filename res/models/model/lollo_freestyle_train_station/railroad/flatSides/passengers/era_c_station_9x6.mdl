@@ -2,21 +2,19 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     return {
         boundingInfo = {
-            bbMax = {4.4, 0.3, 5.0}, -- this would be the building without vents or tunnel awereness
-            -- bbMin = {-4.4, -4.2, 0} -- this would be the building without vents or tunnel awereness
-            bbMin = {-4.4, -4.2, -1.5} -- a bit lower to protect the floor from tunnels
+            bbMax = {4.4, 0.3, 5.5}, -- this would be the building without vents or tunnel awereness
+            -- bbMin = {-4.4, -5.3, 0} -- this would be the building without vents or tunnel awereness
+            bbMin = {-4.4, -5.3, -1.5} -- a bit lower to protect the floor from tunnels
         },
         collider = {
             params = {
-                -- halfExtents = {4.4, 2.25, 2.5} -- this would be the building without vents or tunnel awereness
-                halfExtents = {4.4, 2.25, 5.5} -- a bit taller to protect the floor from tunnels
+                -- halfExtents = {4.4, 2.8, 2.75} -- this would be the building without vents or tunnel awereness
+                halfExtents = {4.4, 2.8, 5.75} -- a bit taller to protect the floor from tunnels
             },
-            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.95, 2.5, 1 }, -- this would be the building without vents
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.95, 1.0, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
+            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, 2.75, 1 }, -- this would be the building without vents
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, 1.25, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
             type = 'BOX'
         },
-        -- LOLLO TODO do this variant
-        -- LOLLO TODO make the modules for these
         lods = {
             {
                 node = {
