@@ -9,20 +9,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 408,
-					offset = 6064,
+					count = 528,
+					offset = 8700,
 				},
 				position = {
-					count = 408,
-					offset = 6880,
+					count = 528,
+					offset = 8172,
 				},
 				tangent = {
-					count = 408,
-					offset = 7288,
+					count = 528,
+					offset = 7116,
 				},
 				uv0 = {
-					count = 408,
-					offset = 6472,
+					count = 528,
+					offset = 7644,
 				},
 			},
 			materials = {
@@ -32,20 +32,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 120,
-					offset = 7696,
+					count = 144,
+					offset = 9660,
 				},
 				position = {
-					count = 120,
-					offset = 7936,
+					count = 144,
+					offset = 9516,
 				},
 				tangent = {
-					count = 120,
-					offset = 8056,
+					count = 144,
+					offset = 9228,
 				},
 				uv0 = {
-					count = 120,
-					offset = 7816,
+					count = 144,
+					offset = 9372,
 				},
 			},
 			materials = {
@@ -55,20 +55,43 @@ return {
 		{
 			indices = {
 				normal = {
+					count = 432,
+					offset = 11100,
+				},
+				position = {
+					count = 432,
+					offset = 10668,
+				},
+				tangent = {
+					count = 432,
+					offset = 9804,
+				},
+				uv0 = {
+					count = 432,
+					offset = 10236,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/stucco.001.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
 					count = 480,
-					offset = 8176,
+					offset = 12972,
 				},
 				position = {
 					count = 480,
-					offset = 9136,
+					offset = 12492,
 				},
 				tangent = {
 					count = 480,
-					offset = 9616,
+					offset = 11532,
 				},
 				uv0 = {
 					count = 480,
-					offset = 8656,
+					offset = 12012,
 				},
 			},
 			materials = {
@@ -79,69 +102,46 @@ return {
 			indices = {
 				normal = {
 					count = 768,
-					offset = 10096,
+					offset = 15756,
 				},
 				position = {
 					count = 768,
-					offset = 11632,
+					offset = 14988,
 				},
 				tangent = {
 					count = 768,
-					offset = 12400,
+					offset = 13452,
 				},
 				uv0 = {
 					count = 768,
-					offset = 10864,
+					offset = 14220,
 				},
 			},
 			materials = {
 				"station/train/passenger/shaft.mtl", 
 			},
-		},
-		{
-			indices = {
-				normal = {
-					count = 96,
-					offset = 13168,
-				},
-				position = {
-					count = 96,
-					offset = 13360,
-				},
-				tangent = {
-					count = 96,
-					offset = 13456,
-				},
-				uv0 = {
-					count = 96,
-					offset = 13264,
-				},
-			},
-			materials = {
-				"lollo_freestyle_train_station/lift/bracket.mtl", 
-			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 1200,
+			count = 1164,
 			numComp = 3,
-			offset = 0,
+			offset = 5952,
 		},
 		position = {
-			count = 1320,
+			count = 1608,
 			numComp = 3,
-			offset = 2888,
+			offset = 4344,
 		},
 		tangent = {
-			count = 1856,
+			count = 1744,
 			numComp = 4,
-			offset = 4208,
+			offset = 0,
 		},
 		uv0 = {
-			count = 1688,
+			count = 2600,
 			numComp = 2,
-			offset = 1200,
+			offset = 1744,
 		},
 	},
 }

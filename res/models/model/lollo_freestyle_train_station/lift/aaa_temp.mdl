@@ -1,7 +1,8 @@
-return function(height, era)
+function data()
+    local height = 20
     local _constants = require('lollo_freestyle_train_station.constants')
     local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-    era = era or _moduleHelpers.eras.era_c.prefix
+    local era = _moduleHelpers.eras.era_c.prefix
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
 
     local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -2, 4.5, 1}

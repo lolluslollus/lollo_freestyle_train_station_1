@@ -1,53 +1,97 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 816,
-					offset = 2392,
+					count = 408,
+					offset = 4468,
 				},
 				position = {
-					count = 816,
-					offset = 4024,
+					count = 408,
+					offset = 4060,
 				},
 				tangent = {
-					count = 816,
-					offset = 4840,
+					count = 408,
+					offset = 3244,
 				},
 				uv0 = {
-					count = 816,
-					offset = 3208,
+					count = 408,
+					offset = 3652,
 				},
 			},
 			materials = {
-				"station/road/streetstation/streetstation_perron_base_old.mtl", 
+				"station/road/streetstation/wall.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 24,
+					offset = 4948,
+				},
+				position = {
+					count = 24,
+					offset = 4924,
+				},
+				tangent = {
+					count = 24,
+					offset = 4876,
+				},
+				uv0 = {
+					count = 24,
+					offset = 4900,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/facade.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 432,
+					offset = 6268,
+				},
+				position = {
+					count = 432,
+					offset = 5836,
+				},
+				tangent = {
+					count = 432,
+					offset = 4972,
+				},
+				uv0 = {
+					count = 432,
+					offset = 5404,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/stucco.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 312,
+			count = 492,
 			numComp = 3,
-			offset = 0,
+			offset = 2752,
 		},
 		position = {
 			count = 648,
 			numComp = 3,
-			offset = 1408,
+			offset = 2104,
 		},
 		tangent = {
-			count = 336,
+			count = 640,
 			numComp = 4,
-			offset = 2056,
+			offset = 0,
 		},
 		uv0 = {
-			count = 1096,
+			count = 1464,
 			numComp = 2,
-			offset = 312,
+			offset = 640,
 		},
 	},
 }
