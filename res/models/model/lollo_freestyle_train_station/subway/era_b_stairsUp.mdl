@@ -16,7 +16,7 @@ function data()
                         -- },
                         {
                             materials = {
-                                'lollo_freestyle_train_station/wall_grey_3.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
                                 'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
                                 'lollo_freestyle_train_station/era_b_doors.mtl',
                             },
