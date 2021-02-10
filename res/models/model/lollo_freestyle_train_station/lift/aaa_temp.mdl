@@ -3,7 +3,6 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
     local era = _moduleHelpers.eras.era_c.prefix
-    local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
 
     local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -2, 4.5, 1}
     local ventTwoTransf = {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5, -2, 4.5, 1}
@@ -43,7 +42,7 @@ function data()
         for h = 5, height, 5 do
             zShift4Wall = zShift4Wall - 5
             local zedZoom4Wall = h == 5 and 0.34 or 1
-            local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  4.5, 0.75, zShift4Wall, 1}
+            local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  0, 0, zShift4Wall, 1}
             results[#results + 1] = {
                 --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
                 materials = {
@@ -79,7 +78,7 @@ function data()
 
     -- local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -4.1, 2.9 - height, 1}
 
-    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5 + _xExtraShift, 0.75, 3.2 - height, 1}
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5, 0.75, 3.2 - height, 1}
 
     local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}

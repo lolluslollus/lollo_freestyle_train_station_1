@@ -46,74 +46,29 @@ function data()
                             children = {
                                 {
                                     -- front doors
-                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'}, -- glass with a hint of colour
-                                    -- materials = {'station/rail/era_c/era_c_trainstation_glass_milk.mtl'},
-                                    -- materials = {'station/rail/era_c/era_c_trainstation_details_1.mtl'},
-
-                                    -- materials = {'station/rail/cargo/cargo_station_windows_and_doors_2.mtl'},
-                                    -- materials = {'station/rail/cargo/cargo_station_windows_and_doors_1.mtl'}, -- has a sympathetic size, you could do a new one in the same size
-
-                                    -- materials = {'station/harbor/harbor_window_1.mtl'}, -- mirrory glass and rust, I could adjust it
-
-                                    -- materials = {'station/air/airfield/passenger_terminal_windows_and_doors.mtl'}, -- shiny, light pattern
-                                    -- materials = {'station/air/airfield/main_building_windows_and_doors.mtl'},
-                                    
-                                    -- materials = {'station/air/asset/asset_tf2/asset_transparent.mtl'},
-                                    
-                                    -- materials = {'asset/industry/asset_industry_transparent_01.mtl'},
-
+                                    materials = {'lollo_freestyle_train_station/era_b_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
                                     transf = frontBelowTransf
                                 },
                                 {
                                     --rear doors
-                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_b_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
                                     transf = rearBelowTransf
                                 },
                             },
-                            name = 'station_1_main_grp',
                             transf = stationMainTransf
                         },
                         {
                             -- inner lift shaft
-                            materials = {'lollo_freestyle_train_station/shaft.mtl'}, -- glass with a hint of colour
-                            --materials = { "station/rail/era_c/era_c_trainstation_roof_white.mtl", },
-                            --materials = {'station/rail/era_c/era_c_trainstation_glass_milk.mtl'},
-                            --materials = {'station/harbor/harbor_window_1.mtl'}, -- mirrory glass and rust
-                            --materials = {'depot/rail/train_depot_era_a/metal_color.mtl'}, -- old dark rust
-                            --materials = {'station/air/airfield/passenger_terminal_windows_and_doors.mtl'}, -- shiny, light pattern
-                            --materials = {'station/air/airfield/main_building_windows_and_doors.mtl'},
-                            --materials = {'station/air/airfield/wall_002.mtl'}, -- marmor-metal
-                            --materials = {'station/air/airfield/wall_003.mtl'}, -- marble column
-                            -- these are unsuitable
-                            --materials = {'station/air/asset/asset_tf2/asset_transparent.mtl'},
-                            --materials = {'station/harbor/harbor_windows_and_doors_3.mtl'},
-                            --materials = {'station/harbor/harbor_windows_and_doors_2.mtl'},
-                            --materials = {'station/harbor/harbor_windows_and_doors_1.mtl'},
-                            --materials = {'station/rail/cargo/cargo_station_windows_and_doors_2.mtl'},
-                            --materials = {'station/rail/cargo/cargo_station_windows_and_doors_1.mtl'},
-                            --materials = {'station/rail/era_c/era_c_trainstation_details_1.mtl'},
-                            --materials = { "station/rail/era_c/era_c_trainstation_special.mtl", }, -- weird, glass and some pattern
-                            --materials = {'asset/industry/asset_industry_transparent_01.mtl'},
-                            -- these fail
-                            --materials = {'station/air/asset/asset_tf2/asset_transparent_skinned.mtl'},
-                            --materials = {'building/era_c/res_3_3x4_03/res_1_windows_and_doors_01_mat.mtl'},
-                            --materials = {'depot/rail/train_depot_era_a/metal_floor.mtl'},
-                            --materials = {'headquarter/headquarter_era_c_05/headquarter_era_c_05_window_highrise_01.mtl'},
-                            --materials = {'headquarter/headquarter_era_c_05/headquarter_era_c_05_window_highrise_02.mtl'},
-                            --materials = {'headquarter/headquarter_era_c_05/headquarter_era_c_05_special.mtl'},
-                            --mesh = 'asset/industry/ind_chimney_3_big_single/ind_chimney_3_big_single_lod0.msh',
-                            --mesh = 'asset/industry/pipes_small_straight/pipes_small_straight_lod0.msh',
-                            -- mesh = 'asset/industry/pipes_large_straight/pipes_large_straight_lod0.msh',
+                            materials = {'lollo_freestyle_train_station/shaft.mtl'},
                             mesh = 'lollo_freestyle_train_station/lift/inner_shaft_round_lod0.msh',
                             transf = groundLiftShaftTransf
                         },
                         {
                             -- pillars
                             materials = {
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
                             transf = pillarsTransf
@@ -122,7 +77,7 @@ function data()
                             -- shaft top
                             materials = {
                                 'lollo_freestyle_train_station/shaft.mtl',
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
                                 -- 'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/hole.mtl',
                                 'lollo_freestyle_train_station/station_concrete_1.mtl',
@@ -145,16 +100,14 @@ function data()
                             children = {
                                 {
                                     -- front doors
-                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_b_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
                                     transf = frontBelowTransf
                                 },
                                 {
                                     --rear doors
-                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_b_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
                                     transf = rearBelowTransf
                                 },
                             },
@@ -164,7 +117,7 @@ function data()
                         {
                             -- pillars
                             materials = {
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
                             transf = pillarsTransf
@@ -173,8 +126,7 @@ function data()
                             -- shaft top
                             materials = {
                                 'lollo_freestyle_train_station/shaft.mtl',
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
-                                -- 'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
                                 'lollo_freestyle_train_station/hole.mtl',
                                 'lollo_freestyle_train_station/station_concrete_1.mtl',
                             },
@@ -197,16 +149,14 @@ function data()
                                 -- below the platform
                                 {
                                     -- front doors
-                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_b_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
                                     transf = frontBelowTransf
                                 },
                                 {
                                     --rear doors
-                                    materials = {'lollo_freestyle_train_station/era_c_doors.mtl'},
+                                    materials = {'lollo_freestyle_train_station/era_b_doors.mtl'},
                                     mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    name = 'oil_refinery_wall_large',
                                     transf = rearBelowTransf
                                 },
                             },
@@ -216,7 +166,7 @@ function data()
                         {
                             -- pillars
                             materials = {
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
                             transf = pillarsTransf
