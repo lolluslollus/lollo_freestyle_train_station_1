@@ -1,6 +1,36 @@
-return function(height)
+return function(height, era)
     local _constants = require('lollo_freestyle_train_station.constants')
+    local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+    era = era or _moduleHelpers.eras.era_c.prefix
     local _xExtraShift = 0.01 -- a lil shift to avoid flickering when overlaying "elevated stairs" and these
+
+    local _allMaterials = {
+        era_b = {
+            shaft = 'lollo_freestyle_train_station/shaft.mtl',
+            stationSign = "lollo_freestyle_train_station/asset/era_b_station_signs.mtl",
+            tiles = 'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
+            wallGrey = 'lollo_freestyle_train_station/wall_marble_2.mtl',
+            wallGreyDeco = 'lollo_freestyle_train_station/wall_marble_2.mtl',
+            wallWhite = 'lollo_freestyle_train_station/wall_marble_1.mtl',
+            wallWhiteDeco = 'lollo_freestyle_train_station/wall_marble_1.mtl',
+        },
+        era_c = {
+            shaft = 'lollo_freestyle_train_station/shaft.mtl',
+            stationSign = 'station/rail/era_c/era_c_trainstation_assets.mtl',
+            tiles = 'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+            wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+            wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
+            wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
+            wallWhiteDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+        }
+    }
+    local _materials = nil
+    if era == _moduleHelpers.eras.era_b.prefix then
+        _materials = _allMaterials.era_b
+    else
+        _materials = _allMaterials.era_c
+    end
+
     local function _getWallsBelowPlatform(lod)
         local results = {}
 
@@ -12,8 +42,12 @@ return function(height)
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  4.5 + _xExtraShift, 2.2, zShift4Wall, 1}
 
             results[#results + 1] = {
-                materials = {'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl'},
-                mesh = 'lollo_freestyle_train_station/lift/lollo9x5x5room_deco.msh',
+                materials = {
+                    _materials.wallGrey,
+                    _materials.wallGreyDeco,
+                    _materials.wallWhiteDeco,
+                },
+                mesh = 'lollo_freestyle_train_station/lift/lift9x5x5level_deco.msh',
                 transf = wallTransf
             }
         end
@@ -38,7 +72,7 @@ return function(height)
     local _wallsBelowThePlatformLod1 = _getWallsBelowPlatform(1)
 
     local zedShift4groundRoof = -height + 2.9 -- - height * .6 + 2.60
-    local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -2.75, zedShift4groundRoof, 1}
+    -- local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -2.75, zedShift4groundRoof, 1}
 
     local zedShift4groundPillar = -height + 3.2
     -- local zedZoom4groundPillar = -1 -- -1.075
@@ -72,18 +106,18 @@ return function(height)
                         {
                             children = {
                                 -- ground level
-                                {
-                                    -- entrance roof
-                                    materials = {
-                                        'station/rail/era_c/era_c_trainstation_borders_1.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
-                                        'station/rail/era_c/era_c_trainstation_roof_white.mtl',
-                                        'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
-                                    },
-                                    mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
-                                    name = 'station_3_roof_perron_side',
-                                    transf = groundRoofTransf
-                                },
+                                -- {
+                                --     -- entrance roof
+                                --     materials = {
+                                --         'station/rail/era_c/era_c_trainstation_borders_1.mtl',
+                                --         'station/rail/era_c/era_c_trainstation_roof_wood.mtl',
+                                --         'station/rail/era_c/era_c_trainstation_roof_white.mtl',
+                                --         'station/rail/era_c/era_c_trainstation_modeling_tmp.mtl'
+                                --     },
+                                --     mesh = 'station/rail/era_c/station_3_roof_perron_side/station_3_roof_perron_side_lod0.msh',
+                                --     name = 'station_3_roof_perron_side',
+                                --     transf = groundRoofTransf
+                                -- },
                                 {
                                     -- ticket machine right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
