@@ -24,7 +24,6 @@ function data()
             transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.95, 1.0, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
             type = 'BOX'
         },
-        -- LOLLO TODO the model needs doing completely
         lods = {
             {
                 node = {
