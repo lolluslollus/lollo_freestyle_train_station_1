@@ -219,7 +219,7 @@ function data()
                                     transf = _idTransf
                                 }
                             },
-                            transf = {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.6, 3.3, 1}
+                            transf = {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.8, 3.85, 1}
                         }
                     },
                     name = 'RootNode',

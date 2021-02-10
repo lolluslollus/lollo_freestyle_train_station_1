@@ -67,7 +67,7 @@ function data()
                                     transf = idTransf
                                 }
                             },
-                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, 4.3 -_constants.stairsAndRampHeight, 1}
+                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.23, 3.65, 1}
                         }
                     },
                     name = 'RootNode',
@@ -110,7 +110,7 @@ function data()
                         nLines = 2,
                         -- renderMode = "EMISSIVE",
                         size = {6, 0.7},
-                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -3.0, -4.333, 3.33, 1},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -3.0, -4.26, 3.33, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }

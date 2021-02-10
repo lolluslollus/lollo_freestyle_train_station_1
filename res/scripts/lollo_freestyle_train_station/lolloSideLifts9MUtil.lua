@@ -246,7 +246,7 @@ return function(height, era)
                                     transf = idTransf
                                 }
                             },
-                            transf = {1.4, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.1, -0.9, 1}
+                            transf = {1.4, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.25, -0.40, 1}
                         }
                     },
                     name = 'RootNode',
@@ -352,10 +352,9 @@ return function(height, era)
                         childId = 'RootNode',
                         fitting = 'SCALE',
                         -- renderMode = "EMISSIVE",
-                        -- nLines = 1,
-                        size = {5.2, 0.6},
-                        -- size = {4.0, 0.6},
-                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0,  -1.80, -4.333, 0.27 -0.8, 1},
+                        nLines = 2,
+                        size = {4.2, 0.6},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -2.0, -4.28, 0.12 -0.8, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }

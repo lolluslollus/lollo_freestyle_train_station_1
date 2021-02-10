@@ -64,7 +64,7 @@ function data()
                                     transf = idTransf
                                 }
                             },
-                            transf = {1.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.9, 3.5, 1}
+                            transf = {1.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -5.1, 4.05, 1}
                         }
                     },
                     name = 'RootNode',
