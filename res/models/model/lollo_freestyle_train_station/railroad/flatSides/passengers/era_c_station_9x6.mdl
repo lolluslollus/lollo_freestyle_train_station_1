@@ -33,16 +33,16 @@ function data()
                         {
                             -- ticket machine left
                             materials = {'station/road/streetstation/streetstation_1.mtl'},
-                            mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
+                            mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                             name = 'tickets_era_c_1',
-                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.65, -3.68, -1.3, 1}
+                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.65, -2.88, -1.3, 1}
                         },
                         {
                             -- ticket machine right
                             materials = {'station/road/streetstation/streetstation_1.mtl'},
-                            mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
+                            mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                             name = 'tickets_era_c_1',
-                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.65, -3.68, -1.3, 1}
+                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.65, -2.88, -1.3, 1}
                         },
                         {
                             -- building
