@@ -44,36 +44,16 @@ return {
 
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 
-		local modelId = nil
-		if era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_9_5_0.mdl'
-		else modelId = 'lollo_freestyle_train_station/lift/side_lifts_9_5_0.mdl'
+		local stationModelId = nil
+		if era == moduleHelpers.eras.era_c.prefix then
+			stationModelId = 'lollo_freestyle_train_station/lift/side_lifts_9_5_0.mdl'
+		else
+			stationModelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_9_5_0.mdl'
 		end
 		result.models[#result.models + 1] = {
-			id = modelId,
+			id = stationModelId,
 			slotId = slotId,
 			transf = buildingTransf,
-			tag = tag
-		}
-
-		-- add some deco
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
-			slotId = slotId,
-			transf = transfUtilsUG.mul(
-				buildingTransf,
-				-- LOLLO TODO see if you can use result.laneZs[nTerminal] instead of -_constants.stairsAndRampHeight, across the app.
-				-- This would help with platforms of different heights.
-				{ 0, 1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.45, -3.5, -_constants.stairsAndRampHeight, 1 }
-			),
-			tag = tag
-		}
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/partenze.mdl',
-			slotId = slotId,
-			transf = transfUtilsUG.mul(
-				buildingTransf,
-				{ 0, -1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.45, -3.5, -_constants.stairsAndRampHeight, 1 }
-			),
 			tag = tag
 		}
 

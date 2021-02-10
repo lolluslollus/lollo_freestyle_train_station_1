@@ -21,13 +21,13 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("FlatPassengerStationMidName"),
-		description = _("FlatPassengerStationMidDesc"),
-		icon = "ui/lollo_freestyle_train_station/flatPassengerStationMid.tga"
+		name = _("FlatPassengerStationSmallName"),
+		description = _("FlatPassengerStationSmallDesc"),
+		icon = "ui/lollo_freestyle_train_station/flatPassengerStationSmall.tga"
 	},
 	metadata = { },
 	order = {
-		value = 24,
+		value = 23,
 	},
 	type = _constants.flatPassengerStation0MModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -45,9 +45,9 @@ return {
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 
 		local modelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_9x8.mdl'
-		elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_9x8.mdl'
-		else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_9x8.mdl'
+		if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_9x6.mdl'
+		elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_9x6.mdl'
+		else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_9x6.mdl'
 		end
 		result.models[#result.models + 1] = {
 			id = modelId,
@@ -56,33 +56,11 @@ return {
 			tag = tag
 		}
 
-		-- add some deco
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
-			slotId = slotId,
-			transf = transfUtilsUG.mul(
-				buildingTransf,
-				-- LOLLO TODO see if you can use result.laneZs[nTerminal] instead of -_constants.stairsAndRampHeight, across the app.
-				-- This would help with platforms of different heights.
-				{ 0, 1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  4.12, -5.5, -_constants.stairsAndRampHeight, 1 }
-			),
-			tag = tag
-		}
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/partenze.mdl',
-			slotId = slotId,
-			transf = transfUtilsUG.mul(
-				buildingTransf,
-				{ 0, -1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -4.12, -5.5, -_constants.stairsAndRampHeight, 1 }
-			),
-			tag = tag
-		}
-
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
 			{-1, -6.2, -_constants.stairsAndRampHeight, 1},
 			{-1, 6.2, -_constants.stairsAndRampHeight, 1},
-			{8.5, 6.2, -_constants.stairsAndRampHeight, 1},
-			{8.5, -6.2, -_constants.stairsAndRampHeight, 1},
+			{6.5, 6.2, -_constants.stairsAndRampHeight, 1},
+			{6.5, -6.2, -_constants.stairsAndRampHeight, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		table.insert(
@@ -115,7 +93,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_9x8.mdl',
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_9x6.mdl',
 				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
 			},
 		}

@@ -48,7 +48,7 @@ return function(height, era)
                 materials = {
                     _materials.wallGrey,
                     _materials.wallGreyDeco,
-                    _materials.wallWhiteDeco,
+                    _materials.wallWhite,
                 },
                 mesh = 'lollo_freestyle_train_station/lift/lift9x5x5level_deco.msh',
                 transf = wallTransf
@@ -234,7 +234,7 @@ return function(height, era)
                             materials = {
                                 _materials.wallGrey,
                                 _materials.wallGreyDeco,
-                                _materials.wallWhiteDeco,
+                                _materials.wallWhite,
                                 _materials.tiles,
                                 _materials.shaft,
                             },
@@ -295,11 +295,11 @@ return function(height, era)
                         {
                             -- top
                             materials = {
+                                _materials.wallGrey,
+                                _materials.wallGreyDeco,
                                 _materials.wallWhite,
-                                _materials.wallWhiteDeco,
                                 _materials.tiles,
                                 _materials.shaft,
-                                _materials.wallGreyDeco
                             },
                             mesh = 'lollo_freestyle_train_station/lift/side_lift_top_9x5x5_lod1.msh',
                             transf = topTransf
@@ -329,11 +329,11 @@ return function(height, era)
                         {
                             -- top
                             materials = {
+                                _materials.wallGrey,
+                                _materials.wallGreyDeco,
                                 _materials.wallWhite,
-                                _materials.wallWhiteDeco,
                                 _materials.tiles,
                                 _materials.shaft,
-                                _materials.wallGreyDeco
                             },
                             mesh = 'lollo_freestyle_train_station/lift/side_lift_top_9x5x5_lod1.msh',
                             transf = topTransf
