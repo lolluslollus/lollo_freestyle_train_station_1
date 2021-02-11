@@ -1,0 +1,421 @@
+local _groundRoofTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+local _streetPillarY = -3.0
+local _clockTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.75, 4.28, 1}
+local _stationSignTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.62, 3.41, 1}
+local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -4.0, -3, 0, 1}
+local _lampRightTransf = {0.71, 0.71, 0, 0,  -0.71, 0.71, 0, 0,  0, 0, 1, 0,  4.0, -3, 0, 1}
+
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    return {
+        boundingInfo = {
+            -- bbMax = {4.4, 1.0, 5.0}, -- this would be fine without tunnel awareness and lamps
+            -- bbMin = {-4.4, -3.2, 0} -- this would be fine without tunnel awareness and lamps
+            bbMax = {4.4, 1.0, 6.5}, -- a bit taller for tunnels and lamps
+            bbMin = {-4.4, -3.2, -1.5} -- a bit lower for tunnels and lamps
+        },
+        collider = {
+            params = {
+                -- halfExtents = {4.4, 2.1, 2.5} -- this would be fine without tunnel awareness and lamps
+                halfExtents = {4.4, 2.1, 5.5} -- a bit taller for tunnels and lamps
+            },
+            -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.1, 2.5, 1}, -- this would be fine without tunnel awareness and lamps
+            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.1, 1.0, 1}, -- a bit taller for tunnels and lamps
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            -- entrance roof
+                            materials = {
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
+                            transf = _groundRoofTransf
+                        },
+                        {
+                            -- lamp left
+                            materials = {
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            transf = _lampLeftTransf
+                        },
+                        {
+                            -- lamp right
+                            materials = {
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            transf = _lampRightTransf
+                        },
+                        {
+                            -- street pillar 1
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.5, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 2
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.7, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 3
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.9, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 4
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.9, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 5
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.7, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 6
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4.5, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- station sign
+                            materials = { "lollo_freestyle_train_station/asset/era_b_station_signs.mtl", },
+                            mesh = 'lollo_freestyle_train_station/asset/era_b_single_station_name_lod0.msh',
+                            transf = _stationSignTransf
+                        },
+                        {
+                            -- clock
+                            children = {
+                                {
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = "station/rail/asset/era_a_small_clock/era_a_small_clock_body_lod0.msh",
+                                    name = "era_a_small_clock_body",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                                {
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = "station/rail/asset/era_a_small_clock/era_a_small_clock_backplate_lod0.msh",
+                                    name = "era_a_small_clock_backplate",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                                {
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = "station/rail/asset/era_a_small_clock/era_a_small_clock_backplate_2_lod0.msh",
+                                    name = "era_a_small_clock_backplate_2",
+                                    transf = { -1, -8.7422776573476e-08, 0, 0, 8.7422776573476e-08, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                                {
+                                    animations = {
+                                        minutes = {
+                                            params = {
+                                                id = "station/rail/asset/era_a_small_clock/minutes/era_a_small_clock_minutes.ani",
+                                            },
+                                            type = "FILE_REF",
+                                        },
+                                    },
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = "station/rail/asset/era_a_small_clock/era_a_small_clock_minutes_lod1.msh",
+                                    name = "era_a_small_clock_minutes",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                                {
+                                    animations = {
+                                        hours = {
+                                            params = {
+                                                id = "station/rail/asset/era_a_small_clock/hours/era_a_small_clock_hours.ani",
+                                            },
+                                            type = "FILE_REF",
+                                        },
+                                    },
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = "station/rail/asset/era_a_small_clock/era_a_small_clock_hours_lod1.msh",
+                                    name = "era_a_small_clock_hours",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                            },
+                            transf = _clockTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 60
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            -- entrance roof
+                            materials = {
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
+                            transf = _groundRoofTransf
+                        },
+                        {
+                            -- lamp left
+                            materials = {
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            transf = _lampLeftTransf
+                        },
+                        {
+                            -- lamp right
+                            materials = {
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            transf = _lampRightTransf
+                        },
+                        {
+                            -- street pillar 1
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.5, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 2
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.7, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 3
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.9, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 4
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.9, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 5
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.7, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 6
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4.5, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- station sign
+                            materials = { "lollo_freestyle_train_station/asset/era_b_station_signs.mtl", },
+                            mesh = 'lollo_freestyle_train_station/asset/era_b_single_station_name_lod0.msh',
+                            transf = _stationSignTransf
+                        },
+                        {
+                            -- clock
+                            children = {
+                                {
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = "station/rail/asset/era_a_small_clock/era_a_small_clock_body_lod0.msh",
+                                    name = "era_a_small_clock_body",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                                {
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = "station/rail/asset/era_a_small_clock/era_a_small_clock_backplate_lod0.msh",
+                                    name = "era_a_small_clock_backplate",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                                {
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = "station/rail/asset/era_a_small_clock/era_a_small_clock_backplate_2_lod0.msh",
+                                    name = "era_a_small_clock_backplate_2",
+                                    transf = { -1, -8.7422776573476e-08, 0, 0, 8.7422776573476e-08, -1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                            },
+                            transf = _clockTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 60,
+                visibleTo = 200
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            -- entrance roof
+                            materials = {
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
+                            transf = _groundRoofTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 200,
+                visibleTo = 2000
+            }
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = 'CENTER',
+                        alphaMode = 'BLEND',
+                        childId = 'RootNode',
+                        color = { 255, 255, 255, },
+                        fitting = 'SCALE',
+                        nLines = 2,
+                        -- renderMode = "EMISSIVE",
+                        size = {3.0, 0.68},
+                        transf = {0.95, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0, -1.45, -1.65, 3.10, 1},
+                        type = 'STATION_NAME',
+                        verticalAlignment = 'CENTER'
+                    }
+                }
+            },
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        -- out of the station
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, 0.7, 0},
+                                {0, -1, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {0, -1.79, 0},
+                                {0, -1, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {0, -1.79, 0},
+                                {0, -1, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {0, -4.29, 0},
+                                {0, -1, 0},
+                                2.4000000953674
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- into the street left
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -1.79, 0},
+                                {-4.5, -3, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {-4.5, -4.29, 0},
+                                {-4.5, -3, 0},
+                                2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- into the street right
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -1.79, 0},
+                                {4.5, -3, 0},
+                                2.4000000953674
+                            },
+                            {
+                                {4.5, -4.29, 0},
+                                {4.5, -3, 0},
+                                2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- sideways, to connect extra elements
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -1.79, 0},
+                                {-1, 0, 0},
+                                2.4000000953674
+                            },
+                            {
+                                -- {-6, -0.5, 0},
+                                {-4.5, -1.79, 0},
+                                {-1, 0, 0},
+                                2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- sideways, to connect extra elements
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -1.79, 0},
+                                {1, 0, 0},
+                                2.4000000953674
+                            },
+                            {
+                                -- {6, -0.5, 0},
+                                {4.5, -1.79, 0},
+                                {1, 0, 0},
+                                2.4000000953674
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                },
+                runways = {},
+                terminals = {}
+            }
+        },
+        version = 1
+    }
+end
