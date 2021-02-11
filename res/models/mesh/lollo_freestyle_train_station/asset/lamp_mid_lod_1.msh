@@ -1,124 +1,97 @@
 function data()
 return {
 	matConfigs = {
-		{
-			0, 0, 0, 0, 
-		}, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 648,
-					offset = 19336,
+					count = 192,
+					offset = 9644,
 				},
 				position = {
-					count = 648,
-					offset = 20632,
+					count = 192,
+					offset = 10028,
 				},
 				tangent = {
-					count = 648,
-					offset = 19984,
+					count = 192,
+					offset = 9836,
 				},
 				uv0 = {
-					count = 648,
-					offset = 21280,
+					count = 192,
+					offset = 10220,
 				},
 			},
 			materials = {
 				"station/train/passenger/cargo_assets_1.mtl", 
 			},
-		},
-		{
+		}, {
 			indices = {
 				normal = {
-					count = 4584,
-					offset = 21928,
+					count = 1608,
+					offset = 10412,
 				},
 				position = {
-					count = 4584,
-					offset = 31096,
+					count = 1608,
+					offset = 13628,
 				},
 				tangent = {
-					count = 4584,
-					offset = 26512,
+					count = 1608,
+					offset = 12020,
 				},
 				uv0 = {
-					count = 4584,
-					offset = 35680,
+					count = 1608,
+					offset = 15236,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/asset/brace.001.mtl", 
 			},
-		},
-		{
+		}, {
 			indices = {
 				normal = {
-					count = 1680,
-					offset = 40264,
+					count = 1704,
+					offset = 16844,
 				},
 				position = {
-					count = 1680,
-					offset = 43624,
+					count = 1704,
+					offset = 20252,
 				},
 				tangent = {
-					count = 1680,
-					offset = 41944,
+					count = 1704,
+					offset = 18548,
 				},
 				uv0 = {
-					count = 1680,
-					offset = 45304,
+					count = 1704,
+					offset = 21956,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/asset/bell.001.mtl", 
 			},
-		},
-		{
-			indices = {
-				normal = {
-					count = 24,
-					offset = 46984,
-				},
-				position = {
-					count = 24,
-					offset = 47032,
-				},
-				tangent = {
-					count = 24,
-					offset = 47008,
-				},
-				uv0 = {
-					count = 24,
-					offset = 47056,
-				},
-			},
-			materials = {
-				"lollo_freestyle_train_station/asset/emissive.mtl", 
-			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 3756,
+			count = 1968,
 			numComp = 3,
 			offset = 0,
 		},
 		position = {
-			count = 3972,
+			count = 2052,
 			numComp = 3,
-			offset = 12348,
+			offset = 6016,
 		},
 		tangent = {
-			count = 8592,
+			count = 4048,
 			numComp = 4,
-			offset = 3756,
+			offset = 1968,
 		},
 		uv0 = {
-			count = 3016,
+			count = 1576,
 			numComp = 2,
-			offset = 16320,
+			offset = 8068,
 		},
 	},
 }
