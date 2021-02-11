@@ -124,17 +124,8 @@ function data()
                 },
                 static = false,
                 visibleFrom = 100,
-                visibleTo = 400
+                visibleTo = 250
             },
-            {
-                node = {
-                    name = 'RootNode',
-                    transf = _idTransf
-                },
-                static = false,
-                visibleFrom = 400,
-                visibleTo = 3500
-            }
         },
         metadata = {
             transportNetworkProvider = {
