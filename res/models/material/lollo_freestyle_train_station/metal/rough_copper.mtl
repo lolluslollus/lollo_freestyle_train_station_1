@@ -41,7 +41,7 @@ function data()
                 units = 0,
             },
             two_sided = {
-                flipNormal = true,
+                flipNormal = false,
                 twoSided = false,
             },
         },
