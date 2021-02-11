@@ -39,23 +39,19 @@ function data()
                         {
                             -- lamp left
                             materials = {
-                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
-                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"asset/lamp_old.mtl",
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
                             transf = _lampLeftTransf
                         },
                         {
                             -- lamp right
                             materials = {
-                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
-                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"asset/lamp_old.mtl",
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
                             transf = _lampRightTransf
                         },
                         {
@@ -96,8 +92,8 @@ function data()
                         },
                         {
                             -- station sign
-                            materials = { "lollo_freestyle_train_station/asset/era_b_station_signs.mtl", },
-                            mesh = 'lollo_freestyle_train_station/asset/era_b_single_station_name_lod0.msh',
+                            materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                            mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
                             transf = _stationSignTransf
                         },
                         {
@@ -175,23 +171,19 @@ function data()
                         {
                             -- lamp left
                             materials = {
-                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
-                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"asset/lamp_old.mtl",
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
                             transf = _lampLeftTransf
                         },
                         {
                             -- lamp right
                             materials = {
-                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
-                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"asset/lamp_old.mtl",
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
                             transf = _lampRightTransf
                         },
                         {
@@ -232,8 +224,8 @@ function data()
                         },
                         {
                             -- station sign
-                            materials = { "lollo_freestyle_train_station/asset/era_b_station_signs.mtl", },
-                            mesh = 'lollo_freestyle_train_station/asset/era_b_single_station_name_lod0.msh',
+                            materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                            mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
                             transf = _stationSignTransf
                         },
                         {
@@ -296,12 +288,12 @@ function data()
                         alignment = 'CENTER',
                         alphaMode = 'BLEND',
                         childId = 'RootNode',
-                        color = { 255, 255, 255, },
+                        color = { 0, 0, 0, },
                         fitting = 'SCALE',
                         nLines = 2,
                         -- renderMode = "EMISSIVE",
-                        size = {3.0, 0.68},
-                        transf = {0.95, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0, -1.45, -1.65, 3.10, 1},
+                        size = {2.0, 0.5},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0, -1.0, -1.67, 3.18, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }
