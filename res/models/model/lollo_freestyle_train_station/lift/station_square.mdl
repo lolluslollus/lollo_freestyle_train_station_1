@@ -1,8 +1,6 @@
-local zedShift4groundRoof = 2.89 -- micro shift to avoid flickering
-local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.8, 0, 0, 0, 0, 0.07, 0, 0, 0.5, zedShift4groundRoof, 1}
--- local groundFloorPavingTransf = {1.024, 0, 0, 0, 0, 1.30, 0, 0, 0, 0, 1, 0, 0, 1.25, zedShift4GroundFloor, 1}
-local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -7.5, -4, 0, 1}
-local _lampRightTransf = {-0.71, -0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  7.5, -4, 0, 1}
+local groundRoofTransf = {0.3, 0, 0, 0,  0, 0.8, 0, 0,  0, 0, 0.3, 0,  0, 0.5, 2.0, 1}
+local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -6.75, -4, 0, 1}
+local _lampRightTransf = {-0.71, -0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  6.75, -4, 0, 1}
 local _streetPillarY = -3.8
 local _poleTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1.1, 0, 0, -3.6, 0, 1}
 local _clockTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.6, 4.55, 1}
@@ -159,48 +157,6 @@ function data()
                                     name = 'era_c_seconds_small_1',
                                     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
                                 },
-                                -- {
-                                --     animations = {
-                                --         hours = {
-                                --             params = {
-                                --                 id = 'station/rail/asset/era_c_small_clock/hours/era_c_hours_small_2.ani'
-                                --             },
-                                --             type = 'FILE_REF'
-                                --         }
-                                --     },
-                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
-                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_hours_small_2_lod0.msh',
-                                --     name = 'era_c_hours_small_2',
-                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
-                                -- },
-                                -- {
-                                --     animations = {
-                                --         minutes = {
-                                --             params = {
-                                --                 id = 'station/rail/asset/era_c_small_clock/minutes/era_c_minutes_small_2.ani'
-                                --             },
-                                --             type = 'FILE_REF'
-                                --         }
-                                --     },
-                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
-                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_minutes_small_2_lod0.msh',
-                                --     name = 'era_c_minutes_small_2',
-                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
-                                -- },
-                                -- {
-                                --     animations = {
-                                --         seconds = {
-                                --             params = {
-                                --                 id = 'station/rail/asset/era_c_small_clock/seconds/era_c_seconds_small_2.ani'
-                                --             },
-                                --             type = 'FILE_REF'
-                                --         }
-                                --     },
-                                --     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
-                                --     mesh = 'station/rail/asset/era_c_small_clock/era_c_seconds_small_2_lod0.msh',
-                                --     name = 'era_c_seconds_small_2',
-                                --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
-                                -- },
                                 {
                                     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                                     mesh = 'station/rail/asset/era_c_small_clock/era_c_trainstation_small_clock_lod0.msh',
@@ -435,62 +391,6 @@ function data()
                         speedLimit = 20,
                         transportModes = {'PERSON'}
                     },
-                    -- {
-                    --     -- into the next sibling left, criss-crossing to avoid duplicating edges
-                    --     linkable = true,
-                    --     nodes = {
-                    --         {
-                    --             {-4.29, -4.29, 0},
-                    --             {-1, 0, 0},
-                    --             2.4000000953674
-                    --         },
-                    --         {
-                    --             {-5, -4.2, 0},
-                    --             {-1, 0, 0},
-                    --             2.4000000953674
-                    --         },
-                    --         {
-                    --             {-5, -4.2, 0},
-                    --             {-1, 0, 0},
-                    --             2.4000000953674
-                    --         },
-                    --         {
-                    --             {-6, -4.29, 0},
-                    --             {-1, 0, 0},
-                    --             2.4000000953674
-                    --         }
-                    --     },
-                    --     speedLimit = 20,
-                    --     transportModes = {'PERSON'}
-                    -- },
-                    -- {
-                    --     -- into the next sibling right, criss-crossing to avoid duplicating edges
-                    --     linkable = true,
-                    --     nodes = {
-                    --         {
-                    --             {4.29, -4.29, 0},
-                    --             {1, 0, 0},
-                    --             2.4000000953674
-                    --         },
-                    --         {
-                    --             {5, -4.2, 0},
-                    --             {1, 0, 0},
-                    --             2.4000000953674
-                    --         },
-                    --         {
-                    --             {5, -4.2, 0},
-                    --             {1, 0, 0},
-                    --             2.4000000953674
-                    --         },
-                    --         {
-                    --             {6, -4.29, 0},
-                    --             {1, 0, 0},
-                    --             2.4000000953674
-                    --         }
-                    --     },
-                    --     speedLimit = 20,
-                    --     transportModes = {'PERSON'}
-                    -- }
                 },
                 runways = {},
                 terminals = {}

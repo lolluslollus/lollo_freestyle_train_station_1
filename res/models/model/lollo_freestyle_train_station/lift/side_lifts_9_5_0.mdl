@@ -149,34 +149,34 @@ function data()
                         speedLimit = 20,
                         transportModes = {'PERSON'}
                     },
-                    {
-                        -- sideways, to connect extra elements
-                        linkable = true,
-                        nodes = {
-                            {
-                                {-4.5, -2.0, -_constants.stairsAndRampHeight},
-                                {1, 0, 0},
-                                2.4
-                            },
-                            {
-                                {0, -2.0, -_constants.stairsAndRampHeight},
-                                {1, 0, 0},
-                                2.4
-                            },
-                            {
-                                {0, -2.0, -_constants.stairsAndRampHeight},
-                                {1, 0, 0},
-                                2.4
-                            },
-                            {
-                                {4.5, -2.0, -_constants.stairsAndRampHeight},
-                                {1, 0, 0},
-                                2.4
-                            },
-                        },
-                        speedLimit = 20,
-                        transportModes = {'PERSON'}
-                    },
+                    -- {
+                    --     -- sideways, to connect extra elements
+                    --     linkable = true,
+                    --     nodes = {
+                    --         {
+                    --             {-4.5, -2.0, -_constants.stairsAndRampHeight},
+                    --             {1, 0, 0},
+                    --             2.4
+                    --         },
+                    --         {
+                    --             {0, -2.0, -_constants.stairsAndRampHeight},
+                    --             {1, 0, 0},
+                    --             2.4
+                    --         },
+                    --         {
+                    --             {0, -2.0, -_constants.stairsAndRampHeight},
+                    --             {1, 0, 0},
+                    --             2.4
+                    --         },
+                    --         {
+                    --             {4.5, -2.0, -_constants.stairsAndRampHeight},
+                    --             {1, 0, 0},
+                    --             2.4
+                    --         },
+                    --     },
+                    --     speedLimit = 20,
+                    --     transportModes = {'PERSON'}
+                    -- },
                 },
                 runways = {},
                 terminals = {}
