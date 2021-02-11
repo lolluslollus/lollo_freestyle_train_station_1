@@ -3,13 +3,13 @@ function data()
 
     local height = 5
 
-    local ecsZoom4Doors = 1.349 -- 1.199
+    local ecsZoom4Doors = 1.222
     local zedZoom4Doors = 1.08
     local frontBelowTransf = {ecsZoom4Doors, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Doors, 0, 0, -2.565, -5, 1}
     local rearBelowTransf = {ecsZoom4Doors, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Doors, 0, 0, 1.965, -5, 1}
 
     local zedShift4groundPillar = -height + 3.2
-    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  4.5, 2.2, zedShift4groundPillar, 1}
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  0, 1.45, zedShift4groundPillar, 1}
 
     local groundLiftShaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.3, -5, 1}
     local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.15, 1}
