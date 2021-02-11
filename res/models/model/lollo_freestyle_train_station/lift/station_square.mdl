@@ -1,4 +1,4 @@
-local groundRoofTransf = {0.3, 0, 0, 0,  0, 0.8, 0, 0,  0, 0, 0.3, 0,  0, 0.5, 2.0, 1}
+local groundRoofTransf = {0.35, 0, 0, 0,  0, 0.8, 0, 0,  0, 0, 0.3, 0,  0, 0.5, 2.0, 1}
 local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -6.75, -4, 0, 1}
 local _lampRightTransf = {-0.71, -0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  6.75, -4, 0, 1}
 local _streetPillarY = -3.8
@@ -353,44 +353,44 @@ function data()
                         speedLimit = 20,
                         transportModes = {'PERSON'}
                     },
-                    {
-                        -- sideways, to connect extra elements
-                        linkable = true,
-                        nodes = {
-                            {
-                                {0, -1.79, 0},
-                                {-1, 0, 0},
-                                2.4000000953674
-                            },
-                            {
-                                -- {-6, -0.5, 0},
-                                {-4.5, -1.79, 0},
-                                {-1, 0, 0},
-                                2.4000000953674
-                            }
-                        },
-                        speedLimit = 20,
-                        transportModes = {'PERSON'}
-                    },
-                    {
-                        -- sideways, to connect extra elements
-                        linkable = true,
-                        nodes = {
-                            {
-                                {0, -1.79, 0},
-                                {1, 0, 0},
-                                2.4000000953674
-                            },
-                            {
-                                -- {6, -0.5, 0},
-                                {4.5, -1.79, 0},
-                                {1, 0, 0},
-                                2.4000000953674
-                            }
-                        },
-                        speedLimit = 20,
-                        transportModes = {'PERSON'}
-                    },
+                    -- {
+                    --     -- sideways, to connect extra elements
+                    --     linkable = true,
+                    --     nodes = {
+                    --         {
+                    --             {0, -1.79, 0},
+                    --             {-1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             -- {-6, -0.5, 0},
+                    --             {-4.5, -1.79, 0},
+                    --             {-1, 0, 0},
+                    --             2.4000000953674
+                    --         }
+                    --     },
+                    --     speedLimit = 20,
+                    --     transportModes = {'PERSON'}
+                    -- },
+                    -- {
+                    --     -- sideways, to connect extra elements
+                    --     linkable = true,
+                    --     nodes = {
+                    --         {
+                    --             {0, -1.79, 0},
+                    --             {1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             -- {6, -0.5, 0},
+                    --             {4.5, -1.79, 0},
+                    --             {1, 0, 0},
+                    --             2.4000000953674
+                    --         }
+                    --     },
+                    --     speedLimit = 20,
+                    --     transportModes = {'PERSON'}
+                    -- },
                 },
                 runways = {},
                 terminals = {}

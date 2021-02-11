@@ -194,44 +194,44 @@ function data()
                         speedLimit = 20,
                         transportModes = {'PERSON'}
                     },
-                    {
-                        -- sideways, to connect extra elements
-                        linkable = true,
-                        nodes = {
-                            {
-                                {0, -1.79, 0},
-                                {-1, 0, 0},
-                                2.4000000953674
-                            },
-                            {
-                                -- {-6, -0.5, 0},
-                                {-4.5, -1.79, 0},
-                                {-1, 0, 0},
-                                2.4000000953674
-                            }
-                        },
-                        speedLimit = 20,
-                        transportModes = {'PERSON'}
-                    },
-                    {
-                        -- sideways, to connect extra elements
-                        linkable = true,
-                        nodes = {
-                            {
-                                {0, -1.79, 0},
-                                {1, 0, 0},
-                                2.4000000953674
-                            },
-                            {
-                                -- {6, -0.5, 0},
-                                {4.5, -1.79, 0},
-                                {1, 0, 0},
-                                2.4000000953674
-                            }
-                        },
-                        speedLimit = 20,
-                        transportModes = {'PERSON'}
-                    },
+                    -- {
+                    --     -- sideways, to connect extra elements
+                    --     linkable = true,
+                    --     nodes = {
+                    --         {
+                    --             {0, -1.79, 0},
+                    --             {-1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             -- {-6, -0.5, 0},
+                    --             {-4.5, -1.79, 0},
+                    --             {-1, 0, 0},
+                    --             2.4000000953674
+                    --         }
+                    --     },
+                    --     speedLimit = 20,
+                    --     transportModes = {'PERSON'}
+                    -- },
+                    -- {
+                    --     -- sideways, to connect extra elements
+                    --     linkable = true,
+                    --     nodes = {
+                    --         {
+                    --             {0, -1.79, 0},
+                    --             {1, 0, 0},
+                    --             2.4000000953674
+                    --         },
+                    --         {
+                    --             -- {6, -0.5, 0},
+                    --             {4.5, -1.79, 0},
+                    --             {1, 0, 0},
+                    --             2.4000000953674
+                    --         }
+                    --     },
+                    --     speedLimit = 20,
+                    --     transportModes = {'PERSON'}
+                    -- },
                 },
                 runways = {},
                 terminals = {}
