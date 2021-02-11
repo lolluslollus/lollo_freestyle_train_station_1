@@ -495,19 +495,6 @@ function data()
 													transf = lane2AreaTransf
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation0MSlotId)
-
-												local ssOuterPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift + 9.5)
-												table.insert(result.slots, {
-													-- height = 0,
-													id = result.mangleId(t, i, _constants.idBases.stationSquareOuterSlotId),
-													shape = 1,
-													spacing = {-1, 4, 4, 4},
-													transf = transfUtilsUG.mul(
-														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5 + _laneZ + _constants.platformSideBitsZ - _constants.stairsAndRampHeight, 1 }
-													),
-													type = _constants.passengerStationSquareModuleType,
-												})
 											end
 										end
 										if not(_getOccupiedInfo4FlatAreas(t, i))
@@ -540,19 +527,6 @@ function data()
 													transf = lane2AreaTransf
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation5MSlotId)
-
-												local ssOuterPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift + 9.5)
-												table.insert(result.slots, {
-													-- height = 0,
-													id = result.mangleId(t, i, _constants.idBases.stationSquareOuterSlotId),
-													shape = 1,
-													spacing = {-1, 4, 4, 4},
-													transf = transfUtilsUG.mul(
-														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-													),
-													type = _constants.passengerStationSquareModuleType,
-												})
 											end
 										end
 									end
@@ -595,31 +569,6 @@ function data()
 													)
 												}
 												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.sideLiftSlotId)
-
-												local ssOuterPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift + 9.5)
-												table.insert(result.slots, {
-													-- height = 0,
-													id = result.mangleId(t, i, _constants.idBases.stationSquareOuterSlotId),
-													shape = 1,
-													spacing = {-1, 4, 4, 4},
-													transf = transfUtilsUG.mul(
-														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssOuterPosTanX2),
-														{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-													),
-													type = _constants.passengerStationSquareModuleType,
-												})
-												local ssInnerPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift - 1.5)
-												table.insert(result.slots, {
-													-- height = 0,
-													id = result.mangleId(t, i, _constants.idBases.stationSquareInnerSlotId),
-													shape = 1,
-													spacing = {-1, 4, 4, 4},
-													transf = transfUtilsUG.mul(
-														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(ssInnerPosTanX2),
-														{ -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-													),
-													type = _constants.passengerStationSquareModuleType,
-												})
 											end
 										end
 										if i < #params.terminals[t].centrePlatformsRelative
@@ -641,32 +590,6 @@ function data()
 												transf = myTransf,
 												type = _constants.passengerPlatformLiftModuleType,
 											})
-											if params.modules[myId] ~= nil then
-												local stationSquareOuterPosTanX2 = transfUtils.getParallelSideways(cpl.posTanX2, 3.4)
-												table.insert(result.slots, {
-													-- height = 0,
-													id = result.mangleId(t, i, _constants.idBases.stationSquareOuterSlotId),
-													shape = 1,
-													spacing = {-1, 4, 4, 4},
-													transf = transfUtilsUG.mul(
-														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(stationSquareOuterPosTanX2),
-														{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-													),
-													type = _constants.passengerStationSquareModuleType,
-												})
-												local stationSquareInnerPosTanX2 = transfUtils.getParallelSideways(cpl.posTanX2, -2.9)
-												table.insert(result.slots, {
-													-- height = 0,
-													id = result.mangleId(t, i, _constants.idBases.stationSquareInnerSlotId),
-													shape = 1,
-													spacing = {-1, 4, 4, 4},
-													transf = transfUtilsUG.mul(
-														moduleHelpers.getPlatformObjectTransf_AlwaysVertical(stationSquareInnerPosTanX2),
-														{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-													),
-													type = _constants.passengerStationSquareModuleType,
-												})
-											end
 										end
 									end
 								end
@@ -675,7 +598,7 @@ function data()
 					end
 				end
 				_addStreetAccess()
-
+-- LOLLO TODO lifts connect to the top of other lifts on other terminals, even if they are far away: this is wrong
 				local function _addLanesAcross()
 					if isCargoTerminal then return end
 

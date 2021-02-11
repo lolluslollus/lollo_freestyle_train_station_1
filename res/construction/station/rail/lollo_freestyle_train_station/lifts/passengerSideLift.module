@@ -62,6 +62,27 @@ return {
 				)
 		}
 
+		table.insert(result.slots, {
+			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.stationSquareOuterSlotId),
+			shape = 1,
+			spacing = {-1, 4, 4, 4},
+			transf = transfUtilsUG.mul(
+				buildingTransf,
+				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, 0, 1 }
+			),
+			type = _constants.passengerStationSquareModuleType,
+		})
+		table.insert(result.slots, {
+			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.stationSquareInnerSlotId),
+			shape = 1,
+			spacing = {-1, 4, 4, 4},
+			transf = transfUtilsUG.mul(
+				buildingTransf,
+				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0.75, 0, 1 }
+			),
+			type = _constants.passengerStationSquareModuleType,
+		})
+
 		-- add some deco
 		local _clockY = -4.3
 		local clockModelId = era == moduleHelpers.eras.era_b.prefix and 'station/rail/asset/era_a_big_clock.mdl' or 'station/rail/asset/era_c_big_clock.mdl'

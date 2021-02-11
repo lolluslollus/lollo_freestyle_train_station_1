@@ -77,6 +77,17 @@ return {
 			tag = tag
 		}
 
+		table.insert(result.slots, {
+			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.stationSquareOuterSlotId),
+			shape = 1,
+			spacing = {-1, 4, 4, 4},
+			transf = transfUtilsUG.mul(
+				buildingTransf,
+				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, - 5, 1 }
+			),
+			type = _constants.passengerStationSquareModuleType,
+		})
+
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
 			{-1, -6.2, -5.0, 1},
 			{-1, 6.2, -5.0, 1},

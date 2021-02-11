@@ -36,6 +36,7 @@ return {
 
 		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
+		print('buildingHeight =', buildingHeight)
 
 		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 		local modelId = nil

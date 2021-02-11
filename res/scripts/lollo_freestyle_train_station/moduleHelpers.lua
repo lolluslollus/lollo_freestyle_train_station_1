@@ -543,7 +543,7 @@ helpers.edges = {
 
 
 -- local _bridgeHeights = { 5, 10, 15, 20, 25, 30, 35, 40 } -- too little, stations get buried
-local _bridgeHeights = { 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
+local _bridgeHeights = { 2.5, 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
 -- local _bridgeHeights = { 6.5, 11.5, 16.5, 21.5, 26.5, 31.5, 36.5, 41.5 }
 helpers.lifts = {
     tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
@@ -552,24 +552,23 @@ helpers.lifts = {
 
         local buildingHeight = 0
         if bridgeHeight < _bridgeHeights[1] then
-            buildingHeight = 5
+            buildingHeight = 0
         elseif bridgeHeight < _bridgeHeights[2] then
-            buildingHeight = 10
+            buildingHeight = 5
         elseif bridgeHeight < _bridgeHeights[3] then
-            buildingHeight = 15
+            buildingHeight = 10
         elseif bridgeHeight < _bridgeHeights[4] then
-            buildingHeight = 20
+            buildingHeight = 15
         elseif bridgeHeight < _bridgeHeights[5] then
-            buildingHeight = 25
+            buildingHeight = 20
         elseif bridgeHeight < _bridgeHeights[6] then
-            buildingHeight = 30
+            buildingHeight = 25
         elseif bridgeHeight < _bridgeHeights[7] then
-            buildingHeight = 35
+            buildingHeight = 30
         elseif bridgeHeight < _bridgeHeights[8] then
-            buildingHeight = 40
+            buildingHeight = 35
         else
             buildingHeight = 40
-            -- return false
         end
 
         return buildingHeight
@@ -583,24 +582,23 @@ helpers.lifts = {
         if eraPrefix == helpers.eras.era_b.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_b_' end
 
         if bridgeHeight < _bridgeHeights[1] then
-            buildingModelId = buildingModelId .. 'side_lifts_9_5_5.mdl'
+            buildingModelId = buildingModelId .. 'side_lifts_9_5_0.mdl'
         elseif bridgeHeight < _bridgeHeights[2] then
-            buildingModelId = buildingModelId .. 'side_lifts_9_5_10.mdl'
+            buildingModelId = buildingModelId .. 'side_lifts_9_5_5.mdl'
         elseif bridgeHeight < _bridgeHeights[3] then
-            buildingModelId = buildingModelId .. 'side_lifts_9_5_15.mdl'
+            buildingModelId = buildingModelId .. 'side_lifts_9_5_10.mdl'
         elseif bridgeHeight < _bridgeHeights[4] then
-            buildingModelId = buildingModelId .. 'side_lifts_9_5_20.mdl'
+            buildingModelId = buildingModelId .. 'side_lifts_9_5_15.mdl'
         elseif bridgeHeight < _bridgeHeights[5] then
-            buildingModelId = buildingModelId .. 'side_lifts_9_5_25.mdl'
+            buildingModelId = buildingModelId .. 'side_lifts_9_5_20.mdl'
         elseif bridgeHeight < _bridgeHeights[6] then
-            buildingModelId = buildingModelId .. 'side_lifts_9_5_30.mdl'
+            buildingModelId = buildingModelId .. 'side_lifts_9_5_25.mdl'
         elseif bridgeHeight < _bridgeHeights[7] then
-            buildingModelId = buildingModelId .. 'side_lifts_9_5_35.mdl'
+            buildingModelId = buildingModelId .. 'side_lifts_9_5_30.mdl'
         elseif bridgeHeight < _bridgeHeights[8] then
-            buildingModelId = buildingModelId .. 'side_lifts_9_5_40.mdl'
+            buildingModelId = buildingModelId .. 'side_lifts_9_5_35.mdl'
         else
             buildingModelId = buildingModelId .. 'side_lifts_9_5_40.mdl'
-            -- return false
         end
 
         return buildingModelId
@@ -649,24 +647,23 @@ helpers.lifts = {
         if eraPrefix == helpers.eras.era_b.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_b_' end
 
         if bridgeHeight < _bridgeHeights[1] then
-            buildingModelId = buildingModelId .. 'platform_lifts_9_5_5.mdl'
+            buildingModelId = buildingModelId .. 'platform_lifts_9_5_5.mdl' -- non linearity
         elseif bridgeHeight < _bridgeHeights[2] then
-            buildingModelId = buildingModelId .. 'platform_lifts_9_5_10.mdl'
+            buildingModelId = buildingModelId .. 'platform_lifts_9_5_5.mdl'
         elseif bridgeHeight < _bridgeHeights[3] then
-            buildingModelId = buildingModelId .. 'platform_lifts_9_5_15.mdl'
+            buildingModelId = buildingModelId .. 'platform_lifts_9_5_10.mdl'
         elseif bridgeHeight < _bridgeHeights[4] then
-            buildingModelId = buildingModelId .. 'platform_lifts_9_5_20.mdl'
+            buildingModelId = buildingModelId .. 'platform_lifts_9_5_15.mdl'
         elseif bridgeHeight < _bridgeHeights[5] then
-            buildingModelId = buildingModelId .. 'platform_lifts_9_5_25.mdl'
+            buildingModelId = buildingModelId .. 'platform_lifts_9_5_20.mdl'
         elseif bridgeHeight < _bridgeHeights[6] then
-            buildingModelId = buildingModelId .. 'platform_lifts_9_5_30.mdl'
+            buildingModelId = buildingModelId .. 'platform_lifts_9_5_25.mdl'
         elseif bridgeHeight < _bridgeHeights[7] then
-            buildingModelId = buildingModelId .. 'platform_lifts_9_5_35.mdl'
+            buildingModelId = buildingModelId .. 'platform_lifts_9_5_30.mdl'
         elseif bridgeHeight < _bridgeHeights[8] then
-            buildingModelId = buildingModelId .. 'platform_lifts_9_5_40.mdl'
+            buildingModelId = buildingModelId .. 'platform_lifts_9_5_35.mdl'
         else
             buildingModelId = buildingModelId .. 'platform_lifts_9_5_40.mdl'
-            -- return false
         end
 
         return buildingModelId
