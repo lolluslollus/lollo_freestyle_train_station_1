@@ -7,7 +7,7 @@ return function(height, era)
         era_b = {
             shaft = 'lollo_freestyle_train_station/shaft.mtl',
             stationSign = "lollo_freestyle_train_station/asset/era_b_station_signs.mtl",
-            tiles = 'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
+            tiles = 'lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl',
             wallGrey = 'lollo_freestyle_train_station/wall_marble_2.mtl',
             wallGreyDeco = 'lollo_freestyle_train_station/wall_marble_2.mtl',
             wallWhite = 'lollo_freestyle_train_station/wall_marble_1.mtl',
@@ -16,7 +16,7 @@ return function(height, era)
         era_c = {
             shaft = 'lollo_freestyle_train_station/shaft.mtl',
             stationSign = 'station/rail/era_c/era_c_trainstation_assets.mtl',
-            tiles = 'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+            tiles = 'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
             wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
             wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
             wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
