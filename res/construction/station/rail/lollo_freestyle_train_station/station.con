@@ -598,7 +598,7 @@ function data()
 					end
 				end
 				_addStreetAccess()
--- LOLLO TODO lifts connect to the top of other lifts on other terminals, even if they are far away: this is wrong
+
 				local function _addLanesAcross()
 					if isCargoTerminal then return end
 
@@ -1070,20 +1070,22 @@ function data()
 					-- There can be multiple links if they are short enough
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
-					local function _linkAcross(segments)
+					local function _linkAcross(segments, maxDistance)
 						local maxT = #params.terminals
 						for t = 1, maxT do
 							if segments[t] ~= nil then
 								for tt = t + 1, maxT do
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
-											result.models[#result.models+1] = {
-												id = _constants.passengerLaneModelId,
-												transf = transfUtils.get1MLaneTransf(
-													value.pos2Link1,
-													value.pos2Link2
-												)
-											}
+											if not(maxDistance) or value.distance <= maxDistance then
+												result.models[#result.models+1] = {
+													id = _constants.passengerLaneModelId,
+													transf = transfUtils.get1MLaneTransf(
+														value.pos2Link1,
+														value.pos2Link2
+													)
+												}
+											end
 										end
 									end
 								end
@@ -1176,7 +1178,9 @@ function data()
                     -- print('shortSegmentsOnGround =') debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
 					-- print('shortSegmentsOnBridge =') debugPrint(shortSegmentsOnBridge)
-					_linkAcross(shortSegmentsOnBridge)
+					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
+					-- we try to avoid this with maxDistance
+					_linkAcross(shortSegmentsOnBridge, 40.0)
 					-- print('shortSegmentsTunnelTops2Tops =') debugPrint(shortSegmentsTunnelTops2Tops)
 					_linkAcross(shortSegmentsTunnelTops2Tops)
 					-- print('shortSegmentsTunnelTops2Surface =') debugPrint(shortSegmentsTunnelTops2Surface)
