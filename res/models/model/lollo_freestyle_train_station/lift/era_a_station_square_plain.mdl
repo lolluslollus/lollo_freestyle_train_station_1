@@ -1,10 +1,9 @@
-local _lampLeftTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -7.5, -4, 0, 1}
-local _lampRightTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, -4, 0, 1}
-local _streetPillarY = -3.8
-local _idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
-local _stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -4.167, -3, 0, 1}
+local _lampRightTransf = {0.71, 0.71, 0, 0,  -0.71, 0.71, 0, 0,  0, 0, 1, 0,  4.167, -3, 0, 1}
+local _streetPillarY = -3.0
 
 function data()
+    -- local _constants = require('lollo_freestyle_train_station.constants')
     return {
         boundingInfo = {
             -- bbMax = {4.4, 1.0, 5.0}, -- this would be fine without tunnel awareness and lamps
@@ -46,47 +45,35 @@ function data()
                                     transf = _lampRightTransf
                                 },
                                 {
-                                    -- street pillar 1
-                                    materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                                    mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -6.5, _streetPillarY, 0, 1}
-                                },
-                                {
                                     -- street pillar 2
                                     materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                                     mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.25, _streetPillarY, 0, 1}
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.5, _streetPillarY, 0, 1}
                                 },
                                 {
                                     -- street pillar 3
                                     materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                                     mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2, _streetPillarY, 0, 1}
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.83333, _streetPillarY, 0, 1}
                                 },
                                 {
                                     -- street pillar 4
                                     materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                                     mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, _streetPillarY, 0, 1}
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.83333, _streetPillarY, 0, 1}
                                 },
                                 {
                                     -- street pillar 5
                                     materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                                     mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4.25, _streetPillarY, 0, 1}
-                                },
-                                {
-                                    -- street pillar 6
-                                    materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                                    mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6.5, _streetPillarY, 0, 1}
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, _streetPillarY, 0, 1}
                                 },
                             },
-                            transf = _stationMainTransf
+                            -- transf = _constants.idTransf
                         },
                     },
                     name = 'RootNode',
-                    transf = _idTransf
+                    -- transf = _constants.idTransf
                 },
                 static = false,
                 visibleFrom = 0,
@@ -116,11 +103,11 @@ function data()
                                     transf = _lampRightTransf
                                 },
                             },
-                            transf = _stationMainTransf
+                            -- transf = _constants.idTransf
                         },
                     },
                     name = 'RootNode',
-                    transf = _idTransf
+                    -- transf = _constants.idTransf
                 },
                 static = false,
                 visibleFrom = 100,

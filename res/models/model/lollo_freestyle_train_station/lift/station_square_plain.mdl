@@ -1,10 +1,10 @@
-local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -7.5, -4, 0, 1}
-local _lampRightTransf = {-0.71, -0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  7.5, -4, 0, 1}
+local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -6.75, -4, 0, 1}
+local _lampRightTransf = {-0.71, -0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  6.75, -4, 0, 1}
 local _streetPillarY = -3.8
-local _idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 local _stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
 function data()
+    -- local _constants = require('lollo_freestyle_train_station.constants')
     return {
         boundingInfo = {
             -- bbMax = {4.4, 1.0, 5.0}, -- this would be fine without tunnel awareness and lamps
@@ -46,13 +46,6 @@ function data()
                                     transf = _lampRightTransf
                                 },
                                 {
-                                    -- street pillar 1
-                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
-                                    mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
-                                    name = 'era_a_street_pillar',
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -6.5, _streetPillarY, 0, 1}
-                                },
-                                {
                                     -- street pillar 2
                                     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                                     mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
@@ -80,20 +73,13 @@ function data()
                                     name = 'era_a_street_pillar',
                                     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4.25, _streetPillarY, 0, 1}
                                 },
-                                {
-                                    -- street pillar 6
-                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
-                                    mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
-                                    name = 'era_a_street_pillar',
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6.5, _streetPillarY, 0, 1}
-                                },
                             },
                             name = 'station_square_1_main_grp',
                             transf = _stationMainTransf
                         },
                     },
                     name = 'RootNode',
-                    transf = _idTransf
+                    -- transf = _constants.idTransf
                 },
                 static = false,
                 visibleFrom = 0,
@@ -128,7 +114,7 @@ function data()
                         },
                     },
                     name = 'RootNode',
-                    transf = _idTransf
+                    -- transf = _constants.idTransf
                 },
                 static = false,
                 visibleFrom = 100,
@@ -137,7 +123,7 @@ function data()
             {
                 node = {
                     name = 'RootNode',
-                    transf = _idTransf
+                    -- transf = _constants.idTransf
                 },
                 static = false,
                 visibleFrom = 400,
