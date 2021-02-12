@@ -21,13 +21,13 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("FlatPassengerStationMidName"),
-		description = _("FlatPassengerStationMidDesc"),
-		icon = "ui/lollo_freestyle_train_station/flatPassengerStationMid.tga"
+		name = _("FlatPassengerStationLargeName"),
+		description = _("FlatPassengerStationLargeDesc"),
+		icon = "ui/lollo_freestyle_train_station/flatPassengerStationLarge.tga"
 	},
 	metadata = { },
 	order = {
-		value = 24,
+		value = 25,
 	},
 	type = _constants.flatPassengerStation0MModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -45,9 +45,9 @@ return {
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 
 		local modelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_9x8.mdl'
-		elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_9x8.mdl'
-		else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_9x8.mdl'
+		if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_24x8.mdl'
+		elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_24x8.mdl'
+		else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_24x8.mdl'
 		end
 		result.models[#result.models + 1] = {
 			id = modelId,
@@ -69,10 +69,10 @@ return {
 		})
 
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-1, -6.2, -_constants.stairsAndRampHeight, 1},
-			{-1, 6.2, -_constants.stairsAndRampHeight, 1},
-			{8.5, 6.2, -_constants.stairsAndRampHeight, 1},
-			{8.5, -6.2, -_constants.stairsAndRampHeight, 1},
+			{-1, -12.2, -_constants.stairsAndRampHeight, 1},
+			{-1, 12.2, -_constants.stairsAndRampHeight, 1},
+			{8.5, 12.2, -_constants.stairsAndRampHeight, 1},
+			{8.5, -12.2, -_constants.stairsAndRampHeight, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		table.insert(
@@ -105,7 +105,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_9x8.mdl',
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_24x8.mdl',
 				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
 			},
 		}

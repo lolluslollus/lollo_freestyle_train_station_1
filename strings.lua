@@ -90,6 +90,8 @@ function data()
 			["FlatPassengerStationSmallDesc"] = "Small ornate passenger station",
 			["FlatPassengerStationMidName"] = "Ornate passenger station",
 			["FlatPassengerStationMidDesc"] = "Ornate passenger station",
+			["FlatPassengerStationLargeName"] = "Ornate passenger station",
+			["FlatPassengerStationLargeDesc"] = "Ornate passenger station",
 			["FlatPassengerStation5MName"] = "Small passenger station, 5 m high",
 			["FlatPassengerStation5MDesc"] = "Small passenger station, to access a platform a bit higher than the road. Repaint its ground with <shift> and a paint tool.",
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
