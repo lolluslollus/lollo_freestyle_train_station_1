@@ -26,7 +26,7 @@ return {
 		map_normal = {
 			-- fileName = "models/station/rail/era_a/trainstation_1850_borders_001_normal.dds",
 			fileName = "lollo_freestyle_train_station/square_cobbles_large_normal.dds",
-			-- redGreen = true,
+			redGreen = true,
 			type = "TWOD",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
