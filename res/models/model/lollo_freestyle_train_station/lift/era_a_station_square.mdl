@@ -1,9 +1,9 @@
 local _groundRoofTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 local _streetPillarY = -3.0
 local _clockTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.75, 4.28, 1}
-local _stationSignTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.62, 3.41, 1}
-local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -4.0, -3, 0, 1}
-local _lampRightTransf = {0.71, 0.71, 0, 0,  -0.71, 0.71, 0, 0,  0, 0, 1, 0,  4.0, -3, 0, 1}
+local _stationSignTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -1.8, 3.41, 1}
+local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -4.167, -3, 0, 1}
+local _lampRightTransf = {0.71, 0.71, 0, 0,  -0.71, 0.71, 0, 0,  0, 0, 1, 0,  4.167, -3, 0, 1}
 
 function data()
     local _constants = require('lollo_freestyle_train_station.constants')
@@ -30,8 +30,10 @@ function data()
                         {
                             -- entrance roof
                             materials = {
-                                'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
+                                'lollo_freestyle_train_station/metal/rough_copper.mtl',
+                                'lollo_freestyle_train_station/legacy_trainstation_small_old_alpha1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
                             transf = _groundRoofTransf
@@ -55,40 +57,28 @@ function data()
                             transf = _lampRightTransf
                         },
                         {
-                            -- street pillar 1
-                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.5, _streetPillarY, 0, 1}
-                        },
-                        {
                             -- street pillar 2
                             materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.7, _streetPillarY, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.5, _streetPillarY, 0, 1}
                         },
                         {
                             -- street pillar 3
                             materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.9, _streetPillarY, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.83333, _streetPillarY, 0, 1}
                         },
                         {
                             -- street pillar 4
                             materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.9, _streetPillarY, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.83333, _streetPillarY, 0, 1}
                         },
                         {
                             -- street pillar 5
                             materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.7, _streetPillarY, 0, 1}
-                        },
-                        {
-                            -- street pillar 6
-                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4.5, _streetPillarY, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, _streetPillarY, 0, 1}
                         },
                         {
                             -- station sign
@@ -162,8 +152,10 @@ function data()
                         {
                             -- entrance roof
                             materials = {
-                                'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
+                                'lollo_freestyle_train_station/metal/rough_copper.mtl',
+                                'lollo_freestyle_train_station/legacy_trainstation_small_old_alpha1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
                             transf = _groundRoofTransf
@@ -187,40 +179,28 @@ function data()
                             transf = _lampRightTransf
                         },
                         {
-                            -- street pillar 1
-                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.5, _streetPillarY, 0, 1}
-                        },
-                        {
                             -- street pillar 2
                             materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.7, _streetPillarY, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.5, _streetPillarY, 0, 1}
                         },
                         {
                             -- street pillar 3
                             materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.9, _streetPillarY, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.83333, _streetPillarY, 0, 1}
                         },
                         {
                             -- street pillar 4
                             materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.9, _streetPillarY, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.83333, _streetPillarY, 0, 1}
                         },
                         {
                             -- street pillar 5
                             materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.7, _streetPillarY, 0, 1}
-                        },
-                        {
-                            -- street pillar 6
-                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4.5, _streetPillarY, 0, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, _streetPillarY, 0, 1}
                         },
                         {
                             -- station sign
@@ -266,8 +246,10 @@ function data()
                         {
                             -- entrance roof
                             materials = {
-                                'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
+                                'lollo_freestyle_train_station/metal/rough_copper.mtl',
+                                'lollo_freestyle_train_station/legacy_trainstation_small_old_alpha1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
                             transf = _groundRoofTransf
@@ -293,7 +275,7 @@ function data()
                         nLines = 2,
                         -- renderMode = "EMISSIVE",
                         size = {2.0, 0.5},
-                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0, -1.0, -1.67, 3.18, 1},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0, -1.0, -1.85, 3.18, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }

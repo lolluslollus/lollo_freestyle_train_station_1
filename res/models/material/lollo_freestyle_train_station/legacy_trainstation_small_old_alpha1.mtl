@@ -14,7 +14,8 @@ return {
 			fadeOutStartDist = 10000,
 		},
 		map_albedo_opacity = {
-			fileName = "models/station/train/trainstation_small_old_alpha1.tga",
+			-- fileName = "models/station/train/trainstation_small_old_alpha1.tga",
+			fileName = 'lollo_freestyle_train_station/legacy_trainstation_small_old_alpha1.tga',
 			type = "TWOD",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
@@ -29,7 +30,7 @@ return {
 		},
 		two_sided = {
 			flipNormal = false,
-			twoSided = false,
+			twoSided = true,
 		},
 	},
 	type = "PHYS_TRANSPARENT",
