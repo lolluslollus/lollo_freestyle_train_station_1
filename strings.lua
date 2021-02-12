@@ -44,7 +44,7 @@ function data()
 				- Upgrading tracks works meh.
 				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
 			]],
-			["NAME"] = "Freestyle train station EXPERIMENTAL",
+			["NAME"] = "Freestyle train station",
 
 			["FlatCargoRampDownSmoothName"] = "Smooth cargo ramp down",
 			["FlatCargoRampDownSmoothDesc"] = "Smooth cargo ramp leading outside and down, 2 m. Adjust its height with <m> and <n>.",
