@@ -41,7 +41,6 @@ function data()
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
 				- Station naming does not work properly.
-				- For now, it's only modern-ish era.
 				- Upgrading tracks works meh.
 				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
 			]],
