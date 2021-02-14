@@ -1589,4 +1589,26 @@ centrePlatformIndex_Nearest2_TrackEdgeListMid, midTrackEdge)
     return false
 end
 
+helpers.getPosTanX2ListReversed = function(posTanX2List)
+    if type(posTanX2List) ~= 'table' then return posTanX2List end
+
+    local result = {}
+    for i = #posTanX2List, 1, -1 do
+        result[#result+1] = posTanX2List[i]
+    end
+
+    for i = 1, #posTanX2List do
+        local swap = result[i].posTanX2[1]
+        result[i].posTanX2[1] = result[i].posTanX2[2]
+        result[i].posTanX2[2] = swap
+        for ii = 1, 2 do
+            for iii = 1, 3 do
+                result[i].posTanX2[ii][2][iii] = -result[i].posTanX2[ii][2][iii]
+            end
+        end
+    end
+
+    return result
+end
+
 return helpers
