@@ -38,12 +38,12 @@ return {
 		moduleHelpers.edges.addEdges(result, tag, params, nTerminal)
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
 
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
-			slotId = slotId,
-			transf = slotTransf,
-			tag = tag
-		}
+		-- result.models[#result.models + 1] = {
+		-- 	id = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = tag
+		-- }
 		-- result.models[#result.models + 1] = {
 		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
 		-- 	slotId = slotId,

@@ -11,7 +11,7 @@ function data()
 
 return {
 	availability = {
-		yearFrom = moduleHelpers.eras.era_b.startYear,
+		yearFrom = 0,
 		yearTo = 0
 	},
 	category = {
@@ -45,10 +45,12 @@ return {
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 
 		local stationModelId = nil
-		if era == moduleHelpers.eras.era_c.prefix then
-			stationModelId = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl'
-		else
+		if era == moduleHelpers.eras.era_a.prefix then
+			stationModelId = 'lollo_freestyle_train_station/lift/era_a_side_lifts_9_5_5.mdl'
+		elseif era == moduleHelpers.eras.era_b.prefix then
 			stationModelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_9_5_5.mdl'
+		else
+			stationModelId = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl'
 		end
 		result.models[#result.models + 1] = {
 			id = stationModelId,
@@ -58,24 +60,26 @@ return {
 		}
 
 		-- add some deco
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
-			slotId = slotId,
-			transf = transfUtilsUG.mul(
-				buildingTransf,
-				{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0, 1 }
-			),
-			tag = tag
-		}
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/partenze.mdl',
-			slotId = slotId,
-			transf = transfUtilsUG.mul(
-				buildingTransf,
-				{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0, 1 }
-			),
-			tag = tag
-		}
+		if era ~= moduleHelpers.eras.era_a.prefix then
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(
+					buildingTransf,
+					{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0, 1 }
+				),
+				tag = tag
+			}
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/asset/partenze.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(
+					buildingTransf,
+					{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0, 1 }
+				),
+				tag = tag
+			}
+		end
 
 		table.insert(result.slots, {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.stationSquareOuterSlotId),

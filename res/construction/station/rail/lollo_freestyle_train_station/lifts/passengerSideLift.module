@@ -11,7 +11,7 @@ function data()
 
 return {
 	availability = {
-		yearFrom = moduleHelpers.eras.era_b.startYear,
+		yearFrom = 0,
 		yearTo = 0
 	},
 	category = {
@@ -84,8 +84,10 @@ return {
 		})
 
 		-- add some deco
-		local _clockY = -4.3
-		local clockModelId = era == moduleHelpers.eras.era_b.prefix and 'station/rail/asset/era_a_big_clock.mdl' or 'station/rail/asset/era_c_big_clock.mdl'
+		local _clockY = era == moduleHelpers.eras.era_a.prefix and -3.8 or -4.3
+		local clockModelId = era == moduleHelpers.eras.era_c.prefix
+			and 'station/rail/asset/era_c_big_clock.mdl'
+			or 'station/rail/asset/era_a_big_clock.mdl'
 		if buildingHeight == 10 then
 			result.models[#result.models + 1] = {
 				id = clockModelId,
@@ -108,7 +110,7 @@ return {
 			}
 		end
 
-		if era ~= moduleHelpers.eras.era_b.prefix then
+		if era == moduleHelpers.eras.era_c.prefix then
 			local _tableY = 0.8
 			if buildingHeight == 10 then
 				result.models[#result.models + 1] = {
@@ -133,7 +135,7 @@ return {
 			end
 		end
 
-		if buildingHeight > 0 then
+		if era ~= moduleHelpers.eras.era_a.prefix and buildingHeight > 0 then
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 				slotId = slotId,
