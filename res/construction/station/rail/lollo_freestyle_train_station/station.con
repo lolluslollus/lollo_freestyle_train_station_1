@@ -40,7 +40,7 @@ end
 -- As soon as a new subway is built, its subways[] will be updated.
 -- So, when querying params.subways[slotId], make sure that params.modules[slotId] also exists.
 
--- LOLLO TODO try building a station next to a platform and onto a track
+-- LOLLO NOTE try building a station next to a platform and onto a track
 -- belonging to another terminal: you can. You shouldn't tho. Adding colliders into the modules does not help.
 -- The proper way would be to check the neighbours before assigning a slot,
 -- but this can be expensive and complicated in a free layout such as this.
@@ -932,7 +932,7 @@ function data()
 					return results
 				end
 
-				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, tolerancePercent4ShortDistances)
+				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, tolerancePercent4ShortDistances, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
 					local allSegments = {}
@@ -992,8 +992,10 @@ function data()
 					-- ignore the latter.
 					-- It would be finer if we run it on the short segments and check the position 1 and 2, but too expensive.
 					-- remove long sides of connection triangles
-					logger.print('allSegments before triangles=') logger.debugPrint(allSegments)
-					logger.print('minDistanceSegments before triangles=') logger.debugPrint(minDistanceSegments)
+					if isOutputLog then
+						logger.print('allSegments before triangles=') logger.debugPrint(allSegments)
+						logger.print('minDistanceSegments before triangles=') logger.debugPrint(minDistanceSegments)
+					end
 					for t = 1, maxT do
 						for tt = t + 1, maxT do
 							for ttt = tt + 1, maxT do
@@ -1017,7 +1019,9 @@ function data()
 							end
 						end
 					end
-					logger.print('minDistanceSegments after triangles=') logger.debugPrint(minDistanceSegments)
+					if isOutputLog then
+						logger.print('minDistanceSegments after triangles=') logger.debugPrint(minDistanceSegments)
+					end
                     local shortSegments = {}
                     for t = 1, maxT do
                         for tt = t + 1, maxT do

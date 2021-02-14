@@ -358,6 +358,7 @@ local _actions = {
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
             seed = oldCon.params.seed + 1,
+            subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
             terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
         }
 
@@ -374,11 +375,14 @@ local _actions = {
         end
         newParams.modules = newModules
 
+        -- write this away before removing it
         local removedTerminalEdgeLists = {
             platformEdgeLists = newParams.terminals[nTerminalToRemove].platformEdgeLists,
             trackEdgeLists = newParams.terminals[nTerminalToRemove].trackEdgeLists,
         }
         table.remove(newParams.terminals, nTerminalToRemove)
+        -- get rid of subways if bulldozing the last terminal
+        if #newParams.terminals < 1 then newParams.subways = {} end
 
         newCon.params = newParams
         newCon.transf = oldCon.transf
