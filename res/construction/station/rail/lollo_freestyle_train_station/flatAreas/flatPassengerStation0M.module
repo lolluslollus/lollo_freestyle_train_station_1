@@ -11,7 +11,7 @@ function data()
 
 return {
 	availability = {
-		yearFrom = moduleHelpers.eras.era_b.startYear,
+		yearFrom = 0,
 		yearTo = 0
 	},
 	category = {
@@ -45,10 +45,12 @@ return {
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 
 		local stationModelId = nil
-		if era == moduleHelpers.eras.era_c.prefix then
-			stationModelId = 'lollo_freestyle_train_station/lift/side_lifts_9_5_0.mdl'
-		else
+		if era == moduleHelpers.eras.era_a.prefix then
+			stationModelId = 'lollo_freestyle_train_station/lift/era_a_side_lifts_9_5_0.mdl'
+		elseif era == moduleHelpers.eras.era_b.prefix then
 			stationModelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_9_5_0.mdl'
+		else
+			stationModelId = 'lollo_freestyle_train_station/lift/side_lifts_9_5_0.mdl'
 		end
 		result.models[#result.models + 1] = {
 			id = stationModelId,
