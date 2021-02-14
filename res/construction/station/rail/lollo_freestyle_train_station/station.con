@@ -1,6 +1,7 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
@@ -74,9 +75,9 @@ function data()
             -- }
         },
 		updateFn = function(params)
-			print('station.con updateFn starting')
-			-- print('updateFn starting, params =') debugPrint(params)
-			-- print('station.con updateFn starting, params.modules =') debugPrint(params.modules)
+			logger.print('station.con updateFn starting')
+			-- logger.print('updateFn starting, params =') logger.debugPrint(params)
+			-- logger.print('station.con updateFn starting, params.modules =') logger.debugPrint(params.modules)
 			-- LOLLO TODO sometimes, there are too many modules of type trackSpeed or trackElectrification
 			-- It seems fixed, but keep checking it.
 			if not params.modules then params.modules = {} end
@@ -189,7 +190,7 @@ function data()
 				if occupiedInfo.crossConnectorsWithSlopedAreas[t] == nil or occupiedInfo.crossConnectorsWithSlopedAreas[t][i] == nil then
 					return { id = nil, yShift = 0 }
 				else
-					-- print('get occupiedInfo.crossConnectorsWithSlopedAreas[t][i] =') debugPrint(occupiedInfo.crossConnectorsWithSlopedAreas[t][i])
+					-- logger.print('get occupiedInfo.crossConnectorsWithSlopedAreas[t][i] =') logger.debugPrint(occupiedInfo.crossConnectorsWithSlopedAreas[t][i])
 					return occupiedInfo.crossConnectorsWithSlopedAreas[t][i]
 				end
 			end
@@ -197,7 +198,7 @@ function data()
 				if occupiedInfo.crossConnectorsWithSlopedAreas[t] == nil then
 					occupiedInfo.crossConnectorsWithSlopedAreas[t] = {}
 				end
-				-- print('set occupiedInfo.crossConnectorsWithSlopedAreas[t][i] =') debugPrint(occupiedInfo.crossConnectorsWithSlopedAreas[t][i])
+				-- logger.print('set occupiedInfo.crossConnectorsWithSlopedAreas[t][i] =') logger.debugPrint(occupiedInfo.crossConnectorsWithSlopedAreas[t][i])
 				occupiedInfo.crossConnectorsWithSlopedAreas[t][i] = { id = newId, yShift = yShift or 0 }
 			end
 			local _occupySlopedAreas = function(t, i, slotId, slotTypeId, yShift)
@@ -258,9 +259,9 @@ function data()
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
 				-- if #result.edgeLists > 0 then
 				-- 	local firstPosTanX2 = result.edgeLists[1].edges
-				-- 	print('firstPosTanX2 =') debugPrint(firstPosTanX2)
+				-- 	logger.print('firstPosTanX2 =') logger.debugPrint(firstPosTanX2)
 				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
-				-- 	print('retransformed first edge =') debugPrint(retransformedFirstEdge)
+				-- 	logger.print('retransformed first edge =') logger.debugPrint(retransformedFirstEdge)
 				-- end
 				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal:
 				-- everything except the platforms and the terminal deco will vary along with it.
@@ -887,7 +888,7 @@ function data()
 			end -- loop over terminals
 
 			local _addSubwaySlots = function()
-				-- print('_addSubwaySlots starting, params.subways =') debugPrint(params.subways)
+				-- logger.print('_addSubwaySlots starting, params.subways =') logger.debugPrint(params.subways)
 				if not(params.subways) then return end
 
 				for slotId, subway in pairs(params.subways) do
@@ -899,7 +900,7 @@ function data()
 							if extraData.transf == nil then
 								print ('ERROR: subway[', slotId, '] has no transf')
 							else
-								-- print('extraData =') debugPrint(extraData)
+								-- logger.print('extraData =') logger.debugPrint(extraData)
 								table.insert(result.slots, {
 									-- height = 0,
 									id = slotId,
@@ -911,14 +912,14 @@ function data()
 						end
 					end
 				end
-				print('_addSubwaySlots ending')
+				logger.print('_addSubwaySlots ending')
 			end
 			_addSubwaySlots()
 
-			-- print('params.upgrade =') debugPrint(params.upgrade)
+			-- logger.print('params.upgrade =') logger.debugPrint(params.upgrade)
 
 			result.terminateConstructionHook = function()
-				print('terminateConstructionHook starting')
+				logger.print('terminateConstructionHook starting')
 				-- xpcall(
 				-- 	function()
 				local _getAllPositions_UndergroundTop_GroundBottom = function()
@@ -931,7 +932,7 @@ function data()
 					return results
 				end
 
-				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, tolerancePercent4ShortDistances, isOutputMessages)
+				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, tolerancePercent4ShortDistances)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
 					local allSegments = {}
@@ -991,10 +992,8 @@ function data()
 					-- ignore the latter.
 					-- It would be finer if we run it on the short segments and check the position 1 and 2, but too expensive.
 					-- remove long sides of connection triangles
-					if isOutputMessages then
-						print('allSegments before triangles=') debugPrint(allSegments)
-						print('minDistanceSegments before triangles=') debugPrint(minDistanceSegments)
-					end
+					logger.print('allSegments before triangles=') logger.debugPrint(allSegments)
+					logger.print('minDistanceSegments before triangles=') logger.debugPrint(minDistanceSegments)
 					for t = 1, maxT do
 						for tt = t + 1, maxT do
 							for ttt = tt + 1, maxT do
@@ -1018,9 +1017,7 @@ function data()
 							end
 						end
 					end
-					if isOutputMessages then
-						print('minDistanceSegments after triangles=') debugPrint(minDistanceSegments)
-					end
+					logger.print('minDistanceSegments after triangles=') logger.debugPrint(minDistanceSegments)
                     local shortSegments = {}
                     for t = 1, maxT do
                         for tt = t + 1, maxT do
@@ -1099,11 +1096,11 @@ function data()
 						1.42
 					)
 
-					-- print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
+					-- logger.print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') logger.debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
 					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						1.42 -- , true
+						1.42
 					)
 
 					local shortSegmentsTunnelTops2Tops, minDistanceSegmentsInTunnel = _getSegmentsBetweenPos2Links_AcrossTerminals(
@@ -1119,18 +1116,18 @@ function data()
 						1.01
 					)
 
-					-- print('result.terminateConstructionHookInfo.liftBottomPositions =') debugPrint(result.terminateConstructionHookInfo.liftBottomPositions)
-					-- print('result.terminateConstructionHookInfo.tunnelStairsTopPositions =') debugPrint(result.terminateConstructionHookInfo.tunnelStairsTopPositions)
+					-- logger.print('result.terminateConstructionHookInfo.liftBottomPositions =') logger.debugPrint(result.terminateConstructionHookInfo.liftBottomPositions)
+					-- logger.print('result.terminateConstructionHookInfo.tunnelStairsTopPositions =') logger.debugPrint(result.terminateConstructionHookInfo.tunnelStairsTopPositions)
 					local shortSegmentsTunnelTops2BridgeBottoms, minDistanceSegments_UndergroundTop_BridgeBottom = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
                         result.terminateConstructionHookInfo.liftBottomPositions,
-						1.01 -- , true
+						1.01
 					)
 
 					local shortSegmentsTunnelTops2Bottoms, minDistanceSegmentsUnderground2Underground = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
                         result.terminateConstructionHookInfo.tunnelStairsBottomPositions,
-                        1.01 -- , true
+                        1.01
                     )
                     -- Remove redundant up-down connectors.
                     -- There could be trouble with a steep underground station with two levels:
@@ -1139,8 +1136,8 @@ function data()
 					-- We try to get past it choosing the shortest path and always associating stairs down to stairs up
 					-- - we never have stairs down without stairs up.
 					local maxT = #params.terminals
-					-- print('shortSegmentsTunnelTops2Bottoms =') debugPrint(shortSegmentsTunnelTops2Bottoms)
-					-- print('shortSegmentsTunnelTops2Tops =') debugPrint(shortSegmentsTunnelTops2Tops)
+					-- logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
+					-- logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 					for t = 1, maxT do
 						local top2BottomsT = shortSegmentsTunnelTops2Bottoms[t]
 						if top2BottomsT ~= nil then
@@ -1172,26 +1169,26 @@ function data()
 							end
 						end
 					end
-					-- print('shortSegmentsTunnelTops2Bottoms =') debugPrint(shortSegmentsTunnelTops2Bottoms)
-					-- print('shortSegmentsTunnelTops2Tops =') debugPrint(shortSegmentsTunnelTops2Tops)
+					-- logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
+					-- logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 
-                    -- print('shortSegmentsOnGround =') debugPrint(shortSegmentsOnGround)
+                    -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
-					-- print('shortSegmentsOnBridge =') debugPrint(shortSegmentsOnBridge)
+					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
 					_linkAcross(shortSegmentsOnBridge, 40.0)
-					-- print('shortSegmentsTunnelTops2Tops =') debugPrint(shortSegmentsTunnelTops2Tops)
+					-- logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 					_linkAcross(shortSegmentsTunnelTops2Tops)
-					-- print('shortSegmentsTunnelTops2Surface =') debugPrint(shortSegmentsTunnelTops2Surface)
+					-- logger.print('shortSegmentsTunnelTops2Surface =') logger.debugPrint(shortSegmentsTunnelTops2Surface)
 					_linkAcross(shortSegmentsTunnelTops2Surface)
-					-- print('shortSegmentsTunnelTops2BridgeBottoms =') debugPrint(shortSegmentsTunnelTops2BridgeBottoms)
+					-- logger.print('shortSegmentsTunnelTops2BridgeBottoms =') logger.debugPrint(shortSegmentsTunnelTops2BridgeBottoms)
 					_linkAcross(shortSegmentsTunnelTops2BridgeBottoms)
-					-- print('shortSegmentsTunnelTops2Bottoms =') debugPrint(shortSegmentsTunnelTops2Bottoms)
+					-- logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
 					_linkAcross(shortSegmentsTunnelTops2Bottoms)
 				end
 				_linkUnderpassesAndStairs()
-				print('passengers and stairs linked')
+				logger.print('passengers and stairs linked')
 
 				local _linkPassengerPlatforms = function(maxLinkLength)
 					-- link the underpasses across terminals, on the ground, if they are close enough
@@ -1221,7 +1218,7 @@ function data()
 					end
 				end
 				_linkPassengerPlatforms(6)
-				print('passenger platforms linked')
+				logger.print('passenger platforms linked')
 
 				local _linkSubways = function()
 					if not(params.subways) then return end
@@ -1251,9 +1248,9 @@ function data()
 										end
 									end
 								end
-								-- print('terminal t = ', minDistanceT, 'about to link to subway')
+								-- logger.print('terminal t = ', minDistanceT, 'about to link to subway')
 								if minDistanceT ~= nil and minDistanceI ~= nil then
-									-- print('allPositionsUnderground[minDistanceT][minDistanceI] =') debugPrint(allPositionsUnderground[minDistanceT][minDistanceI])
+									-- logger.print('allPositionsUnderground[minDistanceT][minDistanceI] =') logger.debugPrint(allPositionsUnderground[minDistanceT][minDistanceI])
 									result.models[#result.models+1] = {
 										id = _constants.passengerLaneModelId,
 										transf = transfUtils.get1MLaneTransf(
@@ -1278,7 +1275,7 @@ function data()
 					-- _linkSubways2(result.terminateConstructionHookInfo.liftBottomPositions)
 				end
 				_linkSubways()
-				print('subways linked')
+				logger.print('subways linked')
 
 		-- 	end,
 		-- 	_myErrorHandler
@@ -1336,7 +1333,7 @@ function data()
 					end
 				end
 				_groupTerminals()
-				print('terminals grouped')
+				logger.print('terminals grouped')
 
 				-- it should output something like (this example has one terminal made of two adjacent bits)
 				-- stock result.stations =
@@ -1358,23 +1355,23 @@ function data()
 				-- 	}
 				-- }
 
-				-- print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
-				-- print('LOLLO result = ') debugPrint(result)
-				-- print('LOLLO result.stations = ') debugPrint(result.stations)
-				-- print('LOLLO result.models = ') debugPrint(result.models)
-				-- print('LOLLO result.terminalGroups = ') debugPrint(result.terminalGroups)
+				-- logger.print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
+				-- logger.print('LOLLO result = ') logger.debugPrint(result)
+				-- logger.print('LOLLO result.stations = ') logger.debugPrint(result.stations)
+				-- logger.print('LOLLO result.models = ') logger.debugPrint(result.models)
+				-- logger.print('LOLLO result.terminalGroups = ') logger.debugPrint(result.terminalGroups)
 			end -- end of terminateConstructionHook()
 
-			-- print('freestyleTrainStation.updateFn about to return')
-			-- print('freestyleTrainStation result =') debugPrint(result)
-			-- print('freestyleTrainStation result.terrainAlignmentLists =') debugPrint(result.terrainAlignmentLists)
+			-- logger.print('freestyleTrainStation.updateFn about to return')
+			-- logger.print('freestyleTrainStation result =') logger.debugPrint(result)
+			-- logger.print('freestyleTrainStation result.terrainAlignmentLists =') logger.debugPrint(result.terrainAlignmentLists)
 			return result
 		end,
  		preProcessFn = function(modules, change, three)
 			-- this fires when the user adds or removes a module
-			-- print('LOLLO preProcessFn')
-			-- print('modules =') debugPrint(modules)
-			-- print('change =') debugPrint(change)
+			-- logger.print('LOLLO preProcessFn')
+			-- logger.print('modules =') logger.debugPrint(modules)
+			-- logger.print('change =') logger.debugPrint(change)
 
 			-- default behaviour
 			-- if change.added then
@@ -1409,10 +1406,10 @@ function data()
 					local terminalSlotId = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.terminalSlotId)
 					-- ... if their terminal is present
 					if modules[terminalSlotId] ~= nil then
-						-- print('barring removal of modules for upgrading tracks')
+						-- logger.print('barring removal of modules for upgrading tracks')
 						return modules
 					-- else
-						-- print('allowing removal of modules for upgrading tracks coz terminal does not exist')
+						-- logger.print('allowing removal of modules for upgrading tracks coz terminal does not exist')
 					end
 				end
 				modules[change.slotId] = nil
@@ -1441,23 +1438,23 @@ function data()
 			-- catenary = 1,
 			-- trackTypeToggle = 1,
 			-- trackType = 1,
-			-- print('LOLLO upgradeFn starting, args.slotId =') debugPrint(args.slotId)
+			-- logger.print('LOLLO upgradeFn starting, args.slotId =') logger.debugPrint(args.slotId)
 
 			-- LOLLO NOTE when hovering on a station with the track upgrade tool,
 			-- some terminals are recognised and others are not (ie args.slotId = -1)
 			-- This makes upgrading tracks impossible.
 			-- Workaround: let's upgrade them all!
 
-			-- print('args.catenaryToggle =') debugPrint(args.catenaryToggle)
-			-- print('args.catenary =') debugPrint(args.catenary)
-			-- print('args.trackTypeToggle =') debugPrint(args.trackTypeToggle)
-			-- print('args.trackType =') debugPrint(args.trackType)
-			-- print('args =') debugPrint(arrayUtils.cloneOmittingFields(args, {'modules'}, true)) -- hangs!
+			-- logger.print('args.catenaryToggle =') logger.debugPrint(args.catenaryToggle)
+			-- logger.print('args.catenary =') logger.debugPrint(args.catenary)
+			-- logger.print('args.trackTypeToggle =') logger.debugPrint(args.trackTypeToggle)
+			-- logger.print('args.trackType =') logger.debugPrint(args.trackType)
+			-- logger.print('args =') logger.debugPrint(arrayUtils.cloneOmittingFields(args, {'modules'}, true)) -- hangs!
 
 			-- if args.slotId == nil or args.slotId < 0 then return {} end
 
 			local affectedTerminals = {}
-			-- print('args.slotId =') debugPrint(args.slotId)
+			-- logger.print('args.slotId =') logger.debugPrint(args.slotId)
 			if args.slotId ~= nil and args.slotId > 0 then
 				local nTerminal, _, _ = slotHelpers.demangleId(args.slotId)
 				if nTerminal == nil then return {} end
@@ -1467,7 +1464,7 @@ function data()
 					affectedTerminals[t] = t
 				end
 			end
-			-- print('affectedTerminals =') debugPrint(affectedTerminals)
+			-- logger.print('affectedTerminals =') logger.debugPrint(affectedTerminals)
 
 			local upgradeResults = {}
 			for _, nTerminal in pairs(affectedTerminals) do
@@ -1475,7 +1472,7 @@ function data()
 				if args.catenaryToggle == 1 then
 					local moduleKey = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackElectrificationSlotId)
 					local oldModuleValue = args.modules[moduleKey]
-					-- print('oldModuleValue =') debugPrint(oldModuleValue)
+					-- logger.print('oldModuleValue =') logger.debugPrint(oldModuleValue)
 
 					if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
 						if oldModuleValue.name == _constants.trackElectrificationNoModuleFileName
@@ -1494,7 +1491,7 @@ function data()
 				elseif args.trackTypeToggle == 1 then
 					local moduleKey = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackSpeedSlotId)
 					local oldModuleValue = args.modules[moduleKey]
-					-- print('oldModuleValue =') debugPrint(oldModuleValue)
+					-- logger.print('oldModuleValue =') logger.debugPrint(oldModuleValue)
 
 					if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
 						if oldModuleValue.name == _constants.trackSpeedSlowModuleFileName
@@ -1513,7 +1510,7 @@ function data()
 				end
 			end
 
-			-- print('results =') debugPrint(upgradeResults)
+			-- logger.print('results =') debugPrint(upgradeResults)
 			return upgradeResults
 
 			-- The return structure is a list like:

@@ -2,6 +2,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local guiHelpers = require('lollo_freestyle_train_station.guiHelpers')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local logger = require('lollo_freestyle_train_station.logger')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stationHelpers = require('lollo_freestyle_train_station.stationHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
@@ -26,7 +27,7 @@ local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
     addSubway = function(stationConstructionId, subwayConstructionId, successEventName)
-        print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
+        logger.print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
         if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then print('WARNING: invalid stationConstructionId') debugPrint(stationConstructionId) return end
         if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then print('WARNING: invalid subwayConstructionId') debugPrint(subwayConstructionId) return end
 
@@ -34,8 +35,8 @@ local _actions = {
         if oldCon == nil then return end
 
         local subwayTransf = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION).transf
-        -- print('subwayTransf =') debugPrint(subwayTransf)
-        if subwayTransf == nil then print('ERROR: no subway transf') return end
+        -- print('subwayTransf =') logger.debugPrint(subwayTransf)
+        if subwayTransf == nil then print('lollo freestyle train station ERROR: no subway transf') return end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
@@ -108,8 +109,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                print('addSubway callback, success =', success)
-                -- debugPrint(result)
+                logger.print('addSubway callback, success =', success)
+                -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -128,7 +129,7 @@ local _actions = {
         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
         -- local oldCon = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-        -- print('oldCon =') debugPrint(oldCon)
+        -- logger.print('oldCon =') logger.debugPrint(oldCon)
         -- if not(oldCon) then return end
 
         local proposal = api.type.SimpleProposal.new()
@@ -147,8 +148,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                print('LOLLO bulldozeMarker success = ', success)
-                -- print('LOLLO bulldozeMarker result = ') debugPrint(result)
+                logger.print('LOLLO bulldozeMarker success = ', success)
+                -- logger.print('LOLLO bulldozeMarker result = ') logger.debugPrint(result)
             end
         )
     end,
@@ -156,7 +157,7 @@ local _actions = {
     buildStation = function(successEventName, args)
         local conTransf = args.platformWaypointTransf
 
-        print('buildStation starting, args =')
+        logger.print('buildStation starting, args =')
         local oldCon = edgeUtils.isValidAndExistingId(args.join2StationId)
         and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
         or nil
@@ -257,7 +258,7 @@ local _actions = {
                 _getRelativePosTanX2s
             )
         end
-        -- print('params_newTerminal =') debugPrint(params_newTerminal)
+        -- logger.print('params_newTerminal =') logger.debugPrint(params_newTerminal)
 
         if oldCon == nil then
             newCon.params = {
@@ -319,11 +320,11 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                print('build station callback, success =', success)
-                -- debugPrint(result)
+                logger.print('build station callback, success =', success)
+                -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
-                    print('stationConstructionId = ', result.resultEntities[1])
-                    print('buildStation callback is about to send command')
+                    logger.print('stationConstructionId = ', result.resultEntities[1])
+                    logger.print('buildStation callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -338,15 +339,15 @@ local _actions = {
     end,
 
     removeTerminal = function(constructionId, nTerminalToRemove, nRemainingTerminals, successEventName)
-        print('removeTerminal starting, constructionId =', constructionId)
+        logger.print('removeTerminal starting, constructionId =', constructionId)
 
         local oldCon = edgeUtils.isValidAndExistingId(constructionId)
         and api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
         or nil
-        -- print('oldCon =') debugPrint(oldCon)
+        -- logger.print('oldCon =') logger.debugPrint(oldCon)
         if oldCon == nil then return end
 
-        print('nTerminalToRemove =') debugPrint(nTerminalToRemove)
+        logger.print('nTerminalToRemove =') logger.debugPrint(nTerminalToRemove)
         if type(nTerminalToRemove) ~= 'number' then return end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
@@ -401,16 +402,16 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                print('removeTerminal callback, success =', success)
-                -- debugPrint(result)
+                logger.print('removeTerminal callback, success =', success)
+                -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
                     local eventArgs = {
                         nRemainingTerminals = nRemainingTerminals,
                         removedTerminalEdgeLists = removedTerminalEdgeLists,
                         stationConstructionId = result.resultEntities[1]
                     }
-                    print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
-                    print('removeTerminal callback is about to send command')
+                    logger.print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
+                    logger.print('removeTerminal callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -425,10 +426,10 @@ local _actions = {
     rebuildOneTerminalTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
         local _significantFigures4LocateNode = 5 -- you may lower this down to 100 if tracks are not properly rebuilt.
         -- cleanupStreetGraph in previous events (removeTerminal and bulldozeStation) might also play a role, it might.
-        print('rebuildOneTerminalTracks starting')
-        -- print('trackEdgeLists =') debugPrint(trackEdgeLists)
-        -- print('platformEdgeLists =') debugPrint(platformEdgeLists)
-        -- print('neighbourNodeIds =') debugPrint(neighbourNodeIds)
+        logger.print('rebuildOneTerminalTracks starting')
+        -- logger.print('trackEdgeLists =') logger.debugPrint(trackEdgeLists)
+        -- logger.print('platformEdgeLists =') logger.debugPrint(platformEdgeLists)
+        -- logger.print('neighbourNodeIds =') logger.debugPrint(neighbourNodeIds)
         if trackEdgeLists == nil or type(trackEdgeLists) ~= 'table' then return end
         if platformEdgeLists == nil or type(platformEdgeLists) ~= 'table' then return end
 
@@ -442,27 +443,27 @@ local _actions = {
             local _baseNode1 = (neighbourNodeIds_plOrTr ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds_plOrTr.node1))
             and api.engine.getComponent(neighbourNodeIds_plOrTr.node1, api.type.ComponentType.BASE_NODE)
             or nil
-            -- print('_baseNode1 =') debugPrint(_baseNode1)
+            -- logger.print('_baseNode1 =') logger.debugPrint(_baseNode1)
             local _baseNode2 = (neighbourNodeIds_plOrTr ~= nil and edgeUtils.isValidAndExistingId(neighbourNodeIds_plOrTr.node2))
             and api.engine.getComponent(neighbourNodeIds_plOrTr.node2, api.type.ComponentType.BASE_NODE)
             or nil
-            -- print('_baseNode2 =') debugPrint(_baseNode2)
+            -- logger.print('_baseNode2 =') logger.debugPrint(_baseNode2)
 
             local _addNode = function(position)
-                -- print('adding node, position =') debugPrint(position)
+                -- logger.print('adding node, position =') logger.debugPrint(position)
                 if _baseNode1 ~= nil
                 and edgeUtils.isNumVeryClose(position[1], _baseNode1.position.x, _significantFigures4LocateNode)
                 and edgeUtils.isNumVeryClose(position[2], _baseNode1.position.y, _significantFigures4LocateNode)
                 and edgeUtils.isNumVeryClose(position[3], _baseNode1.position.z, _significantFigures4LocateNode)
                 then
-                    -- print('_baseNode1 matches')
+                    -- logger.print('_baseNode1 matches')
                     return neighbourNodeIds_plOrTr.node1
                 elseif _baseNode2 ~= nil
                 and edgeUtils.isNumVeryClose(position[1], _baseNode2.position.x, _significantFigures4LocateNode)
                 and edgeUtils.isNumVeryClose(position[2], _baseNode2.position.y, _significantFigures4LocateNode)
                 and edgeUtils.isNumVeryClose(position[3], _baseNode2.position.z, _significantFigures4LocateNode)
                 then
-                    -- print('_baseNode2 matches')
+                    -- logger.print('_baseNode2 matches')
                     return neighbourNodeIds_plOrTr.node2
                 else
                     for _, newNode in pairs(newNodes) do
@@ -470,12 +471,12 @@ local _actions = {
                         and edgeUtils.isNumVeryClose(position[2], newNode.position[2], _significantFigures4LocateNode)
                         and edgeUtils.isNumVeryClose(position[3], newNode.position[3], _significantFigures4LocateNode)
                         then
-                            -- print('reusing a new node')
+                            -- logger.print('reusing a new node')
                             return newNode.id
                         end
                     end
 
-                    -- print('making a new node')
+                    -- logger.print('making a new node')
                     local newNode = api.type.NodeAndEntity.new()
                     nNewEntities = nNewEntities - 1
                     newNode.entity = nNewEntities
@@ -525,7 +526,7 @@ local _actions = {
         local isTracksChanged = doTrackOrPlatform(trackEdgeLists, neighbourNodeIds.tracks)
         if not(isPlatformsChanged) and not(isTracksChanged) then return end
 
-        -- print('rebuildOneTerminalTracks proposal =') debugPrint(proposal)
+        -- logger.print('rebuildOneTerminalTracks proposal =') logger.debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -536,8 +537,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
-                print('LOLLO rebuildOneTerminalTracks success = ', success)
-                -- print('LOLLO result = ') debugPrint(result)
+                logger.print('LOLLO rebuildOneTerminalTracks success = ', success)
+                -- logger.print('LOLLO result = ') logger.debugPrint(result)
                 if success and successEventName ~= nil then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -556,7 +557,7 @@ local _actions = {
         if not(edgeUtils.isValidAndExistingId(constructionId)) then return end
 
         -- local oldCon = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
-        -- print('oldCon =') debugPrint(oldCon)
+        -- logger.print('oldCon =') logger.debugPrint(oldCon)
         -- if not(oldCon) or not(oldCon.params) then return end
 
         local proposal = api.type.SimpleProposal.new()
@@ -575,22 +576,22 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                print('LOLLO bulldozeStation success = ', success)
-                -- print('LOLLO bulldozeStation result = ') debugPrint(result)
+                logger.print('LOLLO bulldozeStation success = ', success)
+                -- logger.print('LOLLO bulldozeStation result = ') logger.debugPrint(result)
             end
         )
     end,
 
     removeTracks = function(platformEdgeIds, trackEdgeIds, successEventName, successEventArgs)
-        print('removeTracks starting')
-        -- print('successEventName =') debugPrint(successEventName)
-        -- print('successEventArgs =') debugPrint(successEventArgs)
-        print('platformEdgeIds =') debugPrint(platformEdgeIds)
-        print('trackEdgeIds =') debugPrint(trackEdgeIds)
+        logger.print('removeTracks starting')
+        -- logger.print('successEventName =') logger.debugPrint(successEventName)
+        -- logger.print('successEventArgs =') logger.debugPrint(successEventArgs)
+        logger.print('platformEdgeIds =') logger.debugPrint(platformEdgeIds)
+        logger.print('trackEdgeIds =') logger.debugPrint(trackEdgeIds)
         local allEdgeIds = {}
         arrayUtils.concatValues(allEdgeIds, trackEdgeIds)
         arrayUtils.concatValues(allEdgeIds, platformEdgeIds)
-        print('allEdgeIds =') debugPrint(allEdgeIds)
+        logger.print('allEdgeIds =') logger.debugPrint(allEdgeIds)
 
         local proposal = api.type.SimpleProposal.new()
         for _, edgeId in pairs(allEdgeIds) do
@@ -606,8 +607,8 @@ local _actions = {
                 end
             end
         end
-        -- print('proposal.streetProposal.edgeObjectsToRemove =')
-        -- debugPrint(proposal.streetProposal.edgeObjectsToRemove)
+        -- logger.print('proposal.streetProposal.edgeObjectsToRemove =')
+        -- logger.debugPrint(proposal.streetProposal.edgeObjectsToRemove)
 
         local sharedNodeIds = {}
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.getNodeIdsBetweenEdgeIds(trackEdgeIds, true))
@@ -615,8 +616,8 @@ local _actions = {
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
-        -- print('proposal.streetProposal.nodesToRemove =') debugPrint(proposal.streetProposal.nodesToRemove)
-        -- print('proposal =') debugPrint(proposal)
+        -- logger.print('proposal.streetProposal.nodesToRemove =') logger.debugPrint(proposal.streetProposal.nodesToRemove)
+        -- logger.print('proposal =') logger.debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -627,10 +628,10 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                print('command callback firing for removeTracks, success =', success)
-                -- debugPrint(result)
+                logger.print('command callback firing for removeTracks, success =', success)
+                -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
-                    print('removeTracks callback is about to send command')
+                    logger.print('removeTracks callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -643,14 +644,14 @@ local _actions = {
     end,
 
     replaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
-        print('replaceEdgeWithSameRemovingObject starting')
+        logger.print('replaceEdgeWithSameRemovingObject starting')
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
-        print('replaceEdgeWithSameRemovingObject found, the old edge id is valid')
+        logger.print('replaceEdgeWithSameRemovingObject found, the old edge id is valid')
         -- replaces a track segment with an identical one, without destroying the buildings
         local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
         if not(proposal) then return end
-        print('replaceEdgeWithSameRemovingObject likes the proposal')
-        -- debugPrint(proposal)
+        logger.print('replaceEdgeWithSameRemovingObject likes the proposal')
+        -- logger.debugPrint(proposal)
         --[[ local sampleNewEdge =
         {
         entity = -1,
@@ -703,38 +704,38 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
-                -- print('LOLLO replaceEdgeWithSameRemovingObject result = ') debugPrint(result)
-                print('LOLLO replaceEdgeWithSameRemovingObject success = ') debugPrint(success)
+                -- logger.print('LOLLO replaceEdgeWithSameRemovingObject result = ') logger.debugPrint(result)
+                logger.print('LOLLO replaceEdgeWithSameRemovingObject success = ') logger.debugPrint(success)
             end
         )
     end,
 
     splitEdgeRemovingObject = function(wholeEdgeId, nodeBetween, objectIdToRemove, successEventName, successEventArgs, newArgName, mustSplit)
-        -- print('splitEdgeRemovingObject starting')
+        -- logger.print('splitEdgeRemovingObject starting')
         if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
 
-        -- print('nodeBetween =') debugPrint(nodeBetween)
+        -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
         local oldBaseEdge = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE)
         local oldBaseEdgeTrack = api.engine.getComponent(wholeEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
         -- save a crash when a modded road underwent a breaking change, so it has no oldEdgeTrack
         if oldBaseEdge == nil or oldBaseEdgeTrack == nil then return end
-        -- print('oldBaseEdge =') debugPrint(oldBaseEdge)
+        -- logger.print('oldBaseEdge =') logger.debugPrint(oldBaseEdge)
 
         local node0 = api.engine.getComponent(oldBaseEdge.node0, api.type.ComponentType.BASE_NODE)
         local node1 = api.engine.getComponent(oldBaseEdge.node1, api.type.ComponentType.BASE_NODE)
         if node0 == nil or node1 == nil then return end
-        -- print('node0 =') debugPrint(node0)
-        -- print('node1 =') debugPrint(node1)
+        -- logger.print('node0 =') logger.debugPrint(node0)
+        -- logger.print('node1 =') logger.debugPrint(node1)
 
         if not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)) and not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node1.position)) then
             print('WARNING: splitEdge cannot find the nodes')
         end
         local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)
-        print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
+        logger.print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
         local distance0 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance0 or nodeBetween.refDistance1
         local distance1 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance1 or nodeBetween.refDistance0
-        print('distance0 =') debugPrint(distance0)
-        print('distance1 =') debugPrint(distance1)
+        logger.print('distance0 =') logger.debugPrint(distance0)
+        logger.print('distance1 =') logger.debugPrint(distance1)
         local tanSign = isNodeBetweenOrientatedLikeMyEdge and 1 or -1
 
         local context = api.type.Context:new()
@@ -747,29 +748,29 @@ local _actions = {
         -- the split may occur at the end of an edge - in theory, but I could not make it happen in practise.
         if distance0 == 0 or distance1 == 0 or (not(mustSplit) and (distance0 < _constants.minSplitDistance or distance1 < _constants.minSplitDistance)) then
             -- we use this to avoid unnecessary splits, unless they must happen
-            print('WARNING: nodeBetween is at the end of an edge; nodeBetween =') debugPrint(nodeBetween)
+            logger.print('WARNING: nodeBetween is at the end of an edge; nodeBetween =') logger.debugPrint(nodeBetween)
             local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(wholeEdgeId, objectIdToRemove)
             if not(proposal) then return end
 
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
-                    print('command callback firing for split, success =', success) --, 'result =') debugPrint(result)
+                    logger.print('command callback firing for split, success =', success) --, 'result =') logger.debugPrint(result)
                     if success and successEventName ~= nil then
-                        -- print('successEventName =') debugPrint(successEventName)
+                        -- logger.print('successEventName =') logger.debugPrint(successEventName)
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                         if not(stringUtils.isNullOrEmptyString(newArgName)) then
                             local splitNodeId = -1
-                            if distance0 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 print('8one')
-                            elseif distance1 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 print('8two')
-                            elseif distance0 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 print('8three')
-                            elseif distance1 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 print('8four')
+                            if distance0 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8one')
+                            elseif distance1 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8two')
+                            elseif distance0 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8three')
+                            elseif distance1 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8four')
                             else
                                 print('ERROR: impossible condition, distance0 =') debugPrint(distance0)
                                 print('distance1 =') debugPrint(distance1)
                                 print('isNodeBetweenOrientatedLikeMyEdge =') debugPrint(isNodeBetweenOrientatedLikeMyEdge)
                             end
-                            print('splitEdgeRemovingObject is about to raise its event with splitNodeId =', splitNodeId or 'NIL')
+                            logger.print('splitEdgeRemovingObject is about to raise its event with splitNodeId =', splitNodeId or 'NIL')
                             eventArgs[newArgName] = splitNodeId
                         end
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -786,8 +787,8 @@ local _actions = {
 
         local oldTan0Length = transfUtils.getVectorLength(oldBaseEdge.tangent0)
         local oldTan1Length = transfUtils.getVectorLength(oldBaseEdge.tangent1)
-        -- print('oldTan0Length =') debugPrint(oldTan0Length)
-        -- print('oldTan1Length =') debugPrint(oldTan1Length)
+        -- logger.print('oldTan0Length =') logger.debugPrint(oldTan0Length)
+        -- logger.print('oldTan1Length =') logger.debugPrint(oldTan1Length)
 
         -- local playerOwned = api.type.PlayerOwned.new()
         -- playerOwned.player = api.engine.util.getPlayer()
@@ -838,14 +839,14 @@ local _actions = {
         newEdge1.trackEdge = oldBaseEdgeTrack
 
         if type(oldBaseEdge.objects) == 'table' and #oldBaseEdge.objects > 1 then
-            print('splitting: edge objects found')
+            logger.print('splitting: edge objects found')
             local edge0Objects = {}
             local edge1Objects = {}
             for _, edgeObj in pairs(oldBaseEdge.objects) do
-                print('edgeObj =') debugPrint(edgeObj)
+                logger.print('edgeObj =') logger.debugPrint(edgeObj)
                 if edgeObj[1] ~= objectIdToRemove then
                     local edgeObjPosition = edgeUtils.getObjectPosition(edgeObj[1])
-                    print('edgeObjPosition =') debugPrint(edgeObjPosition)
+                    logger.print('edgeObjPosition =') logger.debugPrint(edgeObjPosition)
                     if type(edgeObjPosition) ~= 'table' then return end -- change nothing and leave
                     local assignment = stationHelpers.getWhichEdgeGetsEdgeObjectAfterSplit(
                         edgeObjPosition,
@@ -874,43 +875,43 @@ local _actions = {
             proposal.streetProposal.edgeObjectsToRemove[1] = objectIdToRemove
         end
         proposal.streetProposal.nodesToAdd[1] = newNodeBetween
-        -- print('split proposal =') debugPrint(proposal)
+        -- logger.print('split proposal =') logger.debugPrint(proposal)
 
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                print('command callback firing for split, success =', success)
+                logger.print('command callback firing for split, success =', success)
                 if not(success) then
-                    print('proposal =') debugPrint(proposal)
-                    print('split callback result =') debugPrint(result)
+                    logger.print('proposal =') logger.debugPrint(proposal)
+                    logger.print('split callback result =') logger.debugPrint(result)
                 end
                 if success and successEventName ~= nil then
-                    print('successEventName =') debugPrint(successEventName)
+                    logger.print('successEventName =') logger.debugPrint(successEventName)
                     -- UG TODO this should come from UG!
                     -- try reading the node ids from the added edges instead.
                     -- no good, there may be a new edge using an old node!
                     -- But check how many nodes are actually added. If it is only 1, fine;
                     -- otherwise, we need a better way to check the new node
                     -- it looks fine, fortunately
-                    -- print('split callback result =') debugPrint(result)
-                    -- print('split callback result.proposal.proposal.addedNodes =') debugPrint(result.proposal.proposal.addedNodes)
+                    -- logger.print('split callback result =') logger.debugPrint(result)
+                    -- logger.print('split callback result.proposal.proposal.addedNodes =') logger.debugPrint(result.proposal.proposal.addedNodes)
                     if #result.proposal.proposal.addedNodes ~= 1 then
                         print('ERROR: #result.proposal.proposal.addedNodes =', #result.proposal.proposal.addedNodes)
                     end
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
-                    print('addedNodePosition =') debugPrint(addedNodePosition)
+                    logger.print('addedNodePosition =') logger.debugPrint(addedNodePosition)
 
                     local addedNodeIds = edgeUtils.getNearbyObjectIds(
                         transfUtils.position2Transf(addedNodePosition),
                         0.001,
                         api.type.ComponentType.BASE_NODE
                     )
-                    print('addedNodeIds =') debugPrint(addedNodeIds)
+                    logger.print('addedNodeIds =') logger.debugPrint(addedNodeIds)
                     local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                     if not(stringUtils.isNullOrEmptyString(newArgName)) then
                         eventArgs[newArgName] = addedNodeIds[1]
                     end
-                    -- print('sending out eventArgs =') debugPrint(eventArgs)
+                    -- logger.print('sending out eventArgs =') logger.debugPrint(eventArgs)
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -924,7 +925,7 @@ local _actions = {
 }
 
 local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr, proposal, nNewEntities)
-    print('_tryReplaceSegment starting with edgeId =', edgeId or 'NIL')
+    logger.print('_tryReplaceSegment starting with edgeId =', edgeId or 'NIL')
 
     local _addNodeToRemove = function(nodeId)
         if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove, nodeId)) then
@@ -937,7 +938,7 @@ local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr, proposal, nNew
         return false, nNewEntities
     end
 
-    -- print('valid edgeId in _tryReplaceSegment, going ahead')
+    -- logger.print('valid edgeId in _tryReplaceSegment, going ahead')
 
     local newSegment = api.type.SegmentAndEntity.new()
     local nNewEntities_ = nNewEntities - 1
@@ -947,27 +948,27 @@ local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr, proposal, nNew
     if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
         newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
         _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
-        -- print('twenty-one')
+        -- logger.print('twenty-one')
     elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
         newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
         _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
-        -- print('twenty-two')
+        -- logger.print('twenty-two')
     else
         newSegment.comp.node0 = baseEdge.node0
-        -- print('twenty-three')
+        -- logger.print('twenty-three')
     end
 
     if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
         newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
         _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
-        -- print('twenty-four')
+        -- logger.print('twenty-four')
     elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
         newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
         _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
-        -- print('twenty-five')
+        -- logger.print('twenty-five')
     else
         newSegment.comp.node1 = baseEdge.node1
-        -- print('twenty-six')
+        -- logger.print('twenty-six')
     end
 
     newSegment.comp.tangent0.x = baseEdge.tangent0.x
@@ -988,7 +989,7 @@ local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr, proposal, nNew
         newSegment.trackEdge.trackType = baseEdgeTrack.trackType
         newSegment.trackEdge.catenary = baseEdgeTrack.catenary
     elseif baseEdgeStreet ~= nil then
-        print('Warning: edgeId', edgeId, 'is street')
+        logger.print('Warning: edgeId', edgeId, 'is street')
         newSegment.streetEdge.streetType = baseEdgeStreet.streetType
         newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
         newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
@@ -1018,12 +1019,12 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     -- However, this bit in between is replaced once to snap to terminal 1 and replaced again to snap to terminal 2.
     -- The second time it has a new id, so I can only snap it if I reread the station end entities, in a tidy queue.
 
-    print('buildSnappyPlatforms starting')
+    logger.print('buildSnappyPlatforms starting')
     if type(t) ~= 'number' or type(tMax) ~= 'number' then print('Warning: buildSnappyPlatforms received wrong t or tMax') debugPrint(t) debugPrint(tMax) return end
-    if t > tMax then print('tMax reached, leaving') return end
+    if t > tMax then logger.print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
-    print('endEntities4T =') debugPrint(endEntities4T)
+    logger.print('endEntities4T =') logger.debugPrint(endEntities4T)
     if endEntities4T == nil then return end
 
     local isAnyPlatformFailed = false
@@ -1035,15 +1036,15 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
-        -- print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
+        -- logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
     end
     for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge2Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
-        -- print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
+        -- logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
     end
 
-    -- print('proposal =') debugPrint(proposal)
+    -- logger.print('proposal =') logger.debugPrint(proposal)
     -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
     if isSuccess then
         local context = api.type.Context:new()
@@ -1055,14 +1056,14 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
 
         local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
         if expectedResult.errorState.critical then
-            print('expectedResult =') debugPrint(expectedResult)
+            logger.print('expectedResult =') logger.debugPrint(expectedResult)
             isAnyPlatformFailed = true
             _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
         else
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
-                    print('buildSnappyPlatforms callback, success =', success)
+                    logger.print('buildSnappyPlatforms callback, success =', success)
                     _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
                 end
             )
@@ -1075,12 +1076,12 @@ end
 
 _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     -- see the comments in buildSnappyPlatforms
-    print('buildSnappyTracks starting')
+    logger.print('buildSnappyTracks starting')
     if type(t) ~= 'number' or type(tMax) ~= 'number' then print('Warning: buildSnappyTracks received wrong t or tMax') debugPrint(t) debugPrint(tMax) return end
-    if t > tMax then print('tMax reached, leaving') return end
+    if t > tMax then logger.print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
-    print('endEntities4T =') debugPrint(endEntities4T)
+    logger.print('endEntities4T =') logger.debugPrint(endEntities4T)
     if endEntities4T == nil then return end
 
     local isAnyTrackFailed = false
@@ -1108,14 +1109,14 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
 
         local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
         if expectedResult.errorState.critical then
-            print('expectedResult =') debugPrint(expectedResult)
+            logger.print('expectedResult =') logger.debugPrint(expectedResult)
             isAnyTrackFailed = true
             _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
         else
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
-                    print('buildSnappyTracks callback, success =', success)
+                    logger.print('buildSnappyTracks callback, success =', success)
                     _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
                 end
             )
@@ -1145,7 +1146,7 @@ function data()
             xpcall(
                 function()
 
-            print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
+            logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
             -- LOLLO NOTE ONLY SOMETIMES, it can crash when calling game.interface.getEntity(stationId).
             -- Things are better now, it seems that the error came after a fast loop of calling split and raising the event, then calling split again.
             -- That looks like a race, difficult to handle here.
@@ -1262,15 +1263,15 @@ function data()
                     return
                 end
                 if #trackEdgeIdsBetweenNodeIds == 1 then
-                    print('only one track edge, going to split it')
+                    logger.print('only one track edge, going to split it')
                     local edgeId = trackEdgeIdsBetweenNodeIds[1]
                     if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
 
-                    print('args.splitTrackNode1Id =') debugPrint(args.splitTrackNode1Id)
-                    print('args.splitTrackNode2Id =') debugPrint(args.splitTrackNode2Id)
-                    print('edgeId =') debugPrint(edgeId)
+                    logger.print('args.splitTrackNode1Id =') logger.debugPrint(args.splitTrackNode1Id)
+                    logger.print('args.splitTrackNode2Id =') logger.debugPrint(args.splitTrackNode2Id)
+                    logger.print('edgeId =') logger.debugPrint(edgeId)
                     local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, 0.5)
-                    print('nodeBetween =') debugPrint(nodeBetween)
+                    logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                     _actions.splitEdgeRemovingObject(
                         edgeId,
                         nodeBetween,
@@ -1283,7 +1284,7 @@ function data()
                     return
                 end
 
-                print('at least two track edges found')
+                logger.print('at least two track edges found')
                 local platformEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
                     args.splitPlatformNode1Id,
                     args.splitPlatformNode2Id
@@ -1295,7 +1296,7 @@ function data()
                 -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
                 -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                 if #platformEdgeIdsBetweenNodeIds == 1 then
-                    print('only one platform edge, going to split it')
+                    logger.print('only one platform edge, going to split it')
                     local edgeId = platformEdgeIdsBetweenNodeIds[1]
                     if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
 
@@ -1311,15 +1312,15 @@ function data()
                     )
                     return
                 end
-                print('at least two platform edges found')
+                logger.print('at least two platform edges found')
 
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'splitPlatformNode1Id', 'splitPlatformNode2Id', 'splitTrackNode1Id', 'splitTrackNode2Id', })
-                print('track bulldoze requested, platformEdgeIdsBetweenNodeIds =') debugPrint(platformEdgeIdsBetweenNodeIds)
+                logger.print('track bulldoze requested, platformEdgeIdsBetweenNodeIds =') logger.debugPrint(platformEdgeIdsBetweenNodeIds)
                 eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds)
-                -- print('track bulldoze requested, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
-                print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') debugPrint(trackEdgeIdsBetweenNodeIds)
+                -- logger.print('track bulldoze requested, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
+                logger.print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') logger.debugPrint(trackEdgeIdsBetweenNodeIds)
                 eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
-                -- print('track bulldoze requested, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
+                -- logger.print('track bulldoze requested, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
                 local totalLength = 0
                 local trackLengths = {}
                 for i = 1, #eventArgs.trackEdgeList do
@@ -1349,7 +1350,7 @@ function data()
                     lengthSoFar = lengthSoFar + length
                 end
                 if iCloseEnoughToMidLength < 1 then
-                    print('no track edge is close enough to the middle (halfway between the ends), going to add a split. iAcrossMidLength =', iAcrossMidLength)
+                    logger.print('no track edge is close enough to the middle (halfway between the ends), going to add a split. iAcrossMidLength =', iAcrossMidLength)
                     if iAcrossMidLength < 1 then
                         print('WARNING: trouble finding trackEdgeListMidIndex')
                         print('totalLength =') debugPrint(totalLength)
@@ -1360,22 +1361,22 @@ function data()
                     local edgeId = trackEdgeIdsBetweenNodeIds[iAcrossMidLength]
                     if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
 
-                    print('edgeId =') debugPrint(edgeId)
+                    logger.print('edgeId =') logger.debugPrint(edgeId)
                     local position0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][1])
                     local position1 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[2][1])
                     local tangent0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][2])
                     local tangent1 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[2][2])
-                    print('position0 =') debugPrint(position0)
-                    print('position1 =') debugPrint(position1)
-                    print('tangent0 =') debugPrint(tangent0)
-                    print('tangent1 =') debugPrint(tangent1)
-                    print('(halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength] =') debugPrint((halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength])
+                    logger.print('position0 =') logger.debugPrint(position0)
+                    logger.print('position1 =') logger.debugPrint(position1)
+                    logger.print('tangent0 =') logger.debugPrint(tangent0)
+                    logger.print('tangent1 =') logger.debugPrint(tangent1)
+                    logger.print('(halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength] =') logger.debugPrint((halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength])
 
                     local nodeBetween = edgeUtils.getNodeBetween(
                         position0, position1, tangent0, tangent1,
                         (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
                     )
-                    print('nodeBetween =') debugPrint(nodeBetween)
+                    logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                     -- LOLLO NOTE it seems fixed, but keep checking it:
                     -- this can screw up the directions. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
                     -- in these cases, split produces something like:
@@ -1399,8 +1400,8 @@ function data()
 
                 -- this will be the vehicle node, where the trains stop with their belly
                 eventArgs.trackEdgeListMidIndex = iCloseEnoughToMidLength
-                -- print('eventArgs.trackEdgeListMidIndex =') debugPrint(eventArgs.trackEdgeListMidIndex)
-                -- print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
+                -- logger.print('eventArgs.trackEdgeListMidIndex =') logger.debugPrint(eventArgs.trackEdgeListMidIndex)
+                -- logger.print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') logger.debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
                 local _setLeftCentreRightPlatforms = function(platformEdgeList, trackEdgeList, trackEdgeListMidIndex)
                     eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions(
@@ -1408,28 +1409,28 @@ function data()
                         args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
                         true
                     )
-                    -- print('aaa')
+                    -- logger.print('aaa')
 
                     local centrePlatformIndex_Nearest2_TrackEdgeListMid = stationHelpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(eventArgs)
-                    -- print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
+                    -- logger.print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') logger.debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
 
                     local platformWidth = eventArgs.centrePlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].width
                     eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
                     eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
-                    -- print('alalalalal')
+                    -- logger.print('alalalalal')
                     local centreTracks = stationHelpers.getCentralEdgePositions(
                         trackEdgeList,
                         args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
                         false
                     )
-                    -- print('eee')
+                    -- logger.print('eee')
                     eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
                         eventArgs.leftPlatforms,
                         eventArgs.rightPlatforms,
                         centrePlatformIndex_Nearest2_TrackEdgeListMid,
                         trackEdgeList[trackEdgeListMidIndex]
                     )
-                    print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
+                    logger.print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
                     return platformWidth
                 end
@@ -1439,16 +1440,16 @@ function data()
                 -- Remember that "left" and "right" are just conventions here, there is no actual left and right.
                 if not(eventArgs.isTrackOnPlatformLeft) then
                     local midPos1 = eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
-                    -- print('LOLLO reversing platformEdgeList, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
+                    -- logger.print('LOLLO reversing platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
                     eventArgs.platformEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.platformEdgeList)
-                    -- print('LOLLO reversed platformEdgeList, platformEdgeList =') debugPrint(eventArgs.platformEdgeList)
-                    -- print('LOLLO reversing trackEdgeList, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
+                    -- logger.print('LOLLO reversed platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
+                    -- logger.print('LOLLO reversing trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
                     eventArgs.trackEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.trackEdgeList)
-                    -- print('LOLLO reversed trackEdgeList, trackEdgeList =') debugPrint(eventArgs.trackEdgeList)
+                    -- logger.print('LOLLO reversed trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
                     -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 2 -- dangerous
                     -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 1 -- wrong
                     -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex -- wrong
-                    -- print('eventArgs.trackEdgeListMidIndex before =', eventArgs.trackEdgeListMidIndex)
+                    -- logger.print('eventArgs.trackEdgeListMidIndex before =', eventArgs.trackEdgeListMidIndex)
                     -- dumber but safer
                     for i = 1, #eventArgs.trackEdgeList do
                         if (
@@ -1457,7 +1458,7 @@ function data()
                             and eventArgs.trackEdgeList[i].posTanX2[1][1][3] == midPos1[3]
                         ) then
                             eventArgs.trackEdgeListMidIndex = i
-                            -- print('FOUND, new value =', i)
+                            -- logger.print('FOUND, new value =', i)
                             break
                         end
                     end
@@ -1468,9 +1469,9 @@ function data()
                     eventArgs.centrePlatforms,
                     1
                 )
-                -- print('centrePlatformsFine =') debugPrint(centrePlatformsFine)
+                -- logger.print('centrePlatformsFine =') logger.debugPrint(centrePlatformsFine)
 
-                print('calculating slopedAreasFine, platformWidth =', platformWidth)
+                logger.print('calculating slopedAreasFine, platformWidth =', platformWidth)
                 eventArgs.slopedAreasFine = {}
                 if eventArgs.isTrackOnPlatformLeft then
                     -- I add 2 coz it is a little less than half the width of the 5m sloped area,
@@ -1533,7 +1534,7 @@ function data()
                     local con = api.engine.getComponent(eventArgs.join2StationId, api.type.ComponentType.CONSTRUCTION)
                     if con ~= nil then eventArgs.nTerminal = #con.params.terminals + 1 end
                 end
-                print('eventArgs.nTerminal =', eventArgs.nTerminal)
+                logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
 
                 _actions.buildStation(
                     _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED,
@@ -1591,12 +1592,12 @@ function data()
         end,
         guiHandleEvent = function(id, name, args)
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
-            -- print('guiHandleEvent caught id =', id, 'name =', name)
+            -- logger.print('guiHandleEvent caught id =', id, 'name =', name)
             local _joinSubway = function(subwayConstructionId)
                 if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
 
                 local con = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
-                -- if con ~= nil then print('con.fileName =') debugPrint(con.fileName) end
+                -- if con ~= nil then logger.print('con.fileName =') logger.debugPrint(con.fileName) end
                 if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
 
                 local subwayTransfApi = con.transf
@@ -1605,10 +1606,10 @@ function data()
                 local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
                 if conTransf == nil then return end
 
-                print('conTransf =') debugPrint(conTransf)
+                logger.print('conTransf =') logger.debugPrint(conTransf)
                 local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
-                -- print('nearbyFreestyleStations =') debugPrint(nearbyFreestyleStations)
-                print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
+                -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
+                logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
                 if #nearbyFreestyleStations == 0 then return end
 
                 guiHelpers.showNearbyStationPicker(
@@ -1627,16 +1628,16 @@ function data()
                 function()
                     if name == 'builder.apply' then
                         guiHelpers.hideAllWarnings()
-                        -- print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
+                        -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
                         if id == 'bulldozer' then
                             for _, constructionId in pairs(args.proposal.toRemove) do
-                                print('about to bulldoze construction', constructionId)
+                                logger.print('about to bulldoze construction', constructionId)
                                 if edgeUtils.isValidAndExistingId(constructionId) then
                                     local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
                                     if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
-                                        -- print('args = ') debugPrint(args)
+                                        -- logger.print('args = ') logger.debugPrint(args)
                                         -- bulldozed a station module AND there are more left
-                                        -- print('bulldozing a component of a freestyle station, con.params.modules =') debugPrint(con.params.modules)
+                                        -- logger.print('bulldozing a component of a freestyle station, con.params.modules =') logger.debugPrint(con.params.modules)
                                         local remainingTerminalIds = {}
                                         for slotId, _ in pairs(con.params.modules) do
                                             local nTerminal, _, baseId = slotHelpers.demangleId(slotId)
@@ -1654,7 +1655,7 @@ function data()
                                                         break
                                                     end
                                                 end
-                                                print('nTerminalToRemove =', nTerminalToRemove)
+                                                logger.print('nTerminalToRemove =', nTerminalToRemove)
                                                 if nTerminalToRemove > 0 then
                                                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1687,9 +1688,9 @@ function data()
                         elseif id == 'constructionBuilder' then
                             if not args.result or not args.result[1] then return end
 
-                            -- print('args =') debugPrint(args)
+                            -- logger.print('args =') logger.debugPrint(args)
                             local subwayId = args.result[1]
-                            -- print('construction built, construction id =') debugPrint(subwayId)
+                            -- logger.print('construction built, construction id =') logger.debugPrint(subwayId)
 
                             _joinSubway(subwayId)
                         elseif id == 'streetTerminalBuilder' then
@@ -1703,11 +1704,11 @@ function data()
                                 local _trackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
 
                                 local _validateWaypointBuilt = function(targetWaypointModelId, mustBeOnPlatform)
-                                    print('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
+                                    logger.print('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
                                     -- UG TODO this is empty, ask UG to fix this: can't we have the waypointId in args.result?
-                                    -- print('waypoint built, args.result =') debugPrint(args.result)
+                                    -- logger.print('waypoint built, args.result =') logger.debugPrint(args.result)
 
-                                    -- print('args.proposal.proposal.addedSegments =') debugPrint(args.proposal.proposal.addedSegments)
+                                    -- logger.print('args.proposal.proposal.addedSegments =') logger.debugPrint(args.proposal.proposal.addedSegments)
                                     local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, args.proposal.proposal.addedSegments[1])
                                     if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then print('ERROR with lastBuiltEdgeId') return false end
 
@@ -1717,10 +1718,10 @@ function data()
                                     )
                                     if not(lastBuiltBaseEdge) then return false end
 
-                                    -- print('edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, waypointModelId) =')
-                                    -- debugPrint(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
+                                    -- logger.print('edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, waypointModelId) =')
+                                    -- logger.debugPrint(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
                                     local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
-                                    print('newWaypointId not found, lastBuiltEdgeId =', lastBuiltEdgeId, '#args.proposal.proposal.addedSegments =', #args.proposal.proposal.addedSegments)
+                                    logger.print('newWaypointId not found, lastBuiltEdgeId =', lastBuiltEdgeId, '#args.proposal.proposal.addedSegments =', #args.proposal.proposal.addedSegments)
                                     if not(newWaypointId) then return false end
 
                                     -- forbid building this on a platform or a track
@@ -1739,7 +1740,7 @@ function data()
                                     end
 
                                     local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
-                                    print('similarObjectsIdsInAnyEdges =') debugPrint(similarObjectIdsInAnyEdges)
+                                    logger.print('similarObjectsIdsInAnyEdges =') logger.debugPrint(similarObjectIdsInAnyEdges)
                                     -- forbid building more then two waypoints of the same type
                                     if #similarObjectIdsInAnyEdges > 2 then
                                         guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectIdsInAnyEdges)
@@ -1759,10 +1760,10 @@ function data()
                                     -- make sure the waypoint is not too close to station end nodes, or the game will complain later with it != components.end()
                                     local endEdgeIds = edgeUtils.getEdgeIdsConnectedToEdgeId(lastBuiltEdgeId)
                                     local _minDistance = _constants.minSplitDistance * 2
-                                    -- print('endEdgeIds =') debugPrint(endEdgeIds)
+                                    -- logger.print('endEdgeIds =') logger.debugPrint(endEdgeIds)
                                     for ___, edgeId in pairs(endEdgeIds) do
                                         local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
-                                        -- print('conId =', conId or 'NIL')
+                                        -- logger.print('conId =', conId or 'NIL')
                                         -- and it belongs to a construction
                                         if edgeUtils.isValidAndExistingId(conId) then
                                             local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
@@ -1770,7 +1771,7 @@ function data()
                                             if con ~= nil then
                                                 if (type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName) then
                                                     local stationEndEntities = stationHelpers.getStationEndEntities(conId)
-                                                    -- print('stationEndEntities =') debugPrint(stationEndEntities)
+                                                    -- logger.print('stationEndEntities =') logger.debugPrint(stationEndEntities)
                                                     -- if any end nodes are too close to my waypoint
                                                     for __, stationEndEntities4T in pairs(stationEndEntities) do
                                                         if transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
@@ -1842,7 +1843,7 @@ function data()
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId)
                                     )
-                                    print('contiguous track edges =') debugPrint(contiguousTrackEdgeProps)
+                                    logger.print('contiguous track edges =') logger.debugPrint(contiguousTrackEdgeProps)
                                     if #contiguousTrackEdgeProps < 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('WaypointsNotConnected'), newWaypointId, similarObjectIdsInAnyEdges)
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -1925,7 +1926,7 @@ function data()
                                     local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointIds[1])
                                     local edgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
                                     local isCargo = trackUtils.isCargoPlatform(edgeTrack.trackType)
-                                    print('TWENTY, isCargo =', isCargo)
+                                    logger.print('TWENTY, isCargo =', isCargo)
 
                                     -- set a place to build the station
                                     local platformWaypoint1Pos = edgeUtils.getObjectPosition(platformWaypointIds[1])
@@ -1972,7 +1973,7 @@ function data()
                                 -- LOLLO NOTE as I added an edge object, I have NOT split the edge
                                 if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _platformWaypointModelId then
                                     local waypointData = _validateWaypointBuilt(_platformWaypointModelId, true)
-                                    print('platformWaypointData =') debugPrint(waypointData)
+                                    logger.print('platformWaypointData =') logger.debugPrint(waypointData)
                                     if not(waypointData) then return end
 
                                     _handleValidWaypointBuilt()
@@ -1984,7 +1985,7 @@ function data()
 
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _trackWaypointModelId then
                                     local waypointData = _validateWaypointBuilt(_trackWaypointModelId, false)
-                                    print('trackWaypointData =') debugPrint(waypointData)
+                                    logger.print('trackWaypointData =') logger.debugPrint(waypointData)
                                     if not(waypointData) then return end
 
                                     _handleValidWaypointBuilt()
@@ -2020,8 +2021,8 @@ function data()
                                             }
                                         end
                                     else
-                                        print('WARNING upgrading, addedSegment =') -- debugPrint(addedSegment)
-                                        -- print('args.data.entity2tn =') debugPrint(args.data.entity2tn)
+                                        logger.print('WARNING upgrading, addedSegment =') -- logger.debugPrint(addedSegment)
+                                        -- logger.print('args.data.entity2tn =') logger.debugPrint(args.data.entity2tn)
                                         -- LOLLO TODO when upgrading, the game adds a segment and two nodes, which won't work with the following.
                                         -- Probably unimportant, but check it coz edgeUtils.getLastBuiltEdgeId errors out (gracefully)
                                         -- when adding electrification or high speed.
@@ -2031,7 +2032,7 @@ function data()
                                         }
                                     end
                                 -- else
-                                    -- print('addedSegment =') debugPrint(addedSegment)
+                                    -- logger.print('addedSegment =') logger.debugPrint(addedSegment)
                                 end
                             end
                             for i = 1, #removeTrackWaypointsEventArgs do
@@ -2048,8 +2049,8 @@ function data()
                         end
                     elseif name == 'select' then
                         -- LOLLO TODO MAYBE same with stations. Maybe one day.
-                        -- print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
-                        -- debugPrint(args)
+                        -- logger.print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
+                        -- logger.debugPrint(args)
 
                         _joinSubway(args)
                     end
