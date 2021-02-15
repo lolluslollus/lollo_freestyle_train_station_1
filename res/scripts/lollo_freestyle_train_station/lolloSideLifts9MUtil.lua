@@ -79,8 +79,7 @@ return function(height, era)
         local zShift4Wall = -1.8 + 5
         for h = 5, height, 5 do
             zShift4Wall = zShift4Wall - 5
-            local zedZoom4Wall = 1
-            local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  0, 0, zShift4Wall, 1}
+            local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, zShift4Wall, 1}
             if era == _moduleHelpers.eras.era_a.prefix then
                 results[#results + 1] = {
                     materials = {
@@ -97,7 +96,7 @@ return function(height, era)
                         _materials.wallGreyDeco,
                         _materials.wallWhite,
                     },
-                    mesh = 'lollo_freestyle_train_station/lift/lift9x5x5level_deco.msh',
+                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/lift9x5x5top_level_deco.msh' or 'lollo_freestyle_train_station/lift/lift9x5x5level_deco.msh',
                     transf = wallTransf
                 }
             end
