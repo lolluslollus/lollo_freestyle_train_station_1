@@ -86,7 +86,7 @@ return function(height, era)
                     materials = {
                         _materials.iron,
                     },
-                    mesh = 'lollo_freestyle_train_station/lift/era_a_lift9x5x5level_deco.msh',
+                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_a_lift9x5x5top_level_deco.msh' or 'lollo_freestyle_train_station/lift/era_a_lift9x5x5level_deco.msh',
                     transf = wallTransf
                 }
             else
