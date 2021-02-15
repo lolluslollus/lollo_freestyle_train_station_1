@@ -14,6 +14,7 @@ return function(height, era)
             iron = 'lollo_freestyle_train_station/metal/metal_w_rivets.mtl',
             doors = 'lollo_freestyle_train_station/era_a_doors.mtl',
             roof = 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+            roofDeco = 'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl',
         },
         era_b = {
             shaft = 'lollo_freestyle_train_station/shaft.mtl',
@@ -78,14 +79,14 @@ return function(height, era)
         local zShift4Wall = -1.8 + 5
         for h = 5, height, 5 do
             zShift4Wall = zShift4Wall - 5
-            local zedZoom4Wall = h == 5 and 0.34 or 1
+            local zedZoom4Wall = 1
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, zedZoom4Wall, 0,  0, 0, zShift4Wall, 1}
             if era == _moduleHelpers.eras.era_a.prefix then
                 results[#results + 1] = {
                     materials = {
                         _materials.iron,
                     },
-                    mesh = 'lollo_freestyle_train_station/lift/era_a_lift9x5x5level_deco.msh',
+                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_a_lift9x5x5top_level_deco.msh' or 'lollo_freestyle_train_station/lift/era_a_lift9x5x5level_deco.msh',
                     transf = wallTransf
                 }
             else
@@ -133,10 +134,7 @@ return function(height, era)
     local _wallsBelowThePlatformLod0 = _getWallsBelowPlatform(0)
     local _wallsBelowThePlatformLod1 = _getWallsBelowPlatform(1)
 
-    -- local groundRoofTransf = {0.3, 0, 0, 0, 0, 0.05, 0, 0, 0, 0, 0.07, 0, 0, -4.1, 2.9 - height, 1}
-
     local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  0, 0, 3.2 - height, 1}
-
     local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
@@ -270,6 +268,7 @@ return function(height, era)
                                 _materials.tiles,
                                 _materials.doors,
                                 _materials.roof,
+                                _materials.roofDeco,
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
@@ -346,6 +345,7 @@ return function(height, era)
                                 _materials.tiles,
                                 _materials.doors,
                                 _materials.roof,
+                                _materials.roofDeco,
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
@@ -394,6 +394,7 @@ return function(height, era)
                                 _materials.tiles,
                                 _materials.doors,
                                 _materials.roof,
+                                _materials.roofDeco,
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
