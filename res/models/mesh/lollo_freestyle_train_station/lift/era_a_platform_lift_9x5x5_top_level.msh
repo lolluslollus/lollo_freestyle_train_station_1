@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 384,
+					offset = 1320,
+				},
+				position = {
+					count = 384,
+					offset = 936,
+				},
+				tangent = {
+					count = 384,
+					offset = 1704,
+				},
+				uv0 = {
+					count = 384,
+					offset = 552,
+				},
+			},
+			materials = {
+				"station/road/streetstation/iron_w_rivets.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 72,
+			numComp = 3,
+			offset = 416,
+		},
+		position = {
+			count = 384,
+			numComp = 3,
+			offset = 32,
+		},
+		tangent = {
+			count = 64,
+			numComp = 4,
+			offset = 488,
+		},
+		uv0 = {
+			count = 32,
+			numComp = 2,
+			offset = 0,
+		},
+	},
+}
+end
