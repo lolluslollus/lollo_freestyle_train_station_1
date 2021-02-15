@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
+local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -36,7 +37,7 @@ return {
 
 		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge)
 		if not(buildingHeight) then return end
-		print('buildingHeight =', buildingHeight)
+		logger.print('buildingHeight =', buildingHeight)
 
 		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 		local modelId = nil

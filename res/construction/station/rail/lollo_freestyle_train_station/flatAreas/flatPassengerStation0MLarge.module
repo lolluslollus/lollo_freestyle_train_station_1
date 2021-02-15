@@ -56,7 +56,7 @@ return {
 			tag = tag
 		}
 
-		print('buildingTransf =') debugPrint(buildingTransf)
+		-- print('buildingTransf =') debugPrint(buildingTransf)
 		table.insert(result.slots, {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.stationSquareOuterSlotId),
 			shape = 1,
