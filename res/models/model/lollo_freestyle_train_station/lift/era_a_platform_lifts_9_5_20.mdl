@@ -1,0 +1,4 @@
+function data()
+    local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+    return require('lollo_freestyle_train_station.lolloPlatformLifts9MUtil')(20, moduleHelpers.eras.era_a.prefix)
+end

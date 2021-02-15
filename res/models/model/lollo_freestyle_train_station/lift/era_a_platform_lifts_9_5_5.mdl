@@ -1,0 +1,290 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+
+    local height = 5
+
+    local ecsZoom4Doors = 1.222
+    local zedZoom4Doors = 1.08
+    local frontBelowTransf = {ecsZoom4Doors, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Doors, 0, 0, -2.565, -5, 1}
+    local rearBelowTransf = {ecsZoom4Doors, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Doors, 0, 0, 1.965, -5, 1}
+
+    local zedShift4groundPillar = -height + 3.2
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  0, 1.45, zedShift4groundPillar, 1}
+
+    local groundLiftShaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.3, -5, 1}
+    local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.15, 1}
+
+    local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+
+    local _materials = {
+        doors = 'lollo_freestyle_train_station/era_a_doors.mtl',
+        hole = 'lollo_freestyle_train_station/hole.mtl',
+        iron = 'lollo_freestyle_train_station/metal/metal_w_rivets.mtl',
+        roof = 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+        stationSign = "station/rail/era_a/era_a_trainstation_assets.mtl",
+        tiles = 'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
+    }
+    -- LOLLO NOTE I can make many of these, one for each height.
+    -- For example, platform_lifts_9_5_5.mdl, platform_lifts_9_5_10.mdl, and so on.
+    -- Only the transformations above will change, if I am clever,
+    -- and the height of the bounding box.
+
+    --print('LOLLO height = ', height)
+    return {
+        boundingInfo = {
+            -- bbMax = {4.4, 2.0, 4.0}, -- this would be the building without vents or tunnel awereness
+            -- bbMin = {-4.4, -2.6, -height} -- this would be the building without vents or tunnel awereness
+            bbMax = {4.4, 2.0, 5.5}, -- a bit taller to protect the vents from bridges
+            bbMin = {-4.4, -2.6, -height -1.5} -- a bit lower to protect the floor from tunnels
+        },
+        collider = {
+            params = {
+                -- halfExtents = {4.4, 2.3, 2.0 + height * 0.5} -- this would be the building without vents or tunnel awereness
+                halfExtents = {4.4, 2.3, 5.0 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
+            },
+            -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 2.0 - height * 0.5, 1 }, -- this would be the building without vents
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.5 - height * 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    -- front doors
+                                    materials = {'lollo_freestyle_train_station/era_a_doors.mtl'},
+                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
+                                    transf = frontBelowTransf
+                                },
+                                {
+                                    --rear doors
+                                    materials = {'lollo_freestyle_train_station/era_a_doors.mtl'},
+                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
+                                    transf = rearBelowTransf
+                                },
+                            },
+                            transf = stationMainTransf
+                        },
+                        {
+                            -- inner lift shaft
+                            materials = {
+                                _materials.iron,
+                                _materials.doors,
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_inner_shaft_lod0.msh',
+                            transf = groundLiftShaftTransf
+                        },
+                        {
+                            -- pillars
+                            materials = { _materials.iron },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
+                            transf = pillarsTransf
+                        },
+                        {
+                            -- shaft top
+                            materials = {
+                                _materials.hole,
+                                _materials.tiles,
+                                _materials.iron,
+                                _materials.doors,
+                                _materials.roof,
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_shaft_top_lod0.msh',
+                            transf = shaftTopTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 200
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    -- front doors
+                                    materials = {'lollo_freestyle_train_station/era_a_doors.mtl'},
+                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
+                                    transf = frontBelowTransf
+                                },
+                                {
+                                    --rear doors
+                                    materials = {'lollo_freestyle_train_station/era_a_doors.mtl'},
+                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
+                                    transf = rearBelowTransf
+                                },
+                            },
+                            name = 'station_1_main_grp',
+                            transf = stationMainTransf
+                        },
+                        {
+                            -- pillars
+                            materials = { _materials.iron },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
+                            transf = pillarsTransf
+                        },
+                        {
+                            -- shaft top
+                            materials = {
+                                _materials.hole,
+                                _materials.tiles,
+                                _materials.iron,
+                                _materials.doors,
+                                _materials.roof,
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_shaft_top_lod0.msh',
+                            transf = shaftTopTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 200,
+                visibleTo = 1000
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    -- front doors
+                                    materials = {'lollo_freestyle_train_station/era_a_doors.mtl'},
+                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
+                                    transf = frontBelowTransf
+                                },
+                                {
+                                    --rear doors
+                                    materials = {'lollo_freestyle_train_station/era_a_doors.mtl'},
+                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
+                                    transf = rearBelowTransf
+                                },
+                            },
+                            name = 'station_1_main_grp',
+                            transf = stationMainTransf
+                        },
+                        {
+                            -- pillars
+                            materials = { _materials.iron },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
+                            transf = pillarsTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 1000,
+                visibleTo = 3500
+            }
+        },
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        -- straight down
+                        linkable = false,
+                        nodes = {
+                            {
+                                {0, 0, _constants.underpassZ},
+                                {0, 0, -1},
+                                2.4
+                            },
+                            {
+                                {0, 0, -height},
+                                {0, 0, -1},
+                                2.4
+                            },
+                            {
+                                {0, 0, -height},
+                                {0, 0, -1},
+                                2.4
+                            },
+                            {
+                                {0, 0, -height + _constants.underpassZ},
+                                {0, 0, -1},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- out to the front
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, 0, -height},
+                                {0, -1, 0},
+                                2.4
+                            },
+                            {
+                                {0, -2.7, -height},
+                                -- {0, -2.8, -height},
+                                {0, -1, 0},
+                                2.4
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- out to the back
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, 0, -height},
+                                {0, 1, 0},
+                                2.4
+                            },
+                            {
+                                {0, 2.2, -height},
+                                {0, 1, 0},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- sideways, to connect extra elements
+                        nodes = {
+                            {
+                                {-4.5, -0.3, -height},
+                                {1, 0.1, 0},
+                                2.4
+                            },
+                            {
+                                {0, 0, -height},
+                                {1, 0.1, 0},
+                                2.4
+                            },
+                            {
+                                {0, 0, -height},
+                                {1, -0.1, 0},
+                                2.4
+                            },
+                            {
+                                {4.5, -0.3, -height},
+                                {1, -0.1, 0},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                },
+                runways = {},
+                terminals = {}
+            }
+        },
+        version = 1
+    }
+end
