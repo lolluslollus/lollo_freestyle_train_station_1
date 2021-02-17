@@ -1,70 +1,48 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, 0, }, 
+		{ 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 3600,
-					offset = 18632,
+					count = 4344,
+					offset = 14584,
 				},
 				position = {
-					count = 3600,
-					offset = 15032,
+					count = 4344,
+					offset = 23272,
 				},
 				tangent = {
-					count = 3600,
-					offset = 11432,
+					count = 4344,
+					offset = 18928,
 				},
 				uv0 = {
-					count = 3600,
-					offset = 22232,
+					count = 4344,
+					offset = 27616,
 				},
 			},
 			materials = {
-				"station/train/passenger/trainstation_1990_floor_1.mtl", 
-			},
-		}, {
-			indices = {
-				normal = {
-					count = 768,
-					offset = 27368,
-				},
-				position = {
-					count = 768,
-					offset = 26600,
-				},
-				tangent = {
-					count = 768,
-					offset = 25832,
-				},
-				uv0 = {
-					count = 768,
-					offset = 28136,
-				},
-			},
-			materials = {
-				"asset/lamp_old.mtl", 
+				"station/train/passenger/iron.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 29192,
+					offset = 31960,
 				},
 				position = {
 					count = 144,
-					offset = 29048,
+					offset = 32248,
 				},
 				tangent = {
 					count = 144,
-					offset = 28904,
+					offset = 32104,
 				},
 				uv0 = {
 					count = 144,
-					offset = 29336,
+					offset = 32392,
 				},
 			},
 			materials = {
@@ -74,24 +52,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 2460,
+			count = 2664,
 			numComp = 3,
-			offset = 6740,
+			offset = 0,
 		},
 		position = {
-			count = 2532,
+			count = 2520,
 			numComp = 3,
-			offset = 4208,
+			offset = 9832,
 		},
 		tangent = {
-			count = 4208,
+			count = 7168,
 			numComp = 4,
-			offset = 0,
+			offset = 2664,
 		},
 		uv0 = {
 			count = 2232,
 			numComp = 2,
-			offset = 9200,
+			offset = 12352,
 		},
 	},
 }

@@ -21,7 +21,6 @@ function data()
 					{
 						materials = {
 							"lollo_freestyle_train_station/metal/rough_iron.mtl",
-							"lollo_freestyle_train_station/metal/rough_iron.mtl",
 							"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
 						},
 						mesh = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps_lod0.msh',
@@ -33,7 +32,7 @@ function data()
 			},
 			static = false,
 			visibleFrom = 0,
-			visibleTo = 60.0,
+			visibleTo = 100.0,
 		},
 		{
 			node = {
@@ -41,7 +40,6 @@ function data()
 					{
 						materials = {
 							-- 'station/rail/cargo/cargo_assets_1.mtl',
-							"lollo_freestyle_train_station/metal/rough_iron.mtl",
 							"lollo_freestyle_train_station/metal/rough_iron.mtl",
 							"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
 						},
@@ -53,7 +51,7 @@ function data()
 				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 			},
 			static = false,
-			visibleFrom = 60.0,
+			visibleFrom = 100.0,
 			visibleTo = 800.0,
 		},
 	},

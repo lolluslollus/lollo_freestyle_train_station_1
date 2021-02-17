@@ -55,7 +55,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/cargo_name_board.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, result.laneZs[nTerminal], 1 }),
 				tag = tag
 			}
 		end
@@ -67,7 +67,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
+				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, result.laneZs[nTerminal], 1 }),
 				tag = tag
 			}
 			-- the model index must be in base 0 !
@@ -87,26 +87,24 @@ return {
 			result.models[#result.models + 1] = {
 				id = lampsModelId,
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
+				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, result.laneZs[nTerminal], 1 }),
 				tag = tag
 			}
 		end
 		for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 4 do
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local era = moduleHelpers.getEraPrefix(params, nTerminal, i)
-			local platformWidth = cpl.width
-			local yShift = 0 --isTrackOnPlatformLeft and platformWidth + 1.0 or -platformWidth - 1.0
-			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
-			local speakersModelId = nil
-			if era == moduleHelpers.eras.era_a.prefix then speakersModelId = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps.mdl'
-			else speakersModelId = 'lollo_freestyle_train_station/asset/cargo_speakers.mdl'
+			if era ~= moduleHelpers.eras.era_a.prefix then
+				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
+				local platformWidth = cpl.width
+				local yShift = 0 --isTrackOnPlatformLeft and platformWidth + 1.0 or -platformWidth - 1.0
+				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/asset/cargo_speakers.mdl',
+					slotId = slotId,
+					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, result.laneZs[nTerminal], 1 }),
+					tag = tag
+				}
 			end
-			result.models[#result.models + 1] = {
-				id = speakersModelId,
-				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 0, 1 }),
-				tag = tag
-			}
 		end
 
 		print('cargoTerminal.module.updateFn ending')

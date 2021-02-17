@@ -38,7 +38,7 @@ function data()
 			},
 			static = false,
 			visibleFrom = 0,
-			visibleTo = 60.0,
+			visibleTo = 100,
 		},
 		{
 			node = {
@@ -56,7 +56,7 @@ function data()
 				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 			},
 			static = false,
-			visibleFrom = 60.0,
+			visibleFrom = 100,
 			visibleTo = 800.0,
 		},
 	},

@@ -20,8 +20,7 @@ function data()
 				children = {
 					{
 						materials = { "station/rail/cargo/cargo_assets_1.mtl", },
-						mesh = "station/rail/asset/cargo_sign_nr_r/sign_nr_r_lod0.msh",
-						name = "sign_nr_r",
+						mesh = "lollo_freestyle_train_station/asset/cargo_perron_number.msh",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
 				},

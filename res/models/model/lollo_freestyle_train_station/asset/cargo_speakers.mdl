@@ -20,8 +20,7 @@ function data()
 				children = {
 					{
 						materials = { "station/rail/cargo/cargo_assets_1.mtl", },
-						mesh = "station/rail/asset/cargo_speakers/speakers_lod0.msh",
-						name = "speakers",
+						mesh = "lollo_freestyle_train_station/asset/speakers_lod0.msh",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
 				},
@@ -37,8 +36,7 @@ function data()
 				children = {
 					{
 						materials = { "station/rail/cargo/cargo_assets_1.mtl", },
-						mesh = "station/rail/asset/cargo_speakers/speakers_lod1.msh",
-						name = "speakers",
+						mesh = "lollo_freestyle_train_station/asset/speakers_lod1.msh",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
 				},
@@ -46,7 +44,7 @@ function data()
 				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 			},
 			static = false,
-			visibleFrom = 60.0,
+			visibleFrom = 100.0,
 			visibleTo = 450.0,
 		},
 	},
