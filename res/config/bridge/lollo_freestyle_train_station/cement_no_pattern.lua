@@ -4,6 +4,7 @@ local bridgeutil = require('lollo_freestyle_train_station.bridgeUtil')
 function data()
 	local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
 	local railingDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
+	local stockDir = 'bridge/cement/'
 
 	local railing = {
 		railingDir .. 'railing_rep_side_glass_shield_roof.mdl',

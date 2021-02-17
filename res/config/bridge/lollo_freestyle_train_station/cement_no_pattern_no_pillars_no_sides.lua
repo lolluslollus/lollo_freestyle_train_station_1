@@ -1,19 +1,20 @@
--- local bridgeutil = require 'bridgeutil'
-local bridgeutil = require('lollo_freestyle_train_station.bridgeUtil')
+local bridgeutil = require 'bridgeutil'
+-- local bridgeutil = require('lollo_freestyle_train_station.bridgeUtil')
 
 function data()
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/cement_no_sides/'
+    local stockDir = 'bridge/cement/'
 
     local railing = {
-        railingDir .. 'railing_rep_side_no_side.mdl',
-        railingDir .. 'railing_rep_side_no_side.mdl',
-        railingDir .. 'railing_rep_side_no_side.mdl',
-        railingDir .. 'railing_rep_rep.mdl',
-        railingDir .. 'railing_rep_rep.mdl',
-        -- dir .. 'railing_rep_side2_no_side.mdl',
-        -- dir .. 'railing_rep_side2_no_side.mdl',
-        -- dir .. 'railing_rep_side2_no_side.mdl',
+        stockDir .. 'railing_rep_side_no_side.mdl',
+        stockDir .. 'railing_rep_side_no_side.mdl',
+        stockDir .. 'railing_rep_side_no_side.mdl',
+        railingDir .. 'railing_rep_rep.mdl', -- LOLLO NOTE this has a mesh 0.5 m wide instead of 4, and same with the bounding box.
+        railingDir .. 'railing_rep_rep.mdl', -- This allows it to fit below 2.5 m platform-tracks.
+        stockDir .. 'railing_rep_side2_no_side.mdl', -- these are useful to avoid funny dark textures on one side
+        stockDir .. 'railing_rep_side2_no_side.mdl',
+        stockDir .. 'railing_rep_side2_no_side.mdl',
     }
 
     local config = {
