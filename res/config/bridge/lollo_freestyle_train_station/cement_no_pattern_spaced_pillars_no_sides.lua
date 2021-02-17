@@ -1,4 +1,5 @@
-local bridgeutil = require 'bridgeutil'
+-- local bridgeutil = require 'bridgeutil'
+local bridgeutil = require('lollo_freestyle_train_station.bridgeUtil')
 
 function data()
     local dir = 'bridge/cement/'
