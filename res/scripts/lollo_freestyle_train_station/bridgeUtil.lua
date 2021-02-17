@@ -1,4 +1,5 @@
--- require "tableutil"
+require "tableutil"
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local transf = require "transf"
 local vec3 = require "vec3"
 
@@ -26,7 +27,7 @@ local getSizes = function(modelData, models, dim)
 	return result
 end 
 
-local getSteps = function(indices, flipped, refSizes, size, isForceNumRepeat)
+local getSteps = function(indices, flipped, refSizes, size)
 	if #indices == 1 then
 		return { { idx = 1, refSize = refSizes[1], flipped = flipped[1] } }
 	end
@@ -44,7 +45,6 @@ local getSteps = function(indices, flipped, refSizes, size, isForceNumRepeat)
 		numRepeat = math.floor(repeatSize / refSizes[indices[2]] + .5)
 		
 		if indices[1] <= 0 and indices[3] <= 0 and numRepeat == 0 then numRepeat = 1 end -- TODO HACK
-        if isForceNumRepeat and numRepeat <= 0 then numRepeat = 1 end -- LOLLO added this
 		
 		minSize = minSize + numRepeat * refSizes[indices[2]]
 	end
@@ -98,7 +98,7 @@ function bridgeutil.configurePillar(modelData, pillarModels, height, width)
 	result.refSizes1 = { }
 	result.refSizes2 = { }
 	
-	result.indices1 = { } -- base models, repeat models, top models
+	result.indices1 = { }
 	for i = 1, #pillarModels do result.indices1[i] = i end
 
 	result.indices2 = { }
@@ -175,10 +175,10 @@ function bridgeutil.configureRailing(modelData, interval, railingModels, length,
 	return result
 end
 
-function bridgeutil.repeat2D(modelData, config, isForceNumRepeat)
+function bridgeutil.repeat2D(modelData, config)
 	local result = { }
 
-	local steps1 = getSteps(config.indices1, { false, false, false }, config.refSizes1, config.size1, isForceNumRepeat)
+	local steps1 = getSteps(config.indices1, { false, false, false }, config.refSizes1, config.size1)
 			
 	local pos1 = .0
 	for i = 1, #steps1 do
@@ -191,7 +191,7 @@ function bridgeutil.repeat2D(modelData, config, isForceNumRepeat)
 		
 		local offset1 = inverted and size1 or .0
 		
-		local steps2 = getSteps(config.indices2[idx1], config.flipped[idx1], config.refSizes2[idx1], config.size2, isForceNumRepeat)
+		local steps2 = getSteps(config.indices2[idx1], config.flipped[idx1], config.refSizes2[idx1], config.size2)
 	
 		local pos2 = config.min2
 		for j = 1, #steps2 do
@@ -203,7 +203,7 @@ function bridgeutil.repeat2D(modelData, config, isForceNumRepeat)
 			local model = config.models[idx1][idx2]
 			
 			local size = table.copy(modelData[model].max)
-            -- print('size =', size)
+            -- local size = arrayUtils.cloneDeepOmittingFields(modelData[model].max)
 			if inverted then size[config.dim1] = -modelData[model].min[config.dim1] end
 			
 			local offset2 = (flipped or steps2[j].flipped == 1) and size2 or .0
@@ -237,7 +237,39 @@ end
 function bridgeutil.makeDefaultUpdateFn(data)
 	return function(params)
         -- LOLLO NOTE the params contain state, with a list of all known models of bridge parts, with their bounding boxes
-        print('bridge updateFn starting, params =') debugPrint(params)
+        -- they also contain something like
+        -- {
+        --     pillarHeights = { 12.562181472778, },
+        --     pillarLength = 3,
+        --     pillarWidth = 1.5,
+        --     railingIntervals = {
+        --       {
+        --         curvature = 1.2178421684439e-06,
+        --         hasPillar = { -1, 0, },
+        --         lanes = {
+        --           {
+        --             offset = 0,
+        --             type = 0,
+        --           },
+        --         },
+        --         length = 8.565486907959,
+        --       },
+        --       {
+        --         curvature = 1.204009436151e-06,
+        --         hasPillar = { 0, -1, },
+        --         lanes = {
+        --           {
+        --             offset = 0, -- and here is the catch: two 2.5 tracks alongside have both offset 0, while two 5m tracks have 0 and 5
+        --                         -- this is why these 2.5 m platforms do not agree with bridges.
+        --             type = 0,
+        --           },
+        --         },
+        --         length = 8.565486907959,
+        --       },
+        --     },
+        --     railingWidth = 1.5,
+        --   }
+        print('bridge updateFn starting, params =') debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
 		local modelData = params.state.models
 		
 		local configurePillar = data.configurePillar and data.configurePillar or
@@ -264,11 +296,7 @@ function bridgeutil.makeDefaultUpdateFn(data)
 		
 		for i = 1, #params.pillarHeights do
 			local pillarConfig = configurePillar(modelData, params, i, params.pillarHeights[i], pillarWidth)
-            print('pillarConfig =') debugPrint(pillarConfig)
-			local pillarResult = bridgeutil.repeat2D(modelData, pillarConfig) -- , true)
-            print('pillarResultNew =') debugPrint(pillarResult)
-			local pillarResultOld = bridgeutil.repeat2D(modelData, pillarConfig)
-            print('pillarResultOld =') debugPrint(pillarResultOld)
+			local pillarResult = bridgeutil.repeat2D(modelData, pillarConfig)
 			
 			table.insert(result.pillarModels, pillarResult)
 		end
@@ -278,12 +306,14 @@ function bridgeutil.makeDefaultUpdateFn(data)
 		for i = 1, #params.railingIntervals do
 			local interval = params.railingIntervals[i]
 			local railingConfig = configureRailing(modelData, params, interval, i, interval.length, params.railingWidth)
+            print('railingConfig =') debugPrint(railingConfig)
 			local intervalResult = bridgeutil.repeat2D(modelData, railingConfig)
+            print('intervalResult =') debugPrint(intervalResult)
 			
 			table.insert(result.railingModels, intervalResult)
 		end
 		
-        print('bridge updateFn ending, result =') debugPrint(result)
+        -- print('bridge updateFn ending, result =') debugPrint(result)
 		return result
 	end
 end

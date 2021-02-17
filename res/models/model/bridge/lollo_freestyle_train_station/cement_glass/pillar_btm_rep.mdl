@@ -1,12 +1,12 @@
 function data()
 return {
 	boundingInfo = {
-		bbMax = { 1.5, 2, 2.5, },
+		bbMax = { 1.5, 4, 2.5, },
 		bbMin = { -1.5, 0, 0, },
 	},
 	collider = {
 		params = {
-			halfExtents = { 1.6999999284744, 1, 1.75, },
+			halfExtents = { 1.6999999284744, 2, 1.75, },
 		},
 		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 		type = "BOX",
