@@ -1,0 +1,59 @@
+function data()
+return {
+	animations = {
+		--Animation Config goes here!
+	},
+	matConfigs = {
+		{
+			0, 
+		},
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 504,
+					offset = 0,
+				},
+				position = {
+					count = 504,
+					offset = 504,
+				},
+				tangent = {
+					count = 504,
+					offset = 1008,
+				},
+				uv0 = {
+					count = 504,
+					offset = 1512,
+				},
+			},
+			materials = {
+				"MESH_1.mtl",
+			},
+		},
+	},
+	vertexAttr = {
+		normal = {
+			count = 84,
+			numComp = 3,
+			offset = 2016,
+		},
+		position = {
+			count = 336,
+			numComp = 3,
+			offset = 2100,
+		},
+		tangent = {
+			count = 672,
+			numComp = 4,
+			offset = 2436,
+		},
+		uv0 = {
+			count = 352,
+			numComp = 2,
+			offset = 3108,
+		},
+	},
+}
+end

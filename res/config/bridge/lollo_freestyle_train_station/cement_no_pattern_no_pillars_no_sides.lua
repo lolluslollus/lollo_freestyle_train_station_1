@@ -2,24 +2,24 @@
 local bridgeutil = require('lollo_freestyle_train_station.bridgeUtil')
 
 function data()
-	local dir = 'bridge/cement/'
-	local customDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
+    local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
+    local railingDir = 'bridge/lollo_freestyle_train_station/cement_no_sides/'
 
     local railing = {
-        dir .. 'railing_rep_side_no_side.mdl',
-        dir .. 'railing_rep_side_no_side.mdl',
-        dir .. 'railing_rep_side_no_side.mdl',
-        dir .. 'railing_rep_rep.mdl',
-        dir .. 'railing_rep_rep.mdl',
-        dir .. 'railing_rep_side2_no_side.mdl',
-        dir .. 'railing_rep_side2_no_side.mdl',
-        dir .. 'railing_rep_side2_no_side.mdl',
+        railingDir .. 'railing_rep_side_no_side.mdl',
+        railingDir .. 'railing_rep_side_no_side.mdl',
+        railingDir .. 'railing_rep_side_no_side.mdl',
+        railingDir .. 'railing_rep_rep.mdl',
+        railingDir .. 'railing_rep_rep.mdl',
+        -- dir .. 'railing_rep_side2_no_side.mdl',
+        -- dir .. 'railing_rep_side2_no_side.mdl',
+        -- dir .. 'railing_rep_side2_no_side.mdl',
     }
 
     local config = {
-        pillarBase = { dir .. 'pillar_btm_side.mdl', dir .. 'pillar_btm_rep.mdl', dir .. 'pillar_btm_side2.mdl' },
-        pillarRepeat = { dir .. 'pillar_rep_side.mdl', dir .. 'pillar_rep_rep.mdl', dir .. 'pillar_rep_side2.mdl' },
-        pillarTop = { dir .. 'pillar_top_side.mdl', dir .. 'pillar_top_rep.mdl', dir .. 'pillar_top_side2.mdl' },
+        pillarBase = { pillarDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', pillarDir .. 'pillar_btm_side2.mdl' },
+        pillarRepeat = { pillarDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', pillarDir .. 'pillar_rep_side2.mdl' },
+        pillarTop = { pillarDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', pillarDir .. 'pillar_top_side2.mdl' },
         railingBegin = railing,
         railingRepeat = railing,
         railingEnd = railing,

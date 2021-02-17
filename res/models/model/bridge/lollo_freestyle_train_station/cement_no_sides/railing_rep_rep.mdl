@@ -1,0 +1,64 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 6, 3, 0, },
+		bbMin = { 0, 1, -3, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 3, 1, 1.5, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 1, -1.5, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								name = "cement_bridge_bone_6m_start",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+							},
+							{
+								name = "cement_bridge_bone_6m_end",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, 2, 0, 1, },
+							},
+						},
+						-- name = "container_6m",
+						skin = "bridge/cement/railing_rep_rep/cement_railing_rep_rep_lod0.msh",
+						-- mesh = "lollo_freestyle_train_station/bridge/cement/railing_rep_rep_skin/cement_railing_rep_rep_lod0.msh",
+						skinMaterials = { "bridge/cement_skinned.mtl", },
+						-- materials = { "bridge/cement_skinned.mtl", },
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 200,
+		},{
+			node = {
+				children = {
+					{
+						name = "container_6m",
+						mesh = "bridge/cement/railing_rep_rep/cement_railing_rep_rep_lod0.msh",
+						materials = { "bridge/cement.mtl", },
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 200,
+			visibleTo = 600,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

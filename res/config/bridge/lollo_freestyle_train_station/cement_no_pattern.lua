@@ -2,31 +2,21 @@
 local bridgeutil = require('lollo_freestyle_train_station.bridgeUtil')
 
 function data()
-	local dir = 'bridge/lollo_freestyle_train_station/cement_glass/' --'bridge/cement/'
-	local customDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
+	local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
+	local railingDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
 
 	local railing = {
-		-- customDir .. 'railing_rep_side_glass_shield.mdl',
-		-- customDir .. 'railing_rep_side_glass_shield.mdl',
-
-		customDir .. 'railing_rep_side_glass_shield_roof.mdl',
-		customDir .. 'railing_rep_side_glass_shield.mdl',
-		customDir .. 'railing_rep_side_no_side.mdl',
-		customDir .. 'railing_rep_rep_roof.mdl',
-		customDir .. 'railing_rep_rep.mdl',
-
-		-- customDir .. 'railing_rep_side2_glass_shield.mdl',
-		-- customDir .. 'railing_rep_side2_glass_shield.mdl',
-
-		-- customDir .. 'railing_rep_side2_glass_shield.mdl',
-		-- customDir .. 'railing_rep_side2_glass_shield.mdl',
-		-- customDir .. 'railing_rep_side2_no_side.mdl',
+		railingDir .. 'railing_rep_side_glass_shield_roof.mdl',
+		railingDir .. 'railing_rep_side_glass_shield.mdl',
+		railingDir .. 'railing_rep_side_no_side.mdl',
+		railingDir .. 'railing_rep_rep_roof.mdl',
+		railingDir .. 'railing_rep_rep.mdl',
 	}
 
 	local config = {
-		pillarBase = { dir .. 'pillar_btm_side.mdl', dir .. 'pillar_btm_rep.mdl', dir .. 'pillar_btm_side2.mdl' },
-		pillarRepeat = { dir .. 'pillar_rep_side.mdl', dir .. 'pillar_rep_rep.mdl', dir .. 'pillar_rep_side2.mdl' },
-		pillarTop = { dir .. 'pillar_top_side.mdl', dir .. 'pillar_top_rep.mdl', dir .. 'pillar_top_side2.mdl' },
+		pillarBase = { pillarDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', pillarDir .. 'pillar_btm_side2.mdl' },
+		pillarRepeat = { pillarDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', pillarDir .. 'pillar_rep_side2.mdl' },
+		pillarTop = { pillarDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', pillarDir .. 'pillar_top_side2.mdl' },
 		railingBegin = railing, -- LOLLO TODO if you go with this special bridge, make custom begins and ends with shields. Not without skins tho!
 		railingRepeat = railing,
 		railingEnd = railing,
