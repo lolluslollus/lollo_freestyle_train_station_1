@@ -45,14 +45,14 @@ return {
 		},
 		operation_1 = {
 			mode = "WORLD_XY",
-			op = "OVERLAY",
+			op = "NO_OP",
 			opacity = 0.2,
 			scale = { 0.40000000596046, 0.40000000596046, },
 		},
 		operation_2 = {
 			mode = "WORLD_XY",
 			op = "OVERLAY",
-			opacity = 0.55000001192093,
+			opacity = 0.2,
 			scale = { 0.0099999997764826, 0.0099999997764826, },
 		},
 		polygon_offset = {
