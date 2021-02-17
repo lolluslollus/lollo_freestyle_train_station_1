@@ -269,6 +269,7 @@ function bridgeutil.makeDefaultUpdateFn(data)
         --     },
         --     railingWidth = 1.5,
         --   }
+        -- LOLLO NOTE we can trick the game into drawing at least the pillars of 2.5 m bridges, but this disaligns the pillars for 5 m bridges.
         print('bridge updateFn starting, params =') debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
 		local modelData = params.state.models
 		
