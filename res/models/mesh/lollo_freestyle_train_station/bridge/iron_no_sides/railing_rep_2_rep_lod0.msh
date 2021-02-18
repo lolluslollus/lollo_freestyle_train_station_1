@@ -1,0 +1,91 @@
+function data()
+return {
+	animations = {},
+	matConfigs = {
+		{ 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				jointWeights = {
+					count = 1008,
+					offset = 11120,
+				},
+				normal = {
+					count = 1008,
+					offset = 9104,
+				},
+				position = {
+					count = 1008,
+					offset = 7088,
+				},
+				tangent = {
+					count = 1008,
+					offset = 10112,
+				},
+				uv0 = {
+					count = 1008,
+					offset = 8096,
+				},
+			},
+			materials = {
+				"one.mtl", 
+			},
+		},
+		{
+			indices = {
+				jointWeights = {
+					count = 96,
+					offset = 12512,
+				},
+				normal = {
+					count = 96,
+					offset = 12320,
+				},
+				position = {
+					count = 96,
+					offset = 12128,
+				},
+				tangent = {
+					count = 96,
+					offset = 12416,
+				},
+				uv0 = {
+					count = 96,
+					offset = 12224,
+				},
+			},
+			materials = {
+				"two.mtl", 
+			},
+		},
+	},
+	vertexAttr = {
+		jointWeights = {
+			count = 1664,
+			numComp = 4,
+			offset = 5424,
+		},
+		normal = {
+			count = 48,
+			numComp = 3,
+			offset = 2432,
+		},
+		position = {
+			count = 1248,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 2944,
+			numComp = 4,
+			offset = 2480,
+		},
+		uv0 = {
+			count = 1184,
+			numComp = 2,
+			offset = 1248,
+		},
+	},
+}
+end

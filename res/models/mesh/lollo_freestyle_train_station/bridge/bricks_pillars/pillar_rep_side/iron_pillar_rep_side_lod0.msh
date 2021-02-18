@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 624,
+					offset = 3388,
+				},
+				position = {
+					count = 624,
+					offset = 2764,
+				},
+				tangent = {
+					count = 624,
+					offset = 1516,
+				},
+				uv0 = {
+					count = 624,
+					offset = 2140,
+				},
+			},
+			materials = {
+				"iron.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 156,
+			numComp = 3,
+			offset = 1360,
+		},
+		position = {
+			count = 432,
+			numComp = 3,
+			offset = 928,
+		},
+		tangent = {
+			count = 368,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 560,
+			numComp = 2,
+			offset = 368,
+		},
+	},
+}
+end

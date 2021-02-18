@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 192,
+					offset = 1216,
+				},
+				position = {
+					count = 192,
+					offset = 1024,
+				},
+				tangent = {
+					count = 192,
+					offset = 640,
+				},
+				uv0 = {
+					count = 192,
+					offset = 832,
+				},
+			},
+			materials = {
+				"one.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 48,
+			numComp = 3,
+			offset = 592,
+		},
+		position = {
+			count = 192,
+			numComp = 3,
+			offset = 400,
+		},
+		tangent = {
+			count = 240,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 160,
+			numComp = 2,
+			offset = 240,
+		},
+	},
+}
+end

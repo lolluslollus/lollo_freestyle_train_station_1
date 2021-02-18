@@ -30,7 +30,7 @@ function data()
 				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
 				- To work underground, use <NumPad 4>.
 				- Platforms only carry passengers or cargo if they are part of a terminal.
-				- 2.5 m platforms do not agree with bridges and tunnels. Pillarless bridges can help, tunnels can't be helped.
+				- 2.5 m platforms do not agree with bridges and tunnels. My \"no railing\" bridges help a bit, tunnels can't be helped.
                 - Very thin paths help with certain setups: those are in my street fine-tuning mod.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
@@ -191,9 +191,12 @@ function data()
 			["CementBridgeGlassWallNoPillars"] = "Concrete bridge with underpasses, glass shields and no pillars. Only for 5 m platforms.",
 			["CementBridgeGlassWallNormalPillars"] = "Concrete bridge with underpasses and glass shields. Only for 5 m platforms.",
 			["CementBridgeGlassWallSpacedPillars"] = "Concrete bridge with underpasses, glass shields and spaced pillars. Only for 5 m platforms.",
-			["CementBridgeNoPillarsNoSides"] = "Concrete bridge with no pillars and low railing",
-			["CementBridgeNormalPillarsNoSides"] = "Concrete bridge with low railing",
-			["CementBridgeSpacedPillarsNoSides"] = "Concrete bridge with spaced pillars and low railing",
+			["CementBridgeNoPillarsNoSides"] = "Concrete bridge with no pillars and no railing",
+			["CementBridgeNormalPillarsNoSides"] = "Concrete bridge with no railing",
+			["CementBridgeSpacedPillarsNoSides"] = "Concrete bridge with spaced pillars and no railing",
+			["IronBridgeNoPillarsNoSides"] = "Iron bridge with no railing",
+			["IronBridgeNormalPillarsNoSides"] = "Iron bridge with no pillars and no railing",
+			["IronBridgeSpacedPillarsNoSides"] = "Iron bridge with spaced pillars and no railing",
 
 			["NewStationName"] = "New Station",
 

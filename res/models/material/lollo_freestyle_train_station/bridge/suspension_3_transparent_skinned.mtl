@@ -1,0 +1,77 @@
+function data()
+return {
+	order = 0,
+	params = {
+		albedo_scale = {
+			albedoScale = { 0.4, 1, 1, },
+		},
+		alpha_scale = {
+			alphaScale = 1,
+		},
+		alpha_test = {
+			alphaThreshold = 0.5,
+			cutout = true,
+		},
+		fade_out_range = {
+			fadeOutEndDist = 20000,
+			fadeOutStartDist = 10000,
+		},
+		map_albedo_opacity = {
+			fileName = "models/bridge/suspension_3_albedo_opacity.dds",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_metal_gloss_ao = {
+			fileName = "models/bridge/suspension_3_metal_gloss_ao.dds",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_normal = {
+			fileName = "models/bridge/suspension_3_normal.dds",
+			redGreen = true,
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_1 = {
+			fileName = "models/industry/overlay_textures/big_04.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_2 = {
+			fileName = "models/industry/overlay_textures/small_04.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		normal_scale = {
+			normalScale = 0.75,
+		},
+		operation_1 = {
+			mode = "NORMAL",
+			op = "OVERLAY",
+			opacity = 0.2,
+			scale = { 0.0099999997764826, 0.0099999997764826, },
+		},
+		operation_2 = {
+			mode = "NORMAL",
+			op = "OVERLAY",
+			opacity = 0.25,
+			scale = { 0.0099999997764826, 0.0099999997764826, },
+		},
+		polygon_offset = {
+			factor = 0,
+			forceDepthWrite = false,
+			units = 0,
+		},
+		two_sided = {
+			flipNormal = true,
+			twoSided = true,
+		},
+	},
+	type = "SKINNING_PHYS_TRANSPARENT_NRML_MAP_OP",
+}
+end

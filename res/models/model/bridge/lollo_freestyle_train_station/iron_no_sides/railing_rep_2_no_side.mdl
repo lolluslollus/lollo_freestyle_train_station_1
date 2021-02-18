@@ -1,0 +1,77 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 12, 0, 0, },
+		bbMin = { 0, -2.5, -7.5, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 6, 1.4129998683929, 3.1749999523163, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								name = "bridge_bone_12m_start",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+							},
+							{
+								name = "bridge_bone_12m_1",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, 2, 0, 1, },
+							},
+							{
+								name = "bridge_bone_12m_end",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 12, 2, 0, 1, },
+							},
+						},
+						name = "container_12m",
+						skin = "bridge/suspension/railing_rep_2_no_side/railing_rep_2_no_side_lod0.msh",
+						-- skinMaterials = { "bridge/suspension_3_skinned.mtl", "bridge/suspension_1_skinned.mtl", "bridge/suspension_3_transparent_skinned.mtl", },
+						skinMaterials = {
+							"lollo_freestyle_train_station/bridge/suspension_3_skinned.mtl",
+							"lollo_freestyle_train_station/bridge/suspension_1_skinned.mtl",
+							"lollo_freestyle_train_station/bridge/suspension_3_transparent_skinned.mtl",
+						},
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 200,
+		},{
+			node = {
+				children = {
+					{
+						
+						name = "container_12m",
+						mesh = "bridge/suspension/railing_rep_2_no_side/railing_rep_2_no_side_lod0.msh",
+						-- materials = { "bridge/suspension_3.mtl", "bridge/suspension_1.mtl", "bridge/suspension_3_transparent.mtl", },
+						materials = {
+							"lollo_freestyle_train_station/bridge/suspension_3.mtl",
+							"lollo_freestyle_train_station/bridge/suspension_1.mtl",
+							"lollo_freestyle_train_station/bridge/suspension_3_transparent.mtl",
+						},
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 200,
+			visibleTo = 1100,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end
