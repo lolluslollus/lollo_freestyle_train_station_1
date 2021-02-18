@@ -35,7 +35,7 @@ function data()
         pillarMinDist = 6.0,
         pillarMaxDist = 132.0,
         pillarTargetDist = 48.0,
-        pillarWidth = 2,
+        -- pillarWidth = 2,
         cost = 400.0,
         materialsToReplace = {
             streetPaving = {
