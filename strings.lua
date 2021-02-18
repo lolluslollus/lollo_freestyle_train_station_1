@@ -188,9 +188,9 @@ function data()
 			["TrackWaypointName"] = "Track End Marker",
 			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter. Close semaphores can interfere, you may want to remove them and put them back once the station is laid out.",
 
-			["CementBridgeGlassWallNoPillars"] = "Concrete bridge with underpasses, glass shields and no pillars",
-			["CementBridgeGlassWallNormalPillars"] = "Concrete bridge with underpasses and glass shields",
-			["CementBridgeGlassWallSpacedPillars"] = "Concrete bridge with underpasses, glass shields and spaced pillars",
+			["CementBridgeGlassWallNoPillars"] = "Concrete bridge with underpasses, glass shields and no pillars. Only for 5 m platforms.",
+			["CementBridgeGlassWallNormalPillars"] = "Concrete bridge with underpasses and glass shields. Only for 5 m platforms.",
+			["CementBridgeGlassWallSpacedPillars"] = "Concrete bridge with underpasses, glass shields and spaced pillars. Only for 5 m platforms.",
 			["CementBridgeNoPillarsNoSides"] = "Concrete bridge with no pillars and low railing",
 			["CementBridgeNormalPillarsNoSides"] = "Concrete bridge with low railing",
 			["CementBridgeSpacedPillarsNoSides"] = "Concrete bridge with spaced pillars and low railing",
