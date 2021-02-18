@@ -7,6 +7,8 @@ function data()
 
     -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
     -- then places them together depending on this information.
+    -- This probably explains why bridges have a less flexible file structure.
+    -- The trouble is, platform-tracks != 5 m don't work well on bridges.
     -- Either we rewrite the whole thing, or we use the automatisms. So we go for number two.
     -- the *_rep models have a mesh 0.5 m wide instead of 4, and same with the bounding box.
     -- This applies to railing and pillars.
