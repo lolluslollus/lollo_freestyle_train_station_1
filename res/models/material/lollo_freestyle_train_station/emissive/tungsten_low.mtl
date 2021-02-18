@@ -3,7 +3,7 @@ function data()
         order = 0,
         params = {
             emissive_scale = {
-                emissiveScale = { 40, 40, 25, },
+                emissiveScale = { 5, 5, 3.125, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
