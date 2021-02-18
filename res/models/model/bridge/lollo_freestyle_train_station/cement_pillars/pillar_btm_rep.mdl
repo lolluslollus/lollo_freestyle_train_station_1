@@ -16,7 +16,8 @@ return {
 			node = {
 				children = {
 					{
-						materials = { "bridge/cement.mtl", },
+						-- materials = { "bridge/cement.mtl", },
+						materials = { "lollo_freestyle_train_station/bridge/cement_shrunk.mtl"},
 						-- mesh = "bridge/cement/pillar_btm_rep/cement_pilar_btm_rep_lod0.msh",
 						mesh = "lollo_freestyle_train_station/bridge/cement_pillars/pillar_btm_rep/cement_pilar_btm_rep_lod0.msh",
 						name = "cement_pilar_btm_rep",
