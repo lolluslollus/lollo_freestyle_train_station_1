@@ -45,8 +45,6 @@ end
 -- The proper way would be to check the neighbours before assigning a slot,
 -- but this can be expensive and complicated in a free layout such as this.
 
--- LOLLO TODO see if you can upgrade platforms with the track magic wand. It seems not.
-
 function data()
 	return {
 		type = 'RAIL_STATION',

@@ -6,14 +6,16 @@ function data()
     local stockDir = 'bridge/cement/'
 
     -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
+    -- and a list of lanes and offsets,
     -- then places them together depending on this information.
-    -- This probably explains why bridges have a less flexible file structure.
-    -- The trouble is, platform-tracks != 5 m don't work well on bridges.
-    -- Either we rewrite the whole thing, or we use the automatisms. So we go for number two.
-    -- the *_rep models have a mesh 0.5 m wide instead of 4, and same with the bounding box.
+    -- The bounding boxes probably explain why bridges have a less flexible file structure.
+    -- The trouble is, platform-tracks != 5 m don't work well on stock bridges.
+    -- Either we rewrite the whole thing, or we use the automatisms => number two.
+    -- The *_rep models have a mesh 0.5 m wide instead of 4, and same with the bounding box.
     -- This applies to railing and pillars.
-    -- This allows them to fit below 2.5 m platform-tracks.
-    -- Sadly, any sorts of sides won't work with 2.5 m platforms coz bridgeutil assumes tracks are 5 m wide.
+    -- This allows them to fit 2.5 m platform-tracks.
+    -- Sadly, any sorts of sides won't work with 2.5 m platforms
+    -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
     local railing = {
         stockDir .. 'railing_rep_side_no_side.mdl',
         stockDir .. 'railing_rep_side_no_side.mdl',

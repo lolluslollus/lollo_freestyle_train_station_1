@@ -5,7 +5,7 @@ function data()
 	local railingDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
 	local stockDir = 'bridge/cement/'
 
-	-- LOLLO NOTE UG TODO bridgeutil uses the lane width to see how wide a bridge is. However, it does not respect 2.5 m platform-tracks,
+	-- bridgeutil uses the lane width to see how wide a bridge is. However, it does not respect 2.5 m platform-tracks,
 	-- it says 0 m instead of 2.5. As a consequence, this fancy bridge only goes with 5 m platforms.
 	local railing = {
 		railingDir .. 'railing_rep_side_glass_shield_roof.mdl',
