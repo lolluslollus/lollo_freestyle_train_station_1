@@ -12,6 +12,7 @@ function data()
     -- the *_rep models have a mesh 0.5 m wide instead of 4, and same with the bounding box.
     -- This applies to railing and pillars.
     -- This allows them to fit below 2.5 m platform-tracks.
+    -- Sadly, any sorts of sides won't work with 2.5 m platforms coz bridgeutil assumes tracks are 5 m wide.
     local railing = {
         stockDir .. 'railing_rep_side_no_side.mdl',
         stockDir .. 'railing_rep_side_no_side.mdl',
