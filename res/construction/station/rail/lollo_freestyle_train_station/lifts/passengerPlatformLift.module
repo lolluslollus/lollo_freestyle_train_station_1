@@ -83,7 +83,7 @@ return {
 		})
 
 		-- add some deco
-		local _clockY = -2.9 -- 2.8
+		local _clockY = era == moduleHelpers.eras.era_a.prefix and -2.5 or -2.9
 		local clockModelId = era == moduleHelpers.eras.era_c.prefix
 			and 'station/rail/asset/era_c_big_clock.mdl'
 			or 'station/rail/asset/era_a_big_clock.mdl'
@@ -93,7 +93,7 @@ return {
 				slotId = slotId,
 				transf = transfUtilsUG.mul(
 					slotTransf,
-					{ 0.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0.5, 0,  0, _clockY, 6.4 - buildingHeight, 1 }
+					{ 0.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0.5, 0,  0, _clockY, 6.3 - buildingHeight, 1 }
 				),
 				tag = tag
 			}

@@ -105,7 +105,7 @@ return function(height, era)
             local zShift4Shaft = 0
             for h = 5, height, 5 do
                 zShift4Shaft = zShift4Shaft - 5
-                local zedZoom4Shaft = 1
+                local zedZoom4Shaft = h == 5 and 0.93 or 1
                 local shaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Shaft, 0, 0, -0.3, zShift4Shaft, 1}
                 if era == _moduleHelpers.eras.era_a.prefix then
                     results[#results + 1] = {
@@ -113,13 +113,13 @@ return function(height, era)
                             _materials.iron,
                             _materials.doors,
                         },
-                        mesh = 'lollo_freestyle_train_station/lift/era_a_inner_shaft_lod0.msh',
+                        mesh = 'lollo_freestyle_train_station/lift/era_a_inner_shaft_thin_lod0.msh',
                         transf = shaftTransf
                     }
                 else
                     results[#results + 1] = {
                         materials = { _materials.shaft },
-                        mesh = 'lollo_freestyle_train_station/lift/inner_shaft_round_lod0.msh',
+                        mesh = 'lollo_freestyle_train_station/lift/inner_shaft_thin_round_lod0.msh',
                         transf = shaftTransf
                     }
                 end

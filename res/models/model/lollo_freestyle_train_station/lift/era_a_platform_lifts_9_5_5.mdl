@@ -11,7 +11,7 @@ function data()
     local zedShift4groundPillar = -height + 3.2
     local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  0, 1.45, zedShift4groundPillar, 1}
 
-    local groundLiftShaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.3, -5, 1}
+    local groundLiftShaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.93, 0, 0, -0.3, -5, 1}
     local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.15, 1}
 
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
@@ -73,7 +73,7 @@ function data()
                                 _materials.iron,
                                 _materials.doors,
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/era_a_inner_shaft_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_inner_shaft_thin_lod0.msh',
                             transf = groundLiftShaftTransf
                         },
                         {
