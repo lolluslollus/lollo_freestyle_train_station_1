@@ -18,9 +18,9 @@ function data()
     }
 
     local config = {
-        pillarBase = { pillarDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', pillarDir .. 'pillar_btm_side2.mdl' },
-        pillarRepeat = { pillarDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', pillarDir .. 'pillar_rep_side2.mdl' },
-        pillarTop = { pillarDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', pillarDir .. 'pillar_top_side2.mdl' },
+        pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
+        pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
+        pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
         railingBegin = railing,
         railingRepeat = railing,
         railingEnd = railing,
@@ -36,6 +36,7 @@ function data()
         pillarMinDist = 48.0,
         pillarMaxDist = 192.0,
         pillarTargetDist = 96.0,
+        pillarWidth = 2,
         cost = 400.0,
         materialsToReplace = {
             streetPaving = {

@@ -6,21 +6,27 @@ function data()
     local railingDir = 'bridge/lollo_freestyle_train_station/cement_no_sides/'
     local stockDir = 'bridge/cement/'
 
+    -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
+    -- then places them together depending on this information.
+    -- Either we rewrite the whole thing, or we use the automatisms. So we go for number two.
+    -- the *_rep models have a mesh 0.5 m wide instead of 4, and same with the bounding box.
+    -- This applies to railing and pillars.
+    -- This allows them to fit below 2.5 m platform-tracks.
     local railing = {
         stockDir .. 'railing_rep_side_no_side.mdl',
         stockDir .. 'railing_rep_side_no_side.mdl',
         stockDir .. 'railing_rep_side_no_side.mdl',
-        railingDir .. 'railing_rep_rep.mdl', -- LOLLO NOTE this has a mesh 0.5 m wide instead of 4, and same with the bounding box.
-        railingDir .. 'railing_rep_rep.mdl', -- This allows it to fit below 2.5 m platform-tracks.
+        railingDir .. 'railing_rep_rep.mdl',
+        railingDir .. 'railing_rep_rep.mdl',
         stockDir .. 'railing_rep_side2_no_side.mdl', -- these are useful to avoid funny dark textures on one side
         stockDir .. 'railing_rep_side2_no_side.mdl',
         stockDir .. 'railing_rep_side2_no_side.mdl',
     }
 
     local config = {
-        pillarBase = { pillarDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', pillarDir .. 'pillar_btm_side2.mdl' },
-        pillarRepeat = { pillarDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', pillarDir .. 'pillar_rep_side2.mdl' },
-        pillarTop = { pillarDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', pillarDir .. 'pillar_top_side2.mdl' },
+        pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
+        pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
+        pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
         railingBegin = railing,
         railingRepeat = railing,
         railingEnd = railing,
@@ -36,6 +42,7 @@ function data()
         pillarMinDist = 65535,
         pillarMaxDist = 65535,
         pillarTargetDist = 65535,
+        pillarWidth = 2,
         cost = 400.0,
         materialsToReplace = {
             streetPaving = {

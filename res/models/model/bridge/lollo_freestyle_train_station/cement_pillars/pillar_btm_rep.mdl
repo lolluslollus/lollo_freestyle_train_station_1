@@ -1,7 +1,7 @@
 function data()
 return {
 	boundingInfo = {
-		bbMax = { 1.5, 4, 2.5, },
+		bbMax = { 1.5, 0.5, 2.5, },
 		bbMin = { -1.5, 0, 0, },
 	},
 	collider = {
@@ -17,9 +17,10 @@ return {
 				children = {
 					{
 						materials = { "bridge/cement.mtl", },
-						mesh = "bridge/cement/pillar_btm_rep/cement_pilar_btm_rep_lod0.msh",
+						-- mesh = "bridge/cement/pillar_btm_rep/cement_pilar_btm_rep_lod0.msh",
+						mesh = "lollo_freestyle_train_station/bridge/cement/pillar_btm_rep/cement_pilar_btm_rep_lod0.msh",
 						name = "cement_pilar_btm_rep",
-						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.25, 0, 1, },
 					},
 				},
 				name = "RootNode",
