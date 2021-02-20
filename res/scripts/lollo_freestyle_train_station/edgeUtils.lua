@@ -596,7 +596,7 @@ helper.getNodeIdsBetweenEdgeIds = function(edgeIds, isIncludeExclusiveOuterNodes
 end
 
 helper.getObjectPosition = function(objectId)
-    print('getObjectPosition starting')
+    -- print('getObjectPosition starting')
     if not(helper.isValidAndExistingId(objectId)) then return nil end
 
     local modelInstanceList = api.engine.getComponent(objectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
@@ -616,12 +616,35 @@ helper.getObjectPosition = function(objectId)
     -- print('fatInstances[3]', fatInstances[3] and true) -- always nil
     -- print('objectTransf =')
     -- debugPrint(objectTransf)
-    -- LOLLO TODO try calling directly fatInstance[1].transf[13] to get trasnlate x, so as y and z
     return {
         [1] = objectTransf[13],
         [2] = objectTransf[14],
         [3] = objectTransf[15]
     }
+end
+
+helper.getObjectTransf = function(objectId)
+    -- print('getObjectTransf starting')
+    if not(helper.isValidAndExistingId(objectId)) then return nil end
+
+    local modelInstanceList = api.engine.getComponent(objectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
+    if not(modelInstanceList) then return nil end
+
+    local fatInstances = modelInstanceList.fatInstances
+    if not(fatInstances) or not(fatInstances[1]) or not(fatInstances[1].transf) or not(fatInstances[1].transf.cols) then return nil end
+
+    local objectTransf = transfUtilsUG.new(
+        fatInstances[1].transf:cols(0),
+        fatInstances[1].transf:cols(1),
+        fatInstances[1].transf:cols(2),
+        fatInstances[1].transf:cols(3)
+    )
+    local result = {}
+    for _, value in pairs(objectTransf) do
+        result[#result+1] = value
+    end
+
+    return result
 end
 
 helper.getConnectedEdgeIds = function(nodeIds)
