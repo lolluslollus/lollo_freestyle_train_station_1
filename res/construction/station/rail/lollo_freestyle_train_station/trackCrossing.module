@@ -8,59 +8,69 @@ local vec3 = require "vec3"
 
 
 function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-up-and-down", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("TrackCrossingName"),
+			description = _("TrackCrossingDesc"),
+			icon = "ui/lollo_freestyle_train_station/trackCrossing.tga"
+		},
+		metadata = { },
+		order = {
+			value = 60,
+		},
+		type = _constants.trackCrossingModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not nTrackEdge or not baseId then return end
 
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "passenger-up-and-down", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("TrackCrossingName"),
-		description = _("TrackCrossingDesc"),
-		icon = "ui/lollo_freestyle_train_station/trackCrossing.tga"
-	},
-	metadata = { },
-	order = {
-		value = 60,
-	},
-	type = _constants.trackCrossingModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not nTrackEdge or not baseId then return end
+			-- local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local modelId = nil
+			if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_a_trackCrossing.mdl'
+			elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_b_trackCrossing.mdl'
+			else modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_c_trackCrossing.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = modelId,
+				-- id = 'lollo_freestyle_train_station/icon/blue.mdl',
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+			-- I must use y and not x to make several of these in a sequence
+			-- result.models[#result.models + 1] = {
+			-- 	id = modelId,
+			-- 	-- id = 'lollo_freestyle_train_station/icon/blue.mdl',
+			-- 	slotId = slotId,
+			-- 	transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 5, 0, 1 }),
+			-- 	tag = tag
+			-- }
+			-- result.models[#result.models + 1] = {
+			-- 	id = modelId,
+			-- 	-- id = 'lollo_freestyle_train_station/icon/blue.mdl',
+			-- 	slotId = slotId,
+			-- 	transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -5, 0, 1 }),
+			-- 	tag = tag
+			-- }
+		end,
 
-		-- local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-		-- local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		-- local modelId = 'lollo_freestyle_train_station/trackCrossing.mdl'
-		result.models[#result.models + 1] = {
-			-- id = modelId,
-			id = 'lollo_freestyle_train_station/icon/blue.mdl',
-			slotId = slotId,
-			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
-			tag = tag
-		}
-		-- LOLLO TODO make a proper model
-				-- 	result.models[#result.models + 1] = {
-		-- 		id = 'lollo_freestyle_train_station/icon/red.mdl',
-		-- 		slotId = slotId,
-		-- 		transf = slotTransf,
-		-- 		tag = tag
-		-- 	}
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				id = 'lollo_freestyle_train_station/trackCrossing.mdl',
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
-			},
-		}
-	end
-}
-
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/railroad/trackCrossing/era_c_trackCrossing.mdl',
+					transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
+				},
+			}
+		end
+	}
 end
