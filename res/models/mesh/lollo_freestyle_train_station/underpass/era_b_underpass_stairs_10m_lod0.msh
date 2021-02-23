@@ -1,0 +1,171 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 768,
+					offset = 11288,
+				},
+				position = {
+					count = 768,
+					offset = 12056,
+				},
+				tangent = {
+					count = 768,
+					offset = 9752,
+				},
+				uv0 = {
+					count = 768,
+					offset = 10520,
+				},
+			},
+			materials = {
+				"station/train/passenger/edge.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 3744,
+					offset = 20312,
+				},
+				position = {
+					count = 3744,
+					offset = 24056,
+				},
+				tangent = {
+					count = 3744,
+					offset = 12824,
+				},
+				uv0 = {
+					count = 3744,
+					offset = 16568,
+				},
+			},
+			materials = {
+				"station/train/passenger/floor.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 720,
+					offset = 29240,
+				},
+				position = {
+					count = 720,
+					offset = 29960,
+				},
+				tangent = {
+					count = 720,
+					offset = 27800,
+				},
+				uv0 = {
+					count = 720,
+					offset = 28520,
+				},
+			},
+			materials = {
+				"station/train/passenger/wall.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 816,
+					offset = 32312,
+				},
+				position = {
+					count = 816,
+					offset = 33128,
+				},
+				tangent = {
+					count = 816,
+					offset = 30680,
+				},
+				uv0 = {
+					count = 816,
+					offset = 31496,
+				},
+			},
+			materials = {
+				"railing.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 264,
+					offset = 34472,
+				},
+				position = {
+					count = 264,
+					offset = 34736,
+				},
+				tangent = {
+					count = 264,
+					offset = 33944,
+				},
+				uv0 = {
+					count = 264,
+					offset = 34208,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/underpass/tiles.001.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 35192,
+				},
+				position = {
+					count = 96,
+					offset = 35288,
+				},
+				tangent = {
+					count = 96,
+					offset = 35000,
+				},
+				uv0 = {
+					count = 96,
+					offset = 35096,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/underpass/corridor.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 228,
+			numComp = 3,
+			offset = 3920,
+		},
+		position = {
+			count = 5604,
+			numComp = 3,
+			offset = 4148,
+		},
+		tangent = {
+			count = 688,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 3232,
+			numComp = 2,
+			offset = 688,
+		},
+	},
+}
+end
