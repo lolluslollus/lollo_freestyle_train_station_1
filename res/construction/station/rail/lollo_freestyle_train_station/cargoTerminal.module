@@ -37,6 +37,7 @@ return {
 
 		moduleHelpers.edges.addEdges(result, tag, params, nTerminal)
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
+		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal)
 
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',

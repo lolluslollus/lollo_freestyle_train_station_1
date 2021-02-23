@@ -913,4 +913,56 @@ helpers.getEraPrefix = function(params, nTerminal, nTrackEdge)
     return result
 end
 
+helpers.platforms = {
+    addPlatform = function(result, tag, slotId, params, nTerminal)
+        -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
+        -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
+        -- The former is a bit glitchy, the latter is prettier.
+        local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, era)
+			local myModelId = ''
+			if isCargo then
+				if width < 10 then
+					myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_5m_wide.mdl'
+				elseif width < 20 then
+					myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_10m_wide.mdl'
+				else
+					myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_20m_wide.mdl'
+				end
+			else
+				if width < 5 then
+					myModelId = isTrackOnPlatformLeft
+						and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
+						or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
+				else
+					myModelId = isTrackOnPlatformLeft
+						and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
+						or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
+				end
+			end
+
+			if era == helpers.eras.era_a.prefix then
+				return myModelId:gsub(helpers.eras.era_c.prefix, helpers.eras.era_a.prefix)
+			elseif era == helpers.eras.era_b.prefix then
+				return myModelId:gsub(helpers.eras.era_c.prefix, helpers.eras.era_b.prefix)
+			else
+				return myModelId
+			end
+		end
+
+        local isCargoTerminal = params.terminals[nTerminal].isCargo
+        local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+        for _, cpf in pairs(params.terminals[nTerminal].centrePlatformsFineRelative) do
+            local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
+            local era = helpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
+            local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, era)
+            result.models[#result.models+1] = {
+                id = myModelId,
+                slotId = slotId,
+                tag = tag,
+                transf = myTransf
+            }
+        end
+    end,
+}
+
 return helpers
