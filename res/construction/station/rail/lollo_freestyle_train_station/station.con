@@ -810,10 +810,10 @@ function data()
 					local i = params.terminals[t].trackEdgeListMidIndex
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf)
-					-- local unitaryTangent = transfUtils.getPosTanX2Normalised(posTanX2, 2) -- LOLLO TODO check if 1 wouldn't be better than 2
-					local unitaryTangent = transfUtils.getPosTanX2Normalised(posTanX2)
+					-- local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 2)
+					local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 0.1) -- does not need to be perfectly centred
 					local myTransf = transfUtilsUG.mul(
-						moduleHelpers.getPlatformObjectTransf_WithYRotation(unitaryTangent),
+						moduleHelpers.getPlatformObjectTransf_WithYRotation(nearlyCentredPosTanX2),
 						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 					)
 					table.insert(result.slots, {
