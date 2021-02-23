@@ -27,7 +27,7 @@ return {
 	},
 	metadata = { },
 	order = {
-		value = 40,
+		value = 41,
 	},
 	type = _constants.underpassModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
