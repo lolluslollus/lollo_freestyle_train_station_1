@@ -42,7 +42,7 @@ return {
 		result.models[#result.models + 1] = {
 			id = modelId,
 			slotId = slotId,
-			transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }),
+			transf = slotTransf,
 			tag = tag
 		}
 

@@ -244,6 +244,7 @@ function data()
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
 				liftBottomPositions = {},
+				trackCrossingPositions = {},
 				tunnelStairsTopPositions = {},
 				tunnelStairsBottomPositions = {},
 				underpassPositionsOnGround = {},
@@ -628,6 +629,38 @@ function data()
 									pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], _laneZ)
 								}
 							)
+
+							local cpl = params.terminals[t].centrePlatformsRelative[i]
+							local trackCrossingPosTanX2 = transfUtils.getPosTanX2Normalised(
+								transfUtils.getPosTanX2Reversed(crossConnectorPosTanX2), -- cross connectors go from the platform border to its centre, here we go toward the edge
+								cpl.width + 5 -- half platform width plus half track width but we double them so the slot lands at the end of trackCrossingPosTanX2 and not in the middle
+							)
+
+							-- local trackCrossingTransf = transfUtilsUG.mul(
+							-- 	moduleHelpers.getPlatformObjectTransf_WithYRotation(trackCrossingPosTanX2),
+							-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+							-- )
+							local trackCrossingTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(trackCrossingPosTanX2)
+
+							local trackCrossingId = result.mangleId(t, i, _constants.idBases.trackCrossingSlotId)
+							table.insert(result.slots, {
+								-- height = 0,
+								id = trackCrossingId,
+								spacing = {1.5, -0.5, 1, 1}, -- avoid module collisions with terminal slots
+								transf = trackCrossingTransf,
+								type = _constants.trackCrossingModuleType,
+							})
+
+							if params.modules[trackCrossingId] ~= nil then
+								if result.terminateConstructionHookInfo.trackCrossingPositions[t] == nil then result.terminateConstructionHookInfo.trackCrossingPositions[t] = {} end
+								table.insert(
+									result.terminateConstructionHookInfo.trackCrossingPositions[t],
+									{
+										t = t,
+										pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[1][1], _laneZ)
+									}
+								)
+							end
 						end
 					end
 				end
@@ -775,6 +808,7 @@ function data()
 					local i = params.terminals[t].trackEdgeListMidIndex
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf)
+					-- local unitaryTangent = transfUtils.getPosTanX2Normalised(posTanX2, 2) -- LOLLO TODO check if 1 wouldn't be better than 2
 					local unitaryTangent = transfUtils.getPosTanX2Normalised(posTanX2)
 					local myTransf = transfUtilsUG.mul(
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(unitaryTangent),
@@ -1190,14 +1224,14 @@ function data()
 				_linkUnderpassesAndStairs()
 				logger.print('passengers and stairs linked')
 
-				local _linkPassengerPlatforms = function(maxLinkLength)
-					-- link the underpasses across terminals, on the ground, if they are close enough
+				local _linkPassengerPlatforms = function(maxLinkLength, positions)
+					-- link platforms across terminals, on the ground, if they are close enough
 					local maxT = #params.terminals
 					for t = 1, maxT do
-						local positionsInT = result.terminateConstructionHookInfo.crossConnectorPositions[t]
+						local positionsInT = positions[t]
 						if positionsInT ~= nil then
 							for tt = t + 1, maxT do
-								local positionsInTT = result.terminateConstructionHookInfo.crossConnectorPositions[tt]
+								local positionsInTT = positions[tt]
 								if positionsInTT ~= nil then
 									for i = 1, #positionsInT do
 										for ii = 1, #positionsInTT do
@@ -1217,7 +1251,10 @@ function data()
 						end
 					end
 				end
-				_linkPassengerPlatforms(6)
+				_linkPassengerPlatforms(6, result.terminateConstructionHookInfo.crossConnectorPositions)
+				-- LOLLO TODO MAYBE this links a little too much coz it also crosses the platforms
+				-- but it does not disturb.
+				_linkPassengerPlatforms(12, result.terminateConstructionHookInfo.trackCrossingPositions)
 				logger.print('passenger platforms linked')
 
 				local _linkSubways = function()

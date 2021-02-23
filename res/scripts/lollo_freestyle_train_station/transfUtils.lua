@@ -399,10 +399,10 @@ utils.get1MLaneTransf = function(pos1, pos2)
     return result
 end
 
-utils.getPosTanX2Normalised = function(posTanX2)
+utils.getPosTanX2Normalised = function(posTanX2, targetLength)
     local pos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
-    local tan1 = utils.getVectorNormalised(posTanX2[1][2], 2)
-    local tan2 = utils.getVectorNormalised(posTanX2[2][2], 2)
+    local tan1 = utils.getVectorNormalised(posTanX2[1][2], targetLength)
+    local tan2 = utils.getVectorNormalised(posTanX2[2][2], targetLength)
     local pos2 = {
         posTanX2[1][1][1] + tan1[1],
         posTanX2[1][1][2] + tan1[2],
@@ -467,6 +467,29 @@ utils.getExtrapolatedPosX2Continuation = function(pos1, pos2, length)
             pos2[3] + pos3Delta[3],
         }
     end
+end
+
+utils.getPosTanX2Reversed = function(posTanX2)
+    if type(posTanX2) ~= 'table' then return posTanX2 end
+
+    return {
+        {
+            {
+                posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3],
+            },
+            {
+                -posTanX2[2][2][1], -posTanX2[2][2][2], -posTanX2[2][2][3],
+            },
+        },
+        {
+            {
+                posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3],
+            },
+            {
+                -posTanX2[1][2][1], -posTanX2[1][2][2], -posTanX2[1][2][3],
+            },
+        },
+    }
 end
 
 utils.isNumVeryClose = function(num1, num2, significantFigures)
