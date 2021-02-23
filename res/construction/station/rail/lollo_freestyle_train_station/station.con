@@ -1226,7 +1226,7 @@ function data()
 				_linkUnderpassesAndStairs()
 				logger.print('passengers and stairs linked')
 
-				local _linkPassengerPlatforms = function(maxLinkLength, positions)
+				local _linkPassengerPlatforms = function(maxLinkLength, positions, modelId)
 					-- link platforms across terminals, on the ground, if they are close enough
 					local maxT = #params.terminals
 					for t = 1, maxT do
@@ -1239,7 +1239,7 @@ function data()
 										for ii = 1, #positionsInTT do
 											if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
 												result.models[#result.models+1] = {
-													id = _constants.passengerLaneModelId,
+													id = modelId,
 													transf = transfUtils.get1MLaneTransf(
 														positionsInT[i].pos,
 														positionsInTT[ii].pos
@@ -1253,10 +1253,10 @@ function data()
 						end
 					end
 				end
-				_linkPassengerPlatforms(6, result.terminateConstructionHookInfo.crossConnectorPositions)
+				_linkPassengerPlatforms(6, result.terminateConstructionHookInfo.crossConnectorPositions, _constants.passengerLaneModelId)
 				-- LOLLO TODO MAYBE this links a little too much coz it also crosses the platforms
 				-- but it does not disturb.
-				_linkPassengerPlatforms(12, result.terminateConstructionHookInfo.trackCrossingPositions)
+				_linkPassengerPlatforms(12, result.terminateConstructionHookInfo.trackCrossingPositions, 'lollo_freestyle_train_station/passenger_lane_track_crossing.mdl')
 				logger.print('passenger platforms linked')
 
 				local _linkSubways = function()
