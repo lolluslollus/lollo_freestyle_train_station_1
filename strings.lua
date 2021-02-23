@@ -150,8 +150,10 @@ function data()
 			["TunnelStairsUpDesc"] = "Connect underground passenger platforms to the subway entrances and the other terminals above.",
 			["TunnelStairsUpDownName"] = "Subway stairs up and down",
 			["TunnelStairsUpDownDesc"] = "Connect underground passenger platforms to the subway entrances and the other terminals above and below.",
-			["UnderpassName"] = "Underpass",
+			["UnderpassName"] = "Covered Underpass",
 			["UnderpassDesc"] = "Connect passenger platforms to the subway entrances and the other terminals.",
+			["UnderpassStairsName"] = "Underpass",
+			["UnderpassStairsDesc"] = "Connect passenger platforms to the subway entrances and the other terminals.",
 
 			["EraACargoPlatform5MName"] = "5 m cargo platform, era A",
 			["EraACargoPlatform5MDesc"] = "Cargo platforms to be laid as tracks, 5 m wide, era A. They are in fact slow train tracks; they are not meant to be crossed.",
