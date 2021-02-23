@@ -4,13 +4,15 @@ function data()
 return {
 	-- texture = tu.makeTextureLinearNearest("res/textures/terrain/material/mat255.tga", true, false,false),
 	-- texture = tu.makeTextureLinearClamp("res/textures/terrain/material/mat255.tga", true, false,false),
-	-- texture = tu.makeTextureMipmapRepeat("res/textures/terrain/material/mat255.tga", true, false,false),
+	texture = tu.makeTextureMipmapRepeat("res/textures/terrain/material/mat255.tga", true, false,false),
 	-- texture = tu.makeTextureMipmapClamp("res/textures/terrain/material/mat255.tga", true, false,false),
-	texture = tu.makeTextureMipmapClampVertical("res/textures/terrain/material/mat255.tga", true, false,false),
-	texSize = { 2.0, 2.0 },
+	-- texture = tu.makeTextureMipmapClampVertical("res/textures/terrain/material/mat255.tga", true, false,false),
+	-- texSize = { 2.0, 2.0 },
+	-- texSize = { 1.0, 1.0 },
+	texSize = { 64.0, 64.0 },
 	materialIndexMap = {
 		[255] = "",
 	},
-	priority = 5000
+	priority = 15000
 }
 end

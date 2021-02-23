@@ -1,0 +1,39 @@
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "lollo_freestyle_train_station/era_b_station_tiles_1.mtl",
+                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
+                                "lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl",
+                                'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+                                'lollo_freestyle_train_station/square_cobbles_large_z_1.mtl',
+                            },
+                            mesh = "lollo_freestyle_train_station/railroad/platform/platform_1m_long_5_6m_wide_1_2m_high_hole_z.msh",
+                            transf = { _mdlHelpers.getPlatformStretchFactor(1, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                        },
+                        -- {
+                        --     materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},
+                        --     mesh = 'asset/icon/lod_0_icon_pointer.msh',
+                        --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0.3, 0,  0, 0, 1.2, 1}
+                        -- },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+end

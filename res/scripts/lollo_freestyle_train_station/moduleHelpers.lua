@@ -699,7 +699,8 @@ helpers.doTerrain4Subways = function(result, slotTransf, groundFacesStrokeOuterK
             loop = true,
             modes = {
                 {
-                    key = 'lollo_freestyle_train_station/hole.lua',
+                    -- key = 'lollo_freestyle_train_station/hole.lua',
+                    key = 'hole.lua',
                     type = 'FILL',
                 },
                 {
@@ -918,7 +919,7 @@ helpers.platforms = {
         -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
         -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
         -- The former is a bit glitchy, the latter is prettier.
-        local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, era)
+        local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, nTrackEdge, era)
 			local myModelId = ''
 			if isCargo then
 				if width < 10 then
@@ -929,15 +930,28 @@ helpers.platforms = {
 					myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_20m_wide.mdl'
 				end
 			else
-				if width < 5 then
-					myModelId = isTrackOnPlatformLeft
-						and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
-						or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
-				else
-					myModelId = isTrackOnPlatformLeft
-						and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
-						or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
-				end
+                local isUnderpass = params.modules[result.mangleId(nTerminal, nTrackEdge, _constants.idBases.underpassSlotId)] ~= nil
+                if isUnderpass then
+                    if width < 5 then
+                        myModelId = isTrackOnPlatformLeft
+                            and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
+                            or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
+                    else
+                        myModelId = isTrackOnPlatformLeft
+                            and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
+                            or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
+                    end
+                else
+                    if width < 5 then
+                        myModelId = isTrackOnPlatformLeft
+                            and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
+                            or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
+                    else
+                        myModelId = isTrackOnPlatformLeft
+                            and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
+                            or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
+                    end
+                end
 			end
 
 			if era == helpers.eras.era_a.prefix then
@@ -954,7 +968,7 @@ helpers.platforms = {
         for _, cpf in pairs(params.terminals[nTerminal].centrePlatformsFineRelative) do
             local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
             local era = helpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
-            local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, era)
+            local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, era)
             result.models[#result.models+1] = {
                 id = myModelId,
                 slotId = slotId,

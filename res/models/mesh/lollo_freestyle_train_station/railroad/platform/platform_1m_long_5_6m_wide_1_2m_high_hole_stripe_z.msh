@@ -1,0 +1,194 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 1604,
+				},
+				position = {
+					count = 96,
+					offset = 1892,
+				},
+				tangent = {
+					count = 96,
+					offset = 1796,
+				},
+				uv0 = {
+					count = 96,
+					offset = 1700,
+				},
+			},
+			materials = {
+				"station/train/passenger/tiles.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 192,
+					offset = 1988,
+				},
+				position = {
+					count = 192,
+					offset = 2564,
+				},
+				tangent = {
+					count = 192,
+					offset = 2372,
+				},
+				uv0 = {
+					count = 192,
+					offset = 2180,
+				},
+			},
+			materials = {
+				"station/train/passenger/edge.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 2756,
+				},
+				position = {
+					count = 96,
+					offset = 3044,
+				},
+				tangent = {
+					count = 96,
+					offset = 2948,
+				},
+				uv0 = {
+					count = 96,
+					offset = 2852,
+				},
+			},
+			materials = {
+				"station/train/passenger/tiles_high_priority.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 192,
+					offset = 3140,
+				},
+				position = {
+					count = 192,
+					offset = 3716,
+				},
+				tangent = {
+					count = 192,
+					offset = 3524,
+				},
+				uv0 = {
+					count = 192,
+					offset = 3332,
+				},
+			},
+			materials = {
+				"station/train/passenger/edge_high_priority.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 3908,
+				},
+				position = {
+					count = 48,
+					offset = 4052,
+				},
+				tangent = {
+					count = 48,
+					offset = 4004,
+				},
+				uv0 = {
+					count = 48,
+					offset = 3956,
+				},
+			},
+			materials = {
+				"station/road/railroad/track/stripes.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 4100,
+				},
+				position = {
+					count = 48,
+					offset = 4244,
+				},
+				tangent = {
+					count = 48,
+					offset = 4196,
+				},
+				uv0 = {
+					count = 48,
+					offset = 4148,
+				},
+			},
+			materials = {
+				"station/road/railroad/track/stripes_high_priority.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 4292,
+				},
+				position = {
+					count = 96,
+					offset = 4580,
+				},
+				tangent = {
+					count = 96,
+					offset = 4484,
+				},
+				uv0 = {
+					count = 96,
+					offset = 4388,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/platform/edge_low_priority.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 192,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 636,
+			numComp = 3,
+			offset = 968,
+		},
+		tangent = {
+			count = 192,
+			numComp = 4,
+			offset = 776,
+		},
+		uv0 = {
+			count = 584,
+			numComp = 2,
+			offset = 192,
+		},
+	},
+}
+end

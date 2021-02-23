@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 2112,
+					offset = 18704,
+				},
+				position = {
+					count = 2112,
+					offset = 16592,
+				},
+				tangent = {
+					count = 2112,
+					offset = 22928,
+				},
+				uv0 = {
+					count = 2112,
+					offset = 20816,
+				},
+			},
+			materials = {
+				"station/train/passenger/edge.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 3936,
+					offset = 28976,
+				},
+				position = {
+					count = 3936,
+					offset = 25040,
+				},
+				tangent = {
+					count = 3936,
+					offset = 36848,
+				},
+				uv0 = {
+					count = 3936,
+					offset = 32912,
+				},
+			},
+			materials = {
+				"station/train/passenger/floor.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 864,
+					offset = 41648,
+				},
+				position = {
+					count = 864,
+					offset = 40784,
+				},
+				tangent = {
+					count = 864,
+					offset = 43376,
+				},
+				uv0 = {
+					count = 864,
+					offset = 42512,
+				},
+			},
+			materials = {
+				"station/train/passenger/wall.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 2676,
+					offset = 46916,
+				},
+				position = {
+					count = 2676,
+					offset = 44240,
+				},
+				tangent = {
+					count = 2676,
+					offset = 52268,
+				},
+				uv0 = {
+					count = 2676,
+					offset = 49592,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railing.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 1200,
+			numComp = 3,
+			offset = 7032,
+		},
+		position = {
+			count = 7032,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 3696,
+			numComp = 4,
+			offset = 12896,
+		},
+		uv0 = {
+			count = 4664,
+			numComp = 2,
+			offset = 8232,
+		},
+	},
+}
+end
