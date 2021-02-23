@@ -18,7 +18,7 @@ local _texts = {
     warningWindowTitle = _('WarningWindowTitle'),
 }
 
-local _windowXShift = -100
+local _windowXShift = -200
 
 local guiHelpers = {
     isShowingWarning = false,
