@@ -49,6 +49,7 @@ function data()
                                 'lollo_freestyle_train_station/roof_tiles_schist.mtl',
                                 'lollo_freestyle_train_station/windows_old.mtl',
                                 'lollo_freestyle_train_station/era_a_shutter.mtl',
+                                'lollo_freestyle_train_station/era_a_station_tiles_2.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_passenger_station_9x5x8_lod0.msh',
                             transf = _constants.idTransf
