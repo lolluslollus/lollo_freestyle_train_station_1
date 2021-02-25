@@ -94,6 +94,8 @@ function data()
 			["FlatPassengerStationLargeDesc"] = "Ornate passenger station",
 			["FlatPassengerStation5MName"] = "Small passenger station, 5 m high",
 			["FlatPassengerStation5MDesc"] = "Small passenger station, to access a platform a bit higher than the road. Repaint its ground with <shift> and a paint tool.",
+			["LookUndergroundName"] = "Look underground",
+			["LookUndergroundDesc"] = "Hover or build this to look underground, remove it when done.",
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
 			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It connects to underpasses. Max height 40 m. Repaint its ground with <shift> and a paint tool.",
 			["PassengerPlatformLiftName"] = "Passenger lift to a bridge",

@@ -1,0 +1,107 @@
+function data()
+	return {
+		type = 'RAIL_STATION',
+        -- type = 'ASSET_DEFAULT',
+		description = {
+			name = _("LookUndergroundName"),
+			description = _("LookUndergroundDesc"),
+		},
+		availability = {
+			yearFrom = 0,
+			yearTo = 0,
+		},
+		order = 1103,
+		autoRemovable = false,
+        buildMode = "MULTI",
+		skipCollision = true,
+		params = {
+            {
+                key = 'size',
+                name = 'Size',
+                uiType = 'SLIDER',
+                values = {
+                    '10', '20', '30', '40', '50', '60', '70', '80', '90', '100',
+                },
+                defaultIndex = 0
+            },
+            {
+                key = "shape",
+                name = _("Shape"),
+                values = {"QUAD", "TRIS", "CIRCLE"},
+                uiType = "COMBOBOX"
+            },
+        },
+		updateFn = function(params)
+			local result = {
+				colliders = {},
+                cost = 0,
+                edgeLists = {},
+                groundFaces = {},
+				models = {
+					{
+						id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
+                        -- id = 'lollo_freestyle_train_station/empty.mdl',
+                        transf = {1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1},
+					},
+                },
+				terrainAlignmentLists = { { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+					type = "EQUAL",
+					optional = true,
+					faces =  { }
+				} },
+			}
+
+            local size = (params.size + 1) * 10
+            local faces = nil
+            if params.shape == 0 then
+                faces = { { 
+                    {-size, -size, 0}, {size, -size, 0}, {size, size, 0}, {-size, size, 0}
+                } }
+            elseif params.shape == 1 then
+                faces = { { 
+                    {size * math.cos(0), size * math.sin(0), 0}, 
+                    {size * math.cos(math.rad(120)), size * math.sin(math.rad(120)), 0}, 
+                    {size * math.cos(math.rad(240)), size * math.sin(math.rad(240)), 0}
+                } }
+            elseif params.shape == 2 then
+                local c = { }
+                local r = size
+                local N = 10
+                for i = 1, N do
+                    local theta = 2 * math.pi / N * i
+                    c[#c+1] = { r * math.cos(theta), r * math.sin(theta), 0 }
+                end
+                faces = { c }
+            end
+
+            -- local groundFace = { -- the ground faces ignore z, the alignment lists don't
+            --     {-size, -size, 0, 1},
+            --     {-size, size, 0, 1},
+            --     {size, size, 0, 1},
+            --     {size, -size, 0, 1},
+            -- }
+            table.insert(
+                result.groundFaces,
+                {
+                    -- face = groundFace,
+                    face = faces[1],
+                    loop = true,
+                    modes = {
+                        {
+                            -- key = 'lollo_freestyle_train_station/hole.lua',
+                            key = 'hole.lua',
+                            type = 'FILL',
+                        },
+                    }
+                }
+            )
+
+			return result
+		end,
+        upgradeFn = function(_)
+        end,
+	}
+end
