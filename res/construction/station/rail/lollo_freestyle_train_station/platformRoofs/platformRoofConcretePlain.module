@@ -27,7 +27,7 @@ return {
 	},
 	metadata = { },
 	order = {
-		value = 14,
+		value = 13,
 	},
 	type = _constants.platformRoofModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
