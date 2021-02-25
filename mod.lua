@@ -10,8 +10,10 @@ function data()
             description = _('DESC'),
             tags = {
                 'Station',
+                'Bridge Station',
                 'Cargo Station',
                 'Train Station',
+                'Underground Station',
             },
             authors = {
                 {
