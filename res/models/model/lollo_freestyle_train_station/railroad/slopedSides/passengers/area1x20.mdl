@@ -25,7 +25,7 @@ function data()
                                 "lollo_freestyle_train_station/station_concrete_1.mtl",
                                 "lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl",
                                 "lollo_freestyle_train_station/station_concrete_1_z.mtl",
-                                "lollo_freestyle_train_station/station_concrete_1_z_1.mtl",
+                                "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_c_platform_ext_1x20m.msh',
                             transf = {0, 1, 0, 0,  -_mdlHelpers.getSlopedPlatformStretchFactor(1, 20), 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
