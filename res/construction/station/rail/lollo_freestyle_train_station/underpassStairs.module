@@ -54,31 +54,33 @@ return {
 			tag = tag
 		}
 
-		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-4.5, -0.75, 0, 1},
-			{-4.5, 0.75, 0, 1},
-			{4.5, 0.75, 0, 1},
-			{4.5, -0.75, 0, 1},
-		}
-		modulesutil.TransformFaces(slotTransf, groundFace)
-		table.insert(
-			result.groundFaces,
-			{
-				face = groundFace,
-				loop = true,
-				modes = {
-					{
-						-- key = 'lollo_freestyle_train_station/hole.lua',
-						key = 'hole.lua',
-						type = 'FILL',
-					},
-					-- {
-					-- 	key = groundFacesStrokeOuterKey,
-					-- 	type = 'STROKE_OUTER',
-					-- }
-				}
+		if cpl.type ~= 1 then -- skip it on bridges, otherwise it will make the underlying ground transparent. Interesting but unwanted.
+			local groundFace = { -- the ground faces ignore z, the alignment lists don't
+				{-4.5, -0.75, 0, 1},
+				{-4.5, 0.75, 0, 1},
+				{4.5, 0.75, 0, 1},
+				{4.5, -0.75, 0, 1},
 			}
-		)
+			modulesutil.TransformFaces(slotTransf, groundFace)
+			table.insert(
+				result.groundFaces,
+				{
+					face = groundFace,
+					loop = true,
+					modes = {
+						{
+							-- key = 'lollo_freestyle_train_station/hole.lua',
+							key = 'hole.lua',
+							type = 'FILL',
+						},
+						-- {
+						-- 	key = groundFacesStrokeOuterKey,
+						-- 	type = 'STROKE_OUTER',
+						-- }
+					}
+				}
+			)
+		end
 	end,
 
 	getModelsFn = function(params)
