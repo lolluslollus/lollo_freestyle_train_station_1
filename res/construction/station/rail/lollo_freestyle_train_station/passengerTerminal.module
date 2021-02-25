@@ -78,11 +78,6 @@ return {
 			return params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
 		end
-		local isPreviousUnderpass = function(t, i)
-			return i > 1
-				and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
-				or false
-		end
 		local isPlatformRoof = function(t, i)
 			return params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil
 		end
@@ -144,7 +139,8 @@ return {
 					tag = tag
 				}
 			elseif cpl.type == 2 then -- lights (only in tunnels)
-				if (cpl.width >= 5 and era == moduleHelpers.eras.era_c.prefix) or not(isStairs(nTerminal, cpf.leadingIndex)) then
+				if (cpl.width >= 5 and era == moduleHelpers.eras.era_c.prefix)
+				or not(isStairs(nTerminal, cpf.leadingIndex)) then
 					local yShift = 0
 					if cpl.width >= 5 then
 						yShift = isTrackOnPlatformLeft and 0.12 or -0.12
