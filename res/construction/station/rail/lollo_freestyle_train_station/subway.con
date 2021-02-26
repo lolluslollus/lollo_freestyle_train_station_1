@@ -1,4 +1,5 @@
 local _constants = require('lollo_freestyle_train_station.constants')
+local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local transf = require 'transf'
 local vec3 = require 'vec3'
@@ -19,8 +20,8 @@ function data()
         -- autoRemovable = true,
         -- skipCollision = true,
         updateFn = function(params)
-            -- print('lollo subway updateFn')
-            -- debugPrint(params)
+            -- logger.print('lollo subway updateFn')
+            -- logger.debugPrint(params)
 
             local result = {
                 colliders = { },

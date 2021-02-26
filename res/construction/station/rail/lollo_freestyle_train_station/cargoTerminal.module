@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
+local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -112,7 +113,7 @@ return {
 			end
 		end
 
-		print('cargoTerminal.module.updateFn ending')
+		logger.print('cargoTerminal.module.updateFn ending')
 	end,
 
 	getModelsFn = function(params)
