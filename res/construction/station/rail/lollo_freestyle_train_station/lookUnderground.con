@@ -5,6 +5,7 @@ function data()
 		description = {
 			name = _("LookUndergroundName"),
 			description = _("LookUndergroundDesc"),
+            icon = "ui/lollo_freestyle_train_station/lookUnderground.tga"
 		},
 		availability = {
 			yearFrom = 0,
@@ -15,21 +16,22 @@ function data()
         buildMode = "MULTI",
 		skipCollision = true,
 		params = {
-            {
-                key = 'size',
-                name = 'Size',
-                uiType = 'SLIDER',
-                values = {
-                    '10', '20', '30', '40', '50', '60', '70', '80', '90', '100',
-                },
-                defaultIndex = 0
-            },
-            {
-                key = "shape",
-                name = _("Shape"),
-                values = {"QUAD", "TRIS", "CIRCLE"},
-                uiType = "COMBOBOX"
-            },
+            -- {
+            --     key = 'size',
+            --     name = 'Size',
+            --     uiType = 'SLIDER',
+            --     values = {
+            --         '10', '20', -- '30', '40', '50', '60', '70', '80', '90', '100',
+            --     },
+            --     defaultIndex = 0,
+            -- },
+            -- {
+            --     key = "shape",
+            --     name = _("Shape"),
+            --     values = {"QUAD", "TRIS", "CIRCLE"},
+            --     uiType = "COMBOBOX",
+            --     defaultIndex = 2,
+            -- },
         },
 		updateFn = function(params)
 			local result = {
@@ -54,6 +56,8 @@ function data()
 				} },
 			}
 
+            params.shape = 2
+            params.size = 0
             local size = (params.size + 1) * 10
             local faces = nil
             if params.shape == 0 then
