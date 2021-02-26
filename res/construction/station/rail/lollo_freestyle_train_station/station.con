@@ -551,7 +551,7 @@ function data()
 				_addStreetAccess()
 
 				local function _addTrackCrossings()
-					if isCargoTerminal then return end
+					-- if isCargoTerminal then return end
 					-- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 					-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
 					for ii = 2, #params.terminals[t].centrePlatformsFineRelative do
@@ -588,6 +588,10 @@ function data()
 									type = _constants.trackCrossingModuleType,
 								})
 
+								-- add connecting lanes to existing modules
+								-- they connect to passenger lanes and can be connected to roads nearby.
+								-- they do not connect to cargo lanes, but the catchment area extends
+								-- when nearby roads are connected, so it's good enough.
 								if params.modules[trackCrossingId] ~= nil then
 									local trackCrossingPos = transfUtils.getPositionRaisedBy(
 										transfUtils.transf2Position(trackCrossingTransf),
