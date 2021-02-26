@@ -3,7 +3,7 @@ function data()
 
     return {
         info = {
-            minorVersion = 25,
+            minorVersion = 26,
             severityAdd = 'NONE',
             severityRemove = 'WARNING',
             name = _('NAME'),
@@ -12,6 +12,7 @@ function data()
                 'Station',
                 'Bridge Station',
                 'Cargo Station',
+                'Elevated Station',
                 'Train Station',
                 'Underground Station',
             },
