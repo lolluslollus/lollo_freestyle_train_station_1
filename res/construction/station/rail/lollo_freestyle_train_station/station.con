@@ -589,12 +589,24 @@ function data()
 								})
 
 								if params.modules[trackCrossingId] ~= nil then
+									local trackCrossingPos = transfUtils.getPositionRaisedBy(
+										transfUtils.transf2Position(trackCrossingTransf),
+										_constants.trackCrossingZ
+									)
+									result.models[#result.models+1] = {
+										id = _constants.passengerLaneLinkableModelId,
+										transf = transfUtils.get1MLaneTransf(
+											trackCrossingPos,
+											transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[1][1], _laneZ)
+										)
+									}
+
 									if result.terminateConstructionHookInfo.trackCrossingPositions[t] == nil then result.terminateConstructionHookInfo.trackCrossingPositions[t] = {} end
 									table.insert(
 										result.terminateConstructionHookInfo.trackCrossingPositions[t],
 										{
 											t = t,
-											pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[1][1], _laneZ)
+											pos = trackCrossingPos
 										}
 									)
 								end
@@ -1213,10 +1225,17 @@ function data()
 						end
 					end
 				end
-				_linkPassengerPlatforms(6, result.terminateConstructionHookInfo.crossConnectorPositions, _constants.passengerLaneModelId)
-				-- LOLLO TODO MAYBE this links a little too much coz it also crosses the platforms
-				-- but it does not disturb.
-				_linkPassengerPlatforms(12, result.terminateConstructionHookInfo.trackCrossingPositions, 'lollo_freestyle_train_station/passenger_lane_track_crossing.mdl')
+				_linkPassengerPlatforms(
+					6,
+					result.terminateConstructionHookInfo.crossConnectorPositions,
+					_constants.passengerLaneModelId
+				)
+				_linkPassengerPlatforms(
+					6,
+					result.terminateConstructionHookInfo.trackCrossingPositions,
+					_constants.passengerLaneModelId
+					-- 'lollo_freestyle_train_station/passenger_lane_track_crossing.mdl'
+				)
 				logger.print('passenger platforms linked')
 
 				local _linkSubways = function()

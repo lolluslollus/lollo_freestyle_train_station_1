@@ -40,6 +40,7 @@ local constants = {
     subwayPos2LinkX = 4,
     subwayPos2LinkY = 0,
     subwayPos2LinkZ = -4,
+    trackCrossingZ = 0.45,
 
     maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
     minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,
