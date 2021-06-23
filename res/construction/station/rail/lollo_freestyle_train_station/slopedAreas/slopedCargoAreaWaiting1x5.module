@@ -44,7 +44,7 @@ function data()
 				myModelId, _constants.cargoWaitingAreaCentredModelFileName,
 				myGroundFacesFillKey)
 
-			moduleHelpers.addSlopedCargoAreaDeco(result, slotTransf, tag, slotId, params, nTerminal, cpl.posTanX2, 0, 0)
+			moduleHelpers.addSlopedCargoAreaDeco(result, slotTransf, tag, slotId, params, nTerminal, cpl.posTanX2, 0, 0, era)
 		end,
 
 		getModelsFn = function(params)

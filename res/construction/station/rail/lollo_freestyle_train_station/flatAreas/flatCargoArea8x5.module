@@ -48,8 +48,14 @@ return {
 			transf = zAdjustedTransf,
 			tag = tag
 		}
+		local portalModelId = nil
+		if era == moduleHelpers.eras.era_a.prefix then
+			portalModelId = 'lollo_freestyle_train_station/asset/cargo_portal_dark_4x4.mdl'
+		else
+			portalModelId = 'lollo_freestyle_train_station/asset/cargo_portal_4x4.mdl'
+		end
 		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/cargo_portal_4x4.mdl',
+			id = portalModelId,
 			slotId = slotId,
 			transf = zAdjustedTransf,
 			tag = tag

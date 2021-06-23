@@ -776,43 +776,45 @@ helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, p
         arrivalsModelId = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl'
     end
 
-    local isTrackOnPlatformLeftSign = params.terminals[nTerminal].isTrackOnPlatformLeft and 1 or -1
     local verticalTransf = helpers.getPlatformObjectTransf_AlwaysVertical(cplPosTanX2)
-    local decoTransf = transfUtilsUG.mul(
-        verticalTransf,
-        { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  isTrackOnPlatformLeftSign * (verticalTransf[13] - slotTransf[13]), isTrackOnPlatformLeftSign * (verticalTransf[14] - slotTransf[14]), 0, 1 }
-    )
 
     result.models[#result.models + 1] = {
         id = chairsModelId,
         slotId = slotId,
-        transf = transfUtilsUG.mul(decoTransf, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -1.0 + xShift, yShift - 1, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6 + xShift, -5.0 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
         tag = tag
     }
     result.models[#result.models + 1] = {
         id = binModelId,
         slotId = slotId,
-        transf = transfUtilsUG.mul(decoTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.4 + xShift, yShift - 1, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6 + xShift, -3.2 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
         tag = tag
     }
     result.models[#result.models + 1] = {
         id = arrivalsModelId,
         slotId = slotId,
-        transf = transfUtilsUG.mul(decoTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.7 + xShift, yShift + 3, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        transf = transfUtilsUG.mul(verticalTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  4.2 + xShift, -4.5 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
         tag = tag
     }
 end
 
-helpers.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, cplPosTanX2, xShift, yShift)
+helpers.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, cplPosTanX2, xShift, yShift, era)
     -- unlike passenger waiting areas, these tilt the assets. We live with it for the sake of performance.
+    local roofModelId = nil
+    if era == helpers.eras.era_a.prefix then
+        roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_dark_4x4.mdl'
+    else
+        roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl'
+    end
+
     result.models[#result.models + 1] = {
-        id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
+        id = roofModelId,
         slotId = slotId,
         transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift , yShift -4.3, _constants.stairsAndRampHeight + 0.0, 1 }),
         tag = tag
     }
     result.models[#result.models + 1] = {
-        id = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl',
+        id = roofModelId,
         slotId = slotId,
         transf = transfUtilsUG.mul(slotTransf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift +4.6, _constants.stairsAndRampHeight + 0.0, 1 }),
         tag = tag
