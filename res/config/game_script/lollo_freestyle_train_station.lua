@@ -770,7 +770,7 @@ local _actions = {
                             elseif distance0 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8three')
                             elseif distance1 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8four')
                             else
-                                print('ERROR: impossible condition, distance0 =') debugPrint(distance0)
+                                print('lollo freestyle train station ERROR: impossible condition, distance0 =') debugPrint(distance0)
                                 print('distance1 =') debugPrint(distance1)
                                 print('isNodeBetweenOrientatedLikeMyEdge =') debugPrint(isNodeBetweenOrientatedLikeMyEdge)
                             end
@@ -900,7 +900,7 @@ local _actions = {
                     -- logger.print('split callback result =') logger.debugPrint(result)
                     -- logger.print('split callback result.proposal.proposal.addedNodes =') logger.debugPrint(result.proposal.proposal.addedNodes)
                     if #result.proposal.proposal.addedNodes ~= 1 then
-                        print('ERROR: #result.proposal.proposal.addedNodes =', #result.proposal.proposal.addedNodes)
+                        print('lollo freestyle train station ERROR: #result.proposal.proposal.addedNodes =', #result.proposal.proposal.addedNodes)
                     end
                     local addedNodePosition = result.proposal.proposal.addedNodes[1].comp.position
                     logger.print('addedNodePosition =') logger.debugPrint(addedNodePosition)
@@ -1263,7 +1263,7 @@ function data()
                 -- LOLLO NOTE I need this, or a station with only one track edge will dump with
                 -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                 if #trackEdgeIdsBetweenNodeIds == 0 then
-                    print('ERROR: #trackEdgeIdsBetweenNodeIds == 0')
+                    print('lollo freestyle train station ERROR: #trackEdgeIdsBetweenNodeIds == 0')
                     return
                 end
                 if #trackEdgeIdsBetweenNodeIds == 1 then
@@ -1294,7 +1294,7 @@ function data()
                     args.splitPlatformNode2Id
                 )
                 if #platformEdgeIdsBetweenNodeIds == 0 then
-                    print('ERROR: #platformEdgeIdsBetweenNodeIds == 0')
+                    print('lollo freestyle train station ERROR: #platformEdgeIdsBetweenNodeIds == 0')
                     return
                 end
                 -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
@@ -1553,12 +1553,12 @@ function data()
                 )
             elseif name == _eventNames.REBUILD_1_TRACK_REQUESTED then
                 if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
-                    print('ERROR: args.stationConstructionId not valid')
+                    print('lollo freestyle train station ERROR: args.stationConstructionId not valid')
                     return
                 end
                 if type(args.removedTerminalEdgeLists) ~= 'table' or type(args.removedTerminalEdgeLists.trackEdgeLists) ~= 'table' then
                     _actions.bulldozeStation(args.stationConstructionId)
-                    print('ERROR: args.removedTerminalEdgeLists.trackEdgeLists not available')
+                    print('lollo freestyle train station ERROR: args.removedTerminalEdgeLists.trackEdgeLists not available')
                     return
                 end
                 _actions.rebuildOneTerminalTracks(
@@ -1570,12 +1570,12 @@ function data()
                 )
             elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
                 if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
-                    print('ERROR: args.stationConstructionId not valid')
+                    print('lollo freestyle train station ERROR: args.stationConstructionId not valid')
                     return
                 end
                 local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
                 if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
-                    print('ERROR: construction', args.stationConstructionId, 'is not a freestyle station')
+                    print('lollo freestyle train station ERROR: construction', args.stationConstructionId, 'is not a freestyle station')
                     return
                 end
                 _actions.buildSnappyPlatforms(args.stationConstructionId, 1, #con.params.terminals)
@@ -1585,7 +1585,7 @@ function data()
             elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
                 if not(edgeUtils.isValidAndExistingId(args.join2StationId))
                 or not(edgeUtils.isValidAndExistingId(args.subwayId)) then
-                    print('ERROR: args.join2StationId or args.subwayId is invalid')
+                    print('lollo freestyle train station ERROR: args.join2StationId or args.subwayId is invalid')
                     return
                 end
                 _actions.addSubway(args.join2StationId, args.subwayId, _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED)
@@ -1672,7 +1672,7 @@ function data()
                                                         }
                                                     ))
                                                 else
-                                                    print('ERROR: cannot find id of deleted terminal')
+                                                    print('lollo freestyle train station ERROR: cannot find id of deleted terminal')
                                                 end
                                             -- else
                                             --     -- last terminal removed: pull down the station
@@ -1710,12 +1710,14 @@ function data()
                                 local _validateWaypointBuilt = function(targetWaypointModelId, mustBeOnPlatform)
                                     logger.print('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
                                     -- UG TODO this is empty, ask UG to fix this: can't we have the waypointId in args.result?
-                                    -- logger.print('waypoint built, args.result =') logger.debugPrint(args.result)
+                                    -- The problem persists with build 33345
+                                    logger.print('waypoint built, args.result =') logger.debugPrint(args.result)
 
                                     -- logger.print('args.proposal.proposal.addedSegments =') logger.debugPrint(args.proposal.proposal.addedSegments)
                                     local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, args.proposal.proposal.addedSegments[1])
-                                    if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then print('ERROR with lastBuiltEdgeId') return false end
+                                    if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then print('lollo freestyle train station ERROR with lastBuiltEdgeId') return false end
 
+                                    logger.print('lastBuiltEdgeId =') logger.debugPrint(lastBuiltEdgeId)
                                     local lastBuiltBaseEdge = api.engine.getComponent(
                                         lastBuiltEdgeId,
                                         api.type.ComponentType.BASE_EDGE
@@ -1725,7 +1727,7 @@ function data()
                                     -- logger.print('edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, waypointModelId) =')
                                     -- logger.debugPrint(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
                                     local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
-                                    logger.print('newWaypointId not found, lastBuiltEdgeId =', lastBuiltEdgeId, '#args.proposal.proposal.addedSegments =', #args.proposal.proposal.addedSegments)
+                                    logger.print('attempted to retrieve newWaypointId, newWaypointId =', newWaypointId or 'NULL', 'lastBuiltEdgeId =', lastBuiltEdgeId, '#args.proposal.proposal.addedSegments =', #args.proposal.proposal.addedSegments)
                                     if not(newWaypointId) then return false end
 
                                     -- forbid building this on a platform or a track

@@ -314,7 +314,7 @@ local helpers = {
                 )
                 -- print('nodeBetween =') debugPrint(nodeBetween)
                 if nodeBetween == nil then
-                    print('ERROR: nodeBetween not found')
+                    print('lollo freestyle train station ERROR: nodeBetween not found')
                     print('pel =') debugPrint(pel)
                     return {}
                 end
@@ -902,7 +902,7 @@ local _getStationEndEntities4T = function(con, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        print('ERROR: _getStationEndEntities4T con.fileName =') debugPrint(con.fileName)
+        print('lollo freestyle train station ERROR: _getStationEndEntities4T con.fileName =') debugPrint(con.fileName)
         return nil
     end
 
@@ -1044,7 +1044,7 @@ end
 helpers.getStationEndEntities = function(stationConstructionId)
     print('getStationEndEntities started, conId =', stationConstructionId or 'NIL')
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        print('ERROR: getStationEndEntities invalid stationConstructionId') debugPrint(stationConstructionId)
+        print('lollo freestyle train station ERROR: getStationEndEntities invalid stationConstructionId') debugPrint(stationConstructionId)
         return nil
     end
 
@@ -1052,7 +1052,7 @@ helpers.getStationEndEntities = function(stationConstructionId)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        print('ERROR: getStationEndEntities con.fileName =') debugPrint(con.fileName)
+        print('lollo freestyle train station ERROR: getStationEndEntities con.fileName =') debugPrint(con.fileName)
         return nil
     end
 
@@ -1067,7 +1067,7 @@ end
 
 helpers.getStationEndEntities4T = function(stationConstructionId, t)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        print('ERROR: getStationEndEntities4T invalid stationConstructionId') debugPrint(stationConstructionId)
+        print('lollo freestyle train station ERROR: getStationEndEntities4T invalid stationConstructionId') debugPrint(stationConstructionId)
         return nil
     end
 
@@ -1075,7 +1075,7 @@ helpers.getStationEndEntities4T = function(stationConstructionId, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- print('con =') debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        print('ERROR: getStationEndEntities4T con.fileName =') debugPrint(con.fileName)
+        print('lollo freestyle train station ERROR: getStationEndEntities4T con.fileName =') debugPrint(con.fileName)
         return nil
     end
 
