@@ -323,6 +323,8 @@ local _actions = {
                 logger.print('build station callback, success =', success)
                 -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
+                    -- logger.print('station proposal data = ', result.resultProposalData) -- userdata
+                    -- logger.print('station entities = ', result.resultEntities) -- userdata
                     logger.print('stationConstructionId = ', result.resultEntities[1])
                     logger.print('buildStation callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
