@@ -176,12 +176,12 @@ local function _getStreetFilesContents(streetDirPath, fileNamePrefix)
         -- debugPrint(streetFiles[i])
         if isOk then
             local newRecord = {
+                aiLock = fileData.aiLock, -- true means, do not show this street in the menu
                 categories = fileData.categories or {},
                 fileName = (fileNamePrefix or '') .. fileUtils.getFileNameFromPath(streetFiles[i]),
                 name = fileData.name or '',
                 sidewalkWidth = fileData.sidewalkWidth or 0.2,
                 streetWidth = fileData.streetWidth or 0.2,
-                upgrade = fileData.upgrade, -- true means, do not show this street in the menu
                 yearTo = fileData.yearTo or 1925
             }
             if type(newRecord.fileName) == 'string' and newRecord.fileName:len() > 0
@@ -250,29 +250,11 @@ local function _getStreetDataFiltered_Stock(streetDataTable)
 
     local results = {}
     for _, strDataRecord in pairs(streetDataTable) do
-        if strDataRecord.yearTo == 0 and (strDataRecord.upgrade == false or strDataRecord.isAllTramTracks == true) then
+        if strDataRecord.yearTo == 0 and (not(strDataRecord.aiLock) or strDataRecord.isAllTramTracks == true) then
             if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().HIGHWAY)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().ONE_WAY)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().URBAN) then
-                table.insert(results, #results + 1, strDataRecord)
-            end
-        end
-    end
-    return results
-end
-
-local function _getStreetDataFiltered_StockAndMods(streetDataTable)
-    if type(streetDataTable) ~= 'table' then return {} end
-
-    local results = {}
-    for _, strDataRecord in pairs(streetDataTable) do
-        if strDataRecord.yearTo == 0 and (strDataRecord.upgrade == false or strDataRecord.isAllTramTracks == true) then
-            if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY)
-            or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().HIGHWAY)
-            or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().ONE_WAY)
-            or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().URBAN)
-            or arrayUtils.arrayHasValue(strDataRecord.categories, 'mining') then
                 table.insert(results, #results + 1, strDataRecord)
             end
         end
@@ -285,7 +267,7 @@ local function _getStreetDataFiltered_StockAndReservedLanes(streetDataTable)
 
     local results = {}
     for _, strDataRecord in pairs(streetDataTable) do
-        if strDataRecord.yearTo == 0 and (strDataRecord.upgrade == false or strDataRecord.isAllTramTracks == true) then
+        if strDataRecord.yearTo == 0 and (not(strDataRecord.aiLock) or strDataRecord.isAllTramTracks == true) then
             if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY_BUS_RIGHT)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY_CARGO_RIGHT)
@@ -332,18 +314,19 @@ local function _getStreetTypesWithApi()
     local results = {}
     local streetTypes = api.res.streetTypeRep.getAll()
     for ii, fileName in pairs(streetTypes) do
+        -- LOLLO TODO see if a different loop returns the sequence with better consistency
         local streetProperties = api.res.streetTypeRep.get(ii)
         results[#results+1] = {
+            aiLock = streetProperties.aiLock,
             categories = _cloneCategories(streetProperties.categories),
             fileName = fileName,
             icon = streetProperties.icon,
-            isAllTramTracks = helper.getIsStreetAllTramTracks(streetProperties.laneConfigs),
+            isAllTramTracks = helper.isStreetAllTramTracks(streetProperties.laneConfigs),
             laneCount = #(streetProperties.laneConfigs),
             name = streetProperties.name,
             rightLaneWidth = (streetProperties.laneConfigs[2] or {}).width or 0,
             sidewalkWidth = streetProperties.sidewalkWidth,
             streetWidth = streetProperties.streetWidth,
-            upgrade = streetProperties.upgrade,
             yearTo = streetProperties.yearTo
         }
     end
@@ -372,7 +355,7 @@ local function _initLolloStreetDataWithFiles(filter)
     end
 end
 
-helper.getIsStreetOneWay = function(laneConfigs)
+helper.isStreetOneWay = function(laneConfigs)
     if #laneConfigs < 2 then return false end
 
     local lastForward = laneConfigs[2].forward
@@ -402,8 +385,8 @@ helper.getIsOuterLane = function(laneConfigs, laneConfigIndex, isOneWay)
     or (laneConfigIndex > 1 and laneConfigIndex == #laneConfigs - 1) -- leftmost lane in 2-way roads, rightmost in 1-way
 end
 
-helper.getIsStreetAllTramTracks = function(laneConfigs)
-    local _isOneWay = helper.getIsStreetOneWay(laneConfigs)
+helper.isStreetAllTramTracks = function(laneConfigs)
+    local _isOneWay = helper.isStreetOneWay(laneConfigs)
 
     for i = 2, #laneConfigs - 1 do
         if helper.getIsInnerLane(laneConfigs, i, _isOneWay)
@@ -412,6 +395,31 @@ helper.getIsStreetAllTramTracks = function(laneConfigs)
             return true
         end
     end
+
+    return false
+end
+
+helper.isPath = function(streetTypeId)
+    -- is it a path street type?
+    if type(streetTypeId) ~= 'number' or streetTypeId < 0 then return false end
+
+    local streetProperties = api.res.streetTypeRep.get(streetTypeId)
+    if not(streetProperties) then return false end
+
+    return arrayUtils.arrayHasValue(streetProperties.categories, 'paths')
+end
+
+helper.isTramRightBarred = function(streetTypeId)
+    -- are tram tracks in the outer lane explicitly barred?
+    if type(streetTypeId) ~= 'number' or streetTypeId < 0 then return false end
+
+    local fileName = api.res.streetTypeRep.getFileName(streetTypeId)
+    if type(fileName) ~= 'string' then return false end
+
+    if fileName:find(helper.transportModes.getLaneConfigToString(helper.transportModes.getTargetTransportModes4Bus()))
+    or fileName:find(helper.transportModes.getLaneConfigToString(helper.transportModes.getTargetTransportModes4Cargo()))
+    or fileName:find(helper.transportModes.getLaneConfigToString(helper.transportModes.getTargetTransportModes4Tyres()))
+    then return true end
 
     return false
 end
@@ -438,20 +446,6 @@ helper.transportModes = {
             result = result .. tostring(value)
         end
         return result
-    end,
-    isTramRightBarred = function(streetTypeId)
-        -- are tram tracks in the outer lane explicitly barred?
-        if type(streetTypeId) ~= 'number' or streetTypeId < 0 then return false end
-
-        local fileName = api.res.streetTypeRep.getFileName(streetTypeId)
-        if type(fileName) ~= 'string' then return false end
-
-        if fileName:find(helper.transportModes.getLaneConfigToString(helper.transportModes.getTargetTransportModes4Bus()))
-        or fileName:find(helper.transportModes.getLaneConfigToString(helper.transportModes.getTargetTransportModes4Cargo()))
-        or fileName:find(helper.transportModes.getLaneConfigToString(helper.transportModes.getTargetTransportModes4Tyres()))
-        then return true end
-
-        return false
     end,
 }
 
@@ -497,7 +491,6 @@ end
 helper.getStreetDataFilters = function()
     return {
         STOCK = { id = 'stock', func = _getStreetDataFiltered_Stock },
-        STOCK_AND_MODS = { id = 'stock-and-mods', func = _getStreetDataFiltered_StockAndMods },
         STOCK_AND_RESERVED_LANES = { id = 'stock-and-reserved-lanes', func = _getStreetDataFiltered_StockAndReservedLanes },
     }
 end
