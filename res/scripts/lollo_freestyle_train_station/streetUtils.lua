@@ -176,12 +176,15 @@ local function _getStreetFilesContents(streetDirPath, fileNamePrefix)
         -- debugPrint(streetFiles[i])
         if isOk then
             local newRecord = {
-                aiLock = fileData.aiLock, -- true means, do not show this street in the menu
+                aiLock = fileData.aiLock or false,
                 categories = fileData.categories or {},
                 fileName = (fileNamePrefix or '') .. fileUtils.getFileNameFromPath(streetFiles[i]),
                 name = fileData.name or '',
                 sidewalkWidth = fileData.sidewalkWidth or 0.2,
                 streetWidth = fileData.streetWidth or 0.2,
+                -- LOLLO UG TODO isVisible may return true even if street.visibility = false.
+                -- I use yearFrom to get around this.
+                visibility = (fileData.yearFrom < 65535 and fileData.visibility) or false, -- false means, do not show this street in the menu
                 yearTo = fileData.yearTo or 1925
             }
             if type(newRecord.fileName) == 'string' and newRecord.fileName:len() > 0
@@ -250,7 +253,8 @@ local function _getStreetDataFiltered_Stock(streetDataTable)
 
     local results = {}
     for _, strDataRecord in pairs(streetDataTable) do
-        if strDataRecord.yearTo == 0 and (not(strDataRecord.aiLock) or strDataRecord.isAllTramTracks == true) then
+        -- if strDataRecord.yearTo == 0 and (strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true) then
+        if strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true then
             if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().HIGHWAY)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().ONE_WAY)
@@ -267,7 +271,8 @@ local function _getStreetDataFiltered_StockAndReservedLanes(streetDataTable)
 
     local results = {}
     for _, strDataRecord in pairs(streetDataTable) do
-        if strDataRecord.yearTo == 0 and (not(strDataRecord.aiLock) or strDataRecord.isAllTramTracks == true) then
+        -- if strDataRecord.yearTo == 0 and (strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true) then
+        if strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true then
             if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY_BUS_RIGHT)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY_CARGO_RIGHT)
@@ -317,7 +322,7 @@ local function _getStreetTypesWithApi()
         -- LOLLO TODO see if a different loop returns the sequence with better consistency
         local streetProperties = api.res.streetTypeRep.get(ii)
         results[#results+1] = {
-            aiLock = streetProperties.aiLock,
+            aiLock = streetProperties.aiLock or false,
             categories = _cloneCategories(streetProperties.categories),
             fileName = fileName,
             icon = streetProperties.icon,
@@ -327,13 +332,24 @@ local function _getStreetTypesWithApi()
             rightLaneWidth = (streetProperties.laneConfigs[2] or {}).width or 0,
             sidewalkWidth = streetProperties.sidewalkWidth,
             streetWidth = streetProperties.streetWidth,
+            -- LOLLO UG TODO isVisible may return true even if street.visibility = false.
+            -- I use yearFrom to get around this.
+            visibility = (streetProperties.yearFrom < 65535 and api.res.streetTypeRep.isVisible(ii)) or false,
             yearTo = streetProperties.yearTo
         }
     end
+    -- print('_getStreetTypesWithApi is about to return ') debugPrint(results)
     return results
 end
 
 local function _initLolloStreetDataWithApi(filter)
+    -- print('_initLolloStreetDataWithApi starting with filter =') debugPrint(filter)
+    -- print('_lolloStreetDataBuffer.filterId =', _lolloStreetDataBuffer.filterId)
+    -- print('type(_lolloStreetDataBuffer.data) =', type(_lolloStreetDataBuffer.data))
+    -- if type(_lolloStreetDataBuffer.data) == 'table' then
+    --     print('#_lolloStreetDataBuffer.data =', #_lolloStreetDataBuffer.data)
+    -- end
+
     if _lolloStreetDataBuffer.filterId ~= filter.id
     or type(_lolloStreetDataBuffer.data) ~= 'table'
     or #_lolloStreetDataBuffer.data < 1 then
