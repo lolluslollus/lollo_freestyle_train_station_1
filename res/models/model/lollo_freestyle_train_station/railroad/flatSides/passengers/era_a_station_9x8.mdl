@@ -86,6 +86,7 @@ function data()
                                 'lollo_freestyle_train_station/windows_old.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_passenger_station_9x5x8_lod1.msh',
+                            name = 'era_a_station_9x8_lod1',
                             transf = _constants.idTransf
                         },
                     },

@@ -202,6 +202,7 @@ function data()
                                 'lollo_freestyle_train_station/era_b_doors_barely_transparent.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_passenger_station_24x5x8_lod1.msh',
+                            name = 'era_a_station_24x8_lod2',
                             transf = _constants.idTransf
                         },
                     },
