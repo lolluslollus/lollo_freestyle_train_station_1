@@ -1913,6 +1913,34 @@ function data()
                                         end
                                     end
 
+                                    -- make sure there are no signals or waypoints between the waypoints
+                                    local edgeIds = {}
+                                    for _, value in pairs(contiguousTrackEdgeProps) do
+                                        arrayUtils.addUnique(edgeIds, value.entity)
+                                    end
+                                    logger.print('edgeIds =') logger.debugPrint(edgeIds)
+                                    for ___, edgeId in pairs(edgeIds) do
+                                        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                                        if baseEdge and baseEdge.objects and #baseEdge.objects > 0 then
+                                            for __, edgeObj in pairs(baseEdge.objects) do
+                                                logger.print('edgeObj between waypoints =') logger.debugPrint(edgeObj)
+                                                if edgeObj[1] ~= newWaypointId and edgeObj[1] ~= twinWaypointId then
+                                                    guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossSignal'), newWaypointId)
+                                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                        string.sub(debug.getinfo(1, 'S').source, 1),
+                                                        _eventId,
+                                                        _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                        {
+                                                            edgeId = lastBuiltEdgeId,
+                                                            waypointId = newWaypointId,
+                                                        }
+                                                    ))
+                                                    return false
+                                                end
+                                            end
+                                        end
+                                    end
+
                                     -- LOLLO NOTE do not check that the tracks between the waypoints are all of the same type
                                     -- (ie, platforms have the same width) so we have more flexibility with tunnel entrances
                                     -- on the other hand, different platform widths make trouble with cargo, which has multiple waiting areas:
