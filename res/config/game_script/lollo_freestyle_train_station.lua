@@ -1732,7 +1732,7 @@ function data()
                                     logger.print('attempted to retrieve newWaypointId, newWaypointId =', newWaypointId or 'NULL', 'lastBuiltEdgeId =', lastBuiltEdgeId, '#args.proposal.proposal.addedSegments =', #args.proposal.proposal.addedSegments)
                                     if not(newWaypointId) then return false end
 
-                                    -- forbid building this on a platform or a track
+                                    -- forbid building track waypoint on a platform or platform waypoint on a track
                                     if trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType) ~= mustBeOnPlatform then
                                         guiHelpers.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -1772,7 +1772,7 @@ function data()
                                     for ___, edgeId in pairs(endEdgeIds) do
                                         local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
                                         -- logger.print('conId =', conId or 'NIL')
-                                        -- and it belongs to a construction
+                                        -- if the edge belongs to a construction
                                         if edgeUtils.isValidAndExistingId(conId) then
                                             local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                                             -- and the construction is a station, freestyle or otherwise
@@ -1846,12 +1846,12 @@ function data()
                                         end
                                     end
 
-                                    -- make sure the waypoints are on connected tracks
                                     local contiguousTrackEdgeProps = stationHelpers.getTrackEdgePropsBetweenEdgeIds(
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
                                         api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId)
                                     )
                                     logger.print('contiguous track edges =') logger.debugPrint(contiguousTrackEdgeProps)
+                                    -- make sure the waypoints are on connected tracks
                                     if #contiguousTrackEdgeProps < 1 then
                                         guiHelpers.showWarningWindowWithGoto(_('WaypointsNotConnected'), newWaypointId, similarObjectIdsInAnyEdges)
                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -1885,6 +1885,31 @@ function data()
                                                 ))
                                                 return false
                                             end
+                                        end
+                                    end
+
+                                    -- make sure there are no crossings between the waypoints
+                                    local edgeIds = {}
+                                    for __, value in pairs(contiguousTrackEdgeProps) do
+                                        arrayUtils.addUnique(edgeIds, value.entity)
+                                    end
+                                    logger.print('edgeIds =') logger.debugPrint(edgeIds)
+                                    local nodesBetweenWps = edgeUtils.getNodeIdsBetweenNeighbourEdgeIds(edgeIds, false)
+                                    logger.print('nodesBetweenWps =') logger.debugPrint(nodesBetweenWps)
+                                    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+                                    for __, nodeId in pairs(nodesBetweenWps) do
+                                        if _map[nodeId] and #_map[nodeId] > 2 then
+                                            guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossCrossing'), newWaypointId)
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                {
+                                                    edgeId = lastBuiltEdgeId,
+                                                    waypointId = newWaypointId,
+                                                }
+                                            ))
+                                            return false
                                         end
                                     end
 

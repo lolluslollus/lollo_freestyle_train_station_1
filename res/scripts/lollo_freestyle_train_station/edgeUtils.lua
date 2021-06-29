@@ -4,6 +4,7 @@ local quadrangleUtils = require('lollo_freestyle_train_station.quadrangleUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
+
 if math.atan2 == nil then
     math.atan2 = function(dy, dx)
         local result = 0
@@ -593,6 +594,37 @@ helper.getNodeIdsBetweenEdgeIds = function(edgeIds, isIncludeExclusiveOuterNodes
     end
 
     return sharedNodeIds
+end
+
+helper.getNodeIdsBetweenNeighbourEdgeIds = function(edgeIds, isIncludeExclusiveOuterNodes)
+    if type(edgeIds) ~= 'table' then return {} end
+
+    local nodesBetweenEdges = {} -- nodeId, counter
+    for _, edgeId in pairs(edgeIds) do -- don't use _ here, we call it below to translate the message!
+        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+        if baseEdge then
+            if nodesBetweenEdges[baseEdge.node0] then
+                nodesBetweenEdges[baseEdge.node0] = nodesBetweenEdges[baseEdge.node0] + 1
+            else
+                nodesBetweenEdges[baseEdge.node0] = 1
+            end
+            if nodesBetweenEdges[baseEdge.node1] then
+                nodesBetweenEdges[baseEdge.node1] = nodesBetweenEdges[baseEdge.node1] + 1
+            else
+                nodesBetweenEdges[baseEdge.node1] = 1
+            end
+        end
+    end
+
+    local results = {}
+    for nodeId, count in pairs(nodesBetweenEdges) do
+        if count > 1 or isIncludeExclusiveOuterNodes then
+            results[#results+1] = nodeId
+        end
+    end
+
+    -- print('getNodeIdsBetweenEdgeIds about to return') debugPrint(results)
+    return results
 end
 
 helper.getObjectPosition = function(objectId)
