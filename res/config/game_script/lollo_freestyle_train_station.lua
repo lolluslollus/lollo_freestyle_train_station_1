@@ -1888,13 +1888,13 @@ function data()
                                         end
                                     end
 
-                                    -- make sure there are no crossings between the waypoints
-                                    local edgeIds = {}
+                                    local contiguousEdgeIds = {}
                                     for __, value in pairs(contiguousTrackEdgeProps) do
-                                        arrayUtils.addUnique(edgeIds, value.entity)
+                                        arrayUtils.addUnique(contiguousEdgeIds, value.entity)
                                     end
-                                    logger.print('edgeIds =') logger.debugPrint(edgeIds)
-                                    local nodesBetweenWps = edgeUtils.getNodeIdsBetweenNeighbourEdgeIds(edgeIds, false)
+                                    logger.print('contiguousEdgeIds =') logger.debugPrint(contiguousEdgeIds)
+                                    -- make sure there are no crossings between the waypoints
+                                    local nodesBetweenWps = edgeUtils.getNodeIdsBetweenNeighbourEdgeIds(contiguousEdgeIds, false)
                                     logger.print('nodesBetweenWps =') logger.debugPrint(nodesBetweenWps)
                                     local _map = api.engine.system.streetSystem.getNode2SegmentMap()
                                     for __, nodeId in pairs(nodesBetweenWps) do
@@ -1914,12 +1914,7 @@ function data()
                                     end
 
                                     -- make sure there are no signals or waypoints between the waypoints
-                                    local edgeIds = {}
-                                    for _, value in pairs(contiguousTrackEdgeProps) do
-                                        arrayUtils.addUnique(edgeIds, value.entity)
-                                    end
-                                    logger.print('edgeIds =') logger.debugPrint(edgeIds)
-                                    for ___, edgeId in pairs(edgeIds) do
+                                    for ___, edgeId in pairs(contiguousEdgeIds) do
                                         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
                                         if baseEdge and baseEdge.objects and #baseEdge.objects > 0 then
                                             for __, edgeObj in pairs(baseEdge.objects) do
