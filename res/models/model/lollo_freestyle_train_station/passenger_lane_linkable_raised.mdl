@@ -20,7 +20,7 @@ function data()
             transportNetworkProvider = {
                 laneLists = {
                     {
-                        linkable = false, -- false, --true,
+                        linkable = true, -- false, --true,
                         nodes = {
                             {
                                 { 0, 0, _constants.trackCrossingRaise },

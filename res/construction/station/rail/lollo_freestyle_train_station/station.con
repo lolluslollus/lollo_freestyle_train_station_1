@@ -1202,7 +1202,7 @@ function data()
 				_linkUnderpassesAndStairs()
 				logger.print('passengers and stairs linked')
 
-				local _linkPassengerPlatforms = function(maxLinkLength, positions, modelId)
+				local _linkPassengerPlatforms = function(maxLinkLength, positions, modelId, raiseHowMuch)
 					-- link platforms across terminals, on the ground, if they are close enough
 					local maxT = #params.terminals
 					for t = 1, maxT do
@@ -1214,12 +1214,17 @@ function data()
 									for i = 1, #positionsInT do
 										for ii = 1, #positionsInTT do
 											if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
+												local tr = transfUtils.get1MLaneTransf(
+													positionsInT[i].pos,
+													positionsInTT[ii].pos
+												)
+												if raiseHowMuch and raiseHowMuch > 0 then
+													tr[15] = tr[15] + _constants.trackCrossingRaise
+													logger.print('tr[15] = ', tr[15])
+												end
 												result.models[#result.models+1] = {
 													id = modelId,
-													transf = transfUtils.get1MLaneTransf(
-														positionsInT[i].pos,
-														positionsInTT[ii].pos
-													)
+													transf = tr
 												}
 											end
 										end
@@ -1235,9 +1240,10 @@ function data()
 					_constants.passengerLaneModelId
 				)
 				_linkPassengerPlatforms(
-					6,
+					8,
 					result.terminateConstructionHookInfo.trackCrossingPositions,
-					_constants.passengerLaneModelId
+					_constants.passengerLaneModelId,
+					_constants.trackCrossingRaise
 				)
 				logger.print('passenger platforms linked')
 
