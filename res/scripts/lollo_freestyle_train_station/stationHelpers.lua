@@ -1,6 +1,7 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local logger = require('lollo_freestyle_train_station.logger')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -23,7 +24,7 @@ local helpers = {
                 local staGroupId = api.engine.system.stationGroupSystem.getStationGroup(staId)
                 if edgeUtils.isValidAndExistingId(staGroupId) then
                     local staGroupName = api.engine.getComponent(staGroupId, api.type.ComponentType.NAME)
-                    print('staGroupName =') debugPrint(staGroupName)
+                    logger.print('staGroupName =') logger.debugPrint(staGroupName)
                     if staGroupName ~= nil and not(stringUtils.isNullOrEmptyString(staGroupName.name)) then
                         results[#results+1] = {
                             id = con.id,
@@ -35,8 +36,8 @@ local helpers = {
                 end
             end
         end
-        -- print('# nearby freestyle stations = ', #results)
-        -- print('nearby freestyle stations = ') debugPrint(results)
+        -- logger.print('# nearby freestyle stations = ', #results)
+        -- logger.print('nearby freestyle stations = ') logger.debugPrint(results)
         return results
     end,
 
@@ -56,13 +57,13 @@ local helpers = {
             if edgeUtils.isValidAndExistingId(stationId) then
                 local conId = _station2ConstructionMap[stationId]
                 if edgeUtils.isValidAndExistingId(conId) then
-                    -- print('getNearbyFreestyleStationsList has found conId =', conId)
+                    -- logger.print('getNearbyFreestyleStationsList has found conId =', conId)
                     local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                     if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
-                        -- print('construction.name =') debugPrint(con.name) nil
+                        -- logger.print('construction.name =') logger.debugPrint(con.name) nil
                         local isCargo = api.engine.getComponent(stationId, api.type.ComponentType.STATION).cargo or false
-                        -- print('isCargo =', isCargo)
-                        -- print('isOnlyPassengers =', isOnlyPassengers)
+                        -- logger.print('isCargo =', isCargo)
+                        -- logger.print('isOnlyPassengers =', isOnlyPassengers)
                         if not(isCargo) or not(isOnlyPassengers) then
                             local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
                             local name = ''
@@ -73,7 +74,7 @@ local helpers = {
                             local isTwinPassenger = false
 
                             if resultsIndexed[conId] ~= nil then
-                                -- print('found a twin, it is') debugPrint(resultsIndexed[conId])
+                                -- logger.print('found a twin, it is') logger.debugPrint(resultsIndexed[conId])
                                 if stringUtils.isNullOrEmptyString(name) then
                                     name = resultsIndexed[conId].name or ''
                                 end
@@ -96,13 +97,13 @@ local helpers = {
             end
         end
 
-        print('resultsIndexed =') debugPrint(resultsIndexed)
+        logger.print('resultsIndexed =') logger.debugPrint(resultsIndexed)
         local results = {}
         for _, value in pairs(resultsIndexed) do
             results[#results+1] = value
         end
-        -- print('# nearby freestyle stations = ', #results)
-        -- print('nearby freestyle stations = ') debugPrint(results)
+        -- logger.print('# nearby freestyle stations = ', #results)
+        -- logger.print('nearby freestyle stations = ') logger.debugPrint(results)
         return results
     end,
 
@@ -124,11 +125,11 @@ local helpers = {
 
         local results = {}
         for i = 1, #edgeIds do
-            -- print('edgeId =', edgeIds[i])
+            -- logger.print('edgeId =', edgeIds[i])
             local baseEdge = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE)
-            -- print('baseEdge =') debugPrint(baseEdge)
+            -- logger.print('baseEdge =') logger.debugPrint(baseEdge)
             local baseEdgeTrack = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE_TRACK)
-            -- print('baseEdgeTrack =') debugPrint(baseEdgeTrack)
+            -- logger.print('baseEdgeTrack =') logger.debugPrint(baseEdgeTrack)
             local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
             local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
@@ -155,7 +156,7 @@ local helpers = {
             -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
             if i == 1 then
                 if i < #edgeIds then
-                    -- print('nextBaseEdgeId =') debugPrint(edgeIds[i + 1])
+                    -- logger.print('nextBaseEdgeId =') logger.debugPrint(edgeIds[i + 1])
                     local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
                     if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
                 end
@@ -212,8 +213,8 @@ local helpers = {
         if not(searchRadius) then searchRadius = 99999 end
         local results = {}
         local nearbyEdgeIds = edgeUtils.getNearbyObjectIds(_constants.idTransf, searchRadius, api.type.ComponentType.BASE_EDGE)
-        -- print('nearbyEdgeIds =')
-        -- debugPrint(nearbyEdgeIds)
+        -- logger.print('nearbyEdgeIds =')
+        -- logger.debugPrint(nearbyEdgeIds)
         for _, edgeId in pairs(nearbyEdgeIds) do
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
             if baseEdge ~= nil and baseEdge.objects ~= nil then
@@ -224,7 +225,7 @@ local helpers = {
             end
         end
 
-        -- print('getAllEdgeObjectsWithModelId is about to return') debugPrint(results)
+        -- logger.print('getAllEdgeObjectsWithModelId is about to return') logger.debugPrint(results)
         return results
     end,
 
@@ -259,12 +260,12 @@ local helpers = {
             return counter < 2
         end
 
-        print('one')
+        logger.print('one')
         if type(contiguousEdgeIds) ~= 'table' or #contiguousEdgeIds < 1 then return {} end
-        print('two')
+        logger.print('two')
         if #contiguousEdgeIds == 1 then
             local _baseEdge = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
-            print('three')
+            logger.print('three')
             return { _baseEdge.node0, _baseEdge.node1 }
         end
 
@@ -287,7 +288,7 @@ local helpers = {
     end,
 
     getCentralEdgePositions = function(edgeLists, maxEdgeLength, addTerrainHeight)
-        -- print('getCentralEdgePositions starting')
+        -- logger.print('getCentralEdgePositions starting')
         if type(edgeLists) ~= 'table' then return {} end
 
         local leadingIndex = 0
@@ -295,16 +296,16 @@ local helpers = {
         for _, pel in pairs(edgeLists) do
             leadingIndex = leadingIndex + 1
             local edgeLength = (transfUtils.getVectorLength(pel.posTanX2[1][2]) + transfUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
-            -- print('edgeLength =') debugPrint(edgeLength)
+            -- logger.print('edgeLength =') logger.debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
-            -- print('nModelsInEdge =') debugPrint(nModelsInEdge)
+            -- logger.print('nModelsInEdge =') logger.debugPrint(nModelsInEdge)
 
             local edgeResults = {}
             local lengthCovered = 0
             local previousNodeBetween = nil
             for i = 1, nModelsInEdge do
-                -- print('i == ', i)
-                -- print('i / nModelsInEdge =', i / nModelsInEdge)
+                -- logger.print('i == ', i)
+                -- logger.print('i / nModelsInEdge =', i / nModelsInEdge)
                 local nodeBetween = edgeUtils.getNodeBetween(
                     transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][1]),
                     transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][1]),
@@ -312,15 +313,15 @@ local helpers = {
                     transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][2]),
                     i / nModelsInEdge
                 )
-                -- print('nodeBetween =') debugPrint(nodeBetween)
+                -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                 if nodeBetween == nil then
-                    print('lollo freestyle train station ERROR: nodeBetween not found')
-                    print('pel =') debugPrint(pel)
+                    logger.print('lollo freestyle train station ERROR: nodeBetween not found')
+                    logger.print('pel =') logger.debugPrint(pel)
                     return {}
                 end
                 local newEdgeLength = nodeBetween.refDistance0 - lengthCovered
-                -- print('newEdgeLength =', newEdgeLength)
-                -- print('lengthCovered =', lengthCovered)
+                -- logger.print('newEdgeLength =', newEdgeLength)
+                -- logger.print('lengthCovered =', lengthCovered)
                 if i == 1 then
                     edgeResults[#edgeResults+1] = {
                         posTanX2 = {
@@ -437,7 +438,7 @@ local helpers = {
             end
         end
 
-        -- print('getCentralEdgePositions results =') debugPrint(results)
+        -- logger.print('getCentralEdgePositions results =') logger.debugPrint(results)
         return results
     end,
 
@@ -624,12 +625,12 @@ local helpers = {
             -- assignToFirstEstimate = nil,
             assignToSecondEstimate = nil,
         }
-        -- print('LOLLO attempting to place edge object with position =')
-        -- debugPrint(edgeObjPosition)
-        -- print('wholeEdge.node0pos =') debugPrint(node0pos)
-        -- print('nodeBetween.position =') debugPrint(nodeBetween.position)
-        -- print('nodeBetween.tangent =') debugPrint(nodeBetween.tangent)
-        -- print('wholeEdge.node1pos =') debugPrint(node1pos)
+        -- logger.print('LOLLO attempting to place edge object with position =')
+        -- logger.debugPrint(edgeObjPosition)
+        -- logger.print('wholeEdge.node0pos =') logger.debugPrint(node0pos)
+        -- logger.print('nodeBetween.position =') logger.debugPrint(nodeBetween.position)
+        -- logger.print('nodeBetween.tangent =') logger.debugPrint(nodeBetween.tangent)
+        -- logger.print('wholeEdge.node1pos =') logger.debugPrint(node1pos)
         -- first estimator
         -- local nodeBetween_Node0_Distance = transfUtils.getVectorLength({
         --     nodeBetween.position.x - node0pos[1],
@@ -685,7 +686,7 @@ local helpers = {
             end
         -- if b grows too much, I lose precision, so I approximate it with the y axis
         else
-            -- print('alpha =', alpha, 'b =', b)
+            -- logger.print('alpha =', alpha, 'b =', b)
             if edgeObjPosition[1] > nodeBetween.position.x then
                 edgeObjPosition_assignTo = 0
             else
@@ -709,7 +710,7 @@ local helpers = {
             result.assignToSecondEstimate = 1
         end
 
-        -- print('LOLLO assignment =') debugPrint(result)
+        -- logger.print('LOLLO assignment =') logger.debugPrint(result)
         return result
     end,
 
@@ -754,8 +755,8 @@ local helpers = {
             newEdge.trackEdge.catenary = false
         end
 
-        -- print('edgeUtils.isValidId(objectIdToRemove) =', edgeUtils.isValidId(objectIdToRemove))
-        -- print('edgeUtils.isValidAndExistingId(objectIdToRemove) =', edgeUtils.isValidAndExistingId(objectIdToRemove))
+        -- logger.print('edgeUtils.isValidId(objectIdToRemove) =', edgeUtils.isValidId(objectIdToRemove))
+        -- logger.print('edgeUtils.isValidAndExistingId(objectIdToRemove) =', edgeUtils.isValidAndExistingId(objectIdToRemove))
         if edgeUtils.isValidId(objectIdToRemove) then
             local edgeObjects = {}
             for _, edgeObj in pairs(oldEdge.objects) do
@@ -765,18 +766,18 @@ local helpers = {
             end
             if #edgeObjects > 0 then
                 newEdge.comp.objects = edgeObjects -- LOLLO NOTE cannot insert directly into edge0.comp.objects
-                -- print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects =') debugPrint(newEdge.comp.objects)
+                -- logger.print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects =') logger.debugPrint(newEdge.comp.objects)
             else
-                -- print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
+                -- logger.print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
             end
         else
-            print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is') debugPrint(objectIdToRemove)
+            logger.print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is') logger.debugPrint(objectIdToRemove)
             newEdge.comp.objects = oldEdge.objects
         end
 
-        -- print('newEdge.comp.objects:')
+        -- logger.print('newEdge.comp.objects:')
         -- for key, value in pairs(newEdge.comp.objects) do
-        --     print('key =', key) debugPrint(value)
+        --     logger.print('key =', key) logger.debugPrint(value)
         -- end
 
         local proposal = api.type.SimpleProposal.new()
@@ -790,7 +791,7 @@ local helpers = {
     end,
 
     getNeighbourNodeIdsOfBulldozedTerminal = function(platformEdgeLists, trackEdgeLists)
-        print('getNeighbourNodeIdsOfBulldozedTerminal starting')
+        logger.print('getNeighbourNodeIdsOfBulldozedTerminal starting')
 
         local result = {
             platforms = {
@@ -819,14 +820,14 @@ local helpers = {
                 transfUtils.position2Transf(trackEdgeLists[#trackEdgeLists].posTanX2[2][1]), 0.001, api.type.ComponentType.BASE_NODE
             )[1]
         end
-        -- print('getNeighbourNodeIdsOfBulldozedTerminal about to return') debugPrint(result)
+        -- logger.print('getNeighbourNodeIdsOfBulldozedTerminal about to return') logger.debugPrint(result)
         return result
     end,
 }
 
 local _getStationEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
-    -- print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
-    -- print('getStationEndNodesUnsorted, con =') debugPrint(con)
+    -- logger.print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
+    -- logger.print('getStationEndNodesUnsorted, con =') logger.debugPrint(con)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- we may want to respect frozen edges and nodes of other constructions, too, so we import them
     -- instead of picking them from the current station.
@@ -836,10 +837,10 @@ local _getStationEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNode
 
     local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
     local _getNodeId = function(nodePosition, otherEdgeNodePosition)
-        -- print('nodePosition =') debugPrint(nodePosition)
-        -- print('otherEdgeNodePosition =') debugPrint(otherEdgeNodePosition)
+        -- logger.print('nodePosition =') logger.debugPrint(nodePosition)
+        -- logger.print('otherEdgeNodePosition =') logger.debugPrint(otherEdgeNodePosition)
         local nearbyNodeIds = edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(nodePosition), 0.001, api.type.ComponentType.BASE_NODE)
-        -- print('nodeFunds =') debugPrint(nearbyNodeIds)
+        -- logger.print('nodeFunds =') logger.debugPrint(nearbyNodeIds)
         for _, nodeId in pairs(nearbyNodeIds) do
             if _map[nodeId] ~= nil and not(arrayUtils.arrayHasValue(frozenNodes, nodeId)) then
                 for _, edgeId in pairs(_map[nodeId]) do
@@ -849,13 +850,13 @@ local _getStationEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNode
                         -- nodeId could belong to the other terminal: to make sure, I check the other node attached to the same frozen edge.
                         if baseEdge.node0 == nodeId then
                             local otherBaseNode = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                            -- print('baseEdge.node0 == nodeId, otherBaseNode =') debugPrint(otherBaseNode)
+                            -- logger.print('baseEdge.node0 == nodeId, otherBaseNode =') logger.debugPrint(otherBaseNode)
                             if otherBaseNode and otherBaseNode.position and edgeUtils.isXYZVeryClose(otherBaseNode.position, otherEdgeNodePosition, 4) then
                                 return nodeId
                             end
                         elseif baseEdge.node1 == nodeId then
                             local otherBaseNode = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                            -- print('baseEdge.node1 == nodeId, otherBaseNode =') debugPrint(otherBaseNode)
+                            -- logger.print('baseEdge.node1 == nodeId, otherBaseNode =') logger.debugPrint(otherBaseNode)
                             if otherBaseNode and otherBaseNode.position and edgeUtils.isXYZVeryClose(otherBaseNode.position, otherEdgeNodePosition, 4) then
                                 return nodeId
                             end
@@ -879,20 +880,20 @@ local _getStationEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNode
     }
 
     if result.platforms.node1Id == nil then
-        print('WARNING: could not find platformnode1Id in station construction')
-        print('nTerminal =') debugPrint(nTerminal)
+        logger.print('WARNING: could not find platformnode1Id in station construction')
+        logger.print('nTerminal =') logger.debugPrint(nTerminal)
     end
     if result.platforms.node2Id == nil then
-        print('WARNING: could not find platformnode2Id in station construction')
-        print('nTerminal =') debugPrint(nTerminal)
+        logger.print('WARNING: could not find platformnode2Id in station construction')
+        logger.print('nTerminal =') logger.debugPrint(nTerminal)
     end
     if result.tracks.node1Id == nil then
-        print('WARNING: could not find tracknode1Id in station construction')
-        print('nTerminal =') debugPrint(nTerminal)
+        logger.print('WARNING: could not find tracknode1Id in station construction')
+        logger.print('nTerminal =') logger.debugPrint(nTerminal)
     end
     if result.tracks.node2Id == nil then
-        print('WARNING: could not find tracknode2Id in station construction')
-        print('nTerminal =') debugPrint(nTerminal)
+        logger.print('WARNING: could not find tracknode2Id in station construction')
+        logger.print('nTerminal =') logger.debugPrint(nTerminal)
     end
 
     return result
@@ -900,9 +901,9 @@ end
 
 local _getStationEndEntities4T = function(con, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- print('con =') debugPrint(conData)
+    -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        print('lollo freestyle train station ERROR: _getStationEndEntities4T con.fileName =') debugPrint(con.fileName)
+        logger.print('lollo freestyle train station ERROR: _getStationEndEntities4T con.fileName =') logger.debugPrint(con.fileName)
         return nil
     end
 
@@ -911,15 +912,15 @@ local _getStationEndEntities4T = function(con, t)
     -- get all stations, not only mine? It does not seem necessary for now, and we also bar building close to a station, on top of it.
     -- This thing here works, just in case.
     -- local conTransf = transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
-    -- print('frozenEdges first =') debugPrint(frozenEdgeIds)
-    -- print('frozenNodes first =') debugPrint(frozenNodeIds)
+    -- logger.print('frozenEdges first =') logger.debugPrint(frozenEdgeIds)
+    -- logger.print('frozenNodes first =') logger.debugPrint(frozenNodeIds)
     -- local nearbyStations = helpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
     -- for _, nearbyStation in pairs(nearbyStations) do
-    --     print('nearbyStation =') debugPrint(nearbyStation)
+    --     logger.print('nearbyStation =') logger.debugPrint(nearbyStation)
     --     if edgeUtils.isValidAndExistingId(nearbyStation.id) then
     --         local nearbyCon = api.engine.getComponent(nearbyStation.id, api.type.ComponentType.CONSTRUCTION)
-    --         print('nearbyCon found')
-    --         print('#nearbyCon.frozenEdges = ', #nearbyCon.frozenEdges, 'nearbyCon.frozenEdges =') debugPrint(nearbyCon.frozenEdges)
+    --         logger.print('nearbyCon found')
+    --         logger.print('#nearbyCon.frozenEdges = ', #nearbyCon.frozenEdges, 'nearbyCon.frozenEdges =') logger.debugPrint(nearbyCon.frozenEdges)
     --         if nearbyCon and nearbyCon.frozenEdges then
     --             for _, frozenEdgeId in pairs(nearbyCon.frozenEdges) do
     --                 frozenEdgeIds[#frozenEdgeIds+1] = frozenEdgeId
@@ -932,11 +933,11 @@ local _getStationEndEntities4T = function(con, t)
     --         end
     --     end
     -- end
-    -- print('frozenEdges with neighbours =') debugPrint(frozenEdgeIds)
-    -- print('frozenNodes with neighbours =') debugPrint(frozenNodeIds)
+    -- logger.print('frozenEdges with neighbours =') logger.debugPrint(frozenEdgeIds)
+    -- logger.print('frozenNodes with neighbours =') logger.debugPrint(frozenNodeIds)
 
     local endNodeIds4T = _getStationEndNodeIds4T(con, t, frozenEdgeIds, frozenNodeIds)
-    -- print('endNodeIds4T =') debugPrint(endNodeIds4T)
+    -- logger.print('endNodeIds4T =') logger.debugPrint(endNodeIds4T)
     -- I cannot clone these, for some reason: it dumps
     local platformNode1Position = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node1Id)
         and api.engine.getComponent(endNodeIds4T.platforms.node1Id, api.type.ComponentType.BASE_NODE).position
@@ -1002,7 +1003,7 @@ local _getStationEndEntities4T = function(con, t)
             0.001,
             api.type.ComponentType.BASE_NODE
         )
-        -- print('getDisjointNeighbourNodes found') debugPrint(nearbyNodeIds)
+        -- logger.print('getDisjointNeighbourNodes found') logger.debugPrint(nearbyNodeIds)
         for _, nearbyNodeId in pairs(nearbyNodeIds) do
             if edgeUtils.isValidAndExistingId(nearbyNodeId)
             and nearbyNodeId ~= stationNodeId
@@ -1037,22 +1038,22 @@ local _getStationEndEntities4T = function(con, t)
     result.tracks.disjointNeighbourEdgeIds.edge1Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node1Id)
     result.tracks.disjointNeighbourEdgeIds.edge2Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node2Id)
 
-    -- print('_getStationEndEntities4T result =') debugPrint(result)
+    -- logger.print('_getStationEndEntities4T result =') logger.debugPrint(result)
     return result
 end
 
 helpers.getStationEndEntities = function(stationConstructionId)
-    print('getStationEndEntities started, conId =', stationConstructionId or 'NIL')
+    logger.print('getStationEndEntities started, conId =', stationConstructionId or 'NIL')
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        print('lollo freestyle train station ERROR: getStationEndEntities invalid stationConstructionId') debugPrint(stationConstructionId)
+        logger.print('lollo freestyle train station ERROR: getStationEndEntities invalid stationConstructionId') logger.debugPrint(stationConstructionId)
         return nil
     end
 
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- print('con =') debugPrint(conData)
+    -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        print('lollo freestyle train station ERROR: getStationEndEntities con.fileName =') debugPrint(con.fileName)
+        logger.print('lollo freestyle train station ERROR: getStationEndEntities con.fileName =') logger.debugPrint(con.fileName)
         return nil
     end
 
@@ -1061,26 +1062,26 @@ helpers.getStationEndEntities = function(stationConstructionId)
         result[t] = _getStationEndEntities4T(con, t)
     end
 
-    -- print('getStationEndEntities result =') debugPrint(result)
+    -- logger.print('getStationEndEntities result =') logger.debugPrint(result)
     return result
 end
 
 helpers.getStationEndEntities4T = function(stationConstructionId, t)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        print('lollo freestyle train station ERROR: getStationEndEntities4T invalid stationConstructionId') debugPrint(stationConstructionId)
+        logger.print('lollo freestyle train station ERROR: getStationEndEntities4T invalid stationConstructionId') logger.debugPrint(stationConstructionId)
         return nil
     end
 
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- print('con =') debugPrint(conData)
+    -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        print('lollo freestyle train station ERROR: getStationEndEntities4T con.fileName =') debugPrint(con.fileName)
+        logger.print('lollo freestyle train station ERROR: getStationEndEntities4T con.fileName =') logger.debugPrint(con.fileName)
         return nil
     end
 
     if type(t) ~= 'number' or t < 1 or t > #con.params.terminals then
-        print('Warning: getStationEndEntities4T received invalid t =') debugPrint(t)
+        logger.print('Warning: getStationEndEntities4T received invalid t =') logger.debugPrint(t)
         return nil
     end
 
@@ -1090,14 +1091,14 @@ end
 helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
     -- this function returns the ids in the right sequence, but their node0 and node1 may be scrambled,
     -- depending how the user laid the tracks
-    print('getTrackEdgeIdsBetweenEdgeIdsOLD starting, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
+    logger.print('getTrackEdgeIdsBetweenEdgeIdsOLD starting, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
     -- the output is sorted by sequence, from edge1 to edge2
-    print('one, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
+    logger.print('one, _edge1Id =', _edge1Id, '_edge2Id =', _edge2Id)
     if not(edgeUtils.isValidAndExistingId(_edge1Id)) then return {} end
     if not(edgeUtils.isValidAndExistingId(_edge2Id)) then return {} end
-    print('two')
+    logger.print('two')
     if _edge1Id == _edge2Id then return { _edge1Id } end
-    print('three')
+    logger.print('three')
     local _baseEdge1 = api.engine.getComponent(
         _edge1Id,
         api.type.ComponentType.BASE_EDGE
@@ -1107,10 +1108,10 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
         api.type.ComponentType.BASE_EDGE
     )
     if _baseEdge1 == nil or _baseEdge2 == nil then return {} end
-    print('four')
+    logger.print('four')
     local _baseEdgeTrack2 = api.engine.getComponent(_edge2Id, api.type.ComponentType.BASE_EDGE_TRACK)
     if not(_baseEdgeTrack2) then return {} end
-    print('five')
+    logger.print('five')
     -- local _trackType2 = _baseEdgeTrack2.trackType
     local _isTrack2Platform = trackUtils.isPlatform(_baseEdgeTrack2.trackType)
 
@@ -1127,16 +1128,16 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
 
     if _isTrackEdgeContiguousTo2(_baseEdge1) then
         if _isTrackEdgesSameTypeAs2(_edge1Id) then
-            print('six')
+            logger.print('six')
             if _baseEdge1.node1 == _baseEdge2.node0 then
-                print('six point one')
+                logger.print('six point one')
                 return { _edge1Id, _edge2Id }
             else
-                print('six point two')
+                logger.print('six point two')
                 return { _edge2Id, _edge1Id }
             end
         end
-        print('seven')
+        logger.print('seven')
         return {}
     end
 
@@ -1150,25 +1151,25 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
         local _fetchEdgeConnectedToNode = function(nodeId)
             local adjacentEdgeIds = _map[nodeId] -- userdata
             if adjacentEdgeIds == nil then
-                print('nine')
+                logger.print('nine')
                 return 0
             end
             -- we don't deal with intersections for now
             -- LOLLO NOTE even if we did, the game will have trouble when we bulldoze the tracks,
             -- if some of them cross an intersection
             if #adjacentEdgeIds > 2 then
-                print('nine and a half')
+                logger.print('nine and a half')
                 return 0
             end
             for _, edgeId in pairs(adjacentEdgeIds) do -- cannot use adjacentEdgeIds[index] here, it's fucking userdata
-                print('ten')
+                logger.print('ten')
                 if not(arrayUtils.arrayHasValue(edgeIds, edgeId)) and _isTrackEdgesSameTypeAs2(edgeId) then
-                    print('eleven')
+                    logger.print('eleven')
                     edge1Id = edgeId
                     edgeIds[#edgeIds+1] = edge1Id
                     baseEdge1 = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
                     if _isTrackEdgeContiguousTo2(baseEdge1) then
-                        print('twelve')
+                        logger.print('twelve')
                         edgeIds[#edgeIds+1] = _edge2Id
                         return 2
                     end
@@ -1179,22 +1180,22 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
         end
 
         local nodeId = baseEdge1[node0Or1FieldName]
-        print('nodeId =', nodeId)
+        logger.print('nodeId =', nodeId)
         local counter = 0
         while counter < 100 do
             counter = counter + 1
-            print('eight, counter =', counter, 'nodeId =', nodeId)
+            logger.print('eight, counter =', counter, 'nodeId =', nodeId)
             local fetchResult = _fetchEdgeConnectedToNode(nodeId)
             if fetchResult == 0 then
-                print('thirteen')
+                logger.print('thirteen')
                 return false
             elseif fetchResult == 1 then
                 -- make new nodeId
                 if nodeId == baseEdge1.node0 then nodeId = baseEdge1.node1 else nodeId = baseEdge1.node0 end
-                print('fourteen, new nodeId =', nodeId)
+                logger.print('fourteen, new nodeId =', nodeId)
             else
                 -- success
-                print('fifteen')
+                logger.print('fifteen')
                 return edgeIds
             end
         end
@@ -1203,19 +1204,19 @@ helpers.getTrackEdgeIdsBetweenEdgeIdsOLD = function(_edge1Id, _edge2Id)
     end
 
     local node0Results = _getEdgesBetween1and2('node0')
-    print('node0results =') debugPrint(node0Results)
+    logger.print('node0results =') logger.debugPrint(node0Results)
     if node0Results ~= false then
-        if node0Results[1] == _edge1Id then print('sixteen') return node0Results
-        else print('seventeen') return arrayUtils.getReversed(node0Results)
+        if node0Results[1] == _edge1Id then logger.print('sixteen') return node0Results
+        else logger.print('seventeen') return arrayUtils.getReversed(node0Results)
         end
     end
 
     -- nothing good found, try in the opposite direction
     local node1Results = _getEdgesBetween1and2('node1')
-    print('node1results =') debugPrint(node1Results)
+    logger.print('node1results =') logger.debugPrint(node1Results)
     if node1Results ~= false then
-        if node1Results[1] == _edge1Id then print('eighteen') return node1Results
-        else print('nineteen') return arrayUtils.getReversed(node1Results)
+        if node1Results[1] == _edge1Id then logger.print('eighteen') return node1Results
+        else logger.print('nineteen') return arrayUtils.getReversed(node1Results)
         end
     end
 
@@ -1224,15 +1225,15 @@ end
 
 helpers.getTrackEdgeIdsBetweenNodeIdsOLD = function(_node1Id, _node2Id)
 -- sometimes, this function returns an empty array when it could actually return something useful
-    print('getTrackEdgeIdsBetweenNodeIdsOLD starting')
-    print('node1Id =', _node1Id)
-    print('node2Id =', _node2Id)
-    print('ONE')
+    logger.print('getTrackEdgeIdsBetweenNodeIdsOLD starting')
+    logger.print('node1Id =', _node1Id)
+    logger.print('node2Id =', _node2Id)
+    logger.print('ONE')
     if not(edgeUtils.isValidAndExistingId(_node1Id)) then return {} end
     if not(edgeUtils.isValidAndExistingId(_node2Id)) then return {} end
-    print('TWO')
+    logger.print('TWO')
     if _node1Id == _node2Id then return {} end
-    print('THREE')
+    logger.print('THREE')
 
     local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
     local adjacentEdge1Ids = {}
@@ -1241,38 +1242,38 @@ helpers.getTrackEdgeIdsBetweenNodeIdsOLD = function(_node1Id, _node2Id)
         local adjacentEdge1IdsUserdata = _map[_node1Id] -- userdata
         local adjacentEdge2IdsUserdata = _map[_node2Id] -- userdata
         if adjacentEdge1IdsUserdata == nil then
-            print('FOUR')
+            logger.print('FOUR')
             return false
         else
             for _, edgeId in pairs(adjacentEdge1IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
                 -- arrayUtils.addUnique(adjacentEdge1Ids, edgeId)
                 adjacentEdge1Ids[#adjacentEdge1Ids+1] = edgeId
             end
-            print('FIVE')
+            logger.print('FIVE')
         end
         if adjacentEdge2IdsUserdata == nil then
-            print('SIX')
+            logger.print('SIX')
             return false
         else
             for _, edgeId in pairs(adjacentEdge2IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
                 -- arrayUtils.addUnique(adjacentEdge2Ids, edgeId)
                 adjacentEdge2Ids[#adjacentEdge2Ids+1] = edgeId
             end
-            print('SEVEN')
+            logger.print('SEVEN')
         end
 
         return true
     end
 
-    if not(_fetchAdjacentEdges()) then print('SEVEN HALF') return {} end
-    if #adjacentEdge1Ids < 1 or #adjacentEdge2Ids < 1 then print('EIGHT') return {} end
+    if not(_fetchAdjacentEdges()) then logger.print('SEVEN HALF') return {} end
+    if #adjacentEdge1Ids < 1 or #adjacentEdge2Ids < 1 then logger.print('EIGHT') return {} end
 
     if #adjacentEdge1Ids == 1 and #adjacentEdge2Ids == 1 then
         if adjacentEdge1Ids[1] == adjacentEdge2Ids[1] then
-            print('NINE')
+            logger.print('NINE')
             return { adjacentEdge1Ids[1] }
         else
-            print('TEN')
+            logger.print('TEN')
         --     return {}
         end
     end
@@ -1282,14 +1283,14 @@ helpers.getTrackEdgeIdsBetweenNodeIdsOLD = function(_node1Id, _node2Id)
     for _, value in pairs(trackEdgePropsBetweenEdgeIds) do
         trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds+1] = value.entity
     end
-    print('trackEdgeIdsBetweenEdgeIds before pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
-    -- print('adjacentEdge1Ids =') debugPrint(adjacentEdge1Ids)
-    -- print('adjacentEdge2Ids =') debugPrint(adjacentEdge2Ids)
+    logger.print('trackEdgeIdsBetweenEdgeIds before pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
+    -- logger.print('adjacentEdge1Ids =') logger.debugPrint(adjacentEdge1Ids)
+    -- logger.print('adjacentEdge2Ids =') logger.debugPrint(adjacentEdge2Ids)
     -- remove edges adjacent to but outside node1 and node2
 
     -- for _, edgeId in pairs(trackEdgeIdsBetweenEdgeIds) do
     --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-    --     print('base edge = ', edgeId) debugPrint(baseEdge)
+    --     logger.print('base edge = ', edgeId) logger.debugPrint(baseEdge)
     -- end
 
     local isExit = false
@@ -1297,11 +1298,11 @@ helpers.getTrackEdgeIdsBetweenNodeIdsOLD = function(_node1Id, _node2Id)
         if #trackEdgeIdsBetweenEdgeIds > 1
         and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[1])
         and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[2]) then
-            print('ELEVEN')
+            logger.print('ELEVEN')
             table.remove(trackEdgeIdsBetweenEdgeIds, 1)
-            print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+            logger.print('trackEdgeIdsBetweenEdgeIds during pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
         else
-            print('TWELVE')
+            logger.print('TWELVE')
             isExit = true
         end
     end
@@ -1310,33 +1311,33 @@ helpers.getTrackEdgeIdsBetweenNodeIdsOLD = function(_node1Id, _node2Id)
         if #trackEdgeIdsBetweenEdgeIds > 1
         and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
         and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
-            print('THIRTEEN HALF')
+            logger.print('THIRTEEN HALF')
             table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
-            print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+            logger.print('trackEdgeIdsBetweenEdgeIds during pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
         else
-            print('FOURTEEN')
+            logger.print('FOURTEEN')
             isExit = true
         end
     end
 
     -- for _, edgeId in pairs(trackEdgeIdsBetweenEdgeIds) do
     --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-    --     print('base edge = ', edgeId) debugPrint(baseEdge)
+    --     logger.print('base edge = ', edgeId) logger.debugPrint(baseEdge)
     -- end
-    print('trackEdgeIdsBetweenEdgeIds after pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    logger.print('trackEdgeIdsBetweenEdgeIds after pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
     return trackEdgeIdsBetweenEdgeIds
 end
 
 helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
-    print('getTrackEdgeIdsBetweenNodeIds starting')
-    print('node1Id =', _node1Id) print('node2Id =', _node2Id)
-    print('ONE')
+    logger.print('getTrackEdgeIdsBetweenNodeIds starting')
+    logger.print('node1Id =', _node1Id) logger.print('node2Id =', _node2Id)
+    logger.print('ONE')
     if not(edgeUtils.isValidAndExistingId(_node1Id)) then return {} end
-    print('ONE AND A HALF')
+    logger.print('ONE AND A HALF')
     if not(edgeUtils.isValidAndExistingId(_node2Id)) then return {} end
-    print('TWO')
+    logger.print('TWO')
     if _node1Id == _node2Id then return {} end
-    print('THREE')
+    logger.print('THREE')
 
     local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
     local adjacentEdge1Ids = {}
@@ -1345,42 +1346,42 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
         local adjacentEdge1IdsUserdata = _map[_node1Id] -- userdata
         local adjacentEdge2IdsUserdata = _map[_node2Id] -- userdata
         if adjacentEdge1IdsUserdata == nil then
-            print('Warning: FOUR')
+            logger.print('Warning: FOUR')
             return false
         else
             for _, edgeId in pairs(adjacentEdge1IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
                 -- arrayUtils.addUnique(adjacentEdge1Ids, edgeId)
                 adjacentEdge1Ids[#adjacentEdge1Ids+1] = edgeId
             end
-            print('FIVE')
+            logger.print('FIVE')
         end
         if adjacentEdge2IdsUserdata == nil then
-            print('Warning: SIX')
+            logger.print('Warning: SIX')
             return false
         else
             for _, edgeId in pairs(adjacentEdge2IdsUserdata) do -- cannot use adjacentEdgeIds[index] here
                 -- arrayUtils.addUnique(adjacentEdge2Ids, edgeId)
                 adjacentEdge2Ids[#adjacentEdge2Ids+1] = edgeId
             end
-            print('SEVEN')
+            logger.print('SEVEN')
         end
 
         return true
     end
 
-    if not(_fetchAdjacentEdges()) then print('FOUR OR SIX') return {} end
-    if #adjacentEdge1Ids < 1 or #adjacentEdge2Ids < 1 then print('Warning: EIGHT') return {} end
+    if not(_fetchAdjacentEdges()) then logger.print('FOUR OR SIX') return {} end
+    if #adjacentEdge1Ids < 1 or #adjacentEdge2Ids < 1 then logger.print('Warning: EIGHT') return {} end
 
     if #adjacentEdge1Ids == 1 and #adjacentEdge2Ids == 1 then
         if adjacentEdge1Ids[1] == adjacentEdge2Ids[1] then
-            print('NINE')
+            logger.print('NINE')
             return { adjacentEdge1Ids[1] }
         else
-            print('TEN')
+            logger.print('TEN')
         end
     end
-    -- print('adjacentEdge1Ids =') debugPrint(adjacentEdge1Ids)
-    -- print('adjacentEdge2Ids =') debugPrint(adjacentEdge2Ids)
+    -- logger.print('adjacentEdge1Ids =') logger.debugPrint(adjacentEdge1Ids)
+    -- logger.print('adjacentEdge2Ids =') logger.debugPrint(adjacentEdge2Ids)
 
     local _getTrackEdgePropsBetweenEdgeAndNode = function(edgeId, nodeId)
         local edge1IdTyped = api.type.EdgeId.new(edgeId, 0)
@@ -1408,12 +1409,12 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     end
 
     local trackEdgeIdsBetweenEdgeIds = _getTrackEdgePropsBetweenEdgeAndNode(adjacentEdge1Ids[1], _node2Id)
-    print('trackEdgeIdsBetweenEdgeIds before pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    logger.print('trackEdgeIdsBetweenEdgeIds before pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
     -- remove edges adjacent to but outside node1 and node2
 
     -- for _, edgeId in pairs(trackEdgeIdsBetweenEdgeIds) do
     --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-    --     print('base edge = ', edgeId) debugPrint(baseEdge)
+    --     logger.print('base edge = ', edgeId) logger.debugPrint(baseEdge)
     -- end
 
     local isExit = false
@@ -1421,11 +1422,11 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
         if #trackEdgeIdsBetweenEdgeIds > 1
         and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[1])
         and arrayUtils.arrayHasValue(adjacentEdge1Ids, trackEdgeIdsBetweenEdgeIds[2]) then
-            print('ELEVEN')
+            logger.print('ELEVEN')
             table.remove(trackEdgeIdsBetweenEdgeIds, 1)
-            print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+            logger.print('trackEdgeIdsBetweenEdgeIds during pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
         else
-            print('TWELVE')
+            logger.print('TWELVE')
             isExit = true
         end
     end
@@ -1434,22 +1435,22 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     --     if #trackEdgeIdsBetweenEdgeIds > 1
     --     and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
     --     and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
-    --         print('THIRTEEN HALF')
+    --         logger.print('THIRTEEN HALF')
     --         table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
-    --         print('trackEdgeIdsBetweenEdgeIds during pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    --         logger.print('trackEdgeIdsBetweenEdgeIds during pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
     --     else
-    --         print('FOURTEEN')
+    --         logger.print('FOURTEEN')
     --         isExit = true
     --     end
     -- end
 
     -- for _, edgeId in pairs(trackEdgeIdsBetweenEdgeIds) do
     --     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-    --     print('base edge = ', edgeId) debugPrint(baseEdge)
+    --     logger.print('base edge = ', edgeId) logger.debugPrint(baseEdge)
     -- end
-    print('trackEdgeIdsBetweenEdgeIds after pruning =') debugPrint(trackEdgeIdsBetweenEdgeIds)
+    logger.print('trackEdgeIdsBetweenEdgeIds after pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
     if arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds]) then return trackEdgeIdsBetweenEdgeIds end
-    print('Warning: the last edge does not connect, this should never happen')
+    logger.print('Warning: the last edge does not connect, this should never happen')
     return {}
 end
 
@@ -1485,9 +1486,9 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
                     -- else
                     --     return {}
                     -- end
-                    -- print('_map[baseEdge.node0] =') debugPrint(_map[baseEdge.node0])
+                    -- logger.print('_map[baseEdge.node0] =') logger.debugPrint(_map[baseEdge.node0])
                 -- else
-                --     print('WARNING: findPath added something that is not an edge') debugPrint(value)
+                --     logger.print('WARNING: findPath added something that is not an edge') logger.debugPrint(value)
                 end
             -- end
         end
@@ -1507,9 +1508,9 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
         return false
     end
 
-    print('getTrackEdgePropsBetweenEdgeIds starting')
-    print('edge1Id =', edge1Id)
-    print('edge2Id =', edge2Id)
+    logger.print('getTrackEdgePropsBetweenEdgeIds starting')
+    logger.print('edge1Id =', edge1Id)
+    logger.print('edge2Id =', edge2Id)
     local edge1IdTyped = api.type.EdgeId.new(edge1Id, 0)
     local edgeIdDir1False = api.type.EdgeIdDirAndLength.new(edge1IdTyped, false, 0)
     local edgeIdDir1True = api.type.EdgeIdDirAndLength.new(edge1IdTyped, true, 0)
@@ -1524,14 +1525,14 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
         },
         _constants.maxWaypointDistance
     )
-    print('path =') debugPrint(myPath)
-    print('clean path =') debugPrint(_getCleanPath(myPath))
+    logger.print('path =') logger.debugPrint(myPath)
+    logger.print('clean path =') logger.debugPrint(_getCleanPath(myPath))
     if #myPath > 0 and _isIdInPath(myPath, edge2Id) then
         return _getCleanPath(myPath)
     end
 
     node2Typed = api.type.NodeId.new(baseEdge2.node1, 0)
-    print('trying again with node2Typed =') debugPrint(node2Typed)
+    logger.print('trying again with node2Typed =') logger.debugPrint(node2Typed)
     myPath = api.engine.util.pathfinding.findPath(
         { edgeIdDir1False, edgeIdDir1True },
         { node2Typed },
@@ -1542,10 +1543,10 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
         _constants.maxWaypointDistance
     )
 
-    print('now I have path =') debugPrint(myPath)
-    print('now I have clean path =') debugPrint(_getCleanPath(myPath))
+    logger.print('now I have path =') logger.debugPrint(myPath)
+    logger.print('now I have clean path =') logger.debugPrint(_getCleanPath(myPath))
     if #myPath < 1 or not(_isIdInPath(myPath, edge2Id)) then
-        print('WARNING: cannot find a path including both edges, all I found was ') debugPrint(myPath)
+        logger.print('WARNING: cannot find a path including both edges, all I found was ') logger.debugPrint(myPath)
         return {}
     end
     return _getCleanPath(myPath)
