@@ -598,7 +598,7 @@ function data()
 										_constants.trackCrossingZ
 									)
 									result.models[#result.models+1] = {
-										id = _constants.passengerLaneLinkableModelId,
+										id = _constants.passengerLaneLinkableRaisedModelId,
 										transf = transfUtils.get1MLaneTransf(
 											trackCrossingPos,
 											transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[1][1], _laneZ)
@@ -1238,7 +1238,6 @@ function data()
 					6,
 					result.terminateConstructionHookInfo.trackCrossingPositions,
 					_constants.passengerLaneModelId
-					-- 'lollo_freestyle_train_station/passenger_lane_track_crossing.mdl'
 				)
 				logger.print('passenger platforms linked')
 

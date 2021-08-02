@@ -41,6 +41,7 @@ local constants = {
     subwayPos2LinkY = 0,
     subwayPos2LinkZ = -4,
     trackCrossingZ = 0.45,
+    trackCrossingRaise = 0.25,
 
     maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
     minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,
@@ -194,6 +195,7 @@ local constants = {
     passengerLaneUnderpassModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl',
     passengerLaneModelId = 'lollo_freestyle_train_station/passenger_lane.mdl',
     passengerLaneLinkableModelId = 'lollo_freestyle_train_station/passenger_lane_linkable.mdl',
+    passengerLaneLinkableRaisedModelId = 'lollo_freestyle_train_station/passenger_lane_linkable_raised.mdl',
     passengerLaneTunnelStairsUpModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up.mdl',
     passengerLaneTunnelStairsUpDownModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up_down.mdl',
     platformRoofConcretePillar2_5MModelFileName = 'lollo_freestyle_train_station/roofs/concrete/platformRoofPillar_2_5m.mdl',
