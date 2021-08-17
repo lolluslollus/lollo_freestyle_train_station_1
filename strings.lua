@@ -44,6 +44,7 @@ function data()
 				- Upgrading tracks works meh.
 				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
 				- The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
+				- Some track and signal mods are incompatible.
 			]],
 			["NAME"] = "Freestyle train station",
 
