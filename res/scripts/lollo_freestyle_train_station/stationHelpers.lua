@@ -230,10 +230,8 @@ local helpers = {
     end,
 
     getAllEdgeObjectsWithModelId = function(refModelId)
-        logger.print('getAllEdgeObjectsWithModelId starting, refModelId =') debugPrint(refModelId)
-        if not(edgeUtils.isValidId(refModelId)) then return {} end
+        if not(edgeUtils.isValidAndExistingId(refModelId)) then return {} end
 
-        logger.print('refModelId is valid')
         local _map = api.engine.system.streetSystem.getEdgeObject2EdgeMap()
         local edgeObjectIds = {}
         for edgeObjectId, edgeId in pairs(_map) do
