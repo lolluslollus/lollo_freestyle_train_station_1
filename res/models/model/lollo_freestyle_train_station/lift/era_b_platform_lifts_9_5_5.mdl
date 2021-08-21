@@ -32,7 +32,8 @@ function data()
         collider = {
             params = {
                 -- halfExtents = {4.4, 2.3, 2.0 + height * 0.5} -- this would be the building without vents or tunnel awereness
-                halfExtents = {4.4, 2.3, 5.0 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
+                -- halfExtents = {4.4, 2.3, 5.0 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
+                halfExtents = {4.4, 1.4, 5.0 + height * 0.5} -- reduce collisions along the Y axis, so adjacent lifts on thin platforms won't cause irreparable collisions
             },
             -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 2.0 - height * 0.5, 1 }, -- this would be the building without vents
             transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.5 - height * 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
