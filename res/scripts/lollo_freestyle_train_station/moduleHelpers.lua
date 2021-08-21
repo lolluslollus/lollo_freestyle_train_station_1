@@ -546,7 +546,7 @@ helpers.edges = {
 local _bridgeHeights = { 2.5, 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
 -- local _bridgeHeights = { 6.5, 11.5, 16.5, 21.5, 26.5, 31.5, 36.5, 41.5 }
 helpers.lifts = {
-    tryGetLiftHeight = function(params, nTerminal, nTrackEdge)
+    tryGetLiftHeight = function(params, nTerminal, nTrackEdge, slotId)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
         local bridgeHeight = cpl.type == 1 and params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
 
@@ -571,13 +571,29 @@ helpers.lifts = {
             buildingHeight = 40
         end
 
+        local deltaZ = 0
+        local variant = helpers.getVariant(params, slotId)
+        -- logger.print('variant =', variant)
+        if variant <= -2 then
+            deltaZ = -10
+        elseif variant <= -1 then
+            deltaZ = -5
+        elseif variant >= 2 then
+            deltaZ = 10
+        elseif variant >= 1 then
+            deltaZ = 5
+        end
+        -- logger.print('deltaZ =', deltaZ)
+
+        buildingHeight = buildingHeight + deltaZ
+        if buildingHeight < 0 then buildingHeight = 0
+        elseif buildingHeight > 40 then buildingHeight = 40
+        end
+
         return buildingHeight
     end,
 
-    tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge, eraPrefix)
-        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local bridgeHeight = cpl.type == 1 and params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
-
+    tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge, eraPrefix, bridgeHeight)
         local buildingModelId = 'lollo_freestyle_train_station/lift/'
         if eraPrefix == helpers.eras.era_a.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_a_'
         elseif eraPrefix == helpers.eras.era_b.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_b_'
@@ -641,10 +657,7 @@ helpers.lifts = {
         result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
     end,
 
-    tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge, eraPrefix)
-        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local bridgeHeight = cpl.type == 1 and params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
-
+    tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge, eraPrefix, bridgeHeight)
         local buildingModelId = 'lollo_freestyle_train_station/lift/'
         if eraPrefix == helpers.eras.era_a.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_a_'
         elseif eraPrefix == helpers.eras.era_b.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_b_'

@@ -35,7 +35,7 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge)
+		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
 		if not(buildingHeight) then return end
 		logger.print('buildingHeight =', buildingHeight)
 
