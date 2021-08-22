@@ -202,9 +202,10 @@ function data()
 			["CementBridgeNoPillarsNoSides"] = "Concrete bridge with no pillars and no railing",
 			["CementBridgeNormalPillarsNoSides"] = "Concrete bridge with no railing",
 			["CementBridgeSpacedPillarsNoSides"] = "Concrete bridge with spaced pillars and no railing",
-			["IronBridgeNoPillarsNoSides"] = "Iron bridge with no railing",
-			["IronBridgeNormalPillarsNoSides"] = "Iron bridge with no pillars and no railing",
+			["IronBridgeNoPillarsNoSides"] = "Iron bridge with no pillars and no railing",
+			["IronBridgeNormalPillarsNoSides"] = "Iron bridge with no railing",
 			["IronBridgeSpacedPillarsNoSides"] = "Iron bridge with spaced pillars and no railing",
+			["PedestrianCementBridgeNoPillarsNoSides"] = "Pedestrian concrete bridge. Only for very narrow roads",
 
 			["NewStationName"] = "New Station",
 
