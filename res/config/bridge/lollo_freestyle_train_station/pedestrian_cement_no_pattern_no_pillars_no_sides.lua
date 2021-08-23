@@ -23,6 +23,7 @@ function data()
     -- LOLLO TODO make an invisible path, totally invisible. This way, sharp bends will look better.
     -- LOLLO TODO add railings to meshes
     -- LOLLO TODO make icon
+    -- LOLLO TODO make sure it does not crash with large roads (never mind if it looks ugly, it's only for narrow paths) nd it does not work with rail
     local railing = {
         railingDir .. 'railing_rep_side_no_side.mdl',
         railingDir .. 'railing_rep_side_no_side.mdl',
