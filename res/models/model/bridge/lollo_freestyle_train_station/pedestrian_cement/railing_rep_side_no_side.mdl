@@ -32,7 +32,8 @@ return {
 						name = "container_2m",
 						skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_no_side_lod0.msh",
 						skinMaterials = {
-							"bridge/cement_skinned.mtl",
+							-- "bridge/cement_skinned.mtl",
+							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
 						},
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},

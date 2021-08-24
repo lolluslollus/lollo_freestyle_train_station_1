@@ -22,19 +22,22 @@ return {
 					{
 						children = {
 							{
-								name = "cement_bridge_bone_6m_start",
+								name = "cement_bridge_bone_2m_start",
 								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
 							},
 							{
-								name = "cement_bridge_bone_6m_end",
+								name = "cement_bridge_bone_2m_end",
 								-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, 2, 0, 1, },
 								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 2, 0, 1, },
 							},
 						},
-						name = "container_6m",
+						name = "container_2m",
 						skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_railing_rep_rep_lod0.msh",
 						-- skin = "lollo_freestyle_train_station/bridge/cement_no_sides/railing_rep_rep_skin/cement_railing_rep_rep_lod0.msh",
-						skinMaterials = { "bridge/cement_skinned.mtl", },
+						skinMaterials = {
+							-- "bridge/cement_skinned.mtl",
+							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+						},
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
 				},
