@@ -12,18 +12,25 @@ function data()
     -- and a list of lanes and offsets,
     -- then places them together depending on this information.
     -- The bounding boxes explain why bridges have a less flexible file structure.
-    -- The trouble is, platform-tracks != 5 m don't work well on stock bridges.
-    -- Either we rewrite the whole thing, or we use the automatisms => number two.
-    -- The *_rep models have a mesh 0.5 m wide instead of 4, and same with the bounding box.
+
+    -- One problem is, platform-tracks < 5 m don't work well on stock bridges.
+    -- Either we rewrite the whole thing, or we adjust something and use the automatisms
+    -- => number two.
+    -- My dedicated *_rep_* models have a mesh and bounding box 0.5 m wide instead of 4.
     -- This applies to railing and pillars.
-    -- This allows them to fit 2.5 m platform-tracks and narrow paths.
+    -- bridgeutil uses more instances if required, stacked sideways;
+    -- otherwise, only one, and it is narrow enough for anything.
+    -- This allows for bridges under 2.5 m platform-tracks and narrow paths;
     -- Sadly, any sorts of sides won't work with 2.5 m platforms
     -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
 
     -- Skins and bones help bridges look better, they look segmented without them.
     -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
     -- Use the weight painting, then the gradient tool on every vertex group.
-    -- Don't forget to clean each vertex group, like with meshes.
+    -- Don't forget to clean each vertex group after editing, like with meshes.
+
+    -- This particular bridge is for extra narrow paths, which are very bendy.
+    -- See the notes below.
 
     local railing = {
         railingDir .. 'railing_rep_side_full_side.mdl',
@@ -92,7 +99,8 @@ function data()
         -- because the game expects 6m long street segments, while this bridge has 2m long segments.
         -- We can make street materials transparent, so sharp bends will look better.
         -- However, this will give junctions a hole in the middle.
-        -- All in all, we choose junctions with no holes.
+        -- All in all, we choose junctions with no holes
+        -- and put up with segments in stupidly narrow bends.
         materialsToReplace = {
             -- streetPaving = {
             --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
