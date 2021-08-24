@@ -25,6 +25,8 @@ function data()
     -- You can make these models with blender 2.79, using the weight painting (gradient tool helps) on every vertex group.
     -- Don't forget to clean each vertex group, like with meshes.
 
+    -- LOLLO NOTE invisible narrow roads will create holes at junctions, no good.
+
     local railing = {
         railingDir .. 'railing_rep_side_full_side.mdl',
         railingDir .. 'railing_rep_side_no_side.mdl',
@@ -81,35 +83,35 @@ function data()
         carriers = { 'ROAD' },
         speedLimit = 20.0 / 3.6,
         pillarLen = _pillarLength,
-        pillarMinDist = 120, -- 65535,
-        pillarMaxDist = 120, -- 65535,
-        pillarTargetDist = 120, -- 65535,
+        pillarMinDist = 65535,
+        pillarMaxDist = 65535,
+        pillarTargetDist = 65535,
         -- pillarWidth = 2,
         cost = 400.0,
         -- replace street materials, so sharp bends will look better.
-        materialsToReplace = {
-            streetPaving = {
-                -- name = 'street/country_new_medium_paving.mtl',
-                name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            },
-            streetLane = { -- this is useful
-                -- name = 'street/new_medium_lane.mtl',
-                -- size = { 2, 1.0 },
-                name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            },
-            crossingLane = {
-                -- name = 'street/new_medium_lane.mtl',
-                name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            },
-            sidewalkPaving = {
-                -- name = 'street/new_medium_sidewalk.mtl',
-            },
-            sidewalkBorderInner = {
-                -- name = 'street/new_medium_sidewalk_border_inner.mtl',
-                -- size = { 3, 0.6 },
-                name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            },
-        },
+        -- materialsToReplace = {
+        --     streetPaving = {
+        --         -- name = 'street/country_new_medium_paving.mtl',
+        --         name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+        --     },
+        --     streetLane = { -- this is useful
+        --         -- name = 'street/new_medium_lane.mtl',
+        --         -- size = { 2, 1.0 },
+        --         name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+        --     },
+        --     crossingLane = {
+        --         -- name = 'street/new_medium_lane.mtl',
+        --         name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+        --     },
+        --     sidewalkPaving = {
+        --         -- name = 'street/new_medium_sidewalk.mtl',
+        --     },
+        --     sidewalkBorderInner = {
+        --         -- name = 'street/new_medium_sidewalk_border_inner.mtl',
+        --         -- size = { 3, 0.6 },
+        --         name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+        --     },
+        -- },
         noParallelStripSubdivision = true,
         -- updateFn = updateFn,
         updateFn = newUpdateFn,
