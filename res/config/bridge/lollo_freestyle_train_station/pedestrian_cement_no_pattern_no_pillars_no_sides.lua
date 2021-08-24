@@ -19,21 +19,20 @@ function data()
     -- Skins and bones help bridges look better, they look segmented without them.
     -- Blender 2.79 has them and they work with the old converter; they are called vertex groups.
     -- I could use 5 models instead of 8, but it does not look good on top.
+    -- You can make these models with blender 2.79, using the weight painting (gradient tool helps) on every vertex group.
+    -- Don't forget to clean each vertex group, like with meshes.
 
-    -- LOLLO TODO make an invisible path, totally invisible. This way, sharp bends will look better.
-    -- LOLLO TODO add railings to meshes
-    -- LOLLO TODO make icon
-    -- LOLLO TODO make sure it does not crash with large roads (never mind if it looks ugly, it's only for narrow paths) nd it does not work with rail
-    -- LOLLO TODO fix lod 1: new length 2m and new width -0.3 and 0.25
+    -- LOLLO TODO make an invisible path, totally invisible. This way, the mod won't depend on others.
     local railing = {
-        railingDir .. 'railing_rep_side_no_side.mdl',
+        railingDir .. 'railing_rep_side_full_side.mdl',
         railingDir .. 'railing_rep_side_no_side.mdl',
         railingDir .. 'railing_rep_side_no_side.mdl',
         railingDir .. 'railing_rep_rep.mdl',
         railingDir .. 'railing_rep_rep.mdl',
-        railingDir .. 'railing_rep_side2_no_side.mdl', -- these are useful to avoid funny dark textures on one side
-        railingDir .. 'railing_rep_side2_no_side.mdl',
-        railingDir .. 'railing_rep_side2_no_side.mdl',
+        -- these are useful to avoid funny dark textures on one side, but we use the two-sided material instead
+        -- railingDir .. 'railing_rep_side2_full_side.mdl',
+        -- railingDir .. 'railing_rep_side2_no_side.mdl',
+        -- railingDir .. 'railing_rep_side2_no_side.mdl',
     }
 
     local config = {
@@ -87,26 +86,31 @@ function data()
         pillarTargetDist = 65535,
         -- pillarWidth = 2,
         cost = 400.0,
+        -- replace street materials, so sharp bends will look better.
         materialsToReplace = {
-            -- streetPaving = {
-            --     name = 'street/country_new_medium_paving.mtl',
-            -- },
-            -- streetLane = { -- this is useful
-            --     name = 'street/new_medium_lane.mtl',
-            --     size = { 2, 1.0 },
-            -- },
-            -- crossingLane = {
-            --     name = 'street/new_medium_lane.mtl',
-            -- },
-            -- sidewalkPaving = {
-            --     name = 'street/new_medium_sidewalk.mtl',
-            -- },
-            -- sidewalkBorderInner = {
-            --     name = 'street/new_medium_sidewalk_border_inner.mtl',
-            --     size = { 3, 0.6 },
-            -- },
+            streetPaving = {
+                -- name = 'street/country_new_medium_paving.mtl',
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            },
+            streetLane = { -- this is useful
+                -- name = 'street/new_medium_lane.mtl',
+                -- size = { 2, 1.0 },
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            },
+            crossingLane = {
+                -- name = 'street/new_medium_lane.mtl',
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            },
+            sidewalkPaving = {
+                -- name = 'street/new_medium_sidewalk.mtl',
+            },
+            sidewalkBorderInner = {
+                -- name = 'street/new_medium_sidewalk_border_inner.mtl',
+                -- size = { 3, 0.6 },
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            },
         },
-        noParallelStripSubdivision = false,
+        noParallelStripSubdivision = true,
         -- updateFn = updateFn,
         updateFn = newUpdateFn,
     }

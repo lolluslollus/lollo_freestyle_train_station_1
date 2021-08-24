@@ -30,8 +30,10 @@ return {
 							},
 						},
 						name = "container_2m",
-						skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_no_side_skin/cement_railing_rep_side_no_side_lod0.msh",
-						skinMaterials = { "bridge/cement_skinned.mtl", },
+						skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_no_side_lod0.msh",
+						skinMaterials = {
+							"bridge/cement_skinned.mtl",
+						},
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
 				},
@@ -47,9 +49,9 @@ return {
 				children = {
 					{
 						materials = { "bridge/cement.mtl", },
-						mesh = "bridge/cement/railing_rep_side_no_side/cement_railing_rep_side_no_side_lod1.msh",
-						name = "cement_railing_rep_side_no_side",
-						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
+						mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_no_side_lod1.msh",
+						name = "cement_railing_rep_side_no_side_lod1",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
 				},
 				name = "RootNode",

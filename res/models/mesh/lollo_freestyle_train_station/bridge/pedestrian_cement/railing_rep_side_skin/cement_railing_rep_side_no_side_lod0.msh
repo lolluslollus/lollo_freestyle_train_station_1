@@ -1,5 +1,8 @@
 function data()
 return {
+	matConfigs = {
+		{ 0, }, 
+	},
 	subMeshes = {
 		{
 			indices = {
@@ -23,6 +26,9 @@ return {
 					count = 312,
 					offset = 1848,
 				},
+			},
+			materials = {
+				"DELETE.mtl",
 			},
 		},
 	},

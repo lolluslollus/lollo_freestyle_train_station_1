@@ -1,0 +1,89 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				jointWeights = {
+					count = 240,
+					offset = 2888,
+				},
+				normal = {
+					count = 240,
+					offset = 2408,
+				},
+				position = {
+					count = 240,
+					offset = 2648,
+				},
+				tangent = {
+					count = 240,
+					offset = 2168,
+				},
+				uv0 = {
+					count = 240,
+					offset = 1928,
+				},
+			},
+			materials = {
+				"DELETE.mtl", 
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 624,
+					offset = 5624,
+				},
+				normal = {
+					count = 624,
+					offset = 4376,
+				},
+				position = {
+					count = 624,
+					offset = 5000,
+				},
+				tangent = {
+					count = 624,
+					offset = 3752,
+				},
+				uv0 = {
+					count = 624,
+					offset = 3128,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/IRON.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		jointWeights = {
+			count = 32,
+			numComp = 4,
+			offset = 1896,
+		},
+		normal = {
+			count = 72,
+			numComp = 3,
+			offset = 1152,
+		},
+		position = {
+			count = 672,
+			numComp = 3,
+			offset = 1224,
+		},
+		tangent = {
+			count = 560,
+			numComp = 4,
+			offset = 592,
+		},
+		uv0 = {
+			count = 592,
+			numComp = 2,
+			offset = 0,
+		},
+	},
+}
+end

@@ -1,6 +1,5 @@
 function data()
 return {
-	animations = {},
 	matConfigs = {
 		{ 0, }, 
 	},
@@ -29,7 +28,7 @@ return {
 				},
 			},
 			materials = {
-				"station/train/passenger/concrete.mtl", 
+				"station/train/passenger/concrete.mtl",
 			},
 		}, 
 	},
