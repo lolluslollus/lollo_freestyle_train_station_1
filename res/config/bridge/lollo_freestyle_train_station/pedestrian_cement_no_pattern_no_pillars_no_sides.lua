@@ -24,6 +24,7 @@ function data()
     -- LOLLO TODO add railings to meshes
     -- LOLLO TODO make icon
     -- LOLLO TODO make sure it does not crash with large roads (never mind if it looks ugly, it's only for narrow paths) nd it does not work with rail
+    -- LOLLO TODO fix lod 1: new length 2m and new width -0.3 and 0.25
     local railing = {
         railingDir .. 'railing_rep_side_no_side.mdl',
         railingDir .. 'railing_rep_side_no_side.mdl',
