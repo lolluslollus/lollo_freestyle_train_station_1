@@ -25,7 +25,6 @@ function data()
     -- You can make these models with blender 2.79, using the weight painting (gradient tool helps) on every vertex group.
     -- Don't forget to clean each vertex group, like with meshes.
 
-    -- LOLLO TODO make an invisible path, totally invisible. This way, the mod won't depend on others.
     local railing = {
         railingDir .. 'railing_rep_side_full_side.mdl',
         railingDir .. 'railing_rep_side_no_side.mdl',
@@ -49,7 +48,7 @@ function data()
 
     local updateFn = bridgeutil.makeDefaultUpdateFn(config)
     local newUpdateFn = function(params)
-        print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+        -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
         -- UG TODO
         -- LOLLO NOTE
         -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
