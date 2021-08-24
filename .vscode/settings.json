@@ -18,5 +18,6 @@
     ],
     "Lua.diagnostics.disable": [
         "unused-local"
-    ]
+    ],
+    "Lua.workspace.maxPreload": 2000
 }
