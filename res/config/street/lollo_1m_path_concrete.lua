@@ -12,9 +12,9 @@ function data()
         visibility = true,
         country = false,
         speed = 20.0,
-        type = 'lollo_1m_path',
-        name = _("1 Metre Path"),
-        desc = _("1 metre path with a speed limit of %2%, give it a bus lane to pedestrianise it."),
+        type = 'lollo_1m_path_concrete',
+        name = _("1 Metre Concrete Path"),
+        desc = _("1 metre concrete path with a speed limit of %2%, give it a bus lane to pedestrianise it."),
         categories = { 'paths' },
         order = 1,
         busAndTramRight = true,
@@ -29,11 +29,19 @@ function data()
             --     size = { 16.0, 0.2 }
             -- },
             sidewalkPaving = {
-                name = "street/old_medium_sidewalk.mtl",
+                -- name = "street/old_medium_sidewalk.mtl",
+                -- name = "lollo_freestyle_train_station/bridge/cement_no_pattern.mtl",
+                -- name = "lollo_freestyle_train_station/bridge/lighter_cement_no_pattern.mtl",
+                -- name = "lollo_freestyle_train_station/bridge/cement_shrunk.mtl",
+                name = "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
                 size = { 4.0, 4.0 }
             },
             streetPaving = {
-                name = "street/old_medium_sidewalk.mtl",
+                -- name = "street/old_medium_sidewalk.mtl",
+                -- name = "lollo_freestyle_train_station/bridge/cement_no_pattern.mtl",
+                -- name = "lollo_freestyle_train_station/bridge/lighter_cement_no_pattern.mtl",
+                -- name = "lollo_freestyle_train_station/bridge/cement_shrunk.mtl",
+                name = "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
                 size = { 4.0, 4.0 }
             },
         },
