@@ -1,6 +1,9 @@
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local bridgeutil = require 'bridgeutil'
 
 function data()
+    local _pillarLength = 3
+
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_cement/'
     local stockDir = 'bridge/cement/'
@@ -46,29 +49,27 @@ function data()
 
     local updateFn = bridgeutil.makeDefaultUpdateFn(config)
     local newUpdateFn = function(params)
-        print('newUpdateFn starting with params =')
-        print('params.pillarHeights = ') debugPrint(params.pillarHeights)
-        print('params.pillarLength = ') debugPrint(params.pillarLength)
-        print('params.pillarWidth = ') debugPrint(params.pillarWidth)
-        print('params.railingIntervals = ') debugPrint(params.railingIntervals)
-        print('params.railingWidth = ') debugPrint(params.railingWidth)
+        print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
         -- UG TODO
         -- LOLLO NOTE
         -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
-        -- this draws pointless artifacts on the sides
-        params.pillarHeights = {}
-        params.pillarLength = 0
-        params.pillarWidth = 0
-        for key, value in pairs(params.railingIntervals) do
-            value.hasPillar = { -1, -1, }
-            value.lanes = {
-              {
-                offset = 0,
-                type = 0,
-              },
-            }
+        -- this draws pointless artifacts on the sides. When it happens, pillarLength is different from the set value.
+
+        -- params.pillarHeights = {}
+
+        if params.pillarLength ~= _pillarLength then
+            params.pillarLength = _pillarLength
+            params.pillarWidth = 0.5
+
+            for _, railingInterval in pairs(params.railingIntervals) do
+                -- railingInterval.hasPillar = { -1, -1, }
+                for _, lane in pairs(railingInterval.lanes) do
+                    lane.offset = 0
+                    -- lane.type = 0
+                end
+            end
+            params.railingWidth = 0.5
         end
-        params.railingWidth = 0.5
 
         local results = updateFn(params)
         -- print('newUpdateFn returning =') debugPrint(results)
@@ -80,10 +81,10 @@ function data()
         yearTo = 0,
         carriers = { 'ROAD' },
         speedLimit = 20.0 / 3.6,
-        pillarLen = 3,
-        pillarMinDist = 65535,
-        pillarMaxDist = 65535,
-        pillarTargetDist = 65535,
+        pillarLen = _pillarLength,
+        pillarMinDist = 120, -- 65535,
+        pillarMaxDist = 120, -- 65535,
+        pillarTargetDist = 120, -- 65535,
         -- pillarWidth = 2,
         cost = 400.0,
         -- replace street materials, so sharp bends will look better.
