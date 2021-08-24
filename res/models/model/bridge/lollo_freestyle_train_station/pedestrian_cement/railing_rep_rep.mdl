@@ -33,10 +33,10 @@ return {
 						},
 						name = "container_2m",
 						skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_railing_rep_rep_lod0.msh",
-						-- skin = "lollo_freestyle_train_station/bridge/cement_no_sides/railing_rep_rep_skin/cement_railing_rep_rep_lod0.msh",
 						skinMaterials = {
 							-- "bridge/cement_skinned.mtl",
 							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
 						},
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
@@ -48,12 +48,13 @@ return {
 			static = false,
 			visibleFrom = 0,
 			visibleTo = 200,
-		},{
+		},
+		{
 			node = {
 				children = {
 					{
 						name = "container_6m",
-						mesh = "bridge/cement/railing_rep_rep/cement_railing_rep_rep_lod0.msh",
+						mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_railing_rep_rep_lod1.msh",
 						materials = { "bridge/cement.mtl", },
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},

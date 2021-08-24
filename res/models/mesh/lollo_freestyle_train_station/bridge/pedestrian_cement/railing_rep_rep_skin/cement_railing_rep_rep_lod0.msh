@@ -1,34 +1,60 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, }, 
+		{ 0, 0, },
 	},
 	subMeshes = {
 		{
 			indices = {
 				jointWeights = {
-					count = 528,
-					offset = 1672,
+					count = 504,
+					offset = 1656,
 				},
 				normal = {
-					count = 528,
-					offset = 3256,
+					count = 504,
+					offset = 3168,
 				},
 				position = {
-					count = 528,
-					offset = 2728,
+					count = 504,
+					offset = 2664,
 				},
 				tangent = {
-					count = 528,
-					offset = 2200,
+					count = 504,
+					offset = 2160,
 				},
 				uv0 = {
-					count = 528,
-					offset = 1144,
+					count = 504,
+					offset = 1152,
 				},
 			},
 			materials = {
-				"station/train/passenger/concrete.mtl", 
+				"station/train/passenger/sides.mtl",
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 24,
+					offset = 3696,
+				},
+				normal = {
+					count = 24,
+					offset = 3768,
+				},
+				position = {
+					count = 24,
+					offset = 3744,
+				},
+				tangent = {
+					count = 24,
+					offset = 3720,
+				},
+				uv0 = {
+					count = 24,
+					offset = 3672,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/top.mtl",
 			},
 		}, 
 	},
@@ -36,25 +62,25 @@ return {
 		jointWeights = {
 			count = 32,
 			numComp = 4,
-			offset = 360,
+			offset = 384,
 		},
 		normal = {
 			count = 96,
 			numComp = 3,
-			offset = 1048,
+			offset = 1056,
 		},
 		position = {
 			count = 336,
 			numComp = 3,
-			offset = 712,
+			offset = 720,
 		},
 		tangent = {
-			count = 320,
+			count = 304,
 			numComp = 4,
-			offset = 392,
+			offset = 416,
 		},
 		uv0 = {
-			count = 360,
+			count = 384,
 			numComp = 2,
 			offset = 0,
 		},
