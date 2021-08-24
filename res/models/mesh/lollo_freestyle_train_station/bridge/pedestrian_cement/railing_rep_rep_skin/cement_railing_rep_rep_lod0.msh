@@ -7,28 +7,28 @@ return {
 		{
 			indices = {
 				jointWeights = {
-					count = 504,
-					offset = 2540,
+					count = 528,
+					offset = 1672,
 				},
 				normal = {
-					count = 504,
-					offset = 1532,
+					count = 528,
+					offset = 3256,
 				},
 				position = {
-					count = 504,
-					offset = 3044,
+					count = 528,
+					offset = 2728,
 				},
 				tangent = {
-					count = 504,
-					offset = 2036,
+					count = 528,
+					offset = 2200,
 				},
 				uv0 = {
-					count = 504,
-					offset = 1028,
+					count = 528,
+					offset = 1144,
 				},
 			},
 			materials = {
-				"station/train/passenger/concrete.mtl",
+				"station/train/passenger/concrete.mtl", 
 			},
 		}, 
 	},
@@ -36,25 +36,25 @@ return {
 		jointWeights = {
 			count = 32,
 			numComp = 4,
-			offset = 660,
+			offset = 360,
 		},
 		normal = {
-			count = 84,
+			count = 96,
 			numComp = 3,
-			offset = 352,
+			offset = 1048,
 		},
 		position = {
 			count = 336,
 			numComp = 3,
-			offset = 692,
+			offset = 712,
 		},
 		tangent = {
-			count = 224,
+			count = 320,
 			numComp = 4,
-			offset = 436,
+			offset = 392,
 		},
 		uv0 = {
-			count = 352,
+			count = 360,
 			numComp = 2,
 			offset = 0,
 		},
