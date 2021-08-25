@@ -30,7 +30,7 @@ utils.getData = function(isSides)
     -- Use the weight painting, then the gradient tool on every vertex group.
     -- Don't forget to clean each vertex group after editing, like with meshes.
 
-    -- This particular bridge is for extra narrow paths, which are very bendy.
+    -- This particular bridge is for 1 metre roads, which are very bendy.
     -- See the notes below.
 
     local railing = isSides
@@ -74,6 +74,7 @@ utils.getData = function(isSides)
         -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
         -- this draws pointless artifacts on the sides. When it happens, pillarLength is different from the set value.
         -- the reason is, the C routine giving us the params assumes that the road is at least 5 m wide.
+        -- this stupid C routine does not say how wide the road is, so we specialise the bridge on 1 metre wide roads.
 
         -- params.pillarHeights = {}
 
@@ -84,12 +85,12 @@ utils.getData = function(isSides)
             for _, railingInterval in pairs(params.railingIntervals) do
                 -- railingInterval.hasPillar = { -1, -1, }
                 for _, lane in pairs(railingInterval.lanes) do
-                    lane.offset = -0.5 -- goodish
+                    lane.offset = -0.5 -- goodish, it is minus the road width * 0.5
                     -- lane.type = 0
                 end
             end
             -- params.railingWidth = 0.5
-            params.railingWidth = 1 -- goodish
+            params.railingWidth = 1 -- goodish, it is the road width
             -- print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
         end
 
