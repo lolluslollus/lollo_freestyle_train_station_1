@@ -36,7 +36,7 @@ utils.getData = function(isSides)
     local railing = isSides
         and {
             railingDir .. 'railing_rep_side_full_side.mdl',
-            railingDir .. 'railing_rep_side_no_side.mdl',
+            railingDir .. 'railing_rep_side_full_side.mdl',
             railingDir .. 'railing_rep_side_no_side.mdl',
             railingDir .. 'railing_rep_rep.mdl',
             railingDir .. 'railing_rep_rep.mdl',
