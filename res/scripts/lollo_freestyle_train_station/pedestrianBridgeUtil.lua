@@ -3,7 +3,7 @@ local bridgeutil = require 'bridgeutil'
 
 local utils = {}
 utils.getData = function(isSides)
-    local _pillarLength = 3
+    local _pillarLength = 1
 
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_cement/'
