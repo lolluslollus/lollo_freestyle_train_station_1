@@ -77,6 +77,12 @@ return {
 		local isStairs = function(t, i)
 			return params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
 		end
 		local isPlatformRoof = function(t, i)
 			return params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil

@@ -660,13 +660,22 @@ function data()
 				local function _addLanesAlong()
 					if isCargoTerminal then return end
 
-					for i = 2, #params.terminals[t].centrePlatformsRelative - 1 do -- skip the outermost edges to avoid collisions, the game is very picky here.
+					local maxI = #params.terminals[t].centrePlatformsRelative - 1
+					for i = 2, maxI do -- skip the outermost edges to avoid collisions, the game is very picky here.
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						local isInTunnel = cpl.type == 2
 						local isOnBridge = cpl.type == 1
 						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
 						local isStairsUp = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
 						local isStairsUpDown = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
+						local isOpenStairsUpLeft = params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
+						local isNextOpenStairsUpLeft = i < maxI
+							and params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
+							or false
+						local isOpenStairsUpRight = params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId)] ~= nil
+						local isNextOpenStairsUpRight = i > 2
+							and params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
+							or false
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 
 						local centreLaneTransf = transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
@@ -675,6 +684,10 @@ function data()
 						elseif isUnderpass then myModelId = _constants.passengerLaneUnderpassModelId
 						elseif isStairsUp then myModelId = _constants.passengerLaneTunnelStairsUpModelId
 						elseif isStairsUpDown then myModelId = _constants.passengerLaneTunnelStairsUpDownModelId
+						elseif isOpenStairsUpLeft then myModelId = _constants.passengerLaneOpenStairsUpTopModelId
+						elseif isOpenStairsUpRight then myModelId = _constants.passengerLaneOpenStairsUpTopModelId
+						elseif isNextOpenStairsUpLeft then myModelId = _constants.passengerLaneOpenStairsUpBottomNextModelId
+						elseif isNextOpenStairsUpRight then myModelId = _constants.passengerLaneOpenStairsUpBottomPrevModelId
 						end
 						result.models[#result.models+1] = {
 							id = myModelId,
@@ -798,7 +811,9 @@ function data()
 				local _addUpDownSlots = function()
 					if isCargoTerminal then return end
 
+					local isEven = false
 					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
+						isEven = not(isEven)
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
 						local era = moduleHelpers.getEraPrefix(params, t, i)
@@ -833,6 +848,25 @@ function data()
 								transf = myTransf,
 								type = _constants.underpassModuleType,
 							})
+							if isEven and cpl.type == 0 then -- ground
+								table.insert(result.slots, {
+									-- height = 0,
+									id = result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId),
+									spacing = mySpacing,
+									transf = myTransf,
+									type = _constants.openStairsUpLeftModuleType,
+								})
+								table.insert(result.slots, {
+									-- height = 0,
+									id = result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId),
+									spacing = mySpacing,
+									transf = transfUtilsUG.mul(
+										myTransf,
+										{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+									),
+									type = _constants.openStairsUpRightModuleType,
+								})
+							end
 						end
 					end
 				end
