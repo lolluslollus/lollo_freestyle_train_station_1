@@ -213,6 +213,7 @@ function data()
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
 				liftBottomPositions = {},
+				openStairsPositions = {},
 				trackCrossingPositions = {},
 				tunnelStairsTopPositions = {},
 				tunnelStairsBottomPositions = {},
@@ -758,6 +759,19 @@ function data()
 									)
 								)
 							}
+						elseif (isOpenStairsUpLeft or isOpenStairsUpRight) then
+							if result.terminateConstructionHookInfo.openStairsPositions[t] == nil then
+								result.terminateConstructionHookInfo.openStairsPositions[t] = {}
+							end
+							result.terminateConstructionHookInfo.openStairsPositions[t][#result.terminateConstructionHookInfo.openStairsPositions[t]+1] = {
+								t = t,
+								pos2Link = transfUtils.transf2Position(
+									transfUtilsUG.mul(
+										centreLaneTransf,
+										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.tunnelStairsUpZ + 1, 1 }
+									)
+								)
+							}
 							-- LOLLO TODO the following is test code!
 							-- The trouble is, bridges need a certain height and the station is just not high enough.
 							-- They collide.
@@ -1187,6 +1201,12 @@ function data()
 						1.42
 					)
 
+					local shortSegmentsOpenStairs, minDistanceSegmentsOpenStairs = _getSegmentsBetweenPos2Links_AcrossTerminals(
+						result.terminateConstructionHookInfo.openStairsPositions,
+						result.terminateConstructionHookInfo.openStairsPositions,
+						1.42
+					)
+
 					-- logger.print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') logger.debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
 					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
@@ -1265,6 +1285,8 @@ function data()
 
                     -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
+
+					_linkAcross(shortSegmentsOpenStairs)
 					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
