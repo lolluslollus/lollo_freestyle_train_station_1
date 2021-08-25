@@ -59,6 +59,52 @@ return {
 							{
 								children = {
 									{
+										name = "cement_bridge_bone_2m_start",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+									},
+									{
+										name = "cement_bridge_bone_2m_end",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+									},
+								},
+								name = "container_2m",
+								skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_railing_rep_rep_lod0.msh",
+								skinMaterials = {
+									"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+									"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+								},
+							},
+						},
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.5, 0, 4, -0.25, 0, 1, },
+					},
+					{
+						children = {
+							{
+								children = {
+									{
+										name = "cement_bridge_bone_2m_start",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+									},
+									{
+										name = "cement_bridge_bone_2m_end",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+									},
+								},
+								name = "container_2m",
+								skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_railing_rep_rep_lod0.msh",
+								skinMaterials = {
+									"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+									"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+								},
+							},
+						},
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0.5, 0, 6, -0.25, 0, 1, },
+					},
+					{
+						children = {
+							{
+								children = {
+									{
 										name = "cement_bridge_bone_2m_start_side1",
 										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
 									},
@@ -99,6 +145,52 @@ return {
 							},
 						},
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, -0.5, 0, 1, },
+					},
+					{
+						children = {
+							{
+								children = {
+									{
+										name = "cement_bridge_bone_2m_start_side1",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+									},
+									{
+										name = "cement_bridge_bone_2m_end_side1",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+									},
+								},
+								name = "container_2m_side1",
+								skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
+								skinMaterials = {
+									"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+									"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+								},
+							},
+						},
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4, -0.5, 0, 1, },
+					},
+					{
+						children = {
+							{
+								children = {
+									{
+										name = "cement_bridge_bone_2m_start_side1",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+									},
+									{
+										name = "cement_bridge_bone_2m_end_side1",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+									},
+								},
+								name = "container_2m_side1",
+								skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
+								skinMaterials = {
+									"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+									"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+								},
+							},
+						},
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, -0.5, 0, 1, },
 					},
 					{
 						children = {
@@ -146,9 +238,55 @@ return {
 						},
 						transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 2, 0.5, 0, 1, },
 					},
+					{
+						children = {
+							{
+								children = {
+									{
+										name = "cement_bridge_bone_2m_start_side2",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+									},
+									{
+										name = "cement_bridge_bone_2m_end_side2",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+									},
+								},
+								name = "container_2m_side2",
+								skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
+								skinMaterials = {
+									"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+									"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+								},
+							},
+						},
+						transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 4, 0.5, 0, 1, },
+					},
+					{
+						children = {
+							{
+								children = {
+									{
+										name = "cement_bridge_bone_2m_start_side2",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+									},
+									{
+										name = "cement_bridge_bone_2m_end_side2",
+										transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+									},
+								},
+								name = "container_2m_side2",
+								skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
+								skinMaterials = {
+									"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+									"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+								},
+							},
+						},
+						transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 6, 0.5, 0, 1, },
+					},
 				},
 				name = "RootNode",
-				transf = { 0.25, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				transf = { 0.125, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 			},
 			static = false,
 			visibleFrom = 0,

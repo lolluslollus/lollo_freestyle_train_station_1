@@ -1172,7 +1172,8 @@ function data()
 					-- There can be multiple links if they are short enough
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
-					local function _linkAcross(segments, maxDistance)
+					local function _linkAcross(segments, maxDistance, modelId)
+						local myModelId = modelId or _constants.passengerLaneModelId
 						local maxT = #params.terminals
 						for t = 1, maxT do
 							if segments[t] ~= nil then
@@ -1181,7 +1182,7 @@ function data()
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
 												result.models[#result.models+1] = {
-													id = _constants.passengerLaneModelId,
+													id = myModelId,
 													transf = transfUtils.get1MLaneTransf(
 														value.pos2Link1,
 														value.pos2Link2
@@ -1286,7 +1287,7 @@ function data()
                     -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
 
-					_linkAcross(shortSegmentsOpenStairs)
+					_linkAcross(shortSegmentsOpenStairs, 22, "lollo_freestyle_train_station/open_stairs/bridge_chunk_16m.mdl")
 					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
