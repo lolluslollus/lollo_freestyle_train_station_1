@@ -68,7 +68,8 @@ utils.getData = function(isSides)
 
     local updateFn = bridgeutil.makeDefaultUpdateFn(config)
     local newUpdateFn = function(params)
-        -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+        print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+        -- print('newUpdateFn starting with params =') debugPrint(params)
         -- UG TODO
         -- LOLLO NOTE
         -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
@@ -83,11 +84,13 @@ utils.getData = function(isSides)
             for _, railingInterval in pairs(params.railingIntervals) do
                 -- railingInterval.hasPillar = { -1, -1, }
                 for _, lane in pairs(railingInterval.lanes) do
-                    lane.offset = 0
+                    lane.offset = -0.5 -- goodish
                     -- lane.type = 0
                 end
             end
-            params.railingWidth = 0.5
+            -- params.railingWidth = 0.5
+            params.railingWidth = 1 -- goodish
+            print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
         end
 
         local results = updateFn(params)
