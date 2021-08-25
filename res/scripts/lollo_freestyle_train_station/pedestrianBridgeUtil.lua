@@ -41,9 +41,9 @@ utils.getData = function(isSides)
             railingDir .. 'railing_rep_rep.mdl',
             railingDir .. 'railing_rep_rep.mdl',
             -- these are useful to avoid funny dark textures on one side, but we use the two-sided material instead
-            railingDir .. 'railing_rep_side2_full_side.mdl',
-            railingDir .. 'railing_rep_side2_no_side.mdl',
-            railingDir .. 'railing_rep_side2_no_side.mdl',
+            -- railingDir .. 'railing_rep_side2_full_side.mdl',
+            -- railingDir .. 'railing_rep_side2_no_side.mdl',
+            -- railingDir .. 'railing_rep_side2_no_side.mdl',
         }
         or {
             railingDir .. 'railing_rep_side_no_side.mdl',
@@ -52,9 +52,9 @@ utils.getData = function(isSides)
             railingDir .. 'railing_rep_rep.mdl',
             railingDir .. 'railing_rep_rep.mdl',
             -- these are useful to avoid funny dark textures on one side, but we use the two-sided material instead
-            railingDir .. 'railing_rep_side2_no_side.mdl',
-            railingDir .. 'railing_rep_side2_no_side.mdl',
-            railingDir .. 'railing_rep_side2_no_side.mdl',
+            -- railingDir .. 'railing_rep_side2_no_side.mdl',
+            -- railingDir .. 'railing_rep_side2_no_side.mdl',
+            -- railingDir .. 'railing_rep_side2_no_side.mdl',
         }
 
     local config = {
@@ -68,12 +68,12 @@ utils.getData = function(isSides)
 
     local updateFn = bridgeutil.makeDefaultUpdateFn(config)
     local newUpdateFn = function(params)
-        print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
-        -- print('newUpdateFn starting with params =') debugPrint(params)
+        -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
         -- UG TODO
         -- LOLLO NOTE
         -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
         -- this draws pointless artifacts on the sides. When it happens, pillarLength is different from the set value.
+        -- the reason is, the C routine giving us the params assumes that the road is at least 5 m wide.
 
         -- params.pillarHeights = {}
 
@@ -90,7 +90,7 @@ utils.getData = function(isSides)
             end
             -- params.railingWidth = 0.5
             params.railingWidth = 1 -- goodish
-            print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+            -- print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
         end
 
         local results = updateFn(params)
