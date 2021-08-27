@@ -66,6 +66,33 @@ function data()
                         transportModes = { 'PERSON', },
                         speedLimit = 20,
                     },
+                    {
+                        linkable = true, -- false, --true,
+                        nodes = {
+                            {
+                                { 0.5, -1, _constants.tunnelStairsUpZ + 1, },
+                                { 0, 1, 0, },
+                                1.0,
+                            },
+                            {
+                                { 0.5, 0, _constants.tunnelStairsUpZ + 1, },
+                                { 0, 1, 0, },
+                                1.0,
+                            },
+                            {
+                                { 0.5, 0, _constants.tunnelStairsUpZ + 1, },
+                                { 0, 1, 0, },
+                                1.0,
+                            },
+                            {
+                                { 0.5, 1, _constants.tunnelStairsUpZ + 1, },
+                                { 0, 1, 0, },
+                                1.0,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
                 },
                 runways = { },
                 terminals = { },

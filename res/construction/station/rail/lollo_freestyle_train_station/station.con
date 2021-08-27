@@ -679,7 +679,6 @@ function data()
 							or false
 						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 
-						local centreLaneTransf = transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
 						local myModelId = _constants.passengerLaneLinkableModelId -- _constants.passengerLaneModelId
 						if isPlatformLift then myModelId = _constants.passengerLaneLiftModelId
 						elseif isUnderpass then myModelId = _constants.passengerLaneUnderpassModelId
@@ -690,6 +689,9 @@ function data()
 						elseif isNextOpenStairsUpLeft then myModelId = _constants.passengerLaneOpenStairsUpBottomNextModelId
 						elseif isNextOpenStairsUpRight then myModelId = _constants.passengerLaneOpenStairsUpBottomPrevModelId
 						end
+						local centreLaneTransf = (isOpenStairsUpLeft or isOpenStairsUpRight)
+							and transfUtils.get1MModelTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
+							or transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
 						result.models[#result.models+1] = {
 							id = myModelId,
 							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
@@ -1173,7 +1175,6 @@ function data()
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
 					local function _linkAcross(segments, maxDistance, modelId)
-						local myModelId = modelId or _constants.passengerLaneModelId
 						local maxT = #params.terminals
 						for t = 1, maxT do
 							if segments[t] ~= nil then
@@ -1181,13 +1182,23 @@ function data()
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
-												result.models[#result.models+1] = {
-													id = myModelId,
-													transf = transfUtils.get1MLaneTransf(
-														value.pos2Link1,
-														value.pos2Link2
-													)
-												}
+												if modelId then
+													result.models[#result.models+1] = {
+														id = modelId,
+														transf = transfUtils.get1MModelTransf(
+															value.pos2Link1,
+															value.pos2Link2
+														)
+													}
+												else
+													result.models[#result.models+1] = {
+														id = _constants.passengerLaneModelId,
+														transf = transfUtils.get1MLaneTransf(
+															value.pos2Link1,
+															value.pos2Link2
+														)
+													}
+												end
 											end
 										end
 									end
@@ -1205,7 +1216,7 @@ function data()
 					local shortSegmentsOpenStairs, minDistanceSegmentsOpenStairs = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.openStairsPositions,
 						result.terminateConstructionHookInfo.openStairsPositions,
-						1.42
+						1.6 --1.42
 					)
 
 					-- logger.print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') logger.debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
@@ -1287,7 +1298,7 @@ function data()
                     -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
 
-					_linkAcross(shortSegmentsOpenStairs, 22, "lollo_freestyle_train_station/open_stairs/bridge_chunk_16m.mdl")
+					_linkAcross(shortSegmentsOpenStairs, 48, "lollo_freestyle_train_station/open_stairs/bridge_chunk_16m.mdl")
 					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance

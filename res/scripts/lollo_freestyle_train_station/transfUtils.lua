@@ -399,6 +399,53 @@ utils.get1MLaneTransf = function(pos1, pos2)
     return result
 end
 
+utils.get1MModelTransf = function(pos1, pos2)
+    -- gets a transf to fit a 1 m long model (with a non-zero width) between two points
+    -- using transfUtils.getVecTransformed(), solve this system:
+    -- first point: 0, 0, 0 => pos1
+    -- transf[13] = pos1[1]
+    -- transf[14] = pos1[2]
+    -- transf[15] = pos1[3]
+    -- second point: 1, 0, 0 => pos2
+    -- transf[1] + transf[13] = pos2[1]
+    -- transf[2] + transf[14] = pos2[2]
+    -- transf[3] + transf[15] = pos2[3]
+    -- third point: 0, 1, 0 => pos1 + {(pos2[2] - pos1[2]) / xyLength, (pos1[1] - pos2[1]) / xyLength, 0}
+    -- transf[5] + transf[13] = pos1[1] + (pos2[2] - pos1[2]) / xyLength
+    -- transf[6] + transf[14] = pos1[2] + (pos1[1] - pos2[1]) / xyLength
+    -- transf[7] + transf[15] = pos1[3]
+    -- fourth point: 0, 0, 1 => pos1 + { 0, 0, 1 }
+    -- transf[9] + transf[13] = pos1[1]
+    -- transf[10] + transf[14] = pos1[2]
+    -- transf[11] + transf[15] = pos1[3] + 1
+    local xyLength = utils.getVectorLength({pos1[1] - pos2[1], pos1[2] - pos2[2], 0})
+    if not(xyLength) or xyLength == 0 then return {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1} end
+
+    local result = {
+        pos2[1] - pos1[1],
+        pos2[2] - pos1[2],
+        pos2[3] - pos1[3],
+        0,
+
+        (pos2[2] - pos1[2]) / xyLength,
+        (pos1[1] - pos2[1]) / xyLength,
+        0,
+        0,
+
+        0,
+        0,
+        1,
+        0,
+
+        pos1[1],
+        pos1[2],
+        pos1[3],
+        1
+    }
+    -- print('unitaryLaneTransf =') debugPrint(result)
+    return result
+end
+
 utils.getPosTanX2Normalised = function(posTanX2, targetLength)
     local pos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
     local tan1 = utils.getVectorNormalised(posTanX2[1][2], targetLength)

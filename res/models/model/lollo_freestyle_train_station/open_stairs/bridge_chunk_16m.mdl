@@ -3,7 +3,8 @@ local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
 function data()
 	local _2nSegments = 16
 	local lod0Children  = {}
-	for i = 0, _2nSegments - 2, 2 do
+	local iMax = _2nSegments - 2
+	for i = 0, iMax, 2 do
 		-- if i ~= 2 then
 		lod0Children[#lod0Children + 1] = {
 			children = {
@@ -89,11 +90,17 @@ function data()
 						},
 					},
 					name = "container_2m_side1",
-					skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
-					skinMaterials = {
-						"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
-						"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
-					},
+					skin = (i == 0 or i == iMax)
+						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_no_side_lod0.msh"
+						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
+					skinMaterials = (i == 0 or i == iMax)
+						and {
+							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl"
+						}
+						or {
+							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+						},
 				},
 			},
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -1, 0, 1, },
@@ -112,11 +119,17 @@ function data()
 						},
 					},
 					name = "container_2m_side2",
-					skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
-					skinMaterials = {
-						"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
-						"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
-					},
+					skin = (i == 0 or i == iMax)
+						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_no_side_lod0.msh"
+						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
+					skinMaterials = (i == 0 or i == iMax)
+						and {
+							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl"
+						}
+						or {
+							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+						},
 				},
 			},
 			transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, i, 1, 0, 1, },
