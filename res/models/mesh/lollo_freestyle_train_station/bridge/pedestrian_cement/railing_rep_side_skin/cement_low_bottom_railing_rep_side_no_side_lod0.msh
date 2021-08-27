@@ -1,0 +1,63 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				jointWeights = {
+					count = 168,
+					offset = 624,
+				},
+				normal = {
+					count = 168,
+					offset = 792,
+				},
+				position = {
+					count = 168,
+					offset = 456,
+				},
+				tangent = {
+					count = 168,
+					offset = 960,
+				},
+				uv0 = {
+					count = 168,
+					offset = 1128,
+				},
+			},
+			materials = {
+				"DELETE.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		jointWeights = {
+			count = 32,
+			numComp = 4,
+			offset = 120,
+		},
+		normal = {
+			count = 72,
+			numComp = 3,
+			offset = 152,
+		},
+		position = {
+			count = 120,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 64,
+			numComp = 4,
+			offset = 224,
+		},
+		uv0 = {
+			count = 168,
+			numComp = 2,
+			offset = 288,
+		},
+	},
+}
+end
