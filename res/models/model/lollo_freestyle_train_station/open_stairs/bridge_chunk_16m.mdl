@@ -44,7 +44,8 @@ function data()
 					name = "container_2m",
 					skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_railing_rep_rep_lod0.msh",
 					skinMaterials = {
-						"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+						-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+						"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
 						"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
 					},
 				},
@@ -93,10 +94,12 @@ function data()
 						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
 					skinMaterials = (i == 0 or i == iMax)
 						and {
-							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl"
+							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl"
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
 						}
 						or {
-							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
 							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
 						},
 				},
@@ -122,10 +125,12 @@ function data()
 						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_railing_rep_side_full_side_lod0.msh",
 					skinMaterials = (i == 0 or i == iMax)
 						and {
-							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl"
+							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
 						}
 						or {
-							"lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
 							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
 						},
 				},
