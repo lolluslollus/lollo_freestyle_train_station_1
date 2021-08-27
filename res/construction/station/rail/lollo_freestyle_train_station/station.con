@@ -1298,7 +1298,7 @@ function data()
                     -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
 
-					_linkAcross(shortSegmentsOpenStairs, 48, "lollo_freestyle_train_station/open_stairs/bridge_chunk_16m.mdl")
+					_linkAcross(shortSegmentsOpenStairs, 48, "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_16m.mdl")
 					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
