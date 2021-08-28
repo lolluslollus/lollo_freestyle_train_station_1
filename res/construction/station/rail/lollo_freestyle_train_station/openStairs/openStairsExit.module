@@ -23,6 +23,7 @@ return {
 	description = {
 		name = _("OpenStairsExitName"),
 		description = _("OpenStairsExitDesc"),
+        -- LOLLO TODO make the icon
 		icon = "ui/lollo_freestyle_train_station/openStairsExit.tga"
 	},
 	metadata = { },
@@ -40,6 +41,7 @@ return {
 		elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_openStairsExitModelId
 		else modelId = _constants.era_c_openStairsExitModelId
 		end
+        -- LOLLO TODO fix the transformations below
 		result.models[#result.models + 1] = {
 			id = modelId,
 			slotId = slotId,
@@ -50,7 +52,7 @@ return {
 			id = 'lollo_freestyle_train_station/passenger_lane_linkable.mdl',
 			slotId = slotId,
 			transf = slotTransf,
-			-- tag = tag
+			tag = tag
 		}
 	end,
 
