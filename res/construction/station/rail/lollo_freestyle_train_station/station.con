@@ -1186,9 +1186,10 @@ function data()
 					end
 					-- Now we put all segments together, avoiding duplicates or redundant links.
 
-                    local _getSegmentWithTAndTTSwapped = function (oldSegment, isMakeTLessThanTT)
+                    local _getSegmentWithTAndTTSwapped = function (oldSegment, isMakeT1LessThanT2)
                         local newSegment = {}
-						if (oldSegment.t1 < oldSegment.t2 or not(isMakeTLessThanTT)) then
+						if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
+                        or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
 							newSegment.t1 = oldSegment.t1
 							newSegment.t2 = oldSegment.t2
 							newSegment.t1Index = oldSegment.t1Index
@@ -1274,6 +1275,7 @@ function data()
 									-- if tolerancePercent4ShortDistances == nil
 									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
 									if isNewSegmentThere then
+                                        -- newShortSegment = _getSegmentWithTAndTTSwapped(newShortSegment, true)
 										local t1 = newShortSegment.t1
 										local t2 = newShortSegment.t2
 										if short_T_TT_Segments[t1] == nil then short_T_TT_Segments[t1] = {} end
