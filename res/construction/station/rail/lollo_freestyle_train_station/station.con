@@ -1107,9 +1107,9 @@ function data()
 						-- end
 						-- solve for a = y0
 						-- local a = posTanX2[1][1][2]
-						-- I need this otherwise I look if the pos is below or above the line
-						-- but I neglect the direction of my line,
-						-- which is indeed a vector
+						-- So far I checked if the pos is below or above the line,
+						-- but I must consider the direction of my line,
+						-- which is in fact a vector
 						if dX > 0 then
 							return a + b * pos[1] < pos[2]
 						else
@@ -1120,11 +1120,9 @@ function data()
 					local _getAllSegments = function()
 					-- For each terminal, then for each connected point,
 					-- get the shortest segment on the left and the shortest segment on the right.
-					-- the reference vector is lanePosTanX2, if it exists. If it doesn't, get all.
-					-- if I have a segment from A to B and one from B to C, and also a segment from A to C,
-					-- and the latter is not much much shorter than the sum of the other two,
-					-- the latter should be ignored.
-						local minDistance_T_TT_Segments = {}
+					-- the reference vector is lanePosTanX2.
+					-- Then put it all together, avoiding duplicates or redundant links.
+						local minDistance_T_I_Segments = {}
 						for t = 1, maxT do
 							local positionsInT = positionsA[t]
 							if positionsInT ~= nil then
@@ -1137,26 +1135,27 @@ function data()
 											if positionsInTT ~= nil then
 												for ii = 1, #positionsInTT do
 													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
-													local isLeft = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)
+													local isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)
 													local t1 = t
 													local t2 = tt
 													local t1Index = i
 													local t2Index = ii
 													if tt < t then
+														isLeftOfT1 = not(isLeftOfT1)
 														t1 = tt
 														t2 = t
 														t1Index = ii
 														t2Index = i
 													end
-													if isLeft then
+													if isLeftOfT1 then
 														if minDistance_T_I_SegmentLeft == nil or minDistance_T_I_SegmentLeft.distance > distance then
 															minDistance_T_I_SegmentLeft = {
-																t = t1,
-																tt = t2,
+																t1 = t1,
+																t2 = t2,
 																t1Index = t1Index,
 																t2Index = t2Index,
 																distance = distance,
-																isLeft = isLeft,
+																isLeftOfT1 = isLeftOfT1,
 																pos2Link1 = positionsInT[i].pos2Link,
 																pos2Link2 = positionsInTT[ii].pos2Link
 															}
@@ -1164,12 +1163,12 @@ function data()
 													else
 														if minDistance_T_I_SegmentRight == nil or minDistance_T_I_SegmentRight.distance > distance then
 															minDistance_T_I_SegmentRight = {
-																t = t1,
-																tt = t2,
+																t1 = t1,
+																t2 = t2,
 																t1Index = t1Index,
 																t2Index = t2Index,
 																distance = distance,
-																isLeft = isLeft,
+																isLeftOfT1 = isLeftOfT1,
 																pos2Link1 = positionsInT[i].pos2Link,
 																pos2Link2 = positionsInTT[ii].pos2Link
 															}
@@ -1185,89 +1184,79 @@ function data()
 											and value.pos2Link1[1] == rec.pos2Link2[1]
 											and	value.pos2Link1[2] == rec.pos2Link2[2]
 											and	value.pos2Link1[3] == rec.pos2Link2[3]
+											and value.pos2Link2[1] == rec.pos2Link1[1]
+											and	value.pos2Link2[2] == rec.pos2Link1[2]
+											and	value.pos2Link2[3] == rec.pos2Link1[3]
 											then
 												return true
 											end
 										end
 										return false
 									end
-									if minDistance_T_I_SegmentLeft ~= nil then
-										local t1 = minDistance_T_I_SegmentLeft.t
-										local t2 = minDistance_T_I_SegmentLeft.tt
-										local t1Index = minDistance_T_I_SegmentLeft.t1Index
-										if minDistance_T_TT_Segments[t1] == nil then minDistance_T_TT_Segments[t1] = {} end
-										if minDistance_T_TT_Segments[t1][t2] == nil then minDistance_T_TT_Segments[t1][t2] = {} end
-										if minDistance_T_TT_Segments[t1][t2][t1Index] == nil then minDistance_T_TT_Segments[t1][t2][t1Index] = {} end
-										if not(_isTwinAlreadyThere(minDistance_T_TT_Segments[t1][t2][t1Index], minDistance_T_I_SegmentLeft)) then
-											table.insert(
-												minDistance_T_TT_Segments[t1][t2][t1Index],
-												minDistance_T_I_SegmentLeft
-											)
-										end
-									end
-									if minDistance_T_I_SegmentRight ~= nil then
-										local t1 = minDistance_T_I_SegmentRight.t
-										local t2 = minDistance_T_I_SegmentRight.tt
-										local t1Index = minDistance_T_I_SegmentRight.t1Index
-										if minDistance_T_TT_Segments[t1] == nil then minDistance_T_TT_Segments[t1] = {} end
-										if minDistance_T_TT_Segments[t1][t2] == nil then minDistance_T_TT_Segments[t1][t2] = {} end
-										if minDistance_T_TT_Segments[t1][t2][t1Index] == nil then minDistance_T_TT_Segments[t1][t2][t1Index] = {} end
-										if not(_isTwinAlreadyThere(minDistance_T_TT_Segments[t1][t2][t1Index], minDistance_T_I_SegmentRight)) then
-											table.insert(
-												minDistance_T_TT_Segments[t1][t2][t1Index],
-												minDistance_T_I_SegmentRight
-											)
+									for _, minDistanceSegment in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
+										if minDistanceSegment ~= nil then
+											local t1 = minDistanceSegment.t1
+											local t1Index = minDistanceSegment.t1Index
+											if minDistance_T_I_Segments[t1] == nil then minDistance_T_I_Segments[t1] = {} end
+											if minDistance_T_I_Segments[t1][t1Index] == nil then minDistance_T_I_Segments[t1][t1Index] = {} end
+											if not(_isTwinAlreadyThere(minDistance_T_I_Segments[t1][t1Index], minDistanceSegment)) then
+												table.insert(
+													minDistance_T_I_Segments[t1][t1Index],
+													minDistanceSegment
+												)
+											end
 										end
 									end
 									if isOutputLog then
 										print('t = ', t)
 										print('i = ', i)
-										print('minDistance_T_TT_Segments = ') debugPrint(minDistance_T_TT_Segments)
+										print('minDistance_T_I_Segments = ') debugPrint(minDistance_T_I_Segments)
 									end
 								end
 							end
 						end
-						return minDistance_T_TT_Segments
+						return minDistance_T_I_Segments
 					end
 					local allSegments = _getAllSegments()
 
 					if isOutputLog then
 						print('allSegments before triangles=') debugPrint(allSegments)
-						-- print('minDistanceSegments before triangles=') debugPrint(minDistanceSegments)
 					end
 
-                    local shortSegments = {}
+                    local short_T_TT_Segments = {}
                     for t = 1, maxT do
-                        for tt = t + 1, maxT do
-							-- if minDistanceSegments[t] ~= nil and minDistanceSegments[t][tt] ~= nil then
-							if allSegments and allSegments[t] and allSegments[t][tt] then
-								for _, segments in pairs(allSegments[t][tt]) do
-									-- print('key =') debugPrint(key)
-									-- print('### segments =') debugPrint(segments)
-									local newShortSegment = nil
-									for _, segment in pairs(segments) do
-										if newShortSegment == nil or newShortSegment.distance > segment.distance then
+						if allSegments and allSegments[t] then
+							for _, segmentsTouchingPoint in pairs(allSegments[t]) do
+								-- print('key =') debugPrint(key)
+								-- print('### segments =') debugPrint(segments)
+								for _, isLeftOfT1 in pairs({true, false}) do
+									local newShortSegment = {distance = 9999, isLeftOfT1 = isLeftOfT1}
+									local isNewSegmentThere = false
+									for _, segment in pairs(segmentsTouchingPoint) do
+										if segment.isLeftOfT1 == newShortSegment.isLeftOfT1
+										and newShortSegment.distance > segment.distance
+										then
 											newShortSegment = segment
+											isNewSegmentThere = true
 										end
 									end
 									-- print('value2 =') debugPrint(value2)
 									-- if tolerancePercent4ShortDistances == nil
 									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
-									if newShortSegment ~= nil then
-										if shortSegments[t] == nil then shortSegments[t] = {} end
-										if shortSegments[t][tt] == nil then shortSegments[t][tt] = {} end
-										table.insert(shortSegments[t][tt], newShortSegment)
+									if isNewSegmentThere then
+										if short_T_TT_Segments[t] == nil then short_T_TT_Segments[t] = {} end
+										if short_T_TT_Segments[t][newShortSegment.t2] == nil then short_T_TT_Segments[t][newShortSegment.t2] = {} end
+										table.insert(short_T_TT_Segments[t][newShortSegment.t2], newShortSegment)
 									end
 								end
-                            end
-                        end
+							end
+						end
 					end
 
 					if isOutputLog then
-						print('shortSegments =') debugPrint(shortSegments)
+						print('short_T_TT_Segments =') debugPrint(short_T_TT_Segments)
 					end
-					return shortSegments
-					-- return minDistances
+					return short_T_TT_Segments
 				end
 
 				local _linkUnderpassesAndStairs = function()
@@ -1342,8 +1331,8 @@ function data()
 					local shortSegmentsOpenStairs = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.openStairsPositions,
 						result.terminateConstructionHookInfo.openStairsPositions,
-						1.42 --1.6 --1.42
-						-- true
+						1.42, --1.6 --1.42
+						true
 					)
 
 					-- logger.print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') logger.debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
