@@ -1106,9 +1106,8 @@ function data()
 						-- but I must consider the direction of my line,
 						-- which is in fact a vector. On the other hand, the line is an absolute reference
 						-- while the vector may change direction with the station quirks => we use the line.
-						local isLeftResult = false
 						-- if dX > 0 then
-							isLeftResult = a + b * pos[1] < pos[2]
+						local isLeftResult = a + b * pos[1] < pos[2]
 						-- else
 							-- isLeftResult = a + b * pos[1] > pos[2]
 						-- end
@@ -1118,11 +1117,10 @@ function data()
 						return isLeftResult
 					end
 					local _maxT = #params.terminals
-					local _getMinDistance_T_I_Segments = function()
+					local _getMinDistanceSegments = function()
 					-- For each terminal, then for each connected point,
 					-- get the shortest segment on the left and the shortest segment on the right.
 					-- the reference vector is lanePosTanX2.
-					-- Then put it all together, avoiding duplicates or redundant links.
 						local results = {}
 						for t = 1, _maxT do
 							local positionsInT = positionsA[t]
@@ -1136,36 +1134,20 @@ function data()
 											if positionsInTT ~= nil then
 												for ii = 1, #positionsInTT do
 													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
-													-- local segParams = (t < tt)
-													-- 	and {
-													-- 		isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link),
-													-- 		t1 = t,
-													-- 		t2 = tt,
-													-- 		t1Index = i,
-													-- 		t2Index = ii,
-													-- 	} or {
-													-- 		isLeftOfT1 = not(_isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)),
-													-- 		t1 = tt,
-													-- 		t2 = t,
-													-- 		t1Index = ii,
-													-- 		t2Index = i,
-													-- 	}
-													local segParams = {
-														isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link),
-														t1 = t,
-														t2 = tt,
-														t1Index = i,
-														t2Index = ii,
-													}
-													if segParams.isLeftOfT1 then
+													local isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)
+                                                    local t1 = t
+                                                    local t2 = tt
+                                                    local t1Index = i
+                                                    local t2Index = ii
+													if isLeftOfT1 then
 														if minDistance_T_I_SegmentLeft == nil or minDistance_T_I_SegmentLeft.distance > distance then
 															minDistance_T_I_SegmentLeft = {
-																t1 = segParams.t1,
-																t2 = segParams.t2,
-																t1Index = segParams.t1Index,
-																t2Index = segParams.t2Index,
+																t1 = t1,
+																t2 = t2,
+																t1Index = t1Index,
+																t2Index = t2Index,
 																distance = distance,
-																isLeftOfT1 = segParams.isLeftOfT1,
+																isLeftOfT1 = isLeftOfT1,
 																pos2Link1 = positionsInT[i].pos2Link,
 																pos2Link2 = positionsInTT[ii].pos2Link
 															}
@@ -1173,12 +1155,12 @@ function data()
 													else
 														if minDistance_T_I_SegmentRight == nil or minDistance_T_I_SegmentRight.distance > distance then
 															minDistance_T_I_SegmentRight = {
-																t1 = segParams.t1,
-																t2 = segParams.t2,
-																t1Index = segParams.t1Index,
-																t2Index = segParams.t2Index,
+																t1 = t1,
+																t2 = t2,
+																t1Index = t1Index,
+																t2Index = t2Index,
 																distance = distance,
-																isLeftOfT1 = segParams.isLeftOfT1,
+																isLeftOfT1 = isLeftOfT1,
 																pos2Link1 = positionsInT[i].pos2Link,
 																pos2Link2 = positionsInTT[ii].pos2Link
 															}
@@ -1188,50 +1170,21 @@ function data()
 											end
 										end
 									end
-									-- local _isTwinAlreadyThere = function(tab, rec)
-									-- 	for _, value in pairs(tab) do
-									-- 		if value.distance == rec.distance
-									-- 		and value.pos2Link1[1] == rec.pos2Link2[1]
-									-- 		and	value.pos2Link1[2] == rec.pos2Link2[2]
-									-- 		and	value.pos2Link1[3] == rec.pos2Link2[3]
-									-- 		and value.pos2Link2[1] == rec.pos2Link1[1]
-									-- 		and	value.pos2Link2[2] == rec.pos2Link1[2]
-									-- 		and	value.pos2Link2[3] == rec.pos2Link1[3]
-									-- 		then
-									-- 			return true
-									-- 		end
-									-- 	end
-									-- 	return false
-									-- end
 									for _, minDistanceSegment in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
 										if minDistanceSegment ~= nil then
-											-- local t1 = minDistanceSegment.t1
-											-- local t1Index = minDistanceSegment.t1Index
-											-- if results[t1] == nil then results[t1] = {} end
-											-- if results[t1][t1Index] == nil then results[t1][t1Index] = {} end
-											-- -- if not(_isTwinAlreadyThere(results[t1][t1Index], minDistanceSegment)) then
-											-- 	table.insert(
-											-- 		results[t1][t1Index],
-											-- 		minDistanceSegment
-											-- 	)
-											-- -- end
 											table.insert(results, minDistanceSegment)
 										end
-									end
-									if isOutputLog then
-										print('t = ', t, ', i = ', i, ', minDistanceSegments úpdated to = ') debugPrint(results)
 									end
 								end
 							end
 						end
 						return results
 					end
-					-- minDistance_T_I_Segments_SmallTFirst is indexed by t1 (terminal, unsorted) and t1Index (index of connection point along the terminal).
-					local minDistanceSegments = _getMinDistance_T_I_Segments()
-
+					local minDistanceSegments = _getMinDistanceSegments()
 					if isOutputLog then
 						print('minDistanceSegments =') debugPrint(minDistanceSegments)
 					end
+					-- Now we put all segments together, avoiding duplicates or redundant links.
 
 					local minDistance_T_I_Segments_SmallTFirst = {}
 					for _, value in pairs(minDistanceSegments) do
@@ -1260,8 +1213,8 @@ function data()
 						table.insert(minDistance_T_I_Segments_SmallTFirst[newValue.t1][newValue.t1Index], newValue)
 					end
 
-					-- minDistance_T_I_Segments_SmallTFirst is indexed by t1 (lowest terminal) and t1Index (index of connection point along the terminal).
-					-- In the following, I index the results by t2 (highest terminal) and t2Index (index of connection point along the terminal).
+					-- minDistance_T_I_Segments_SmallTFirst is indexed by t1 (lowest terminal) and t1Index (index of connection point along it).
+					-- In the following, I index the results by t2 (highest terminal) and t2Index (index of connection point along it).
 					-- removing redundant links (eg if there are two or more links heading left or right, I only keep the shortest)
 					local minDistance_TT_II_Segments_LargeTFirst = {}
                     for t = 1, _maxT do
@@ -1294,7 +1247,7 @@ function data()
 						print('minDistance_TT_II_Segments_LargeTFirst =') debugPrint(minDistance_TT_II_Segments_LargeTFirst)
 					end
 
-					-- minDistance_TT_II_Segments_LargeTFirst is indexed by t2 (highest terminal) and t2Index (index of connection point along the terminal).
+					-- minDistance_TT_II_Segments_LargeTFirst is indexed by t2 (highest terminal) and t2Index (index of connection point along it).
 					-- In the following, I index the results by t1 (lowest terminal) and t2 (highest terminal).
 					-- removing redundant links (eg if there are two or more links heading left or right, I only keep the shortest)
 					-- Now, I have removed all redundant links
@@ -1405,8 +1358,8 @@ function data()
 					local shortSegmentsOpenStairs = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.openStairsPositions,
 						result.terminateConstructionHookInfo.openStairsPositions,
-						1.42, --1.6 --1.42
-						true
+						1.42 --1.6 --1.42
+						-- true
 					)
 
 					-- logger.print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') logger.debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
