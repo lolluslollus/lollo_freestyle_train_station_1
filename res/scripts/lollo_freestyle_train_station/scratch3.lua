@@ -1,5 +1,8 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
+local arr = {}
+arr[7] = {a = 10, b = 20}
+arr[7][8] = {c = 10, d = 20}
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local logger = require('lollo_freestyle_train_station.logger')
