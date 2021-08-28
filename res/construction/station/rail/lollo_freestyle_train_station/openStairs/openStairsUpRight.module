@@ -21,15 +21,15 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("OpenStairsUpLeftName"),
-		description = _("OpenStairsUpLeftDesc"),
-		icon = "ui/lollo_freestyle_train_station/openStairsUpLeft.tga"
+		name = _("OpenStairsUpRightName"),
+		description = _("OpenStairsUpRightDesc"),
+		icon = "ui/lollo_freestyle_train_station/openStairsUpRight.tga"
 	},
 	metadata = { },
 	order = {
-		value = 50,
+		value = 71,
 	},
-	type = _constants.openStairsUpLeftModuleType,
+	type = _constants.openStairsUpRightModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
@@ -53,6 +53,7 @@ return {
 			{
 				id = _constants.era_c_openStairsUpModelId,
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
+				-- transf = {-1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
 			},
 		}
 	end

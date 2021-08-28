@@ -102,6 +102,8 @@ function data()
 			["OpenStairsUpLeftDesc"] = "Connect ground passenger platforms to their twins or to the outside world.",
 			["OpenStairsUpRightName"] = "Stairs up right for ground platform",
 			["OpenStairsUpRightDesc"] = "Connect ground passenger platforms to their twins or to the outside world.",
+            ["OpenStairsExitName"] = "Entrance to stairs",
+            ["OpenStairsExitDesc"] = "Connect stairs to the outside",
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
 			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It connects to underpasses. Max height 40 m, adjust it with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
 			["PassengerPlatformLiftName"] = "Passenger lift to a bridge",
