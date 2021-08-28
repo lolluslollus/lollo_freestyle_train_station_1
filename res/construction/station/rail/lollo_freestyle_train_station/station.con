@@ -700,11 +700,25 @@ function data()
 						local centreLaneTransf = (isOpenStairsUpLeft or isOpenStairsUpRight)
 							and transfUtils.get1MModelTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
 							or transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
-						result.models[#result.models+1] = {
-							id = myModelId,
-							transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
-						}
-
+                        if (isOpenStairsUpLeft or isOpenStairsUpRight) then
+                            if isOpenStairsUpLeft then
+                                result.models[#result.models+1] = {
+                                    id = _constants.passengerLaneOpenStairsUpTopNextModelId,
+                                    transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+                                }
+                            end
+                            if isOpenStairsUpRight then
+                                result.models[#result.models+1] = {
+                                    id = _constants.passengerLaneOpenStairsUpTopPrevModelId,
+                                    transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+                                }
+                            end
+                        else
+                            result.models[#result.models+1] = {
+                                id = myModelId,
+                                transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+                            }
+                        end
 						if isStairsUp then
 							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
