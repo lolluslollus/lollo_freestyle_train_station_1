@@ -1186,31 +1186,35 @@ function data()
 					end
 					-- Now we put all segments together, avoiding duplicates or redundant links.
 
-					local minDistance_T_I_Segments_SmallTFirst = {}
-					for _, value in pairs(minDistanceSegments) do
-						local newValue = {}
-						if value.t1 < value.t2 then
-							newValue.t1 = value.t1
-							newValue.t2 = value.t2
-							newValue.t1Index = value.t1Index
-							newValue.t2Index = value.t2Index
-							newValue.distance = value.distance
-							newValue.isLeftOfT1 = value.isLeftOfT1
-							newValue.pos2Link1 = value.pos2Link1
-							newValue.pos2Link2 = value.pos2Link2
+                    local _getSegmentWithTAndTTSwapped = function (oldSegment, isMakeTLessThanTT)
+                        local newSegment = {}
+						if (oldSegment.t1 < oldSegment.t2 or not(isMakeTLessThanTT)) then
+							newSegment.t1 = oldSegment.t1
+							newSegment.t2 = oldSegment.t2
+							newSegment.t1Index = oldSegment.t1Index
+							newSegment.t2Index = oldSegment.t2Index
+							newSegment.distance = oldSegment.distance
+							newSegment.isLeftOfT1 = oldSegment.isLeftOfT1
+							newSegment.pos2Link1 = oldSegment.pos2Link1
+							newSegment.pos2Link2 = oldSegment.pos2Link2
 						else
-							newValue.t1 = value.t2
-							newValue.t2 = value.t1
-							newValue.t1Index = value.t2Index
-							newValue.t2Index = value.t1Index
-							newValue.distance = value.distance
-							newValue.isLeftOfT1 = not(value.isLeftOfT1)
-							newValue.pos2Link1 = value.pos2Link1
-							newValue.pos2Link2 = value.pos2Link2
+							newSegment.t1 = oldSegment.t2
+							newSegment.t2 = oldSegment.t1
+							newSegment.t1Index = oldSegment.t2Index
+							newSegment.t2Index = oldSegment.t1Index
+							newSegment.distance = oldSegment.distance
+							newSegment.isLeftOfT1 = not(oldSegment.isLeftOfT1)
+							newSegment.pos2Link1 = oldSegment.pos2Link1
+							newSegment.pos2Link2 = oldSegment.pos2Link2
 						end
-						if minDistance_T_I_Segments_SmallTFirst[newValue.t1] == nil then minDistance_T_I_Segments_SmallTFirst[newValue.t1] = {} end
-						if minDistance_T_I_Segments_SmallTFirst[newValue.t1][newValue.t1Index] == nil then minDistance_T_I_Segments_SmallTFirst[newValue.t1][newValue.t1Index] = {} end
-						table.insert(minDistance_T_I_Segments_SmallTFirst[newValue.t1][newValue.t1Index], newValue)
+                        return newSegment
+                    end
+					local minDistance_T_I_Segments_SmallTFirst = {}
+					for _, segment in pairs(minDistanceSegments) do
+						local newSegment = _getSegmentWithTAndTTSwapped(segment, true)
+						if minDistance_T_I_Segments_SmallTFirst[newSegment.t1] == nil then minDistance_T_I_Segments_SmallTFirst[newSegment.t1] = {} end
+						if minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index] == nil then minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index] = {} end
+						table.insert(minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index], newSegment)
 					end
 
 					-- minDistance_T_I_Segments_SmallTFirst is indexed by t1 (lowest terminal) and t1Index (index of connection point along it).
@@ -1232,6 +1236,7 @@ function data()
 										end
 									end
 									if isNewSegmentThere then
+                                        -- newShortSegment = _getSegmentWithTAndTTSwapped(newShortSegment, false)
 										local t2 = newShortSegment.t2
 										local t2Index = newShortSegment.t2Index
 										if minDistance_TT_II_Segments_LargeTFirst[t2] == nil then minDistance_TT_II_Segments_LargeTFirst[t2] = {} end
