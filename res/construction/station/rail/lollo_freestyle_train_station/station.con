@@ -1116,20 +1116,20 @@ function data()
 							return a + b * pos[1] > pos[2]
 						end
 					end
-					local maxT = #params.terminals
-					local _getAllSegments = function()
+					local _maxT = #params.terminals
+					local _getMinDistance_T_I_Segments = function()
 					-- For each terminal, then for each connected point,
 					-- get the shortest segment on the left and the shortest segment on the right.
 					-- the reference vector is lanePosTanX2.
 					-- Then put it all together, avoiding duplicates or redundant links.
-						local minDistance_T_I_Segments = {}
-						for t = 1, maxT do
+						local results = {}
+						for t = 1, _maxT do
 							local positionsInT = positionsA[t]
 							if positionsInT ~= nil then
 								for i = 1, #positionsInT do
 									local minDistance_T_I_SegmentLeft = nil
 									local minDistance_T_I_SegmentRight = nil
-									for tt = 1, maxT do
+									for tt = 1, _maxT do
 										if t ~= tt then
 											local positionsInTT = positionsB[tt]
 											if positionsInTT ~= nil then
@@ -1197,11 +1197,11 @@ function data()
 										if minDistanceSegment ~= nil then
 											local t1 = minDistanceSegment.t1
 											local t1Index = minDistanceSegment.t1Index
-											if minDistance_T_I_Segments[t1] == nil then minDistance_T_I_Segments[t1] = {} end
-											if minDistance_T_I_Segments[t1][t1Index] == nil then minDistance_T_I_Segments[t1][t1Index] = {} end
-											if not(_isTwinAlreadyThere(minDistance_T_I_Segments[t1][t1Index], minDistanceSegment)) then
+											if results[t1] == nil then results[t1] = {} end
+											if results[t1][t1Index] == nil then results[t1][t1Index] = {} end
+											if not(_isTwinAlreadyThere(results[t1][t1Index], minDistanceSegment)) then
 												table.insert(
-													minDistance_T_I_Segments[t1][t1Index],
+													results[t1][t1Index],
 													minDistanceSegment
 												)
 											end
@@ -1210,25 +1210,26 @@ function data()
 									if isOutputLog then
 										print('t = ', t)
 										print('i = ', i)
-										print('minDistance_T_I_Segments = ') debugPrint(minDistance_T_I_Segments)
+										print('minDistance_T_I_Segments = ') debugPrint(results)
 									end
 								end
 							end
 						end
-						return minDistance_T_I_Segments
+						return results
 					end
-					local allSegments = _getAllSegments()
+					local minDistance_T_I_Segments = _getMinDistance_T_I_Segments()
 
 					if isOutputLog then
-						print('allSegments before triangles=') debugPrint(allSegments)
+						print('allSegments before triangles=') debugPrint(minDistance_T_I_Segments)
 					end
 
-                    local short_T_TT_Segments = {}
-                    for t = 1, maxT do
-						if allSegments and allSegments[t] then
-							for _, segmentsTouchingPoint in pairs(allSegments[t]) do
-								-- print('key =') debugPrint(key)
-								-- print('### segments =') debugPrint(segments)
+					-- minDistance_T_I_Segments is indexed by t1 (lowest terminal) and t1Index (index of connection point along the terminal).
+					-- In the following, I index the results by t2 (highest terminal) and t2Index (index of connection point along the terminal).
+					-- removing redundant links (eg if there are two or more links heading left or right, I only keep the shortest)
+					local minDistance_TT_II_Segments = {}
+                    for t = 1, _maxT do
+						if minDistance_T_I_Segments and minDistance_T_I_Segments[t] then
+							for _, segmentsTouchingPoint in pairs(minDistance_T_I_Segments[t]) do
 								for _, isLeftOfT1 in pairs({true, false}) do
 									local newShortSegment = {distance = 9999, isLeftOfT1 = isLeftOfT1}
 									local isNewSegmentThere = false
@@ -1240,13 +1241,12 @@ function data()
 											isNewSegmentThere = true
 										end
 									end
-									-- print('value2 =') debugPrint(value2)
-									-- if tolerancePercent4ShortDistances == nil
-									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
 									if isNewSegmentThere then
-										if short_T_TT_Segments[t] == nil then short_T_TT_Segments[t] = {} end
-										if short_T_TT_Segments[t][newShortSegment.t2] == nil then short_T_TT_Segments[t][newShortSegment.t2] = {} end
-										table.insert(short_T_TT_Segments[t][newShortSegment.t2], newShortSegment)
+										local t2 = newShortSegment.t2
+										local t2Index = newShortSegment.t2Index
+										if minDistance_TT_II_Segments[t2] == nil then minDistance_TT_II_Segments[t2] = {} end
+										if minDistance_TT_II_Segments[t2][t2Index] == nil then minDistance_TT_II_Segments[t2][t2Index] = {} end
+										table.insert(minDistance_TT_II_Segments[t2][t2Index], newShortSegment)
 									end
 								end
 							end
@@ -1254,8 +1254,45 @@ function data()
 					end
 
 					if isOutputLog then
+						print('minDistance_TT_II_Segments =') debugPrint(minDistance_TT_II_Segments)
+					end
+
+					-- minDistance_TT_II_Segments is indexed by t2 (highest terminal) and t2Index (index of connection point along the terminal).
+					-- In the following, I index the results by t1 (lowest terminal) and t2 (highest terminal).
+					-- removing redundant links (eg if there are two or more links heading left or right, I only keep the shortest)
+					-- Now, I have removed all redundant links
+					local short_T_TT_Segments = {}
+                    for t = 1, _maxT do
+						if minDistance_TT_II_Segments and minDistance_TT_II_Segments[t] then
+							for _, segmentsTouchingPoint in pairs(minDistance_TT_II_Segments[t]) do
+								for _, isLeftOfT1 in pairs({true, false}) do
+									local newShortSegment = {distance = 9999, isLeftOfT1 = isLeftOfT1}
+									local isNewSegmentThere = false
+									for _, segment in pairs(segmentsTouchingPoint) do
+										if segment.isLeftOfT1 == newShortSegment.isLeftOfT1
+										and newShortSegment.distance > segment.distance
+										then
+											newShortSegment = segment
+											isNewSegmentThere = true
+										end
+									end
+									-- if tolerancePercent4ShortDistances == nil
+									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
+									if isNewSegmentThere then
+										local t1 = newShortSegment.t1
+										local t2 = newShortSegment.t2
+										if short_T_TT_Segments[t1] == nil then short_T_TT_Segments[t1] = {} end
+										if short_T_TT_Segments[t1][t2] == nil then short_T_TT_Segments[t1][t2] = {} end
+										table.insert(short_T_TT_Segments[t1][t2], newShortSegment)
+									end
+								end
+							end
+						end
+					end
+					if isOutputLog then
 						print('short_T_TT_Segments =') debugPrint(short_T_TT_Segments)
 					end
+
 					return short_T_TT_Segments
 				end
 
