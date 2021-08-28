@@ -806,51 +806,64 @@ function data()
 									)
 								}
 							)
+
 							-- LOLLO TODO the following is test code!
 							-- The trouble is, bridges need a certain height and the station is just not high enough.
 							-- They collide.
 							-- We may want to try something self-made, or leave it.
-						-- elseif (isOpenStairsUpLeft or isOpenStairsUpRight) then
-						-- elseif (isOpenStairsUpLeft) then
-						-- 	local pos0 = transfUtils.transf2Position(
-						-- 		transfUtilsUG.mul(
-						-- 			centreLaneTransf,
-						-- 			{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ + 1, 1 }
-						-- 		)
-						-- 	)
-						-- 	local posLeft = {pos0[1], pos0[2] - 5, pos0[3]}
-						-- 	local posRight = {pos0[1], pos0[2] + 5, pos0[3]}
+							-- if (isOpenStairsUpLeft) then
+							-- 	local pos0 = transfUtils.transf2Position(
+							-- 		transfUtilsUG.mul(
+							-- 			centreLaneTransf,
+							-- 			{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ + 1, 1 }
+							-- 		)
+							-- 	)
+							-- 	local posLeft2 = {pos0[1], pos0[2] - 10, pos0[3]}
+							-- 	local posLeft = {pos0[1], pos0[2] - 5, pos0[3]}
+							-- 	local posRight = {pos0[1], pos0[2] + 5, pos0[3]}
+							-- 	local posRight2 = {pos0[1], pos0[2] + 10, pos0[3]}
 
 
-						-- 	local newEdgeList = {
-						-- 		alignTerrain = false, -- only align on ground and in tunnels
-						-- 		edges = {
-						-- 			{
-						-- 				posLeft, {0, 5, 0},
-						-- 			},
-						-- 			{
-						-- 				posRight, {0, 5, 0},
-						-- 			},
-						-- 			-- {
-						-- 			-- 	pos0, {0, 2, 0},
-						-- 			-- },
-						-- 			-- {
-						-- 			-- 	posRight, {0, 2, 0},
-						-- 			-- },
-						-- 		},
-						-- 		edgeType = "BRIDGE",
-						-- 		edgeTypeName = "lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua",
-						-- 		-- freeNodes = {},
-						-- 		params = {
-						-- 			type = "lollo_1m_path_concrete.lua",
-						-- 			-- tramTrackType = "YES"
-						-- 		},
-						-- 		snapNodes = {0, 1},
-						-- 		-- tag2nodes = {},
-						-- 		type = 'STREET'
-						-- 	}
+							-- 	local newEdgeList = {
+							-- 		alignTerrain = false, -- only align on ground and in tunnels
+							-- 		edges = {
+							-- 			{
+							-- 				posLeft2, {0, 5, 0},
+							-- 			},
+							-- 			{
+							-- 				pos0, {0, 5, 0},
+							-- 			},
+							-- 			{
+							-- 				pos0, {0, 5, 0},
+							-- 			},
+							-- 			{
+							-- 				posRight2, {0, 5, 0},
+							-- 			},
+							-- 			-- {
+							-- 			-- 	posRight, {0, 5, 0},
+							-- 			-- },
+							-- 			-- {
+							-- 			-- 	pos0, {0, 2, 0},
+							-- 			-- },
+							-- 			-- {
+							-- 			-- 	posRight, {0, 2, 0},
+							-- 			-- },
+							-- 		},
+							-- 		edgeType = "BRIDGE",
+							-- 		edgeTypeName = "lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua",
+							-- 		-- freeNodes = {},
+							-- 		params = {
+							-- 			type = "lollo_1m_path_concrete.lua",
+							-- 			-- tramTrackType = "YES"
+							-- 		},
+							-- 		snapNodes = {0, 1},
+							-- 		-- tag2nodes = {},
+							-- 		type = 'STREET'
+							-- 	}
 
-						-- 	result.edgeLists[#result.edgeLists+1] = newEdgeList
+							-- 	result.edgeLists[#result.edgeLists+1] = newEdgeList
+							-- 	print('newEdgeList =') debugPrint(newEdgeList)
+							-- end
 						end
 					end
 				end
