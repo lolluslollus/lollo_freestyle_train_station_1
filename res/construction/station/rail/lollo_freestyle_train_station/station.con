@@ -510,10 +510,14 @@ function data()
 												if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
 													result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
 												end
-												result.terminateConstructionHookInfo.underpassPositionsOnBridge[t][#result.terminateConstructionHookInfo.underpassPositionsOnBridge[t]+1] = {
-													t = t,
-													pos2Link = transfUtils.transf2Position(underpassBottomTransf)
-												}
+												table.insert(
+													result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
+													{
+														t = t,
+														lanePosTanX2 = cpl.posTanX2,
+														pos2Link = transfUtils.transf2Position(underpassBottomTransf)
+													}
+												)
 
 												result.models[#result.models+1] = {
 													id = _constants.passengerLaneModelId,
@@ -607,10 +611,12 @@ function data()
 									}
 
 									if result.terminateConstructionHookInfo.trackCrossingPositions[t] == nil then result.terminateConstructionHookInfo.trackCrossingPositions[t] = {} end
+									local cpl = params.terminals[t].centrePlatformsRelative[cpf.leadingIndex]
 									table.insert(
 										result.terminateConstructionHookInfo.trackCrossingPositions[t],
 										{
 											t = t,
+											lanePosTanX2 = cpl.posTanX2,
 											pos = trackCrossingPos
 										}
 									)
@@ -646,10 +652,12 @@ function data()
 								transf = crossConnectorTransf
 							}
 							if result.terminateConstructionHookInfo.crossConnectorPositions[t] == nil then result.terminateConstructionHookInfo.crossConnectorPositions[t] = {} end
+							local cpl = params.terminals[t].centrePlatformsRelative[i]
 							table.insert(
 								result.terminateConstructionHookInfo.crossConnectorPositions[t],
 								{
 									t = t,
+									lanePosTanX2 = cpl.posTanX2,
 									pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], _laneZ)
 								}
 							)
@@ -701,79 +709,103 @@ function data()
 							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
 							end
-							result.terminateConstructionHookInfo.tunnelStairsTopPositions[t][#result.terminateConstructionHookInfo.tunnelStairsTopPositions[t]+1] = {
-								t = t,
-								pos2Link = transfUtils.transf2Position(
-									transfUtilsUG.mul(
-										centreLaneTransf,
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+							table.insert(
+								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
+								{
+									t = t,
+									lanePosTanX2 = cpl.posTanX2,
+									pos2Link = transfUtils.transf2Position(
+										transfUtilsUG.mul(
+											centreLaneTransf,
+											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+										)
 									)
-								)
-							}
+								}
+							)
 						elseif isStairsUpDown then
 							if result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] == nil then
 								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] = {}
 							end
-							result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t][#result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t]+1] = {
-								t = t,
-								pos2Link = transfUtils.transf2Position(
-									transfUtilsUG.mul(
-										centreLaneTransf,
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+							table.insert(
+								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t],
+								{
+									t = t,
+									lanePosTanX2 = cpl.posTanX2,
+									pos2Link = transfUtils.transf2Position(
+										transfUtilsUG.mul(
+											centreLaneTransf,
+											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+										)
 									)
-								)
-							}
+								}
+							)
 							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
 							end
-							result.terminateConstructionHookInfo.tunnelStairsTopPositions[t][#result.terminateConstructionHookInfo.tunnelStairsTopPositions[t]+1] = {
-								t = t,
-								pos2Link = transfUtils.transf2Position(
-									transfUtilsUG.mul(
-										centreLaneTransf,
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+							table.insert(
+								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
+								{
+									t = t,
+									lanePosTanX2 = cpl.posTanX2,
+									pos2Link = transfUtils.transf2Position(
+										transfUtilsUG.mul(
+											centreLaneTransf,
+											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+										)
 									)
-								)
-							}
+								}
+							)
 						elseif (isUnderpass and isOnBridge) or isPlatformLift then
 							if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
 								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
 							end
-							result.terminateConstructionHookInfo.underpassPositionsOnBridge[t][#result.terminateConstructionHookInfo.underpassPositionsOnBridge[t]+1] = {
-								t = t,
-								pos2Link = transfUtils.transf2Position(
-									transfUtilsUG.mul(
-										centreLaneTransf,
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+							table.insert(
+								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
+								{
+									t = t,
+									lanePosTanX2 = cpl.posTanX2,
+									pos2Link = transfUtils.transf2Position(
+										transfUtilsUG.mul(
+											centreLaneTransf,
+											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+										)
 									)
-								)
-							}
+								}
+							)
 						elseif isUnderpass then
 							if result.terminateConstructionHookInfo.underpassPositionsOnGround[t] == nil then
 								result.terminateConstructionHookInfo.underpassPositionsOnGround[t] = {}
 							end
-							result.terminateConstructionHookInfo.underpassPositionsOnGround[t][#result.terminateConstructionHookInfo.underpassPositionsOnGround[t]+1] = {
-								t = t,
-								pos2Link = transfUtils.transf2Position(
-									transfUtilsUG.mul(
-										centreLaneTransf,
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+							table.insert(
+								result.terminateConstructionHookInfo.underpassPositionsOnGround[t],
+								{
+									t = t,
+									lanePosTanX2 = cpl.posTanX2,
+									pos2Link = transfUtils.transf2Position(
+										transfUtilsUG.mul(
+											centreLaneTransf,
+											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+										)
 									)
-								)
-							}
+								}
+							)
 						elseif (isOpenStairsUpLeft or isOpenStairsUpRight) then
 							if result.terminateConstructionHookInfo.openStairsPositions[t] == nil then
 								result.terminateConstructionHookInfo.openStairsPositions[t] = {}
 							end
-							result.terminateConstructionHookInfo.openStairsPositions[t][#result.terminateConstructionHookInfo.openStairsPositions[t]+1] = {
-								t = t,
-								pos2Link = transfUtils.transf2Position(
-									transfUtilsUG.mul(
-										centreLaneTransf,
-										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.tunnelStairsUpZ + 1, 1 }
+							table.insert(
+								result.terminateConstructionHookInfo.openStairsPositions[t],
+								{
+									t = t,
+									lanePosTanX2 = cpl.posTanX2,
+									pos2Link = transfUtils.transf2Position(
+										transfUtilsUG.mul(
+											centreLaneTransf,
+											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.tunnelStairsUpZ + 1, 1 }
+										)
 									)
-								)
-							}
+								}
+							)
 							-- LOLLO TODO the following is test code!
 							-- The trouble is, bridges need a certain height and the station is just not high enough.
 							-- They collide.
@@ -1038,109 +1070,190 @@ function data()
 				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, tolerancePercent4ShortDistances, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
-					local allSegments = {}
-					local minDistanceSegments = {}
+					local _isLeft = function(posTanX2, pos)
+						-- a + b * x = y
+						-- b = dY / dX
+						-- a = y - dY / dX * x
+						-- a + dY / dX * x = y
+						local dX = posTanX2[2][1][1] - posTanX2[1][1][1]
+						local dY = posTanX2[2][1][2] - posTanX2[1][1][2]
+						-- if isOutputLog then
+						-- 	print('posTanX2 =') debugPrint(posTanX2)
+						-- 	print('pos =') debugPrint(pos)
+						-- 	print('dX =', dX, 'dY =', dY)
+						-- end
+						if dX == 0 then
+							return pos[1] < posTanX2[1][1][1]
+						end
+						local b = dY / dX
+						local a = posTanX2[1][1][2] - b * posTanX2[1][1][1]
+						-- if isOutputLog then
+						-- 	print('a =', a)
+						-- 	print('b =', b)
+						-- 	print('_isLeft =', a + b * pos[1] < pos[2])
+						-- end
+						-- solve for a = y0
+						-- local a = posTanX2[1][1][2]
+						-- I need this otherwise I look if the pos is below or above the line
+						-- but I neglect the direction of my line,
+						-- which is indeed a vector
+						if dX > 0 then
+							return a + b * pos[1] < pos[2]
+						else
+							return a + b * pos[1] > pos[2]
+						end
+					end
 					local maxT = #params.terminals
-					for t = 1, maxT do
-						local positionsInT = positionsA[t]
-						if positionsInT ~= nil then
-							for tt = 1, maxT do
-								if t ~= tt then
-									local t1 = math.min(t, tt)
-									local t2 = math.max(t, tt)
-									if minDistanceSegments[t1] == nil or minDistanceSegments[t1][t2] == nil then -- avoid repeating the same thing twice
-										local positionsInTT = positionsB[tt]
-										if positionsInTT ~= nil then
-											for i = 1, #positionsInT do
+					local _getAllSegments = function()
+					-- For each terminal, then for each connected point,
+					-- get the shortest segment on the left and the shortest segment on the right.
+					-- the reference vector is lanePosTanX2, if it exists. If it doesn't, get all.
+					-- if I have a segment from A to B and one from B to C, and also a segment from A to C,
+					-- and the latter is not much much shorter than the sum of the other two,
+					-- the latter should be ignored.
+						local minDistance_T_TT_Segments = {}
+						for t = 1, maxT do
+							local positionsInT = positionsA[t]
+							if positionsInT ~= nil then
+								for i = 1, #positionsInT do
+									local minDistance_T_I_SegmentLeft = nil
+									local minDistance_T_I_SegmentRight = nil
+									for tt = 1, maxT do
+										if t ~= tt then
+											local positionsInTT = positionsB[tt]
+											if positionsInTT ~= nil then
 												for ii = 1, #positionsInTT do
-                                                    local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
-                                                    if allSegments[t1] == nil then allSegments[t1] = {} end
-                                                    if allSegments[t1][t2] == nil then allSegments[t1][t2] = {} end
-                                                    table.insert(
-                                                        allSegments[t1][t2],
-                                                        {
-                                                            t = t1,
-                                                            tt = t2,
-                                                            i = i,
-                                                            ii = ii,
-                                                            distance = distance,
-                                                            pos2Link1 = positionsInT[i].pos2Link,
-                                                            pos2Link2 = positionsInTT[ii].pos2Link
-                                                        }
-                                                    )
-
-                                                    if minDistanceSegments[t1] == nil then minDistanceSegments[t1] = {} end
-                                                    if minDistanceSegments[t1][t2] == nil or minDistanceSegments[t1][t2].distance > distance then
-                                                        minDistanceSegments[t1][t2] = {
-                                                            t = t1,
-                                                            tt = t2,
-                                                            i = i,
-                                                            ii = ii,
-                                                            distance = distance,
-                                                            pos2Link1 = positionsInT[i].pos2Link,
-                                                            pos2Link2 = positionsInTT[ii].pos2Link
-                                                        }
-                                                    end
+													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
+													local isLeft = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)
+													local t1 = t
+													local t2 = tt
+													local t1Index = i
+													local t2Index = ii
+													if tt < t then
+														t1 = tt
+														t2 = t
+														t1Index = ii
+														t2Index = i
+													end
+													if isLeft then
+														if minDistance_T_I_SegmentLeft == nil or minDistance_T_I_SegmentLeft.distance > distance then
+															minDistance_T_I_SegmentLeft = {
+																t = t1,
+																tt = t2,
+																t1Index = t1Index,
+																t2Index = t2Index,
+																distance = distance,
+																isLeft = isLeft,
+																pos2Link1 = positionsInT[i].pos2Link,
+																pos2Link2 = positionsInTT[ii].pos2Link
+															}
+														end
+													else
+														if minDistance_T_I_SegmentRight == nil or minDistance_T_I_SegmentRight.distance > distance then
+															minDistance_T_I_SegmentRight = {
+																t = t1,
+																tt = t2,
+																t1Index = t1Index,
+																t2Index = t2Index,
+																distance = distance,
+																isLeft = isLeft,
+																pos2Link1 = positionsInT[i].pos2Link,
+																pos2Link2 = positionsInTT[ii].pos2Link
+															}
+														end
+													end
 												end
 											end
 										end
 									end
-								end
-							end
-						end
-					end
-
-					-- if I have a segment from A to B and one from B to C, and also a segment from A to C,
-					-- and the latter is not much much shorter than the sum of the other two,
-					-- ignore the latter.
-					-- It would be finer if we run it on the short segments and check the position 1 and 2, but too expensive.
-					-- remove long sides of connection triangles
-					if isOutputLog then
-						logger.print('allSegments before triangles=') logger.debugPrint(allSegments)
-						logger.print('minDistanceSegments before triangles=') logger.debugPrint(minDistanceSegments)
-					end
-					for t = 1, maxT do
-						for tt = t + 1, maxT do
-							for ttt = tt + 1, maxT do
-								if minDistanceSegments[t] ~= nil
-								and minDistanceSegments[t][tt] ~= nil and minDistanceSegments[t][ttt] ~= nil
-								and minDistanceSegments[tt] ~= nil
-								and minDistanceSegments[tt][ttt] ~= nil
-								then
-									local t_tt_distance = minDistanceSegments[t][tt].distance
-									local t_ttt_distance = minDistanceSegments[t][ttt].distance
-									local tt_ttt_distance = minDistanceSegments[tt][ttt].distance
-									local maxDistance = math.max(t_tt_distance, t_ttt_distance, tt_ttt_distance)
-									if maxDistance == t_tt_distance and (maxDistance ~= t_ttt_distance or maxDistance ~= tt_ttt_distance) then
-										minDistanceSegments[t][tt] = nil
-									elseif maxDistance == t_ttt_distance and (maxDistance ~= t_tt_distance or maxDistance ~= tt_ttt_distance) then
-										minDistanceSegments[t][ttt] = nil
-									elseif maxDistance == tt_ttt_distance and (maxDistance ~= t_tt_distance or maxDistance ~= t_ttt_distance) then
-										minDistanceSegments[tt][ttt] = nil
+									local _isTwinAlreadyThere = function(tab, rec)
+										for _, value in pairs(tab) do
+											if value.distance == rec.distance
+											and value.pos2Link1[1] == rec.pos2Link2[1]
+											and	value.pos2Link1[2] == rec.pos2Link2[2]
+											and	value.pos2Link1[3] == rec.pos2Link2[3]
+											then
+												return true
+											end
+										end
+										return false
+									end
+									if minDistance_T_I_SegmentLeft ~= nil then
+										local t1 = minDistance_T_I_SegmentLeft.t
+										local t2 = minDistance_T_I_SegmentLeft.tt
+										local t1Index = minDistance_T_I_SegmentLeft.t1Index
+										if minDistance_T_TT_Segments[t1] == nil then minDistance_T_TT_Segments[t1] = {} end
+										if minDistance_T_TT_Segments[t1][t2] == nil then minDistance_T_TT_Segments[t1][t2] = {} end
+										if minDistance_T_TT_Segments[t1][t2][t1Index] == nil then minDistance_T_TT_Segments[t1][t2][t1Index] = {} end
+										if not(_isTwinAlreadyThere(minDistance_T_TT_Segments[t1][t2][t1Index], minDistance_T_I_SegmentLeft)) then
+											table.insert(
+												minDistance_T_TT_Segments[t1][t2][t1Index],
+												minDistance_T_I_SegmentLeft
+											)
+										end
+									end
+									if minDistance_T_I_SegmentRight ~= nil then
+										local t1 = minDistance_T_I_SegmentRight.t
+										local t2 = minDistance_T_I_SegmentRight.tt
+										local t1Index = minDistance_T_I_SegmentRight.t1Index
+										if minDistance_T_TT_Segments[t1] == nil then minDistance_T_TT_Segments[t1] = {} end
+										if minDistance_T_TT_Segments[t1][t2] == nil then minDistance_T_TT_Segments[t1][t2] = {} end
+										if minDistance_T_TT_Segments[t1][t2][t1Index] == nil then minDistance_T_TT_Segments[t1][t2][t1Index] = {} end
+										if not(_isTwinAlreadyThere(minDistance_T_TT_Segments[t1][t2][t1Index], minDistance_T_I_SegmentRight)) then
+											table.insert(
+												minDistance_T_TT_Segments[t1][t2][t1Index],
+												minDistance_T_I_SegmentRight
+											)
+										end
+									end
+									if isOutputLog then
+										print('t = ', t)
+										print('i = ', i)
+										print('minDistance_T_TT_Segments = ') debugPrint(minDistance_T_TT_Segments)
 									end
 								end
 							end
 						end
+						return minDistance_T_TT_Segments
 					end
+					local allSegments = _getAllSegments()
+
 					if isOutputLog then
-						logger.print('minDistanceSegments after triangles=') logger.debugPrint(minDistanceSegments)
+						print('allSegments before triangles=') debugPrint(allSegments)
+						-- print('minDistanceSegments before triangles=') debugPrint(minDistanceSegments)
 					end
+
                     local shortSegments = {}
                     for t = 1, maxT do
                         for tt = t + 1, maxT do
-							if minDistanceSegments[t] ~= nil and minDistanceSegments[t][tt] ~= nil then
-								for _, value in pairs(allSegments[t][tt]) do
-									if tolerancePercent4ShortDistances == nil or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
+							-- if minDistanceSegments[t] ~= nil and minDistanceSegments[t][tt] ~= nil then
+							if allSegments and allSegments[t] and allSegments[t][tt] then
+								for _, segments in pairs(allSegments[t][tt]) do
+									-- print('key =') debugPrint(key)
+									-- print('### segments =') debugPrint(segments)
+									local newShortSegment = nil
+									for _, segment in pairs(segments) do
+										if newShortSegment == nil or newShortSegment.distance > segment.distance then
+											newShortSegment = segment
+										end
+									end
+									-- print('value2 =') debugPrint(value2)
+									-- if tolerancePercent4ShortDistances == nil
+									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
+									if newShortSegment ~= nil then
 										if shortSegments[t] == nil then shortSegments[t] = {} end
 										if shortSegments[t][tt] == nil then shortSegments[t][tt] = {} end
-										table.insert(shortSegments[t][tt], value)
+										table.insert(shortSegments[t][tt], newShortSegment)
 									end
 								end
                             end
                         end
 					end
 
-					return shortSegments, minDistanceSegments
+					if isOutputLog then
+						print('shortSegments =') debugPrint(shortSegments)
+					end
+					return shortSegments
 					-- return minDistances
 				end
 
@@ -1207,47 +1320,46 @@ function data()
 						end
 					end
 
-					local shortSegmentsOnGround, minDistanceSegmentsOnGround = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					local shortSegmentsOnGround = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						1.42
 					)
 
-					local shortSegmentsOpenStairs, minDistanceSegmentsOpenStairs = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					local shortSegmentsOpenStairs = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.openStairsPositions,
 						result.terminateConstructionHookInfo.openStairsPositions,
-						1.6 --1.42
+						1.42 --1.6 --1.42
+						-- true
 					)
 
 					-- logger.print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') logger.debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
-					local shortSegmentsOnBridge, minDistanceSegmentsOnBridge = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					local shortSegmentsOnBridge = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
 						1.42
 					)
 
-					local shortSegmentsTunnelTops2Tops, minDistanceSegmentsInTunnel = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					local shortSegmentsTunnelTops2Tops = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
 						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
 						1.42
 					)
 
                     -- LOLLO TODO MAYBE link the following only once, like with subways
-					local shortSegmentsTunnelTops2Surface, minDistanceSegmentsUnderground2Surface = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					local shortSegmentsTunnelTops2Surface = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
                         result.terminateConstructionHookInfo.underpassPositionsOnGround,
 						1.01
 					)
 
-					-- logger.print('result.terminateConstructionHookInfo.liftBottomPositions =') logger.debugPrint(result.terminateConstructionHookInfo.liftBottomPositions)
-					-- logger.print('result.terminateConstructionHookInfo.tunnelStairsTopPositions =') logger.debugPrint(result.terminateConstructionHookInfo.tunnelStairsTopPositions)
-					local shortSegmentsTunnelTops2BridgeBottoms, minDistanceSegments_UndergroundTop_BridgeBottom = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					local shortSegmentsTunnelTops2BridgeBottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
                         result.terminateConstructionHookInfo.liftBottomPositions,
 						1.01
 					)
 
-					local shortSegmentsTunnelTops2Bottoms, minDistanceSegmentsUnderground2Underground = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					local shortSegmentsTunnelTops2Bottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
                         result.terminateConstructionHookInfo.tunnelStairsBottomPositions,
                         1.01
@@ -1298,7 +1410,7 @@ function data()
                     -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
 
-					_linkAcross(shortSegmentsOpenStairs, 48, "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_16m.mdl")
+					_linkAcross(shortSegmentsOpenStairs, 99, "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_16m.mdl")
 					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance

@@ -55,13 +55,17 @@ return {
 		}
 
 		if result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] == nil then result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] = {} end
-		result.terminateConstructionHookInfo.liftBottomPositions[nTerminal][#result.terminateConstructionHookInfo.liftBottomPositions[nTerminal]+1] = {
-			t = nTerminal,
-			pos2Link = transfUtils.transf2Position(
-					transfUtilsUG.mul(buildingTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.0, -buildingHeight + _constants.underpassZ, 1 })
-				)
-		}
-
+		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+		table.insert(
+			result.terminateConstructionHookInfo.liftBottomPositions[nTerminal],
+			{
+				t = nTerminal,
+				lanePosTanX2 = cpl.posTanX2,
+				pos2Link = transfUtils.transf2Position(
+						transfUtilsUG.mul(buildingTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.0, -buildingHeight + _constants.underpassZ, 1 })
+					)
+			}
+		)
 		table.insert(result.slots, {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.stationSquareOuterSlotId),
 			shape = 1,
