@@ -1186,7 +1186,7 @@ function data()
 					end
 					-- Now we put all segments together, avoiding duplicates or redundant links.
 
-                    local _getSegmentWithTAndTTSwapped = function (oldSegment, isMakeT1LessThanT2)
+                    local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
                         local newSegment = {}
 						if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
                         or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
@@ -1212,7 +1212,7 @@ function data()
                     end
 					local minDistance_T_I_Segments_SmallTFirst = {}
 					for _, segment in pairs(minDistanceSegments) do
-						local newSegment = _getSegmentWithTAndTTSwapped(segment, true)
+						local newSegment = _getSegmentWithT1AndT2Sorted(segment, true)
 						if minDistance_T_I_Segments_SmallTFirst[newSegment.t1] == nil then minDistance_T_I_Segments_SmallTFirst[newSegment.t1] = {} end
 						if minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index] == nil then minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index] = {} end
 						table.insert(minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index], newSegment)
@@ -1221,7 +1221,7 @@ function data()
 					-- minDistance_T_I_Segments_SmallTFirst is indexed by t1 (lowest terminal) and t1Index (index of connection point along it).
 					-- In the following, I index the results by t2 (highest terminal) and t2Index (index of connection point along it).
 					-- removing redundant links (eg if there are two or more links heading left or right, I only keep the shortest)
-					local minDistance_TT_II_Segments_LargeTFirst = {}
+					local minDistance_TT_II_Segments_SmallTFirst = {}
                     for t = 1, _maxT do
 						if minDistance_T_I_Segments_SmallTFirst and minDistance_T_I_Segments_SmallTFirst[t] then
 							for _, segmentsTouchingPoint in pairs(minDistance_T_I_Segments_SmallTFirst[t]) do
@@ -1237,12 +1237,12 @@ function data()
 										end
 									end
 									if isNewSegmentThere then
-                                        -- newShortSegment = _getSegmentWithTAndTTSwapped(newShortSegment, false)
+                                        -- newShortSegment = _getSegmentWithT1AndT2Sorted(newShortSegment, false)
 										local t2 = newShortSegment.t2
 										local t2Index = newShortSegment.t2Index
-										if minDistance_TT_II_Segments_LargeTFirst[t2] == nil then minDistance_TT_II_Segments_LargeTFirst[t2] = {} end
-										if minDistance_TT_II_Segments_LargeTFirst[t2][t2Index] == nil then minDistance_TT_II_Segments_LargeTFirst[t2][t2Index] = {} end
-										table.insert(minDistance_TT_II_Segments_LargeTFirst[t2][t2Index], newShortSegment)
+										if minDistance_TT_II_Segments_SmallTFirst[t2] == nil then minDistance_TT_II_Segments_SmallTFirst[t2] = {} end
+										if minDistance_TT_II_Segments_SmallTFirst[t2][t2Index] == nil then minDistance_TT_II_Segments_SmallTFirst[t2][t2Index] = {} end
+										table.insert(minDistance_TT_II_Segments_SmallTFirst[t2][t2Index], newShortSegment)
 									end
 								end
 							end
@@ -1250,17 +1250,17 @@ function data()
 					end
 
 					if isOutputLog then
-						print('minDistance_TT_II_Segments_LargeTFirst =') debugPrint(minDistance_TT_II_Segments_LargeTFirst)
+						print('minDistance_TT_II_Segments_SmallTFirst =') debugPrint(minDistance_TT_II_Segments_SmallTFirst)
 					end
 
-					-- minDistance_TT_II_Segments_LargeTFirst is indexed by t2 (highest terminal) and t2Index (index of connection point along it).
+					-- minDistance_TT_II_Segments_SmallTFirst is indexed by t2 (highest terminal) and t2Index (index of connection point along it).
 					-- In the following, I index the results by t1 (lowest terminal) and t2 (highest terminal).
 					-- removing redundant links (eg if there are two or more links heading left or right, I only keep the shortest)
 					-- Now, I have removed all redundant links
-					local short_T_TT_Segments = {}
+					local short_T_TT_Segments_SmallTFirst = {}
                     for t = 1, _maxT do
-						if minDistance_TT_II_Segments_LargeTFirst and minDistance_TT_II_Segments_LargeTFirst[t] then
-							for _, segmentsTouchingPoint in pairs(minDistance_TT_II_Segments_LargeTFirst[t]) do
+						if minDistance_TT_II_Segments_SmallTFirst and minDistance_TT_II_Segments_SmallTFirst[t] then
+							for _, segmentsTouchingPoint in pairs(minDistance_TT_II_Segments_SmallTFirst[t]) do
 								for _, isLeftOfT1 in pairs({true, false}) do
 									local newShortSegment = {distance = 9999, isLeftOfT1 = isLeftOfT1}
 									local isNewSegmentThere = false
@@ -1275,22 +1275,22 @@ function data()
 									-- if tolerancePercent4ShortDistances == nil
 									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
 									if isNewSegmentThere then
-                                        -- newShortSegment = _getSegmentWithTAndTTSwapped(newShortSegment, true)
+                                        -- newShortSegment = _getSegmentWithT1AndT2Sorted(newShortSegment, true)
 										local t1 = newShortSegment.t1
 										local t2 = newShortSegment.t2
-										if short_T_TT_Segments[t1] == nil then short_T_TT_Segments[t1] = {} end
-										if short_T_TT_Segments[t1][t2] == nil then short_T_TT_Segments[t1][t2] = {} end
-										table.insert(short_T_TT_Segments[t1][t2], newShortSegment)
+										if short_T_TT_Segments_SmallTFirst[t1] == nil then short_T_TT_Segments_SmallTFirst[t1] = {} end
+										if short_T_TT_Segments_SmallTFirst[t1][t2] == nil then short_T_TT_Segments_SmallTFirst[t1][t2] = {} end
+										table.insert(short_T_TT_Segments_SmallTFirst[t1][t2], newShortSegment)
 									end
 								end
 							end
 						end
 					end
 					if isOutputLog then
-						print('short_T_TT_Segments =') debugPrint(short_T_TT_Segments)
+						print('short_T_TT_Segments_SmallTFirst =') debugPrint(short_T_TT_Segments_SmallTFirst)
 					end
 
-					return short_T_TT_Segments
+					return short_T_TT_Segments_SmallTFirst
 				end
 
 				local _linkUnderpassesAndStairs = function()
