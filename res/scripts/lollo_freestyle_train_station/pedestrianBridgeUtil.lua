@@ -1,5 +1,6 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local bridgeutil = require 'bridgeutil'
+local mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
 
 local utils = {}
 utils.getData = function(isSides)
@@ -155,6 +156,172 @@ utils.getData = function(isSides)
         -- updateFn = updateFn,
         updateFn = newUpdateFn,
     }
+end
+
+utils.getModel = function(nSegments)
+    local _2nSegments = 2 * nSegments
+    local _iMax = _2nSegments - 2
+	local lod0Children  = {}
+
+	for i = 0, _iMax, 2 do
+		lod0Children[#lod0Children + 1] = {
+			children = {
+				{
+					children = {
+						{
+							name = "cement_bridge_bone_2m_start",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+						},
+						{
+							name = "cement_bridge_bone_2m_end",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+						},
+					},
+					name = "container_2m",
+					skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod0.msh",
+					skinMaterials = {
+						-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+						"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+						"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+					},
+				},
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -0.25, 0, 1, },
+		}
+		lod0Children[#lod0Children + 1] = {
+			children = {
+				{
+					children = {
+						{
+							name = "cement_bridge_bone_2m_start_side1",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+						},
+						{
+							name = "cement_bridge_bone_2m_end_side1",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+						},
+					},
+					name = "container_2m_side1",
+					skin = (i == 0 or i == _iMax)
+						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh"
+						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh",
+					skinMaterials = (i == 0 or i == _iMax)
+						and {
+							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl"
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+						}
+						or {
+							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+						},
+				},
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -0.5, 0, 1, },
+		}
+		lod0Children[#lod0Children + 1] = {
+			children = {
+				{
+					children = {
+						{
+							name = "cement_bridge_bone_2m_start_side2",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+						},
+						{
+							name = "cement_bridge_bone_2m_end_side2",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+						},
+					},
+					name = "container_2m_side2",
+					skin = (i == 0 or i == _iMax)
+						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh"
+						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh",
+					skinMaterials = (i == 0 or i == _iMax)
+						and {
+							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+						}
+						or {
+							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
+							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+						},
+				},
+			},
+			transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, i, 0.5, 0, 1, },
+		}
+	end
+
+	return {
+		boundingInfo = mdlHelpers.getVoidBoundingInfo(),
+		collider = mdlHelpers.getVoidCollider(),
+		lods = {
+			{
+				node = {
+					children =  lod0Children,
+					name = "lod0Children",
+					transf = { 1 / _2nSegments, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 0,
+				visibleTo = 200,
+			},
+			{
+				node = {
+					children = {
+						{
+							mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
+							-- materials = { "bridge/cement.mtl", },
+							materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.5, 0, 1, },
+						},
+						{
+							mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod1.msh",
+							materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.25, 0, 1, },
+						},
+						{
+							mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
+							-- materials = { "bridge/cement.mtl", },
+							materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+							transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0.5, 0, 1, },
+						},
+					},
+					name = "lod1Children",
+					transf = { 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 200,
+				visibleTo = 600,
+			},
+		},
+		metadata = {
+			transportNetworkProvider = {
+				laneLists = {
+					{
+						linkable = false, -- false, --true,
+						nodes = {
+							{
+								{ 0, 0, 0 },
+								{ 1, 0, 0 },
+								1.5,
+							},
+							{
+								{ 1, 0, 0 },
+								{ 1, 0, 0 },
+								1.5,
+							},
+						},
+						transportModes = { 'PERSON', },
+						speedLimit = 20,
+					},
+				},
+				runways = { },
+				terminals = { },
+			},
+		},
+		version = 1,
+	}
 end
 
 return utils

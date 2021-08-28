@@ -1323,7 +1323,7 @@ function data()
 					-- There can be multiple links if they are short enough
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
-					local function _linkAcross(segments, maxDistance, modelId)
+					local function _linkAcross(segments, maxDistance, getModelId)
 						local maxT = #params.terminals
 						for t = 1, maxT do
 							if segments[t] ~= nil then
@@ -1331,9 +1331,9 @@ function data()
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
-												if modelId then
+												if getModelId then
 													result.models[#result.models+1] = {
-														id = modelId,
+														id = getModelId(value.distance),
 														transf = transfUtils.get1MModelTransf(
 															value.pos2Link1,
 															value.pos2Link2
@@ -1446,7 +1446,13 @@ function data()
                     -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
 
-					_linkAcross(shortSegmentsOpenStairs, 99, "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_16m.mdl")
+					local _getPedestrianBridgeModelId = function(length)
+						if length < 12 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_8m.mdl"
+						elseif length < 24 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_16m.mdl"
+						else return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_32m.mdl"
+						end
+					end
+					_linkAcross(shortSegmentsOpenStairs, 99, _getPedestrianBridgeModelId)
 					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
