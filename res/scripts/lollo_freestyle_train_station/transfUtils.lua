@@ -73,31 +73,31 @@ utils.flipXYZ = function(m)
     }
 end
 
-utils.mul = function(m1, m2)
-    -- returns the product of two 1x16 vectors
-    local m = function(line, col)
-        local l = (line - 1) * 4
-        return m1[l + 1] * m2[col + 0] + m1[l + 2] * m2[col + 4] + m1[l + 3] * m2[col + 8] + m1[l + 4] * m2[col + 12]
-    end
-    return {
-        m(1, 1),
-        m(1, 2),
-        m(1, 3),
-        m(1, 4),
-        m(2, 1),
-        m(2, 2),
-        m(2, 3),
-        m(2, 4),
-        m(3, 1),
-        m(3, 2),
-        m(3, 3),
-        m(3, 4),
-        m(4, 1),
-        m(4, 2),
-        m(4, 3),
-        m(4, 4)
-    }
-end
+-- utils.mul = function(m1, m2)
+--     -- returns the product of two 1x16 vectors
+--     local m = function(line, col)
+--         local l = (line - 1) * 4
+--         return m1[l + 1] * m2[col + 0] + m1[l + 2] * m2[col + 4] + m1[l + 3] * m2[col + 8] + m1[l + 4] * m2[col + 12]
+--     end
+--     return {
+--         m(1, 1),
+--         m(1, 2),
+--         m(1, 3),
+--         m(1, 4),
+--         m(2, 1),
+--         m(2, 2),
+--         m(2, 3),
+--         m(2, 4),
+--         m(3, 1),
+--         m(3, 2),
+--         m(3, 3),
+--         m(3, 4),
+--         m(4, 1),
+--         m(4, 2),
+--         m(4, 3),
+--         m(4, 4)
+--     }
+-- end
 
 utils.getInverseTransf = function(transf)
     local matrix = _getMatrix(transf)
