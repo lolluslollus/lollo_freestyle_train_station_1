@@ -107,7 +107,7 @@ function data()
 			["OpenStairsExitName_16m"] = "Entrance to stairs, 16 m",
 			["OpenStairsExitName_32m"] = "Entrance to stairs, 32 m",
 			["OpenStairsExitName_64m"] = "Entrance to stairs, 64 m",
-            ["OpenStairsExitDesc"] = "Connect stairs to the outside",
+            ["OpenStairsExitDesc"] = "Connect stairs to the outside. Adjust the tilt with <m> and <n>.",
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
 			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It connects to underpasses. Max height 40 m, adjust it with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
 			["PassengerPlatformLiftName"] = "Passenger lift to a bridge",
