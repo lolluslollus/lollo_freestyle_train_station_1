@@ -34,8 +34,8 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(32, era)
+		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+		local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(32, eraPrefix)
 
 		result.models[#result.models + 1] = {
 			id = modelId,

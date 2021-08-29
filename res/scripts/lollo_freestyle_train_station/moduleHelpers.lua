@@ -939,6 +939,7 @@ helpers.openStairs = {
         return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
     end,
     getPedestrianBridgeModelId = function(length, eraPrefix)
+        -- eraPrefix is a string like 'era_a_'
         local lengthStr = '4'
         if length < 6 then lengthStr = '4'
         elseif length < 12 then lengthStr = '8'
@@ -949,22 +950,21 @@ helpers.openStairs = {
 
         local newEraPrefix = eraPrefix
         if newEraPrefix ~= helpers.eras.era_a.prefix and newEraPrefix ~= helpers.eras.era_b.prefix and newEraPrefix ~= helpers.eras.era_c.prefix then
-            newEraPrefix = helpers.eras.era_c.prefix -- 'era_c_'
+            newEraPrefix = helpers.eras.era_c.prefix
         end
         local modelId = 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_' .. lengthStr .. 'm.mdl'
 
         return modelId
     end,
     getPedestrianBridgeModelId_Compressed = function(length, eraOfT1Prefix, eraOfT2Prefix)
-        -- LOLLO TODO adjust it when you have the era-dependent models
         -- eraOfT1 and eraOfT2 are strings like 'era_a_'
         local newEraPrefix1 = eraOfT1Prefix
         if newEraPrefix1 ~= helpers.eras.era_a.prefix and newEraPrefix1 ~= helpers.eras.era_b.prefix and newEraPrefix1 ~= helpers.eras.era_c.prefix then
-            newEraPrefix1 = helpers.eras.era_c.prefix -- 'era_c_'
+            newEraPrefix1 = helpers.eras.era_c.prefix
         end
         local newEraPrefix2 = eraOfT2Prefix
         if newEraPrefix2 ~= helpers.eras.era_a.prefix and newEraPrefix2 ~= helpers.eras.era_b.prefix and newEraPrefix2 ~= helpers.eras.era_c.prefix then
-            newEraPrefix2 = helpers.eras.era_c.prefix -- 'era_c_'
+            newEraPrefix2 = helpers.eras.era_c.prefix
         end
         local newEraPrefix = (newEraPrefix1 > newEraPrefix2) and newEraPrefix1 or newEraPrefix2
 

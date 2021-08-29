@@ -34,10 +34,10 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 		local modelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_openStairsUpModelId
-		elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_openStairsUpModelId
+		if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_openStairsUpModelId
+		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_openStairsUpModelId
 		else modelId = _constants.era_c_openStairsUpModelId
 		end
 		result.models[#result.models + 1] = {
