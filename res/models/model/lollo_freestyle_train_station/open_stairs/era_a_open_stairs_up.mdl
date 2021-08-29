@@ -12,9 +12,9 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/wall_grey_3.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
+                                'lollo_freestyle_train_station/square_cobbles.mtl',
                                 'lollo_freestyle_train_station/metal/rough_copper.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
+                                'lollo_freestyle_train_station/square_cobbles.mtl',
                                 'lollo_freestyle_train_station/square_cobbles_z.mtl'
                             },
                             mesh = 'lollo_freestyle_train_station/open_stairs/open-stairs-up-half-8m-no-top-railing.msh',
