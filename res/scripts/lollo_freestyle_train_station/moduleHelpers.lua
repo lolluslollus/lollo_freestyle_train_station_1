@@ -929,6 +929,17 @@ helpers.getEraPrefix = function(params, nTerminal, nTrackEdge)
     return result
 end
 
+helpers.openStairs = {
+    getExitModelTransf = function(slotTransf, slotId, params)
+        local _maxRad = 0.5
+
+        local variant = helpers.getVariant(params, slotId) * 0.05
+		if variant > _maxRad then variant = _maxRad elseif variant < -_maxRad then variant = -_maxRad end
+
+        return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
+    end
+}
+
 helpers.platforms = {
     addPlatform = function(result, tag, slotId, params, nTerminal)
         -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.

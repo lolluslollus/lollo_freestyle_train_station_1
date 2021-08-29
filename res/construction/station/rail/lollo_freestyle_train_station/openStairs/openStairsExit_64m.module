@@ -41,7 +41,7 @@ return {
 		result.models[#result.models + 1] = {
 			id = modelId,
 			slotId = slotId,
-			transf = slotTransf,
+			transf = moduleHelpers.openStairs.getExitModelTransf(slotTransf, slotId, params),
 			tag = tag
 		}
 		result.models[#result.models + 1] = {

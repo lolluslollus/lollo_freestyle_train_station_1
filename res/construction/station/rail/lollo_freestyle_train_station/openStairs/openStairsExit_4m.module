@@ -39,11 +39,10 @@ return {
 		local modelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl' -- LOLLO TODO remove after adding eras
 		-- print('openStairsExit era =') debugPrint(era)
 		-- print('openStairsExit modelId =') debugPrint(modelId)
-        -- LOLLO TODO add tilting transf if possible, to this and its twins
 		result.models[#result.models + 1] = {
 			id = modelId,
 			slotId = slotId,
-			transf = slotTransf,
+			transf = moduleHelpers.openStairs.getExitModelTransf(slotTransf, slotId, params),
 			tag = tag
 		}
 		result.models[#result.models + 1] = {
