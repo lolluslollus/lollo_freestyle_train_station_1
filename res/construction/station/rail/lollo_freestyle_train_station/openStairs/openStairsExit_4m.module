@@ -15,7 +15,7 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "passenger-up-and-down", },
+		categories = { "passenger-road-access", },
 	},
 	cost = {
 		price = 0,
@@ -27,7 +27,7 @@ return {
 	},
 	metadata = { },
 	order = {
-		value = 75,
+		value = 61,
 	},
 	type = _constants.openStairsExitModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -35,10 +35,8 @@ return {
 		if not nTerminal or not baseId then return end
 
 		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local modelId = 'lollo_freestyle_train_station/open_stairs/' .. era .. 'bridge_chunk_4m.mdl'
-		local modelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl' -- LOLLO TODO remove after adding eras
-		-- print('openStairsExit era =') debugPrint(era)
-		-- print('openStairsExit modelId =') debugPrint(modelId)
+		local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(4, era)
+
 		result.models[#result.models + 1] = {
 			id = modelId,
 			slotId = slotId,

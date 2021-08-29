@@ -937,7 +937,31 @@ helpers.openStairs = {
 		if variant > _maxRad then variant = _maxRad elseif variant < -_maxRad then variant = -_maxRad end
 
         return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
-    end
+    end,
+    getPedestrianBridgeModelId = function(length, era)
+        -- era is a string like 'era_a_'
+        local lengthStr = '4'
+        if length < 6 then lengthStr = '4'
+        elseif length < 12 then lengthStr = '8'
+        elseif length < 24 then lengthStr = '16'
+        elseif length < 48 then lengthStr = '32'
+        else lengthStr = '64'
+        end
+
+        era = 'era_c_' -- LOLLO TODO remove when you have the era-dependent models
+        local modelId = 'lollo_freestyle_train_station/open_stairs/' .. era .. 'bridge_chunk_' .. lengthStr .. 'm.mdl'
+
+        return modelId
+    end,
+    getPedestrianBridgeModelId_Compressed = function(length, eraOfT1, eraOfT2)
+        -- LOLLO TODO adjust it when you have the era-dependent models
+        -- eraOfT1 and eraOfT2 are strings like 'era_a_'
+        if length < 12 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_8m.mdl"
+        elseif length < 24 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_16m.mdl"
+        elseif length < 48 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_32m.mdl"
+        else return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_64m.mdl"
+        end
+    end,
 }
 
 helpers.platforms = {

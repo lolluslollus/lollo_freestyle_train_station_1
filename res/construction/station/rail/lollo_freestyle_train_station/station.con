@@ -811,6 +811,7 @@ function data()
 								result.terminateConstructionHookInfo.openStairsPositions[t],
 								{
 									t = t,
+									era = cpl.era,
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
@@ -820,64 +821,6 @@ function data()
 									)
 								}
 							)
-
-							-- LOLLO TODO the following is test code!
-							-- The trouble is, bridges need a certain height and the station is just not high enough.
-							-- They collide.
-							-- We may want to try something self-made, or leave it.
-							-- if (isOpenStairsUpLeft) then
-							-- 	local pos0 = transfUtils.transf2Position(
-							-- 		transfUtilsUG.mul(
-							-- 			centreLaneTransf,
-							-- 			{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.openStairsUpZ, 1 }
-							-- 		)
-							-- 	)
-							-- 	local posLeft2 = {pos0[1], pos0[2] - 10, pos0[3]}
-							-- 	local posLeft = {pos0[1], pos0[2] - 5, pos0[3]}
-							-- 	local posRight = {pos0[1], pos0[2] + 5, pos0[3]}
-							-- 	local posRight2 = {pos0[1], pos0[2] + 10, pos0[3]}
-
-
-							-- 	local newEdgeList = {
-							-- 		alignTerrain = false, -- only align on ground and in tunnels
-							-- 		edges = {
-							-- 			{
-							-- 				posLeft2, {0, 5, 0},
-							-- 			},
-							-- 			{
-							-- 				pos0, {0, 5, 0},
-							-- 			},
-							-- 			{
-							-- 				pos0, {0, 5, 0},
-							-- 			},
-							-- 			{
-							-- 				posRight2, {0, 5, 0},
-							-- 			},
-							-- 			-- {
-							-- 			-- 	posRight, {0, 5, 0},
-							-- 			-- },
-							-- 			-- {
-							-- 			-- 	pos0, {0, 2, 0},
-							-- 			-- },
-							-- 			-- {
-							-- 			-- 	posRight, {0, 2, 0},
-							-- 			-- },
-							-- 		},
-							-- 		edgeType = "BRIDGE",
-							-- 		edgeTypeName = "lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua",
-							-- 		-- freeNodes = {},
-							-- 		params = {
-							-- 			type = "lollo_1m_path_concrete.lua",
-							-- 			-- tramTrackType = "YES"
-							-- 		},
-							-- 		snapNodes = {0, 1},
-							-- 		-- tag2nodes = {},
-							-- 		type = 'STREET'
-							-- 	}
-
-							-- 	result.edgeLists[#result.edgeLists+1] = newEdgeList
-							-- 	print('newEdgeList =') debugPrint(newEdgeList)
-							-- end
 						end
 					end
 				end
@@ -1094,7 +1037,7 @@ function data()
 					return results
 				end
 
-				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, tolerancePercent4ShortDistances, isOutputLog)
+				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
 					local _isLeft = function(posTanX2, pos)
@@ -1147,37 +1090,27 @@ function data()
 											local positionsInTT = positionsB[tt]
 											if positionsInTT ~= nil then
 												for ii = 1, #positionsInTT do
-													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
 													local isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)
-                                                    local t1 = t
-                                                    local t2 = tt
-                                                    local t1Index = i
-                                                    local t2Index = ii
+													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
+													local newSegment = {
+														t1 = t,
+														t2 = tt,
+														t1Index = i,
+														t2Index = ii,
+														distance = distance,
+														isLeftOfT1 = isLeftOfT1,
+														pos2Link1 = positionsInT[i].pos2Link,
+														pos2Link2 = positionsInTT[ii].pos2Link,
+														eraOfT1 = positionsInT[i].era,
+														eraOfT2 = positionsInTT[ii].era,
+													}
 													if isLeftOfT1 then
 														if minDistance_T_I_SegmentLeft == nil or minDistance_T_I_SegmentLeft.distance > distance then
-															minDistance_T_I_SegmentLeft = {
-																t1 = t1,
-																t2 = t2,
-																t1Index = t1Index,
-																t2Index = t2Index,
-																distance = distance,
-																isLeftOfT1 = isLeftOfT1,
-																pos2Link1 = positionsInT[i].pos2Link,
-																pos2Link2 = positionsInTT[ii].pos2Link
-															}
+															minDistance_T_I_SegmentLeft = newSegment
 														end
 													else
 														if minDistance_T_I_SegmentRight == nil or minDistance_T_I_SegmentRight.distance > distance then
-															minDistance_T_I_SegmentRight = {
-																t1 = t1,
-																t2 = t2,
-																t1Index = t1Index,
-																t2Index = t2Index,
-																distance = distance,
-																isLeftOfT1 = isLeftOfT1,
-																pos2Link1 = positionsInT[i].pos2Link,
-																pos2Link2 = positionsInTT[ii].pos2Link
-															}
+															minDistance_T_I_SegmentRight = newSegment
 														end
 													end
 												end
@@ -1212,6 +1145,8 @@ function data()
 							newSegment.isLeftOfT1 = oldSegment.isLeftOfT1
 							newSegment.pos2Link1 = oldSegment.pos2Link1
 							newSegment.pos2Link2 = oldSegment.pos2Link2
+							newSegment.eraOfT1 = oldSegment.eraOfT1
+							newSegment.eraOfT2 = oldSegment.eraOfT2
 						else
 							newSegment.t1 = oldSegment.t2
 							newSegment.t2 = oldSegment.t1
@@ -1221,6 +1156,8 @@ function data()
 							newSegment.isLeftOfT1 = not(oldSegment.isLeftOfT1)
 							newSegment.pos2Link1 = oldSegment.pos2Link1
 							newSegment.pos2Link2 = oldSegment.pos2Link2
+							newSegment.eraOfT1 = oldSegment.eraOfT2
+							newSegment.eraOfT2 = oldSegment.eraOfT1
 						end
                         return newSegment
                     end
@@ -1230,6 +1167,10 @@ function data()
 						if minDistance_T_I_Segments_SmallTFirst[newSegment.t1] == nil then minDistance_T_I_Segments_SmallTFirst[newSegment.t1] = {} end
 						if minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index] == nil then minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index] = {} end
 						table.insert(minDistance_T_I_Segments_SmallTFirst[newSegment.t1][newSegment.t1Index], newSegment)
+					end
+
+					if isOutputLog then
+						print('minDistance_T_I_Segments_SmallTFirst =') debugPrint(minDistance_T_I_Segments_SmallTFirst)
 					end
 
 					-- minDistance_T_I_Segments_SmallTFirst is indexed by t1 (lowest terminal) and t1Index (index of connection point along it).
@@ -1251,7 +1192,7 @@ function data()
 										end
 									end
 									if isNewSegmentThere then
-                                        -- newShortSegment = _getSegmentWithT1AndT2Sorted(newShortSegment, false)
+                                        newShortSegment = _getSegmentWithT1AndT2Sorted(newShortSegment, false)
 										local t2 = newShortSegment.t2
 										local t2Index = newShortSegment.t2Index
 										if minDistance_TT_II_Segments_SmallTFirst[t2] == nil then minDistance_TT_II_Segments_SmallTFirst[t2] = {} end
@@ -1289,7 +1230,7 @@ function data()
 									-- if tolerancePercent4ShortDistances == nil
 									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
 									if isNewSegmentThere then
-                                        -- newShortSegment = _getSegmentWithT1AndT2Sorted(newShortSegment, true)
+                                        newShortSegment = _getSegmentWithT1AndT2Sorted(newShortSegment, true)
 										local t1 = newShortSegment.t1
 										local t2 = newShortSegment.t2
 										if short_T_TT_Segments_SmallTFirst[t1] == nil then short_T_TT_Segments_SmallTFirst[t1] = {} end
@@ -1347,7 +1288,7 @@ function data()
 											if not(maxDistance) or value.distance <= maxDistance then
 												if getModelId then
 													result.models[#result.models+1] = {
-														id = getModelId(value.distance),
+														id = getModelId(value.distance, value.eraOfT1, value.eraOfT2),
 														transf = transfUtils.get1MModelTransf(
 															value.pos2Link1,
 															value.pos2Link2
@@ -1372,47 +1313,39 @@ function data()
 
 					local shortSegmentsOnGround = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnGround,
-						result.terminateConstructionHookInfo.underpassPositionsOnGround,
-						1.42
+						result.terminateConstructionHookInfo.underpassPositionsOnGround
 					)
 
 					local shortSegmentsOpenStairs = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.openStairsPositions,
-						result.terminateConstructionHookInfo.openStairsPositions,
-						1.42 --1.6 --1.42
+						result.terminateConstructionHookInfo.openStairsPositions
 						-- true
 					)
 
-					-- logger.print('result.terminateConstructionHookInfo.underpassPositionsOnBridge =') logger.debugPrint(result.terminateConstructionHookInfo.underpassPositionsOnBridge)
 					local shortSegmentsOnBridge = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						1.42
+						result.terminateConstructionHookInfo.underpassPositionsOnBridge
 					)
 
 					local shortSegmentsTunnelTops2Tops = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-						1.42
+						result.terminateConstructionHookInfo.tunnelStairsTopPositions
 					)
 
                     -- LOLLO TODO MAYBE link the following only once, like with subways
 					local shortSegmentsTunnelTops2Surface = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-                        result.terminateConstructionHookInfo.underpassPositionsOnGround,
-						1.01
+                        result.terminateConstructionHookInfo.underpassPositionsOnGround
 					)
 
 					local shortSegmentsTunnelTops2BridgeBottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-                        result.terminateConstructionHookInfo.liftBottomPositions,
-						1.01
+                        result.terminateConstructionHookInfo.liftBottomPositions
 					)
 
 					local shortSegmentsTunnelTops2Bottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-                        result.terminateConstructionHookInfo.tunnelStairsBottomPositions,
-                        1.01
+                        result.terminateConstructionHookInfo.tunnelStairsBottomPositions
                     )
                     -- Remove redundant up-down connectors.
                     -- There could be trouble with a steep underground station with two levels:
@@ -1460,14 +1393,7 @@ function data()
                     -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
 
-					local _getPedestrianBridgeModelId = function(length)
-						if length < 12 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_8m.mdl"
-						elseif length < 24 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_16m.mdl"
-						elseif length < 48 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_32m.mdl"
-						else return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_64m.mdl"
-						end
-					end
-					_linkAcross(shortSegmentsOpenStairs, 99, _getPedestrianBridgeModelId)
+					_linkAcross(shortSegmentsOpenStairs, 99, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
 					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
