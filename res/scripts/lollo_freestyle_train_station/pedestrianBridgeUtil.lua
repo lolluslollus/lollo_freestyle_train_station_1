@@ -158,12 +158,18 @@ utils.getData = function(isSides)
     }
 end
 
-utils.getModel = function(nSegments)
+utils.getModel = function(nSegments, isCompressed)
+    if (not(nSegments) or nSegments < 2) then nSegments = 2 end
     local _2nSegments = 2 * nSegments
-    local _iMax = _2nSegments - 2
-	local lod0Children  = {}
+    local _iMaxLod0 = _2nSegments - 2
+    local _iMaxLod1 = nSegments - 1
+    local _xFactorLod0 = isCompressed and (1 / _2nSegments) or 1
+    local _xFactorLod1 = isCompressed and (1 / nSegments) or 2
+    local _xFactorTN = isCompressed and 1 or _2nSegments
+	local _isTNLinkable = not(isCompressed)
 
-	for i = 0, _iMax, 2 do
+	local lod0Children  = {}
+	for i = 0, _iMaxLod0, 2 do
 		lod0Children[#lod0Children + 1] = {
 			children = {
 				{
@@ -202,10 +208,10 @@ utils.getModel = function(nSegments)
 						},
 					},
 					name = "container_2m_side1",
-					skin = (i == 0 or i == _iMax)
+					skin = (i == 0 or i == _iMaxLod0)
 						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh"
 						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh",
-					skinMaterials = (i == 0 or i == _iMax)
+					skinMaterials = (i == 0 or i == _iMaxLod0)
 						and {
 							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl"
 							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
@@ -233,10 +239,10 @@ utils.getModel = function(nSegments)
 						},
 					},
 					name = "container_2m_side2",
-					skin = (i == 0 or i == _iMax)
+					skin = (i == 0 or i == _iMaxLod0)
 						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh"
 						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh",
-					skinMaterials = (i == 0 or i == _iMax)
+					skinMaterials = (i == 0 or i == _iMaxLod0)
 						and {
 							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
 							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
@@ -252,7 +258,38 @@ utils.getModel = function(nSegments)
 		}
 	end
 
-	return {
+	local lod1Children  = {}
+	for i = 0, _iMaxLod1, 2 do
+		lod1Children[#lod1Children + 1] = {
+			children = {
+				{
+                    mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
+                    materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+				},
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -0.5, 0, 1, },
+		}
+		lod1Children[#lod1Children + 1] = {
+			children = {
+				{
+                    mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod1.msh",
+                    materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+				},
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -0.25, 0, 1, },
+		}
+		lod1Children[#lod1Children + 1] = {
+			children = {
+				{
+                    mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
+                    materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+				},
+			},
+			transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, i, 0.5, 0, 1, },
+		}
+	end
+
+    return {
 		boundingInfo = mdlHelpers.getVoidBoundingInfo(),
 		collider = mdlHelpers.getVoidCollider(),
 		lods = {
@@ -260,7 +297,7 @@ utils.getModel = function(nSegments)
 				node = {
 					children =  lod0Children,
 					name = "lod0Children",
-					transf = { 1 / _2nSegments, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+					transf = { _xFactorLod0, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
 				},
 				static = false,
 				visibleFrom = 0,
@@ -268,27 +305,9 @@ utils.getModel = function(nSegments)
 			},
 			{
 				node = {
-					children = {
-						{
-							mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
-							-- materials = { "bridge/cement.mtl", },
-							materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.5, 0, 1, },
-						},
-						{
-							mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod1.msh",
-							materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.25, 0, 1, },
-						},
-						{
-							mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
-							-- materials = { "bridge/cement.mtl", },
-							materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
-							transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0.5, 0, 1, },
-						},
-					},
+					children =  lod1Children,
 					name = "lod1Children",
-					transf = { 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					transf = { _xFactorLod1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
 				},
 				static = false,
 				visibleFrom = 200,
@@ -299,16 +318,16 @@ utils.getModel = function(nSegments)
 			transportNetworkProvider = {
 				laneLists = {
 					{
-						linkable = false, -- false, --true,
+						linkable = _isTNLinkable, -- false, --true,
 						nodes = {
 							{
 								{ 0, 0, 0 },
-								{ 1, 0, 0 },
+								{ _xFactorTN, 0, 0 },
 								1.5,
 							},
 							{
-								{ 1, 0, 0 },
-								{ 1, 0, 0 },
+								{ _xFactorTN, 0, 0 },
+								{ _xFactorTN, 0, 0 },
 								1.5,
 							},
 						},

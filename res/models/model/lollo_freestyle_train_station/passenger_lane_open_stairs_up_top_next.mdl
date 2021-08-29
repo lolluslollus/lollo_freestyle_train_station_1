@@ -23,42 +23,42 @@ function data()
                         linkable = false, -- false, --true,
                         nodes = {
                             {
-                                { 0, 0, _constants.tunnelStairsUpZ - 1, },
+                                { 0, 0, _constants.openStairsUpZ - 2, },
                                 { 0.25, 0, 0, },
                                 1.0,
                             },
                             {
-                                { 0.25, 0, _constants.tunnelStairsUpZ + 1, },
+                                { 0.25, 0, _constants.openStairsUpZ, },
                                 { 0.25, 0, 0, },
                                 1.0,
                             },
                             {
-                                { 0.25, 0, _constants.tunnelStairsUpZ + 1, },
+                                { 0.25, 0, _constants.openStairsUpZ, },
                                 { 0.25, 0, 0, },
                                 1.0,
                             },
                             {
-                                { 0.5, 0, _constants.tunnelStairsUpZ + 1, },
+                                { 0.5, 0, _constants.openStairsUpZ, },
                                 { 0.25, 0, 0, },
                                 1.0,
                             },
                             -- {
-                            --     { 0.5, 0, _constants.tunnelStairsUpZ + 1, },
+                            --     { 0.5, 0, _constants.openStairsUpZ, },
                             --     { 0.25, 0, 0, },
                             --     1.0,
                             -- },
                             -- {
-                            --     { 0.75, 0, _constants.tunnelStairsUpZ + 1, },
+                            --     { 0.75, 0, _constants.openStairsUpZ, },
                             --     { 0.25, 0, 0, },
                             --     1.0,
                             -- },
                             -- {
-                            --     { 0.75, 0, _constants.tunnelStairsUpZ + 1, },
+                            --     { 0.75, 0, _constants.openStairsUpZ, },
                             --     { 0.25, 0, 0, },
                             --     1.0,
                             -- },
                             -- {
-                            --     { 1, 0, _constants.tunnelStairsUpZ - 1, },
+                            --     { 1, 0, _constants.openStairsUpZ - 2, },
                             --     { 0.25, 0, 0, },
                             --     1.0,
                             -- },
@@ -66,6 +66,33 @@ function data()
                         transportModes = { 'PERSON', },
                         speedLimit = 20,
                     },
+                    -- {
+                    --     linkable = false,
+                    --     nodes = {
+                    --         {
+                    --             { 0.5, -1, _constants.openStairsUpZ, },
+                    --             { 0, 1, 0, },
+                    --             1.0,
+                    --         },
+                    --         {
+                    --             { 0.5, 0, _constants.openStairsUpZ, },
+                    --             { 0, 1, 0, },
+                    --             1.0,
+                    --         },
+                    --         {
+                    --             { 0.5, 0, _constants.openStairsUpZ, },
+                    --             { 0, 1, 0, },
+                    --             1.0,
+                    --         },
+                    --         {
+                    --             { 0.5, 1, _constants.openStairsUpZ, },
+                    --             { 0, 1, 0, },
+                    --             1.0,
+                    --         },
+                    --     },
+                    --     transportModes = { 'PERSON', },
+                    --     speedLimit = 20,
+                    -- },
                 },
                 runways = { },
                 terminals = { },

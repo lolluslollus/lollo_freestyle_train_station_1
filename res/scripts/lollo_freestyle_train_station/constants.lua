@@ -40,6 +40,7 @@ local constants = {
     subwayPos2LinkX = 4,
     subwayPos2LinkY = 0,
     subwayPos2LinkZ = -4,
+    openStairsUpZ = 8,
     trackCrossingZ = 0.45,
     trackCrossingRaise = 0.25,
 
@@ -201,7 +202,7 @@ local constants = {
     passengerLaneLinkableRaisedModelId = 'lollo_freestyle_train_station/passenger_lane_linkable_raised.mdl',
     passengerLaneOpenStairsUpBottomNextModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_next.mdl',
     passengerLaneOpenStairsUpBottomPrevModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_prev.mdl',
-    passengerLaneOpenStairsUpTopModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top.mdl',
+    -- passengerLaneOpenStairsUpTopModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top.mdl',
     passengerLaneOpenStairsUpTopNextModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_next.mdl',
     passengerLaneOpenStairsUpTopPrevModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_prev.mdl',
     passengerLaneTunnelStairsUpModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up.mdl',

@@ -21,14 +21,13 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("OpenStairsExitName"),
+		name = _("OpenStairsExitName_8m"),
 		description = _("OpenStairsExitDesc"),
-        -- LOLLO TODO make the icon
-		icon = "ui/lollo_freestyle_train_station/openStairsExit.tga"
+		icon = "ui/lollo_freestyle_train_station/openStairsExit8m.tga"
 	},
 	metadata = { },
 	order = {
-		value = 75,
+		value = 76,
 	},
 	type = _constants.openStairsExitModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -36,12 +35,9 @@ return {
 		if not nTerminal or not baseId then return end
 
 		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local modelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_openStairsExitModelId
-		elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_openStairsExitModelId
-		else modelId = _constants.era_c_openStairsExitModelId
-		end
-        -- LOLLO TODO fix the transformations below
+		local modelId = 'lollo_freestyle_train_station/open_stairs/' .. era .. 'bridge_chunk_8m.mdl'
+		local modelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_8m.mdl' -- LOLLO TODO remove after adding eras
+
 		result.models[#result.models + 1] = {
 			id = modelId,
 			slotId = slotId,
@@ -49,9 +45,9 @@ return {
 			tag = tag
 		}
 		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/passenger_lane_linkable.mdl',
+			id = 'lollo_freestyle_train_station/passenger_lane.mdl',
 			slotId = slotId,
-			transf = slotTransf,
+			transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}),
 			tag = tag
 		}
 	end,
@@ -59,7 +55,7 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = _constants.era_c_openStairsExitModelId,
+				id = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_8m.mdl',
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

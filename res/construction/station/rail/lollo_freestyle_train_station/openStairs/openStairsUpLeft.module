@@ -46,26 +46,25 @@ return {
 			transf = slotTransf,
 			tag = tag
 		}
-        -- LOLLO TODO fix the transformations below
         table.insert(result.slots, {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitInnerSlotId),
 			shape = 1,
-			spacing = {-1, 4, 4, 4},
+			spacing = {-1, 4, 1, 1},
 			transf = transfUtilsUG.mul(
 				slotTransf,
-				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -3.4, 0, 1 }
+				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -1, _constants.openStairsUpZ, 1 }
 			),
 			type = _constants.openStairsExitModuleType,
 		})
 		table.insert(result.slots, {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.stationSquareOuterSlotId),
 			shape = 1,
-			spacing = {-1, 4, 4, 4},
+			spacing = {-1, 4, 1, 1},
 			transf = transfUtilsUG.mul(
 				slotTransf,
-				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 2.9, 0, 1 }
+				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 1, _constants.openStairsUpZ, 1 }
 			),
-			type = _constants.passengerStationSquareModuleType,
+			type = _constants.openStairsExitModuleType,
 		})
 	end,
 

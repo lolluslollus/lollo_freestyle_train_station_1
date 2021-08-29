@@ -1,5 +1,5 @@
 local pedestrianBridgeUtils = require('lollo_freestyle_train_station.pedestrianBridgeUtil')
 
 function data()
-	return pedestrianBridgeUtils.getModel(8)
+	return pedestrianBridgeUtils.getModel(8, false)
 end
