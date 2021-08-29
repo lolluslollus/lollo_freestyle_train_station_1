@@ -33,11 +33,11 @@ function data()
             },
             polygon_offset = {
                 factor = 0,
-                forceDepthWrite = true, -- false
+                forceDepthWrite = true,
                 units = 0,
             },
             two_sided = {
-                flipNormal = false, -- true
+                flipNormal = false,
                 twoSided = false,
             },
         },

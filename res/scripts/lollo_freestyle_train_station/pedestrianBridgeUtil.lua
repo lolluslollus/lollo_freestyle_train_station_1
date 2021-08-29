@@ -1,6 +1,52 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local bridgeutil = require 'bridgeutil'
 local mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+
+local _lod0_skinMaterials_era_a_rep = {
+	'lollo_freestyle_train_station/wall_grey_3_skinned.mtl',
+	'lollo_freestyle_train_station/wall_grey_3_skinned.mtl',
+}
+local _lod0_skinMaterials_era_a_side = {
+	'lollo_freestyle_train_station/wall_grey_3_skinned.mtl',
+	"lollo_freestyle_train_station/metal/rough_copper_skinned.mtl",
+}
+local _lod0_skinMaterials_era_a_side_no_railing = {
+	'lollo_freestyle_train_station/wall_grey_3_skinned.mtl',
+}
+local _lod1_materials_era_a = {
+	'lollo_freestyle_train_station/wall_grey_3.mtl',
+}
+
+local _lod0_skinMaterials_era_b_rep = {
+	"lollo_freestyle_train_station/wall_marble_1_skinned.mtl",
+	"lollo_freestyle_train_station/wall_marble_1_skinned.mtl",
+}
+local _lod0_skinMaterials_era_b_side = {
+	"lollo_freestyle_train_station/wall_marble_1_skinned.mtl",
+	"lollo_freestyle_train_station/metal/rough_copper_skinned.mtl",
+}
+local _lod0_skinMaterials_era_b_side_no_railing = {
+	"lollo_freestyle_train_station/wall_marble_1_skinned.mtl",
+}
+local _lod1_materials_era_b = {
+	"lollo_freestyle_train_station/wall_marble_1.mtl",
+}
+
+local _lod0_skinMaterials_era_c_rep = {
+	"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+	"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+}
+local _lod0_skinMaterials_era_c_side = {
+	"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+	"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+}
+local _lod0_skinMaterials_era_c_side_no_railing = {
+	"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+}
+local _lod1_materials_era_c = {
+	"lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
+}
 
 local utils = {}
 utils.getData = function(isSides)
@@ -158,8 +204,9 @@ utils.getData = function(isSides)
     }
 end
 
-utils.getModel = function(nSegments, isCompressed)
+utils.getModel = function(nSegments, isCompressed, eraPrefix)
     if (not(nSegments) or nSegments < 2) then nSegments = 2 end
+
     local _2nSegments = 2 * nSegments
     local _iMaxLod0 = _2nSegments - 2
     local _iMaxLod1 = nSegments - 1
@@ -167,6 +214,27 @@ utils.getModel = function(nSegments, isCompressed)
     local _xFactorLod1 = isCompressed and (1 / nSegments) or 2
     local _xFactorTN = isCompressed and 1 or _2nSegments
 	local _isTNLinkable = not(isCompressed)
+
+	local _lod0_skinMaterials_rep = {}
+	local _lod0_skinMaterials_side = {}
+	local _lod0_skinMaterials_side_no_railing = {}
+	local _lod1_materials = {}
+	if eraPrefix == moduleHelpers.eras.era_a.prefix then
+		_lod0_skinMaterials_rep = _lod0_skinMaterials_era_a_rep
+		_lod0_skinMaterials_side = _lod0_skinMaterials_era_a_side
+		_lod0_skinMaterials_side_no_railing = _lod0_skinMaterials_era_a_side_no_railing
+		_lod1_materials = _lod1_materials_era_a
+	elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
+		_lod0_skinMaterials_rep = _lod0_skinMaterials_era_b_rep
+		_lod0_skinMaterials_side = _lod0_skinMaterials_era_b_side
+		_lod0_skinMaterials_side_no_railing = _lod0_skinMaterials_era_b_side_no_railing
+		_lod1_materials = _lod1_materials_era_b
+	else
+		_lod0_skinMaterials_rep = _lod0_skinMaterials_era_c_rep
+		_lod0_skinMaterials_side = _lod0_skinMaterials_era_c_side
+		_lod0_skinMaterials_side_no_railing = _lod0_skinMaterials_era_c_side_no_railing
+		_lod1_materials = _lod1_materials_era_c
+	end
 
 	local lod0Children  = {}
 	for i = 0, _iMaxLod0, 2 do
@@ -185,11 +253,7 @@ utils.getModel = function(nSegments, isCompressed)
 					},
 					name = "container_2m",
 					skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod0.msh",
-					skinMaterials = {
-						-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
-						"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
-						"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
-					},
+					skinMaterials = _lod0_skinMaterials_rep,
 				},
 			},
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -0.25, 0, 1, },
@@ -212,15 +276,8 @@ utils.getModel = function(nSegments, isCompressed)
 						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh"
 						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh",
 					skinMaterials = (i == 0 or i == _iMaxLod0)
-						and {
-							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl"
-							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
-						}
-						or {
-							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
-							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
-							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
-						},
+						and _lod0_skinMaterials_side_no_railing
+						or _lod0_skinMaterials_side,
 				},
 			},
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -0.5, 0, 1, },
@@ -243,15 +300,8 @@ utils.getModel = function(nSegments, isCompressed)
 						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh"
 						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh",
 					skinMaterials = (i == 0 or i == _iMaxLod0)
-						and {
-							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
-							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
-						}
-						or {
-							-- "lollo_freestyle_train_station/bridge/cement_skinned_2_sided.mtl",
-							"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
-							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
-						},
+						and _lod0_skinMaterials_side_no_railing
+						or _lod0_skinMaterials_side,
 				},
 			},
 			transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, i, 0.5, 0, 1, },
@@ -264,7 +314,7 @@ utils.getModel = function(nSegments, isCompressed)
 			children = {
 				{
                     mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
-                    materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+                    materials = _lod1_materials,
 				},
 			},
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -0.5, 0, 1, },
@@ -273,7 +323,7 @@ utils.getModel = function(nSegments, isCompressed)
 			children = {
 				{
                     mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod1.msh",
-                    materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+                    materials = _lod1_materials,
 				},
 			},
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, i, -0.25, 0, 1, },
@@ -282,7 +332,7 @@ utils.getModel = function(nSegments, isCompressed)
 			children = {
 				{
                     mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
-                    materials = { "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl", },
+                    materials = _lod1_materials,
 				},
 			},
 			transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, i, 0.5, 0, 1, },

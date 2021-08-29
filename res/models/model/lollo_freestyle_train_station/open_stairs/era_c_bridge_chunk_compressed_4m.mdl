@@ -1,5 +1,6 @@
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local pedestrianBridgeUtils = require('lollo_freestyle_train_station.pedestrianBridgeUtil')
 
 function data()
-	return pedestrianBridgeUtils.getModel(2, true)
+	return pedestrianBridgeUtils.getModel(2, true, moduleHelpers.eras.era_c.prefix)
 end

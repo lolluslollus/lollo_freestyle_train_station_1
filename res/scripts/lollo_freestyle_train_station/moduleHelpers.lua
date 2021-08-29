@@ -1,13 +1,13 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
-local modulesutil = require "modulesutil"
+local modulesutil = require 'modulesutil'
 local slotUtils = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require 'transf'
-local vec3 = require "vec3"
-local vec4 = require "vec4"
+local vec3 = require 'vec3'
+local vec4 = require 'vec4'
 
 
 local helpers = {
@@ -730,7 +730,7 @@ helpers.doTerrain4Subways = function(result, slotTransf, groundFacesStrokeOuterK
             optional = true,
             slopeHigh = _constants.slopeHigh,
 			slopeLow = _constants.slopeLow,
-            type = "EQUAL",
+            type = 'EQUAL',
         }
     )
 end
@@ -931,15 +931,14 @@ end
 
 helpers.openStairs = {
     getExitModelTransf = function(slotTransf, slotId, params)
-        local _maxRad = 0.5
+        local _maxRad = 0.36
 
         local variant = helpers.getVariant(params, slotId) * 0.05
 		if variant > _maxRad then variant = _maxRad elseif variant < -_maxRad then variant = -_maxRad end
 
         return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
     end,
-    getPedestrianBridgeModelId = function(length, era)
-        -- era is a string like 'era_a_'
+    getPedestrianBridgeModelId = function(length, eraPrefix)
         local lengthStr = '4'
         if length < 6 then lengthStr = '4'
         elseif length < 12 then lengthStr = '8'
@@ -948,18 +947,32 @@ helpers.openStairs = {
         else lengthStr = '64'
         end
 
-        era = 'era_c_' -- LOLLO TODO remove when you have the era-dependent models
-        local modelId = 'lollo_freestyle_train_station/open_stairs/' .. era .. 'bridge_chunk_' .. lengthStr .. 'm.mdl'
+        local newEraPrefix = eraPrefix
+        if newEraPrefix ~= helpers.eras.era_a.prefix and newEraPrefix ~= helpers.eras.era_b.prefix and newEraPrefix ~= helpers.eras.era_c.prefix then
+            newEraPrefix = helpers.eras.era_c.prefix -- 'era_c_'
+        end
+        local modelId = 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_' .. lengthStr .. 'm.mdl'
 
         return modelId
     end,
-    getPedestrianBridgeModelId_Compressed = function(length, eraOfT1, eraOfT2)
+    getPedestrianBridgeModelId_Compressed = function(length, eraOfT1Prefix, eraOfT2Prefix)
         -- LOLLO TODO adjust it when you have the era-dependent models
         -- eraOfT1 and eraOfT2 are strings like 'era_a_'
-        if length < 12 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_8m.mdl"
-        elseif length < 24 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_16m.mdl"
-        elseif length < 48 then return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_32m.mdl"
-        else return "lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_compressed_64m.mdl"
+        local newEraPrefix1 = eraOfT1Prefix
+        if newEraPrefix1 ~= helpers.eras.era_a.prefix and newEraPrefix1 ~= helpers.eras.era_b.prefix and newEraPrefix1 ~= helpers.eras.era_c.prefix then
+            newEraPrefix1 = helpers.eras.era_c.prefix -- 'era_c_'
+        end
+        local newEraPrefix2 = eraOfT2Prefix
+        if newEraPrefix2 ~= helpers.eras.era_a.prefix and newEraPrefix2 ~= helpers.eras.era_b.prefix and newEraPrefix2 ~= helpers.eras.era_c.prefix then
+            newEraPrefix2 = helpers.eras.era_c.prefix -- 'era_c_'
+        end
+        local newEraPrefix = (newEraPrefix1 > newEraPrefix2) and newEraPrefix1 or newEraPrefix2
+
+        if length < 6 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_4m.mdl'
+        elseif length < 12 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_8m.mdl'
+        elseif length < 24 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_16m.mdl'
+        elseif length < 48 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_32m.mdl'
+        else return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_64m.mdl'
         end
     end,
 }
