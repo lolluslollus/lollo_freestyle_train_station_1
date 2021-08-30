@@ -811,7 +811,7 @@ function data()
 								result.terminateConstructionHookInfo.openStairsPositions[t],
 								{
 									t = t,
-									era = cpl.era,
+									era = moduleHelpers.getEraPrefix(params, t, i),
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
@@ -878,7 +878,6 @@ function data()
 					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
 						isEven = not(isEven)
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
 						local era = moduleHelpers.getEraPrefix(params, t, i)
 						local mySpacing = {3, -0.1, 1, 1}
 						local myTransf = transfUtilsUG.mul(
