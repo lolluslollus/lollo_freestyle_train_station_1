@@ -1,6 +1,7 @@
 function data()
 	return {
-		type = 'RAIL_STATION',
+        type = 'TRACK_CONSTRUCTION',
+		-- type = 'RAIL_STATION',
         -- type = 'ASSET_DEFAULT',
 		description = {
 			name = _("LookUndergroundName"),
