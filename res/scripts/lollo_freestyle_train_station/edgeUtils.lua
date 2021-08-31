@@ -55,20 +55,21 @@ helper.getPositionsMiddle = function(pos0, pos1)
     return transfUtils.getPositionsMiddle(pos0, pos1)
 end
 
-helper.getNearbyEntities = function(transf)
-    if type(transf) ~= 'table' then return {} end
+-- do not use this, it calls the old game.interface, which can freeze the game
+-- helper.getNearbyEntitiesOLD = function(transf)
+--     if type(transf) ~= 'table' then return {} end
 
-    -- debugger()
-    local edgeSearchRadius = 0.0
-    local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
-    local results = game.interface.getEntities(
-        {pos = squareCentrePosition, radius = edgeSearchRadius},
-        {includeData = true}
-        -- {includeData = true}
-    )
+--     -- debugger()
+--     local edgeSearchRadius = 0.0
+--     local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
+--     local results = game.interface.getEntities(
+--         {pos = squareCentrePosition, radius = edgeSearchRadius},
+--         {includeData = true}
+--         -- {includeData = true}
+--     )
 
-    return results
-end
+--     return results
+-- end
 
 local function swap(num1, num2)
     local swapTemp = num1
@@ -92,9 +93,9 @@ helper.getNearbyObjectIds = function(transf, searchRadius, componentType)
         -- print('callback0 found entity', entity)
         -- print('boundingVolume =')
         -- debugPrint(boundingVolume)
-        if not(entity) then return {} end
+        if not(entity) then return end
 
-        if not(api.engine.getComponent(entity, componentType)) then return {} end
+        if not(api.engine.getComponent(entity, componentType)) then return end
         -- print('the entity has the right component type')
 
         results[#results+1] = entity
@@ -110,15 +111,63 @@ helper.getNearbyObjectIds = function(transf, searchRadius, componentType)
         if node == nil then return {} end
         -- print('the entity has the right component type')
 
-        if math.abs(node.position.x - _position[1]) > _searchRadius then return {} end
-        if math.abs(node.position.y - _position[2]) > _searchRadius then return {} end
-        if math.abs(node.position.z - _position[3]) > _searchRadius then return {} end
+        if math.abs(node.position.x - _position[1]) > _searchRadius then return end
+        if math.abs(node.position.y - _position[2]) > _searchRadius then return end
+        if math.abs(node.position.z - _position[3]) > _searchRadius then return end
 
         results[#results+1] = entity
     end
     local callbackInUse = componentType == api.type.ComponentType.BASE_NODE and callback4Nodes or callbackDefault
     api.engine.system.octreeSystem.findIntersectingEntities(_box0, callbackInUse)
 
+    return results
+end
+
+helper.getNearbyObjects = function(transf, searchRadius, componentType)
+    if type(transf) ~= 'table' then return {} end
+
+    if not(componentType) then componentType = api.type.ComponentType.BASE_EDGE end
+
+    local _position = transfUtils.getVec123Transformed({0, 0, 0}, transf)
+    local _searchRadius = searchRadius or 0.5
+    local _box0 = api.type.Box3.new(
+        api.type.Vec3f.new(_position[1] - _searchRadius, _position[2] - _searchRadius, -9999),
+        api.type.Vec3f.new(_position[1] + _searchRadius, _position[2] + _searchRadius, 9999)
+    )
+    local results = {}
+    local callbackDefault = function(entityId, boundingVolume)
+        -- print('callback0 found entity', entity)
+        -- print('boundingVolume =')
+        -- debugPrint(boundingVolume)
+        if not(entityId) then return end
+
+        local props = api.engine.getComponent(entityId, componentType)
+        -- print('the entity has the right component type')
+        results[entityId] = props
+    end
+    -- LOLLO NOTE nodes may have a bounding box: for them, we check the position only
+    local callback4Nodes = function(entityId, boundingVolume)
+        -- print('callback0 found entity', entity)
+        -- print('boundingVolume =')
+        -- debugPrint(boundingVolume)
+        if not(entityId) then return end
+
+        local props = api.engine.getComponent(entityId, api.type.ComponentType.BASE_NODE)
+        if not(props) then
+            results[entityId] = props
+            return
+        end
+        -- print('the entity has the right component type')
+
+        if math.abs(props.position.x - _position[1]) > _searchRadius then return end
+        if math.abs(props.position.y - _position[2]) > _searchRadius then return end
+        if math.abs(props.position.z - _position[3]) > _searchRadius then return end
+
+        results[entityId] = props
+    end
+    local callbackInUse = (componentType == api.type.ComponentType.BASE_NODE) and callback4Nodes or callbackDefault
+    api.engine.system.octreeSystem.findIntersectingEntities(_box0, callbackInUse)
+    -- print('getNearbyObjects about to return') debugPrint(results)
     return results
 end
 
@@ -456,6 +505,22 @@ helper.getNodeBetweenOLD = function(position0, tangent0, position1, tangent1, be
     end
 
     return nodeBetween
+end
+
+helper.isEdgeFrozen = function(edgeId)
+    if not(helper.isValidAndExistingId(edgeId)) then return false end
+
+    local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
+    if not(helper.isValidAndExistingId(conId)) then return false end
+
+    local conData = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+    if not(conData) or not(conData.frozenEdges) then return false end
+
+    for _, value in pairs(conData.frozenEdges) do
+        if value == edgeId then return true end
+    end
+
+    return false
 end
 
 helper.getEdgeObjectsIdsWithModelId = function(edgeObjects, refModelId)

@@ -54,7 +54,7 @@ local function _getFilesInDir_Posix(dirPath, filterFn)
     pfile:close()
 
     -- print('LOLLO files in dir = ')
-    -- dump(true)(results)
+    -- debugPrint(results)
     return results
 end
 
@@ -156,8 +156,8 @@ fileUtils.readGameDataFile = function(filePath)
     -- this works, but it returns a file that returns nothing, coz street files are structured this way
     -- local file, err = loadfile(<full path>)
     -- print('LOLLO err = ', err)
-    -- print(inspect(file)) -- a function
-    -- print(inspect(file())) -- nil. Note that street files do not return anything.
+    -- debugPrint(file) -- a function
+    -- debugPrint(file()) -- nil. Note that street files do not return anything.
 
     -- file has type userdata
     -- print('LOLLO start reading the file')
@@ -176,9 +176,9 @@ fileUtils.readGameDataFile = function(filePath)
     fileContents, howManyMatches = string.gsub(fileContents, searchStr, 'return function(', 1)
 
     -- print('LOLLO adjusted file contents = ')
-    -- dump(true)(fileContents)
+    -- debugPrint(fileContents)
     -- print('LOLLO howManyMatches = ')
-    -- dump(true)(howManyMatches)
+    -- debugPrint(howManyMatches)
 
     if howManyMatches == 0 then
         return false
@@ -202,7 +202,7 @@ fileUtils.readGameDataFile = function(filePath)
         local ok, fc = pcall(func)
         if ok then
             -- print('LOLLO test 4 load -----------------------------------')
-            -- dump(true)(fc()) -- fc now contains my street data!
+            -- debugPrint(fc()) -- fc now contains my street data!
             return true, fc()
         else
             print('lollo file utils - Execution error:', fc)
