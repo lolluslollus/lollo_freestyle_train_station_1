@@ -1710,14 +1710,14 @@ function data()
                                 local _platformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
                                 local _trackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
 
-                                local _validateWaypointBuilt = function(targetWaypointModelId, mustBeOnPlatform)
+                                local _validateWaypointBuilt = function(targetWaypointModelId, newWaypointId, lastBuiltEdgeId, mustBeOnPlatform)
                                     logger.print('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
                                     -- UG TODO this is empty, ask UG to fix this: can't we have the waypointId in args.result?
                                     -- The problem persists with build 33345
                                     logger.print('waypoint built, args.result =') logger.debugPrint(args.result)
 
                                     -- logger.print('args.proposal.proposal.addedSegments =') logger.debugPrint(args.proposal.proposal.addedSegments)
-                                    local lastBuiltEdgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, args.proposal.proposal.addedSegments[1])
+                                    if not(edgeUtils.isValidAndExistingId(newWaypointId)) then print('lollo freestyle train station ERROR with newWaypointId') return false end
                                     if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then print('lollo freestyle train station ERROR with lastBuiltEdgeId') return false end
 
                                     logger.print('lastBuiltEdgeId =') logger.debugPrint(lastBuiltEdgeId)
@@ -1729,9 +1729,6 @@ function data()
 
                                     -- logger.print('edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, waypointModelId) =')
                                     -- logger.debugPrint(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
-                                    local newWaypointId = arrayUtils.getLast(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
-                                    logger.print('attempted to retrieve newWaypointId, newWaypointId =', newWaypointId or 'NULL', 'lastBuiltEdgeId =', lastBuiltEdgeId, '#args.proposal.proposal.addedSegments =', #args.proposal.proposal.addedSegments)
-                                    if not(newWaypointId) then return false end
 
                                     -- forbid building track waypoint on a platform or platform waypoint on a track
                                     if trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType) ~= mustBeOnPlatform then
@@ -2029,7 +2026,11 @@ function data()
                                 end
                                 -- LOLLO NOTE as I added an edge object, I have NOT split the edge
                                 if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _platformWaypointModelId then
-                                    local waypointData = _validateWaypointBuilt(_platformWaypointModelId, true)
+                                    local waypointData = _validateWaypointBuilt(_platformWaypointModelId,
+                                        args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
+                                        args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
+                                        true
+                                    )
                                     logger.print('platformWaypointData =') logger.debugPrint(waypointData)
                                     if not(waypointData) then return end
 
@@ -2041,14 +2042,18 @@ function data()
                                     -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
 
                                 elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _trackWaypointModelId then
-                                    local waypointData = _validateWaypointBuilt(_trackWaypointModelId, false)
+                                    local waypointData = _validateWaypointBuilt(_trackWaypointModelId,
+                                        args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
+                                        args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
+                                        false
+                                    )
                                     logger.print('trackWaypointData =') logger.debugPrint(waypointData)
                                     if not(waypointData) then return end
 
                                     _handleValidWaypointBuilt()
                                 end
                             end
-                        elseif id == 'trackBuilder' or id == 'streetTrackModifier' then
+                        --[[ elseif id == 'trackBuilder' or id == 'streetTrackModifier' then
                             -- I get here in 3 cases:
                             -- 1) a new track is built (id = trackBuilder)
                             -- 2) an existing track is changed to a different type (id = streetTrackModifier)
@@ -2102,7 +2107,7 @@ function data()
                                         waypointId = removeTrackWaypointsEventArgs[i].waypointId,
                                     }
                                 ))
-                            end
+                            end ]]
                         end
                     elseif name == 'select' then
                         -- LOLLO TODO MAYBE same with stations. Maybe one day.
