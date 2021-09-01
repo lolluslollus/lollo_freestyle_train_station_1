@@ -1599,6 +1599,7 @@ function data()
         guiHandleEvent = function(id, name, args)
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
             -- logger.print('guiHandleEvent caught id =', id, 'name =', name)
+            if (name ~= 'builder.apply' and name ~= 'select') then return end -- for performance
             local _joinSubway = function(subwayConstructionId)
                 if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
 
