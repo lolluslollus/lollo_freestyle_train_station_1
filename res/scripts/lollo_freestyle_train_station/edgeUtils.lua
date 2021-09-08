@@ -195,7 +195,7 @@ helper.getEdgeLength = function(edgeId)
     -- return tn.edges[1].geometry.length
 end
 
-helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift021) --, length)
+helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift0To1) --, length)
     -- these should be identical, but they are not really so, so we average them
     local length0 = helper.getVectorLength({
         x = tangent0.x,
@@ -210,7 +210,7 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
     local length = (length0 + length1) * 0.5
     if type(length) ~= 'number' or length <= 0 then return nil end
 
-    -- print('getNodeBetween starting, shift021 =', shift021, 'length =', length)
+    -- print('getNodeBetween starting, shift0To1 =', shift0To1, 'length =', length)
     -- print('baseEdge =') debugPrint(baseEdge)
     -- print('baseNode0 =') debugPrint(baseNode0)
     -- print('baseNode1 =') debugPrint(baseNode1)
@@ -270,9 +270,9 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
     -- print(testZ, 'should be', position1.z)
     if not(helper.isNumVeryClose(testZ, position1.z, 3)) then return nil end
 
-    local lMid = shift021 * length
+    local lMid = shift0To1 * length
     local result = {
-        refDistance0 = length * shift021,
+        refDistance0 = length * shift0To1,
         refPosition0 = {
             x = position0.x,
             y = position0.y,
@@ -283,7 +283,7 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
             y = tangent0.y,
             z = tangent0.z,
         },
-        refDistance1 = length * (1 - shift021),
+        refDistance1 = length * (1 - shift0To1),
         refPosition1 = {
             x = position1.x,
             y = position1.y,
@@ -294,8 +294,8 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
             y = tangent1.y,
             z = tangent1.z,
         },
-        -- length0 = length * shift021,
-        -- length1 = length * (1 - shift021),
+        -- length0 = length * shift0To1,
+        -- length1 = length * (1 - shift0To1),
         position = {
             x = aX + bX * lMid + cX * lMid * lMid + dX * lMid * lMid * lMid,
             y = aY + bY * lMid + cY * lMid * lMid + dY * lMid * lMid * lMid,
@@ -312,10 +312,10 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
     return result
 end
 
-helper.getNodeBetweenByPercentageShift = function(edgeId, shift021)
+helper.getNodeBetweenByPercentageShift = function(edgeId, shift0To1)
     if not(helper.isValidAndExistingId(edgeId)) then return nil end
 
-    if type(shift021) ~= 'number' or shift021 < 0 or shift021 > 1 then shift021 = 0.5 end
+    if type(shift0To1) ~= 'number' or shift0To1 < 0 or shift0To1 > 1 then shift0To1 = 0.5 end
 
     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
     if baseEdge == nil then return nil end
@@ -326,7 +326,7 @@ helper.getNodeBetweenByPercentageShift = function(edgeId, shift021)
 
     -- if helper.getEdgeLength(edgeId) <= 0 then return nil end
 
-    return helper.getNodeBetween(baseNode0.position, baseNode1.position, baseEdge.tangent0, baseEdge.tangent1, shift021)
+    return helper.getNodeBetween(baseNode0.position, baseNode1.position, baseEdge.tangent0, baseEdge.tangent1, shift0To1)
 end
 
 helper.getNodeBetweenByPosition = function(edgeId, position)
