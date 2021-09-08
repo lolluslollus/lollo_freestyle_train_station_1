@@ -523,6 +523,19 @@ helper.isEdgeFrozen = function(edgeId)
     return false
 end
 
+helper.getEdgeObjectModelId = function(edgeObjectId)
+    if helper.isValidAndExistingId(edgeObjectId) then
+        local modelInstanceList = api.engine.getComponent(edgeObjectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
+        if modelInstanceList ~= nil
+        and modelInstanceList.fatInstances
+        and modelInstanceList.fatInstances[1]
+        and modelInstanceList.fatInstances[1].modelId then
+            return modelInstanceList.fatInstances[1].modelId
+        end
+    end
+    return nil
+end
+
 helper.getEdgeObjectsIdsWithModelId = function(edgeObjects, refModelId)
     local results = {}
     if type(edgeObjects) ~= 'table' or not(helper.isValidId(refModelId)) then return results end
@@ -618,26 +631,9 @@ helper.getNodeIdsBetweenNeighbourEdgeIds = function(edgeIds, isIncludeExclusiveO
 end
 
 helper.getObjectPosition = function(objectId)
-    -- print('getObjectPosition starting')
-    if not(helper.isValidAndExistingId(objectId)) then return nil end
+    local objectTransf = helper.getObjectTransf(objectId)
+    if not(objectTransf) then return nil end
 
-    local modelInstanceList = api.engine.getComponent(objectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
-    if not(modelInstanceList) then return nil end
-
-    local fatInstances = modelInstanceList.fatInstances
-    if not(fatInstances) or not(fatInstances[1]) or not(fatInstances[1].transf) or not(fatInstances[1].transf.cols) then return nil end
-
-    local objectTransf = transfUtilsUG.new(
-        fatInstances[1].transf:cols(0),
-        fatInstances[1].transf:cols(1),
-        fatInstances[1].transf:cols(2),
-        fatInstances[1].transf:cols(3)
-    )
-    -- print('fatInstances[1]', fatInstances[1] and true)
-    -- print('fatInstances[2]', fatInstances[2] and true) -- always nil
-    -- print('fatInstances[3]', fatInstances[3] and true) -- always nil
-    -- print('objectTransf =')
-    -- debugPrint(objectTransf)
     return {
         [1] = objectTransf[13],
         [2] = objectTransf[14],

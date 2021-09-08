@@ -622,8 +622,7 @@ local helpers = {
 
     getWhichEdgeGetsEdgeObjectAfterSplit = function(edgeObjPosition, node0pos, node1pos, nodeBetween)
         local result = {
-            -- assignToFirstEstimate = nil,
-            assignToSecondEstimate = nil,
+            assignToSide = nil,
         }
         -- logger.print('LOLLO attempting to place edge object with position =')
         -- logger.debugPrint(edgeObjPosition)
@@ -631,30 +630,7 @@ local helpers = {
         -- logger.print('nodeBetween.position =') logger.debugPrint(nodeBetween.position)
         -- logger.print('nodeBetween.tangent =') logger.debugPrint(nodeBetween.tangent)
         -- logger.print('wholeEdge.node1pos =') logger.debugPrint(node1pos)
-        -- first estimator
-        -- local nodeBetween_Node0_Distance = transfUtils.getVectorLength({
-        --     nodeBetween.position.x - node0pos[1],
-        --     nodeBetween.position.y - node0pos[2]
-        -- })
-        -- local nodeBetween_Node1_Distance = transfUtils.getVectorLength({
-        --     nodeBetween.position.x - node1pos[1],
-        --     nodeBetween.position.y - node1pos[2]
-        -- })
-        -- local edgeObj_Node0_Distance = transfUtils.getVectorLength({
-        --     edgeObjPosition[1] - node0pos[1],
-        --     edgeObjPosition[2] - node0pos[2]
-        -- })
-        -- local edgeObj_Node1_Distance = transfUtils.getVectorLength({
-        --     edgeObjPosition[1] - node1pos[1],
-        --     edgeObjPosition[2] - node1pos[2]
-        -- })
-        -- if edgeObj_Node0_Distance < nodeBetween_Node0_Distance then
-        --     result.assignToFirstEstimate = 0
-        -- elseif edgeObj_Node1_Distance < nodeBetween_Node1_Distance then
-        --     result.assignToFirstEstimate = 1
-        -- end
 
-        -- second estimator
         local edgeObjPosition_assignTo = nil
         local node0_assignTo = nil
         local node1_assignTo = nil
@@ -705,9 +681,9 @@ local helpers = {
         end
 
         if edgeObjPosition_assignTo == node0_assignTo then
-            result.assignToSecondEstimate = 0
+            result.assignToSide = 0
         elseif edgeObjPosition_assignTo == node1_assignTo then
-            result.assignToSecondEstimate = 1
+            result.assignToSide = 1
         end
 
         -- logger.print('LOLLO assignment =') logger.debugPrint(result)

@@ -860,9 +860,9 @@ local _actions = {
                         {node1.position.x, node1.position.y, node1.position.z},
                         nodeBetween
                     )
-                    if assignment.assignToSecondEstimate == 0 then
+                    if assignment.assignToSide == 0 then
                         table.insert(edge0Objects, { edgeObj[1], edgeObj[2] })
-                    elseif assignment.assignToSecondEstimate == 1 then
+                    elseif assignment.assignToSide == 1 then
                         table.insert(edge1Objects, { edgeObj[1], edgeObj[2] })
                     else
                         return -- change nothing and leave
