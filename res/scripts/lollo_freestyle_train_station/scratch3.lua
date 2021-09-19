@@ -1,5 +1,12 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
+local abaBool = true
+local abaNum = 78
+local abaStr = 'ABC'
+local abbBool = abaBool or false
+local abbNum = abaNum or false
+local abbStr = abaStr or false
+
 local arr = {}
 arr[7] = {a = 10, b = 20}
 arr[7][8] = {c = 10, d = 20}
