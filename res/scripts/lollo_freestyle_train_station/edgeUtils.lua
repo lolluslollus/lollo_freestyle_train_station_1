@@ -71,12 +71,13 @@ end
 --     return results
 -- end
 
-helper.swap = function(any1, any2)
-    -- local swapTemp = any1
-    -- any1 = any2
-    -- any2 = swapTemp
-    any2, any1 = any1, any2
-end
+-- useless coz the refs to any1 and any2 are passed by val
+-- helper.swap = function(any1, any2)
+--     -- local swapTemp = any1
+--     -- any1 = any2
+--     -- any2 = swapTemp
+--     any2, any1 = any1, any2
+-- end
 
 helper.getNearbyObjectIds = function(transf, searchRadius, componentType)
     if type(transf) ~= 'table' then return {} end
