@@ -140,12 +140,8 @@ local helpers = {
             local tan1 = baseEdge.tangent1
 
             local _swap = function()
-                local swapPos = pos0
-                pos0 = pos1
-                pos1 = swapPos
-                local swapTan = tan0
-                tan0 = tan1
-                tan1 = swapTan
+                edgeUtils.swap(pos0, pos1)
+                edgeUtils.swap(tan0, tan1)
                 tan0.x = -tan0.x
                 tan0.y = -tan0.y
                 tan0.z = -tan0.z
@@ -1575,9 +1571,7 @@ helpers.getPosTanX2ListReversed = function(posTanX2List)
     end
 
     for i = 1, #posTanX2List do
-        local swap = result[i].posTanX2[1]
-        result[i].posTanX2[1] = result[i].posTanX2[2]
-        result[i].posTanX2[2] = swap
+        edgeUtils.swap(result[i].posTanX2[1], result[i].posTanX2[2])
         for ii = 1, 2 do
             for iii = 1, 3 do
                 result[i].posTanX2[ii][2][iii] = -result[i].posTanX2[ii][2][iii]
