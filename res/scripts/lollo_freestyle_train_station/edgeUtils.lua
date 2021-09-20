@@ -71,10 +71,11 @@ end
 --     return results
 -- end
 
-local function swap(num1, num2)
-    local swapTemp = num1
-    num1 = num2
-    num2 = swapTemp
+helper.swap = function(any1, any2)
+    -- local swapTemp = any1
+    -- any1 = any2
+    -- any2 = swapTemp
+    any2, any1 = any1, any2
 end
 
 helper.getNearbyObjectIds = function(transf, searchRadius, componentType)
