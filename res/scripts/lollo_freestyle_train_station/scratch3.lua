@@ -7,6 +7,10 @@ local abbBool = abaBool or false
 local abbNum = abaNum or false
 local abbStr = abaStr or false
 
+local aba = {1, {2, 3}, {{4, 5}}}
+local abb = {6, {7, 8}, {{9, 0}}}
+aba, abb = abb, aba -- you can swap without 3rd variable coz lua assigns both variables at the same time
+
 local arr = {}
 arr[7] = {a = 10, b = 20}
 arr[7][8] = {c = 10, d = 20}
