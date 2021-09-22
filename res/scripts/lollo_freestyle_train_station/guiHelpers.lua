@@ -28,7 +28,7 @@ local guiHelpers = {
     end
 }
 guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eventId, joinEventName, noJoinEventName, eventArgs)
-    print('showNearbyStationPicker starting')
+    -- print('showNearbyStationPicker starting')
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
     local window = api.gui.util.getById(_stationPickerWindowId)
     if window == nil then

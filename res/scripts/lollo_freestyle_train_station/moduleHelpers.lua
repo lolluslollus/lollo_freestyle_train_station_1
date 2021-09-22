@@ -282,11 +282,11 @@ local _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
     return waitingAreaScaleFactor, xScaleFactor
 end
 
-local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey, isGroundLevel)
+local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey, isGroundLevel)
     -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
     local terrainCoordinates = {}
 
-    local i1 = nTrackEdge - 1
+    local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
     local iN = nTrackEdge + 1
     local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
     for ii = 1, #safs do
@@ -351,13 +351,14 @@ local _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, ar
 end
 
 helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey)
+    local isEndFiller = math.fmod(nTrackEdge, 3) == 1
     local innerDegree = _getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
 --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
     local waitingAreaScaleFactor, xScaleFactor = _getSlopedAreaTweakFactors(innerDegree, areaWidth)
     -- local waitingAreaShift = params.terminals[nTerminal].isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
     local waitingAreaIndex = 0
 
-    local ii1 = nTrackEdge - 1
+    local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
     local iiN = nTrackEdge + 1
 
     local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
@@ -396,7 +397,76 @@ helpers.slopedAreas.addAll = function(result, tag, params, nTerminal, nTrackEdge
         end
     end
 
-    _doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, areaWidth, groundFacesFillKey)
+    _doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
+end
+
+helpers.slopedAreas.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, cplPosTanX2, xShift, yShift, era)
+    local isEndFiller = math.fmod(nTrackEdge, 3) == 1
+    if isEndFiller then return end
+
+    local chairsModelId = nil
+    local binModelId = nil
+    local arrivalsModelId = nil
+    if era == helpers.eras.era_a.prefix then
+        chairsModelId = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl'
+        binModelId = 'station/rail/asset/era_a_trashcan.mdl'
+        arrivalsModelId = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl'
+    elseif era == helpers.eras.era_b.prefix then
+        chairsModelId = 'lollo_freestyle_train_station/asset/era_b_four_chairs.mdl'
+        binModelId = 'station/rail/asset/era_b_trashcan.mdl'
+        arrivalsModelId = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl'
+    else
+        chairsModelId = 'lollo_freestyle_train_station/asset/era_c_four_chairs.mdl'
+        binModelId = 'station/rail/asset/era_c_trashcan.mdl'
+        arrivalsModelId = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl'
+    end
+
+    local verticalTransf = helpers.getPlatformObjectTransf_AlwaysVertical(cplPosTanX2)
+
+    result.models[#result.models + 1] = {
+        id = chairsModelId,
+        slotId = slotId,
+        transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6 + xShift, -5.0 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        tag = tag
+    }
+    result.models[#result.models + 1] = {
+        id = binModelId,
+        slotId = slotId,
+        transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6 + xShift, -3.2 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        tag = tag
+    }
+    result.models[#result.models + 1] = {
+        id = arrivalsModelId,
+        slotId = slotId,
+        transf = transfUtilsUG.mul(verticalTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  4.2 + xShift, -4.5 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
+        tag = tag
+    }
+end
+
+helpers.slopedAreas.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, cplPosTanX2, xShift, yShift, era)
+    -- unlike passenger waiting areas, these tilt the assets. We live with it for the sake of performance.
+    local isEndFiller = math.fmod(nTrackEdge, 3) == 1
+    if isEndFiller then return end
+
+    local roofModelId = nil
+    if era == helpers.eras.era_a.prefix then
+        roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_dark_4x4.mdl'
+    else
+        roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl'
+    end
+
+    result.models[#result.models + 1] = {
+        id = roofModelId,
+        slotId = slotId,
+        transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift , yShift -4.3, _constants.stairsAndRampHeight + 0.0, 1 }),
+        tag = tag
+    }
+    result.models[#result.models + 1] = {
+        id = roofModelId,
+        slotId = slotId,
+        transf = transfUtilsUG.mul(slotTransf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift +4.6, _constants.stairsAndRampHeight + 0.0, 1 }),
+        tag = tag
+    }
 end
 
 local _addTrackEdges = function(result, tag2nodes, params, t)
@@ -771,81 +841,19 @@ helpers.flatAreas = {
     end
 }
 
-helpers.addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, cplPosTanX2, xShift, yShift, era)
-    local chairsModelId = nil
-    local binModelId = nil
-    local arrivalsModelId = nil
-    if era == helpers.eras.era_a.prefix then
-        chairsModelId = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl'
-        binModelId = 'station/rail/asset/era_a_trashcan.mdl'
-        arrivalsModelId = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl'
-    elseif era == helpers.eras.era_b.prefix then
-        chairsModelId = 'lollo_freestyle_train_station/asset/era_b_four_chairs.mdl'
-        binModelId = 'station/rail/asset/era_b_trashcan.mdl'
-        arrivalsModelId = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl'
-    else
-        chairsModelId = 'lollo_freestyle_train_station/asset/era_c_four_chairs.mdl'
-        binModelId = 'station/rail/asset/era_c_trashcan.mdl'
-        arrivalsModelId = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl'
-    end
-
-    local verticalTransf = helpers.getPlatformObjectTransf_AlwaysVertical(cplPosTanX2)
-
-    result.models[#result.models + 1] = {
-        id = chairsModelId,
-        slotId = slotId,
-        transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6 + xShift, -5.0 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
-        tag = tag
-    }
-    result.models[#result.models + 1] = {
-        id = binModelId,
-        slotId = slotId,
-        transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6 + xShift, -3.2 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
-        tag = tag
-    }
-    result.models[#result.models + 1] = {
-        id = arrivalsModelId,
-        slotId = slotId,
-        transf = transfUtilsUG.mul(verticalTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  4.2 + xShift, -4.5 + yShift, result.laneZs[nTerminal] + _constants.platformSideBitsZ, 1 }),
-        tag = tag
-    }
-end
-
-helpers.addSlopedCargoAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, cplPosTanX2, xShift, yShift, era)
-    -- unlike passenger waiting areas, these tilt the assets. We live with it for the sake of performance.
-    local roofModelId = nil
-    if era == helpers.eras.era_a.prefix then
-        roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_dark_4x4.mdl'
-    else
-        roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl'
-    end
-
-    result.models[#result.models + 1] = {
-        id = roofModelId,
-        slotId = slotId,
-        transf = transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift , yShift -4.3, _constants.stairsAndRampHeight + 0.0, 1 }),
-        tag = tag
-    }
-    result.models[#result.models + 1] = {
-        id = roofModelId,
-        slotId = slotId,
-        transf = transfUtilsUG.mul(slotTransf, { -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  xShift, yShift +4.6, _constants.stairsAndRampHeight + 0.0, 1 }),
-        tag = tag
-    }
-end
-
 helpers.doPlatformRoof = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
 ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
     local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
     local transfXZoom = isTrackOnPlatformLeft and -1 or 1
     local transfYZoom = isTrackOnPlatformLeft and -1 or 1
+    local isEndFiller = math.fmod(nTrackEdge, 3) == 1
 
     -- LOLLO NOTE setting this to 2 gets a negligible performance boost and uglier joints,
     -- particularly on slopes and bends
     local _ceilingStep = 1
     local _pillarPeriod = 4 -- it would be math.ceil(4 / _ceilingStep)
 
-    local ii1 = nTrackEdge - 1
+    local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
     local iiN = nTrackEdge + 1
     local ceilingCounter = -2
     local drawNumberSign = 1
@@ -855,11 +863,10 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
         if leadingIndex > iiN then break end
         if leadingIndex >= ii1 then
             local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-            -- local era = cpl.era or helpers.eras.era_c.prefix
-            local era = helpers.getEraPrefix(params, nTerminal, leadingIndex)
+            local eraPrefix = helpers.getEraPrefix(params, nTerminal, leadingIndex)
             local platformWidth = cpl.width
 
-            if cpf.type ~= 2 then
+            if cpf.type ~= 2 then -- outside or bridge
                 result.models[#result.models+1] = {
                     id = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId,
                     transf = transfUtilsUG.mul(
@@ -878,7 +885,7 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
                     helpers.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformRoofZ, 1 }
                 )
-                if cpf.type ~= 2 then
+                if cpf.type ~= 2 then -- outside or bridge
                     result.models[#result.models+1] = {
                         id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
                         transf = myTransf,
@@ -889,11 +896,11 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
 
                 if drawNumberSign == 1 then -- little bodge to prevent overlapping with station name signs
                     -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
-                    if cpf.type ~= 2 then
+                    if cpf.type ~= 2 then -- outside or bridge
                         local yShift = -platformWidth * 0.5 + 0.20
                         local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                        if era == helpers.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                        elseif era == helpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                        if eraPrefix == helpers.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                        elseif eraPrefix == helpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
                         end
                         result.models[#result.models + 1] = {
                             id = perronNumberModelId,
@@ -1030,8 +1037,8 @@ helpers.platforms = {
         local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
         for _, cpf in pairs(params.terminals[nTerminal].centrePlatformsFineRelative) do
             local myTransf = helpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
-            local era = helpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
-            local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, era)
+            local eraPrefix = helpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
+            local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix)
             result.models[#result.models+1] = {
                 id = myModelId,
                 slotId = slotId,

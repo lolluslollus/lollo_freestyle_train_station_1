@@ -244,7 +244,13 @@ function data()
 				local function _addPlatformRoofs()
 					if isCargoTerminal then return end
 
-					for i = 2, #params.terminals[t].centrePlatformsRelative, 3 do
+					local iMax = #params.terminals[t].centrePlatformsRelative
+					local iss = {}
+					for i = 2, iMax, 3 do iss[#iss+1] = i end
+					-- fill the last if any
+					if math.fmod(iMax, 3) == 1 then iss[#iss+1] = iMax end
+
+					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						if cpl.type ~= 2 then -- no platform roofs in tunnels
 							local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
@@ -261,7 +267,13 @@ function data()
 				_addPlatformRoofs()
 
 				local function _addOutsideExtensions()
-					for i = 2, #params.terminals[t].centrePlatformsRelative, 3 do
+					local iMax = #params.terminals[t].centrePlatformsRelative
+					local iss = {}
+					for i = 2, iMax, 3 do iss[#iss+1] = i end
+					-- fill the last if any
+					if math.fmod(iMax, 3) == 1 then iss[#iss+1] = iMax end
+
+					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						if cpl.type == 0 then -- only on ground
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
