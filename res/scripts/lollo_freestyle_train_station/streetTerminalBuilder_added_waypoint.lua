@@ -392,7 +392,7 @@ local args = {
               modelId = 3805,
               transf0 = nil,
               transf = {
-                cols = <function>,
+                -- cols = <function>,
               },
               transformator = 10,
             },
