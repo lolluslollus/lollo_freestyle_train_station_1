@@ -20,7 +20,7 @@ function data()
                 - If you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels.
 
                 You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, connect the platform ends by hand with a suitable street type and <shift>.
-                If you have a group of adjacent platforms and tracks, try to place your underpasses (or stairs if you are in a tunnel) opposite to one another.
+                You cannot share one stretch of platform among multiple terminals.
 
 				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
 				When you bulldoze the station, everything will be bulldozed.
