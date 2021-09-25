@@ -1051,34 +1051,36 @@ function data()
 				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
-					local _isLeft = function(posTanX2, pos)
+					local _isLeft = function(posTanX2, pos, isOutputLog)
 						-- a + b * x = y
 						-- b = dY / dX
 						-- a = y - dY / dX * x
-						-- a + dY / dX * x = y
-						local dX = posTanX2[2][1][1] - posTanX2[1][1][1]
-						local dY = posTanX2[2][1][2] - posTanX2[1][1][2]
+						local x0, x1 = posTanX2[1][1][1], posTanX2[2][1][1]
+						local y0, y1 = posTanX2[1][1][2], posTanX2[2][1][2]
+						local isInvert = ((x1 > x0 and y1 < y0) or (x1 < x0 and y1 > y0)) -- 2nd or 4th quadrant
+						local dX = x1 - x0
+						local dY = y1 - y0
 						if isOutputLog then
 							print('_isLeft received posTanX2 =') debugPrint(posTanX2)
 							print(', pos =') debugPrint(pos)
 							print(', dX =', dX, 'dY =', dY)
 						end
 						if dX == 0 then
-							return pos[1] < posTanX2[1][1][1]
+							local isLeftResult = pos[1] < x0
+							if isInvert then isLeftResult = not(isLeftResult) end
+							if isOutputLog then
+								print('_isLeft has calculated result = ', isLeftResult)
+							end
+							return isLeftResult
 						end
 						local b = dY / dX
-						local a = posTanX2[1][1][2] - b * posTanX2[1][1][1]
-						-- solve for a = y0
-						-- local a = posTanX2[1][1][2]
+						local a = y0 - b * x0
 						-- LOLLO NOTE So far I checked if the pos is below or above the line,
 						-- but I must consider the direction of my line,
 						-- which is in fact a vector. On the other hand, the line is an absolute reference
 						-- while the vector may change direction with the station quirks => we use the line.
-						-- if dX > 0 then
 						local isLeftResult = a + b * pos[1] < pos[2]
-						-- else
-							-- isLeftResult = a + b * pos[1] > pos[2]
-						-- end
+						if isInvert then isLeftResult = not(isLeftResult) end
 						if isOutputLog then
 							print('_isLeft has calculated a =', a, ', b =', b, ', result = ', isLeftResult)
 						end
@@ -1101,7 +1103,8 @@ function data()
 											local positionsInTT = positionsB[tt]
 											if positionsInTT ~= nil then
 												for ii = 1, #positionsInTT do
-													local isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)
+													-- LOLLO TODO remove the last param in the following line when done testing
+													local isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link, (t == 6 and tt == 7) or (t == 7 and tt == 6))
 													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
 													local newSegment = {
 														t1 = t,
@@ -1165,8 +1168,8 @@ function data()
 							newSegment.t2Index = oldSegment.t1Index
 							newSegment.distance = oldSegment.distance
 							newSegment.isLeftOfT1 = not(oldSegment.isLeftOfT1)
-							newSegment.pos2Link1 = oldSegment.pos2Link1
-							newSegment.pos2Link2 = oldSegment.pos2Link2
+							newSegment.pos2Link1 = oldSegment.pos2Link2
+							newSegment.pos2Link2 = oldSegment.pos2Link1
 							newSegment.eraOfT1 = oldSegment.eraOfT2
 							newSegment.eraOfT2 = oldSegment.eraOfT1
 						end
@@ -1198,25 +1201,28 @@ function data()
 							-- for _, segmentsTouchingPoint in pairs(minDistance_TT_II_Segments_SmallTFirst[t]) do
 							for _, segmentsTouchingPointWithIndex in pairs(minDistance_T_I_Segments_SmallTFirst[t]) do
 								for _, isLeftOfT1 in pairs({true, false}) do
-									local newSegment = {distance = 9999}
+									local testSegment = {distance = 9999}
 									local isNewSegmentThere = false
 									for _, segment in pairs(segmentsTouchingPointWithIndex) do
 										if segment.isLeftOfT1 == isLeftOfT1
-										and segment.distance < newSegment.distance
+										and segment.distance < testSegment.distance
 										then
-											newSegment = segment
+											testSegment = segment
 											isNewSegmentThere = true
 										end
 									end
 									-- if tolerancePercent4ShortDistances == nil
 									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
 									if isNewSegmentThere then
-                                        newSegment = _getSegmentWithT1AndT2Sorted(newSegment, true)
+                                        local newSegment = _getSegmentWithT1AndT2Sorted(testSegment, true)
 										local t1 = newSegment.t1
 										local t2 = newSegment.t2
 										if short_T_TT_Segments_SmallTFirst[t1] == nil then short_T_TT_Segments_SmallTFirst[t1] = {} end
 										if short_T_TT_Segments_SmallTFirst[t1][t2] == nil then short_T_TT_Segments_SmallTFirst[t1][t2] = {} end
 										table.insert(short_T_TT_Segments_SmallTFirst[t1][t2], newSegment)
+										if isOutputLog then
+											print('isLeftOfT1 =', isLeftOfT1, ', inserted segment ') debugPrint(newSegment) print('with t1 =', t1, 'and t2 =', t2)
+										end
 									end
 								end
 							end
@@ -1311,7 +1317,8 @@ function data()
 
 					local shortSegmentsTunnelTops2Tops = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-						result.terminateConstructionHookInfo.tunnelStairsTopPositions
+						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
+						true
 					)
 
                     -- LOLLO TODO MAYBE link the following only once, like with subways
@@ -1336,8 +1343,8 @@ function data()
 					-- We try to get past it choosing the shortest path and always associating stairs down to stairs up
 					-- - we never have stairs down without stairs up.
 					local maxT = #params.terminals
-					-- logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
-					-- logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
+					logger.print('shortSegmentsTunnelTops2Bottoms before reducing =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
+					logger.print('shortSegmentsTunnelTops2Tops before reducing =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 					for t = 1, maxT do
 						local top2BottomsT = shortSegmentsTunnelTops2Bottoms[t]
 						if top2BottomsT ~= nil then
@@ -1369,24 +1376,28 @@ function data()
 							end
 						end
 					end
-					-- logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
-					-- logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 
-                    -- logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
+                    logger.print('shortSegmentsOnGround =') logger.debugPrint(shortSegmentsOnGround)
 					_linkAcross(shortSegmentsOnGround)
 
+					logger.print('shortSegmentsOpenStairs =') logger.debugPrint(shortSegmentsOpenStairs)
 					_linkAcross(shortSegmentsOpenStairs, 99, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
-					-- logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
+
+					logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
 					_linkAcross(shortSegmentsOnBridge, 40.0)
-					-- logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
+
+					logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 					_linkAcross(shortSegmentsTunnelTops2Tops)
-					-- logger.print('shortSegmentsTunnelTops2Surface =') logger.debugPrint(shortSegmentsTunnelTops2Surface)
+
+					logger.print('shortSegmentsTunnelTops2Surface =') logger.debugPrint(shortSegmentsTunnelTops2Surface)
 					_linkAcross(shortSegmentsTunnelTops2Surface)
-					-- logger.print('shortSegmentsTunnelTops2BridgeBottoms =') logger.debugPrint(shortSegmentsTunnelTops2BridgeBottoms)
+
+					logger.print('shortSegmentsTunnelTops2BridgeBottoms =') logger.debugPrint(shortSegmentsTunnelTops2BridgeBottoms)
 					_linkAcross(shortSegmentsTunnelTops2BridgeBottoms)
-					-- logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
+
+					logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
 					_linkAcross(shortSegmentsTunnelTops2Bottoms)
 				end
 				_linkUnderpassesAndStairs()

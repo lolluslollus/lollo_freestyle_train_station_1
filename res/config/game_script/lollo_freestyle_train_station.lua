@@ -168,6 +168,7 @@ local _actions = {
         local _mainTransf = oldCon == nil
             and arrayUtils.cloneDeepOmittingFields(conTransf)
             or arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true)
+        logger.print('_mainTransf =') logger.debugPrint(_mainTransf)
         local _inverseMainTransf = transfUtils.getInverseTransf(_mainTransf)
 
         local params_newModuleKeys = {
