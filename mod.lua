@@ -1,9 +1,11 @@
 function data()
-    local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    local _stringUtils = require('lollo_freestyle_train_station.stringUtils')
+    local _trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 
     return {
         info = {
-            minorVersion = 36,
+            minorVersion = 37,
             severityAdd = 'NONE',
             severityRemove = 'WARNING',
             name = _('NAME'),
@@ -24,6 +26,23 @@ function data()
             }
         },
 
+        -- streetside stations have colliders that annoy the station: get rid of them
+        runFn = function(settings)
+            addModifier(
+                'loadModel',
+                function(fileName, data)
+                    if not(_stringUtils.stringEndsWith(fileName, '.mdl')) then return end
+
+                    if data and data.metadata and data.metadata.streetTerminal then
+                        data.boundingInfo = _mdlHelpers.getVoidBoundingInfo()
+                        data.collider = _mdlHelpers.getVoidCollider()
+                        -- print('LOLLO bounding reset, filename =', fileName)
+                    end
+                    return data
+                end
+            )
+        end,
+
         postRunFn = function(settings, params)
             -- LOLLO NOTE yet another hack.
             -- base_mod.lua has postRunFn and loops over all the tracks it finds,
@@ -36,8 +55,8 @@ function data()
 
             for trackTypeIndex, trackFileName in pairs(trackFileNames) do
                 local track = api.res.trackTypeRep.get(trackTypeIndex)
-                if trackUtils.isPlatform2(track) then
-                    local availability = trackUtils.getTrackAvailability(trackFileName)
+                if _trackUtils.isPlatform2(track) then
+                    local availability = _trackUtils.getTrackAvailability(trackFileName)
                     track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
                     track.yearTo = availability.yearTo -- idem
                     --[[
