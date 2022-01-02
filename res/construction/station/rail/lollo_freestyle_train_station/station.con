@@ -1316,8 +1316,8 @@ function data()
 
 					local shortSegmentsTunnelTops2Tops = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-						result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-						true
+						result.terminateConstructionHookInfo.tunnelStairsTopPositions
+						-- true
 					)
 
                     -- LOLLO TODO MAYBE link the following only once, like with subways
