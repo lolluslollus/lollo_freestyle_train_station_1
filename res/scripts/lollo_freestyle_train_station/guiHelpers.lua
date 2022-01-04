@@ -8,7 +8,7 @@ local _eventNames = _constants.eventData.eventNames
 local _stationPickerWindowId = 'lollo_freestyle_station_picker_window'
 local _warningWindowWithGotoId = 'lollo_freestyle_station_warning_window_with_goto'
 local _warningWindowWithStateId = 'lollo_freestyle_station_warning_window_with_state'
-local _waypointDistanceWindow = 'lollo_freestyle_station_waypoint_distance_window'
+local _waypointDistanceWindowId = 'lollo_freestyle_station_waypoint_distance_window'
 
 local _texts = {
     goBack = _('GoBack'),
@@ -24,6 +24,7 @@ local _windowXShift = -200
 
 local guiHelpers = {
     isShowingWarning = false,
+    isShowingWaypointDistance = false,
     moveCamera = function(position)
         local cameraData = game.gui.getCamera()
         game.gui.setCamera({position[1], position[2], cameraData[3], cameraData[4], cameraData[5]})
@@ -279,32 +280,28 @@ guiHelpers.showWarningWindowWithState = function(text)
 end
 
 guiHelpers.showWaypointDistance = function(text)
-    local layout = api.gui.layout.BoxLayout.new('VERTICAL')
-    local window = api.gui.util.getById(_waypointDistanceWindow)
+    guiHelpers.isShowingWaypointDistance = true
+
+    local content = api.gui.layout.BoxLayout.new('VERTICAL')
+    local window = api.gui.util.getById(_waypointDistanceWindowId)
     if window == nil then
-        window = api.gui.comp.Window.new(_texts.waypointDistanceWindowTitle, layout)
-        window:setId(_waypointDistanceWindow)
+        window = api.gui.comp.Window.new(_texts.waypointDistanceWindowTitle, content)
+        window:setId(_waypointDistanceWindowId)
     else
-        window:setContent(layout)
+        window:setContent(content)
         window:setVisible(true, false)
     end
 
-    layout:addItem(api.gui.comp.TextView.new(text))
+    content:addItem(api.gui.comp.TextView.new(text))
 
-    -- window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
     window:setPosition(position.x + _windowXShift, position.y)
-    -- window:addHideOnCloseHandler()
+
+    -- make title bar invisible without that dumb pseudo css
+    window:getLayout():getItem(0):setVisible(false, false)
+
     window:onClose(
-        function()
-            window:setVisible(false, false)
-            -- api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-            --     string.sub(debug.getinfo(1, 'S').source, 1),
-            --     _eventId,
-            --     _eventNames.HIDE_WARNINGS,
-            --     {}
-            -- ))
-        end
+        guiHelpers.hideWaypointDistance
     )
 end
 
@@ -320,9 +317,13 @@ guiHelpers.hideAllWarnings = function()
 end
 
 guiHelpers.hideWaypointDistance = function()
-    local window = api.gui.util.getById(_waypointDistanceWindow)
-    if window ~= nil then
-        window:setVisible(false, false)
+    if guiHelpers.isShowingWaypointDistance then -- only for performance
+        guiHelpers.isShowingWaypointDistance = false
+
+        local window = api.gui.util.getById(_waypointDistanceWindowId)
+        if window ~= nil then
+            window:setVisible(false, false)
+        end
     end
 end
 

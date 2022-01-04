@@ -246,7 +246,7 @@ function data()
 			["WaypointsCrossCrossing"] = "There is a joint between this marker and its twin",
 			["WaypointsCrossSignal"] = "There is a semaphore or a waypoint between this marker and its twin, or too close to either",
 			["WaypointsCrossStation"] = "You cannot cross an existing station",
-			["WaypointDistanceWindowTitle"] = "Distance",
+			["WaypointDistanceWindowTitle"] = "Air Distance",
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
 			["WaypointsTooCloseToStation"] = "Too close to an existing station",
 			["WaypointsTooFar"] = "Too far from its twin",

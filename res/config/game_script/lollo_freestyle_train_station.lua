@@ -1606,348 +1606,183 @@ function data()
         guiHandleEvent = function(id, name, args)
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
             -- logger.print('guiHandleEvent caught id =', id, 'name =', name)
-            if (name ~= 'builder.proposalCreate' and name ~= 'builder.apply' and name ~= 'select') then return end -- for performance
-            local _joinSubway = function(subwayConstructionId)
-                if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
+            local isHideDistance = true
+            if (name == 'builder.proposalCreate' or name == 'builder.apply' or name == 'select') then -- for performance
+                local _joinSubway = function(subwayConstructionId)
+                    if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
 
-                local con = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
-                -- if con ~= nil then logger.print('con.fileName =') logger.debugPrint(con.fileName) end
-                if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
+                    local con = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
+                    -- if con ~= nil then logger.print('con.fileName =') logger.debugPrint(con.fileName) end
+                    if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
 
-                local subwayTransfApi = con.transf
-                if subwayTransfApi == nil then return end
+                    local subwayTransfApi = con.transf
+                    if subwayTransfApi == nil then return end
 
-                local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
-                if conTransf == nil then return end
+                    local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
+                    if conTransf == nil then return end
 
-                logger.print('conTransf =') logger.debugPrint(conTransf)
-                local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
-                -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
-                logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
-                if #nearbyFreestyleStations == 0 then return end
+                    logger.print('conTransf =') logger.debugPrint(conTransf)
+                    local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
+                    -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
+                    logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
+                    if #nearbyFreestyleStations == 0 then return end
 
-                guiHelpers.showNearbyStationPicker(
-                    false, -- subways are only for passengers
-                    nearbyFreestyleStations,
-                    _eventId,
-                    _eventNames.SUBWAY_JOIN_REQUESTED,
-                    nil,
-                    {
-                        subwayId = subwayConstructionId
-                        -- join2StationId will be added by the popup
-                    }
-                )
-            end
-            xpcall(
-                function()
-                    local isHideDistance = true
-                    if name == 'builder.proposalCreate' then
-                        if id == 'streetTerminalBuilder' then
-                            -- waypoint, traffic light, my own waypoints built
-                            if args and args.proposal and args.proposal.proposal
-                            and args.proposal.proposal.edgeObjectsToAdd
-                            and args.proposal.proposal.edgeObjectsToAdd[1]
-                            and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
-                            then
-                                local _tryShowDistance = function(targetWaypointModelId, newWaypointTransf, mustBeOnPlatform)
-                                    if not(targetWaypointModelId) or not(newWaypointTransf) then return false end
+                    guiHelpers.showNearbyStationPicker(
+                        false, -- subways are only for passengers
+                        nearbyFreestyleStations,
+                        _eventId,
+                        _eventNames.SUBWAY_JOIN_REQUESTED,
+                        nil,
+                        {
+                            subwayId = subwayConstructionId
+                            -- join2StationId will be added by the popup
+                        }
+                    )
+                end
+                xpcall(
+                    function()
+                        if name == 'builder.proposalCreate' then
+                            if id == 'streetTerminalBuilder' then
+                                -- waypoint, traffic light, my own waypoints built
+                                if args and args.proposal and args.proposal.proposal
+                                and args.proposal.proposal.edgeObjectsToAdd
+                                and args.proposal.proposal.edgeObjectsToAdd[1]
+                                and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
+                                then
+                                    local _tryShowDistance = function(targetWaypointModelId, newWaypointTransf, mustBeOnPlatform)
+                                        if not(targetWaypointModelId) or not(newWaypointTransf) then return false end
 
-                                    local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
-                                    if #similarObjectIdsInAnyEdges ~= 1 then
-                                        -- not ready yet
-                                        return false
-                                    end
-
-                                    local twinWaypointPosition = edgeUtils.getObjectPosition(similarObjectIdsInAnyEdges[1])
-                                    local newWaypointPosition = transfUtils.transf2Position(
-                                        transfUtilsUG.new(newWaypointTransf:cols(0), newWaypointTransf:cols(1), newWaypointTransf:cols(2), newWaypointTransf:cols(3))
-                                    )
-                                    if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
-                                        local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition) or 0
-                                        guiHelpers.showWaypointDistance(tostring((_('WaypointDistanceWindowTitle') .. " %.0f m"):format(distance)))
-                                        return true
-                                    end
-
-                                    return false
-                                end
-
-                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiPlatformWaypointModelId then
-                                    isHideDistance = not(_tryShowDistance(
-                                        _guiPlatformWaypointModelId,
-                                        args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf,
-                                        true
-                                    ))
-                                elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiTrackWaypointModelId then
-                                    isHideDistance = not(_tryShowDistance(
-                                        _guiTrackWaypointModelId,
-                                        args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf,
-                                        false
-                                    ))
-                                end
-                            end
-                        end
-                    elseif name == 'builder.apply' then
-                        guiHelpers.hideAllWarnings()
-                        -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
-                        if id == 'bulldozer' then
-                            for _, constructionId in pairs(args.proposal.toRemove) do
-                                logger.print('about to bulldoze construction', constructionId)
-                                if edgeUtils.isValidAndExistingId(constructionId) then
-                                    local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
-                                    if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
-                                        -- logger.print('args = ') logger.debugPrint(args)
-                                        -- bulldozed a station module AND there are more left
-                                        -- logger.print('bulldozing a component of a freestyle station, con.params.modules =') logger.debugPrint(con.params.modules)
-                                        local remainingTerminalIds = {}
-                                        for slotId, _ in pairs(con.params.modules) do
-                                            local nTerminal, _, baseId = slotHelpers.demangleId(slotId)
-                                            if baseId == _constants.idBases.terminalSlotId then
-                                                arrayUtils.addUnique(remainingTerminalIds, nTerminal)
-                                            end
-                                        end
-                                        -- a terminal was bulldozed
-                                        if #remainingTerminalIds < #con.params.terminals then
-                                            -- if #remainingTerminalIds > 0 then
-                                                local nTerminalToRemove = -1
-                                                for t = 1, #con.params.terminals do
-                                                    if not(arrayUtils.arrayHasValue(remainingTerminalIds, t)) then
-                                                        nTerminalToRemove = t
-                                                        break
-                                                    end
-                                                end
-                                                logger.print('nTerminalToRemove =', nTerminalToRemove)
-                                                if nTerminalToRemove > 0 then
-                                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                        string.sub(debug.getinfo(1, 'S').source, 1),
-                                                        _eventId,
-                                                        _eventNames.REMOVE_TERMINAL_REQUESTED,
-                                                        {
-                                                            stationConstructionId = constructionId,
-                                                            nRemainingTerminals = #remainingTerminalIds,
-                                                            nTerminalToRemove = nTerminalToRemove
-                                                        }
-                                                    ))
-                                                else
-                                                    print('lollo freestyle train station ERROR: cannot find id of deleted terminal')
-                                                end
-                                            -- else
-                                            --     -- last terminal removed: pull down the station
-                                            --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                            --         string.sub(debug.getinfo(1, 'S').source, 1),
-                                            --         _eventId,
-                                            --         _eventNames.BULLDOZE_STATION_REQUESTED,
-                                            --         {
-                                            --             constructionId = constructionId,
-                                            --         }
-                                            --     ))
-                                            -- end
-                                        end
-                                    end
-                                end
-                            end
-                        elseif id == 'constructionBuilder' then
-                            if not args.result or not args.result[1] then return end
-
-                            -- logger.print('args =') logger.debugPrint(args)
-                            local subwayId = args.result[1]
-                            -- logger.print('construction built, construction id =') logger.debugPrint(subwayId)
-
-                            _joinSubway(subwayId)
-                        elseif id == 'streetTerminalBuilder' then
-                            -- waypoint, traffic light, my own waypoints built
-                            if args and args.proposal and args.proposal.proposal
-                            and args.proposal.proposal.edgeObjectsToAdd
-                            and args.proposal.proposal.edgeObjectsToAdd[1]
-                            and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
-                            then
-                                local _validateWaypointBuilt = function(targetWaypointModelId, newWaypointId, lastBuiltEdgeId, mustBeOnPlatform)
-                                    logger.print('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
-                                    -- UG TODO this is empty, ask UG to fix this: can't we have the waypointId in args.result?
-                                    -- The problem persists with build 33345
-                                    logger.print('waypoint built, args.result =') logger.debugPrint(args.result)
-
-                                    -- logger.print('args.proposal.proposal.addedSegments =') logger.debugPrint(args.proposal.proposal.addedSegments)
-                                    if not(edgeUtils.isValidAndExistingId(newWaypointId)) then print('lollo freestyle train station ERROR with newWaypointId') return false end
-                                    if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then print('lollo freestyle train station ERROR with lastBuiltEdgeId') return false end
-
-                                    logger.print('lastBuiltEdgeId =') logger.debugPrint(lastBuiltEdgeId)
-                                    local lastBuiltBaseEdge = api.engine.getComponent(
-                                        lastBuiltEdgeId,
-                                        api.type.ComponentType.BASE_EDGE
-                                    )
-                                    if not(lastBuiltBaseEdge) then return false end
-
-                                    -- logger.print('edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, waypointModelId) =')
-                                    -- logger.debugPrint(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
-
-                                    -- forbid building track waypoint on a platform or platform waypoint on a track
-                                    if trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType) ~= mustBeOnPlatform then
-                                        guiHelpers.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
-                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                            string.sub(debug.getinfo(1, 'S').source, 1),
-                                            _eventId,
-                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                            {
-                                                edgeId = lastBuiltEdgeId,
-                                                waypointId = newWaypointId,
-                                            }
-                                        ))
-                                        return false
-                                    end
-
-                                    local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
-                                    logger.print('similarObjectsIdsInAnyEdges =') logger.debugPrint(similarObjectIdsInAnyEdges)
-                                    -- forbid building more then two waypoints of the same type
-                                    if #similarObjectIdsInAnyEdges > 2 then
-                                        guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectIdsInAnyEdges)
-                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                            string.sub(debug.getinfo(1, 'S').source, 1),
-                                            _eventId,
-                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                            {
-                                                edgeId = lastBuiltEdgeId,
-                                                waypointId = newWaypointId
-                                            }
-                                        ))
-                                        return false
-                                    end
-
-                                    local newWaypointPosition = edgeUtils.getObjectPosition(newWaypointId)
-                                    -- make sure the waypoint is not too close to station end nodes, or the game will complain later with it != components.end()
-                                    local endEdgeIds = edgeUtils.getEdgeIdsConnectedToEdgeId(lastBuiltEdgeId)
-                                    local _minDistance = _constants.minSplitDistance * 2
-                                    -- logger.print('endEdgeIds =') logger.debugPrint(endEdgeIds)
-                                    for ___, edgeId in pairs(endEdgeIds) do
-                                        local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
-                                        -- logger.print('conId =', conId or 'NIL')
-                                        -- if the edge belongs to a construction
-                                        if edgeUtils.isValidAndExistingId(conId) then
-                                            local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-                                            -- and the construction is a station, freestyle or otherwise
-                                            if con ~= nil then
-                                                if (type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName) then
-                                                    local stationEndEntities = stationHelpers.getStationEndEntities(conId)
-                                                    -- logger.print('stationEndEntities =') logger.debugPrint(stationEndEntities)
-                                                    -- if any end nodes are too close to my waypoint
-                                                    for __, stationEndEntities4T in pairs(stationEndEntities) do
-                                                        if transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
-                                                        or transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
-                                                        or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
-                                                        or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
-                                                        then
-                                                            guiHelpers.showWarningWindowWithGoto(_('WaypointsTooCloseToStation'), newWaypointId)
-                                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                                string.sub(debug.getinfo(1, 'S').source, 1),
-                                                                _eventId,
-                                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                                                {
-                                                                    edgeId = lastBuiltEdgeId,
-                                                                    waypointId = newWaypointId,
-                                                                }
-                                                            ))
-                                                            return false
-                                                        end
-                                                    end
-                                                else -- if con.stations ~= nil and #con.stations > 0 then
-                                                    -- no knowledge of end nodes: just forbid the waypoint
-                                                    guiHelpers.showWarningWindowWithGoto(_('WaypointsTooCloseToStation'), newWaypointId)
-                                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                        string.sub(debug.getinfo(1, 'S').source, 1),
-                                                        _eventId,
-                                                        _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                                        {
-                                                            edgeId = lastBuiltEdgeId,
-                                                            waypointId = newWaypointId,
-                                                        }
-                                                    ))
-                                                    return false
-                                                end
-                                            end
-                                        end
-                                    end
-
-                                    if #similarObjectIdsInAnyEdges < 2 then
-                                        -- not ready yet
-                                        -- guiHelpers.showWarningWindowWithGoto(_('BuildMoreWaypoints'), newWaypointId)
-                                        return false
-                                    end
-
-                                    local twinWaypointId =
-                                        newWaypointId == similarObjectIdsInAnyEdges[1] and similarObjectIdsInAnyEdges[2] or similarObjectIdsInAnyEdges[1]
-                                    local twinWaypointPosition = edgeUtils.getObjectPosition(twinWaypointId)
-
-                                    -- forbid building waypoints too far apart, which would make the station too large
-                                    if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
-                                        local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition)
-                                        if distance > _constants.maxWaypointDistance then
-                                            guiHelpers.showWarningWindowWithGoto(_('WaypointsTooFar'), newWaypointId, similarObjectIdsInAnyEdges)
-                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                string.sub(debug.getinfo(1, 'S').source, 1),
-                                                _eventId,
-                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                                {
-                                                    edgeId = lastBuiltEdgeId,
-                                                    waypointId = newWaypointId
-                                                }
-                                            ))
+                                        local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
+                                        if #similarObjectIdsInAnyEdges ~= 1 then
+                                            -- not ready yet
                                             return false
                                         end
-                                    end
 
-                                    local contiguousTrackEdgeProps = stationHelpers.getTrackEdgePropsBetweenEdgeIds(
-                                        api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
-                                        api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId)
-                                    )
-                                    logger.print('contiguous track edges =') logger.debugPrint(contiguousTrackEdgeProps)
-                                    -- make sure the waypoints are on connected tracks
-                                    if #contiguousTrackEdgeProps < 1 then
-                                        guiHelpers.showWarningWindowWithGoto(_('WaypointsNotConnected'), newWaypointId, similarObjectIdsInAnyEdges)
-                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                            string.sub(debug.getinfo(1, 'S').source, 1),
-                                            _eventId,
-                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                            {
-                                                edgeId = lastBuiltEdgeId,
-                                                waypointId = newWaypointId,
-                                            }
-                                        ))
+                                        local twinWaypointPosition = edgeUtils.getObjectPosition(similarObjectIdsInAnyEdges[1])
+                                        local newWaypointPosition = transfUtils.transf2Position(
+                                            transfUtilsUG.new(newWaypointTransf:cols(0), newWaypointTransf:cols(1), newWaypointTransf:cols(2), newWaypointTransf:cols(3))
+                                        )
+                                        if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
+                                            local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition) or 0
+                                            guiHelpers.showWaypointDistance(tostring((_('WaypointDistanceWindowTitle') .. " %.0f m"):format(distance)))
+                                            return true
+                                        end
+
                                         return false
                                     end
 
-                                    -- make sure the waypoints are not overlapping existing station tracks or platforms, for any sort of station
-                                    for __, obj in pairs(contiguousTrackEdgeProps) do -- don't use _ here, we call it below to translate the message!
-                                        local edgeId = obj.entity
-                                        local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
-                                        if edgeUtils.isValidAndExistingId(conId) then
-                                            local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-                                            if con ~= nil and con.stations ~= nil and #con.stations > 0 then
-                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossStation'), newWaypointId)
-                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                    string.sub(debug.getinfo(1, 'S').source, 1),
-                                                    _eventId,
-                                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                                    {
-                                                        edgeId = lastBuiltEdgeId,
-                                                        waypointId = newWaypointId,
-                                                    }
-                                                ))
-                                                return false
+                                    if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiPlatformWaypointModelId then
+                                        isHideDistance = not(_tryShowDistance(
+                                            _guiPlatformWaypointModelId,
+                                            args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf,
+                                            true
+                                        ))
+                                    elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiTrackWaypointModelId then
+                                        isHideDistance = not(_tryShowDistance(
+                                            _guiTrackWaypointModelId,
+                                            args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf,
+                                            false
+                                        ))
+                                    end
+                                end
+                            end
+                        elseif name == 'builder.apply' then
+                            guiHelpers.hideAllWarnings()
+                            -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
+                            if id == 'bulldozer' then
+                                for _, constructionId in pairs(args.proposal.toRemove) do
+                                    logger.print('about to bulldoze construction', constructionId)
+                                    if edgeUtils.isValidAndExistingId(constructionId) then
+                                        local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+                                        if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
+                                            -- logger.print('args = ') logger.debugPrint(args)
+                                            -- bulldozed a station module AND there are more left
+                                            -- logger.print('bulldozing a component of a freestyle station, con.params.modules =') logger.debugPrint(con.params.modules)
+                                            local remainingTerminalIds = {}
+                                            for slotId, _ in pairs(con.params.modules) do
+                                                local nTerminal, _, baseId = slotHelpers.demangleId(slotId)
+                                                if baseId == _constants.idBases.terminalSlotId then
+                                                    arrayUtils.addUnique(remainingTerminalIds, nTerminal)
+                                                end
+                                            end
+                                            -- a terminal was bulldozed
+                                            if #remainingTerminalIds < #con.params.terminals then
+                                                -- if #remainingTerminalIds > 0 then
+                                                    local nTerminalToRemove = -1
+                                                    for t = 1, #con.params.terminals do
+                                                        if not(arrayUtils.arrayHasValue(remainingTerminalIds, t)) then
+                                                            nTerminalToRemove = t
+                                                            break
+                                                        end
+                                                    end
+                                                    logger.print('nTerminalToRemove =', nTerminalToRemove)
+                                                    if nTerminalToRemove > 0 then
+                                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                                            _eventId,
+                                                            _eventNames.REMOVE_TERMINAL_REQUESTED,
+                                                            {
+                                                                stationConstructionId = constructionId,
+                                                                nRemainingTerminals = #remainingTerminalIds,
+                                                                nTerminalToRemove = nTerminalToRemove
+                                                            }
+                                                        ))
+                                                    else
+                                                        print('lollo freestyle train station ERROR: cannot find id of deleted terminal')
+                                                    end
+                                                -- else
+                                                --     -- last terminal removed: pull down the station
+                                                --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                --         string.sub(debug.getinfo(1, 'S').source, 1),
+                                                --         _eventId,
+                                                --         _eventNames.BULLDOZE_STATION_REQUESTED,
+                                                --         {
+                                                --             constructionId = constructionId,
+                                                --         }
+                                                --     ))
+                                                -- end
                                             end
                                         end
                                     end
+                                end
+                            elseif id == 'constructionBuilder' then
+                                if not args.result or not args.result[1] then return end
 
-                                    local contiguousEdgeIds = {}
-                                    for __, value in pairs(contiguousTrackEdgeProps) do
-                                        arrayUtils.addUnique(contiguousEdgeIds, value.entity)
-                                    end
-                                    logger.print('contiguousEdgeIds =') logger.debugPrint(contiguousEdgeIds)
-                                    -- make sure there are no crossings between the waypoints
-                                    local nodesBetweenWps = edgeUtils.getNodeIdsBetweenNeighbourEdgeIds(contiguousEdgeIds, false)
-                                    logger.print('nodesBetweenWps =') logger.debugPrint(nodesBetweenWps)
-                                    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
-                                    for __, nodeId in pairs(nodesBetweenWps) do
-                                        if _map[nodeId] and #_map[nodeId] > 2 then
-                                            guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossCrossing'), newWaypointId)
+                                -- logger.print('args =') logger.debugPrint(args)
+                                local subwayId = args.result[1]
+                                -- logger.print('construction built, construction id =') logger.debugPrint(subwayId)
+
+                                _joinSubway(subwayId)
+                            elseif id == 'streetTerminalBuilder' then
+                                -- waypoint, traffic light, my own waypoints built
+                                if args and args.proposal and args.proposal.proposal
+                                and args.proposal.proposal.edgeObjectsToAdd
+                                and args.proposal.proposal.edgeObjectsToAdd[1]
+                                and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
+                                then
+                                    local _validateWaypointBuilt = function(targetWaypointModelId, newWaypointId, lastBuiltEdgeId, mustBeOnPlatform)
+                                        logger.print('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
+                                        -- UG TODO this is empty, ask UG to fix this: can't we have the waypointId in args.result?
+                                        -- The problem persists with build 33345
+                                        logger.print('waypoint built, args.result =') logger.debugPrint(args.result)
+
+                                        -- logger.print('args.proposal.proposal.addedSegments =') logger.debugPrint(args.proposal.proposal.addedSegments)
+                                        if not(edgeUtils.isValidAndExistingId(newWaypointId)) then print('lollo freestyle train station ERROR with newWaypointId') return false end
+                                        if not(edgeUtils.isValidAndExistingId(lastBuiltEdgeId)) then print('lollo freestyle train station ERROR with lastBuiltEdgeId') return false end
+
+                                        logger.print('lastBuiltEdgeId =') logger.debugPrint(lastBuiltEdgeId)
+                                        local lastBuiltBaseEdge = api.engine.getComponent(
+                                            lastBuiltEdgeId,
+                                            api.type.ComponentType.BASE_EDGE
+                                        )
+                                        if not(lastBuiltBaseEdge) then return false end
+
+                                        -- logger.print('edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, waypointModelId) =')
+                                        -- logger.debugPrint(edgeUtils.getEdgeObjectsIdsWithModelId(lastBuiltBaseEdge.objects, targetWaypointModelId))
+
+                                        -- forbid building track waypoint on a platform or platform waypoint on a track
+                                        if trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType) ~= mustBeOnPlatform then
+                                            guiHelpers.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                                 _eventId,
@@ -1959,16 +1794,134 @@ function data()
                                             ))
                                             return false
                                         end
-                                    end
 
-                                    -- make sure there are no signals or waypoints between the waypoints
-                                    for ___, edgeId in pairs(contiguousEdgeIds) do
-                                        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                                        if baseEdge and baseEdge.objects and #baseEdge.objects > 0 then
-                                            for __, edgeObj in pairs(baseEdge.objects) do
-                                                logger.print('edgeObj between waypoints =') logger.debugPrint(edgeObj)
-                                                if edgeObj[1] ~= newWaypointId and edgeObj[1] ~= twinWaypointId then
-                                                    guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossSignal'), newWaypointId)
+                                        local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
+                                        logger.print('similarObjectsIdsInAnyEdges =') logger.debugPrint(similarObjectIdsInAnyEdges)
+                                        -- forbid building more then two waypoints of the same type
+                                        if #similarObjectIdsInAnyEdges > 2 then
+                                            guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectIdsInAnyEdges)
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                {
+                                                    edgeId = lastBuiltEdgeId,
+                                                    waypointId = newWaypointId
+                                                }
+                                            ))
+                                            return false
+                                        end
+
+                                        local newWaypointPosition = edgeUtils.getObjectPosition(newWaypointId)
+                                        -- make sure the waypoint is not too close to station end nodes, or the game will complain later with it != components.end()
+                                        local endEdgeIds = edgeUtils.getEdgeIdsConnectedToEdgeId(lastBuiltEdgeId)
+                                        local _minDistance = _constants.minSplitDistance * 2
+                                        -- logger.print('endEdgeIds =') logger.debugPrint(endEdgeIds)
+                                        for ___, edgeId in pairs(endEdgeIds) do
+                                            local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
+                                            -- logger.print('conId =', conId or 'NIL')
+                                            -- if the edge belongs to a construction
+                                            if edgeUtils.isValidAndExistingId(conId) then
+                                                local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                                                -- and the construction is a station, freestyle or otherwise
+                                                if con ~= nil then
+                                                    if (type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName) then
+                                                        local stationEndEntities = stationHelpers.getStationEndEntities(conId)
+                                                        -- logger.print('stationEndEntities =') logger.debugPrint(stationEndEntities)
+                                                        -- if any end nodes are too close to my waypoint
+                                                        for __, stationEndEntities4T in pairs(stationEndEntities) do
+                                                            if transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
+                                                            or transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
+                                                            or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
+                                                            or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
+                                                            then
+                                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsTooCloseToStation'), newWaypointId)
+                                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                                    string.sub(debug.getinfo(1, 'S').source, 1),
+                                                                    _eventId,
+                                                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                                    {
+                                                                        edgeId = lastBuiltEdgeId,
+                                                                        waypointId = newWaypointId,
+                                                                    }
+                                                                ))
+                                                                return false
+                                                            end
+                                                        end
+                                                    else -- if con.stations ~= nil and #con.stations > 0 then
+                                                        -- no knowledge of end nodes: just forbid the waypoint
+                                                        guiHelpers.showWarningWindowWithGoto(_('WaypointsTooCloseToStation'), newWaypointId)
+                                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                                            _eventId,
+                                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                            {
+                                                                edgeId = lastBuiltEdgeId,
+                                                                waypointId = newWaypointId,
+                                                            }
+                                                        ))
+                                                        return false
+                                                    end
+                                                end
+                                            end
+                                        end
+
+                                        if #similarObjectIdsInAnyEdges < 2 then
+                                            -- not ready yet
+                                            -- guiHelpers.showWarningWindowWithGoto(_('BuildMoreWaypoints'), newWaypointId)
+                                            return false
+                                        end
+
+                                        local twinWaypointId =
+                                            newWaypointId == similarObjectIdsInAnyEdges[1] and similarObjectIdsInAnyEdges[2] or similarObjectIdsInAnyEdges[1]
+                                        local twinWaypointPosition = edgeUtils.getObjectPosition(twinWaypointId)
+
+                                        -- forbid building waypoints too far apart, which would make the station too large
+                                        if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
+                                            local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition)
+                                            if distance > _constants.maxWaypointDistance then
+                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsTooFar'), newWaypointId, similarObjectIdsInAnyEdges)
+                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                    string.sub(debug.getinfo(1, 'S').source, 1),
+                                                    _eventId,
+                                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                    {
+                                                        edgeId = lastBuiltEdgeId,
+                                                        waypointId = newWaypointId
+                                                    }
+                                                ))
+                                                return false
+                                            end
+                                        end
+
+                                        local contiguousTrackEdgeProps = stationHelpers.getTrackEdgePropsBetweenEdgeIds(
+                                            api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
+                                            api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId)
+                                        )
+                                        logger.print('contiguous track edges =') logger.debugPrint(contiguousTrackEdgeProps)
+                                        -- make sure the waypoints are on connected tracks
+                                        if #contiguousTrackEdgeProps < 1 then
+                                            guiHelpers.showWarningWindowWithGoto(_('WaypointsNotConnected'), newWaypointId, similarObjectIdsInAnyEdges)
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                {
+                                                    edgeId = lastBuiltEdgeId,
+                                                    waypointId = newWaypointId,
+                                                }
+                                            ))
+                                            return false
+                                        end
+
+                                        -- make sure the waypoints are not overlapping existing station tracks or platforms, for any sort of station
+                                        for __, obj in pairs(contiguousTrackEdgeProps) do -- don't use _ here, we call it below to translate the message!
+                                            local edgeId = obj.entity
+                                            local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
+                                            if edgeUtils.isValidAndExistingId(conId) then
+                                                local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                                                if con ~= nil and con.stations ~= nil and #con.stations > 0 then
+                                                    guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossStation'), newWaypointId)
                                                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                         string.sub(debug.getinfo(1, 'S').source, 1),
                                                         _eventId,
@@ -1982,23 +1935,19 @@ function data()
                                                 end
                                             end
                                         end
-                                    end
 
-                                    -- LOLLO NOTE do not check that the tracks between the waypoints are all of the same type
-                                    -- (ie, platforms have the same width) so we have more flexibility with tunnel entrances
-                                    -- on the other hand, different platform widths make trouble with cargo, which has multiple waiting areas:
-                                    -- let's check if they are different only if one is > 5, which only happens with cargo.
-                                    local trackDistances = {}
-                                    for _, obj in pairs(contiguousTrackEdgeProps) do
-                                        local edgeId = obj.entity
-                                        local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                                        local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
-                                        arrayUtils.addUnique(trackDistances, baseEdgeProperties.trackDistance)
-                                    end
-                                    if #trackDistances > 1 then
-                                        for __, td in pairs(trackDistances) do -- don't use _ here, we call it below to translate the message!
-                                            if td > 5 then
-                                                guiHelpers.showWarningWindowWithGoto(_('DifferentPlatformWidths'), newWaypointId)
+                                        local contiguousEdgeIds = {}
+                                        for __, value in pairs(contiguousTrackEdgeProps) do
+                                            arrayUtils.addUnique(contiguousEdgeIds, value.entity)
+                                        end
+                                        logger.print('contiguousEdgeIds =') logger.debugPrint(contiguousEdgeIds)
+                                        -- make sure there are no crossings between the waypoints
+                                        local nodesBetweenWps = edgeUtils.getNodeIdsBetweenNeighbourEdgeIds(contiguousEdgeIds, false)
+                                        logger.print('nodesBetweenWps =') logger.debugPrint(nodesBetweenWps)
+                                        local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+                                        for __, nodeId in pairs(nodesBetweenWps) do
+                                            if _map[nodeId] and #_map[nodeId] > 2 then
+                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossCrossing'), newWaypointId)
                                                 api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                     string.sub(debug.getinfo(1, 'S').source, 1),
                                                     _eventId,
@@ -2011,165 +1960,217 @@ function data()
                                                 return false
                                             end
                                         end
-                                    end
 
-                                    -- validation fine, return data
-                                    return {
-                                        newWaypointId = newWaypointId,
-                                        twinWaypointId = twinWaypointId
-                                    }
-                                end
-
-                                local _handleValidWaypointBuilt = function()
-                                    local trackWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiTrackWaypointModelId)
-                                    if #trackWaypointIds ~= 2 then return end
-
-                                    local platformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiPlatformWaypointModelId)
-                                    if #platformWaypointIds ~= 2 then return end
-
-                                    local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointIds[1])
-                                    local edgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                                    local isCargo = trackUtils.isCargoPlatform(edgeTrack.trackType)
-                                    logger.print('TWENTY, isCargo =', isCargo)
-
-                                    -- set a place to build the station
-                                    local platformWaypoint1Pos = edgeUtils.getObjectPosition(platformWaypointIds[1])
-                                    local platformWaypoint2Pos = edgeUtils.getObjectPosition(platformWaypointIds[2])
-                                    local platformWaypointMidTransf = transfUtils.position2Transf({
-                                        (platformWaypoint1Pos[1] + platformWaypoint2Pos[1]) * 0.5,
-                                        (platformWaypoint1Pos[2] + platformWaypoint2Pos[2]) * 0.5,
-                                        (platformWaypoint1Pos[3] + platformWaypoint2Pos[3]) * 0.5,
-                                    })
-
-                                    local trackWaypoint1Pos = edgeUtils.getObjectPosition(trackWaypointIds[1])
-                                    local trackWaypoint2Pos = edgeUtils.getObjectPosition(trackWaypointIds[2])
-                                    local distance11 = transfUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint1Pos)
-                                    local distance12 = transfUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint2Pos)
-
-                                    local eventArgs = {
-                                        isCargo = isCargo,
-                                        platformWaypointTransf = platformWaypointMidTransf,
-                                        platformWaypoint1Id = platformWaypointIds[1],
-                                        platformWaypoint2Id = platformWaypointIds[2],
-                                        trackWaypoint1Id = distance11 < distance12 and trackWaypointIds[1] or trackWaypointIds[2],
-                                        trackWaypoint2Id = distance11 < distance12 and trackWaypointIds[2] or trackWaypointIds[1],
-                                    }
-
-                                    local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
-                                    if #nearbyFreestyleStations > 0 and #nearbyFreestyleStations < _constants.maxNTerminals then
-                                        guiHelpers.showNearbyStationPicker(
-                                            isCargo,
-                                            nearbyFreestyleStations,
-                                            _eventId,
-                                            _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                            _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                            eventArgs -- join2StationId will be added by the popup
-                                        )
-                                    else
-                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                            string.sub(debug.getinfo(1, 'S').source, 1),
-                                            _eventId,
-                                            _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                            eventArgs
-                                        ))
-                                    end
-                                end
-                                -- LOLLO NOTE as I added an edge object, I have NOT split the edge
-                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiPlatformWaypointModelId then
-                                    local waypointData = _validateWaypointBuilt(_guiPlatformWaypointModelId,
-                                        args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
-                                        args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
-                                        true
-                                    )
-                                    logger.print('platformWaypointData =') logger.debugPrint(waypointData)
-                                    if not(waypointData) then return end
-
-                                    _handleValidWaypointBuilt()
-
-                                    -- if any platform nodes are joints between more than 2 platform-tracks,
-                                    -- we bar building two platform waypoints outside a junction.
-                                    -- Or maybe, we could bar intersecting platform-tracks altogether:
-                                    -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
-
-                                elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiTrackWaypointModelId then
-                                    local waypointData = _validateWaypointBuilt(_guiTrackWaypointModelId,
-                                        args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
-                                        args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
-                                        false
-                                    )
-                                    logger.print('trackWaypointData =') logger.debugPrint(waypointData)
-                                    if not(waypointData) then return end
-
-                                    _handleValidWaypointBuilt()
-                                end
-                            end
-                        --[[ elseif id == 'trackBuilder' or id == 'streetTrackModifier' then
-                            -- I get here in 3 cases:
-                            -- 1) a new track is built (id = trackBuilder)
-                            -- 2) an existing track is changed to a different type (id = streetTrackModifier)
-                            -- 3) an existing track is changed with the upgrade tool (id = streetTrackModifier)
-
-                            -- the user has built or updated a piece of platform-track:
-                            -- if there is a track waypoint, remove it, ie rebuild the platform-track without
-                            -- otherwise, if the catenary is true, rebuild the platform-track without
-                            -- note that this can affect multiple edges at once.
-                            if not(args) or not(args.proposal) or not(args.proposal.proposal)
-                            or not(args.proposal.proposal.addedSegments) or not(args.proposal.proposal.addedSegments[1])
-                            or not(args.data) or not(args.data.entity2tn) then return end
-
-                            local _trackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
-
-                            local removeTrackWaypointsEventArgs = {}
-                            for _, addedSegment in pairs(args.proposal.proposal.addedSegments) do
-                                if addedSegment and addedSegment.trackEdge
-                                and trackUtils.isPlatform(addedSegment.trackEdge.trackType)
-                                and addedSegment.comp.objects then
-                                    local edgeObjectsToRemoveIds = edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypointModelId)
-                                    if #edgeObjectsToRemoveIds > 0 then
-                                        for _, waypointId in pairs(edgeObjectsToRemoveIds) do
-                                            removeTrackWaypointsEventArgs[#removeTrackWaypointsEventArgs+1] = {
-                                                edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(waypointId),
-                                                waypointId = waypointId,
-                                            }
+                                        -- make sure there are no signals or waypoints between the waypoints
+                                        for ___, edgeId in pairs(contiguousEdgeIds) do
+                                            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                                            if baseEdge and baseEdge.objects and #baseEdge.objects > 0 then
+                                                for __, edgeObj in pairs(baseEdge.objects) do
+                                                    logger.print('edgeObj between waypoints =') logger.debugPrint(edgeObj)
+                                                    if edgeObj[1] ~= newWaypointId and edgeObj[1] ~= twinWaypointId then
+                                                        guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossSignal'), newWaypointId)
+                                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                                            _eventId,
+                                                            _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                            {
+                                                                edgeId = lastBuiltEdgeId,
+                                                                waypointId = newWaypointId,
+                                                            }
+                                                        ))
+                                                        return false
+                                                    end
+                                                end
+                                            end
                                         end
-                                    else
-                                        logger.print('WARNING upgrading, addedSegment =') -- logger.debugPrint(addedSegment)
-                                        -- logger.print('args.data.entity2tn =') logger.debugPrint(args.data.entity2tn)
-                                        -- LOLLO TODO when upgrading, the game adds a segment and two nodes, which won't work with the following.
-                                        -- Probably unimportant, but check it coz edgeUtils.getLastBuiltEdgeId errors out (gracefully)
-                                        -- when adding electrification or high speed.
-                                        removeTrackWaypointsEventArgs[#removeTrackWaypointsEventArgs+1] = {
-                                            edgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, addedSegment),
-                                            waypointId = nil,
+
+                                        -- LOLLO NOTE do not check that the tracks between the waypoints are all of the same type
+                                        -- (ie, platforms have the same width) so we have more flexibility with tunnel entrances
+                                        -- on the other hand, different platform widths make trouble with cargo, which has multiple waiting areas:
+                                        -- let's check if they are different only if one is > 5, which only happens with cargo.
+                                        local trackDistances = {}
+                                        for _, obj in pairs(contiguousTrackEdgeProps) do
+                                            local edgeId = obj.entity
+                                            local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                                            local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
+                                            arrayUtils.addUnique(trackDistances, baseEdgeProperties.trackDistance)
+                                        end
+                                        if #trackDistances > 1 then
+                                            for __, td in pairs(trackDistances) do -- don't use _ here, we call it below to translate the message!
+                                                if td > 5 then
+                                                    guiHelpers.showWarningWindowWithGoto(_('DifferentPlatformWidths'), newWaypointId)
+                                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                        string.sub(debug.getinfo(1, 'S').source, 1),
+                                                        _eventId,
+                                                        _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                        {
+                                                            edgeId = lastBuiltEdgeId,
+                                                            waypointId = newWaypointId,
+                                                        }
+                                                    ))
+                                                    return false
+                                                end
+                                            end
+                                        end
+
+                                        -- validation fine, return data
+                                        return {
+                                            newWaypointId = newWaypointId,
+                                            twinWaypointId = twinWaypointId
                                         }
                                     end
-                                -- else
-                                    -- logger.print('addedSegment =') logger.debugPrint(addedSegment)
-                                end
-                            end
-                            for i = 1, #removeTrackWaypointsEventArgs do
-                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                    string.sub(debug.getinfo(1, 'S').source, 1),
-                                    _eventId,
-                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                    {
-                                        edgeId = removeTrackWaypointsEventArgs[i].edgeId,
-                                        waypointId = removeTrackWaypointsEventArgs[i].waypointId,
-                                    }
-                                ))
-                            end ]]
-                        end
-                    elseif name == 'select' then
-                        -- LOLLO TODO MAYBE same with stations. Maybe one day.
-                        -- logger.print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
-                        -- logger.debugPrint(args)
 
-                        _joinSubway(args)
-                    end
-                    if isHideDistance then guiHelpers.hideWaypointDistance() end
-                end,
-                _myErrorHandler
-            )
+                                    local _handleValidWaypointBuilt = function()
+                                        local trackWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiTrackWaypointModelId)
+                                        if #trackWaypointIds ~= 2 then return end
+
+                                        local platformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiPlatformWaypointModelId)
+                                        if #platformWaypointIds ~= 2 then return end
+
+                                        local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointIds[1])
+                                        local edgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+                                        local isCargo = trackUtils.isCargoPlatform(edgeTrack.trackType)
+                                        logger.print('TWENTY, isCargo =', isCargo)
+
+                                        -- set a place to build the station
+                                        local platformWaypoint1Pos = edgeUtils.getObjectPosition(platformWaypointIds[1])
+                                        local platformWaypoint2Pos = edgeUtils.getObjectPosition(platformWaypointIds[2])
+                                        local platformWaypointMidTransf = transfUtils.position2Transf({
+                                            (platformWaypoint1Pos[1] + platformWaypoint2Pos[1]) * 0.5,
+                                            (platformWaypoint1Pos[2] + platformWaypoint2Pos[2]) * 0.5,
+                                            (platformWaypoint1Pos[3] + platformWaypoint2Pos[3]) * 0.5,
+                                        })
+
+                                        local trackWaypoint1Pos = edgeUtils.getObjectPosition(trackWaypointIds[1])
+                                        local trackWaypoint2Pos = edgeUtils.getObjectPosition(trackWaypointIds[2])
+                                        local distance11 = transfUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint1Pos)
+                                        local distance12 = transfUtils.getPositionsDistance(platformWaypoint1Pos, trackWaypoint2Pos)
+
+                                        local eventArgs = {
+                                            isCargo = isCargo,
+                                            platformWaypointTransf = platformWaypointMidTransf,
+                                            platformWaypoint1Id = platformWaypointIds[1],
+                                            platformWaypoint2Id = platformWaypointIds[2],
+                                            trackWaypoint1Id = distance11 < distance12 and trackWaypointIds[1] or trackWaypointIds[2],
+                                            trackWaypoint2Id = distance11 < distance12 and trackWaypointIds[2] or trackWaypointIds[1],
+                                        }
+
+                                        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
+                                        if #nearbyFreestyleStations > 0 and #nearbyFreestyleStations < _constants.maxNTerminals then
+                                            guiHelpers.showNearbyStationPicker(
+                                                isCargo,
+                                                nearbyFreestyleStations,
+                                                _eventId,
+                                                _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
+                                                _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
+                                                eventArgs -- join2StationId will be added by the popup
+                                            )
+                                        else
+                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                _eventId,
+                                                _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
+                                                eventArgs
+                                            ))
+                                        end
+                                    end
+                                    -- LOLLO NOTE as I added an edge object, I have NOT split the edge
+                                    if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiPlatformWaypointModelId then
+                                        local waypointData = _validateWaypointBuilt(_guiPlatformWaypointModelId,
+                                            args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
+                                            args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
+                                            true
+                                        )
+                                        logger.print('platformWaypointData =') logger.debugPrint(waypointData)
+                                        if not(waypointData) then return end
+
+                                        _handleValidWaypointBuilt()
+
+                                        -- if any platform nodes are joints between more than 2 platform-tracks,
+                                        -- we bar building two platform waypoints outside a junction.
+                                        -- Or maybe, we could bar intersecting platform-tracks altogether:
+                                        -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
+
+                                    elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiTrackWaypointModelId then
+                                        local waypointData = _validateWaypointBuilt(_guiTrackWaypointModelId,
+                                            args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
+                                            args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
+                                            false
+                                        )
+                                        logger.print('trackWaypointData =') logger.debugPrint(waypointData)
+                                        if not(waypointData) then return end
+
+                                        _handleValidWaypointBuilt()
+                                    end
+                                end
+                            --[[ elseif id == 'trackBuilder' or id == 'streetTrackModifier' then
+                                -- I get here in 3 cases:
+                                -- 1) a new track is built (id = trackBuilder)
+                                -- 2) an existing track is changed to a different type (id = streetTrackModifier)
+                                -- 3) an existing track is changed with the upgrade tool (id = streetTrackModifier)
+
+                                -- the user has built or updated a piece of platform-track:
+                                -- if there is a track waypoint, remove it, ie rebuild the platform-track without
+                                -- otherwise, if the catenary is true, rebuild the platform-track without
+                                -- note that this can affect multiple edges at once.
+                                if not(args) or not(args.proposal) or not(args.proposal.proposal)
+                                or not(args.proposal.proposal.addedSegments) or not(args.proposal.proposal.addedSegments[1])
+                                or not(args.data) or not(args.data.entity2tn) then return end
+
+                                local _trackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
+
+                                local removeTrackWaypointsEventArgs = {}
+                                for _, addedSegment in pairs(args.proposal.proposal.addedSegments) do
+                                    if addedSegment and addedSegment.trackEdge
+                                    and trackUtils.isPlatform(addedSegment.trackEdge.trackType)
+                                    and addedSegment.comp.objects then
+                                        local edgeObjectsToRemoveIds = edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypointModelId)
+                                        if #edgeObjectsToRemoveIds > 0 then
+                                            for _, waypointId in pairs(edgeObjectsToRemoveIds) do
+                                                removeTrackWaypointsEventArgs[#removeTrackWaypointsEventArgs+1] = {
+                                                    edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(waypointId),
+                                                    waypointId = waypointId,
+                                                }
+                                            end
+                                        else
+                                            logger.print('WARNING upgrading, addedSegment =') -- logger.debugPrint(addedSegment)
+                                            -- logger.print('args.data.entity2tn =') logger.debugPrint(args.data.entity2tn)
+                                            -- LOLLO TODO when upgrading, the game adds a segment and two nodes, which won't work with the following.
+                                            -- Probably unimportant, but check it coz edgeUtils.getLastBuiltEdgeId errors out (gracefully)
+                                            -- when adding electrification or high speed.
+                                            removeTrackWaypointsEventArgs[#removeTrackWaypointsEventArgs+1] = {
+                                                edgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, addedSegment),
+                                                waypointId = nil,
+                                            }
+                                        end
+                                    -- else
+                                        -- logger.print('addedSegment =') logger.debugPrint(addedSegment)
+                                    end
+                                end
+                                for i = 1, #removeTrackWaypointsEventArgs do
+                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                        string.sub(debug.getinfo(1, 'S').source, 1),
+                                        _eventId,
+                                        _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                        {
+                                            edgeId = removeTrackWaypointsEventArgs[i].edgeId,
+                                            waypointId = removeTrackWaypointsEventArgs[i].waypointId,
+                                        }
+                                    ))
+                                end ]]
+                            end
+                        elseif name == 'select' then
+                            -- LOLLO TODO MAYBE same with stations. Maybe one day.
+                            -- logger.print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
+                            -- logger.debugPrint(args)
+
+                            _joinSubway(args)
+                        end
+                    end,
+                    _myErrorHandler
+                )
+            end
+            if isHideDistance then guiHelpers.hideWaypointDistance() end
         end,
         -- update = function()
         -- end,
