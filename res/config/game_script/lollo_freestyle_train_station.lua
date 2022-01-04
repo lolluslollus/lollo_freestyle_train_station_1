@@ -22,6 +22,8 @@ local state = {}
 
 local _eventId = _constants.eventData.eventId
 local _eventNames = _constants.eventData.eventNames
+local _guiPlatformWaypointModelId = nil
+local _guiTrackWaypointModelId = nil
 
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
@@ -1147,6 +1149,10 @@ function data()
     return {
         -- ini = function()
         -- end,
+        guiInit = function()
+            _guiPlatformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
+            _guiTrackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
+        end,
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
 
@@ -1600,7 +1606,7 @@ function data()
         guiHandleEvent = function(id, name, args)
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
             -- logger.print('guiHandleEvent caught id =', id, 'name =', name)
-            if (name ~= 'builder.apply' and name ~= 'select') then return end -- for performance
+            if (name ~= 'builder.proposalCreate' and name ~= 'builder.apply' and name ~= 'select') then return end -- for performance
             local _joinSubway = function(subwayConstructionId)
                 if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
 
@@ -1634,7 +1640,53 @@ function data()
             end
             xpcall(
                 function()
-                    if name == 'builder.apply' then
+                    local isHideDistance = true
+                    if name == 'builder.proposalCreate' then
+                        if id == 'streetTerminalBuilder' then
+                            -- waypoint, traffic light, my own waypoints built
+                            if args and args.proposal and args.proposal.proposal
+                            and args.proposal.proposal.edgeObjectsToAdd
+                            and args.proposal.proposal.edgeObjectsToAdd[1]
+                            and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
+                            then
+                                local _tryShowDistance = function(targetWaypointModelId, newWaypointTransf, mustBeOnPlatform)
+                                    if not(targetWaypointModelId) or not(newWaypointTransf) then return false end
+
+                                    local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
+                                    if #similarObjectIdsInAnyEdges ~= 1 then
+                                        -- not ready yet
+                                        return false
+                                    end
+
+                                    local twinWaypointPosition = edgeUtils.getObjectPosition(similarObjectIdsInAnyEdges[1])
+                                    local newWaypointPosition = transfUtils.transf2Position(
+                                        transfUtilsUG.new(newWaypointTransf:cols(0), newWaypointTransf:cols(1), newWaypointTransf:cols(2), newWaypointTransf:cols(3))
+                                    )
+                                    if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
+                                        local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition) or 0
+                                        guiHelpers.showWaypointDistance(tostring((_('WaypointDistanceWindowTitle') .. " %.0f m"):format(distance)))
+                                        return true
+                                    end
+
+                                    return false
+                                end
+
+                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiPlatformWaypointModelId then
+                                    isHideDistance = not(_tryShowDistance(
+                                        _guiPlatformWaypointModelId,
+                                        args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf,
+                                        true
+                                    ))
+                                elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiTrackWaypointModelId then
+                                    isHideDistance = not(_tryShowDistance(
+                                        _guiTrackWaypointModelId,
+                                        args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf,
+                                        false
+                                    ))
+                                end
+                            end
+                        end
+                    elseif name == 'builder.apply' then
                         guiHelpers.hideAllWarnings()
                         -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
                         if id == 'bulldozer' then
@@ -1708,9 +1760,6 @@ function data()
                             and args.proposal.proposal.edgeObjectsToAdd[1]
                             and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
                             then
-                                local _platformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
-                                local _trackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
-
                                 local _validateWaypointBuilt = function(targetWaypointModelId, newWaypointId, lastBuiltEdgeId, mustBeOnPlatform)
                                     logger.print('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
                                     -- UG TODO this is empty, ask UG to fix this: can't we have the waypointId in args.result?
@@ -1972,10 +2021,10 @@ function data()
                                 end
 
                                 local _handleValidWaypointBuilt = function()
-                                    local trackWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_trackWaypointModelId)
+                                    local trackWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiTrackWaypointModelId)
                                     if #trackWaypointIds ~= 2 then return end
 
-                                    local platformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_platformWaypointModelId)
+                                    local platformWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiPlatformWaypointModelId)
                                     if #platformWaypointIds ~= 2 then return end
 
                                     local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(platformWaypointIds[1])
@@ -2026,8 +2075,8 @@ function data()
                                     end
                                 end
                                 -- LOLLO NOTE as I added an edge object, I have NOT split the edge
-                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _platformWaypointModelId then
-                                    local waypointData = _validateWaypointBuilt(_platformWaypointModelId,
+                                if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiPlatformWaypointModelId then
+                                    local waypointData = _validateWaypointBuilt(_guiPlatformWaypointModelId,
                                         args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
                                         args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
                                         true
@@ -2042,8 +2091,8 @@ function data()
                                     -- Or maybe, we could bar intersecting platform-tracks altogether:
                                     -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
 
-                                elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _trackWaypointModelId then
-                                    local waypointData = _validateWaypointBuilt(_trackWaypointModelId,
+                                elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiTrackWaypointModelId then
+                                    local waypointData = _validateWaypointBuilt(_guiTrackWaypointModelId,
                                         args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
                                         args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
                                         false
@@ -2117,6 +2166,7 @@ function data()
 
                         _joinSubway(args)
                     end
+                    if isHideDistance then guiHelpers.hideWaypointDistance() end
                 end,
                 _myErrorHandler
             )

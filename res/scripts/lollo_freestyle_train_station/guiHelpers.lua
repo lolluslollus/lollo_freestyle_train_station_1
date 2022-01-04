@@ -8,6 +8,7 @@ local _eventNames = _constants.eventData.eventNames
 local _stationPickerWindowId = 'lollo_freestyle_station_picker_window'
 local _warningWindowWithGotoId = 'lollo_freestyle_station_warning_window_with_goto'
 local _warningWindowWithStateId = 'lollo_freestyle_station_warning_window_with_state'
+local _waypointDistanceWindow = 'lollo_freestyle_station_waypoint_distance_window'
 
 local _texts = {
     goBack = _('GoBack'),
@@ -16,6 +17,7 @@ local _texts = {
     noJoin = _('NoJoin'),
     stationPickerWindowTitle = _('StationPickerWindowTitle'),
     warningWindowTitle = _('WarningWindowTitle'),
+    waypointDistanceWindowTitle = _('WaypointDistanceWindowTitle'),
 }
 
 local _windowXShift = -200
@@ -27,6 +29,7 @@ local guiHelpers = {
         game.gui.setCamera({position[1], position[2], cameraData[3], cameraData[4], cameraData[5]})
     end
 }
+
 guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eventId, joinEventName, noJoinEventName, eventArgs)
     -- print('showNearbyStationPicker starting')
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
@@ -275,12 +278,49 @@ guiHelpers.showWarningWindowWithState = function(text)
     )
 end
 
+guiHelpers.showWaypointDistance = function(text)
+    local layout = api.gui.layout.BoxLayout.new('VERTICAL')
+    local window = api.gui.util.getById(_waypointDistanceWindow)
+    if window == nil then
+        window = api.gui.comp.Window.new(_texts.waypointDistanceWindowTitle, layout)
+        window:setId(_waypointDistanceWindow)
+    else
+        window:setContent(layout)
+        window:setVisible(true, false)
+    end
+
+    layout:addItem(api.gui.comp.TextView.new(text))
+
+    -- window:setHighlighted(true)
+    local position = api.gui.util.getMouseScreenPos()
+    window:setPosition(position.x + _windowXShift, position.y)
+    -- window:addHideOnCloseHandler()
+    window:onClose(
+        function()
+            window:setVisible(false, false)
+            -- api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+            --     string.sub(debug.getinfo(1, 'S').source, 1),
+            --     _eventId,
+            --     _eventNames.HIDE_WARNINGS,
+            --     {}
+            -- ))
+        end
+    )
+end
+
 guiHelpers.hideAllWarnings = function()
     local window = api.gui.util.getById(_stationPickerWindowId)
     if window ~= nil then
         window:setVisible(false, false)
     end
     window = api.gui.util.getById(_warningWindowWithGotoId)
+    if window ~= nil then
+        window:setVisible(false, false)
+    end
+end
+
+guiHelpers.hideWaypointDistance = function()
+    local window = api.gui.util.getById(_waypointDistanceWindow)
     if window ~= nil then
         window:setVisible(false, false)
     end
