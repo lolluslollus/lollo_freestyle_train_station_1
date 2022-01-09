@@ -1350,7 +1350,7 @@ function data()
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
-												if linkedTerminals == nil or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
+												if not(linkedTerminals) or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
 													if getModelId then
 														result.models[#result.models+1] = {
 															id = getModelId(value.distance, value.eraOfT1, value.eraOfT2),
@@ -1488,6 +1488,7 @@ function data()
 					_linkAcross(shortSegmentsTunnelTops2Tops)
 
                     local linkedTerminals = arrayUtils.cloneDeepOmittingFields(_linkedTerminals)
+					logger.print('linkedTerminals =') logger.debugPrint(linkedTerminals)
 					-- only make these connections if there are no other peer-to-peer connections between the terminals
 					logger.print('shortSegmentsTunnelTops2Surface =') logger.debugPrint(shortSegmentsTunnelTops2Surface)
 					_linkAcross(shortSegmentsTunnelTops2Surface, nil, nil, linkedTerminals)
