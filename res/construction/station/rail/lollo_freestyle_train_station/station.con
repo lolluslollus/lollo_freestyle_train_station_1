@@ -1036,8 +1036,8 @@ function data()
 
 			result.terminateConstructionHook = function()
 				logger.print('terminateConstructionHook starting')
-				-- xpcall(
-				-- 	function()
+		-- xpcall(
+		-- 	function()
 				local _getAllPositions_UndergroundTop_GroundBottom = function()
 					local results = {}
 					for t = 1, #params.terminals do
@@ -1052,12 +1052,14 @@ function data()
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
 					local _isLeft = function(posTanX2, pos)
+						-- approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short
+						-- the direction ought to be irrelevant coz the calc is based on absolute positions
 						-- a + b * x = y
 						-- b = dY / dX
 						-- a = y - dY / dX * x
 						local x0, x1 = posTanX2[1][1][1], posTanX2[2][1][1]
 						local y0, y1 = posTanX2[1][1][2], posTanX2[2][1][2]
-						local isInvert = ((x1 > x0 and y1 < y0) or (x1 < x0 and y1 > y0)) -- 2nd or 4th quadrant
+						-- local isInvert = ((x1 > x0 and y1 < y0) or (x1 < x0 and y1 > y0)) -- 2nd or 4th quadrant
 						local dX = x1 - x0
 						local dY = y1 - y0
 						if isOutputLog then
@@ -1067,7 +1069,7 @@ function data()
 						end
 						if dX == 0 then
 							local isLeftResult = pos[1] < x0
-							if isInvert then isLeftResult = not(isLeftResult) end
+							-- if isInvert then isLeftResult = not(isLeftResult) end
 							if isOutputLog then
 								print('_isLeft has calculated result = ', isLeftResult)
 							end
@@ -1075,12 +1077,8 @@ function data()
 						end
 						local b = dY / dX
 						local a = y0 - b * x0
-						-- LOLLO NOTE So far I checked if the pos is below or above the line,
-						-- but I must consider the direction of my line,
-						-- which is in fact a vector. On the other hand, the line is an absolute reference
-						-- while the vector may change direction with the station quirks => we use the line.
 						local isLeftResult = a + b * pos[1] < pos[2]
-						if isInvert then isLeftResult = not(isLeftResult) end
+						-- if isInvert then isLeftResult = not(isLeftResult) end
 						if isOutputLog then
 							print('_isLeft has calculated a =', a, ', b =', b, ', result = ', isLeftResult)
 						end
