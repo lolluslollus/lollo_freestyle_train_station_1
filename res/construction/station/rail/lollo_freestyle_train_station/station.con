@@ -1341,7 +1341,8 @@ function data()
 					-- There can be multiple links if they are short enough
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
-					local function _linkAcross(segments, maxDistance, getModelId)
+					local _linkedTerminals = {}
+					local function _linkAcross(segments, maxDistance, getModelId, onlyIfUnlinked)
 						local maxT = #params.terminals
 						for t = 1, maxT do
 							if segments[t] ~= nil then
@@ -1349,22 +1350,28 @@ function data()
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
-												if getModelId then
-													result.models[#result.models+1] = {
-														id = getModelId(value.distance, value.eraOfT1, value.eraOfT2),
-														transf = transfUtils.get1MModelTransf(
-															value.pos2Link1,
-															value.pos2Link2
-														)
-													}
-												else
-													result.models[#result.models+1] = {
-														id = _constants.passengerLaneModelId,
-														transf = transfUtils.get1MLaneTransf(
-															value.pos2Link1,
-															value.pos2Link2
-														)
-													}
+												if not(onlyIfUnlinked) or not(arrayUtils.arrayHasValue(_linkedTerminals[t], tt)) then
+													if getModelId then
+														result.models[#result.models+1] = {
+															id = getModelId(value.distance, value.eraOfT1, value.eraOfT2),
+															transf = transfUtils.get1MModelTransf(
+																value.pos2Link1,
+																value.pos2Link2
+															)
+														}
+													else
+														result.models[#result.models+1] = {
+															id = _constants.passengerLaneModelId,
+															transf = transfUtils.get1MLaneTransf(
+																value.pos2Link1,
+																value.pos2Link2
+															)
+														}
+													end
+													if _linkedTerminals[t] == nil then _linkedTerminals[t] = {} end
+													if _linkedTerminals[tt] == nil then _linkedTerminals[tt] = {} end
+													arrayUtils.addUnique(_linkedTerminals[t], tt)
+													arrayUtils.addUnique(_linkedTerminals[tt], t)
 												end
 											end
 										end
@@ -1480,13 +1487,13 @@ function data()
 					logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 					_linkAcross(shortSegmentsTunnelTops2Tops)
 
-					-- LOLLO TODO only make these connections if there are no other connections between the terminals
+					-- only make these connections if there are no other connections between the terminals
 					logger.print('shortSegmentsTunnelTops2Surface =') logger.debugPrint(shortSegmentsTunnelTops2Surface)
-					_linkAcross(shortSegmentsTunnelTops2Surface)
+					_linkAcross(shortSegmentsTunnelTops2Surface, nil, nil, true)
 
-					-- LOLLO TODO only make these connections if there are no other connections between the terminals
+					-- only make these connections if there are no other connections between the terminals
 					logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
-					_linkAcross(shortSegmentsTunnelTops2Bottoms)
+					_linkAcross(shortSegmentsTunnelTops2Bottoms, nil, nil, true)
 				end
 				_linkUnderpassesAndStairs()
 				logger.print('passengers and stairs linked')
