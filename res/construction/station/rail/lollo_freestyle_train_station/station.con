@@ -1088,12 +1088,15 @@ function data()
 						return isLeftResult
 					end
 					local _isLeft = function(t1, t2)
-						-- If the station is curved, links between terminal T (1) to TT (1) might look left,
-						-- while links between terminal T (1) to TT (2) might look right: this is wrong.
-						-- So we compare the centre points of each terminal.
+						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
+                        -- If the station is curved, and we check the centre platform segments,
+                        -- a link between terminal T (1) to TT (1) might look left,
+						-- while a link between terminal T (1) to TT (2) might look right.
+                        -- Instead, we compare the centre points of each terminal:
+                        -- this way, all connections between platform T1 and T2 will be left or right,
+                        -- and all connections between platform T2 and T1 will be right or left.
 						-- It does not really matter how we compare, as long as
-						-- platform T is left of platform TT =>
-						-- platform TT is right of platform T
+						-- platform T is left of platform TT => platform TT is right of platform T
 						-- LOLLO TODO check what happens if platforms cross each other, one above and one below
 						if t1 == t2 then print('LOLLO freestyle train station ERROR: t1 == t2 ==', t1) return false end
 
