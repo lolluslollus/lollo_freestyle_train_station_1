@@ -1342,7 +1342,7 @@ function data()
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
 					local _linkedTerminals = {}
-					local function _linkAcross(segments, maxDistance, getModelId, onlyIfUnlinked)
+					local function _linkAcross(segments, maxDistance, getModelId, linkedTerminals)
 						local maxT = #params.terminals
 						for t = 1, maxT do
 							if segments[t] ~= nil then
@@ -1350,7 +1350,7 @@ function data()
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
-												if not(onlyIfUnlinked) or not(arrayUtils.arrayHasValue(_linkedTerminals[t], tt)) then
+												if linkedTerminals == nil or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
 													if getModelId then
 														result.models[#result.models+1] = {
 															id = getModelId(value.distance, value.eraOfT1, value.eraOfT2),
@@ -1487,13 +1487,14 @@ function data()
 					logger.print('shortSegmentsTunnelTops2Tops =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 					_linkAcross(shortSegmentsTunnelTops2Tops)
 
-					-- only make these connections if there are no other connections between the terminals
+                    local linkedTerminals = arrayUtils.cloneDeepOmittingFields(_linkedTerminals)
+					-- only make these connections if there are no other peer-to-peer connections between the terminals
 					logger.print('shortSegmentsTunnelTops2Surface =') logger.debugPrint(shortSegmentsTunnelTops2Surface)
-					_linkAcross(shortSegmentsTunnelTops2Surface, nil, nil, true)
+					_linkAcross(shortSegmentsTunnelTops2Surface, nil, nil, linkedTerminals)
 
-					-- only make these connections if there are no other connections between the terminals
+					-- only make these connections if there are no other peer-to-peer connections between the terminals
 					logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
-					_linkAcross(shortSegmentsTunnelTops2Bottoms, nil, nil, true)
+					_linkAcross(shortSegmentsTunnelTops2Bottoms, nil, nil, linkedTerminals)
 				end
 				_linkUnderpassesAndStairs()
 				logger.print('passengers and stairs linked')
