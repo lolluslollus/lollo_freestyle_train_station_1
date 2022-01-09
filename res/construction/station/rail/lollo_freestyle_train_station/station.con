@@ -526,7 +526,7 @@ function data()
 													result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
 													{
 														t = t,
-														lanePosTanX2 = cpl.posTanX2,
+														-- lanePosTanX2 = cpl.posTanX2,
 														pos2Link = transfUtils.transf2Position(underpassBottomTransf)
 													}
 												)
@@ -628,7 +628,7 @@ function data()
 										result.terminateConstructionHookInfo.trackCrossingPositions[t],
 										{
 											t = t,
-											lanePosTanX2 = cpl.posTanX2,
+											-- lanePosTanX2 = cpl.posTanX2,
 											pos = trackCrossingPos
 										}
 									)
@@ -669,7 +669,7 @@ function data()
 								result.terminateConstructionHookInfo.crossConnectorPositions[t],
 								{
 									t = t,
-									lanePosTanX2 = cpl.posTanX2,
+									-- lanePosTanX2 = cpl.posTanX2,
 									pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], _laneZ)
 								}
 							)
@@ -739,7 +739,7 @@ function data()
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
 								{
 									t = t,
-									lanePosTanX2 = cpl.posTanX2,
+									-- lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -756,7 +756,7 @@ function data()
 								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t],
 								{
 									t = t,
-									lanePosTanX2 = cpl.posTanX2,
+									-- lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -772,7 +772,7 @@ function data()
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
 								{
 									t = t,
-									lanePosTanX2 = cpl.posTanX2,
+									-- lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -789,7 +789,7 @@ function data()
 								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
 								{
 									t = t,
-									lanePosTanX2 = cpl.posTanX2,
+									-- lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -806,7 +806,7 @@ function data()
 								result.terminateConstructionHookInfo.underpassPositionsOnGround[t],
 								{
 									t = t,
-									lanePosTanX2 = cpl.posTanX2,
+									-- lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -824,7 +824,7 @@ function data()
 								{
 									t = t,
 									era = moduleHelpers.getEraPrefix(params, t, i),
-									lanePosTanX2 = cpl.posTanX2,
+									-- lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -1154,7 +1154,6 @@ function data()
 					local _getMinDistanceSegments = function()
 					-- For each terminal, then for each connected point,
 					-- get the shortest segment on the left and the shortest segment on the right.
-					-- the reference vector is lanePosTanX2.
 						local results = {}
 						for t = 1, _maxT do
 							local positionsInT = positionsA[t]
