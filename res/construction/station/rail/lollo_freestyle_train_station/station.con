@@ -1261,7 +1261,6 @@ function data()
                     for t = 1, _maxT do
 						-- if minDistance_TT_II_Segments_SmallTFirst[t] then
 						if minDistance_T_I_Segments_SmallTFirst[t] then
-							-- for _, segmentsTouchingPoint in pairs(minDistance_TT_II_Segments_SmallTFirst[t]) do
 							for _, segmentsTouchingPointWithIndex in pairs(minDistance_T_I_Segments_SmallTFirst[t]) do
 								for _, isLeftOfT1 in pairs({true, false}) do
 									local testSegment = {distance = 9999}
