@@ -1350,7 +1350,7 @@ function data()
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
-												if not(linkedTerminals) or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
+												if not(linkedTerminals) or not(linkedTerminals[t]) or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
 													if getModelId then
 														result.models[#result.models+1] = {
 															id = getModelId(value.distance, value.eraOfT1, value.eraOfT2),
