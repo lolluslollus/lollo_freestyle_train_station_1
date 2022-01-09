@@ -1350,6 +1350,8 @@ function data()
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
+												-- LOLLO NOTE this estimator could be improved to check indirect connections,
+												-- but I like it simple
 												if not(linkedTerminals) or not(linkedTerminals[t]) or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
 													if getModelId then
 														result.models[#result.models+1] = {
