@@ -250,6 +250,15 @@ function data()
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
 			["WaypointsTooCloseToStation"] = "Too close to an existing station",
 			["WaypointsTooFar"] = "Too far from its twin",
+
+			-- free open stairs
+			["Era"] = "Era",
+			["OpenStairsFreeDesc"] = "Stairs Matching Freestyle Train Stations",
+			["OpenStairsFreeHeight"] = "Height",
+			["OpenStairsFreeName"] = "Stairs",
+			["TopPlatformLength"] = "Top Platform Length",
+			["TopPlatformYAngle"] = "Top Platform Tilt",
+			["TopPlatformZAngle"] = "Top Platform Rotation",
 		},
 	}
 end

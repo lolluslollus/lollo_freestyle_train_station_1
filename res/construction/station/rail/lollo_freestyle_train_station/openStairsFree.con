@@ -7,10 +7,25 @@ function data()
         print('lollo freestyle train station ERROR: ', err)
     end
 
+    local _maxBridgeChunkYAngleDeg = 15
+    local _bridgeChunkYAngleStep = 5
     local _maxBridgeChunkZAngleDeg = 90
     local _bridgeChunkZAngleStep = 5
     local _bridgeChunkLengthValues = {'0', '4', '8', '16', '32', '64'}
     local _paramsFunctions = {
+        getBridgeChunkYAngle = function(params)
+            return (math.floor(params.bridge_chunk_y_angle * _bridgeChunkYAngleStep) - _maxBridgeChunkYAngleDeg) or 0
+        end,
+        getBridgeChunkYAngleDefault = function()
+            return math.floor(_maxBridgeChunkYAngleDeg / _bridgeChunkYAngleStep)
+        end,
+        getBridgeChunkYAngleValues = function()
+            local results = {}
+            for i = -_maxBridgeChunkYAngleDeg, _maxBridgeChunkYAngleDeg, _bridgeChunkYAngleStep do
+                results[#results+1] = tostring(i)
+            end
+            return results
+        end,
         getBridgeChunkZAngle = function(params)
             return (math.floor(params.bridge_chunk_z_angle * _bridgeChunkZAngleStep) - _maxBridgeChunkZAngleDeg) or 0
         end,
@@ -55,6 +70,7 @@ function data()
 			yearFrom = 0,
 			yearTo = 0,
 		},
+        categories = { 'stairs' },
 		order = 1103,
 		autoRemovable = false,
         buildMode = 'MULTI',
@@ -62,7 +78,7 @@ function data()
 		params = {
             {
                 key = 'stairs_height',
-                name = _('Height'),
+                name = _('OpenStairsFreeHeight'),
                 values = _paramsFunctions.getHeightValues(),
                 uiType = 'BUTTON',
                 defaultIndex = 1,
@@ -87,6 +103,13 @@ function data()
                 values = _paramsFunctions.getBridgeChunkZAngleValues(),
                 uiType = 'SLIDER',
                 defaultIndex = _paramsFunctions.getBridgeChunkZAngleDefault(),
+            },
+            {
+                key = 'bridge_chunk_y_angle',
+                name = _('TopPlatformYAngle'),
+                values = _paramsFunctions.getBridgeChunkYAngleValues(),
+                uiType = 'SLIDER',
+                defaultIndex = _paramsFunctions.getBridgeChunkYAngleDefault(),
             },
         },
 		updateFn = function(params)
@@ -144,13 +167,15 @@ function data()
                     if _bridgeChunkLength > 0 then
                         local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                         local transf = _transfUtilsUG.mul(
-                            {1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
-                            0, 0, params.stairs_height == 1 and _constants.openStairsUpZ or _constants.openStairsUpZ / 2, 1},
-                            _transfUtilsUG.rotZ(math.rad(_paramsFunctions.getBridgeChunkZAngle(params)))
+                            _transfUtilsUG.rotZ(math.rad(_paramsFunctions.getBridgeChunkZAngle(params))),
+                            _transfUtilsUG.mul(
+                                {1, 0, 0, 0,
+                                0, 1, 0, 0,
+                                0, 0, 1, 0,
+                                0, 0, params.stairs_height == 1 and _constants.openStairsUpZ or _constants.openStairsUpZ / 2, 1},
+                                _transfUtilsUG.rotY(math.rad(_paramsFunctions.getBridgeChunkYAngle(params)))
+                            )
                         )
-
                         table.insert(
                             result.models,
                             {
