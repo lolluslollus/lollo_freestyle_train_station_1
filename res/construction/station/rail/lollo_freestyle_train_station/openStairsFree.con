@@ -1,0 +1,168 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+    local _transfUtilsUG = require('transf')
+
+    local function _myErrorHandler(err)
+        print('lollo freestyle train station ERROR: ', err)
+    end
+
+    local _maxBridgeChunkAngleDeg = 90
+    local _bridgeChunkAngleStep = 5
+    local _bridgeChunkLengthValues = {'0', '4', '8', '16', '32', '64'}
+    local _paramsFunctions = {
+        getBridgeChunkAngle = function(params)
+            return (math.floor(params.bridge_chunk_angle * _bridgeChunkAngleStep) - _maxBridgeChunkAngleDeg) or 0
+        end,
+        getBridgeChunkAngleValues = function()
+            local results = {}
+            for i = -_maxBridgeChunkAngleDeg, _maxBridgeChunkAngleDeg, _bridgeChunkAngleStep do
+                results[#results+1] = tostring(i)
+            end
+            return results
+        end,
+        getBridgeChunkLength = function(params)
+            return tonumber(_bridgeChunkLengthValues[params.bridge_chunk_length + 1] or 0, 10)
+        end,
+        getBridgeChunkLengthValues = function()
+            return _bridgeChunkLengthValues
+        end,
+        getEraPrefix = function(params)
+            if params.era_prefix == 1 then return _moduleHelpers.eras.era_b.prefix
+            elseif params.era_prefix == 2 then return _moduleHelpers.eras.era_c.prefix
+            else return _moduleHelpers.eras.era_a.prefix
+            end
+        end,
+        getEraValues = function()
+            return {'A', 'B', 'C'}
+        end,
+        getHeightValues = function()
+            return {'4m', '8m'}
+        end,
+    }
+
+	return {
+        type = 'ASSET_DEFAULT',
+		description = {
+			name = _('OpenStairsFreeName'),
+			description = _('OpenStairsFreeDesc'),
+            icon = 'ui/lollo_freestyle_train_station/openStairsFree.tga'
+		},
+		availability = {
+			yearFrom = 0,
+			yearTo = 0,
+		},
+		order = 1103,
+		autoRemovable = false,
+        buildMode = 'MULTI',
+		skipCollision = false, -- true,
+		params = {
+            {
+                key = 'stairs_height',
+                name = _('Height'),
+                values = _paramsFunctions.getHeightValues(),
+                uiType = 'BUTTON',
+                defaultIndex = 1,
+            },
+            {
+                key = 'era_prefix',
+                name = _('Era'),
+                values = _paramsFunctions.getEraValues(),
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'bridge_chunk_length',
+                name = _('TopPlatformLength'),
+                values = _paramsFunctions.getBridgeChunkLengthValues(),
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'bridge_chunk_angle',
+                name = _('TopPlatformAngle'),
+                values = _paramsFunctions.getBridgeChunkAngleValues(),
+                uiType = 'SLIDER',
+                defaultIndex = 0,
+            },
+        },
+		updateFn = function(params)
+            local _xMin, _xMax, _ySize = -10, -8, 0.6
+            local _faces = { {
+                {_xMin, -_ySize, 0}, {_xMax, -_ySize, 0}, {_xMax, _ySize, 0}, {_xMin, _ySize, 0}
+            } }
+            local _era_prefix = _paramsFunctions.getEraPrefix(params)
+
+            local result = {
+                colliders = {},
+                cost = 0,
+                edgeLists = {},
+                groundFaces = {
+                    -- {
+                    --     face = faces[1],
+                    --     loop = true,
+                    --     modes = {
+                    --         {
+                    --             -- key = 'lollo_freestyle_train_station/hole.lua',
+                    --             key = 'hole.lua',
+                    --             type = 'FILL',
+                    --         },
+                    --     }
+                    -- }
+                },
+                models = {
+                    {
+                        -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
+                        -- id = 'lollo_freestyle_train_station/empty.mdl',
+                        id = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 1 and 'open_stairs_up.mdl' or 'open_stairs_up_half.mdl'),
+                        transf = {1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1},
+                    },
+                    {
+                        id = params.stairs_height == 1 and 'lollo_freestyle_train_station/passenger_lane_open_stairs_free.mdl' or 'lollo_freestyle_train_station/passenger_lane_open_stairs_free_half.mdl',
+                        transf = {1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1},
+                    },
+                },
+                terrainAlignmentLists = { {
+                    type = 'EQUAL',
+                    optional = true,
+                    faces =  _faces
+                } },
+            }
+
+            xpcall(
+                function()
+                    local _bridgeChunkLength = _paramsFunctions.getBridgeChunkLength(params)
+                    if _bridgeChunkLength > 0 then
+                        local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
+                        local transf = _transfUtilsUG.mul(
+                            {1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, params.stairs_height == 1 and _constants.openStairsUpZ or _constants.openStairsUpZ / 2, 1},
+                            _transfUtilsUG.rotZ(math.rad(_paramsFunctions.getBridgeChunkAngle(params)))
+                        )
+
+                        table.insert(
+                            result.models,
+                            {
+                                id = modelId,
+                                transf = transf,
+                            }
+                        )
+                    end
+                end,
+                _myErrorHandler
+            )
+
+			return result
+		end,
+        upgradeFn = function(_)
+        end,
+	}
+end

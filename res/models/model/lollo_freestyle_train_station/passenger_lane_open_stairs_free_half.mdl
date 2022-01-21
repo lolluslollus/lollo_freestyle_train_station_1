@@ -1,0 +1,77 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    local _zed = _constants.openStairsUpZ / 2
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100,
+            },
+        },
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        linkable = true,
+                        nodes = {
+                            {
+                                { -5.7, 0, 0, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { -4.367, 0, _zed * 0.333, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { -4.367, 0, _zed * 0.333, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { -3.033, 0, _zed * 0.667, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { -3.033, 0, _zed * 0.667, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { -1.7, 0, _zed, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { -1.7, 0, _zed, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { 0, 0, _zed, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = { },
+            },
+        },
+        version = 1
+    }
+end
