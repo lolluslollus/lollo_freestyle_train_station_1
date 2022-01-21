@@ -113,10 +113,68 @@ function data()
             },
         },
 		updateFn = function(params)
-            local _xMin, _xMax, _ySize = -10, -8, 0.6
-            local _faces = { {
-                {_xMin, -_ySize, 0}, {_xMax, -_ySize, 0}, {_xMax, _ySize, 0}, {_xMin, _ySize, 0}
-            } }
+            local _ySize = 0.6
+            local _flatFaces = params.stairs_height == 1
+                and { {
+                    {0, -_ySize, 0}, {0, _ySize, 0}, {-10, _ySize, 0}, {-10, -_ySize, 0}
+                } }
+                or { {
+                    {0, -_ySize, 0}, {0, _ySize, 0}, {-5, _ySize, 0}, {-5, -_ySize, 0}
+                } }
+            local _slopedFaces = params.stairs_height == 1
+                and { {
+                    {0, -_ySize, 5}, {0, _ySize, 5}, {-10, _ySize, 0}, {-10, -_ySize, 0}
+                } }
+                or { {
+                    {0, -_ySize, 2.5}, {0, _ySize, 2.5}, {-5, _ySize, 0}, {-5, -_ySize, 0}
+                } }
+            -- local _flatTriangles = params.stairs_height == 1
+            --     and {
+            --             {
+            --                 {-10, -_ySize, 0}, {0, -_ySize, 0}, {0, _ySize, 0},
+            --             },
+            --             {
+            --                 {0, _ySize, 0}, {-10, _ySize, 0}, {-10, -_ySize, 0},
+            --             },
+            --         }
+            --     or {
+            --         {
+            --             {-5, -_ySize, 0}, {0, -_ySize, 0}, {0, _ySize, 0},
+            --         },
+            --         {
+            --             {0, _ySize, 0}, {-5, _ySize, 0}, {-5, -_ySize, 0},
+            --         },
+            --     }
+            -- local _slopedTriangles = params.stairs_height == 1
+            --     and {
+            --             {
+            --                 {-10, -_ySize, 0}, {0, -_ySize, 5}, {0, _ySize, 5},
+            --             },
+            --             {
+            --                 {0, _ySize, 5}, {-10, _ySize, 0}, {-10, -_ySize, 0},
+            --             },
+            --         }
+            --     or {
+            --         {
+            --             {-5, -_ySize, 0}, {0, -_ySize, 2.5}, {0, _ySize, 2.5},
+            --         },
+            --         {
+            --             {0, _ySize, 2.5}, {-5, _ySize, 0}, {-5, -_ySize, 0},
+            --         },
+            --     }
+            -- local _alongFaces = params.stairs_height == 1
+            --     and { {
+            --         {-8, -_ySize, 0},
+            --         {0, -_ySize, 7.5},
+            --         {0, _ySize, 7.5},
+            --         {-8, _ySize, 0}
+            --     } }
+            --     or { {
+            --         {-4, -_ySize, 0},
+            --         {0, -_ySize, 3.5},
+            --         {0, _ySize, 3.5},
+            --         {-4, _ySize, 0}
+            --     } }
             local _era_prefix = _paramsFunctions.getEraPrefix(params)
 
             local result = {
@@ -154,11 +212,27 @@ function data()
                             0, 0, 0, 1},
                     },
                 },
-                terrainAlignmentLists = { {
-                    type = 'EQUAL',
-                    optional = true,
-                    faces =  _faces
-                } },
+                terrainAlignmentLists = {
+                    {
+                        type = 'EQUAL',
+                        -- type = 'LESS',
+                        -- type = 'GREATER',
+                        optional = true,
+                        slopeLow = 9.6,
+                        slopeHigh = 9.9,
+                        faces =  _flatFaces,
+                        -- faces = _slopedFaces,
+                        -- triangles = _flatTriangles,
+                        -- triangles = _slopedTriangles,
+                    },
+                    -- {
+                    --     type = 'LESS',
+                    --     optional = true,
+                    --     -- slopeLow = 0.6,
+                    --     -- slopeHigh = 0.9,
+                    --     faces =  _alongFaces
+                    -- }
+                },
             }
 
             xpcall(
