@@ -7,16 +7,19 @@ function data()
         print('lollo freestyle train station ERROR: ', err)
     end
 
-    local _maxBridgeChunkAngleDeg = 90
-    local _bridgeChunkAngleStep = 5
+    local _maxBridgeChunkZAngleDeg = 90
+    local _bridgeChunkZAngleStep = 5
     local _bridgeChunkLengthValues = {'0', '4', '8', '16', '32', '64'}
     local _paramsFunctions = {
-        getBridgeChunkAngle = function(params)
-            return (math.floor(params.bridge_chunk_angle * _bridgeChunkAngleStep) - _maxBridgeChunkAngleDeg) or 0
+        getBridgeChunkZAngle = function(params)
+            return (math.floor(params.bridge_chunk_z_angle * _bridgeChunkZAngleStep) - _maxBridgeChunkZAngleDeg) or 0
         end,
-        getBridgeChunkAngleValues = function()
+        getBridgeChunkZAngleDefault = function()
+            return math.floor(_maxBridgeChunkZAngleDeg / _bridgeChunkZAngleStep)
+        end,
+        getBridgeChunkZAngleValues = function()
             local results = {}
-            for i = -_maxBridgeChunkAngleDeg, _maxBridgeChunkAngleDeg, _bridgeChunkAngleStep do
+            for i = -_maxBridgeChunkZAngleDeg, _maxBridgeChunkZAngleDeg, _bridgeChunkZAngleStep do
                 results[#results+1] = tostring(i)
             end
             return results
@@ -79,11 +82,11 @@ function data()
                 defaultIndex = 0,
             },
             {
-                key = 'bridge_chunk_angle',
-                name = _('TopPlatformAngle'),
-                values = _paramsFunctions.getBridgeChunkAngleValues(),
+                key = 'bridge_chunk_z_angle',
+                name = _('TopPlatformZAngle'),
+                values = _paramsFunctions.getBridgeChunkZAngleValues(),
                 uiType = 'SLIDER',
-                defaultIndex = 0,
+                defaultIndex = _paramsFunctions.getBridgeChunkZAngleDefault(),
             },
         },
 		updateFn = function(params)
@@ -145,7 +148,7 @@ function data()
                             0, 1, 0, 0,
                             0, 0, 1, 0,
                             0, 0, params.stairs_height == 1 and _constants.openStairsUpZ or _constants.openStairsUpZ / 2, 1},
-                            _transfUtilsUG.rotZ(math.rad(_paramsFunctions.getBridgeChunkAngle(params)))
+                            _transfUtilsUG.rotZ(math.rad(_paramsFunctions.getBridgeChunkZAngle(params)))
                         )
 
                         table.insert(
