@@ -5,7 +5,18 @@ function data()
     local _zed = _constants.openStairsUpZ / 2
     return {
         boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        -- boundingInfo = {
+        --     bbMax = { 1, 0.5, _zed },
+        --     bbMin = { -1, -0.5, 0 },
+        -- },
         collider = _mdlHelpers.getVoidCollider(),
+        -- collider = {
+        --     params = {
+        --         halfExtents = { 1, 0.5, _zed / 2, },
+        --     },
+        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+        --     type = 'BOX',
+        -- },
         lods = {
             {
                 node = {
@@ -29,6 +40,23 @@ function data()
                                 1.0,
                             },
                             {
+                                { -5.5, 0, 0, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                    {
+                        linkable = false,
+                        nodes = {
+                            {
+                                { -5.5, 0, 0, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
                                 { -4.367, 0, _zed * 0.333, },
                                 { 1, 0, 0, },
                                 1.0,
@@ -55,6 +83,23 @@ function data()
                             },
                             {
                                 { -1.7, 0, _zed, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { -0.2, 0, _zed, },
+                                { 1, 0, 0, },
+                                1.0,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                    {
+                        linkable = true,
+                        nodes = {
+                            {
+                                { -0.2, 0, _zed, },
                                 { 1, 0, 0, },
                                 1.0,
                             },
