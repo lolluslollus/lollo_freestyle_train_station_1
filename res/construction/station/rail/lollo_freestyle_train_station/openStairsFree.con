@@ -118,20 +118,20 @@ function data()
             },
         },
 		updateFn = function(params)
-            local _ySize = 0.6
+            local _ySize = 1
             local _flatFaces = params.stairs_height == 0
                 and { {
-                    {0, -_ySize, 0}, {0, _ySize, 0}, {-5, _ySize, 0}, {-5, -_ySize, 0}
+                    {0, -_ySize, 0}, {0, _ySize, 0}, {-6, _ySize, 0}, {-6, -_ySize, 0}
                 } }
                 or { {
-                    {0, -_ySize, 0}, {0, _ySize, 0}, {-9, _ySize, 0}, {-9, -_ySize, 0}
+                    {0, -_ySize, 0}, {0, _ySize, 0}, {-10.5, _ySize, 0}, {-10.5, -_ySize, 0}
                 } }
             local _slopedFaces = params.stairs_height == 0
                 and { {
-                    {0, -_ySize, 3}, {0, _ySize, 3}, {-5, _ySize, 0}, {-5, -_ySize, 0}
+                    {0, -_ySize, 3}, {0, _ySize, 3}, {-6, _ySize, -0.5}, {-6, -_ySize, -0.5}
                 } }
                 or { {
-                    {0, -_ySize, 7}, {0, _ySize, 7}, {-9, _ySize, 0}, {-9, -_ySize, 0}
+                    {0, -_ySize, 7}, {0, _ySize, 7}, {-10.5, _ySize, -0.5}, {-10.5, -_ySize, -0.5}
                 } }
 
             local _era_prefix = _paramReaders.getEraPrefix(params)
@@ -174,7 +174,7 @@ function data()
                 terrainAlignmentLists = {
                     {
                         type = _paramReaders.getTerrainAlignmentType(params),
-                        optional = true,
+                        optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
                         slopeLow = 9.6,
                         slopeHigh = 9.9,
                         faces = params.flat_sloped_terrain == 0 and _flatFaces or _slopedFaces,

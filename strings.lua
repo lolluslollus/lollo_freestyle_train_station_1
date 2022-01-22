@@ -254,7 +254,7 @@ function data()
 			-- free open stairs
 			["Era"] = "Era",
 			["FlatSlopedTerrain"] = "Terrain Incline",
-			["OpenStairsFreeDesc"] = "Stairs to climb up a slope. The game messes up the terrain if you combine them as flyovers.",
+			["OpenStairsFreeDesc"] = "Stairs to climb up a slope, matching the freestyle stations, collision free; use fences or similar mods to fine-tune collisions. You can combine multiple stairs into flyovers, but the game might mess up the terrain.",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
 			["TerrainAlignmentType"] = "Terrain Alignment",
