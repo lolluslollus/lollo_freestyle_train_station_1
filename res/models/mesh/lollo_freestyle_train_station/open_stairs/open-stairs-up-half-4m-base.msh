@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 264,
+					offset = 1388,
+				},
+				position = {
+					count = 264,
+					offset = 1124,
+				},
+				tangent = {
+					count = 264,
+					offset = 1652,
+				},
+				uv0 = {
+					count = 264,
+					offset = 860,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_stairs/concrete_top.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 156,
+			numComp = 3,
+			offset = 480,
+		},
+		position = {
+			count = 192,
+			numComp = 3,
+			offset = 288,
+		},
+		tangent = {
+			count = 224,
+			numComp = 4,
+			offset = 636,
+		},
+		uv0 = {
+			count = 288,
+			numComp = 2,
+			offset = 0,
+		},
+	},
+}
+end
