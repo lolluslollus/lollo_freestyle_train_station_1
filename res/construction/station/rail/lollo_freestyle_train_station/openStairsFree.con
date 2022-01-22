@@ -7,33 +7,32 @@ function data()
         print('lollo freestyle train station ERROR: ', err)
     end
 
-    local function _getSliderValues(max, step)
-        local results = {}
-        for i = -max, max, step do
-            results[#results+1] = tostring(i)
-        end
-        return results
-    end
-
-    local _paramConstants = {
+    local _paramHelpers = {
+        getSliderValues = function(max, step)
+            local results = {}
+            for i = -max, max, step do
+                results[#results+1] = tostring(i)
+            end
+            return results
+        end,
         maxBridgeChunkYAngleDeg = 15,
         bridgeChunkYAngleStep = 5,
         maxBridgeChunkZAngleDeg = 90,
         bridgeChunkZAngleStep = 5,
+        eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
     }
     local _paramValues = {
-        heights = {'4m', '8m'},
+        heights = {'4 m', '8 m'},
         eras = {'A', 'B', 'C'},
-        eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
         bridgeChunkLengths = {'0', '4', '8', '16', '32', '64'},
-        bridgeChunkZAngles = _getSliderValues(_paramConstants.maxBridgeChunkZAngleDeg, _paramConstants.bridgeChunkZAngleStep),
-        bridgeChunkYAngles = _getSliderValues(_paramConstants.maxBridgeChunkYAngleDeg, _paramConstants.bridgeChunkYAngleStep),
+        bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
+        bridgeChunkYAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkYAngleDeg, _paramHelpers.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
     }
-    local _paramsFunctions = {
+    local _paramReaders = {
         getEraPrefix = function(params)
-            return (_paramValues.eraPrefixes)[params.era_prefix + 1] or _paramValues.eraPrefixes[1]
+            return _paramHelpers.eraPrefixes[params.era_prefix + 1] or _paramHelpers.eraPrefixes[1]
         end,
         getBridgeChunkLength = function(params)
             return tonumber(_paramValues.bridgeChunkLengths[params.bridge_chunk_length + 1] or 0, 10)
@@ -51,7 +50,7 @@ function data()
             return (math.floor(params.bridge_chunk_y_angle * _paramValues.bridgeChunkYAngleStep) - _paramValues.maxBridgeChunkYAngleDeg) or 0
         end,
         getTerrainAlignmentType = function(params)
-            return _paramValues.terrainAlignmentTypes[params.terrain_alignment + 1] or _paramValues.terrainAlignmentTypes[1]
+            return _paramValues.terrainAlignmentTypes[params.terrain_alignment_type + 1] or _paramValues.terrainAlignmentTypes[1]
         end,
     }
 
@@ -98,17 +97,17 @@ function data()
                 name = _('TopPlatformZAngle'),
                 values = _paramValues.bridgeChunkZAngles,
                 uiType = 'SLIDER',
-                defaultIndex = _paramsFunctions.getBridgeChunkZAngleDefault(),
+                defaultIndex = _paramReaders.getBridgeChunkZAngleDefault(),
             },
             {
                 key = 'bridge_chunk_y_angle',
                 name = _('TopPlatformYAngle'),
                 values = _paramValues.bridgeChunkYAngles,
                 uiType = 'SLIDER',
-                defaultIndex = _paramsFunctions.getBridgeChunkYAngleDefault(),
+                defaultIndex = _paramReaders.getBridgeChunkYAngleDefault(),
             },
             {
-                key = 'terrain_alignment',
+                key = 'terrain_alignment_type',
                 name = _('TerrainAlignmentType'),
                 values = _paramValues.terrainAlignmentTypes,
                 uiType = 'BUTTON',
@@ -139,7 +138,7 @@ function data()
                     {0, -_ySize, 7}, {0, _ySize, 7}, {-9, _ySize, 0}, {-9, -_ySize, 0}
                 } }
 
-            local _era_prefix = _paramsFunctions.getEraPrefix(params)
+            local _era_prefix = _paramReaders.getEraPrefix(params)
 
             local result = {
                 colliders = {},
@@ -178,7 +177,7 @@ function data()
                 },
                 terrainAlignmentLists = {
                     {
-                        type = _paramsFunctions.getTerrainAlignmentType(params),
+                        type = _paramReaders.getTerrainAlignmentType(params),
                         optional = true,
                         slopeLow = 9.6,
                         slopeHigh = 9.9,
@@ -189,17 +188,17 @@ function data()
 
             xpcall(
                 function()
-                    local _bridgeChunkLength = _paramsFunctions.getBridgeChunkLength(params)
+                    local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
                     if _bridgeChunkLength > 0 then
                         local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                         local transf = _transfUtilsUG.mul(
-                            _transfUtilsUG.rotZ(math.rad(_paramsFunctions.getBridgeChunkZAngle(params))),
+                            _transfUtilsUG.rotZ(math.rad(_paramReaders.getBridgeChunkZAngle(params))),
                             _transfUtilsUG.mul(
                                 {1, 0, 0, 0,
                                 0, 1, 0, 0,
                                 0, 0, 1, 0,
                                 0, 0, params.stairs_height == 0 and _constants.openStairsUpZ / 2 or _constants.openStairsUpZ, 1},
-                                _transfUtilsUG.rotY(math.rad(_paramsFunctions.getBridgeChunkYAngle(params)))
+                                _transfUtilsUG.rotY(math.rad(_paramReaders.getBridgeChunkYAngle(params)))
                             )
                         )
                         table.insert(
