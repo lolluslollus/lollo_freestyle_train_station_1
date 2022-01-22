@@ -26,7 +26,9 @@ function data()
         eras = {'A', 'B', 'C'},
         bridgeChunkLengths = {'0', '4', '8', '16', '32', '64'},
         bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
+        bridgeChunkZAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkZAngleDeg / _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkYAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkYAngleDeg, _paramHelpers.bridgeChunkYAngleStep),
+        bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
     }
@@ -37,17 +39,11 @@ function data()
         getBridgeChunkLength = function(params)
             return tonumber(_paramValues.bridgeChunkLengths[params.bridge_chunk_length + 1] or 0, 10)
         end,
-        getBridgeChunkZAngleDefault = function()
-            return math.floor(_paramValues.maxBridgeChunkZAngleDeg / _paramValues.bridgeChunkZAngleStep)
-        end,
         getBridgeChunkZAngle = function(params)
-            return (math.floor(params.bridge_chunk_z_angle * _paramValues.bridgeChunkZAngleStep) - _paramValues.maxBridgeChunkZAngleDeg) or 0
-        end,
-        getBridgeChunkYAngleDefault = function()
-            return math.floor(_paramValues.maxBridgeChunkYAngleDeg / _paramValues.bridgeChunkYAngleStep)
+            return (math.floor(params.bridge_chunk_z_angle * _paramHelpers.bridgeChunkZAngleStep) - _paramHelpers.maxBridgeChunkZAngleDeg) or 0
         end,
         getBridgeChunkYAngle = function(params)
-            return (math.floor(params.bridge_chunk_y_angle * _paramValues.bridgeChunkYAngleStep) - _paramValues.maxBridgeChunkYAngleDeg) or 0
+            return (math.floor(params.bridge_chunk_y_angle * _paramHelpers.bridgeChunkYAngleStep) - _paramHelpers.maxBridgeChunkYAngleDeg) or 0
         end,
         getTerrainAlignmentType = function(params)
             return _paramValues.terrainAlignmentTypes[params.terrain_alignment_type + 1] or _paramValues.terrainAlignmentTypes[1]
@@ -97,14 +93,14 @@ function data()
                 name = _('TopPlatformZAngle'),
                 values = _paramValues.bridgeChunkZAngles,
                 uiType = 'SLIDER',
-                defaultIndex = _paramReaders.getBridgeChunkZAngleDefault(),
+                defaultIndex = _paramValues.bridgeChunkZAngleDefaultIndex,
             },
             {
                 key = 'bridge_chunk_y_angle',
                 name = _('TopPlatformYAngle'),
                 values = _paramValues.bridgeChunkYAngles,
                 uiType = 'SLIDER',
-                defaultIndex = _paramReaders.getBridgeChunkYAngleDefault(),
+                defaultIndex = _paramValues.bridgeChunkYAngleDefaultIndex,
             },
             {
                 key = 'terrain_alignment_type',
