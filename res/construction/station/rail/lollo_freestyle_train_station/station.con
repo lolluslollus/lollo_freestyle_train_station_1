@@ -526,7 +526,7 @@ function data()
 													result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
 													{
 														t = t,
-														-- lanePosTanX2 = cpl.posTanX2,
+														lanePosTanX2 = cpl.posTanX2,
 														pos2Link = transfUtils.transf2Position(underpassBottomTransf)
 													}
 												)
@@ -628,7 +628,7 @@ function data()
 										result.terminateConstructionHookInfo.trackCrossingPositions[t],
 										{
 											t = t,
-											-- lanePosTanX2 = cpl.posTanX2,
+											lanePosTanX2 = cpl.posTanX2,
 											pos = trackCrossingPos
 										}
 									)
@@ -669,7 +669,7 @@ function data()
 								result.terminateConstructionHookInfo.crossConnectorPositions[t],
 								{
 									t = t,
-									-- lanePosTanX2 = cpl.posTanX2,
+									lanePosTanX2 = cpl.posTanX2,
 									pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], _laneZ)
 								}
 							)
@@ -739,7 +739,7 @@ function data()
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
 								{
 									t = t,
-									-- lanePosTanX2 = cpl.posTanX2,
+									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -756,7 +756,7 @@ function data()
 								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t],
 								{
 									t = t,
-									-- lanePosTanX2 = cpl.posTanX2,
+									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -772,7 +772,7 @@ function data()
 								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
 								{
 									t = t,
-									-- lanePosTanX2 = cpl.posTanX2,
+									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -789,7 +789,7 @@ function data()
 								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
 								{
 									t = t,
-									-- lanePosTanX2 = cpl.posTanX2,
+									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -806,7 +806,7 @@ function data()
 								result.terminateConstructionHookInfo.underpassPositionsOnGround[t],
 								{
 									t = t,
-									-- lanePosTanX2 = cpl.posTanX2,
+									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -824,7 +824,7 @@ function data()
 								{
 									t = t,
 									era = moduleHelpers.getEraPrefix(params, t, i),
-									-- lanePosTanX2 = cpl.posTanX2,
+									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
 											centreLaneTransf,
@@ -1051,7 +1051,7 @@ function data()
 				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
-					local _isLeftOLD = function(posTanX2, pos)
+					local _isLeft_1 = function(posTanX2, pos)
 						-- if the station is curved, links between terminal T (1) to TT (1) might look left,
 						-- while links between terminal T (1) to TT (2) might look right: this is wrong.
 						-- Instead, compare the centre points of each terminal.
@@ -1087,7 +1087,7 @@ function data()
 						end
 						return isLeftResult
 					end
-					local _isLeft = function(t1, t2)
+					local _isLeft_2 = function(t1, t2)
 						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
                         -- If the station is curved, and we check the centre platform segments,
                         -- a link between terminal T (1) to TT (1) might look left,
@@ -1098,6 +1098,7 @@ function data()
 						-- It does not really matter how we compare, as long as
 						-- platform T is left of platform TT => platform TT is right of platform T
 						-- LOLLO TODO check what happens if platforms cross each other, one above and one below
+						-- LOLLO TODO this fails if the terminals are shifted lengthwise
 						if t1 == t2 then print('LOLLO freestyle train station ERROR: t1 == t2 ==', t1) return false end
 
 						local midIndex1 = math.floor(#params.terminals[t1].centrePlatformsFineRelative / 2)
@@ -1153,6 +1154,41 @@ function data()
 						-- 	width = 5,
 						--   },
 					end
+					local _isLeft = function(posTanX2, pos, distance)
+						-- distance is only for debugging purposes
+						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
+						-- if the station is curved, links between terminal T (1) to TT (1) might look left,
+						-- while links between terminal T (1) to TT (2) might look right: check this.
+						-- approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short
+						-- the direction ought to be irrelevant coz the calc is based on absolute positions
+						-- a + b * x = y
+						-- b = dY / dX
+						-- a = y - dY / dX * x
+						local x0, x1 = posTanX2[1][1][1], posTanX2[2][1][1]
+						local y0, y1 = posTanX2[1][1][2], posTanX2[2][1][2]
+						local dX = x1 - x0
+						local dY = y1 - y0
+						if isOutputLog then
+							print('_isLeft received posTanX2 =') debugPrint(posTanX2)
+							print(', pos =') debugPrint(pos)
+							print(', dX =', dX, 'dY =', dY)
+							print(', distance =', distance or 'NIL')
+						end
+						if dX == 0 then
+							local isLeftResult = pos[1] < x0
+							if isOutputLog then
+								print('_isLeft has calculated result = ', isLeftResult)
+							end
+							return isLeftResult
+						end
+						local b = dY / dX
+						local a = y0 - b * x0
+						local isLeftResult = a + b * pos[1] < pos[2]
+						if isOutputLog then
+							print('_isLeft has calculated a =', a, ', b =', b, ', result = ', isLeftResult)
+						end
+						return isLeftResult
+					end
 					local _maxT = #params.terminals
 					local _getMinDistanceSegments = function()
 					-- For each terminal, then for each connected point,
@@ -1169,9 +1205,10 @@ function data()
 											local positionsInTT = positionsB[tt]
 											if positionsInTT ~= nil then
 												for ii = 1, #positionsInTT do
-													-- local isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)
-													local isLeftOfT1 = _isLeft(t, tt)
 													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
+													-- local isLeftOfT1 = _isLeft_1(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link)
+													-- local isLeftOfT1 = _isLeft_2(t, tt)
+													local isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link, distance)
 													local newSegment = {
 														t1 = t,
 														t2 = tt,
@@ -1197,9 +1234,29 @@ function data()
 											end
 										end
 									end
-									for _, minDistanceSegment in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
-										if minDistanceSegment ~= nil then
-											table.insert(results, minDistanceSegment)
+									for _, newMds in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
+										if newMds ~= nil then
+											local isAlreadyThere = false
+											-- isLeft tells if a point is above or below a line.
+											-- if you have curved tracks, their tangents  at the connection points will cross.
+											-- Imagine they form an X.
+											-- bottom left of the X, I have a connection point
+											-- and another one at the bottom right, on either side of the point where the tangents cross.
+											-- both will have the same isLeft, which is correct per se but results in duplicates
+											for _, prevMds in pairs(results) do
+												-- if prevMds.distance == newMds.distance -- check this first for performance -- not pretty but it works
+												-- and prevMds.t1 == newMds.t2 and prevMds.t1Index == newMds.t2Index
+												-- and prevMds.t2 == newMds.t1 and prevMds.t2Index == newMds.t1Index
+												if prevMds.t1 == newMds.t2 and prevMds.t1Index == newMds.t2Index
+												and prevMds.t2 == newMds.t1 and prevMds.t2Index == newMds.t1Index
+												then
+													isAlreadyThere = true
+													break
+												end
+											end
+											if not(isAlreadyThere) then
+												table.insert(results, newMds)
+											end
 										end
 									end
 								end
