@@ -7,15 +7,27 @@ function data()
         print('lollo freestyle train station ERROR: ', err)
     end
 
+    local function _getSliderValues(max, step)
+        local results = {}
+        for i = -max, max, step do
+            results[#results+1] = tostring(i)
+        end
+        return results
+    end
+
+    local _paramConstants = {
+        maxBridgeChunkYAngleDeg = 15,
+        bridgeChunkYAngleStep = 5,
+        maxBridgeChunkZAngleDeg = 90,
+        bridgeChunkZAngleStep = 5,
+    }
     local _paramValues = {
         heights = {'4m', '8m'},
         eras = {'A', 'B', 'C'},
         eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
         bridgeChunkLengths = {'0', '4', '8', '16', '32', '64'},
-        maxBridgeChunkYAngleDeg = 15,
-        bridgeChunkYAngleStep = 5,
-        maxBridgeChunkZAngleDeg = 90,
-        bridgeChunkZAngleStep = 5,
+        bridgeChunkZAngles = _getSliderValues(_paramConstants.maxBridgeChunkZAngleDeg, _paramConstants.bridgeChunkZAngleStep),
+        bridgeChunkYAngles = _getSliderValues(_paramConstants.maxBridgeChunkYAngleDeg, _paramConstants.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
     }
@@ -26,25 +38,11 @@ function data()
         getBridgeChunkLength = function(params)
             return tonumber(_paramValues.bridgeChunkLengths[params.bridge_chunk_length + 1] or 0, 10)
         end,
-        getBridgeChunkZAngleValues = function()
-            local results = {}
-            for i = -_paramValues.maxBridgeChunkZAngleDeg, _paramValues.maxBridgeChunkZAngleDeg, _paramValues.bridgeChunkZAngleStep do
-                results[#results+1] = tostring(i)
-            end
-            return results
-        end,
         getBridgeChunkZAngleDefault = function()
             return math.floor(_paramValues.maxBridgeChunkZAngleDeg / _paramValues.bridgeChunkZAngleStep)
         end,
         getBridgeChunkZAngle = function(params)
             return (math.floor(params.bridge_chunk_z_angle * _paramValues.bridgeChunkZAngleStep) - _paramValues.maxBridgeChunkZAngleDeg) or 0
-        end,
-        getBridgeChunkYAngleValues = function()
-            local results = {}
-            for i = -_paramValues.maxBridgeChunkYAngleDeg, _paramValues.maxBridgeChunkYAngleDeg, _paramValues.bridgeChunkYAngleStep do
-                results[#results+1] = tostring(i)
-            end
-            return results
         end,
         getBridgeChunkYAngleDefault = function()
             return math.floor(_paramValues.maxBridgeChunkYAngleDeg / _paramValues.bridgeChunkYAngleStep)
@@ -98,14 +96,14 @@ function data()
             {
                 key = 'bridge_chunk_z_angle',
                 name = _('TopPlatformZAngle'),
-                values = _paramsFunctions.getBridgeChunkZAngleValues(),
+                values = _paramValues.bridgeChunkZAngles,
                 uiType = 'SLIDER',
                 defaultIndex = _paramsFunctions.getBridgeChunkZAngleDefault(),
             },
             {
                 key = 'bridge_chunk_y_angle',
                 name = _('TopPlatformYAngle'),
-                values = _paramsFunctions.getBridgeChunkYAngleValues(),
+                values = _paramValues.bridgeChunkYAngles,
                 uiType = 'SLIDER',
                 defaultIndex = _paramsFunctions.getBridgeChunkYAngleDefault(),
             },
