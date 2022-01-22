@@ -121,7 +121,7 @@ function data()
                 name = _('FlatSlopedTerrain'),
                 values = _paramValues.flatSlopedTerrain,
                 uiType = 'BUTTON',
-                defaultIndex = 1,
+                defaultIndex = 0,
             },
         },
 		updateFn = function(params)
