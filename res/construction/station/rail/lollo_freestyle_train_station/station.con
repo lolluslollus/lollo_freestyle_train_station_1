@@ -1157,9 +1157,7 @@ function data()
 					local _isLeft = function(posTanX2, pos, distance)
 						-- distance is only for debugging purposes
 						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
-						-- if the station is curved, links between terminal T (1) to TT (1) might look left,
-						-- while links between terminal T (1) to TT (2) might look right: check this.
-						-- approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short
+						-- We approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short
 						-- the direction ought to be irrelevant coz the calc is based on absolute positions
 						-- a + b * x = y
 						-- b = dY / dX
