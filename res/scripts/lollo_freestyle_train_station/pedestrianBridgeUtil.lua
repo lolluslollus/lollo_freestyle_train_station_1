@@ -366,9 +366,45 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
 		},
 		metadata = {
 			transportNetworkProvider = {
-				laneLists = {
-					{
-						linkable = _isTNLinkable, -- false, --true,
+				laneLists = _isTNLinkable
+					and {
+							{
+								linkable = false,
+								nodes = {
+									{
+										{ 0, 0, 0 },
+										{ _xFactorTN - 0.2, 0, 0 },
+										1.5,
+									},
+									{
+										{ _xFactorTN - 0.2, 0, 0 },
+										{ _xFactorTN - 0.2, 0, 0 },
+										1.5,
+									},
+								},
+								transportModes = { 'PERSON', },
+								speedLimit = 20,
+							},
+							{
+								linkable = true,
+								nodes = {
+									{
+										{ _xFactorTN - 0.2, 0, 0 },
+										{ 0.2, 0, 0 },
+										1.5,
+									},
+									{
+										{ _xFactorTN, 0, 0 },
+										{ 0.2, 0, 0 },
+										1.5,
+									},
+								},
+								transportModes = { 'PERSON', },
+								speedLimit = 20,
+							}
+						}
+					or {{
+						linkable = false,
 						nodes = {
 							{
 								{ 0, 0, 0 },
@@ -383,8 +419,7 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
 						},
 						transportModes = { 'PERSON', },
 						speedLimit = 20,
-					},
-				},
+					}},
 				runways = { },
 				terminals = { },
 			},

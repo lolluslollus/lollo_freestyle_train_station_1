@@ -7,6 +7,11 @@ function data()
         print('lollo openStairsFree.con ERROR: ', err)
     end
 
+    local _idTransf = {1, 0, 0, 0,
+        0, 1, 0, 0,
+        0, 0, 1, 0,
+        0, 0, 0, 1}
+
     local _paramHelpers = {
         getSliderValues = function(max, step)
             local results = {}
@@ -31,6 +36,7 @@ function data()
         bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
+        stairsBase = {_('NO'), _('YES')},
     }
     local _paramReaders = {
         getEraPrefix = function(params)
@@ -116,9 +122,23 @@ function data()
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
+            {
+                key = 'stairs_base',
+                name = _('StairsBase'),
+                values = _paramValues.stairsBase,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
         },
 		updateFn = function(params)
             local _ySize = 1
+            local _baseFaces = params.stairs_height == 0
+                and { {
+                    {-6, -_ySize, 0}, {-6, _ySize, 0}, {-7.5, _ySize, 0}, {-7.5, -_ySize, 0}
+                } }
+                or { {
+                    {-10.5, -_ySize, 0}, {-10.5, _ySize, 0}, {-12, _ySize, 0}, {-12, -_ySize, 0}
+                } }
             local _flatFaces = params.stairs_height == 0
                 and { {
                     {0, -_ySize, 0}, {0, _ySize, 0}, {-6, _ySize, 0}, {-6, -_ySize, 0}
@@ -135,6 +155,29 @@ function data()
                 } }
 
             local _era_prefix = _paramReaders.getEraPrefix(params)
+            local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
+
+            local baseLanesModelId = ''
+            if params.stairs_base == 0 and params.stairs_height == 0 then
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_4m.mdl'
+            elseif params.stairs_base == 0 and params.stairs_height == 1 then
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_8m.mdl'
+            elseif params.stairs_base == 1 and params.stairs_height == 0 then
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_4m.mdl'
+            elseif params.stairs_base == 1 and params.stairs_height == 1 then
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_8m.mdl'
+            end
+
+            local topLanesModelId = ''
+            if _bridgeChunkLength == 0 and params.stairs_height == 0 then
+                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_4m.mdl'
+            elseif _bridgeChunkLength == 0 and params.stairs_height == 1 then
+                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_8m.mdl'
+            elseif _bridgeChunkLength ~= 0 and params.stairs_height == 0 then
+                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_4m.mdl'
+            elseif _bridgeChunkLength ~= 0 and params.stairs_height == 1 then
+                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_8m.mdl'
+            end
 
             local result = {
                 colliders = {},
@@ -158,33 +201,45 @@ function data()
                         -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
                         -- id = 'lollo_freestyle_train_station/empty.mdl',
                         id = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_up_half.mdl' or 'open_stairs_up.mdl'),
-                        transf = {1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
-                            0, 0, 0, 1},
+                        transf = _idTransf,
                     },
                     {
-                        id = params.stairs_height == 0 and 'lollo_freestyle_train_station/passenger_lane_open_stairs_free_half.mdl' or 'lollo_freestyle_train_station/passenger_lane_open_stairs_free.mdl',
-                        transf = {1, 0, 0, 0,
-                            0, 1, 0, 0,
-                            0, 0, 1, 0,
-                            0, 0, 0, 1},
+                        id = baseLanesModelId,
+                        transf = _idTransf,
+                    },
+                    {
+                        id = params.stairs_height == 0
+                            and 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_4m.mdl'
+                            or 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_8m.mdl',
+                        transf = _idTransf,
+                    },
+                    {
+                        id = topLanesModelId,
+                        transf = _idTransf,
                     },
                 },
                 terrainAlignmentLists = {
                     {
                         type = _paramReaders.getTerrainAlignmentType(params),
-                        optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                        optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
                         slopeLow = 9.6,
                         slopeHigh = 9.9,
                         faces = params.flat_sloped_terrain == 0 and _flatFaces or _slopedFaces,
                     },
+                    params.stairs_base == 1
+                        and {
+                            type = 'EQUAL',
+                            optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                            slopeLow = 9.6,
+                            slopeHigh = 9.9,
+                            faces = _baseFaces,
+                        }
+                        or nil
                 },
             }
 
             xpcall(
                 function()
-                    local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
                     if _bridgeChunkLength > 0 then
                         local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                         local transf = _transfUtilsUG.mul(

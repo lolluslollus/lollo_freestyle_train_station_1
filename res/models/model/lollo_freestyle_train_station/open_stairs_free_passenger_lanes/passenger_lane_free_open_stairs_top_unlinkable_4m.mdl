@@ -1,0 +1,58 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    local _zed = _constants.openStairsUpZ / 2
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        -- boundingInfo = {
+        --     bbMax = { 1, 0.5, _zed },
+        --     bbMin = { -1, -0.5, 0 },
+        -- },
+        collider = _mdlHelpers.getVoidCollider(),
+        -- collider = {
+        --     params = {
+        --         halfExtents = { 1, 0.5, _zed / 2, },
+        --     },
+        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+        --     type = 'BOX',
+        -- },
+        lods = {
+            {
+                node = {
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100,
+            },
+        },
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        linkable = false,
+                        nodes = {
+                            {
+                                { -0.2, 0, _zed, },
+                                { 0.2, 0, 0, },
+                                1.0,
+                            },
+                            {
+                                { 0, 0, _zed, },
+                                { 0.2, 0, 0, },
+                                1.0,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = { },
+            },
+        },
+        version = 1
+    }
+end

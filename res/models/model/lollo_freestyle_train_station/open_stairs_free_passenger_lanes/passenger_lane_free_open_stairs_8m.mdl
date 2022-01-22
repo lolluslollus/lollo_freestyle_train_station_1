@@ -32,23 +32,6 @@ function data()
             transportNetworkProvider = {
                 laneLists = {
                     {
-                        linkable = true,
-                        nodes = {
-                            {
-                                { -10.2, 0, 0, },
-                                { 1, 0, 0, },
-                                1.0,
-                            },
-                            {
-                                { -10, 0, 0, },
-                                { 1, 0, 0, },
-                                1.0,
-                            },
-                        },
-                        transportModes = { 'PERSON' },
-                        speedLimit = 20,
-                    },
-                    {
                         linkable = false,
                         nodes = {
                             {
@@ -92,24 +75,7 @@ function data()
                                 1.0,
                             },
                         },
-                        transportModes = { 'PERSON' },
-                        speedLimit = 20,
-                    },
-                    {
-                        linkable = true,
-                        nodes = {
-                            {
-                                { -0.2, 0, _zed, },
-                                { 1, 0, 0, },
-                                1.0,
-                            },
-                            {
-                                { 0, 0, _zed, },
-                                { 1, 0, 0, },
-                                1.0,
-                            },
-                        },
-                        transportModes = { 'PERSON' },
+                        transportModes = { 'PERSON', },
                         speedLimit = 20,
                     },
                 },
