@@ -254,7 +254,7 @@ function data()
 			-- free open stairs
 			["Era"] = "Era",
 			["FlatSlopedTerrain"] = "Terrain Incline",
-			["OpenStairsFreeDesc"] = "Stairs Matching Freestyle Train Stations",
+			["OpenStairsFreeDesc"] = "Stairs to climb up a slope. The game messes up the terrain if you combine them as flyovers.",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
 			["TerrainAlignmentType"] = "Terrain Alignment",

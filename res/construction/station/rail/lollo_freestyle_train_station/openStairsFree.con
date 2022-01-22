@@ -4,7 +4,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo freestyle train station ERROR: ', err)
+        print('lollo openStairsFree.con ERROR: ', err)
     end
 
     local _paramHelpers = {
