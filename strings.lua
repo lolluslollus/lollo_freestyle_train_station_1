@@ -253,9 +253,13 @@ function data()
 
 			-- free open stairs
 			["Era"] = "Era",
+			["FlatSlopedTerrain"] = "Terrain Incline",
 			["OpenStairsFreeDesc"] = "Stairs Matching Freestyle Train Stations",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
+			["TerrainAlignmentType"] = "Terrain Alignment",
+			["TerrainAlignmentTypeFlat"] = "Flat",
+			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
 			["TopPlatformYAngle"] = "Top Platform Tilt",
 			["TopPlatformZAngle"] = "Top Platform Rotation",

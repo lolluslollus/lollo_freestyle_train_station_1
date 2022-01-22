@@ -7,55 +7,53 @@ function data()
         print('lollo freestyle train station ERROR: ', err)
     end
 
-    local _maxBridgeChunkYAngleDeg = 15
-    local _bridgeChunkYAngleStep = 5
-    local _maxBridgeChunkZAngleDeg = 90
-    local _bridgeChunkZAngleStep = 5
-    local _bridgeChunkLengthValues = {'0', '4', '8', '16', '32', '64'}
+    local _paramValues = {
+        heights = {'4m', '8m'},
+        eras = {'A', 'B', 'C'},
+        eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
+        bridgeChunkLengths = {'0', '4', '8', '16', '32', '64'},
+        maxBridgeChunkYAngleDeg = 15,
+        bridgeChunkYAngleStep = 5,
+        maxBridgeChunkZAngleDeg = 90,
+        bridgeChunkZAngleStep = 5,
+        terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
+        flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
+    }
     local _paramsFunctions = {
-        getBridgeChunkYAngle = function(params)
-            return (math.floor(params.bridge_chunk_y_angle * _bridgeChunkYAngleStep) - _maxBridgeChunkYAngleDeg) or 0
+        getEraPrefix = function(params)
+            return (_paramValues.eraPrefixes)[params.era_prefix + 1] or _paramValues.eraPrefixes[1]
         end,
-        getBridgeChunkYAngleDefault = function()
-            return math.floor(_maxBridgeChunkYAngleDeg / _bridgeChunkYAngleStep)
-        end,
-        getBridgeChunkYAngleValues = function()
-            local results = {}
-            for i = -_maxBridgeChunkYAngleDeg, _maxBridgeChunkYAngleDeg, _bridgeChunkYAngleStep do
-                results[#results+1] = tostring(i)
-            end
-            return results
-        end,
-        getBridgeChunkZAngle = function(params)
-            return (math.floor(params.bridge_chunk_z_angle * _bridgeChunkZAngleStep) - _maxBridgeChunkZAngleDeg) or 0
-        end,
-        getBridgeChunkZAngleDefault = function()
-            return math.floor(_maxBridgeChunkZAngleDeg / _bridgeChunkZAngleStep)
+        getBridgeChunkLength = function(params)
+            return tonumber(_paramValues.bridgeChunkLengths[params.bridge_chunk_length + 1] or 0, 10)
         end,
         getBridgeChunkZAngleValues = function()
             local results = {}
-            for i = -_maxBridgeChunkZAngleDeg, _maxBridgeChunkZAngleDeg, _bridgeChunkZAngleStep do
+            for i = -_paramValues.maxBridgeChunkZAngleDeg, _paramValues.maxBridgeChunkZAngleDeg, _paramValues.bridgeChunkZAngleStep do
                 results[#results+1] = tostring(i)
             end
             return results
         end,
-        getBridgeChunkLength = function(params)
-            return tonumber(_bridgeChunkLengthValues[params.bridge_chunk_length + 1] or 0, 10)
+        getBridgeChunkZAngleDefault = function()
+            return math.floor(_paramValues.maxBridgeChunkZAngleDeg / _paramValues.bridgeChunkZAngleStep)
         end,
-        getBridgeChunkLengthValues = function()
-            return _bridgeChunkLengthValues
+        getBridgeChunkZAngle = function(params)
+            return (math.floor(params.bridge_chunk_z_angle * _paramValues.bridgeChunkZAngleStep) - _paramValues.maxBridgeChunkZAngleDeg) or 0
         end,
-        getEraPrefix = function(params)
-            if params.era_prefix == 1 then return _moduleHelpers.eras.era_b.prefix
-            elseif params.era_prefix == 2 then return _moduleHelpers.eras.era_c.prefix
-            else return _moduleHelpers.eras.era_a.prefix
+        getBridgeChunkYAngleValues = function()
+            local results = {}
+            for i = -_paramValues.maxBridgeChunkYAngleDeg, _paramValues.maxBridgeChunkYAngleDeg, _paramValues.bridgeChunkYAngleStep do
+                results[#results+1] = tostring(i)
             end
+            return results
         end,
-        getEraValues = function()
-            return {'A', 'B', 'C'}
+        getBridgeChunkYAngleDefault = function()
+            return math.floor(_paramValues.maxBridgeChunkYAngleDeg / _paramValues.bridgeChunkYAngleStep)
         end,
-        getHeightValues = function()
-            return {'4m', '8m'}
+        getBridgeChunkYAngle = function(params)
+            return (math.floor(params.bridge_chunk_y_angle * _paramValues.bridgeChunkYAngleStep) - _paramValues.maxBridgeChunkYAngleDeg) or 0
+        end,
+        getTerrainAlignmentType = function(params)
+            return _paramValues.terrainAlignmentTypes[params.terrain_alignment + 1] or _paramValues.terrainAlignmentTypes[1]
         end,
     }
 
@@ -71,7 +69,7 @@ function data()
 			yearTo = 0,
 		},
         categories = { 'stairs' },
-		order = 1103,
+		order = 0,
 		autoRemovable = false,
         buildMode = 'MULTI',
 		skipCollision = false, -- true,
@@ -79,21 +77,21 @@ function data()
             {
                 key = 'stairs_height',
                 name = _('OpenStairsFreeHeight'),
-                values = _paramsFunctions.getHeightValues(),
+                values = _paramValues.heights,
                 uiType = 'BUTTON',
                 defaultIndex = 1,
             },
             {
                 key = 'era_prefix',
                 name = _('Era'),
-                values = _paramsFunctions.getEraValues(),
+                values = _paramValues.eras,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
             {
                 key = 'bridge_chunk_length',
                 name = _('TopPlatformLength'),
-                values = _paramsFunctions.getBridgeChunkLengthValues(),
+                values = _paramValues.bridgeChunkLengths,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
@@ -111,70 +109,38 @@ function data()
                 uiType = 'SLIDER',
                 defaultIndex = _paramsFunctions.getBridgeChunkYAngleDefault(),
             },
+            {
+                key = 'terrain_alignment',
+                name = _('TerrainAlignmentType'),
+                values = _paramValues.terrainAlignmentTypes,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'flat_sloped_terrain',
+                name = _('FlatSlopedTerrain'),
+                values = _paramValues.flatSlopedTerrain,
+                uiType = 'BUTTON',
+                defaultIndex = 1,
+            },
         },
 		updateFn = function(params)
             local _ySize = 0.6
-            local _flatFaces = params.stairs_height == 1
+            local _flatFaces = params.stairs_height == 0
                 and { {
-                    {0, -_ySize, 0}, {0, _ySize, 0}, {-10, _ySize, 0}, {-10, -_ySize, 0}
-                } }
-                or { {
                     {0, -_ySize, 0}, {0, _ySize, 0}, {-5, _ySize, 0}, {-5, -_ySize, 0}
                 } }
-            local _slopedFaces = params.stairs_height == 1
+                or { {
+                    {0, -_ySize, 0}, {0, _ySize, 0}, {-9, _ySize, 0}, {-9, -_ySize, 0}
+                } }
+            local _slopedFaces = params.stairs_height == 0
                 and { {
-                    {0, -_ySize, 5}, {0, _ySize, 5}, {-10, _ySize, 0}, {-10, -_ySize, 0}
+                    {0, -_ySize, 3}, {0, _ySize, 3}, {-5, _ySize, 0}, {-5, -_ySize, 0}
                 } }
                 or { {
-                    {0, -_ySize, 2.5}, {0, _ySize, 2.5}, {-5, _ySize, 0}, {-5, -_ySize, 0}
+                    {0, -_ySize, 7}, {0, _ySize, 7}, {-9, _ySize, 0}, {-9, -_ySize, 0}
                 } }
-            -- local _flatTriangles = params.stairs_height == 1
-            --     and {
-            --             {
-            --                 {-10, -_ySize, 0}, {0, -_ySize, 0}, {0, _ySize, 0},
-            --             },
-            --             {
-            --                 {0, _ySize, 0}, {-10, _ySize, 0}, {-10, -_ySize, 0},
-            --             },
-            --         }
-            --     or {
-            --         {
-            --             {-5, -_ySize, 0}, {0, -_ySize, 0}, {0, _ySize, 0},
-            --         },
-            --         {
-            --             {0, _ySize, 0}, {-5, _ySize, 0}, {-5, -_ySize, 0},
-            --         },
-            --     }
-            -- local _slopedTriangles = params.stairs_height == 1
-            --     and {
-            --             {
-            --                 {-10, -_ySize, 0}, {0, -_ySize, 5}, {0, _ySize, 5},
-            --             },
-            --             {
-            --                 {0, _ySize, 5}, {-10, _ySize, 0}, {-10, -_ySize, 0},
-            --             },
-            --         }
-            --     or {
-            --         {
-            --             {-5, -_ySize, 0}, {0, -_ySize, 2.5}, {0, _ySize, 2.5},
-            --         },
-            --         {
-            --             {0, _ySize, 2.5}, {-5, _ySize, 0}, {-5, -_ySize, 0},
-            --         },
-            --     }
-            -- local _alongFaces = params.stairs_height == 1
-            --     and { {
-            --         {-8, -_ySize, 0},
-            --         {0, -_ySize, 7.5},
-            --         {0, _ySize, 7.5},
-            --         {-8, _ySize, 0}
-            --     } }
-            --     or { {
-            --         {-4, -_ySize, 0},
-            --         {0, -_ySize, 3.5},
-            --         {0, _ySize, 3.5},
-            --         {-4, _ySize, 0}
-            --     } }
+
             local _era_prefix = _paramsFunctions.getEraPrefix(params)
 
             local result = {
@@ -198,14 +164,14 @@ function data()
                     {
                         -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
                         -- id = 'lollo_freestyle_train_station/empty.mdl',
-                        id = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 1 and 'open_stairs_up.mdl' or 'open_stairs_up_half.mdl'),
+                        id = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_up_half.mdl' or 'open_stairs_up.mdl'),
                         transf = {1, 0, 0, 0,
                             0, 1, 0, 0,
                             0, 0, 1, 0,
                             0, 0, 0, 1},
                     },
                     {
-                        id = params.stairs_height == 1 and 'lollo_freestyle_train_station/passenger_lane_open_stairs_free.mdl' or 'lollo_freestyle_train_station/passenger_lane_open_stairs_free_half.mdl',
+                        id = params.stairs_height == 0 and 'lollo_freestyle_train_station/passenger_lane_open_stairs_free_half.mdl' or 'lollo_freestyle_train_station/passenger_lane_open_stairs_free.mdl',
                         transf = {1, 0, 0, 0,
                             0, 1, 0, 0,
                             0, 0, 1, 0,
@@ -214,24 +180,12 @@ function data()
                 },
                 terrainAlignmentLists = {
                     {
-                        type = 'EQUAL',
-                        -- type = 'LESS',
-                        -- type = 'GREATER',
+                        type = _paramsFunctions.getTerrainAlignmentType(params),
                         optional = true,
                         slopeLow = 9.6,
                         slopeHigh = 9.9,
-                        faces =  _flatFaces,
-                        -- faces = _slopedFaces,
-                        -- triangles = _flatTriangles,
-                        -- triangles = _slopedTriangles,
+                        faces = params.flat_sloped_terrain == 0 and _flatFaces or _slopedFaces,
                     },
-                    -- {
-                    --     type = 'LESS',
-                    --     optional = true,
-                    --     -- slopeLow = 0.6,
-                    --     -- slopeHigh = 0.9,
-                    --     faces =  _alongFaces
-                    -- }
                 },
             }
 
@@ -246,7 +200,7 @@ function data()
                                 {1, 0, 0, 0,
                                 0, 1, 0, 0,
                                 0, 0, 1, 0,
-                                0, 0, params.stairs_height == 1 and _constants.openStairsUpZ or _constants.openStairsUpZ / 2, 1},
+                                0, 0, params.stairs_height == 0 and _constants.openStairsUpZ / 2 or _constants.openStairsUpZ, 1},
                                 _transfUtilsUG.rotY(math.rad(_paramsFunctions.getBridgeChunkYAngle(params)))
                             )
                         )
