@@ -37,6 +37,7 @@ function data()
 				- Extra ground textures are in my terrain tweak mod.
 				- If you want large buildings, use assets. There are mods for those.
                 - This mod adds extra bridges to help with elevated stations.
+				- This mod adds stairs as a configurable asset, which can be used anywhere.
 
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
