@@ -22,7 +22,7 @@ function data()
             return results
         end,
         maxBridgeChunkYAngleDeg = 15,
-        bridgeChunkYAngleStep = 5,
+        bridgeChunkYAngleStep = 1,
         maxBridgeChunkZAngleDeg = 90,
         bridgeChunkZAngleStep = 5,
         eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
