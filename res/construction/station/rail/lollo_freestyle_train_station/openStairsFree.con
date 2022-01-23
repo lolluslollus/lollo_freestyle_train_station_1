@@ -240,6 +240,17 @@ function data()
 
             xpcall(
                 function()
+                    if params.stairs_base == 1 then
+                        local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_base_4m.mdl' or 'open_stairs_base_8m.mdl')
+                        table.insert(
+                            result.models,
+                            {
+                                id = modelId,
+                                transf = _idTransf,
+                            }
+                        )
+                    end
+
                     if _bridgeChunkLength > 0 then
                         local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                         local transf = _transfUtilsUG.mul(
