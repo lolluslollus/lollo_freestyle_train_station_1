@@ -31,11 +31,12 @@ function data()
 				- To work underground, use <NumPad 4>.
 				- Platforms only carry passengers or cargo if they are part of a terminal.
 				- 2.5 m platforms do not agree with bridges and tunnels. My \"no railing\" bridges help a bit, tunnels can't be helped.
-                - Very thin paths help with certain setups: those are in my street fine-tuning mod.
+                - Very thin paths help with certain setups: those are in my street fine tuning mod.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweak mod.
 				- If you want large buildings, use assets. There are mods for those.
+				- This mod adds extra pedestrian paths.
                 - This mod adds extra bridges to help with elevated stations.
 				- This mod adds stairs as a configurable asset, which can be used anywhere.
 
