@@ -10,13 +10,13 @@ function data()
         yearTo = 0,
         aiLock = true,
         visibility = true,
-        country = true,
+        country = true, -- LOLLO UG TODO this does not help: the AI still makes buildings
         speed = 20.0,
         type = 'lollo_1m_path_concrete_country',
         name = _("1 Metre Concrete Path, No Buildings"),
-        desc = _("1 metre concrete path with a speed limit of %2% and no buildings, give it a bus lane to pedestrianise it."),
+        desc = _("1 metre concrete path with a speed limit of %2% and no buildings, give it a bus lane or install the street fine tuning to pedestrianise it. It matches the freestyle station era C."),
         categories = { 'paths' },
-        order = 0,
+        order = 6,
         busAndTramRight = true,
         -- slopeBuildSteps = 1,
         embankmentSlopeLow  = 0.75,
@@ -29,19 +29,11 @@ function data()
             --     size = { 16.0, 0.2 }
             -- },
             sidewalkPaving = {
-                -- name = "street/old_medium_sidewalk.mtl",
-                -- name = "lollo_freestyle_train_station/bridge/cement_no_pattern.mtl",
-                -- name = "lollo_freestyle_train_station/bridge/lighter_cement_no_pattern.mtl",
-                -- name = "lollo_freestyle_train_station/bridge/cement_shrunk.mtl",
-                name = "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
+                name = "lollo_freestyle_train_station/station_concrete_1_z.mtl",
                 size = { 4.0, 4.0 }
             },
             streetPaving = {
-                -- name = "street/old_medium_sidewalk.mtl",
-                -- name = "lollo_freestyle_train_station/bridge/cement_no_pattern.mtl",
-                -- name = "lollo_freestyle_train_station/bridge/lighter_cement_no_pattern.mtl",
-                -- name = "lollo_freestyle_train_station/bridge/cement_shrunk.mtl",
-                name = "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
+                name = "lollo_freestyle_train_station/station_concrete_1_z.mtl",
                 size = { 4.0, 4.0 }
             },
         },

@@ -12,11 +12,11 @@ function data()
         visibility = true,
         country = false,
         speed = 20.0,
-        type = 'lollo_1m_path_concrete',
-        name = _("1 Metre Concrete Path"),
-        desc = _("1 metre concrete path with a speed limit of %2%, give it a bus lane or install the street fine tuning to pedestrianise it. It matches the freestyle station era C."),
+        type = 'lollo_1m_path_cobbles',
+        name = _("1 Metre Cobbled Path"),
+        desc = _("1 metre cobbled path with a speed limit of %2%, give it a bus lane or install the street fine tuning to pedestrianise it. It matches the freestyle station era A."),
         categories = { 'paths' },
-        order = 3,
+        order = 1,
         busAndTramRight = true,
         -- slopeBuildSteps = 1,
         embankmentSlopeLow  = 0.75,
@@ -29,12 +29,12 @@ function data()
             --     size = { 16.0, 0.2 }
             -- },
             sidewalkPaving = {
-                name = "lollo_freestyle_train_station/station_concrete_1_z.mtl",
-                size = { 4.0, 4.0 }
+                name = "lollo_freestyle_train_station/square_cobbles_z.mtl",
+                size = { 2.0, 2.0 }
             },
             streetPaving = {
-                name = "lollo_freestyle_train_station/station_concrete_1_z.mtl",
-                size = { 4.0, 4.0 }
+                name = "lollo_freestyle_train_station/square_cobbles_z.mtl",
+                size = { 2.0, 2.0 }
             },
         },
         assets = {},
