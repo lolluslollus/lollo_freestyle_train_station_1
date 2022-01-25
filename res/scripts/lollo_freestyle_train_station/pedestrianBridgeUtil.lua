@@ -148,7 +148,7 @@ utils.getData = function(isSides)
 
     return {
         name = isSides and _('PedestrianCementBridgeNoPillars') or _('PedestrianCementBridgeNoPillarsNoSides'),
-        yearFrom = 1960,
+        yearFrom = game.config.busLaneYearFrom, -- same as concrete paths
         yearTo = 0,
         carriers = { 'ROAD' },
         speedLimit = 20.0 / 3.6,
