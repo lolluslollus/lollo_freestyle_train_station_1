@@ -213,7 +213,6 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
     local _xFactorLod0 = isCompressed and (1 / _2nSegments) or 1
     local _xFactorLod1 = isCompressed and (1 / nSegments) or 2
     local _xFactorTN = isCompressed and 1 or _2nSegments
-	local _isTNLinkable = not(isCompressed)
 
 	local _lod0_skinMaterials_rep = {}
 	local _lod0_skinMaterials_side = {}
@@ -366,14 +365,16 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
 		},
 		metadata = {
 			transportNetworkProvider = {
-				laneLists = _isTNLinkable
+				-- compressed bridges are inside stations; bridge exits and free open stairs bridges are uncompressed
+				laneLists = not(isCompressed)
 					and {
 							{
 								linkable = false,
 								nodes = {
+									-- the lane starts where the model starts
 									{
 										{ 0, 0, 0 },
-										{ _xFactorTN - 1.2, 0, 0 },
+										{ _xFactorTN - 1.2, 0, 0 }, -- _xFactorTN >= 4, by construction
 										1.5,
 									},
 									{
@@ -393,6 +394,7 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
 										{ 0.2, 0, 0 },
 										1.5,
 									},
+									-- the lane ends 1 m before the model ends, for seamless looking links
 									{
 										{ _xFactorTN - 1, 0, 0 },
 										{ 0.2, 0, 0 },
@@ -406,11 +408,13 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
 					or {{
 						linkable = false,
 						nodes = {
+							-- the lane starts where the model starts
 							{
 								{ 0, 0, 0 },
 								{ _xFactorTN, 0, 0 },
 								1.5,
 							},
+							-- the lane ends where the model ends
 							{
 								{ _xFactorTN, 0, 0 },
 								{ _xFactorTN, 0, 0 },
