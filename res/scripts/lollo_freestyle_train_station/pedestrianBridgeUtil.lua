@@ -365,7 +365,9 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
 		},
 		metadata = {
 			transportNetworkProvider = {
-				-- compressed bridges are inside stations; bridge exits and free open stairs bridges are uncompressed
+				-- compressed bridges are inside stations;
+				-- bridge exits and free open stairs bridges are uncompressed
+				-- their x == 0 end is atop the stairs (free stairs or station stairs), their x > 0 end joins up with the outer world
 				laneLists = not(isCompressed)
 					and {
 							{
