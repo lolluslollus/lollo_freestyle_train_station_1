@@ -21,30 +21,32 @@ function data()
             end
             return results
         end,
-        maxBridgeChunkYAngleDeg = 15,
-        bridgeChunkYAngleStep = 1,
+        eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
+        bridgeChunkLengths = {-1, 4, 8, 16, 32, 64, 0},
         maxBridgeChunkZAngleDeg = 90,
         bridgeChunkZAngleStep = 5,
-        eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
+        maxBridgeChunkYAngleDeg = 15,
+        bridgeChunkYAngleStep = 1,
+        stairsBases = {-1, 1, 0},
     }
     local _paramValues = {
         heights = {'4 m', '8 m'},
         eras = {'A', 'B', 'C'},
-        bridgeChunkLengths = {'0', '4', '8', '16', '32', '64'},
+        bridgeChunkLengths = {'0', '4 m', '8 m', '16 m', '32 m', '64 m', 'EDGE'},
         bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkZAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkZAngleDeg / _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkYAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkYAngleDeg, _paramHelpers.bridgeChunkYAngleStep),
         bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
-        stairsBase = {_('NO'), _('YES')},
+        stairsBases = {_('NO'), _('MODEL'), _('EDGE')},
     }
     local _paramReaders = {
         getEraPrefix = function(params)
             return _paramHelpers.eraPrefixes[params.era_prefix + 1] or _paramHelpers.eraPrefixes[1]
         end,
         getBridgeChunkLength = function(params)
-            return tonumber(_paramValues.bridgeChunkLengths[params.bridge_chunk_length + 1] or 0, 10)
+            return _paramHelpers.bridgeChunkLengths[params.bridge_chunk_length + 1] or -1
         end,
         getBridgeChunkZAngle = function(params)
             return (math.floor(params.bridge_chunk_z_angle * _paramHelpers.bridgeChunkZAngleStep) - _paramHelpers.maxBridgeChunkZAngleDeg) or 0
@@ -54,6 +56,9 @@ function data()
         end,
         getTerrainAlignmentType = function(params)
             return _paramValues.terrainAlignmentTypes[params.terrain_alignment_type + 1] or _paramValues.terrainAlignmentTypes[1]
+        end,
+        getStairsBase = function(params)
+            return _paramHelpers.stairsBases[params.stairs_base + 1] or -1
         end,
     }
 
@@ -126,36 +131,57 @@ function data()
             {
                 key = 'stairs_base',
                 name = _('StairsBase'),
-                values = _paramValues.stairsBase,
+                values = _paramValues.stairsBases,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
         },
 		updateFn = function(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
+            local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _yHalfSize = 1
 
             local baseLanesModelId = ''
-            if params.stairs_base == 0 and params.stairs_height == 0 then
-                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_4m.mdl'
-            elseif params.stairs_base == 0 and params.stairs_height == 1 then
-                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_8m.mdl'
-            elseif params.stairs_base == 1 and params.stairs_height == 0 then
-                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_4m.mdl'
-            elseif params.stairs_base == 1 and params.stairs_height == 1 then
-                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_8m.mdl'
+            if _stairsBase == -1 then -- no base
+                if params.stairs_height == 0 then
+                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_4m.mdl'
+                else
+                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_8m.mdl'
+                end
+            elseif _stairsBase == 0 then -- edge
+                if params.stairs_height == 0 then
+                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_4m.mdl'
+                else
+                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_8m.mdl'
+                end
+            else -- model
+                if params.stairs_height == 0 then
+                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_4m.mdl'
+                else
+                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_8m.mdl'
+                end
             end
 
             local topLanesModelId = ''
-            if _bridgeChunkLength == 0 and params.stairs_height == 0 then
-                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_4m.mdl'
-            elseif _bridgeChunkLength == 0 and params.stairs_height == 1 then
-                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_8m.mdl'
-            elseif _bridgeChunkLength ~= 0 and params.stairs_height == 0 then
-                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_4m.mdl'
-            elseif _bridgeChunkLength ~= 0 and params.stairs_height == 1 then
-                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_8m.mdl'
+            if _bridgeChunkLength == -1 then -- no bridge
+                if params.stairs_height == 0 then
+                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_4m.mdl'
+                elseif params.stairs_height == 1 then
+                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_8m.mdl'
+                end
+            elseif _bridgeChunkLength == 0 then -- edge
+                if params.stairs_height == 0 then
+                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_4m.mdl'
+                elseif params.stairs_height == 1 then
+                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_8m.mdl'
+                end
+            else -- model
+                if params.stairs_height == 0 then
+                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_4m.mdl'
+                elseif params.stairs_height == 1 then
+                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_8m.mdl'
+                end
             end
 
             local _flatFaces = params.stairs_height == 0
@@ -223,94 +249,151 @@ function data()
                 },
             }
 
-            xpcall(
-                function()
-                    if params.stairs_base == 1 then
-                        local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_base_4m.mdl' or 'open_stairs_base_8m.mdl')
-                        table.insert(
-                            result.models,
-                            {
-                                id = modelId,
-                                transf = _idTransf,
-                            }
-                        )
+            local _addBase = function()
+                if _stairsBase == 0 then -- edge
+                    local _baseLen = 2
+                    table.insert(
+                        result.edgeLists,
+                        {
+                            alignTerrain = false, -- only align on ground and in tunnels
+                            edges = params.stairs_height == 0 and {
+                                { { -5.7, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                                { { -5.7 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                            } or {
+                                { { -10.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                                { { -10.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                            },
+                            -- edgeType = 'BRIDGE',
+                            -- edgeTypeName = 'lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua',
+                            freeNodes = { },
+                            params = {
+                                tramTrackType  = 'NO',
+                                type = 'lollo_1m_path_cobbles.lua',
+                            },
+                            snapNodes = { 1 },
+                            tag2nodes = {},
+                            type = 'STREET'
+                        }
+                    )
+                elseif _stairsBase == 1 then -- model
+                    local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_base_4m.mdl' or 'open_stairs_base_8m.mdl')
+                    table.insert(
+                        result.models,
+                        {
+                            id = modelId,
+                            transf = _idTransf,
+                        }
+                    )
 
-                        local _baseFaces = params.stairs_height == 0
-                            and { {
-                                {-6, -_yHalfSize, 0}, {-6, _yHalfSize, 0}, {-7.5, _yHalfSize, 0}, {-7.5, -_yHalfSize, 0}
-                            } }
-                            or { {
-                                {-10.5, -_yHalfSize, 0}, {-10.5, _yHalfSize, 0}, {-12, _yHalfSize, 0}, {-12, -_yHalfSize, 0}
-                            } }
-                        table.insert(
-                            result.terrainAlignmentLists,
-                            {
-                                type = 'EQUAL',
-                                optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
-                                slopeLow = 9.6,
-                                slopeHigh = 9.9,
-                                faces = _baseFaces,
-                            }
-                        )
-                    end
-
-                    if _bridgeChunkLength > 0 then
-                        local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
-                        local transf = _transfUtilsUG.mul(
-                            _transfUtilsUG.rotZ(math.rad(_paramReaders.getBridgeChunkZAngle(params))),
-                            _transfUtilsUG.mul(
-                                {1, 0, 0, 0,
-                                0, 1, 0, 0,
-                                0, 0, 1, 0,
-                                0, 0, params.stairs_height == 0 and _constants.openStairsUpZ / 2 or _constants.openStairsUpZ, 1},
-                                _transfUtilsUG.rotY(math.rad(_paramReaders.getBridgeChunkYAngle(params)))
-                            )
-                        )
-                        table.insert(
-                            result.models,
-                            {
-                                id = modelId,
-                                transf = transf,
-                            }
-                        )
-
-                        local _faceDZ = -0.5
-                        local _bridgeFaces = { {
-                            {_bridgeChunkLength, -_yHalfSize, _faceDZ, 1},
-                            {_bridgeChunkLength, _yHalfSize, _faceDZ, 1},
-                            {0, _yHalfSize, _faceDZ, 1},
-                            {0, -_yHalfSize, _faceDZ, 1}
+                    local _baseFaces = params.stairs_height == 0
+                        and { {
+                            {-6, -_yHalfSize, 0}, {-6, _yHalfSize, 0}, {-7.5, _yHalfSize, 0}, {-7.5, -_yHalfSize, 0}
                         } }
-                        local terrainFaces = {{
-                            type = 'LESS',
+                        or { {
+                            {-10.5, -_yHalfSize, 0}, {-10.5, _yHalfSize, 0}, {-12, _yHalfSize, 0}, {-12, -_yHalfSize, 0}
+                        } }
+                    table.insert(
+                        result.terrainAlignmentLists,
+                        {
+                            type = 'EQUAL',
                             optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
                             slopeLow = 9.6,
                             slopeHigh = 9.9,
-                            faces = _bridgeFaces,
-                        }}
-                        -- print('terrainFaces before transf =') debugPrint(terrainFaces)
-                        _modulesutilUG.TransformAlignmentFaces(transf, terrainFaces)
-                        -- print('terrainFaces after transf =') debugPrint(terrainFaces)
-                        table.insert(result.terrainAlignmentLists, terrainFaces[1])
+                            faces = _baseFaces,
+                        }
+                    )
+                end
+            end
 
-                        -- local bridgeFaces = {
-                        --     {_bridgeChunkLength, -_yHalfSize, _faceDZ, 1},
-                        --     {_bridgeChunkLength, _yHalfSize, _faceDZ, 1},
-                        --     {0, _yHalfSize, _faceDZ, 1},
-                        --     {0, -_yHalfSize, _faceDZ, 1}
-                        -- }
-                        -- _modulesutilUG.TransformFaces(transf, bridgeFaces)
-                        -- table.insert(
-                        --     result.terrainAlignmentLists,
-                        --     {
-                        --         type = 'LESS',
-                        --         optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
-                        --         slopeLow = 9.6,
-                        --         slopeHigh = 9.9,
-                        --         faces = bridgeFaces,
-                        --     }
-                        -- )
-                    end
+            local _addBridge = function()
+                if _bridgeChunkLength == 0 then -- edge
+                    local _bridgeLen = 2
+                    table.insert(
+                        result.edgeLists,
+                        {
+                            alignTerrain = false, -- only align on ground and in tunnels
+                            edges = params.stairs_height == 0 and {
+                                { { 0, 0, 4 }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
+                                { { _bridgeLen, 0, 4 }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
+                            } or {
+                                { { 0, 0, 8 }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
+                                { { _bridgeLen, 0, 8 }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
+                            },
+                            edgeType = 'BRIDGE',
+                            edgeTypeName = 'lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua',
+                            freeNodes = { },
+                            params = {
+                                tramTrackType  = 'NO',
+                                type = 'lollo_1m_path_cobbles.lua',
+                            },
+                            snapNodes = { 1 },
+                            tag2nodes = {},
+                            type = 'STREET'
+                        }
+                    )
+                elseif _bridgeChunkLength > 1 then -- model
+                    local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
+                    local transf = _transfUtilsUG.mul(
+                        _transfUtilsUG.rotZ(math.rad(_paramReaders.getBridgeChunkZAngle(params))),
+                        _transfUtilsUG.mul(
+                            {1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, params.stairs_height == 0 and _constants.openStairsUpZ / 2 or _constants.openStairsUpZ, 1},
+                            _transfUtilsUG.rotY(math.rad(_paramReaders.getBridgeChunkYAngle(params)))
+                        )
+                    )
+                    table.insert(
+                        result.models,
+                        {
+                            id = modelId,
+                            transf = transf,
+                        }
+                    )
+
+                    local _faceDZ = -0.5
+                    local _bridgeFaces = { {
+                        {_bridgeChunkLength, -_yHalfSize, _faceDZ, 1},
+                        {_bridgeChunkLength, _yHalfSize, _faceDZ, 1},
+                        {0, _yHalfSize, _faceDZ, 1},
+                        {0, -_yHalfSize, _faceDZ, 1}
+                    } }
+                    local terrainFaces = {{
+                        type = 'LESS',
+                        optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                        slopeLow = 9.6,
+                        slopeHigh = 9.9,
+                        faces = _bridgeFaces,
+                    }}
+                    -- print('terrainFaces before transf =') debugPrint(terrainFaces)
+                    _modulesutilUG.TransformAlignmentFaces(transf, terrainFaces)
+                    -- print('terrainFaces after transf =') debugPrint(terrainFaces)
+                    table.insert(result.terrainAlignmentLists, terrainFaces[1])
+
+                    -- local bridgeFaces = {
+                    --     {_bridgeChunkLength, -_yHalfSize, _faceDZ, 1},
+                    --     {_bridgeChunkLength, _yHalfSize, _faceDZ, 1},
+                    --     {0, _yHalfSize, _faceDZ, 1},
+                    --     {0, -_yHalfSize, _faceDZ, 1}
+                    -- }
+                    -- _modulesutilUG.TransformFaces(transf, bridgeFaces)
+                    -- table.insert(
+                    --     result.terrainAlignmentLists,
+                    --     {
+                    --         type = 'LESS',
+                    --         optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                    --         slopeLow = 9.6,
+                    --         slopeHigh = 9.9,
+                    --         faces = bridgeFaces,
+                    --     }
+                    -- )
+                end
+            end
+
+            xpcall(
+                function()
+                    _addBase()
+                    _addBridge()
                 end,
                 _myErrorHandler
             )
