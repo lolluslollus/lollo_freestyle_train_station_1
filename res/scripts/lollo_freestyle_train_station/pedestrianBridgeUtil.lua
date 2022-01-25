@@ -373,12 +373,12 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
 								nodes = {
 									{
 										{ 0, 0, 0 },
-										{ _xFactorTN - 0.2, 0, 0 },
+										{ _xFactorTN - 1.2, 0, 0 },
 										1.5,
 									},
 									{
-										{ _xFactorTN - 0.2, 0, 0 },
-										{ _xFactorTN - 0.2, 0, 0 },
+										{ _xFactorTN - 1.2, 0, 0 },
+										{ _xFactorTN - 1.2, 0, 0 },
 										1.5,
 									},
 								},
@@ -389,12 +389,12 @@ utils.getModel = function(nSegments, isCompressed, eraPrefix)
 								linkable = true,
 								nodes = {
 									{
-										{ _xFactorTN - 0.2, 0, 0 },
+										{ _xFactorTN - 1.2, 0, 0 },
 										{ 0.2, 0, 0 },
 										1.5,
 									},
 									{
-										{ _xFactorTN, 0, 0 },
+										{ _xFactorTN - 1, 0, 0 },
 										{ 0.2, 0, 0 },
 										1.5,
 									},
