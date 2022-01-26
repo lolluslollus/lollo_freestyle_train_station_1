@@ -255,7 +255,7 @@ function data()
                     table.insert(
                         result.edgeLists,
                         {
-                            alignTerrain = false, -- only align on ground and in tunnels
+                            alignTerrain = true, -- only align on ground and in tunnels
                             edges = params.stairs_height == 0 and {
                                 { { -5.7, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
                                 { { -5.7 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
@@ -331,6 +331,15 @@ function data()
                             type = 'STREET'
                         }
                     )
+
+                    -- table.insert(
+                    --     result.terrainAlignmentLists,
+                    --     { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+                    --         type = 'EQUAL',
+                    --         optional = true,
+                    --         faces =  { }
+                    --     }
+                    -- )
                 elseif _bridgeChunkLength > 1 then -- model
                     local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                     local transf = _transfUtilsUG.mul(
