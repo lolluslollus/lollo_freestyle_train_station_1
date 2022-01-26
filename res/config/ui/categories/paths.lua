@@ -1,6 +1,6 @@
 function data()
 	return {
-		name = _("Pedestrian Paths"),
+		name = _("PedestrianPaths"),
 		order = 99,
 	}
 end
