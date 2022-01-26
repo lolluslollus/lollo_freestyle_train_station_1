@@ -259,6 +259,8 @@ function data()
 			["OpenStairsFreeDesc"] = "Stairs to climb up a slope, matching the freestyle stations, collision free; use fences or similar mods to fine-tune collisions. You can combine multiple stairs into flyovers, but the game might mess up the terrain.",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
+			["PedestrianBridges"] = "Pedestrian Bridges",
+			["PedestrianPaths"] = "Pedestrian Paths",
 			["StairsBase"] = "Expand Base",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",

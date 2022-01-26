@@ -248,12 +248,39 @@ local function _getStreetFilesContents(streetDirPath, fileNamePrefix)
     -- end
 end
 
+local function _getStreetDataFiltered_Paths(streetDataTable)
+    if type(streetDataTable) ~= 'table' then return {} end
+
+    local results = {}
+    for _, strDataRecord in pairs(streetDataTable) do
+        if strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true then
+            if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().PATHS) then
+                table.insert(results, #results + 1, strDataRecord)
+            end
+        end
+    end
+    return results
+end
+
+local function _getStreetDataFiltered_PathsOnForcedBridge(streetDataTable)
+    if type(streetDataTable) ~= 'table' then return {} end
+
+    local results = {}
+    for _, strDataRecord in pairs(streetDataTable) do
+        if strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true then
+            if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().PATHS_ON_FORCED_BRIDGE) then
+                table.insert(results, #results + 1, strDataRecord)
+            end
+        end
+    end
+    return results
+end
+
 local function _getStreetDataFiltered_Stock(streetDataTable)
     if type(streetDataTable) ~= 'table' then return {} end
 
     local results = {}
     for _, strDataRecord in pairs(streetDataTable) do
-        -- if strDataRecord.yearTo == 0 and (strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true) then
         if strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true then
             if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().COUNTRY)
             or arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().HIGHWAY)
@@ -332,9 +359,10 @@ local function _getStreetTypesWithApi()
             rightLaneWidth = (streetProperties.laneConfigs[2] or {}).width or 0,
             sidewalkWidth = streetProperties.sidewalkWidth,
             streetWidth = streetProperties.streetWidth,
-            -- LOLLO UG TODO isVisible may return true even if street.visibility = false.
-            -- I use yearFrom to get around this.
-            visibility = (streetProperties.yearFrom < 65535 and api.res.streetTypeRep.isVisible(ii)) or false,
+            -- LOLLO NOTE isVisible may return true even if street.visibility = false.
+            -- The reason is, visibility was introduced with a beta and quickly taken back.
+            -- I use yearFrom = 65535 to get around this.
+            visibility = (streetProperties.yearFrom < 65535 and streetProperties.yearTo == 0 and api.res.streetTypeRep.isVisible(ii)) or false,
             yearTo = streetProperties.yearTo
         }
     end
@@ -485,6 +513,8 @@ helper.getStreetCategories = function()
         ONE_WAY_PERSON_RIGHT = 'one-way-person-right',
         ONE_WAY_TRAM_RIGHT = 'one-way-tram-right',
         ONE_WAY_TYRES_RIGHT = 'one-way-tyres-right',
+        PATHS = 'paths',
+        PATHS_ON_FORCED_BRIDGE = 'paths-on-forced-bridge',
         URBAN = 'urban',
         URBAN_BUS_RIGHT = 'urban-bus-right',
         URBAN_CARGO_RIGHT = 'urban-cargo-right',
@@ -506,6 +536,8 @@ end
 
 helper.getStreetDataFilters = function()
     return {
+        PATHS = { id = 'paths', func = _getStreetDataFiltered_Paths },
+        PATHS_ON_FORCED_BRIDGE = { id = 'paths-on-forced-bridge', func = _getStreetDataFiltered_PathsOnForcedBridge },
         STOCK = { id = 'stock', func = _getStreetDataFiltered_Stock },
         STOCK_AND_RESERVED_LANES = { id = 'stock-and-reserved-lanes', func = _getStreetDataFiltered_StockAndReservedLanes },
     }

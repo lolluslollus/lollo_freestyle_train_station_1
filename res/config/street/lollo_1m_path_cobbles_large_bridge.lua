@@ -12,16 +12,16 @@ function data()
         visibility = true,
         country = false,
         speed = 20.0,
-        type = 'lollo_1m_path_cobbles',
-        name = _("1 Metre Cobbled Path"),
-        desc = _("1 metre cobbled path with a speed limit of %2%, give it a bus lane or install the street fine tuning to pedestrianise it. It matches the freestyle station era A."),
-        categories = { 'paths' },
-        order = 1,
+        type = 'lollo_1m_path_cobbles_large_bridge',
+        name = _("1 Metre Large-Cobbled Bridge"),
+        desc = _("1 metre large-cobbled bridge with a speed limit of %2%. It matches the freestyle station era B. Build one and it will turn into a bridge automatically."),
+        categories = { 'paths-on-forced-bridge' },
+        order = 2,
         busAndTramRight = true,
         -- slopeBuildSteps = 1,
         embankmentSlopeLow  = 0.75,
         embankmentSlopeHigh  = 2.5,
-        borderGroundTex = "street_border.lua",
+        -- borderGroundTex = "street_border.lua",
         materials = {
             -- sidewalkBorderOuter = {
             --     name = "street/old_medium_sidewalk_border_outer.mtl",
@@ -29,11 +29,11 @@ function data()
             --     size = { 16.0, 0.2 }
             -- },
             sidewalkPaving = {
-                name = "lollo_freestyle_train_station/square_cobbles_z.mtl",
+                name = "lollo_freestyle_train_station/square_cobbles_large_z.mtl",
                 size = { 2.0, 2.0 }
             },
             streetPaving = {
-                name = "lollo_freestyle_train_station/square_cobbles_z.mtl",
+                name = "lollo_freestyle_train_station/square_cobbles_large_z.mtl",
                 size = { 2.0, 2.0 }
             },
         },
