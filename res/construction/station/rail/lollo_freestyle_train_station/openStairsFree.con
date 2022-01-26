@@ -254,7 +254,7 @@ function data()
 
             local _addBase = function()
                 if _stairsBase == 0 or _stairsBase == 1 then -- edge or snappy edge
-                    local _baseLen = 2
+                    local _baseLen = 1
                     table.insert(
                         result.edgeLists,
                         {
