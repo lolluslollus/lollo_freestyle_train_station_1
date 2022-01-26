@@ -4,12 +4,12 @@ local mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 
 local _lod0_skinMaterials_era_a_rep = {
-	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
 }
 local _lod0_skinMaterials_era_a_side = {
 	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
-	"lollo_freestyle_train_station/metal/rough_copper_skinned.mtl",
+	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
 local _lod0_skinMaterials_era_a_side_no_railing = {
 	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
@@ -19,33 +19,33 @@ local _lod1_materials_era_a = {
 }
 
 local _lod0_skinMaterials_era_b_rep = {
-	"lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl",
-	"lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl",
+	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
+	'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
 }
 local _lod0_skinMaterials_era_b_side = {
-	"lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl",
-	"lollo_freestyle_train_station/metal/rough_copper_skinned.mtl",
+	'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
 local _lod0_skinMaterials_era_b_side_no_railing = {
-	"lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl",
+	'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
 }
 local _lod1_materials_era_b = {
-	"lollo_freestyle_train_station/square_cobbles_large.mtl",
+	'lollo_freestyle_train_station/square_cobbles_large.mtl',
 }
 
 local _lod0_skinMaterials_era_c_rep = {
-	"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
-	"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
+	'lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl',
 }
 local _lod0_skinMaterials_era_c_side = {
-	"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
-	"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+	'lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
 }
 local _lod0_skinMaterials_era_c_side_no_railing = {
-	"lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl",
+	'lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl',
 }
 local _lod1_materials_era_c = {
-	"lollo_freestyle_train_station/station_concrete_1.mtl",
+	'lollo_freestyle_train_station/station_concrete_1.mtl',
 }
 
 local function getDynamicProps(eraPrefix)
@@ -202,25 +202,25 @@ utils.getData4Cement = function(isSides)
             -- },
             -- sidewalkPaving = { -- this fills small gaps at junctions but also draws tangent stripes outside sharp bends
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     -- name = "lollo_freestyle_train_station/icon/green.mtl"
-            --     -- name = "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl"
+            --     -- name = 'lollo_freestyle_train_station/icon/green.mtl'
+            --     -- name = 'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl'
             --     name = 'street/country_new_medium_paving.mtl',
             --     size = { 2, 2 },
             -- },
             -- sidewalkCurb = { -- useless
             --     -- size = { 3, 0.6 },
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     name = "lollo_freestyle_train_station/icon/yellow.mtl"
+            --     name = 'lollo_freestyle_train_station/icon/yellow.mtl'
             -- },
             -- sidewalkBorderInner = {
             --     size = { 2, 0.8 },
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     name = "lollo_freestyle_train_station/icon/blue.mtl"
+            --     name = 'lollo_freestyle_train_station/icon/blue.mtl'
             -- },
             -- sidewalkLane = {
             --     size = { 2, 0.8 },
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     name = "lollo_freestyle_train_station/icon/red.mtl"
+            --     name = 'lollo_freestyle_train_station/icon/red.mtl'
             -- },
         },
         noParallelStripSubdivision = true,
@@ -357,25 +357,25 @@ utils.getData4Basic = function(eraPrefix, isSides)
             -- },
             -- sidewalkPaving = { -- this fills small gaps at junctions but also draws tangent stripes outside sharp bends
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     -- name = "lollo_freestyle_train_station/icon/green.mtl"
-            --     -- name = "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl"
+            --     -- name = 'lollo_freestyle_train_station/icon/green.mtl'
+            --     -- name = 'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl'
             --     name = 'street/country_new_medium_paving.mtl',
             --     size = { 2, 2 },
             -- },
             -- sidewalkCurb = { -- useless
             --     -- size = { 3, 0.6 },
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     name = "lollo_freestyle_train_station/icon/yellow.mtl"
+            --     name = 'lollo_freestyle_train_station/icon/yellow.mtl'
             -- },
             -- sidewalkBorderInner = {
             --     size = { 2, 0.8 },
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     name = "lollo_freestyle_train_station/icon/blue.mtl"
+            --     name = 'lollo_freestyle_train_station/icon/blue.mtl'
             -- },
             -- sidewalkLane = {
             --     size = { 2, 0.8 },
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     name = "lollo_freestyle_train_station/icon/red.mtl"
+            --     name = 'lollo_freestyle_train_station/icon/red.mtl'
             -- },
         },
         noParallelStripSubdivision = true,
@@ -403,16 +403,16 @@ utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
 				{
 					children = {
 						{
-							name = "cement_bridge_bone_2m_start",
+							name = 'cement_bridge_bone_2m_start',
 							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
 						},
 						{
-							name = "cement_bridge_bone_2m_end",
+							name = 'cement_bridge_bone_2m_end',
 							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
 						},
 					},
-					name = "container_2m",
-					skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod0.msh",
+					name = 'container_2m',
+					skin = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod0.msh',
 					skinMaterials = _lod0_skinMaterials_rep,
 				},
 			},
@@ -423,18 +423,18 @@ utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
 				{
 					children = {
 						{
-							name = "cement_bridge_bone_2m_start_side1",
+							name = 'cement_bridge_bone_2m_start_side1',
 							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
 						},
 						{
-							name = "cement_bridge_bone_2m_end_side1",
+							name = 'cement_bridge_bone_2m_end_side1',
 							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
 						},
 					},
-					name = "container_2m_side1",
+					name = 'container_2m_side1',
 					skin = (i == 0 or i == _iMaxLod0)
-						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh"
-						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh",
+						and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh'
+						or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh',
 					skinMaterials = (i == 0 or i == _iMaxLod0)
 						and _lod0_skinMaterials_side_no_railing
 						or _lod0_skinMaterials_side,
@@ -447,18 +447,18 @@ utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
 				{
 					children = {
 						{
-							name = "cement_bridge_bone_2m_start_side2",
+							name = 'cement_bridge_bone_2m_start_side2',
 							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
 						},
 						{
-							name = "cement_bridge_bone_2m_end_side2",
+							name = 'cement_bridge_bone_2m_end_side2',
 							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
 						},
 					},
-					name = "container_2m_side2",
+					name = 'container_2m_side2',
 					skin = (i == 0 or i == _iMaxLod0)
-						and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh"
-						or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh",
+						and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh'
+						or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh',
 					skinMaterials = (i == 0 or i == _iMaxLod0)
 						and _lod0_skinMaterials_side_no_railing
 						or _lod0_skinMaterials_side,
@@ -473,7 +473,7 @@ utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
 		lod1Children[#lod1Children + 1] = {
 			children = {
 				{
-                    mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
+                    mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh',
                     materials = _lod1_materials,
 				},
 			},
@@ -482,7 +482,7 @@ utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
 		lod1Children[#lod1Children + 1] = {
 			children = {
 				{
-                    mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod1.msh",
+                    mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod1.msh',
                     materials = _lod1_materials,
 				},
 			},
@@ -491,7 +491,7 @@ utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
 		lod1Children[#lod1Children + 1] = {
 			children = {
 				{
-                    mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
+                    mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh',
                     materials = _lod1_materials,
 				},
 			},
@@ -506,7 +506,7 @@ utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
 			{
 				node = {
 					children =  lod0Children,
-					name = "lod0Children",
+					name = 'lod0Children',
 					transf = { _xFactorLod0, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
 				},
 				static = false,
@@ -516,7 +516,7 @@ utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
 			{
 				node = {
 					children =  lod1Children,
-					name = "lod1Children",
+					name = 'lod1Children',
 					transf = { _xFactorLod1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
 				},
 				static = false,
@@ -608,7 +608,7 @@ utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 				halfExtents = { 1, 0.3, 0.25, },
 			},
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, -0.3, -0.25, 1, },
-			type = "BOX",
+			type = 'BOX',
 		},
 		lods = {
 			{
@@ -617,18 +617,18 @@ utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 						{
 							children = {
 								{
-									name = "cement_bridge_bone_2m_start_side1",
+									name = 'cement_bridge_bone_2m_start_side1',
 									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
 								},
 								{
-									name = "cement_bridge_bone_2m_end_side1",
+									name = 'cement_bridge_bone_2m_end_side1',
 									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
 								},
 							},
-							name = "container_2m_side1",
+							name = 'container_2m_side1',
 							skin = isSide
-								and "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh"
-								or "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh",
+								and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh'
+								or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh',
 							skinMaterials = isSide
 								and _lod0_skinMaterials_side
 								or _lod0_skinMaterials_side_no_railing,
@@ -645,7 +645,7 @@ utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 				node = {
 					children = {
 						{
-							mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh",
+							mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh',
 							materials = _lod1_materials,
 						},
 					},
@@ -675,7 +675,7 @@ utils.getModel4Basic_rep_rep = function(eraPrefix)
 				halfExtents = { 1, 0.25, 0.25, },
 			},
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, -0.25, 1, },
-			type = "BOX",
+			type = 'BOX',
 		},
 		lods = {
 			{
@@ -684,16 +684,16 @@ utils.getModel4Basic_rep_rep = function(eraPrefix)
 						{
 							children = {
 								{
-									name = "cement_bridge_bone_2m_start",
+									name = 'cement_bridge_bone_2m_start',
 									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
 								},
 								{
-									name = "cement_bridge_bone_2m_end",
+									name = 'cement_bridge_bone_2m_end',
 									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
 								},
 							},
-							name = "container_2m",
-							skin = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod0.msh",
+							name = 'container_2m',
+							skin = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod0.msh',
 							skinMaterials = _lod0_skinMaterials_rep,
 						},
 					},
@@ -708,7 +708,7 @@ utils.getModel4Basic_rep_rep = function(eraPrefix)
 				node = {
 					children = {
 						{
-							mesh = "lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod1.msh",
+							mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod1.msh',
 							materials = _lod1_materials,
 						},
 					},
