@@ -265,11 +265,13 @@ function data()
                             },
                             -- edgeType = 'BRIDGE',
                             -- edgeTypeName = 'lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua',
-                            freeNodes = { },
+                            -- freeNodes = { },
+                            freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
                                 type = 'lollo_1m_path_cobbles.lua',
                             },
+                            -- snapNodes = { 1 },
                             snapNodes = { 1 },
                             tag2nodes = {},
                             type = 'STREET'
@@ -321,11 +323,13 @@ function data()
                             },
                             edgeType = 'BRIDGE',
                             edgeTypeName = 'lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua',
-                            freeNodes = { },
+                            -- freeNodes = { },
+                            freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
                                 type = 'lollo_1m_path_cobbles.lua',
                             },
+                            -- snapNodes = { 1 },
                             snapNodes = { 1 },
                             tag2nodes = {},
                             type = 'STREET'
