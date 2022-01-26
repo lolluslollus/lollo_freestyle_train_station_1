@@ -49,7 +49,7 @@ local _lod1_materials_era_c = {
 }
 
 local utils = {}
-utils.getData = function(isSides)
+utils.getData4Cement = function(isSides)
     local _pillarLength = 1
 
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
@@ -204,7 +204,7 @@ utils.getData = function(isSides)
     }
 end
 
-utils.getModel = function(nSegments, isCompressed, eraPrefix)
+utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
     if (not(nSegments) or nSegments < 2) then nSegments = 2 end
 
     local _2nSegments = 2 * nSegments
