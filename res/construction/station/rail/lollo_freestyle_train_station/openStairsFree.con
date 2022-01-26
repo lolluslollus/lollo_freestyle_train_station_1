@@ -268,13 +268,11 @@ function data()
                             },
                             -- edgeType = 'BRIDGE',
                             -- edgeTypeName = openStairsRefData.bridgeTypeName_withRailing,
-                            -- freeNodes = { },
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
                                 type = _openStairsRefData.streetTypeName_noBridge,
                             },
-                            -- snapNodes = { 1 },
                             snapNodes = _stairsBase == 0 and { } or { 1 },
                             tag2nodes = {},
                             type = 'STREET'
@@ -335,13 +333,11 @@ function data()
                             },
                             edgeType = 'BRIDGE',
                             edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
-                            -- freeNodes = { },
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
                                 type = _openStairsRefData.streetTypeName_noBridge,
                             },
-                            -- snapNodes = { 1 },
                             snapNodes = _bridgeChunkLength == 0 and { } or { 1 },
                             tag2nodes = {},
                             type = 'STREET'
