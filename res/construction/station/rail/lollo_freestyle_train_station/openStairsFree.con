@@ -23,24 +23,24 @@ function data()
             return results
         end,
         eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
-        bridgeChunkLengths = {-1, 4, 8, 16, 32, 64, 0},
+        bridgeChunkLengths = {-1, 4, 8, 16, 32, 64, 0, 1},
         maxBridgeChunkZAngleDeg = 90,
         bridgeChunkZAngleStep = 5,
         maxBridgeChunkYAngleDeg = 15,
         bridgeChunkYAngleStep = 1,
-        stairsBases = {-1, 1, 0},
+        stairsBases = {-1, 99, 0, 1},
     }
     local _paramValues = {
         heights = {'4 m', '8 m'},
         eras = {'A', 'B', 'C'},
-        bridgeChunkLengths = {'0', '4 m', '8 m', '16 m', '32 m', '64 m', 'EDGE'},
+        bridgeChunkLengths = {'0', '4 m', '8 m', '16 m', '32 m', '64 m', _('Edge'), _('SnappyEdge')},
         bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkZAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkZAngleDeg / _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkYAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkYAngleDeg, _paramHelpers.bridgeChunkYAngleStep),
         bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
-        stairsBases = {_('NO'), _('MODEL'), _('EDGE')},
+        stairsBases = {_('NO'), _('Model'), _('Edge'), _('SnappyEdge')},
     }
     local _paramReaders = {
         getEraPrefix = function(params)
@@ -152,7 +152,7 @@ function data()
                 else
                     baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_8m.mdl'
                 end
-            elseif _stairsBase == 0 then -- edge
+            elseif _stairsBase == 0 or _stairsBase == 1 then -- edge or snappy edge
                 if params.stairs_height == 0 then
                     baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_4m.mdl'
                 else
@@ -173,7 +173,7 @@ function data()
                 elseif params.stairs_height == 1 then
                     topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_8m.mdl'
                 end
-            elseif _bridgeChunkLength == 0 then -- edge
+            elseif _bridgeChunkLength == 0 or _bridgeChunkLength == 1 then -- edge or snappy edge
                 if params.stairs_height == 0 then
                     topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_4m.mdl'
                 elseif params.stairs_height == 1 then
@@ -253,7 +253,7 @@ function data()
             }
 
             local _addBase = function()
-                if _stairsBase == 0 then -- edge
+                if _stairsBase == 0 or _stairsBase == 1 then -- edge or snappy edge
                     local _baseLen = 2
                     table.insert(
                         result.edgeLists,
@@ -275,12 +275,21 @@ function data()
                                 type = _openStairsRefData.streetTypeName_noBridge,
                             },
                             -- snapNodes = { 1 },
-                            snapNodes = { },
+                            snapNodes = _stairsBase == 0 and { } or { 1 },
                             tag2nodes = {},
                             type = 'STREET'
                         }
                     )
-                elseif _stairsBase == 1 then -- model
+
+                    table.insert(
+                        result.terrainAlignmentLists,
+                        { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+                            type = 'EQUAL',
+                            optional = true,
+                            faces =  { }
+                        }
+                    )
+                elseif _stairsBase == 99 then -- model
                     local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_base_4m.mdl' or 'open_stairs_base_8m.mdl')
                     table.insert(
                         result.models,
@@ -311,7 +320,7 @@ function data()
             end
 
             local _addBridge = function()
-                if _bridgeChunkLength == 0 then -- edge
+                if _bridgeChunkLength == 0 or _bridgeChunkLength == 1 then -- edge or snappy edge
                     local _bridgeLen = 2
                     table.insert(
                         result.edgeLists,
@@ -333,20 +342,20 @@ function data()
                                 type = _openStairsRefData.streetTypeName_noBridge,
                             },
                             -- snapNodes = { 1 },
-                            snapNodes = { },
+                            snapNodes = _bridgeChunkLength == 0 and { } or { 1 },
                             tag2nodes = {},
                             type = 'STREET'
                         }
                     )
 
-                    -- table.insert(
-                    --     result.terrainAlignmentLists,
-                    --     { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
-                    --         type = 'EQUAL',
-                    --         optional = true,
-                    --         faces =  { }
-                    --     }
-                    -- )
+                    table.insert(
+                        result.terrainAlignmentLists,
+                        { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+                            type = 'EQUAL',
+                            optional = true,
+                            faces =  { }
+                        }
+                    )
                 elseif _bridgeChunkLength > 1 then -- model
                     local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                     local transf = _transfUtilsUG.mul(

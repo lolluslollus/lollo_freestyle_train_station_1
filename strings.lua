@@ -256,13 +256,16 @@ function data()
 			["WaypointsTooFar"] = "Too far from its twin",
 
 			-- free open stairs
+			["Edge"] = "Edge",
 			["Era"] = "Era",
 			["FlatSlopedTerrain"] = "Terrain Incline",
+			["Model"] = "Model",
 			["OpenStairsFreeDesc"] = "Stairs to climb up a slope, matching the freestyle stations, collision free; use fences or similar mods to fine-tune collisions. You can choose \"edge\" and combine this to pedestrian bridges or paths.",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
 			["PedestrianBridges"] = "Pedestrian Bridges",
 			["PedestrianPaths"] = "Pedestrian Paths",
+			["SnappyEdge"] = "Snappy Edge",
 			["StairsBase"] = "Expand Base",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",
