@@ -14,7 +14,7 @@ function data()
         speed = 20.0,
         type = 'lollo_1m_path_concrete_bridge',
         name = _("1 Metre Concrete Bridge"),
-        desc = _("1 metre concrete bridge with a speed limit of %2%. It matches the freestyle station era C. Build one and it will turn into a bridge automatically."),
+        desc = _("1 metre concrete bridge with a speed limit of %2%. It matches the freestyle station and the \"stairs\" asset, era C. Build one and it will turn into a bridge automatically."),
         categories = { 'paths-on-forced-bridge' },
         order = 3,
         busAndTramRight = true,

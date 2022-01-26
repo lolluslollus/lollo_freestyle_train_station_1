@@ -1,6 +1,7 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
+local openStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
 local streetUtils = require('lollo_freestyle_train_station.streetUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
@@ -13,11 +14,7 @@ local _compTypeBridge = 1
 local _eventId = 'lolloOpenStairsFree'
 local _eventNames = { BUILD_BRIDGE_REQUESTED = 'buildBridgeRequested' }
 
-local _guiStreetConstants = {
-    bridgeTypeId = 0, -- these have base 0
-    forceBridgeStreetTypeIds = {},
-    myBridgeFileName = 'lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua'
-}
+local _guiOpenStairsHelpers = openStairsHelpers
 
 local _actions = {
     replaceEdgeWithSameOnBridge = function(oldEdgeId, bridgeTypeId)
@@ -82,13 +79,17 @@ local _actions = {
 function data()
     return {
         guiInit = function()
-            local _globalStreetData = streetUtils.getGlobalStreetData(streetUtils.getStreetDataFilters().PATHS_ON_FORCED_BRIDGE)
-            for _, streetDataRecord in pairs(_globalStreetData) do
-                local streetId = api.res.streetTypeRep.find(streetDataRecord.fileName)
-                arrayUtils.addUnique(_guiStreetConstants.forceBridgeStreetTypeIds, streetId)
-            end
+            _guiOpenStairsHelpers.eraA.bridgeTypeId_withRailing = api.res.bridgeTypeRep.find(_guiOpenStairsHelpers.eraA.bridgeTypeName_withRailing)
+            _guiOpenStairsHelpers.eraB.bridgeTypeId_withRailing = api.res.bridgeTypeRep.find(_guiOpenStairsHelpers.eraB.bridgeTypeName_withRailing)
+            _guiOpenStairsHelpers.eraC.bridgeTypeId_withRailing = api.res.bridgeTypeRep.find(_guiOpenStairsHelpers.eraC.bridgeTypeName_withRailing)
 
-            _guiStreetConstants.bridgeTypeId = api.res.bridgeTypeRep.find(_guiStreetConstants.myBridgeFileName)
+            _guiOpenStairsHelpers.eraA.bridgeTypeId_noRailing = api.res.bridgeTypeRep.find(_guiOpenStairsHelpers.eraA.bridgeTypeName_noRailing)
+            _guiOpenStairsHelpers.eraB.bridgeTypeId_noRailing = api.res.bridgeTypeRep.find(_guiOpenStairsHelpers.eraB.bridgeTypeName_noRailing)
+            _guiOpenStairsHelpers.eraC.bridgeTypeId_noRailing = api.res.bridgeTypeRep.find(_guiOpenStairsHelpers.eraC.bridgeTypeName_noRailing)
+
+            _guiOpenStairsHelpers.eraA.streetTypeId_withBridge = api.res.streetTypeRep.find(_guiOpenStairsHelpers.eraA.streetTypeName_withBridge)
+            _guiOpenStairsHelpers.eraB.streetTypeId_withBridge = api.res.streetTypeRep.find(_guiOpenStairsHelpers.eraB.streetTypeName_withBridge)
+            _guiOpenStairsHelpers.eraC.streetTypeId_withBridge = api.res.streetTypeRep.find(_guiOpenStairsHelpers.eraC.streetTypeName_withBridge)
         end,
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
@@ -124,10 +125,12 @@ function data()
                                 local forceBridgeEventParams = {}
                                 for _, addedSegment in pairs(args.proposal.proposal.addedSegments) do
                                     if addedSegment and addedSegment.streetEdge and addedSegment.comp and addedSegment.comp.type ~= _compTypeBridge then
-                                        if arrayUtils.arrayHasValue(_guiStreetConstants.forceBridgeStreetTypeIds, addedSegment.streetEdge.streetType) then
+                                        -- print('addedSegment =') debugPrint(addedSegment)
+                                        local bridgeTypeId = _guiOpenStairsHelpers.getBridgeTypeId(addedSegment.streetEdge.streetType, true)
+                                        if bridgeTypeId then
                                             forceBridgeEventParams[#forceBridgeEventParams+1] = {
                                                 edgeId = addedSegment.entity,
-                                                bridgeTypeId = _guiStreetConstants.bridgeTypeId
+                                                bridgeTypeId = bridgeTypeId
                                             }
                                         end
                                     end

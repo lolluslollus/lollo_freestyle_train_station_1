@@ -219,6 +219,8 @@ function data()
 			["IronBridgeSpacedPillarsNoSides"] = "Iron bridge with spaced pillars and no railing",
 			["PedestrianCementBridgeNoPillars"] = "Pedestrian concrete bridge with no pillars. Only for 1 metre wide roads",
 			["PedestrianCementBridgeNoPillarsNoSides"] = "Pedestrian concrete bridge with no pillars and no railing. Only for 1 metre wide roads",
+			["PedestrianBasicBridgeNoPillars"] = "Pedestrian bridge with no pillars. Only for 1 metre wide roads",
+			["PedestrianBasicBridgeNoPillarsNoSides"] = "Pedestrian bridge with no pillars and no railing. Only for 1 metre wide roads",
 
 			["NewStationName"] = "New Station",
 
@@ -256,7 +258,7 @@ function data()
 			-- free open stairs
 			["Era"] = "Era",
 			["FlatSlopedTerrain"] = "Terrain Incline",
-			["OpenStairsFreeDesc"] = "Stairs to climb up a slope, matching the freestyle stations, collision free; use fences or similar mods to fine-tune collisions. You can combine multiple stairs into flyovers, but the game might mess up the terrain.",
+			["OpenStairsFreeDesc"] = "Stairs to climb up a slope, matching the freestyle stations, collision free; use fences or similar mods to fine-tune collisions. You can choose \"edge\" and combine this to pedestrian bridges or paths.",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
 			["PedestrianBridges"] = "Pedestrian Bridges",

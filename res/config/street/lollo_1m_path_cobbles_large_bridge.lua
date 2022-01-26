@@ -14,7 +14,7 @@ function data()
         speed = 20.0,
         type = 'lollo_1m_path_cobbles_large_bridge',
         name = _("1 Metre Large-Cobbled Bridge"),
-        desc = _("1 metre large-cobbled bridge with a speed limit of %2%. It matches the freestyle station era B. Build one and it will turn into a bridge automatically."),
+        desc = _("1 metre large-cobbled bridge with a speed limit of %2%. It matches the freestyle station and the \"stairs\" asset, era B. Build one and it will turn into a bridge automatically."),
         categories = { 'paths-on-forced-bridge' },
         order = 2,
         busAndTramRight = true,

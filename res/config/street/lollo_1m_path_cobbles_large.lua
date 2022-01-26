@@ -14,7 +14,7 @@ function data()
         speed = 20.0,
         type = 'lollo_1m_path_cobbles_large',
         name = _("1 Metre Large-Cobbled Path"),
-        desc = _("1 metre large-cobbled path with a speed limit of %2%, give it a bus lane or install the street fine tuning to pedestrianise it. It matches the freestyle station era B."),
+        desc = _("1 metre large-cobbled path with a speed limit of %2%; give it a bus lane or install the street fine tuning to pedestrianise it. It matches the freestyle station and the \"stairs\" asset, era B."),
         categories = { 'paths' },
         order = 2,
         busAndTramRight = true,

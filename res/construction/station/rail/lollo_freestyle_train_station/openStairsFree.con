@@ -2,6 +2,7 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
     local _modulesutilUG = require('modulesutil')
+    local _openStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
@@ -140,6 +141,8 @@ function data()
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
             local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
+            local _openStairsRefData = _openStairsHelpers.getData4Era(_era_prefix)
+
             local _yHalfSize = 1
 
             local baseLanesModelId = ''
@@ -264,15 +267,15 @@ function data()
                                 { { -10.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
                             },
                             -- edgeType = 'BRIDGE',
-                            -- edgeTypeName = 'lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua',
+                            -- edgeTypeName = openStairsRefData.bridgeTypeName_withRailing,
                             -- freeNodes = { },
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
-                                type = 'lollo_1m_path_cobbles.lua',
+                                type = _openStairsRefData.streetTypeName_noBridge,
                             },
                             -- snapNodes = { 1 },
-                            snapNodes = { 1 },
+                            snapNodes = { },
                             tag2nodes = {},
                             type = 'STREET'
                         }
@@ -322,15 +325,15 @@ function data()
                                 { { _bridgeLen, 0, 8 }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
                             },
                             edgeType = 'BRIDGE',
-                            edgeTypeName = 'lollo_freestyle_train_station/pedestrian_cement_no_pattern_no_pillars.lua',
+                            edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
                             -- freeNodes = { },
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
-                                type = 'lollo_1m_path_cobbles.lua',
+                                type = _openStairsRefData.streetTypeName_noBridge,
                             },
                             -- snapNodes = { 1 },
-                            snapNodes = { 1 },
+                            snapNodes = { },
                             tag2nodes = {},
                             type = 'STREET'
                         }
