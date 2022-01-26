@@ -10,9 +10,11 @@ local _lod0_skinMaterials_era_a_rep = {
 local _lod0_skinMaterials_era_a_side = {
 	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
 local _lod0_skinMaterials_era_a_side_no_railing = {
 	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
 local _lod1_materials_era_a = {
 	'lollo_freestyle_train_station/square_cobbles.mtl',
@@ -25,9 +27,11 @@ local _lod0_skinMaterials_era_b_rep = {
 local _lod0_skinMaterials_era_b_side = {
 	'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
 local _lod0_skinMaterials_era_b_side_no_railing = {
 	'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
 local _lod1_materials_era_b = {
 	'lollo_freestyle_train_station/square_cobbles_large.mtl',
@@ -40,9 +44,11 @@ local _lod0_skinMaterials_era_c_rep = {
 local _lod0_skinMaterials_era_c_side = {
 	'lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
 }
 local _lod0_skinMaterials_era_c_side_no_railing = {
 	'lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
 }
 local _lod1_materials_era_c = {
 	'lollo_freestyle_train_station/station_concrete_1.mtl',

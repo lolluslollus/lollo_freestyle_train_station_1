@@ -1,34 +1,60 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, }, 
+		{ 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				jointWeights = {
-					count = 168,
-					offset = 624,
+					count = 96,
+					offset = 648,
 				},
 				normal = {
-					count = 168,
-					offset = 792,
+					count = 96,
+					offset = 840,
 				},
 				position = {
-					count = 168,
-					offset = 456,
+					count = 96,
+					offset = 552,
 				},
 				tangent = {
-					count = 168,
-					offset = 960,
+					count = 96,
+					offset = 744,
 				},
 				uv0 = {
-					count = 168,
-					offset = 1128,
+					count = 96,
+					offset = 456,
 				},
 			},
 			materials = {
-				"DELETE.mtl", 
+				"TOP.mtl",
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 72,
+					offset = 1080,
+				},
+				normal = {
+					count = 72,
+					offset = 1224,
+				},
+				position = {
+					count = 72,
+					offset = 1008,
+				},
+				tangent = {
+					count = 72,
+					offset = 1152,
+				},
+				uv0 = {
+					count = 72,
+					offset = 936,
+				},
+			},
+			materials = {
+				"BOTTOM.mtl",
 			},
 		}, 
 	},
@@ -36,27 +62,27 @@ return {
 		jointWeights = {
 			count = 32,
 			numComp = 4,
-			offset = 120,
+			offset = 288,
 		},
 		normal = {
 			count = 72,
 			numComp = 3,
-			offset = 152,
+			offset = 384,
 		},
 		position = {
 			count = 120,
 			numComp = 3,
-			offset = 0,
+			offset = 168,
 		},
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 224,
+			offset = 320,
 		},
 		uv0 = {
 			count = 168,
 			numComp = 2,
-			offset = 288,
+			offset = 0,
 		},
 	},
 }
