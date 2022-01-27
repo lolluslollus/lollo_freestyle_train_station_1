@@ -206,13 +206,6 @@ function data()
                 } }
             end
 
-            local mainModelId = ''
-            if _height == 2 then mainModelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_up_2m.mdl'
-            elseif _height == 4 then mainModelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_up_half.mdl'
-            elseif _height == 6 then mainModelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_up_6m.mdl'
-            elseif _height == 8 then mainModelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_up.mdl'
-            end
-
             local result = {
                 colliders = {},
                 cost = 0,
@@ -234,7 +227,7 @@ function data()
                     {
                         -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
                         -- id = 'lollo_freestyle_train_station/empty.mdl',
-                        id = mainModelId,
+                        id = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. 'open_stairs_'.. _height ..'m.mdl',
                         transf = _idTransf,
                     },
                     {
@@ -313,7 +306,7 @@ function data()
                     --     }
                     -- )
                 elseif _stairsBase == 99 then -- model
-                    local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_base_' .. _height .. 'm.mdl'
+                    local modelId = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. 'open_stairs_base_' .. _height .. 'm.mdl'
                     table.insert(
                         result.models,
                         {
