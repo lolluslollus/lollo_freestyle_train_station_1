@@ -257,6 +257,8 @@ function data()
 
 			-- free open stairs
 			["Edge"] = "Edge",
+			["EdgeWithBridge"] = "Edge with Bridge",
+			["EdgeWithNoBridge"] = "Edge with No Bridge",
 			["Era"] = "Era",
 			["FlatSlopedTerrain"] = "Terrain Incline",
 			["Model"] = "Model",
@@ -266,6 +268,8 @@ function data()
 			["PedestrianBridges"] = "Pedestrian Bridges",
 			["PedestrianPaths"] = "Pedestrian Paths",
 			["SnappyEdge"] = "Snappy Edge",
+			["SnappyEdgeWithBridge"] = "Snappy Edge with Bridge",
+			["SnappyEdgeWithNoBridge"] = "Snappy Edge with No Bridge",
 			["StairsBase"] = "Expand Base",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",

@@ -28,7 +28,7 @@ function data()
         bridgeChunkZAngleStep = 5,
         maxBridgeChunkYAngleDeg = 15,
         bridgeChunkYAngleStep = 1,
-        stairsBases = {-1, 99, 0, 1},
+        stairsBases = {-1, 99, 0, 1, 2, 3},
     }
     local _paramValues = {
         heights = {'4 m', '8 m'},
@@ -40,7 +40,7 @@ function data()
         bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
-        stairsBases = {_('NO'), _('Model'), _('Edge'), _('SnappyEdge')},
+        stairsBases = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
     }
     local _paramReaders = {
         getEraPrefix = function(params)
@@ -140,6 +140,7 @@ function data()
 		updateFn = function(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
             local _stairsBase = _paramReaders.getStairsBase(params)
+            print('_stairsBase =', _stairsBase or 'NIL')
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _openStairsRefData = _openStairsHelpers.getData4Era(_era_prefix)
 
@@ -152,7 +153,7 @@ function data()
                 else
                     baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_8m.mdl'
                 end
-            elseif _stairsBase == 0 or _stairsBase == 1 then -- edge or snappy edge
+            elseif _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
                 if params.stairs_height == 0 then
                     baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_4m.mdl'
                 else
@@ -253,12 +254,12 @@ function data()
             }
 
             local _addBase = function()
-                if _stairsBase == 0 or _stairsBase == 1 then -- edge or snappy edge
+                if _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
                     local _baseLen = 1
                     table.insert(
                         result.edgeLists,
                         {
-                            alignTerrain = true, -- only align on ground and in tunnels
+                            alignTerrain = (_stairsBase == 0 or _stairsBase == 1) and true or false, -- only align on ground and in tunnels
                             edges = params.stairs_height == 0 and {
                                 { { -5.7, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
                                 { { -5.7 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
@@ -266,27 +267,27 @@ function data()
                                 { { -10.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
                                 { { -10.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
                             },
-                            -- edgeType = 'BRIDGE',
-                            -- edgeTypeName = openStairsRefData.bridgeTypeName_withRailing,
+                            edgeType = (_stairsBase == 2 or _stairsBase == 3) and 'BRIDGE' or nil,
+                            edgeTypeName = (_stairsBase == 2 or _stairsBase == 3) and _openStairsRefData.bridgeTypeName_withRailing or nil,
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
                                 type = _openStairsRefData.streetTypeName_noBridge,
                             },
-                            snapNodes = _stairsBase == 0 and { } or { 1 },
+                            snapNodes = (_stairsBase == 1 or _stairsBase == 3) and { 1 } or { },
                             tag2nodes = {},
                             type = 'STREET'
                         }
                     )
 
-                    table.insert(
-                        result.terrainAlignmentLists,
-                        { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
-                            type = 'EQUAL',
-                            optional = true,
-                            faces =  { }
-                        }
-                    )
+                    -- table.insert(
+                    --     result.terrainAlignmentLists,
+                    --     { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+                    --         type = 'EQUAL',
+                    --         optional = true,
+                    --         faces =  { }
+                    --     }
+                    -- )
                 elseif _stairsBase == 99 then -- model
                     local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_base_4m.mdl' or 'open_stairs_base_8m.mdl')
                     table.insert(
