@@ -256,9 +256,8 @@ function data()
 			["WaypointsTooFar"] = "Too far from its twin",
 
 			-- free open stairs
-			["Edge"] = "Edge",
-			["EdgeWithBridge"] = "Edge with Bridge",
-			["EdgeWithNoBridge"] = "Edge with No Bridge",
+			["EdgeWithBridge"] = "Bridge",
+			["EdgeWithNoBridge"] = "Path",
 			["Era"] = "Era",
 			["FlatSlopedTerrain"] = "Terrain Incline",
 			["Model"] = "Model",
@@ -267,9 +266,8 @@ function data()
 			["OpenStairsFreeName"] = "Stairs",
 			["PedestrianBridges"] = "Pedestrian Bridges",
 			["PedestrianPaths"] = "Pedestrian Paths",
-			["SnappyEdge"] = "Snappy Edge",
-			["SnappyEdgeWithBridge"] = "Snappy Edge with Bridge",
-			["SnappyEdgeWithNoBridge"] = "Snappy Edge with No Bridge",
+			["SnappyEdgeWithBridge"] = "Snappy Bridge",
+			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["StairsBase"] = "Expand Base",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",

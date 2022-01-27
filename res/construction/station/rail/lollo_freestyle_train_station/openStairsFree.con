@@ -28,19 +28,19 @@ function data()
         bridgeChunkZAngleStep = 5,
         maxBridgeChunkYAngleDeg = 15,
         bridgeChunkYAngleStep = 1,
-        stairsBases = {-1, 99, 0, 1, 2, 3},
+        stairsBases = {-1, 99, 0, --[[ 1, ]] 2, --[[ 3, ]]},
     }
     local _paramValues = {
         heights = {'4 m', '8 m'},
         eras = {'A', 'B', 'C'},
-        bridgeChunkLengths = {'0', '4 m', '8 m', '16 m', '32 m', '64 m', _('Edge'), _('SnappyEdge')},
+        bridgeChunkLengths = {'0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
         bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkZAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkZAngleDeg / _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkYAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkYAngleDeg, _paramHelpers.bridgeChunkYAngleStep),
         bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
-        stairsBases = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+        stairsBases = {_('NO'), _('Model'), _('EdgeWithNoBridge'), --[[ _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), --[[ _('SnappyEdgeWithBridge'), ]]},
     }
     local _paramReaders = {
         getEraPrefix = function(params)
@@ -140,7 +140,6 @@ function data()
 		updateFn = function(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
             local _stairsBase = _paramReaders.getStairsBase(params)
-            print('_stairsBase =', _stairsBase or 'NIL')
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _openStairsRefData = _openStairsHelpers.getData4Era(_era_prefix)
 
@@ -345,14 +344,14 @@ function data()
                         }
                     )
 
-                    table.insert(
-                        result.terrainAlignmentLists,
-                        { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
-                            type = 'EQUAL',
-                            optional = true,
-                            faces =  { }
-                        }
-                    )
+                    -- table.insert(
+                    --     result.terrainAlignmentLists,
+                    --     { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+                    --         type = 'EQUAL',
+                    --         optional = true,
+                    --         faces =  { }
+                    --     }
+                    -- )
                 elseif _bridgeChunkLength > 1 then -- model
                     local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                     local transf = _transfUtilsUG.mul(
