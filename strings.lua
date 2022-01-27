@@ -274,6 +274,7 @@ function data()
 			["TerrainAlignmentTypeFlat"] = "Flat",
 			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
+			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Bridge\" or \"0\" when building and change it to \"Snappy Bridge\" once built",
 			["TopPlatformYAngle"] = "Top Platform Tilt",
 			["TopPlatformZAngle"] = "Top Platform Rotation",
 		},

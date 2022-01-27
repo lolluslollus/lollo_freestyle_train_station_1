@@ -101,6 +101,7 @@ function data()
             {
                 key = 'bridge_chunk_length',
                 name = _('TopPlatformLength'),
+                tooltip = _('TopPlatformLengthTooltip'),
                 values = _paramValues.bridgeChunkLengths,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
