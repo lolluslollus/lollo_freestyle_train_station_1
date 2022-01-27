@@ -22,6 +22,7 @@ function data()
             end
             return results
         end,
+        heights = {2, 4, 6, 8},
         eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
         bridgeChunkLengths = {-1, 4, 8, 16, 32, 64, 0, 1},
         maxBridgeChunkZAngleDeg = 90,
@@ -31,7 +32,7 @@ function data()
         stairsBases = {-1, 99, 0, --[[ 1, ]] 2, --[[ 3, ]]},
     }
     local _paramValues = {
-        heights = {'4 m', '8 m'},
+        heights = {'2m', '4 m', '6m', '8 m'},
         eras = {'A', 'B', 'C'},
         bridgeChunkLengths = {'0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
         bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
@@ -43,6 +44,9 @@ function data()
         stairsBases = {_('NO'), _('Model'), _('EdgeWithNoBridge'), --[[ _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), --[[ _('SnappyEdgeWithBridge'), ]]},
     }
     local _paramReaders = {
+        getHeight = function(params)
+            return _paramHelpers.heights[params.stairs_height + 1] or 8
+        end,
         getEraPrefix = function(params)
             return _paramHelpers.eraPrefixes[params.era_prefix + 1] or _paramHelpers.eraPrefixes[1]
         end,
@@ -139,6 +143,7 @@ function data()
             },
         },
 		updateFn = function(params)
+            local _height = _paramReaders.getHeight(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
             local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
@@ -148,60 +153,65 @@ function data()
 
             local baseLanesModelId = ''
             if _stairsBase == -1 then -- no base
-                if params.stairs_height == 0 then
-                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_4m.mdl'
-                else
-                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_8m.mdl'
-                end
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_'.. _height ..'m.mdl'
             elseif _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
-                if params.stairs_height == 0 then
-                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_4m.mdl'
-                else
-                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_8m.mdl'
-                end
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_'.. _height ..'m.mdl'
             else -- model
-                if params.stairs_height == 0 then
-                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_4m.mdl'
-                else
-                    baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_8m.mdl'
-                end
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_'.. _height ..'m.mdl'
             end
 
             local topLanesModelId = ''
             if _bridgeChunkLength == -1 then -- no bridge
-                if params.stairs_height == 0 then
-                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_4m.mdl'
-                elseif params.stairs_height == 1 then
-                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_8m.mdl'
-                end
+                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_'.. _height ..'m.mdl'
             elseif _bridgeChunkLength == 0 or _bridgeChunkLength == 1 then -- edge or snappy edge
-                if params.stairs_height == 0 then
-                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_4m.mdl'
-                elseif params.stairs_height == 1 then
-                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_8m.mdl'
-                end
+                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_'.. _height ..'m.mdl'
             else -- model
-                if params.stairs_height == 0 then
-                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_4m.mdl'
-                elseif params.stairs_height == 1 then
-                    topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_8m.mdl'
-                end
+                topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_'.. _height ..'m.mdl'
             end
 
-            local _flatFaces = params.stairs_height == 0
-                and { {
+            local flatFaces = {}
+            if _height == 2 then
+                flatFaces = { {
+                    {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-3.75, _yHalfSize, 0}, {-3.75, -_yHalfSize, 0}
+                } }
+            elseif _height == 4 then
+                flatFaces = { {
                     {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-6, _yHalfSize, 0}, {-6, -_yHalfSize, 0}
                 } }
-                or { {
+            elseif _height == 6 then
+                flatFaces = { {
+                    {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-8.25, _yHalfSize, 0}, {-8.25, -_yHalfSize, 0}
+                } }
+            elseif _height == 8 then
+                flatFaces = { {
                     {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-10.5, _yHalfSize, 0}, {-10.5, -_yHalfSize, 0}
                 } }
-            local _slopedFaces = params.stairs_height == 0
-                and { {
+            end
+            local slopedFaces = {}
+            if _height == 2 then
+                slopedFaces = { {
+                    {0, -_yHalfSize, 1}, {0, _yHalfSize, 1}, {-3.75, _yHalfSize, -0.5}, {-3.75, -_yHalfSize, -0.5}
+                } }
+            elseif _height == 4 then
+                slopedFaces = { {
                     {0, -_yHalfSize, 3}, {0, _yHalfSize, 3}, {-6, _yHalfSize, -0.5}, {-6, -_yHalfSize, -0.5}
                 } }
-                or { {
+            elseif _height == 6 then
+                slopedFaces = { {
+                    {0, -_yHalfSize, 5}, {0, _yHalfSize, 5}, {-8.25, _yHalfSize, -0.5}, {-8.25, -_yHalfSize, -0.5}
+                } }
+            elseif _height == 8 then
+                slopedFaces = { {
                     {0, -_yHalfSize, 7}, {0, _yHalfSize, 7}, {-10.5, _yHalfSize, -0.5}, {-10.5, -_yHalfSize, -0.5}
                 } }
+            end
+
+            local mainModelId = ''
+            if _height == 2 then mainModelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_up_2m.mdl'
+            elseif _height == 4 then mainModelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_up_half.mdl'
+            elseif _height == 6 then mainModelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_up_6m.mdl'
+            elseif _height == 8 then mainModelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_up.mdl'
+            end
 
             local result = {
                 colliders = {},
@@ -224,7 +234,7 @@ function data()
                     {
                         -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
                         -- id = 'lollo_freestyle_train_station/empty.mdl',
-                        id = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_up_half.mdl' or 'open_stairs_up.mdl'),
+                        id = mainModelId,
                         transf = _idTransf,
                     },
                     {
@@ -232,9 +242,7 @@ function data()
                         transf = _idTransf,
                     },
                     {
-                        id = params.stairs_height == 0
-                            and 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_4m.mdl'
-                            or 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_8m.mdl',
+                        id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
                         transf = _idTransf,
                     },
                     {
@@ -248,7 +256,7 @@ function data()
                         optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
                         slopeLow = 9.6,
                         slopeHigh = 9.9,
-                        faces = params.flat_sloped_terrain == 0 and _flatFaces or _slopedFaces,
+                        faces = params.flat_sloped_terrain == 0 and flatFaces or slopedFaces,
                     },
                 },
             }
@@ -256,17 +264,33 @@ function data()
             local _addBase = function()
                 if _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
                     local _baseLen = 1
+                    local edges = {}
+                    if _height == 2 then
+                        edges = {
+                            { { -3.7, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                            { { -3.7 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                        }
+                    elseif _height == 4 then
+                        edges = {
+                            { { -5.7, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                            { { -5.7 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                        }
+                    elseif _height == 6 then
+                        edges = {
+                            { { -8.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                            { { -8.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                        }
+                    elseif _height == 8 then
+                        edges = {
+                            { { -10.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                            { { -10.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                        }
+                    end
                     table.insert(
                         result.edgeLists,
                         {
                             alignTerrain = (_stairsBase == 0 or _stairsBase == 1) and true or false, -- only align on ground and in tunnels
-                            edges = params.stairs_height == 0 and {
-                                { { -5.7, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
-                                { { -5.7 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
-                            } or {
-                                { { -10.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
-                                { { -10.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
-                            },
+                            edges = edges,
                             edgeType = (_stairsBase == 2 or _stairsBase == 3) and 'BRIDGE' or nil,
                             edgeTypeName = (_stairsBase == 2 or _stairsBase == 3) and _openStairsRefData.bridgeTypeName_withRailing or nil,
                             freeNodes = { 1 },
@@ -289,7 +313,7 @@ function data()
                     --     }
                     -- )
                 elseif _stairsBase == 99 then -- model
-                    local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. (params.stairs_height == 0 and 'open_stairs_base_4m.mdl' or 'open_stairs_base_8m.mdl')
+                    local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'open_stairs_base_' .. _height .. 'm.mdl'
                     table.insert(
                         result.models,
                         {
@@ -298,13 +322,24 @@ function data()
                         }
                     )
 
-                    local _baseFaces = params.stairs_height == 0
-                        and { {
+                    local baseFaces = {}
+                    if _height == 2 then
+                        baseFaces = { {
+                            {-3.75, -_yHalfSize, 0}, {-3.75, _yHalfSize, 0}, {-5.25, _yHalfSize, 0}, {-5.25, -_yHalfSize, 0}
+                        } }
+                    elseif _height == 4 then
+                        baseFaces = { {
                             {-6, -_yHalfSize, 0}, {-6, _yHalfSize, 0}, {-7.5, _yHalfSize, 0}, {-7.5, -_yHalfSize, 0}
                         } }
-                        or { {
+                    elseif _height == 6 then
+                        baseFaces = { {
+                            {-8.25, -_yHalfSize, 0}, {-8.25, _yHalfSize, 0}, {-9.75, _yHalfSize, 0}, {-9.75, -_yHalfSize, 0}
+                        } }
+                    elseif _height == 8 then
+                        baseFaces = { {
                             {-10.5, -_yHalfSize, 0}, {-10.5, _yHalfSize, 0}, {-12, _yHalfSize, 0}, {-12, -_yHalfSize, 0}
                         } }
+                    end
                     table.insert(
                         result.terrainAlignmentLists,
                         {
@@ -312,7 +347,7 @@ function data()
                             optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
                             slopeLow = 9.6,
                             slopeHigh = 9.9,
-                            faces = _baseFaces,
+                            faces = baseFaces,
                         }
                     )
                 end
@@ -325,12 +360,9 @@ function data()
                         result.edgeLists,
                         {
                             alignTerrain = false, -- only align on ground and in tunnels
-                            edges = params.stairs_height == 0 and {
-                                { { 0, 0, 4 }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
-                                { { _bridgeLen, 0, 4 }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
-                            } or {
-                                { { 0, 0, 8 }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
-                                { { _bridgeLen, 0, 8 }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
+                            edges = {
+                                { { 0, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
+                                { { _bridgeLen, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
                             },
                             edgeType = 'BRIDGE',
                             edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
@@ -361,7 +393,7 @@ function data()
                             {1, 0, 0, 0,
                             0, 1, 0, 0,
                             0, 0, 1, 0,
-                            0, 0, params.stairs_height == 0 and _constants.openStairsUpZ / 2 or _constants.openStairsUpZ, 1},
+                            0, 0, _height, 1},
                             _transfUtilsUG.rotY(math.rad(_paramReaders.getBridgeChunkYAngle(params)))
                         )
                     )
