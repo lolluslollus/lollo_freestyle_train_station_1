@@ -116,6 +116,14 @@ function data()
                 defaultIndex = _paramValues.bridgeChunkYAngleDefaultIndex,
             },
             {
+                key = 'stairs_base',
+                name = _('StairsBase'),
+                tooltip = _('StairsBaseTooltip'),
+                values = _paramValues.stairsBases,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
                 key = 'terrain_alignment_type',
                 name = _('TerrainAlignmentType'),
                 values = _paramValues.terrainAlignmentTypes,
@@ -126,13 +134,6 @@ function data()
                 key = 'flat_sloped_terrain',
                 name = _('FlatSlopedTerrain'),
                 values = _paramValues.flatSlopedTerrain,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'stairs_base',
-                name = _('StairsBase'),
-                values = _paramValues.stairsBases,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
