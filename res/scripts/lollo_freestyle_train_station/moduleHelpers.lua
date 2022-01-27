@@ -940,7 +940,7 @@ helpers.openStairs = {
     getExitModelTransf = function(slotTransf, slotId, params)
         local _maxRad = 0.36
 
-        local variant = helpers.getVariant(params, slotId) * 0.025
+        local variant = helpers.getVariant(params, slotId) * 0.0125
 		if variant > _maxRad then variant = _maxRad elseif variant < -_maxRad then variant = -_maxRad end
 
         return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
