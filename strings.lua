@@ -261,6 +261,7 @@ function data()
 			["Era"] = "Era",
 			["FlatSlopedTerrain"] = "Terrain Incline",
 			["Model"] = "Platform",
+			["NoRailing0"] = "0 - No Railing",
 			["OpenStairsFreeDesc"] = "Stairs matching the freestyle stations, collision free; use fences or similar mods to fine-tune collisions. You can choose \"Auto Bridge\" or \"Auto Path\" and combine this to pedestrian bridges or paths.",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
