@@ -27,7 +27,7 @@ return {
 	},
 	metadata = { },
 	order = {
-		value = 61,
+		value = 62,
 	},
 	type = _constants.openStairsExitModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)

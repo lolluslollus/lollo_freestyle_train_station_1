@@ -945,7 +945,7 @@ helpers.openStairs = {
 
         return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
     end,
-    getPedestrianBridgeModelId = function(length, eraPrefix)
+    getPedestrianBridgeModelId = function(length, eraPrefix, isWithEdge)
         -- eraPrefix is a string like 'era_a_'
         local lengthStr = '4'
         if length < 6 then lengthStr = '4'
@@ -959,9 +959,12 @@ helpers.openStairs = {
         if newEraPrefix ~= helpers.eras.era_a.prefix and newEraPrefix ~= helpers.eras.era_b.prefix and newEraPrefix ~= helpers.eras.era_c.prefix then
             newEraPrefix = helpers.eras.era_c.prefix
         end
-        local modelId = 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_' .. lengthStr .. 'm.mdl'
 
-        return modelId
+        if isWithEdge then
+            return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_with_edge_' .. lengthStr .. 'm.mdl'
+        else
+            return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_' .. lengthStr .. 'm.mdl'
+        end
     end,
     getPedestrianBridgeModelId_Compressed = function(length, eraOfT1Prefix, eraOfT2Prefix)
         -- eraOfT1 and eraOfT2 are strings like 'era_a_'

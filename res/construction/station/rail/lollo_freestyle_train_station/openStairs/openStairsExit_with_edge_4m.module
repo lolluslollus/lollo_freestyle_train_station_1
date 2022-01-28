@@ -2,6 +2,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
+local openStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
 local vec3 = require "vec3"
@@ -21,13 +22,13 @@ return {
 		price = 0,
 	},
 	description = {
-		name = _("OpenStairsExitName_64m"),
+		name = _("OpenStairsExitWithEdgeName_4m"),
 		description = _("OpenStairsExitDesc"),
-		icon = "ui/lollo_freestyle_train_station/openStairsExit64m.tga"
+        icon = "ui/lollo_freestyle_train_station/openStairsExit4m.tga"
 	},
 	metadata = { },
 	order = {
-		value = 66,
+		value = 61,
 	},
 	type = _constants.openStairsExitModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -35,12 +36,13 @@ return {
 		if not nTerminal or not baseId then return end
 
 		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(64, eraPrefix)
+		local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(4, eraPrefix, true)
+		local transf = moduleHelpers.openStairs.getExitModelTransf(slotTransf, slotId, params)
 
 		result.models[#result.models + 1] = {
 			id = modelId,
 			slotId = slotId,
-			transf = moduleHelpers.openStairs.getExitModelTransf(slotTransf, slotId, params),
+			transf = transf,
 			tag = tag
 		}
 		result.models[#result.models + 1] = {
@@ -49,12 +51,40 @@ return {
 			transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}),
 			tag = tag
 		}
+
+		local _openStairsRefData = openStairsHelpers.getData4Era(eraPrefix)
+		table.insert(
+			result.edgeLists,
+			{
+				alignTerrain = false, -- only align on ground and in tunnels
+				edges = transfUtils.getPosTanX2Transformed(
+					{
+						-- { { 4, 0, _constants.openStairsUpZ }, { 1, 0, 0 } },  -- node 0 pos, tan
+						-- { { 5, 0, _constants.openStairsUpZ }, { 1, 0, 0 } },  -- node 1 pos, tan
+						{ { 4, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+						{ { 5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+					},
+					transf
+				),
+				edgeType = 'BRIDGE',
+				edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
+				freeNodes = { 1 },
+				params = {
+					tramTrackType  = 'NO',
+					type = _openStairsRefData.streetTypeName_noBridge,
+				},
+				snapNodes = {},
+				-- snapNodes = _bridgeChunkLength == 0 and { } or { 1 },
+				tag2nodes = {},
+				type = 'STREET'
+			}
+		)
 	end,
 
 	getModelsFn = function(params)
 		return {
 			{
-				id = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_64m.mdl',
+				id = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl',
 				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
 			},
 		}

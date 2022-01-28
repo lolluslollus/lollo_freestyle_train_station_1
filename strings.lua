@@ -104,6 +104,7 @@ function data()
 			["OpenStairsUpLeftDesc"] = "Connect ground passenger platforms to their twins or to the outside world.",
 			["OpenStairsUpRightName"] = "Stairs up right for ground platform",
 			["OpenStairsUpRightDesc"] = "Connect ground passenger platforms to their twins or to the outside world.",
+			["OpenStairsExitWithEdgeName_4m"] = "Entrance to stairs with auto bridge, 4 m",
             ["OpenStairsExitName_4m"] = "Entrance to stairs, 4 m",
 			["OpenStairsExitName_8m"] = "Entrance to stairs, 8 m",
 			["OpenStairsExitName_16m"] = "Entrance to stairs, 16 m",

@@ -601,6 +601,69 @@ utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix)
 	}
 end
 
+utils.getModel4Basic_WithEdge = function(nSegments, eraPrefix)
+	local model = utils.getModel4Basic(nSegments, false, eraPrefix)
+	local _2nSegments = 2 * nSegments
+    local _xFactorTN = _2nSegments
+	model.metadata.transportNetworkProvider = {
+		-- compressed bridges are inside stations;
+		-- bridge exits and free open stairs bridges are uncompressed
+		-- their x == 0 end is atop the stairs (free stairs or station stairs), their x > 0 end joins up with the outer world
+		laneLists = {
+			{
+				linkable = false,
+				nodes = {
+					-- the lane starts where the model starts
+					{
+						{ 0, 0, 0 },
+						{ _xFactorTN - 0.3, 0, 0 }, -- _xFactorTN >= 4, by construction
+						1.5,
+					},
+					{
+						{ _xFactorTN - 0.3, 0, 0 },
+						{ _xFactorTN - 0.3, 0, 0 },
+						1.5,
+					},
+				},
+				transportModes = { 'PERSON', },
+				speedLimit = 20,
+			},
+			{
+				linkable = true,
+				nodes = {
+					-- two lanes to match the edge pavement
+					{
+						{ _xFactorTN - 0.3, 0, 0 },
+						{ 0.3, 0.3, 0 },
+						1.5,
+					},
+					{
+						{ _xFactorTN, 0.3, 0 },
+						{ 0.3, 0.3, 0 },
+						1.5,
+					},
+					{
+						{ _xFactorTN - 0.3, 0, 0 },
+						{ 0.3, -0.3, 0 },
+						1.5,
+					},
+					{
+						{ _xFactorTN, -0.3, 0 },
+						{ 0.3, -0.3, 0 },
+						1.5,
+					},
+				},
+				transportModes = { 'PERSON', },
+				speedLimit = 20,
+			}
+		},
+		runways = { },
+		terminals = { },
+	}
+
+	return model
+end
+
 utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 	local _lod0_skinMaterials_rep, _lod0_skinMaterials_side, _lod0_skinMaterials_side_no_railing, _lod1_materials = getDynamicProps(eraPrefix)
 
