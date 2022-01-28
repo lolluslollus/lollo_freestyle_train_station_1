@@ -390,7 +390,7 @@ utils.getData4Basic = function(eraPrefix, isSides)
     }
 end
 
-utils.getModel4Cement = function(nSegments, isCompressed, eraPrefix)
+utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix)
     if (not(nSegments) or nSegments < 2) then nSegments = 2 end
 
     local _2nSegments = 2 * nSegments
