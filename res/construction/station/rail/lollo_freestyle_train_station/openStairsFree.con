@@ -418,8 +418,8 @@ function data()
                             type = 'LESS',
                             optional = true,
                             faces =  {{
-                                { 0, -_yHalfSize, _height }, { 0, _yHalfSize, _height },
-                                { _bridgeLen, _yHalfSize, _height }, { _bridgeLen, -_yHalfSize, _height },
+                                { 0, -_yHalfSize, _height - 1}, { 0, _yHalfSize, _height - 1},
+                                { _bridgeLen, _yHalfSize, _height - 1}, { _bridgeLen, -_yHalfSize, _height - 1},
                             }}
                         }
                     )
