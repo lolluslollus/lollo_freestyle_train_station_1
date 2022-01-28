@@ -29,7 +29,7 @@ function data()
         bridgeChunkZAngleStep = 5,
         maxBridgeChunkYAngleDeg = 15,
         bridgeChunkYAngleStep = 1,
-        stairsBases = {-1, 99, 0, --[[ 1, ]] 2, --[[ 3, ]]},
+        stairsBases = {-1, 99, 0, 1, 2, 3,},
     }
     local _paramValues = {
         heights = {'2m', '4 m', '6m', '8 m', '10 m'},
@@ -41,7 +41,7 @@ function data()
         bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
         flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
-        stairsBases = {_('NO'), _('Model'), _('EdgeWithNoBridge'), --[[ _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), --[[ _('SnappyEdgeWithBridge'), ]]},
+        stairsBases = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'),},
     }
     local _paramReaders = {
         getHeight = function(params)
