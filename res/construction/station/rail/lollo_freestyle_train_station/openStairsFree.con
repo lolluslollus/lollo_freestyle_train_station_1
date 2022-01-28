@@ -24,7 +24,7 @@ function data()
         end,
         heights = {2, 4, 6, 8, 10},
         eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
-        bridgeChunkLengths = {-2, -1, 4, 8, 16, 32, 64, 0, 1},
+        bridgeChunkLengths = {-2, -1, 4, 8, 16, 32, 64, 0, 1, 2, 3},
         maxBridgeChunkZAngleDeg = 90,
         bridgeChunkZAngleStep = 5,
         maxBridgeChunkYAngleDeg = 15,
@@ -34,7 +34,7 @@ function data()
     local _paramValues = {
         heights = {'2m', '4 m', '6m', '8 m', '10 m'},
         eras = {'A', 'B', 'C'},
-        bridgeChunkLengths = {_('NoRailing0'), '0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+        bridgeChunkLengths = {_('NoRailing0'), '0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
         bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkZAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkZAngleDeg / _paramHelpers.bridgeChunkZAngleStep),
         bridgeChunkYAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkYAngleDeg, _paramHelpers.bridgeChunkYAngleStep),
@@ -164,7 +164,7 @@ function data()
             local topLanesModelId = ''
             if _bridgeChunkLength == -1 or _bridgeChunkLength == -2 then -- no bridge
                 topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_'.. _height ..'m.mdl'
-            elseif _bridgeChunkLength == 0 or _bridgeChunkLength == 1 then -- edge or snappy edge
+            elseif _bridgeChunkLength == 0 or _bridgeChunkLength == 1 or _bridgeChunkLength == 2 or _bridgeChunkLength == 3 then -- edge or bridge, snappy or not
                 topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_'.. _height ..'m.mdl'
             else -- model
                 topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_'.. _height ..'m.mdl'
@@ -372,6 +372,28 @@ function data()
                     table.insert(
                         result.edgeLists,
                         {
+                            alignTerrain = true, -- only align on ground and in tunnels
+                            edges = {
+                                { { 0, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
+                                { { _bridgeLen, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
+                            },
+                            -- edgeType = 'BRIDGE',
+                            -- edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
+                            freeNodes = { 1 },
+                            params = {
+                                tramTrackType  = 'NO',
+                                type = _openStairsRefData.streetTypeName_noBridge,
+                            },
+                            snapNodes = _bridgeChunkLength == 0 and { } or { 1 },
+                            tag2nodes = {},
+                            type = 'STREET'
+                        }
+                    )
+                elseif _bridgeChunkLength == 2 or _bridgeChunkLength == 3 then -- bridge or snappy bridge
+                    local _bridgeLen = 2
+                    table.insert(
+                        result.edgeLists,
+                        {
                             alignTerrain = false, -- only align on ground and in tunnels
                             edges = {
                                 { { 0, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
@@ -384,12 +406,23 @@ function data()
                                 tramTrackType  = 'NO',
                                 type = _openStairsRefData.streetTypeName_noBridge,
                             },
-                            snapNodes = _bridgeChunkLength == 0 and { } or { 1 },
+                            snapNodes = _bridgeChunkLength == 2 and { } or { 1 },
                             tag2nodes = {},
                             type = 'STREET'
                         }
                     )
-
+                    -- adjust the terrain so it does not cover the bridge
+                    table.insert(
+                        result.terrainAlignmentLists,
+                        { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+                            type = 'LESS',
+                            optional = true,
+                            faces =  {{
+                                { 0, -_yHalfSize, _height }, { 0, _yHalfSize, _height },
+                                { _bridgeLen, _yHalfSize, _height }, { _bridgeLen, -_yHalfSize, _height },
+                            }}
+                        }
+                    )
                     -- table.insert(
                     --     result.terrainAlignmentLists,
                     --     { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
@@ -398,7 +431,7 @@ function data()
                     --         faces =  { }
                     --     }
                     -- )
-                elseif _bridgeChunkLength > 1 then -- model
+                elseif _bridgeChunkLength >= 4 then -- model
                     local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                     local transf = _transfUtilsUG.mul(
                         _transfUtilsUG.rotZ(math.rad(_paramReaders.getBridgeChunkZAngle(params))),
