@@ -266,38 +266,26 @@ function data()
             local _addBase = function()
                 if _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
                     local _baseLen = 1
-                    local edges = {}
+                    local edgeX0 = 0
                     if _height == 2 then
-                        edges = {
-                            { { -3.7, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
-                            { { -3.7 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
-                        }
+                        edgeX0 = -3.7
                     elseif _height == 4 then
-                        edges = {
-                            { { -5.7, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
-                            { { -5.7 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
-                        }
+                        edgeX0 = -5.7
                     elseif _height == 6 then
-                        edges = {
-                            { { -8.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
-                            { { -8.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
-                        }
+                        edgeX0 = -8.2
                     elseif _height == 8 then
-                        edges = {
-                            { { -10.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
-                            { { -10.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
-                        }
+                        edgeX0 = -10.2
                     elseif _height == 10 then
-                        edges = {
-                            { { -12.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
-                            { { -12.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
-                        }
+                        edgeX0 = -12.2
                     end
                     table.insert(
                         result.edgeLists,
                         {
                             alignTerrain = (_stairsBase == 0 or _stairsBase == 1) and true or false, -- only align on ground and in tunnels
-                            edges = edges,
+                            edges = {
+                                { { edgeX0, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                                { { edgeX0 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                            },
                             edgeType = (_stairsBase == 2 or _stairsBase == 3) and 'BRIDGE' or nil,
                             edgeTypeName = (_stairsBase == 2 or _stairsBase == 3) and _openStairsRefData.bridgeTypeName_withRailing or nil,
                             freeNodes = { 1 },
@@ -311,6 +299,20 @@ function data()
                         }
                     )
 
+                    -- adjust the terrain so it does not cover the bridge
+                    if (_stairsBase == 2 or _stairsBase == 3) then
+                        table.insert(
+                            result.terrainAlignmentLists,
+                            { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+                                type = 'LESS',
+                                optional = true,
+                                faces =  {{
+                                    { edgeX0 -_baseLen, -_yHalfSize, 0 }, { edgeX0 -_baseLen, _yHalfSize, 0 },
+                                    { edgeX0, _yHalfSize, 0 }, { edgeX0, -_yHalfSize, 0 },
+                                }}
+                            }
+                        )
+                    end
                     -- table.insert(
                     --     result.terrainAlignmentLists,
                     --     { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
