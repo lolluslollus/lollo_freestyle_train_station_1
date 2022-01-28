@@ -22,7 +22,7 @@ function data()
             end
             return results
         end,
-        heights = {2, 4, 6, 8},
+        heights = {2, 4, 6, 8, 10},
         eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
         bridgeChunkLengths = {-2, -1, 4, 8, 16, 32, 64, 0, 1},
         maxBridgeChunkZAngleDeg = 90,
@@ -32,7 +32,7 @@ function data()
         stairsBases = {-1, 99, 0, --[[ 1, ]] 2, --[[ 3, ]]},
     }
     local _paramValues = {
-        heights = {'2m', '4 m', '6m', '8 m'},
+        heights = {'2m', '4 m', '6m', '8 m', '10 m'},
         eras = {'A', 'B', 'C'},
         bridgeChunkLengths = {_('NoRailing0'), '0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
         bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
@@ -173,7 +173,7 @@ function data()
             local flatFaces = {}
             if _height == 2 then
                 flatFaces = { {
-                    {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-3.75, _yHalfSize, 0}, {-3.75, -_yHalfSize, 0}
+                    {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-4, _yHalfSize, 0}, {-4, -_yHalfSize, 0}
                 } }
             elseif _height == 4 then
                 flatFaces = { {
@@ -181,17 +181,21 @@ function data()
                 } }
             elseif _height == 6 then
                 flatFaces = { {
-                    {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-8.25, _yHalfSize, 0}, {-8.25, -_yHalfSize, 0}
+                    {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-8.5, _yHalfSize, 0}, {-8.5, -_yHalfSize, 0}
                 } }
             elseif _height == 8 then
                 flatFaces = { {
                     {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-10.5, _yHalfSize, 0}, {-10.5, -_yHalfSize, 0}
                 } }
+            elseif _height == 10 then
+                flatFaces = { {
+                    {0, -_yHalfSize, 0}, {0, _yHalfSize, 0}, {-12.5, _yHalfSize, 0}, {-12.5, -_yHalfSize, 0}
+                } }
             end
             local slopedFaces = {}
             if _height == 2 then
                 slopedFaces = { {
-                    {0, -_yHalfSize, 1}, {0, _yHalfSize, 1}, {-3.75, _yHalfSize, -0.5}, {-3.75, -_yHalfSize, -0.5}
+                    {0, -_yHalfSize, 1}, {0, _yHalfSize, 1}, {-4, _yHalfSize, -0.5}, {-4, -_yHalfSize, -0.5}
                 } }
             elseif _height == 4 then
                 slopedFaces = { {
@@ -199,11 +203,15 @@ function data()
                 } }
             elseif _height == 6 then
                 slopedFaces = { {
-                    {0, -_yHalfSize, 5}, {0, _yHalfSize, 5}, {-8.25, _yHalfSize, -0.5}, {-8.25, -_yHalfSize, -0.5}
+                    {0, -_yHalfSize, 5}, {0, _yHalfSize, 5}, {-8.5, _yHalfSize, -0.5}, {-8.5, -_yHalfSize, -0.5}
                 } }
             elseif _height == 8 then
                 slopedFaces = { {
                     {0, -_yHalfSize, 7}, {0, _yHalfSize, 7}, {-10.5, _yHalfSize, -0.5}, {-10.5, -_yHalfSize, -0.5}
+                } }
+            elseif _height == 10 then
+                slopedFaces = { {
+                    {0, -_yHalfSize, 9}, {0, _yHalfSize, 9}, {-12.5, _yHalfSize, -0.5}, {-12.5, -_yHalfSize, -0.5}
                 } }
             end
 
@@ -279,6 +287,11 @@ function data()
                             { { -10.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
                             { { -10.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
                         }
+                    elseif _height == 10 then
+                        edges = {
+                            { { -12.2, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                            { { -12.2 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                        }
                     end
                     table.insert(
                         result.edgeLists,
@@ -319,7 +332,7 @@ function data()
                     local baseFaces = {}
                     if _height == 2 then
                         baseFaces = { {
-                            {-3.75, -_yHalfSize, 0}, {-3.75, _yHalfSize, 0}, {-5.25, _yHalfSize, 0}, {-5.25, -_yHalfSize, 0}
+                            {-4, -_yHalfSize, 0}, {-4, _yHalfSize, 0}, {-5.5, _yHalfSize, 0}, {-5.5, -_yHalfSize, 0}
                         } }
                     elseif _height == 4 then
                         baseFaces = { {
@@ -327,11 +340,15 @@ function data()
                         } }
                     elseif _height == 6 then
                         baseFaces = { {
-                            {-8.25, -_yHalfSize, 0}, {-8.25, _yHalfSize, 0}, {-9.75, _yHalfSize, 0}, {-9.75, -_yHalfSize, 0}
+                            {-8.5, -_yHalfSize, 0}, {-8.5, _yHalfSize, 0}, {-10, _yHalfSize, 0}, {-10, -_yHalfSize, 0}
                         } }
                     elseif _height == 8 then
                         baseFaces = { {
                             {-10.5, -_yHalfSize, 0}, {-10.5, _yHalfSize, 0}, {-12, _yHalfSize, 0}, {-12, -_yHalfSize, 0}
+                        } }
+                    elseif _height == 10 then
+                        baseFaces = { {
+                            {-12.5, -_yHalfSize, 0}, {-12.5, _yHalfSize, 0}, {-14, _yHalfSize, 0}, {-14, -_yHalfSize, 0}
                         } }
                     end
                     table.insert(
