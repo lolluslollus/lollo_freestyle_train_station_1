@@ -390,8 +390,8 @@ utils.getData4Basic = function(eraPrefix, isSides)
     }
 end
 
-utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix)
-    if (not(nSegments) or nSegments < 2) then nSegments = 2 end
+utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix, isWithEdge)
+    if (not(nSegments) or nSegments < 1) then nSegments = 1 end
 
     local _2nSegments = 2 * nSegments
     local _iMaxLod0 = _2nSegments - 2
@@ -505,6 +505,111 @@ utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix)
 		}
 	end
 
+	local laneListsWithEdge = {
+		{
+			linkable = false,
+			nodes = {
+				-- the lane starts where the model starts
+				{
+					{ 0, 0, 0 },
+					{ _xFactorTN - 0.3, 0, 0 }, -- _xFactorTN >= 4, by construction
+					1.5,
+				},
+				{
+					{ _xFactorTN - 0.3, 0, 0 },
+					{ _xFactorTN - 0.3, 0, 0 },
+					1.5,
+				},
+			},
+			transportModes = { 'PERSON', },
+			speedLimit = 20,
+		},
+		{
+			linkable = true,
+			nodes = {
+				-- two lanes to match the edge pavement
+				{
+					{ _xFactorTN - 0.3, 0, 0 },
+					{ 0.3, 0.3, 0 },
+					1.5,
+				},
+				{
+					{ _xFactorTN, 0.3, 0 },
+					{ 0.3, 0.3, 0 },
+					1.5,
+				},
+				{
+					{ _xFactorTN - 0.3, 0, 0 },
+					{ 0.3, -0.3, 0 },
+					1.5,
+				},
+				{
+					{ _xFactorTN, -0.3, 0 },
+					{ 0.3, -0.3, 0 },
+					1.5,
+				},
+			},
+			transportModes = { 'PERSON', },
+			speedLimit = 20,
+		}
+	}
+	local laneListsNotCompressed = {
+		{
+			linkable = false,
+			nodes = {
+				-- the lane starts where the model starts
+				{
+					{ 0, 0, 0 },
+					{ _xFactorTN - 1.2, 0, 0 }, -- _xFactorTN >= 2, by construction
+					1.5,
+				},
+				{
+					{ _xFactorTN - 1.2, 0, 0 },
+					{ _xFactorTN - 1.2, 0, 0 },
+					1.5,
+				},
+			},
+			transportModes = { 'PERSON', },
+			speedLimit = 20,
+		},
+		{
+			linkable = true,
+			nodes = {
+				{
+					{ _xFactorTN - 1.2, 0, 0 },
+					{ 0.2, 0, 0 },
+					1.5,
+				},
+				-- the lane ends 1 m before the model ends, for seamless looking links
+				{
+					{ _xFactorTN - 1, 0, 0 },
+					{ 0.2, 0, 0 },
+					1.5,
+				},
+			},
+			transportModes = { 'PERSON', },
+			speedLimit = 20,
+		}
+	}
+	local laneListsCompressed = {{
+		linkable = false,
+		nodes = {
+			-- the lane starts where the model starts
+			{
+				{ 0, 0, 0 },
+				{ _xFactorTN, 0, 0 },
+				1.5,
+			},
+			-- the lane ends where the model ends
+			{
+				{ _xFactorTN, 0, 0 },
+				{ _xFactorTN, 0, 0 },
+				1.5,
+			},
+		},
+		transportModes = { 'PERSON', },
+		speedLimit = 20,
+	}}
     return {
 		boundingInfo = mdlHelpers.getVoidBoundingInfo(),
 		collider = mdlHelpers.getVoidCollider(),
@@ -535,133 +640,13 @@ utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix)
 				-- compressed bridges are inside stations;
 				-- bridge exits and free open stairs bridges are uncompressed
 				-- their x == 0 end is atop the stairs (free stairs or station stairs), their x > 0 end joins up with the outer world
-				laneLists = not(isCompressed)
-					and {
-							{
-								linkable = false,
-								nodes = {
-									-- the lane starts where the model starts
-									{
-										{ 0, 0, 0 },
-										{ _xFactorTN - 1.2, 0, 0 }, -- _xFactorTN >= 4, by construction
-										1.5,
-									},
-									{
-										{ _xFactorTN - 1.2, 0, 0 },
-										{ _xFactorTN - 1.2, 0, 0 },
-										1.5,
-									},
-								},
-								transportModes = { 'PERSON', },
-								speedLimit = 20,
-							},
-							{
-								linkable = true,
-								nodes = {
-									{
-										{ _xFactorTN - 1.2, 0, 0 },
-										{ 0.2, 0, 0 },
-										1.5,
-									},
-									-- the lane ends 1 m before the model ends, for seamless looking links
-									{
-										{ _xFactorTN - 1, 0, 0 },
-										{ 0.2, 0, 0 },
-										1.5,
-									},
-								},
-								transportModes = { 'PERSON', },
-								speedLimit = 20,
-							}
-						}
-					or {{
-						linkable = false,
-						nodes = {
-							-- the lane starts where the model starts
-							{
-								{ 0, 0, 0 },
-								{ _xFactorTN, 0, 0 },
-								1.5,
-							},
-							-- the lane ends where the model ends
-							{
-								{ _xFactorTN, 0, 0 },
-								{ _xFactorTN, 0, 0 },
-								1.5,
-							},
-						},
-						transportModes = { 'PERSON', },
-						speedLimit = 20,
-					}},
+				laneLists = isWithEdge and laneListsWithEdge or (isCompressed and laneListsCompressed or laneListsNotCompressed),
 				runways = { },
 				terminals = { },
 			},
 		},
 		version = 1,
 	}
-end
-
-utils.getModel4Basic_WithEdge = function(nSegments, eraPrefix)
-	local model = utils.getModel4Basic(nSegments, false, eraPrefix)
-	local _2nSegments = 2 * nSegments
-    local _xFactorTN = _2nSegments
-	model.metadata.transportNetworkProvider = {
-		-- compressed bridges are inside stations;
-		-- bridge exits and free open stairs bridges are uncompressed
-		-- their x == 0 end is atop the stairs (free stairs or station stairs), their x > 0 end joins up with the outer world
-		laneLists = {
-			{
-				linkable = false,
-				nodes = {
-					-- the lane starts where the model starts
-					{
-						{ 0, 0, 0 },
-						{ _xFactorTN - 0.3, 0, 0 }, -- _xFactorTN >= 4, by construction
-						1.5,
-					},
-					{
-						{ _xFactorTN - 0.3, 0, 0 },
-						{ _xFactorTN - 0.3, 0, 0 },
-						1.5,
-					},
-				},
-				transportModes = { 'PERSON', },
-				speedLimit = 20,
-			},
-			{
-				linkable = true,
-				nodes = {
-					-- two lanes to match the edge pavement
-					{
-						{ _xFactorTN - 0.3, 0, 0 },
-						{ 0.3, 0.3, 0 },
-						1.5,
-					},
-					{
-						{ _xFactorTN, 0.3, 0 },
-						{ 0.3, 0.3, 0 },
-						1.5,
-					},
-					{
-						{ _xFactorTN - 0.3, 0, 0 },
-						{ 0.3, -0.3, 0 },
-						1.5,
-					},
-					{
-						{ _xFactorTN, -0.3, 0 },
-						{ 0.3, -0.3, 0 },
-						1.5,
-					},
-				},
-				transportModes = { 'PERSON', },
-				speedLimit = 20,
-			}
-		},
-		runways = { },
-		terminals = { },
-	}
-
-	return model
 end
 
 utils.getModel4Basic_rep_side = function(eraPrefix, isSide)

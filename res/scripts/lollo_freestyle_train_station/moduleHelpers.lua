@@ -948,7 +948,8 @@ helpers.openStairs = {
     getPedestrianBridgeModelId = function(length, eraPrefix, isWithEdge)
         -- eraPrefix is a string like 'era_a_'
         local lengthStr = '4'
-        if length < 6 then lengthStr = '4'
+        if length < 3 then lengthStr = '2'
+        elseif length < 6 then lengthStr = '4'
         elseif length < 12 then lengthStr = '8'
         elseif length < 24 then lengthStr = '16'
         elseif length < 48 then lengthStr = '32'

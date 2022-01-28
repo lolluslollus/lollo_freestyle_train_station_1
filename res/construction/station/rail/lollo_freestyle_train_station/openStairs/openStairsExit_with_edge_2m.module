@@ -16,15 +16,15 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "passenger-road-access", },
+		categories = { "passenger-road-access-stairs", },
 	},
 	cost = {
 		price = 0,
 	},
 	description = {
-		name = _("OpenStairsExitWithEdgeName_4m"),
-		description = _("OpenStairsExitDesc"),
-        icon = "ui/lollo_freestyle_train_station/openStairsExit4m.tga"
+		name = _("OpenStairsExitWithEdgeName_2m"),
+		description = _("OpenStairsExitWithEdgeDesc"),
+        icon = "ui/lollo_freestyle_train_station/openStairsExitWithEdge2m.tga"
 	},
 	metadata = { },
 	order = {
@@ -36,7 +36,7 @@ return {
 		if not nTerminal or not baseId then return end
 
 		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(4, eraPrefix, true)
+		local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(2, eraPrefix, true)
 		local transf = moduleHelpers.openStairs.getExitModelTransf(slotTransf, slotId, params)
 
 		result.models[#result.models + 1] = {
@@ -59,10 +59,8 @@ return {
 				alignTerrain = false, -- only align on ground and in tunnels
 				edges = transfUtils.getPosTanX2Transformed(
 					{
-						-- { { 4, 0, _constants.openStairsUpZ }, { 1, 0, 0 } },  -- node 0 pos, tan
-						-- { { 5, 0, _constants.openStairsUpZ }, { 1, 0, 0 } },  -- node 1 pos, tan
-						{ { 4, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
-						{ { 5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+						{ { 2, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+						{ { 3, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
 					},
 					transf
 				),

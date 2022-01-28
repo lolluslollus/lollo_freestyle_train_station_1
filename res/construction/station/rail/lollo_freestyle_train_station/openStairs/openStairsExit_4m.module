@@ -15,7 +15,7 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "passenger-road-access", },
+		categories = { "passenger-road-access-stairs", },
 	},
 	cost = {
 		price = 0,
