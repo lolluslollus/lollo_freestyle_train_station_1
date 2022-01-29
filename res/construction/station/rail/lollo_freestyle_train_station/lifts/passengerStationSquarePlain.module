@@ -28,7 +28,7 @@ return {
 	},
 	metadata = { },
 	order = {
-		value = 52,
+		value = 2, -- LOLLO NOTE put this first to speed up station configuration, since it has very few slots
 	},
 	type = _constants.passengerStationSquareModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
