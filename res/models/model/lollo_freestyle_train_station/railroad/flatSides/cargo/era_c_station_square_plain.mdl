@@ -1,0 +1,144 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  4, 4, 0, 1}
+local _lampRightTransf = {0.71, 0.71, 0, 0,  -0.71, 0.71, 0, 0,  0, 0, 1, 0,  4, -4, 0, 1}
+
+function data()
+    return {
+        boundingInfo = {
+            -- bbMax = {4.4, 1.0, 5.0}, -- this would be fine without tunnel awareness and lamps
+            -- bbMin = {-4.4, -4.0, 0} -- this would be fine without tunnel awareness and lamps
+            bbMax = {4.4, 1.0, 6.5}, -- a bit taller for tunnels and lamps
+            bbMin = {-4.4, -4.0, -1.5} -- a bit lower for tunnels and lamps
+        },
+        collider = {
+            params = {
+                -- halfExtents = {4.4, 2.5, 2.5} -- this would be fine without tunnel awareness and lamps
+                halfExtents = {4.4, 2.5, 5.5} -- a bit taller for tunnels and lamps
+            },
+            -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 2.5, 1}, -- this would be fine without tunnel awareness and lamps
+            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.5, 1.0, 1}, -- a bit taller for tunnels and lamps
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    -- lamp left
+                                    materials = {
+                                        "asset/lamp_new.mtl",
+                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_0.msh',
+                                    transf = _lampLeftTransf
+                                },
+                                {
+                                    -- lamp right
+                                    materials = {
+                                        "asset/lamp_new.mtl",
+                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_0.msh',
+                                    transf = _lampRightTransf
+                                },
+                            },
+                            name = 'station_square_1_main_grp',
+                            transf = _constants.idTransf
+                        },
+                    },
+                    name = 'RootNode',
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    -- lamp left
+                                    materials = {
+                                        "asset/lamp_new.mtl",
+                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
+                                    transf = _lampLeftTransf
+                                },
+                                {
+                                    -- lamp right
+                                    materials = {
+                                        "asset/lamp_new.mtl",
+                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
+                                    transf = _lampRightTransf
+                                },
+                            },
+                            name = 'station_square_1_main_grp',
+                            transf = _constants.idTransf
+                        },
+                    },
+                    name = 'RootNode',
+                },
+                static = false,
+                visibleFrom = 100,
+                visibleTo = 400
+            },
+            {
+                node = {
+                    name = 'RootNode',
+                },
+                static = false,
+                visibleFrom = 400,
+                visibleTo = 3500
+            }
+        },
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        linkable = false,
+                        nodes = {
+                            {
+                                {0.0, 0.0, 0},
+                                {3.7, 0.0, 0},
+                                2.4
+                            },
+                            {
+                                {3.7, 0.0, 0},
+                                {3.7, 0.0, 0},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON', 'CARGO'}
+                    },
+                    {
+                        linkable = true,
+                        nodes = {
+                            {
+                                {3.7, 0.0, 0},
+                                {0.3, 0.0, 0},
+                                2.4
+                            },
+                            {
+                                {4.0, 0.0, 0},
+                                {0.3, 0.0, 0},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON', 'CARGO'}
+                    },
+                },
+                runways = {},
+                terminals = {}
+            }
+        },
+        version = 1
+    }
+end

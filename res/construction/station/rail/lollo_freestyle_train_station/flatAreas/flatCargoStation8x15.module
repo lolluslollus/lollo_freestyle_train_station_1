@@ -37,10 +37,10 @@ return {
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+        local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
-		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
-		local myModelId = era == moduleHelpers.eras.era_a.prefix
+		local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
+		local myModelId = eraPrefix == moduleHelpers.eras.era_a.prefix
 			and _constants.era_a_flatCargoStation8x15ModelFileName
 			or _constants.era_b_flatCargoStation8x15ModelFileName
 
@@ -80,6 +80,17 @@ return {
 			modulesutil.TransformFaces(zAdjustedTransf, face)
 		end
 		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+
+		table.insert(result.slots, {
+			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
+			shape = 1,
+			spacing = {1, 1, 2, 2},
+			transf = transfUtilsUG.mul(
+				zAdjustedTransf,
+				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, 0, -_constants.stairsAndRampHeight, 1 }
+			),
+			type = _constants.cargoStationSquareModuleType,
+		})
 	end,
 
 	getModelsFn = function(params)

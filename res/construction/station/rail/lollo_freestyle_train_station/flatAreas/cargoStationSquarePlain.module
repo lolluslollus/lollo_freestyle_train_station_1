@@ -1,0 +1,103 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local logger = require('lollo_freestyle_train_station.logger')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local modulesutil = require "modulesutil"
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+local vec3 = require "vec3"
+
+
+function data()
+
+return {
+	availability = {
+		yearFrom = 0,
+		yearTo = 0
+	},
+	category = {
+		categories = { "cargo-road-access", },
+	},
+	cost = {
+		price = 0,
+	},
+	description = {
+		name = _("CargoStationSquarePlainName"),
+		description = _("CargoStationSquarePlainDesc"),
+		icon = "ui/lollo_freestyle_train_station/cargoStationSquarePlain.tga"
+	},
+	metadata = { },
+	order = {
+		value = 2, -- LOLLO NOTE put this first to speed up station configuration, since it has very few slots
+	},
+	type = _constants.cargoStationSquareModuleType,
+	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+		if not nTerminal or not nTrackEdge or not baseId then return end
+
+		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+		local modelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/'.. eraPrefix ..'station_square_plain.mdl'
+		result.models[#result.models + 1] = {
+			id = modelId,
+			slotId = slotId,
+			transf = slotTransf,
+			tag = tag
+		}
+
+		local fillKey = _constants.era_c_groundFacesFillKey
+		if eraPrefix == moduleHelpers.eras.era_a.prefix then
+			fillKey = _constants.era_a_groundFacesFillKey
+		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
+			fillKey = _constants.era_b_groundFacesFillKey
+		end
+		local strokeOuterKey = _constants.era_c_groundFacesStrokeOuterKey
+		if eraPrefix == moduleHelpers.eras.era_a.prefix then
+			fillKey = _constants.era_a_groundFacesStrokeOuterKey
+		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
+			fillKey = _constants.era_b_groundFacesStrokeOuterKey
+		end
+		local groundFace = { -- the ground faces ignore z, the alignment lists don't
+			{0.0, -6, 0, 1},
+			{0.0, 6, 0, 1},
+			{5.0, 4, 0, 1},
+			{5.0, -4, 0, 1},
+		}
+		modulesutil.TransformFaces(slotTransf, groundFace)
+		table.insert(
+			result.groundFaces,
+			{
+				face = groundFace,
+				modes = {
+					{
+						type = 'FILL',
+						key = fillKey
+					},
+					{
+						type = 'STROKE_OUTER',
+						key = strokeOuterKey
+					}
+				}
+			}
+		)
+
+		local terrainAlignmentList = {
+			faces = { groundFace },
+			optional = true,
+			slopeHigh = _constants.slopeHigh,
+			slopeLow = _constants.slopeLow,
+			type = 'LESS',
+		}
+		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+	end,
+
+	getModelsFn = function(params)
+		return {
+			{
+				id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_square_plain.mdl',
+				transf = _constants.idTransf,
+			},
+		}
+	end
+}
+
+end

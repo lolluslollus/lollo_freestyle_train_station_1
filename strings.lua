@@ -50,6 +50,8 @@ function data()
 			]],
 			["NAME"] = "Freestyle train station",
 
+			["CargoStationSquarePlainName"] = "Plain station square",
+			["CargoStationSquarePlainDesc"] = "Plain square between cargo stations and the road. Repaint its ground with <shift> and a paint tool.",
 			["FlatCargoRampDownSmoothName"] = "Smooth cargo ramp down",
 			["FlatCargoRampDownSmoothDesc"] = "Smooth cargo ramp leading outside and down, 2 m. Adjust its height with <m> and <n>.",
 			["FlatCargoRampDownSteepName"] = "Steep cargo ramp down",

@@ -60,7 +60,7 @@ return {
 		}
 
 		table.insert(result.slots, {
-			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.stationSquareOuterSlotId),
+			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 			shape = 1,
 			spacing = {-1, 4, 4, 4},
 			transf = transfUtilsUG.mul(
