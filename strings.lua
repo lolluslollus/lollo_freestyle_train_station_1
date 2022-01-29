@@ -15,7 +15,7 @@ function data()
                 - Every set of adjacent ground platforms requires street access or an underpass. This is like the stock stations.
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
                 - Every bridge level requires a lift.
-                - Every set of adjacent underground platforms requires stairs to go up.
+                - Every set of adjacent underground platforms requires stairs.
                 - Every underground level requires a subway entrance, or a ground platform with an underpass, or a bridge platform with a lift, or a higher underground level with stairs down.
                 - If you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels.
 
@@ -36,7 +36,7 @@ function data()
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweak mod.
 				- If you want large buildings, use assets. There are mods for those.
-				- This mod adds extra pedestrian paths.
+				- This mod adds extra pedestrian paths and bridges.
                 - This mod adds extra bridges to help with elevated stations.
 				- This mod adds stairs as a configurable asset, which can be used anywhere.
 
