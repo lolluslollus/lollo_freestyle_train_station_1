@@ -1,0 +1,65 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 200,
+            },
+        },
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        -- waiting areas in the atrium
+                        linkable = false,
+                        nodes = {
+                            -- left
+                            {
+                                {-2.6, -4.5, -_constants.stairsAndRampHeight},
+                                {0, 2.0, 0},
+                                1.5
+                            },
+                            {
+                                {-2.6, -2.5, -_constants.stairsAndRampHeight},
+                                {0, 2.0, 0},
+                                1.5
+                            },
+                            -- right
+                            {
+                                {2.6, -2.5, -_constants.stairsAndRampHeight},
+                                {0, -2.0, 0},
+                                1.5
+                            },
+                            {
+                                {2.6, -4.5, -_constants.stairsAndRampHeight},
+                                {0, -2.0, 0},
+                                1.5
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                },
+                runways = {},
+                terminals = {
+                    {
+                        -- order = 0,
+                        personEdges = { 0, 1 }, -- base 0
+                        personNodes = { 0, 1, 2, 3 }, -- base 0
+                        -- vehicleNode = -1, -- 0,
+                    },
+                }
+            }
+        },
+        version = 1
+    }
+end

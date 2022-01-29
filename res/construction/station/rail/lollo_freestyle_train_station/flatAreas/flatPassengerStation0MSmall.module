@@ -2,6 +2,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
 local vec3 = require "vec3"
@@ -54,6 +55,12 @@ return {
 			slotId = slotId,
 			transf = buildingTransf,
 			tag = tag
+		}
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_9x6.mdl',
+			slotId = slotId,
+			transf = buildingTransf,
+			tag = slotHelpers.mangleModelTag(nTerminal, true),
 		}
 
 		table.insert(result.slots, {
