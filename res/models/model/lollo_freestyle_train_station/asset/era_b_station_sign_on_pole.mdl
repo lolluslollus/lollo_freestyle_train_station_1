@@ -1,0 +1,71 @@
+function data()
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        -- boundingInfo = {
+        --     bbMax = { 2.8306999206543, 0.052642997354269, 3.3516299724579, },
+        --     bbMin = { -2.8306999206543, -0.052642997354269, -1.7881393432617e-07, },
+        -- },
+        -- collider = {
+        --     params = {
+        --         halfExtents = { 2.8306999206543, 0.052642997354269, 1.6758151054382, },
+        --     },
+        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+        --     type = "BOX",
+        -- },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = { "station/rail/era_b/station_detail_2.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/era_b_station_sign_on_pole_lod0.msh",
+                            name = "name_board",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 250,
+            },
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = "CENTER",
+                        alpha = 1,
+                        alphaMode = "BLEND",
+                        childId = "RootNode",
+                        color = { 0, 0, 0, },
+                        fitting = "SCALE",
+                        nLines = 2,
+                        size = { 2.6, 0.7 },
+                        transf = { 1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -1.3, -0.025, 2.85, 1, },
+                        type = "STATION_NAME",
+                        verticalAlignment = "CENTER",
+                    },
+                    {
+                        alignment = "CENTER",
+                        alpha = 1,
+                        alphaMode = "BLEND",
+                        childId = "RootNode",
+                        color = { 0, 0, 0, },
+                        fitting = "SCALE",
+                        nLines = 2,
+                        size = { 2.6, 0.7 },
+                        transf = { -1, 0, 0, 0,  0, 0, 1, 0,  0, 1, 0, 0,  1.3, 0.025, 2.85, 1, },
+                        type = "STATION_NAME",
+                        verticalAlignment = "CENTER",
+                    },
+                },
+            },
+        },
+        version = 1,
+    }
+    end
+    
