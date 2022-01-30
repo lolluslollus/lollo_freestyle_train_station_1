@@ -23,13 +23,13 @@ function data()
                             -- mesh = "station/rail/asset/cargo_name_board/name_board_lod0.msh",
                             mesh = 'lollo_freestyle_train_station/asset/cargo_name_board_lod0.msh',
                             name = "name_board",
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1.5, 1, },
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.6, 1, },
                         },
                         {
                             materials = {'station/rail/era_c/era_c_trainstation_borders_2.mtl'},
                             mesh = 'station/rail/asset/era_c_perron_pillar/era_c_perron_pillar_lod0.msh',
                             name = 'era_c_perron_pillar',
-                            transf = {0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, -0.25, 1}
+                            transf = {0.5, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 0.77, 0, 0, 0, -0.25, 1}
                         },
                     },
                     name = "RootNode",
@@ -45,7 +45,7 @@ function data()
             labelList = {
                 labels = {
                     {
-                        transf = { 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -1.3, -0.074, 3.67, 1, },
+                        transf = { 1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -1.3, -0.074, 2.77, 1, },
                         size = { 2.6, .3 },
                         type = "STATION_NAME",
                         alphaMode = "BLEND",
@@ -55,7 +55,7 @@ function data()
                         childId = "RootNode",
                     },
                     {
-                        transf = { -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1.3, 0.074, 3.67, 1, },
+                        transf = { -1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1.3, 0.074, 2.77, 1, },
                         size = { 2.6, .3 },
                         type = "STATION_NAME",
                         alphaMode = "BLEND",
