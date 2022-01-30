@@ -210,7 +210,7 @@ return {
 						-- id = 'lollo_freestyle_train_station/asset/era_a_station_sign.mdl',
 						id = 'lollo_freestyle_train_station/asset/era_a_station_sign_on_pole.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift * 4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
 						tag = tag
 					}
 				elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
@@ -218,14 +218,14 @@ return {
 						-- id = 'lollo_freestyle_train_station/asset/era_b_station_sign.mdl',
 						id = 'lollo_freestyle_train_station/asset/era_b_station_sign_on_pole.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift * 4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
 						tag = tag
 					}
 				else
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/era_c_station_sign.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift * 4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
 						tag = tag
 					}
 				end
