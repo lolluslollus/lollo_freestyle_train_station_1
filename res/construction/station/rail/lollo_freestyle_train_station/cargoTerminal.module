@@ -53,7 +53,7 @@ return {
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local era = moduleHelpers.getEraPrefix(params, nTerminal, i)
 			local platformWidth = cpl.width
-			local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.2 or -platformWidth * 0.5 + 0.2
+			local yShift = isTrackOnPlatformLeft and (platformWidth - 9.6) * 0.5 or (platformWidth - 9.6) * -0.5
 			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 			local stationSignModelId = era == moduleHelpers.eras.era_c.prefix
 				and 'lollo_freestyle_train_station/asset/era_c_cargo_station_sign.mdl'
@@ -61,7 +61,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = stationSignModelId,
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, result.laneZs[nTerminal], 1 }),
+				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal], 1 }),
 				tag = tag
 			}
 		end
