@@ -933,6 +933,40 @@ local _actions = {
     end,
 }
 
+local _guiActions = {
+    joinSubway = function(subwayConstructionId)
+        if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
+
+        local con = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
+        -- if con ~= nil then logger.print('con.fileName =') logger.debugPrint(con.fileName) end
+        if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
+
+        local subwayTransf_c = con.transf
+        if subwayTransf_c == nil then return end
+
+        local subwayTransf_lua = transfUtilsUG.new(subwayTransf_c:cols(0), subwayTransf_c:cols(1), subwayTransf_c:cols(2), subwayTransf_c:cols(3))
+        if subwayTransf_lua == nil then return end
+
+        logger.print('conTransf =') logger.debugPrint(subwayTransf_lua)
+        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
+        -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
+        logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
+        if #nearbyFreestyleStations == 0 then return end
+
+        guiHelpers.showNearbyStationPicker(
+            false, -- subways are only for passengers
+            nearbyFreestyleStations,
+            _eventId,
+            _eventNames.SUBWAY_JOIN_REQUESTED,
+            nil,
+            {
+                subwayId = subwayConstructionId
+                -- join2StationId will be added by the popup
+            }
+        )
+    end,
+}
+
 local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr, proposal, nNewEntities)
     logger.print('_tryReplaceSegment starting with edgeId =', edgeId or 'NIL')
 
@@ -1608,37 +1642,7 @@ function data()
             -- logger.print('guiHandleEvent caught id =', id, 'name =', name)
             local isHideDistance = true
             if (name == 'builder.proposalCreate' or name == 'builder.apply' or name == 'select') then -- for performance
-                local _joinSubway = function(subwayConstructionId)
-                    if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
 
-                    local con = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
-                    -- if con ~= nil then logger.print('con.fileName =') logger.debugPrint(con.fileName) end
-                    if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
-
-                    local subwayTransfApi = con.transf
-                    if subwayTransfApi == nil then return end
-
-                    local conTransf = transfUtilsUG.new(subwayTransfApi:cols(0), subwayTransfApi:cols(1), subwayTransfApi:cols(2), subwayTransfApi:cols(3))
-                    if conTransf == nil then return end
-
-                    logger.print('conTransf =') logger.debugPrint(conTransf)
-                    local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
-                    -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
-                    logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
-                    if #nearbyFreestyleStations == 0 then return end
-
-                    guiHelpers.showNearbyStationPicker(
-                        false, -- subways are only for passengers
-                        nearbyFreestyleStations,
-                        _eventId,
-                        _eventNames.SUBWAY_JOIN_REQUESTED,
-                        nil,
-                        {
-                            subwayId = subwayConstructionId
-                            -- join2StationId will be added by the popup
-                        }
-                    )
-                end
                 xpcall(
                     function()
                         if name == 'builder.proposalCreate' then
@@ -1752,7 +1756,7 @@ function data()
                                 local subwayId = args.result[1]
                                 -- logger.print('construction built, construction id =') logger.debugPrint(subwayId)
 
-                                _joinSubway(subwayId)
+                                _guiActions.joinSubway(subwayId)
                             elseif id == 'streetTerminalBuilder' then
                                 -- waypoint, traffic light, my own waypoints built
                                 if args and args.proposal and args.proposal.proposal
@@ -2164,7 +2168,7 @@ function data()
                             -- logger.print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
                             -- logger.debugPrint(args)
 
-                            _joinSubway(args)
+                            _guiActions.joinSubway(args)
                         end
                     end,
                     _myErrorHandler
