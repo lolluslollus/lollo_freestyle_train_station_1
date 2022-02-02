@@ -199,38 +199,26 @@ return {
 						tag = tag
 					}
 				end
-			else
-				if platformWidth > 4 or (not(isUnderpass(nTerminal, i)) and not(isStairs(nTerminal, i))) then
-					local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
-					-- sign near the track
-					local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
-					-- sign 4.8 m or 2.3 m from the track
-					-- local yShift = isTrackOnPlatformLeft and - platformWidth * 0.5 + 0.25 or platformWidth * 0.5 - 0.25
-					if eraPrefix == moduleHelpers.eras.era_a.prefix then
-						result.models[#result.models + 1] = {
-							-- id = 'lollo_freestyle_train_station/asset/era_a_station_sign.mdl',
-							id = 'lollo_freestyle_train_station/asset/era_a_station_sign_on_pole.mdl',
-							slotId = slotId,
-							transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
-							tag = tag
-						}
-					elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
-						result.models[#result.models + 1] = {
-							-- id = 'lollo_freestyle_train_station/asset/era_b_station_sign.mdl',
-							id = 'lollo_freestyle_train_station/asset/era_b_station_sign_on_pole.mdl',
-							slotId = slotId,
-							transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
-							tag = tag
-						}
-					else
-						result.models[#result.models + 1] = {
-							id = 'lollo_freestyle_train_station/asset/era_c_station_sign.mdl',
-							slotId = slotId,
-							transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
-							tag = tag
-						}
-					end
+			elseif platformWidth > 4 or (not(isUnderpass(nTerminal, i)) and not(isStairs(nTerminal, i))) then
+				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
+				-- sign near the track
+				-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
+				-- sign 1.5 m from the track
+				local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.75 or -platformWidth * 0.5 + 0.75
+				-- sign 4.8 m or 2.3 m from the track
+				-- local yShift = isTrackOnPlatformLeft and - platformWidth * 0.5 + 0.25 or platformWidth * 0.5 - 0.25
+				local modelId = 'lollo_freestyle_train_station/asset/era_c_station_sign.mdl'
+				if eraPrefix == moduleHelpers.eras.era_a.prefix then
+					modelId = 'lollo_freestyle_train_station/asset/era_a_station_sign_on_pole.mdl'
+				elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
+					modelId = 'lollo_freestyle_train_station/asset/era_b_station_sign_on_pole.mdl'
 				end
+				result.models[#result.models + 1] = {
+					id = modelId,
+					slotId = slotId,
+					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
+					tag = tag
+				}
 			end
 		end
 		-- platform number signs
@@ -242,52 +230,42 @@ return {
 				if cpl.width >= 5 or not(isStairs(nTerminal, i)) then
 					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
 					local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
-					local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
-					local perronNumberModelId = 'lollo_freestyle_train_station/subway/era_c_perron_number_hanging.mdl'
-					if eraPrefix == moduleHelpers.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/subway/era_a_perron_number_hanging.mdl'
-					elseif eraPrefix == moduleHelpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/subway/era_b_perron_number_hanging_plain.mdl'
+					local modelId = 'lollo_freestyle_train_station/subway/era_c_perron_number_hanging.mdl'
+					if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/subway/era_a_perron_number_hanging.mdl'
+					elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/subway/era_b_perron_number_hanging_plain.mdl'
 					end
 					result.models[#result.models + 1] = {
-						id = perronNumberModelId,
+						id = modelId,
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }),
+						transf = transfUtilsUG.mul(
+							moduleHelpers.getTerminalDecoTransf(cpl.posTanX2),
+							{ -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }
+						),
 						tag = tag
 					}
 					-- the model index must be in base 0 !
-					result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+					result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal) }
 				end
 			else
 				if not(isPlatformRoof(nTerminal, i)) and (platformWidth > 4 or (not(isUnderpass(nTerminal, i)) and not(isStairs(nTerminal, i)))) then
-					local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
-					local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
-					if eraPrefix == moduleHelpers.eras.era_a.prefix then
-						result.models[#result.models + 1] = {
-							id = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl',
-							slotId = slotId,
-							transf = transfUtilsUG.mul(transf, { -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
-							tag = tag
-						}
-						-- the model index must be in base 0 !
-						result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
-					elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
-						result.models[#result.models + 1] = {
-							id = 'lollo_freestyle_train_station/asset/era_b_perron_number.mdl',
-							slotId = slotId,
-							transf = transfUtilsUG.mul(transf, { -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
-							tag = tag
-						}
-						-- the model index must be in base 0 !
-						result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
-					else
-						result.models[#result.models + 1] = {
-							id = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl',
-							slotId = slotId,
-							transf = transfUtilsUG.mul(transf, { -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
-							tag = tag
-						}
-						-- the model index must be in base 0 !
-						result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+					-- very close to the track
+					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
+					-- sign 1.5 m from the track and facing outwards
+					local yShift = isTrackOnPlatformLeft and (platformWidth * 0.5 - 0.75) or (-platformWidth * 0.5 + 0.75)
+					local modelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
+					if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl'
+					elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/asset/era_b_perron_number.mdl'
 					end
+					result.models[#result.models + 1] = {
+						id = modelId,
+						slotId = slotId,
+						transf = transfUtilsUG.mul(
+							moduleHelpers.getTerminalDecoTransf(cpl.posTanX2),
+							{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }
+						),
+						tag = tag
+					}
+					result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal) }
 				end
 			end
 		end
@@ -356,7 +334,7 @@ return {
 			end
 		end
 
-		-- print('passengerTerminal.module.updateFn ending')
+		-- logger.print('passengerTerminal.module.updateFn ending')
 	end,
 
 	getModelsFn = function(params)
