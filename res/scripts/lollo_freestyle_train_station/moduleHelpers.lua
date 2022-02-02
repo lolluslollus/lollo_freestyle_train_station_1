@@ -856,7 +856,8 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
     local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
     local iiN = nTrackEdge + 1
     local ceilingCounter = -2
-    local drawNumberSign = 1
+    local numberSignPeriod = 6
+    local drawNumberSign = math.ceil(numberSignPeriod * 0.5)
     for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, _ceilingStep do
         local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
         local leadingIndex = cpf.leadingIndex
@@ -892,7 +893,8 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
                         tag = tag,
                     }
                 end
-                drawNumberSign = -drawNumberSign
+                drawNumberSign = drawNumberSign + 1
+                if drawNumberSign > numberSignPeriod then drawNumberSign = drawNumberSign - numberSignPeriod end
 
                 if drawNumberSign == 1 then -- little bodge to prevent overlapping with station name signs
                     -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
