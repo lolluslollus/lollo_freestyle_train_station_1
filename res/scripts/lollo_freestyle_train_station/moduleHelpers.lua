@@ -852,12 +852,16 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
     -- particularly on slopes and bends
     local _ceilingStep = 1
     local _pillarPeriod = 4 -- it would be math.ceil(4 / _ceilingStep)
+    local _numberSignPeriod = 6
+    local _barredNumberSignIs = {}
+    for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do -- copied from passengerTerminal
+        _barredNumberSignIs[i] = true
+    end
 
     local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
     local iiN = nTrackEdge + 1
-    local ceilingCounter = -2
-    local numberSignPeriod = 6
-    local drawNumberSign = math.ceil(numberSignPeriod * 0.5)
+    local ceilingCounter = -math.ceil(_pillarPeriod * 0.5)
+    local pillarCounter = -math.ceil(_numberSignPeriod * 0.5)
     for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, _ceilingStep do
         local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
         local leadingIndex = cpf.leadingIndex
@@ -882,39 +886,38 @@ ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
             if params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep]
             and params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep].leadingIndex <= iiN
             and math.fmod(ceilingCounter, _pillarPeriod) == 0 then
-                local myTransf = transfUtilsUG.mul(
-                    helpers.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
-                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformRoofZ, 1 }
-                )
+                pillarCounter = pillarCounter + 1
                 if cpf.type ~= 2 then -- outside or bridge
+                    local myTransf = transfUtilsUG.mul(
+                        helpers.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
+                        { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, _constants.platformRoofZ, 1 }
+                    )
                     result.models[#result.models+1] = {
                         id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
                         transf = myTransf,
                         tag = tag,
                     }
-                end
-                drawNumberSign = drawNumberSign + 1
-                if drawNumberSign > numberSignPeriod then drawNumberSign = drawNumberSign - numberSignPeriod end
 
-                if drawNumberSign == 1 then -- little bodge to prevent overlapping with station name signs
-                    -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
-                    if cpf.type ~= 2 then -- outside or bridge
-                        local yShift = -platformWidth * 0.5 + 0.20
-                        local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                        if eraPrefix == helpers.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                        elseif eraPrefix == helpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                    if not(_barredNumberSignIs[leadingIndex]) then -- prevent overlapping with station name signs
+                        if math.fmod(pillarCounter, _numberSignPeriod) == 0 then
+                            -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+                            local yShift = -platformWidth * 0.5 + 0.20
+                            local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                            if eraPrefix == helpers.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                            elseif eraPrefix == helpers.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                            end
+                            result.models[#result.models + 1] = {
+                                id = perronNumberModelId,
+                                slotId = slotId,
+                                transf = transfUtilsUG.mul(
+                                    myTransf,
+                                    { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                                ),
+                                tag = tag
+                            }
+                            -- the model index must be in base 0 !
+                            result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
                         end
-                        result.models[#result.models + 1] = {
-                            id = perronNumberModelId,
-                            slotId = slotId,
-                            transf = transfUtilsUG.mul(
-                                myTransf,
-                                { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
-                            ),
-                            tag = tag
-                        }
-                        -- the model index must be in base 0 !
-                        result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
                     end
                 end
             end
