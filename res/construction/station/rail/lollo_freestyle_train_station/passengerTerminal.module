@@ -229,7 +229,7 @@ return {
 				result.models[#result.models + 1] = {
 					id = modelId,
 					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift * 3, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
+					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 2, yShift, result.laneZs[nTerminal] + 0.0, 1 }),
 					tag = tag
 				}
 			end
