@@ -1057,7 +1057,7 @@ function data()
 				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
-					local _isLeft_2 = function(t1, t2)
+					local _isNorth_2 = function(t1, t2)
 						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
                         -- If the station is curved, and we check the centre platform segments,
                         -- a link between terminal T (1) to TT (1) might look left,
@@ -1075,11 +1075,11 @@ function data()
 						local midIndex2 = math.floor(#params.terminals[t2].centrePlatformsFineRelative / 2)
 						local pos1 = (params.terminals[t1].centrePlatformsFineRelative[midIndex1]).posTanX2[1][1]
 						local pos2 = (params.terminals[t2].centrePlatformsFineRelative[midIndex2]).posTanX2[1][1]
-						local isLeftResult = pos1[2] == pos2[2] and pos2[1] > pos1[1] or pos2[2] > pos1[2]
+						local isNorthResult = pos1[2] == pos2[2] and pos2[1] > pos1[1] or pos2[2] > pos1[2]
 						if isOutputLog then
-							print('_isLeft on t1 =', t1, ', t2 =', t2, 'has calculated midIndex1 =', midIndex1, ', midIndex2 =', midIndex2, ', result =', isLeftResult)
+							print('_isNorth on t1 =', t1, ', t2 =', t2, 'has calculated midIndex1 =', midIndex1, ', midIndex2 =', midIndex2, ', result =', isNorthResult)
 						end
-						return isLeftResult
+						return isNorthResult
 						-- fine sample
 						-- {
 						-- 	catenary = false,
@@ -1124,11 +1124,23 @@ function data()
 						-- 	width = 5,
 						--   },
 					end
-					local _isLeft = function(posTanX2, pos, distance)
+					local _isNorth = function(posTanX2, pos, distance)
 						-- distance is only for debugging purposes
 						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
-						-- We approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short
-						-- the direction ought to be irrelevant coz the calc is based on absolute positions
+						-- We approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short.
+						-- The direction ought to be irrelevant coz the calc is based on absolute positions
+						-- LOLLO NOTE
+						-- Suppose I have two curvy tracks, or 2 tracks that cross, maybe at different heights.
+						-- Imagine two pos2Links in the left part of the cross and two in the right.
+						-- Terminal 1 goes from NW to SE, terminal 2 goes from SW to NE.
+						-- The SE point is south of any segments in terminal 2.
+						-- The SW point is south of any segments in terminal 1.
+						-- Imagine I have two curvx tracks, parallel. They go from SW to N and SE.
+						-- Terminal 1 is above, terminal 2 is below.
+						-- Take the T1 SE segment: the T2 SE position is south, the T2 SW position too.
+						-- Take the T2 SE segment: the T1 SE position is north, the T1 SW position is north.
+						-- As you see, this function needs calculating for each reference segment and point
+						-- of a pair of bits to join.
 						-- a + b * x = y
 						-- b = dY / dX
 						-- a = y - dY / dX * x
@@ -1137,25 +1149,25 @@ function data()
 						local dX = x1 - x0
 						local dY = y1 - y0
 						if isOutputLog then
-							print('_isLeft received posTanX2 =') debugPrint(posTanX2)
+							print('_isNorth received posTanX2 =') debugPrint(posTanX2)
 							print(', pos =') debugPrint(pos)
 							print(', dX =', dX, 'dY =', dY)
 							print(', distance =', distance or 'NIL')
 						end
 						if dX == 0 then
-							local isLeftResult = pos[1] < x0
+							local isNorthResult = pos[1] < x0
 							if isOutputLog then
-								print('_isLeft has calculated result = ', isLeftResult)
+								print('_isNorth has calculated result = ', isNorthResult)
 							end
-							return isLeftResult
+							return isNorthResult
 						end
 						local b = dY / dX
 						local a = y0 - b * x0
-						local isLeftResult = a + b * pos[1] < pos[2]
+						local isNorthResult = a + b * pos[1] < pos[2]
 						if isOutputLog then
-							print('_isLeft has calculated a =', a, ', b =', b, ', result = ', isLeftResult)
+							print('_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult)
 						end
-						return isLeftResult
+						return isNorthResult
 					end
 					local _maxT = #params.terminals
 					local _getMinDistanceSegments = function()
@@ -1174,21 +1186,23 @@ function data()
 											if positionsInTT ~= nil then
 												for ii = 1, #positionsInTT do
 													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
-													-- local isLeftOfT1 = _isLeft_2(t, tt)
-													local isLeftOfT1 = _isLeft(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link, distance)
+													-- local isNorthOfT1 = _isNorth_2(t, tt)
+													local isNorthOfT1 = _isNorth(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link, distance)
+													local isNorthOfT2 = _isNorth(positionsInTT[ii].lanePosTanX2, positionsInT[i].pos2Link, distance)
 													local newSegment = {
 														t1 = t,
 														t2 = tt,
 														t1Index = i,
 														t2Index = ii,
 														distance = distance,
-														isLeftOfT1 = isLeftOfT1,
+														isNorthOfT1 = isNorthOfT1, -- these two isNorthOfTN may have the same value, see the note above
+														isNorthOfT2 = isNorthOfT2,
 														pos2Link1 = positionsInT[i].pos2Link,
 														pos2Link2 = positionsInTT[ii].pos2Link,
 														eraOfT1 = positionsInT[i].era,
 														eraOfT2 = positionsInTT[ii].era,
 													}
-													if isLeftOfT1 then
+													if isNorthOfT1 then
 														if minDistance_T_I_SegmentLeft == nil or minDistance_T_I_SegmentLeft.distance > distance then
 															minDistance_T_I_SegmentLeft = newSegment
 														end
@@ -1201,29 +1215,36 @@ function data()
 											end
 										end
 									end
+									-- We now calc isNothfOfT1 and isNorthOfT2, so we don't need this anymore.
+									-- for _, newMds in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
+									-- 	if newMds ~= nil then
+									-- 		local isAlreadyThere = false
+									-- 		-- isNorth tells if a point is above or below a line.
+									-- 		-- if you have curved tracks, their tangents  at the connection points will cross.
+									-- 		-- Imagine they form an X.
+									-- 		-- bottom left of the X, I have a connection point
+									-- 		-- and another one at the bottom right, on either side of the point where the tangents cross.
+									-- 		-- both will have the same isNorth, which is correct per se but results in duplicates
+									-- 		-- See the note above for more details.
+									-- 		for _, prevMds in pairs(results) do
+									-- 			-- if prevMds.distance == newMds.distance -- check this first for performance -- not pretty but it works
+									-- 			-- and prevMds.t1 == newMds.t2 and prevMds.t1Index == newMds.t2Index
+									-- 			-- and prevMds.t2 == newMds.t1 and prevMds.t2Index == newMds.t1Index
+									-- 			if prevMds.t1 == newMds.t2 and prevMds.t1Index == newMds.t2Index
+									-- 			and prevMds.t2 == newMds.t1 and prevMds.t2Index == newMds.t1Index
+									-- 			then
+									-- 				isAlreadyThere = true
+									-- 				break
+									-- 			end
+									-- 		end
+									-- 		if not(isAlreadyThere) then
+									-- 			table.insert(results, newMds)
+									-- 		end
+									-- 	end
+									-- end
 									for _, newMds in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
 										if newMds ~= nil then
-											local isAlreadyThere = false
-											-- isLeft tells if a point is above or below a line.
-											-- if you have curved tracks, their tangents  at the connection points will cross.
-											-- Imagine they form an X.
-											-- bottom left of the X, I have a connection point
-											-- and another one at the bottom right, on either side of the point where the tangents cross.
-											-- both will have the same isLeft, which is correct per se but results in duplicates
-											for _, prevMds in pairs(results) do
-												-- if prevMds.distance == newMds.distance -- check this first for performance -- not pretty but it works
-												-- and prevMds.t1 == newMds.t2 and prevMds.t1Index == newMds.t2Index
-												-- and prevMds.t2 == newMds.t1 and prevMds.t2Index == newMds.t1Index
-												if prevMds.t1 == newMds.t2 and prevMds.t1Index == newMds.t2Index
-												and prevMds.t2 == newMds.t1 and prevMds.t2Index == newMds.t1Index
-												then
-													isAlreadyThere = true
-													break
-												end
-											end
-											if not(isAlreadyThere) then
-												table.insert(results, newMds)
-											end
+											table.insert(results, newMds)
 										end
 									end
 								end
@@ -1246,7 +1267,8 @@ function data()
 							newSegment.t1Index = oldSegment.t1Index
 							newSegment.t2Index = oldSegment.t2Index
 							newSegment.distance = oldSegment.distance
-							newSegment.isLeftOfT1 = oldSegment.isLeftOfT1
+							newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
+							newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
 							newSegment.pos2Link1 = oldSegment.pos2Link1
 							newSegment.pos2Link2 = oldSegment.pos2Link2
 							newSegment.eraOfT1 = oldSegment.eraOfT1
@@ -1257,7 +1279,8 @@ function data()
 							newSegment.t1Index = oldSegment.t2Index
 							newSegment.t2Index = oldSegment.t1Index
 							newSegment.distance = oldSegment.distance
-							newSegment.isLeftOfT1 = not(oldSegment.isLeftOfT1)
+							newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
+							newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
 							newSegment.pos2Link1 = oldSegment.pos2Link2
 							newSegment.pos2Link2 = oldSegment.pos2Link1
 							newSegment.eraOfT1 = oldSegment.eraOfT2
@@ -1286,22 +1309,19 @@ function data()
 					-- index the remaining links by terminal 1 and then terminal 2
 					local short_T_TT_Segments_SmallTFirst = {}
                     for t = 1, _maxT do
-						-- if minDistance_TT_II_Segments_SmallTFirst[t] then
 						if minDistance_T_I_Segments_SmallTFirst[t] then
 							for _, segmentsTouchingPointWithIndex in pairs(minDistance_T_I_Segments_SmallTFirst[t]) do
-								for _, isLeftOfT1 in pairs({true, false}) do
+								for _, isNorthOfT1 in pairs({true, false}) do
 									local testSegment = {distance = 9999}
 									local isNewSegmentThere = false
 									for _, segment in pairs(segmentsTouchingPointWithIndex) do
-										if segment.isLeftOfT1 == isLeftOfT1
+										if segment.isNorthOfT1 == isNorthOfT1
 										and segment.distance < testSegment.distance
 										then
 											testSegment = segment
 											isNewSegmentThere = true
 										end
 									end
-									-- if tolerancePercent4ShortDistances == nil
-									-- or value.distance / minDistanceSegments[t][tt].distance <= tolerancePercent4ShortDistances then
 									if isNewSegmentThere then
                                         local newSegment = _getSegmentWithT1AndT2Sorted(testSegment, true)
 										local t1 = newSegment.t1
@@ -1310,7 +1330,7 @@ function data()
 										if short_T_TT_Segments_SmallTFirst[t1][t2] == nil then short_T_TT_Segments_SmallTFirst[t1][t2] = {} end
 										table.insert(short_T_TT_Segments_SmallTFirst[t1][t2], newSegment)
 										if isOutputLog then
-											print('isLeftOfT1 =', isLeftOfT1, ', inserted segment ') debugPrint(newSegment) print('with t1 =', t1, 'and t2 =', t2)
+											print('isNorthOfT1 =', isNorthOfT1, ', inserted segment ') debugPrint(newSegment) print('with t1 =', t1, 'and t2 =', t2)
 										end
 									end
 								end
