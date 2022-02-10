@@ -28,7 +28,7 @@ local myTransf = { -0.96921503543854, -0.24621585011482, 0, 0, 0.24621585011482,
 local inverseMainTransf = transfUtils.getInverseTransf(mainTransf)
 local inverseMyTransf = transfUtils.getInverseTransf(myTransf)
 
-local newTransf = transfUtils.mul(mainTransf, inverseMyTransf)
+-- local newTransf = transfUtils.mul(mainTransf, inverseMyTransf)
 
 
 local edgeIds = {111, 222, 333, 444}
@@ -113,8 +113,16 @@ local b0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {1, 0}
 local b1 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {0, 1}) -- 0.707
 local b2 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {0, 0}) -- 0
 local b3 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {1, 1}) -- 0
+local b4 = transfUtils.getDistanceBetweenPointAndStraight({-4, 0}, {-4, 1}, {1, 0}) -- 5
+local b5 = transfUtils.getDistanceBetweenPointAndStraight({-4, 0}, {-4, 1}, {0, 1}) -- 4
+local b6 = transfUtils.getDistanceBetweenPointAndStraight({-4, -4}, {-2, -4}, {0, 0}) -- 4
+local b7 = transfUtils.getDistanceBetweenPointAndStraight({-4, -4}, {-2, -4}, {-1, 0}) -- 4
 
 local c0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {1, 0}) -- 1
+local c01 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {0.5, 0}) -- 0.5
+local c02 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {-0.5, 0}) -- 0.5
+local c03 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {0.5, 1}) -- 0.5
+local c04 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {-0.5, 0.5}) -- 0.5
 local c1 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {0, 1}) -- 0
 local c2 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {0, 0}) -- 0
 local c3 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {1, 1}) -- 1
@@ -128,13 +136,15 @@ local c9 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {-0.1, 1}, {1,
 
 local d0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {1, 0}) -- 0
 local d1 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {0, 1}) -- 1
-local d2 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {0, 0}) -- 0
-local d3 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {1, 1}) -- 1
+local d2 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {0.5, 1}) -- 1
+local d3 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {0.5, -1}) -- 1
+local d4 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {0, 0}) -- 0
+local d5 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {1, 1}) -- 1
 
 -- 808.78717041016	-997.80047607422	792.95832642313	-990.78839434966	800.90161479805	-994.2243518885
-local e0 = transfUtils.getDistanceBetweenPointAndStraight({808, -997}, {792, -990}, {800, -994})
-local e1 = transfUtils.getDistanceBetweenPointAndStraight({808 - 808, -997}, {792 - 808, -990}, {800 - 808, -994})
-local e2 = transfUtils.getDistanceBetweenPointAndStraight({808 - 808, -997 - 997}, {792 - 808, -990 - 997}, {800 - 808, -994 - 997})
+local e0 = transfUtils.getDistanceBetweenPointAndStraight({808, -997}, {792, -990}, {800, -994}) -- 0.458
+local e1 = transfUtils.getDistanceBetweenPointAndStraight({808 - 808, -997}, {792 - 808, -990}, {800 - 808, -994}) -- 0.458
+local e2 = transfUtils.getDistanceBetweenPointAndStraight({808 - 808, -997 - 997}, {792 - 808, -990 - 997}, {800 - 808, -994 - 997}) -- 0.458
 local dummy = 123
 
 --  id = 24148,
