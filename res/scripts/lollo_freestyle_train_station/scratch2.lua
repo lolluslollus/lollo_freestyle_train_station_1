@@ -117,6 +117,8 @@ local b4 = transfUtils.getDistanceBetweenPointAndStraight({-4, 0}, {-4, 1}, {1, 
 local b5 = transfUtils.getDistanceBetweenPointAndStraight({-4, 0}, {-4, 1}, {0, 1}) -- 4
 local b6 = transfUtils.getDistanceBetweenPointAndStraight({-4, -4}, {-2, -4}, {0, 0}) -- 4
 local b7 = transfUtils.getDistanceBetweenPointAndStraight({-4, -4}, {-2, -4}, {-1, 0}) -- 4
+local b8 = transfUtils.getDistanceBetweenPointAndStraight({-4, 0}, {0, -4}, {-2, -2}) -- 0
+local b9 = transfUtils.getDistanceBetweenPointAndStraight({-4, 0}, {0, -4}, {-1, -1}) -- 1.414
 
 local c0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {1, 0}) -- 1
 local c01 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {0, 1}, {0.5, 0}) -- 0.5
