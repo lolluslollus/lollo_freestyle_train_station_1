@@ -2,9 +2,16 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local fileUtils = require('lollo_freestyle_train_station.fileUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
-local _lolloStreetDataBuffer = {
+local _streetDataBuffer = {
     data = {},
     filterId = nil
+}
+local _bridgeDataBuffer = {
+    data = {},
+    carrierId = nil, -- 0 is api.type.enum.Carrier.ROAD, 1 is api.type.enum.Carrier.RAIL
+}
+local _texts = {
+    noBridge = _('NoBridge'),
 }
 local helper = {}
 -- --------------- global street data ------------------------
@@ -248,6 +255,41 @@ local function _getStreetFilesContents(streetDirPath, fileNamePrefix)
     -- end
 end
 
+local function _getBridgeTypes(carrierId)
+    local allBridgeTypes = api.res.bridgeTypeRep.getAll()
+    local results = {}
+    for bridgeTypeId, fileName in pairs(allBridgeTypes) do
+        if fileName then
+            local bridgeType = api.res.bridgeTypeRep.get(bridgeTypeId)
+            if bridgeType
+            and bridgeType.carriers
+            -- this is simpler than the streets: we only want a list of visible bridges, that's all
+            and bridgeType.yearFrom < 65535
+            and bridgeType.yearTo == 0
+            and api.res.bridgeTypeRep.isVisible(bridgeTypeId)
+            then
+                local isRightCarrier = false
+                for _, bridgeCarrierId in pairs(bridgeType.carriers) do
+                    if bridgeCarrierId == carrierId then
+                        isRightCarrier = true
+                        break
+                    end
+                end
+                if isRightCarrier then
+                    results[#results+1] = {
+                        fileName = fileName,
+                        icon = bridgeType.icon,
+                        name = bridgeType.name,
+                        yearFrom = bridgeType.yearFrom,
+                        yearTo = bridgeType.yearTo,
+                    }
+                end
+            end
+        end
+    end
+    return results
+end
+
 local function _getStreetDataFiltered_Paths(streetDataTable)
     if type(streetDataTable) ~= 'table' then return {} end
 
@@ -372,30 +414,41 @@ end
 
 local function _initLolloStreetDataWithApi(filter)
     -- print('_initLolloStreetDataWithApi starting with filter =') debugPrint(filter)
-    -- print('_lolloStreetDataBuffer.filterId =', _lolloStreetDataBuffer.filterId)
-    -- print('type(_lolloStreetDataBuffer.data) =', type(_lolloStreetDataBuffer.data))
-    -- if type(_lolloStreetDataBuffer.data) == 'table' then
-    --     print('#_lolloStreetDataBuffer.data =', #_lolloStreetDataBuffer.data)
+    -- print('_streetDataBuffer.filterId =', _streetDataBuffer.filterId)
+    -- print('type(_streetDataBuffer.data) =', type(_streetDataBuffer.data))
+    -- if type(_streetDataBuffer.data) == 'table' then
+    --     print('#_streetDataBuffer.data =', #_streetDataBuffer.data)
     -- end
 
-    if _lolloStreetDataBuffer.filterId ~= filter.id
-    or type(_lolloStreetDataBuffer.data) ~= 'table'
-    or #_lolloStreetDataBuffer.data < 1 then
-        _lolloStreetDataBuffer.data = filter.func(_getStreetTypesWithApi())
-        arrayUtils.sort(_lolloStreetDataBuffer.data, 'name')
+    if _streetDataBuffer.filterId ~= filter.id
+    or type(_streetDataBuffer.data) ~= 'table'
+    or #_streetDataBuffer.data < 1 then
+        _streetDataBuffer.data = filter.func(_getStreetTypesWithApi())
+        arrayUtils.sort(_streetDataBuffer.data, 'name')
 
-        -- print('LOLLO street data initialised with api, it has', #(_lolloStreetData.data or {}), 'records and type = ', type(_lolloStreetData.data))
+        -- print('LOLLO street data initialised with api, it has', #(_streetDataBuffer.data or {}), 'records and type = ', type(_streetDataBuffer.data))
+    end
+end
+
+local function _initLolloBridgeDataWithApi(carrierId)
+    if _bridgeDataBuffer.carrierId ~= carrierId -- 0 is api.type.enum.Carrier.ROAD, 1 is api.type.enum.Carrier.RAIL
+    or type(_bridgeDataBuffer.data) ~= 'table'
+    or #_bridgeDataBuffer.data < 1 then
+        _bridgeDataBuffer.data = _getBridgeTypes(carrierId)
+        arrayUtils.sort(_bridgeDataBuffer.data, 'name')
+
+        -- print('LOLLO bridge data initialised with api, it has', #(_bridgeDataBuffer.data or {}), 'records and type = ', type(_bridgeDataBuffer.data))
     end
 end
 
 local function _initLolloStreetDataWithFiles(filter)
-    if _lolloStreetDataBuffer.filterId ~= filter.id
-    or type(_lolloStreetDataBuffer.data) ~= 'table'
-    or #_lolloStreetDataBuffer.data < 1 then
-        _lolloStreetDataBuffer.data = filter.func(_getStreetFilesContents(_getMyStreetDirPath()))
-        arrayUtils.sort(_lolloStreetDataBuffer.data, 'name')
+    if _streetDataBuffer.filterId ~= filter.id
+    or type(_streetDataBuffer.data) ~= 'table'
+    or #_streetDataBuffer.data < 1 then
+        _streetDataBuffer.data = filter.func(_getStreetFilesContents(_getMyStreetDirPath()))
+        arrayUtils.sort(_streetDataBuffer.data, 'name')
 
-        -- print('LOLLO street data initialised with files, it has', #(_lolloStreetData.data or {}), 'records and type = ', type(_lolloStreetData.data))
+        -- print('LOLLO street data initialised with files, it has', #(_streetDataBuffer.data or {}), 'records and type = ', type(_streetDataBuffer.data))
     end
 end
 
@@ -547,7 +600,19 @@ helper.getGlobalStreetData = function(filter)
     if filter == nil then filter = helper.getStreetDataFilters().STOCK end
     _initLolloStreetDataWithApi(filter)
     -- _initLolloStreetDataWithFiles(filter)
-    return _lolloStreetDataBuffer.data
+    return _streetDataBuffer.data
+end
+
+helper.getGlobalBridgeData = function(carrierId)
+    if not(carrierId) then carrierId = api.type.enum.Carrier.ROAD end
+    _initLolloBridgeDataWithApi(carrierId)
+    return _bridgeDataBuffer.data
+end
+
+helper.getGlobalBridgeDataPlusNoBridge = function(carrierId)
+    local results = helper.getGlobalBridgeData(carrierId)
+    table.insert(results, 1, {name = _texts.noBridge, icon = 'ui/bridges/no_bridge.tga'})
+    return results
 end
 
 return helper
