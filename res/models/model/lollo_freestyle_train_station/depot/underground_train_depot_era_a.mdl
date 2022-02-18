@@ -1,0 +1,205 @@
+local mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+	return {
+		-- boundingInfo = {
+		-- 	bbMax = { 5.6731095314026, 42.596519470215, 11.722250938416, },
+		-- 	bbMin = { -9.6756753921509, -28.696517944336, -3.0000047683716, },
+		-- },
+		-- collider = {
+		-- 	params = {
+		-- 		halfExtents = { 7.6743927001953, 35.646518707275, 7.3611278533936, },
+		-- 	},
+		-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		-- 	type = "BOX",
+		-- },
+		boundingInfo = mdlHelpers.getVoidBoundingInfo(),
+		collider = mdlHelpers.getVoidCollider(),
+		lods = {
+			{
+				node = {
+					children = {
+						{
+							materials = {
+								"depot/rail/train_depot_era_a/metal floor.mtl",
+								"depot/rail/train_depot_era_a/concrete.mtl",
+								"depot/rail/train_depot_era_a/metal_color.mtl",
+								"depot/rail/train_depot_era_a/roof.mtl",
+							},
+							mesh = "lollo_freestyle_train_station/depot/underground_train_depot_era_a/depot_narrow_lod0.msh",
+							name = "depot",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+						{
+							materials = {
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"lollo_freestyle_train_station/metal/rough_iron_dark.mtl",
+							},
+							mesh = "lollo_freestyle_train_station/depot/underground_train_depot_era_a/era_a_depot_lamp_lod0.msh",
+							name = "depot",
+							transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  2.95, -23.1, 0, 1, },
+						},
+						{
+							materials = {
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"lollo_freestyle_train_station/metal/rough_iron_dark.mtl",
+							},
+							mesh = "lollo_freestyle_train_station/depot/underground_train_depot_era_a/era_a_depot_lamp_lod0.msh",
+							name = "depot",
+							transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  2.95, -11.55, 0, 1, },
+						},
+						{
+							materials = {
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"lollo_freestyle_train_station/metal/rough_iron_dark.mtl",
+							},
+							mesh = "lollo_freestyle_train_station/depot/underground_train_depot_era_a/era_a_depot_lamp_lod0.msh",
+							name = "depot",
+							transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  2.95, 0, 0, 1, },
+						},
+						{
+							materials = {
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"lollo_freestyle_train_station/metal/rough_iron_dark.mtl",
+							},
+							mesh = "lollo_freestyle_train_station/depot/underground_train_depot_era_a/era_a_depot_lamp_lod0.msh",
+							name = "depot",
+							transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  2.95, 11.5, 0, 1, },
+						},
+						{
+							materials = {
+								"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+								"lollo_freestyle_train_station/metal/rough_iron_dark.mtl",
+							},
+							mesh = "lollo_freestyle_train_station/depot/underground_train_depot_era_a/era_a_depot_lamp_lod0.msh",
+							name = "depot",
+							transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  2.95, 23.0, 0, 1, },
+						},
+						-- {
+						-- 	animations = {
+						-- 		close = {
+						-- 			params = {
+						-- 				id = "depot/rail/train_depot_era_a/close/door_l.ani",
+						-- 			},
+						-- 			type = "FILE_REF",
+						-- 		},
+						-- 		open = {
+						-- 			params = {
+						-- 				id = "depot/rail/train_depot_era_a/open/door_l.ani",
+						-- 			},
+						-- 			type = "FILE_REF",
+						-- 		},
+						-- 	},
+						-- 	materials = { "depot/rail/train_depot_era_a/details.mtl", },
+						-- 	mesh = "depot/rail/train_depot_era_a/door_l_lod0.msh",
+						-- 	name = "door_l",
+						-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.9599995613098, -27.681776046753, 0, 1, },
+						-- },
+						-- {
+						-- 	animations = {
+						-- 		close = {
+						-- 			params = {
+						-- 				id = "depot/rail/train_depot_era_a/close/door_r.ani",
+						-- 			},
+						-- 			type = "FILE_REF",
+						-- 		},
+						-- 		open = {
+						-- 			params = {
+						-- 				id = "depot/rail/train_depot_era_a/open/door_r.ani",
+						-- 			},
+						-- 			type = "FILE_REF",
+						-- 		},
+						-- 	},
+						-- 	materials = { "depot/rail/train_depot_era_a/details.mtl", },
+						-- 	mesh = "depot/rail/train_depot_era_a/door_r_lod0.msh",
+						-- 	name = "door_r",
+						-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.9599995613098, -27.681776046753, 0, 1, },
+						-- },
+						-- {
+						-- 	materials = {'lollo_freestyle_train_station/icon/blue.mtl'},
+                        --     mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
+                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 5, 0, 0, -19.1, 0, 1}
+						-- },
+						-- {
+						-- 	materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},
+                        --     mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
+                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 5, 0, 0, 0, 0, 1}
+						-- },
+						-- {
+						-- 	materials = {'lollo_freestyle_train_station/icon/green.mtl'},
+                        --     mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
+                        --     transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 5, 0, 0, 19.1, 0, 1}
+						-- },
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 0,
+				visibleTo = 150,
+			},
+			{
+				node = {
+					children = {
+						{
+							materials = {
+								"depot/rail/train_depot_era_a/concrete.mtl",
+								"depot/rail/train_depot_era_a/roof.mtl",
+							},
+							mesh = "lollo_freestyle_train_station/depot/underground_train_depot_era_a/depot_narrow_lod1.msh",
+							name = "depot",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 150,
+				visibleTo = 2000,
+			},
+		},
+		metadata = {
+			transportNetworkProvider = {
+				laneLists = {
+					{
+						linkable = false,
+						nodes = {
+							{
+								{ 0, 19.1, 0, },
+								{ 0, -19.1, 0, },
+								3,
+							},
+							{
+								{ 0, 0, 0, },
+								{ 0, -19.1, 0, },
+								3,
+							},
+							{
+								{ 0, 0, 0, },
+								{ 0, -19.1, 0, },
+								3,
+							},
+							{
+								{ 0, -19.1, 0, },
+								{ 0, -19.1, 0, },
+								3,
+							},
+						},
+						speedLimit = 50,
+						transportModes = { "TRAIN", "ELECTRIC_TRAIN", },
+					},
+				},
+				runways = { },
+				terminals = { },
+			},
+			vehicleDepot = {
+				capacity = 5,
+				carrier = "RAIL",
+				inNodes = { 1, },
+				outNodes = { 1, },
+			},
+		},
+		version = 1,
+	}
+end

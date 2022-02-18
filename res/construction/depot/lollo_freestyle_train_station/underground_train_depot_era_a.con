@@ -1,0 +1,116 @@
+local logger = require('lollo_freestyle_train_station.logger')
+local paramsutil = require 'paramsutil'
+
+function data()
+	local config = {
+		trackTypes = { 'standard.lua', 'high_speed.lua' },
+	}
+
+	return {
+		type = 'RAIL_DEPOT',
+		description = {
+			name = _('UndergroundTrainDepotName'),
+			description = _('UndergroundTrainDepotDesc')
+		},
+		availability = { },
+		params = {
+			paramsutil.makeTrackTypeParam(),
+			paramsutil.makeTrackCatenaryParam(),
+			-- LOLLO NOTE it would be nice to show underground while building and
+			-- close the view underground once built,
+			-- but this involves upgrading or rebuilding the depot programmatically,
+			-- which fails.
+            -- {
+            --     key = 'isShowUnderground',
+            --     name = _('ShowUnderground'),
+			-- 	tooltip = _('ShowUndergroundTooltip'), -- useless with the checkbox
+            --     uiType = 'BUTTON',
+			-- 	-- uiType = 'CHECKBOX',
+            --     values = {
+            --         _('NO'), _('YES')
+            --     },
+            --     defaultIndex = 0,
+            -- },
+		},
+		updateFn = function(params)
+			logger.print('updateFn starting, params.upgrade =', params.upgrade) -- this is always nil
+			local trackHeight = params.state.track.railBase + params.state.track.railHeight
+            -- LOLLO NOTE If some edges are not free, I will need a dummy model,
+            -- otherwise the game will say "hello there" or "easter egg" or other rubbish,
+            -- then point away (to some animal) and do nothing,
+            -- when the user clicks on a done construction to configure it.
+			local result = {
+				cost = 18000,
+				edgeLists = {
+					{
+						type = 'TRACK',
+						params = {
+							type = config.trackTypes[params.trackType and params.trackType + 1 or 0],
+							catenary = params.catenary == 1
+						},
+						edgeType = 'TUNNEL',
+						edgeTypeName = 'railroad_old.lua',
+						edges = {
+							-- Edges must not completely overlap any lanes in the model.
+							-- this edge is for real
+							{ { 0, 39.1, -trackHeight }, { 0, -20.0, 0 } },
+							{ { 0, 19.1, -trackHeight }, { 0, -20.0, 0 } },
+							-- this edge is only for the looks.
+							{ { 0, 19.1, -trackHeight }, { 0, -49.1, 0 } },
+							{ { 0, -30, -trackHeight }, { 0, -49.1, 0 } },
+							-- this edge is for real. I could use it to let trains enter from either end,
+							-- but this end will not find the path."
+							-- { { 0, -19.1, -trackHeight }, { 0, -20.0, 0 } },
+							-- { { 0, -39.1, -trackHeight }, { 0, -20.0, 0 } },
+						},
+						-- freeNodes = { 0, 5, },
+						snapNodes = { 0, },
+					}
+				},
+				models = {
+					{
+						id = 'lollo_freestyle_train_station/depot/underground_train_depot_era_a.mdl',
+						transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+					},
+				},
+				terrainAlignmentLists = {
+					{
+						type = 'EQUAL',
+						optional = true,
+						faces = {}
+					}
+				}
+			}
+
+			if params.isShowUnderground == 1 then
+				local xSize = 25
+				local ySize = 100
+				local faces = { {
+					{-xSize, -ySize, 0}, {xSize, -ySize, 0}, {xSize, ySize, 0}, {-xSize, ySize, 0}
+				} }
+
+				result.groundFaces = {
+					{
+						-- face = groundFace,
+						face = faces[1],
+						loop = true,
+						modes = {
+							{
+								-- key = 'lollo_freestyle_train_station/hole.lua',
+								key = 'hole.lua',
+								type = 'FILL',
+							},
+						}
+					}
+				}
+			end
+
+			return result
+		end,
+		upgradeFn = function(args1, args2)
+			-- this one never fires
+			logger.print('args1 =') logger.debugPrint(args1)
+			logger.print('args2 =') logger.debugPrint(args2)
+		end,
+	}
+end

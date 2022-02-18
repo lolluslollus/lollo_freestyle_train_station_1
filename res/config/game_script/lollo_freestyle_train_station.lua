@@ -13,10 +13,6 @@ local transfUtilsUG = require('transf')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
-local function _myErrorHandler(err)
-    print('lollo freestyle train station ERROR: ', err)
-end
-
 -- LOLLO NOTE you can only update the state from the worker thread
 local state = {}
 
@@ -931,27 +927,98 @@ local _actions = {
             end
         )
     end,
+
+    rebuildUndergroundDepotWithoutHole = function(oldConId)
+        logger.print('rebuildUndergroundDepotWithoutHole starting, oldConId =', oldConId or 'NIL')
+        local oldCon = edgeUtils.isValidAndExistingId(oldConId)
+        and api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
+        or nil
+        if not(oldCon) then return end
+
+        logger.print('oldCon =') logger.debugPrint(oldCon)
+
+        local newParams = {
+            catenary = oldCon.params.catenary,
+            isShowUnderground = 0, -- this is what this is all about: once built, stop showing underground
+            -- paramX = oldCon.params.paramX,
+            -- paramY = oldCon.params.paramY,
+            seed = oldCon.params.seed + 1,
+            trackType = oldCon.params.trackType,
+            -- year = oldCon.params.year,
+        }
+        -- LOLLO NOTE this is no ordinary construction, but a rail depot.
+        -- Some magic is involved.
+        -- Rebuilding it with the api will lead to crashes as soon as the user clicks it.
+        -- Instead, we try the old interface, which fails with the usual "pr.second failed"
+    --[[
+        game.interface.upgradeConstruction(
+            oldConId,
+            oldCon.fileName,
+            newParams
+        )
+    ]]
+    --[[
+        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+        newCon.fileName = oldCon.fileName
+        newCon.params = newParams
+        newCon.transf = oldCon.transf
+        newCon.playerEntity = api.engine.util.getPlayer()
+
+        logger.print('newCon =') logger.debugPrint(newCon)
+
+        local proposal = api.type.SimpleProposal.new()
+        proposal.constructionsToAdd[1] = newCon
+        proposal.constructionsToRemove = { oldConId }
+        proposal.old2new = {
+            oldConId, 0
+            -- oldConId, 1
+        }
+
+        logger.print('proposal =') logger.debugPrint(proposal)
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, nil, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                logger.print('rebuild underground depot without hole callback, success =', success)
+                -- logger.debugPrint(result)
+            end
+        )
+    ]]
+    end,
 }
 
 local _guiActions = {
-    joinSubway = function(subwayConstructionId)
-        if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then return end
+    getCon = function(constructionId)
+        if not(edgeUtils.isValidAndExistingId(constructionId)) then return nil end
 
-        local con = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
-        -- if con ~= nil then logger.print('con.fileName =') logger.debugPrint(con.fileName) end
-        if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return end
+        return api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+    end,
+    tryHideHole = function(conId, con)
+        if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.undergroundDepotConFileName or con.transf == nil then return false end
+
+        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+            string.sub(debug.getinfo(1, 'S').source, 1),
+            _eventId,
+            _eventNames.HIDE_HOLE_REQUESTED,
+            { conId = conId }
+        ))
+
+        return true
+    end,
+    tryJoinSubway = function(conId, con)
+        if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return false end
 
         local subwayTransf_c = con.transf
-        if subwayTransf_c == nil then return end
+        if subwayTransf_c == nil then return false end
 
         local subwayTransf_lua = transfUtilsUG.new(subwayTransf_c:cols(0), subwayTransf_c:cols(1), subwayTransf_c:cols(2), subwayTransf_c:cols(3))
-        if subwayTransf_lua == nil then return end
+        if subwayTransf_lua == nil then return false end
 
         logger.print('conTransf =') logger.debugPrint(subwayTransf_lua)
         local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
         -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
         logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
-        if #nearbyFreestyleStations == 0 then return end
+        if #nearbyFreestyleStations == 0 then return false end
 
         guiHelpers.showNearbyStationPicker(
             false, -- subways are only for passengers
@@ -960,10 +1027,12 @@ local _guiActions = {
             _eventNames.SUBWAY_JOIN_REQUESTED,
             nil,
             {
-                subwayId = subwayConstructionId
+                subwayId = conId
                 -- join2StationId will be added by the popup
             }
         )
+
+        return true
     end,
 }
 
@@ -1207,6 +1276,8 @@ function data()
             if name == _eventNames.HIDE_WARNINGS then
                 state.isShowBuildSnappyTracksFailed = false
                 guiHelpers.isShowingWarning = false
+            elseif name == _eventNames.HIDE_HOLE_REQUESTED then
+                -- _actions.rebuildUndergroundDepotWithoutHole(args.conId)
             elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
                 _actions.bulldozeMarker(args.platformMarkerConstructionEntityId)
             elseif name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
@@ -1634,7 +1705,7 @@ function data()
                 _actions.addSubway(args.join2StationId, args.subwayId, _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED)
             end
         end,
-        _myErrorHandler
+        logger.xpErrorHandler
     )
         end,
         guiHandleEvent = function(id, name, args)
@@ -1753,10 +1824,13 @@ function data()
                                 if not args.result or not args.result[1] then return end
 
                                 -- logger.print('args =') logger.debugPrint(args)
-                                local subwayId = args.result[1]
-                                -- logger.print('construction built, construction id =') logger.debugPrint(subwayId)
+                                local conId = args.result[1]
+                                local con = _guiActions.getCon(conId)
+                                -- logger.print('construction built, construction id =') logger.debugPrint(conId)
+                                if not(con) then return end
 
-                                _guiActions.joinSubway(subwayId)
+                                _guiActions.tryJoinSubway(conId, con)
+                                -- _guiActions.tryHideHole(conId, con)
                             elseif id == 'streetTerminalBuilder' then
                                 -- waypoint, traffic light, my own waypoints built
                                 if args and args.proposal and args.proposal.proposal
@@ -2168,10 +2242,14 @@ function data()
                             -- logger.print('LOLLO caught gui select, id = ', id, ' name = ', name, ' args = ')
                             -- logger.debugPrint(args)
 
-                            _guiActions.joinSubway(args)
+                            local conId = args
+                            local con = _guiActions.getCon(conId)
+                            if not(con) then return end
+
+                            _guiActions.tryJoinSubway(conId, con)
                         end
                     end,
-                    _myErrorHandler
+                    logger.xpErrorHandler
                 )
             end
             if isHideDistance then guiHelpers.hideWaypointDistance() end

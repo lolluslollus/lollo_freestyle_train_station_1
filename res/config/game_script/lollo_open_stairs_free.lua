@@ -6,10 +6,6 @@ local streetUtils = require('lollo_freestyle_train_station.streetUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 
-local function _myErrorHandler(err)
-    print('lollo_open_stairs_free ERROR: ', err)
-end
-
 local _compTypeBridge = 1
 local _eventId = 'lolloOpenStairsFree'
 local _eventNames = { BUILD_BRIDGE_REQUESTED = 'buildBridgeRequested' }
@@ -108,7 +104,7 @@ function data()
                         end
                     end
                 end,
-                _myErrorHandler
+                logger.xpErrorHandler
             )
         end,
         guiHandleEvent = function(id, name, args)
@@ -146,7 +142,7 @@ function data()
                             end
                         end
                     end,
-                    _myErrorHandler
+                    logger.xpErrorHandler
                 )
             end
         end,

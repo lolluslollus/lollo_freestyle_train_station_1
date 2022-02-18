@@ -3,8 +3,6 @@ local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 local _maxPercentageDeviation4Midpoint = 1.1
 
 local constants = {
-    isExtendedLog = false,
-
     cargoPlatformTracksCategory = 'cargo-platform-tracks',
     invisiblePlatformTracksCategory = 'invisible-platform-tracks',
     passengerPlatformTracksCategory = 'passenger-platform-tracks',
@@ -16,6 +14,7 @@ local constants = {
             BUILD_STATION_REQUESTED = 'buildStationRequested',
             BULLDOZE_MARKER_REQUESTED = 'bulldozeMarkerRequested',
             BULLDOZE_STATION_REQUESTED = 'bulldozeStationRequested',
+            HIDE_HOLE_REQUESTED = 'hideHoleRequested',
             HIDE_WARNINGS = 'hideWarnings',
             PLATFORM_MARKER_BUILT = 'platformMarkerBuilt',
             PLATFORM_WAYPOINT_1_SPLIT_REQUESTED = 'platformWaypoint1SplitRequested',
@@ -67,6 +66,7 @@ local constants = {
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
     subwayConFileName = 'station/rail/lollo_freestyle_train_station/subway.con',
+    undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
 
     cargoStationSquareModuleType = 'freestyleTrainStationCargoStationSquare',
     flatCargoRampModuleType = 'freestyleTrainStationFlatCargoRamp',

@@ -1,29 +1,58 @@
-local _constants = require('lollo_freestyle_train_station.constants')
+local _isExtendedLogActive = true
+local _isWarningLogActive = true
+local _isErrorLogActive = true
+local _isTimersActive = true
 
-local _util = {
-    print = function(whatever1, whatever2, whatever3, whatever4, whatever5, whatever6, whatever7, whatever8, whatever9, whatever10)
-        if not(_constants.isExtendedLog) then return end
-
-        -- rubbish, does not work
-        -- if type(arg) ~= 'table' then return end
-
-        -- local printResult = ''
-        -- for i, v in ipairs(arg) do
-        --     print(i)
-        --     print(v)
-        -- -- for _, v in pairs(arg) do
-        --     -- print(v) -- arg here is like arguments in JS
-        --     printResult = printResult .. tostring(v) .. "\t" -- arg here is like arguments in JS
-        -- end
-        -- printResult = printResult .. "\n"
-
-        print(whatever1 or '', whatever2 or '', whatever3 or '', whatever4 or '', whatever5 or '', whatever6 or '', whatever7 or '', whatever8 or '', whatever9 or '', whatever10 or '')
+return {
+    print = function(...)
+        if not(_isExtendedLogActive) then return end
+        print(...)
     end,
-
+    warn = function(label, ...)
+        if not(_isWarningLogActive) then return end
+        print('lollo_freestyle_train_station WARNING: ' .. label, ...)
+    end,
+    err = function(label, ...)
+        if not(_isErrorLogActive) then return end
+        print('lollo_freestyle_train_station ERROR: ' .. label, ...)
+    end,
     debugPrint = function(whatever)
-        if not(_constants.isExtendedLog) then return end
+        if not(_isExtendedLogActive) then return end
         debugPrint(whatever)
-    end
+    end,
+    warningDebugPrint = function(whatever)
+        if not(_isWarningLogActive) then return end
+        debugPrint(whatever)
+    end,
+    errorDebugPrint = function(whatever)
+        if not(_isErrorLogActive) then return end
+        debugPrint(whatever)
+    end,
+    profile = function(label, func)
+        if _isTimersActive then
+            local results
+            local startSec = os.clock()
+            print('######## ' .. tostring(label or '') .. ' starting at', math.ceil(startSec * 1000), 'mSec')
+            -- results = {func()} -- func() may return several results, it's LUA
+            results = func()
+            local elapsedSec = os.clock() - startSec
+            print('######## ' .. tostring(label or '') .. ' took' .. math.ceil(elapsedSec * 1000) .. 'mSec')
+            -- return table.unpack(results) -- test if we really need this
+            return results
+        else
+            return func() -- test this
+        end
+    end,
+    xpHandler = function(error)
+        if not(_isExtendedLogActive) then return end
+        print('lollo_freestyle_train_station INFO:') debugPrint(error)
+    end,
+    xpWarningHandler = function(error)
+        if not(_isWarningLogActive) then return end
+        print('lollo_freestyle_train_station WARNING:') debugPrint(error)
+    end,
+    xpErrorHandler = function(error)
+        if not(_isErrorLogActive) then return end
+        print('lollo_freestyle_train_station ERROR:') debugPrint(error)
+    end,
 }
-
-return _util

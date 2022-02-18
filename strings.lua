@@ -38,7 +38,7 @@ function data()
 				- If you want large buildings, use assets. There are mods for those.
 				- This mod adds extra pedestrian paths and bridges.
                 - This mod adds extra bridges to help with elevated stations.
-				- This mod adds stairs as a configurable asset, which can be used anywhere. The construction mover helps place them easily.
+				- This mod adds stairs as a configurable asset, which can be used anywhere. The construction mover helps to place them easily.
 
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
@@ -102,7 +102,7 @@ function data()
 			["FlatPassengerStationLargeDesc"] = "Ornate passenger station",
 			["FlatPassengerStation5MName"] = "Small passenger station, 5 m high",
 			["FlatPassengerStation5MDesc"] = "Small passenger station, to access a platform a bit higher than the road. Repaint its ground with <shift> and a paint tool.",
-			["LookUndergroundName"] = "Look underground",
+			["LookUndergroundName"] = "Look Underground",
 			["LookUndergroundDesc"] = "Hover or build this to look underground, remove it when done.",
 			["OpenStairsUpLeftName"] = "Stairs up left for ground platform",
 			["OpenStairsUpLeftDesc"] = "Connects ground passenger platforms to their twins or to the outside world.",
@@ -247,11 +247,15 @@ function data()
 			["GoThere"] = "Go there",
 			["Join"] = "Join",
 			["NoJoin"] = "Do not join",
+			["ShowUnderground"] = "Show Underground",
+			["ShowUndergroundTooltip"] = "It cannot be changed once plopped. If you want assistance to place it easily, use the 'Look Underground' track construction instead of this.",
 			["StationPickerWindowTitle"] = "Pick a station to join",
 			["SubwayCannotConnect"] = "Add stairs or underpasses to connect this subway entrance",
 			["SubwayNotConnected"] = "Join this subway entrance to a station",
 			["TrackWaypointBuiltOnPlatform"] = "You can only build track markers on tracks and platform markers on platforms",
 			["TrackWaypointsMissing"] = "Build two track markers first",
+			["UndergroundTrainDepotName"] = "Underground Train depot",
+			["UndergroundTrainDepotDesc"] = "Used to buy/sell trains. The 'Look Underground' track construction helps to snap it to the track.",
 			["WarningWindowTitle"] = "Warning",
 			["WaypointAlreadyBuilt"] = "You can only build two markers",
 			["WaypointsCrossCrossing"] = "There is a joint between this marker and its twin",
@@ -259,7 +263,7 @@ function data()
 			["WaypointsCrossStation"] = "You cannot cross an existing station",
 			["WaypointDistanceWindowTitle"] = "Air Distance",
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
-			["WaypointsTooCloseToStation"] = "Too close to an existing station",
+			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot",
 			["WaypointsTooFar"] = "Too far from its twin",
 
 			-- free open stairs
