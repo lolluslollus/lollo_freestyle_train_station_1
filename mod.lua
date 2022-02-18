@@ -15,8 +15,11 @@ function data()
                 'Bridge Station',
                 'Cargo Station',
                 'Elevated Station',
+                'Stairs',
+                'Train Depot',
                 'Train Station',
                 'Underground Station',
+                'Underground Train Depot',
             },
             authors = {
                 {
