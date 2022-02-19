@@ -74,7 +74,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             joinButton:onClick(
                 function()
                     if not(stringUtils.isNullOrEmptyString(joinEventName)) then
-                        eventArgs.join2StationId = station.id
+                        eventArgs.join2StationConId = station.id
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                             string.sub(debug.getinfo(1, 'S').source, 1),
                             eventId,

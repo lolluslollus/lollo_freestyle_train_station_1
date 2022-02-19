@@ -157,8 +157,8 @@ local _actions = {
         local conTransf = args.platformWaypointTransf
 
         logger.print('buildStation starting, args =')
-        local oldCon = edgeUtils.isValidAndExistingId(args.join2StationId)
-        and api.engine.getComponent(args.join2StationId, api.type.ComponentType.CONSTRUCTION)
+        local oldCon = edgeUtils.isValidAndExistingId(args.join2StationConId)
+        and api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
         or nil
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
@@ -297,10 +297,10 @@ local _actions = {
 
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
-        if edgeUtils.isValidAndExistingId(args.join2StationId) then
-            proposal.constructionsToRemove = { args.join2StationId }
+        if edgeUtils.isValidAndExistingId(args.join2StationConId) then
+            proposal.constructionsToRemove = { args.join2StationConId }
             -- proposal.old2new = {
-            --     [args.join2StationId] = 0,
+            --     [args.join2StationConId] = 0,
             -- }
         end
 
@@ -1011,7 +1011,7 @@ local _guiActions = {
         if subwayTransf_lua == nil then return false end
 
         logger.print('conTransf =') logger.debugPrint(subwayTransf_lua)
-        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
+        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
         -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
         logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
         if #nearbyFreestyleStations == 0 then return false end
@@ -1024,7 +1024,7 @@ local _guiActions = {
             nil,
             {
                 subwayId = conId
-                -- join2StationId will be added by the popup
+                -- join2StationConId will be added by the popup
             }
         )
 
@@ -1646,8 +1646,8 @@ function data()
             elseif name == _eventNames.BUILD_STATION_REQUESTED then
                 local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
                 eventArgs.nTerminal = 1
-                if edgeUtils.isValidAndExistingId(eventArgs.join2StationId) then
-                    local con = api.engine.getComponent(eventArgs.join2StationId, api.type.ComponentType.CONSTRUCTION)
+                if edgeUtils.isValidAndExistingId(eventArgs.join2StationConId) then
+                    local con = api.engine.getComponent(eventArgs.join2StationConId, api.type.ComponentType.CONSTRUCTION)
                     if con ~= nil then eventArgs.nTerminal = #con.params.terminals + 1 end
                 end
                 logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
@@ -1695,12 +1695,12 @@ function data()
             elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
                 _actions.bulldozeStation(args.stationConstructionId)
             elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
-                if not(edgeUtils.isValidAndExistingId(args.join2StationId))
+                if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
                 or not(edgeUtils.isValidAndExistingId(args.subwayId)) then
-                    print('lollo freestyle train station ERROR: args.join2StationId or args.subwayId is invalid')
+                    print('lollo freestyle train station ERROR: args.join2StationConId or args.subwayId is invalid')
                     return
                 end
-                _actions.addSubway(args.join2StationId, args.subwayId, _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED)
+                _actions.addSubway(args.join2StationConId, args.subwayId, _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED)
             end
         end,
         logger.xpErrorHandler
@@ -2131,7 +2131,7 @@ function data()
                                             trackWaypoint2Id = distance11 < distance12 and trackWaypointIds[2] or trackWaypointIds[1],
                                         }
 
-                                        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
+                                        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
                                         if #nearbyFreestyleStations > 0 and #nearbyFreestyleStations < _constants.maxNTerminals then
                                             guiHelpers.showNearbyStationPicker(
                                                 isCargo,
@@ -2139,7 +2139,7 @@ function data()
                                                 _eventId,
                                                 _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
                                                 _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                                eventArgs -- join2StationId will be added by the popup
+                                                eventArgs -- join2StationConId will be added by the popup
                                             )
                                         else
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(

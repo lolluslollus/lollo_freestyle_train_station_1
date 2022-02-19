@@ -41,7 +41,7 @@ local helpers = {
         return results
     end,
 
-    getNearbyFreestyleStationsList = function(transf, searchRadius, isOnlyPassengers)
+    getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnlyPassengers)
         if type(transf) ~= 'table' then return {} end
         if tonumber(searchRadius) == nil then searchRadius = _constants.searchRadius4NearbyStation2Join end
 
@@ -57,7 +57,7 @@ local helpers = {
             if edgeUtils.isValidAndExistingId(stationId) then
                 local conId = _station2ConstructionMap[stationId]
                 if edgeUtils.isValidAndExistingId(conId) then
-                    -- logger.print('getNearbyFreestyleStationsList has found conId =', conId)
+                    -- logger.print('getNearbyFreestyleStationConsList has found conId =', conId)
                     local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                     if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
                         -- logger.print('construction.name =') logger.debugPrint(con.name) nil
@@ -889,7 +889,7 @@ local _getStationEndEntities4T = function(con, t)
     -- local conTransf = transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
     -- logger.print('frozenEdges first =') logger.debugPrint(frozenEdgeIds)
     -- logger.print('frozenNodes first =') logger.debugPrint(frozenNodeIds)
-    -- local nearbyStations = helpers.getNearbyFreestyleStationsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
+    -- local nearbyStations = helpers.getNearbyFreestyleStationConsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
     -- for _, nearbyStation in pairs(nearbyStations) do
     --     logger.print('nearbyStation =') logger.debugPrint(nearbyStation)
     --     if edgeUtils.isValidAndExistingId(nearbyStation.id) then
