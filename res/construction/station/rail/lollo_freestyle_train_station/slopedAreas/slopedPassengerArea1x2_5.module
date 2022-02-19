@@ -34,7 +34,6 @@ function data()
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'slopedPassengerArea1x2_5ModelFileName']
 
-			-- LOLLO TODO this will crash coz sloped area positions are burnt in when laying the tracks
 			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 2.5,
 				myModelId, nil,
 				myGroundFacesFillKey)

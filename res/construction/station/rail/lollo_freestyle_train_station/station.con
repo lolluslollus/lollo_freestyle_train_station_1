@@ -1071,73 +1071,6 @@ function data()
 				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
-					local _isNorth_2 = function(t1, t2)
-						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
-                        -- If the station is curved, and we check the centre platform segments,
-                        -- a link between terminal T (1) to TT (1) might look left,
-						-- while a link between terminal T (1) to TT (2) might look right.
-                        -- Instead, we compare the centre points of each terminal:
-                        -- this way, all connections between platform T1 and T2 will be left or right,
-                        -- and all connections between platform T2 and T1 will be right or left.
-						-- It does not really matter how we compare, as long as
-						-- platform T is left of platform TT => platform TT is right of platform T
-						-- LOLLO TODO check what happens if platforms cross each other, one above and one below
-						-- LOLLO TODO this fails if the terminals are shifted lengthwise
-						if t1 == t2 then print('LOLLO freestyle train station ERROR: t1 == t2 ==', t1) return false end
-
-						local midIndex1 = math.floor(#params.terminals[t1].centrePlatformsFineRelative / 2)
-						local midIndex2 = math.floor(#params.terminals[t2].centrePlatformsFineRelative / 2)
-						local pos1 = (params.terminals[t1].centrePlatformsFineRelative[midIndex1]).posTanX2[1][1]
-						local pos2 = (params.terminals[t2].centrePlatformsFineRelative[midIndex2]).posTanX2[1][1]
-						local isNorthResult = pos1[2] == pos2[2] and pos2[1] > pos1[1] or pos2[2] > pos1[2]
-						if isOutputLog then
-							print('_isNorth on t1 =', t1, ', t2 =', t2, 'has calculated midIndex1 =', midIndex1, ', midIndex2 =', midIndex2, ', result =', isNorthResult)
-						end
-						return isNorthResult
-						-- fine sample
-						-- {
-						-- 	catenary = false,
-						-- 	era = "era_b_",
-						-- 	leadingIndex = 1,
-						-- 	posTanX2 = {
-						-- 	  {
-						-- 		{ -410.38708496094, 298.75, -12.37020111084, },
-						-- 		{ 0.93100528717041, -0.35960373878479, 0.00043170726858079, },
-						-- 	  },
-						-- 	  {
-						-- 		{ -409.45594571539, 298.39073207305, -12.369768843313, },
-						-- 		{ 0.93126547655219, -0.35892937927669, 0.0004328567151471, },
-						-- 	  },
-						-- 	},
-						-- 	trackType = 13,
-						-- 	trackTypeName = "lollo_freestyle_train_station/era_b_passenger_platform_5m.lua",
-						-- 	type = 2,
-						-- 	typeIndex = 1,
-						-- 	width = 5,
-						--   },
-						-- not fine sample
-						-- {
-						-- 	catenary = false,
-						-- 	era = "era_b_",
-						-- 	leadingIndex = 1,
-						-- 	posTanX2 = {
-						-- 	  {
-						-- 		{ -410.38708496094, 298.75, -12.37020111084, },
-						-- 		{ 4.6550264358521, -1.798018693924, 0.002158536342904, },
-						-- 	  },
-						-- 	  {
-						-- 		{ -405.72878396511, 296.96038103104, -12.368025350384, },
-						-- 		{ 4.6614825564051, -1.7812137077216, 0.0021970066487603, },
-						-- 	  },
-						-- 	},
-						-- 	terrainHeight1 = 103.71601867676, -- not in the fine sample
-						-- 	trackType = 13,
-						-- 	trackTypeName = "lollo_freestyle_train_station/era_b_passenger_platform_5m.lua",
-						-- 	type = 2,
-						-- 	typeIndex = 1,
-						-- 	width = 5,
-						--   },
-					end
 					local _isNorth = function(posTanX2, pos, distance)
 						-- distance is only for debugging purposes
 						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
@@ -1200,7 +1133,6 @@ function data()
 											if positionsInTT ~= nil then
 												for ii = 1, #positionsInTT do
 													local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
-													-- local isNorthOfT1 = _isNorth_2(t, tt)
 													local isNorthOfT1 = _isNorth(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link, distance)
 													local isNorthOfT2 = _isNorth(positionsInTT[ii].lanePosTanX2, positionsInT[i].pos2Link, distance)
 													local newSegment = {
