@@ -363,20 +363,24 @@ local privateFuncs = {
             local iN = nTrackEdge + 1
             local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
             for ii = 1, #safs do
-                if safs[ii].leadingIndex > iN then break end
-                if safs[ii].leadingIndex >= i1 then
-                    local saf = safs[ii]
-                    local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
-                    local pos1Inner = cpf.posTanX2[1][1]
-                    local pos2Inner = cpf.posTanX2[2][1]
-                    local pos2Outer = saf.posTanX2[2][1]
-                    local pos1Outer = saf.posTanX2[1][1]
-                    terrainCoordinates[#terrainCoordinates+1] = {
-                        pos1Inner,
-                        pos2Inner,
-                        transfUtils.getExtrapolatedPosX2Continuation(pos2Inner, pos2Outer, areaWidth * 0.5),
-                        transfUtils.getExtrapolatedPosX2Continuation(pos1Inner, pos1Outer, areaWidth * 0.5),
-                    }
+                local leadingIndex = safs[ii].leadingIndex
+                if leadingIndex > iN then break end
+                local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+                if cpl.type == 0 then -- only on ground
+                    if leadingIndex >= i1 then
+                        local saf = safs[ii]
+                        local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+                        local pos1Inner = cpf.posTanX2[1][1]
+                        local pos2Inner = cpf.posTanX2[2][1]
+                        local pos2Outer = saf.posTanX2[2][1]
+                        local pos1Outer = saf.posTanX2[1][1]
+                        terrainCoordinates[#terrainCoordinates+1] = {
+                            pos1Inner,
+                            pos2Inner,
+                            transfUtils.getExtrapolatedPosX2Continuation(pos2Inner, pos2Outer, areaWidth * 0.5),
+                            transfUtils.getExtrapolatedPosX2Continuation(pos1Inner, pos1Outer, areaWidth * 0.5),
+                        }
+                    end
                 end
             end
             -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
