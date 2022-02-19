@@ -362,6 +362,7 @@ local privateFuncs = {
             local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local iN = nTrackEdge + 1
             local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
+            if not(safs) then return end
             for ii = 1, #safs do
                 local leadingIndex = safs[ii].leadingIndex
                 if leadingIndex > iN then break end
@@ -906,6 +907,7 @@ return {
             local iiN = nTrackEdge + 1
         
             local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
+            if not(safs) then return end
             -- print('safs =') debugPrint(safs)
             for ii = 1, #safs do
                 if safs[ii].leadingIndex > iiN then break end
