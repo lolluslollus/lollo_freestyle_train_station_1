@@ -26,8 +26,8 @@ local _actions = {
     -- which has the same format as the result of api.cmd.make.buildProposal
     addSubway = function(stationConstructionId, subwayConstructionId, successEventName)
         logger.print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
-        if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then print('WARNING: invalid stationConstructionId') debugPrint(stationConstructionId) return end
-        if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then print('WARNING: invalid subwayConstructionId') debugPrint(subwayConstructionId) return end
+        if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then logger.warn('invalid stationConstructionId') logger.warningDebugPrint(stationConstructionId) return end
+        if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then logger.warn('invalid subwayConstructionId') logger.warningDebugPrint(subwayConstructionId) return end
 
         local oldCon = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
         if oldCon == nil then return end
@@ -56,7 +56,7 @@ local _actions = {
                 if newParams.modules[testResult] == nil then return testResult end
             end
 
-            print('WARNING: cannot find an available slot for a subway')
+            logger.warn('cannot find an available slot for a subway')
             return false
         end
         local newSubway_Key = _getNextAvailableSlotId()
@@ -732,7 +732,7 @@ local _actions = {
         -- logger.print('node1 =') logger.debugPrint(node1)
 
         if not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)) and not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node1.position)) then
-            print('WARNING: splitEdge cannot find the nodes')
+            logger.warn('splitEdge cannot find the nodes')
         end
         local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)
         logger.print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
@@ -770,9 +770,9 @@ local _actions = {
                             elseif distance0 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8three')
                             elseif distance1 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8four')
                             else
-                                print('lollo freestyle train station ERROR: impossible condition, distance0 =') debugPrint(distance0)
-                                print('distance1 =') debugPrint(distance1)
-                                print('isNodeBetweenOrientatedLikeMyEdge =') debugPrint(isNodeBetweenOrientatedLikeMyEdge)
+                                logger.err('impossible condition, distance0 =') logger.errorDebugPrint(distance0)
+                                logger.err('distance1 =') logger.errorDebugPrint(distance1)
+                                logger.err('isNodeBetweenOrientatedLikeMyEdge =') logger.errorDebugPrint(isNodeBetweenOrientatedLikeMyEdge)
                             end
                             logger.print('splitEdgeRemovingObject is about to raise its event with splitNodeId =', splitNodeId or 'NIL')
                             eventArgs[newArgName] = splitNodeId
@@ -1045,7 +1045,7 @@ local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr, proposal, nNew
     end
 
     if not(edgeUtils.isValidAndExistingId(edgeId)) then
-        print('Warning: invalid edgeId in _tryReplaceSegment')
+        logger.warn('invalid edgeId in _tryReplaceSegment')
         return false, nNewEntities
     end
 
@@ -1131,7 +1131,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     -- The second time it has a new id, so I can only snap it if I reread the station end entities, in a tidy queue.
 
     logger.print('buildSnappyPlatforms starting')
-    if type(t) ~= 'number' or type(tMax) ~= 'number' then print('Warning: buildSnappyPlatforms received wrong t or tMax') debugPrint(t) debugPrint(tMax) return end
+    if type(t) ~= 'number' or type(tMax) ~= 'number' then logger.warn('buildSnappyPlatforms received wrong t or tMax') logger.warningDebugPrint(t) logger.warningDebugPrint(tMax) return end
     if t > tMax then logger.print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
@@ -1188,7 +1188,7 @@ end
 _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     -- see the comments in buildSnappyPlatforms
     logger.print('buildSnappyTracks starting')
-    if type(t) ~= 'number' or type(tMax) ~= 'number' then print('Warning: buildSnappyTracks received wrong t or tMax') debugPrint(t) debugPrint(tMax) return end
+    if type(t) ~= 'number' or type(tMax) ~= 'number' then logger.warn('buildSnappyTracks received wrong t or tMax') logger.warningDebugPrint(t) logger.warningDebugPrint(tMax) return end
     if t > tMax then logger.print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
@@ -1363,8 +1363,8 @@ function data()
                 then
                     if args == nil then print('args is NIL')
                     else
-                        print('WARNING: some data is missing or invalid. args.splitTrackNode1Id =') debugPrint(args.splitTrackNode1Id)
-                        print('args.splitTrackNode2Id =') debugPrint(args.splitTrackNode2Id)
+                        logger.warn('some data is missing or invalid. args.splitTrackNode1Id =') logger.warningDebugPrint(args.splitTrackNode1Id)
+                        logger.warn('args.splitTrackNode2Id =') logger.warningDebugPrint(args.splitTrackNode2Id)
                     end
                     return
                 end
@@ -1469,7 +1469,7 @@ function data()
                 if iCloseEnoughToMidLength < 1 then
                     logger.print('no track edge is close enough to the middle (halfway between the ends), going to add a split. iAcrossMidLength =', iAcrossMidLength)
                     if iAcrossMidLength < 1 then
-                        print('WARNING: trouble finding trackEdgeListMidIndex')
+                        logger.warn('trouble finding trackEdgeListMidIndex')
                         print('totalLength =') debugPrint(totalLength)
                         print('trackLengths =') debugPrint(trackLengths)
                         print('halfTotalLength =') debugPrint(halfTotalLength)
