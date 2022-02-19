@@ -45,7 +45,8 @@ local _actions = {
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
             seed = oldCon.params.seed + 1,
             subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
-            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
+            -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
+            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true),
         }
         local _getNextAvailableSlotId = function()
             local counter = 0
@@ -209,31 +210,25 @@ local _actions = {
         end
         local params_newTerminal = {
             isCargo = args.isCargo,
-            -- myTransf = arrayUtils.cloneDeepOmittingFields(conTransf),
             platformEdgeLists = args.platformEdgeList,
             trackEdgeLists = args.trackEdgeList,
-            -- centrePlatforms = args.centrePlatforms,
             centrePlatformsRelative = arrayUtils.map(
                 args.centrePlatforms,
                 _getRelativePosTanX2s
             ),
-            -- centrePlatformsFine = args.centrePlatformsFine,
             centrePlatformsFineRelative = arrayUtils.map(
                 args.centrePlatformsFine,
                 _getRelativePosTanX2s
             ),
             trackEdgeListMidIndex = args.trackEdgeListMidIndex,
-            -- leftPlatforms = args.leftPlatforms,
             leftPlatformsRelative = arrayUtils.map(
                 args.leftPlatforms,
                 _getRelativePosTanX2s
             ),
-            -- rightPlatforms = args.rightPlatforms,
             rightPlatformsRelative = arrayUtils.map(
                 args.rightPlatforms,
                 _getRelativePosTanX2s
             ),
-            -- crossConnectors = args.crossConnectors,
             crossConnectorsRelative = arrayUtils.map(
                 args.crossConnectors,
                 _getRelativePosTanX2s
@@ -288,7 +283,8 @@ local _actions = {
                 modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
                 seed = oldCon.params.seed + 1,
                 subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
-                terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
+                -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
+                terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true),
             }
             newParams.modules[params_newModuleKeys[1]] = params_newModuleValues[1]
             newParams.modules[params_newModuleKeys[2]] = params_newModuleValues[2]
@@ -359,7 +355,8 @@ local _actions = {
             modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
             seed = oldCon.params.seed + 1,
             subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
-            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true)
+            -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
+            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true),
         }
 
         local newModules = {}
