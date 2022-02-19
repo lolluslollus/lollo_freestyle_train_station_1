@@ -6,15 +6,15 @@ function data()
             bbMax = { 1.2, 0.4, 4 },
             bbMin = { -1.2, -0.4, 0 },
         },
-        collider = {
-            params = {
-                halfExtents = { 1.2, 0.4, 2, },
-            },
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 2, 1, },
-            type = 'BOX',
-        },
+        -- collider = {
+        --     params = {
+        --         halfExtents = { 1.2, 0.4, 2, },
+        --     },
+        --     transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 2, 1, },
+        --     type = 'BOX',
+        -- },
         -- boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
-        -- collider = _mdlHelpers.getVoidCollider(),
+        collider = _mdlHelpers.getVoidCollider(),
         lods = {
             {
                 node = {
