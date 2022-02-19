@@ -31,7 +31,7 @@ function data()
 				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
 				- To work underground, use <NumPad 4>.
 				- Platforms only carry passengers or cargo if they are part of a terminal.
-				- 2.5 m platforms do not agree with bridges and tunnels. My \"no railing\" bridges help a bit, tunnels can't be helped.
+				- 2.5 m platforms do not agree with bridges and tunnels. My \"no railing\" bridges help, tunnels can't be helped.
                 - Very thin paths help with certain setups: those are in my street fine tuning mod.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
@@ -153,12 +153,16 @@ function data()
 			["SlopedCargoAreaWaiting1x10Desc"] = "Platform extension, 10 m. It holds extra cargo.",
 			["SlopedCargoAreaWaiting1x20Name"] = "20 m platform extension, to hold extra cargo",
 			["SlopedCargoAreaWaiting1x20Desc"] = "Platform extension, 20 m. It holds extra cargo.",
+			["SlopedPassengerArea1x2_5Name"] = "2.5 m platform extension, passenger style",
+			["SlopedPassengerArea1x2_5Desc"] = "Platform extension, 2.5 m, passenger style. Good for plopping assets on.",
 			["SlopedPassengerArea1x5Name"] = "5 m platform extension, passenger style",
 			["SlopedPassengerArea1x5Desc"] = "Platform extension, 5 m, passenger style. Good for plopping assets on.",
 			["SlopedPassengerArea1x10Name"] = "10 m platform extension, passenger style",
 			["SlopedPassengerArea1x10Desc"] = "Platform extension, 10 m, passenger style. Good for plopping assets on.",
 			["SlopedPassengerArea1x20Name"] = "20 m platform extension, passenger style",
 			["SlopedPassengerArea1x20Desc"] = "Platform extension, 20 m, passenger style. Good for plopping assets on.",
+			["SlopedPassengerAreaWaiting1x2_5Name"] = "2.5 m platform extension, to hold extra passengers",
+			["SlopedPassengerAreaWaiting1x2_5Desc"] = "Platform extension, 2.5 m. It holds extra passengers.",
 			["SlopedPassengerAreaWaiting1x5Name"] = "5 m platform extension, to hold extra passengers",
 			["SlopedPassengerAreaWaiting1x5Desc"] = "Platform extension, 5 m. It holds extra passengers.",
 			["SlopedPassengerAreaWaiting1x10Name"] = "10 m platform extension, to hold extra passengers",

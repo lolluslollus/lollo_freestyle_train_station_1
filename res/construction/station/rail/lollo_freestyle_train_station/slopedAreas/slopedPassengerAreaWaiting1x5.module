@@ -21,7 +21,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 22,
+			value = 24,
 		},
 		type = _constants.slopedPassengerArea1x5ModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -38,7 +38,7 @@ function data()
 				myModelId, _constants.passengerWaitingAreaCentredModelFileName,
 				myGroundFacesFillKey)
 
-			moduleHelpers.slopedAreas.addSlopedPassengerAreaDeco(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, cpl.posTanX2, 0.0, 0.0, era)
+			moduleHelpers.slopedAreas.addSlopedPassengerAreaDeco(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, era, 5)
 		end,
 
 		getModelsFn = function(params)

@@ -267,7 +267,27 @@ function data()
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						if cpl.type == 0 then -- only on ground
+						if cpl.type == 0 or cpl.type == 1 then -- only on ground and on bridges
+							if not(isCargoTerminal) and params.terminals[t].slopedAreasFineRelative[2.5] then -- thin sloped areas were added later and they are burnt into the initial data
+								if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x2_5SlotId then
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 2.5)
+									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x2_5SlotId)
+									table.insert(result.slots, {
+										-- height = 0,
+										id = myId,
+										-- 0, 3} and 3, 0} shift this along the track so it avoids flat areas,
+										-- which have the same thing reversed.
+										-- This way, sloped areas and flat areas can be easily combined.
+										spacing = isTrackOnPlatformLeft and {2, 0, 0, 3} or {0, 2, 3, 0},
+										transf = transfUtilsUG.mul(
+											moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
+											{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+										),
+										type = _constants.slopedPassengerArea1x2_5ModuleType,
+									})
+									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess)
+								end
+							end
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
@@ -286,7 +306,8 @@ function data()
 								})
 								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess)
 							end
-
+						end
+						if cpl.type == 0 then -- only on ground
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 10)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)

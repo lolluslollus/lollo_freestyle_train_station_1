@@ -945,10 +945,19 @@ return {
         
             privateFuncs.slopedAreas._doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
         end,
-        addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, cplPosTanX2, xShift, yShift, era)
+        addSlopedPassengerAreaDeco = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, era, areaWidth)
+            if areaWidth < 5 then return end
+
             local isEndFiller = math.fmod(nTrackEdge, 3) == 1
             if isEndFiller then return end
-        
+
+            local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+            local platformWidth = cpl.width
+
+            -- 0, -2.5, -7.5
+            -- local yShift = (platformWidth - areaWidth) / 2
+            local yShift = -platformWidth / 2
+
             local chairsModelId = nil
             local binModelId = nil
             local arrivalsModelId = nil
@@ -966,24 +975,24 @@ return {
                 arrivalsModelId = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl'
             end
         
-            local verticalTransf = privateFuncs.getPlatformObjectTransf_AlwaysVertical(cplPosTanX2)
+            local verticalTransf = privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2)
         
             result.models[#result.models + 1] = {
                 id = chairsModelId,
                 slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6 + xShift, -5.0 + yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+                transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6, yShift - 2.8, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
                 tag = tag
             }
             result.models[#result.models + 1] = {
                 id = binModelId,
                 slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6 + xShift, -3.2 + yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+                transf = transfUtilsUG.mul(verticalTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.6, yShift - 1.0, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
                 tag = tag
             }
             result.models[#result.models + 1] = {
                 id = arrivalsModelId,
                 slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  4.2 + xShift, -4.5 + yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+                transf = transfUtilsUG.mul(verticalTransf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  4.2, yShift -2.1, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
                 tag = tag
             }
         end,

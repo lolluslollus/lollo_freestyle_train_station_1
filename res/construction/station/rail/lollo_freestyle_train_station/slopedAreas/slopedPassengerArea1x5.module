@@ -21,7 +21,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 21,
+			value = 23,
 		},
 		type = _constants.slopedPassengerArea1x5ModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
