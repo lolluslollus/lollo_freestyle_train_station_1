@@ -5,54 +5,52 @@ local modulesutil = require "modulesutil"
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
 
 
 function data()
-return {
-	availability = {
-		yearFrom = moduleHelpers.eras.era_c.startYear,
-		yearTo = 0
-	},
-	category = {
-		categories = { "deco", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("PlatformRoofMetalGlassName"),
-		description = _("PlatformRoofMetalGlassDesc"),
-		icon = "ui/lollo_freestyle_train_station/platformRoofMetalGlass.tga"
-	},
-	metadata = { },
-	order = {
-		value = 15,
-	},
-	type = _constants.platformRoofModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not nTrackEdge or not baseId then return end
+	return {
+		availability = {
+			yearFrom = moduleHelpers.eras.era_c.startYear,
+			yearTo = 0
+		},
+		category = {
+			categories = { "deco", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("PlatformRoofMetalGlassName"),
+			description = _("PlatformRoofMetalGlassDesc"),
+			icon = "ui/lollo_freestyle_train_station/platformRoofMetalGlass.tga"
+		},
+		metadata = { },
+		order = {
+			value = 15,
+		},
+		type = _constants.platformRoofModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not nTrackEdge or not baseId then return end
 
-		moduleHelpers.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-		_constants.platformRoofMetalGlassCeiling2_5MModelFileName, _constants.platformRoofMetalGlassCeiling5MModelFileName,
-		_constants.platformRoofMetalGlassPillar2_5MModelFileName, _constants.platformRoofMetalGlassPillar5MModelFileName)
-	end,
+			moduleHelpers.platformRoofs.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+			_constants.platformRoofMetalGlassCeiling2_5MModelFileName, _constants.platformRoofMetalGlassCeiling5MModelFileName,
+			_constants.platformRoofMetalGlassPillar2_5MModelFileName, _constants.platformRoofMetalGlassPillar5MModelFileName)
+		end,
 
-	getModelsFn = function(params)
-		local results = {}
-		for y = -2, 2 do
+		getModelsFn = function(params)
+			local results = {}
+			for y = -2, 2 do
+				results[#results+1] = {
+					id = _constants.platformRoofMetalGlassCeiling2_5MModelFileName,
+					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+				}
+			end
 			results[#results+1] = {
-				id = _constants.platformRoofMetalGlassCeiling2_5MModelFileName,
-				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+				id = _constants.platformRoofMetalGlassPillar2_5MModelFileName,
+				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
+		return results
 		end
-		results[#results+1] = {
-			id = _constants.platformRoofMetalGlassPillar2_5MModelFileName,
-			transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
-		}
-	return results
-	end
-}
-
+	}
 end

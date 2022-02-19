@@ -5,7 +5,6 @@ local modulesutil = require "modulesutil"
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
 
 
 function data()

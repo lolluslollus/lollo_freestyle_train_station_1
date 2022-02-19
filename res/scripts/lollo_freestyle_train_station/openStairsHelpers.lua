@@ -1,6 +1,6 @@
-local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local constants = require('lollo_freestyle_train_station.constants')
 
-local helpers = {
+local public = {
     eraA = {
         streetTypeId_withBridge = nil,
         streetTypeName_withBridge = 'lollo_1m_path_cobbles_bridge.lua',
@@ -30,28 +30,28 @@ local helpers = {
     },
 }
 
-helpers.getBridgeTypeId = function(streetTypeId_withBridge, isRailing)
+public.getBridgeTypeId = function(streetTypeId_withBridge, isRailing)
     if isRailing then
-        if helpers.eraA.streetTypeId_withBridge == streetTypeId_withBridge then return helpers.eraA.bridgeTypeId_withRailing
-        elseif helpers.eraB.streetTypeId_withBridge == streetTypeId_withBridge then return helpers.eraB.bridgeTypeId_withRailing
-        elseif helpers.eraC.streetTypeId_withBridge == streetTypeId_withBridge then return helpers.eraC.bridgeTypeId_withRailing
+        if public.eraA.streetTypeId_withBridge == streetTypeId_withBridge then return public.eraA.bridgeTypeId_withRailing
+        elseif public.eraB.streetTypeId_withBridge == streetTypeId_withBridge then return public.eraB.bridgeTypeId_withRailing
+        elseif public.eraC.streetTypeId_withBridge == streetTypeId_withBridge then return public.eraC.bridgeTypeId_withRailing
         else return nil
         end
     else
-        if helpers.eraA.streetTypeId_withBridge == streetTypeId_withBridge then return helpers.eraA.bridgeTypeId_noRailing
-        elseif helpers.eraB.streetTypeId_withBridge == streetTypeId_withBridge then return helpers.eraB.bridgeTypeId_noRailing
-        elseif helpers.eraC.streetTypeId_withBridge == streetTypeId_withBridge then return helpers.eraC.bridgeTypeId_noRailing
+        if public.eraA.streetTypeId_withBridge == streetTypeId_withBridge then return public.eraA.bridgeTypeId_noRailing
+        elseif public.eraB.streetTypeId_withBridge == streetTypeId_withBridge then return public.eraB.bridgeTypeId_noRailing
+        elseif public.eraC.streetTypeId_withBridge == streetTypeId_withBridge then return public.eraC.bridgeTypeId_noRailing
         else return nil
         end
     end
 end
 
-helpers.getData4Era = function(eraPrefix)
-    if eraPrefix == moduleHelpers.eras.era_a.prefix then return helpers.eraA
-    elseif eraPrefix == moduleHelpers.eras.era_b.prefix then return helpers.eraB
-    elseif eraPrefix == moduleHelpers.eras.era_c.prefix then return helpers.eraC
+public.getData4Era = function(eraPrefix)
+    if eraPrefix == constants.eras.era_a.prefix then return public.eraA
+    elseif eraPrefix == constants.eras.era_b.prefix then return public.eraB
+    elseif eraPrefix == constants.eras.era_c.prefix then return public.eraC
     else return nil
     end
 end
 
-return helpers
+return public

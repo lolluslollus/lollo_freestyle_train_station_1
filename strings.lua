@@ -1,4 +1,5 @@
 function data()
+	-- local _constants = require('lollo_freestyle_train_station.constants') -- this won't work
 	return {
 		en = {
 			["DESC"] = [[
@@ -119,7 +120,7 @@ function data()
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
 			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It connects to underpasses. Max height 40 m, adjust it with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
 			["PassengerPlatformLiftName"] = "Passenger lift to a bridge",
-			["PassengerPlatformLiftDesc"] = "Passenger lift to access a 5 m platform on a bridge, from below. It connects to underpasses. Max height 40 m, adjust it with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
+			["PassengerPlatformLiftDesc"] = "Passenger lift to access a platform on a bridge, from below. It connects to underpasses. Max height 40 m, adjust it with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
 			["PassengerStationSquareName"] = "Station square",
 			["PassengerStationSquareDesc"] = "Square between passenger stations and the road. Adjust its height with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
 			["PassengerStationSquarePlainName"] = "Plain station square",
@@ -223,10 +224,21 @@ function data()
 			["IronBridgeNoPillarsNoSides"] = "Iron bridge with no pillars and no railing",
 			["IronBridgeNormalPillarsNoSides"] = "Iron bridge with no railing",
 			["IronBridgeSpacedPillarsNoSides"] = "Iron bridge with spaced pillars and no railing",
-			["PedestrianCementBridgeNoPillars"] = "Pedestrian concrete bridge with no pillars. Only for 1 metre wide roads",
-			["PedestrianCementBridgeNoPillarsNoSides"] = "Pedestrian concrete bridge with no pillars and no railing. Only for 1 metre wide roads",
-			["PedestrianBasicBridgeNoPillars"] = "Pedestrian bridge with no pillars. Only for 1 metre wide roads",
-			["PedestrianBasicBridgeNoPillarsNoSides"] = "Pedestrian bridge with no pillars and no railing. Only for 1 metre wide roads",
+			["PedestrianCementBridgeNoPillars"] = "Concrete bridge with no pillars. For pedestrian paths",
+			["PedestrianCementBridgeNoPillarsNoSides"] = "Concrete bridge with no pillars and no railing. For pedestrian paths",
+			-- these won't work
+			-- ["PedestrianBasicBridgeNoPillars" .. _constants.eras.era_a.prefix] = "Era A bridge with no pillars, for pedestrian paths",
+			-- ["PedestrianBasicBridgeNoPillarsNoSides" .. _constants.eras.era_a.prefix] = "Era A bridge with no pillars and no railing, for pedestrian paths",
+			-- ["PedestrianBasicBridgeNoPillars" .. _constants.eras.era_b.prefix] = "Era B bridge with no pillars, for pedestrian paths",
+			-- ["PedestrianBasicBridgeNoPillarsNoSides" .. _constants.eras.era_b.prefix] = "Era B bridge with no pillars and no railing, for pedestrian paths",
+			-- ["PedestrianBasicBridgeNoPillars" .. _constants.eras.era_c.prefix] = "Era C bridge with no pillars, for pedestrian paths",
+			-- ["PedestrianBasicBridgeNoPillarsNoSides" .. _constants.eras.era_c.prefix] = "Era C bridge with no pillars and no railing, for pedestrian paths",
+			["era_a_PedestrianBasicBridgeNoPillars"] = "Era A bridge with no pillars, for pedestrian paths",
+			["era_a_PedestrianBasicBridgeNoPillarsNoSides"] = "Era A bridge with no pillars and no railing, for pedestrian paths and 2.5 m platforms",
+			["era_b_PedestrianBasicBridgeNoPillars"] = "Era B bridge with no pillars, for pedestrian paths",
+			["era_b_PedestrianBasicBridgeNoPillarsNoSides"] = "Era B bridge with no pillars and no railing, for pedestrian paths and 2.5 m platforms",
+			["era_c_PedestrianBasicBridgeNoPillars"] = "Era C bridge with no pillars, for pedestrian paths",
+			["era_c_PedestrianBasicBridgeNoPillarsNoSides"] = "Era C bridge with no pillars and no railing, for pedestrian paths and 2.5 m platforms",
 
 			["NewStationName"] = "New Station",
 

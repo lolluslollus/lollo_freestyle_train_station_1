@@ -2,7 +2,6 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local transf = require 'transf'
-local vec3 = require 'vec3'
 
 function data()
     return {
@@ -50,7 +49,7 @@ function data()
             --		result.terminalGroups = {}
             --		result.terrainAlignmentLists = {}
 
-            moduleHelpers.doTerrain4Subways(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
+            moduleHelpers.subways.doTerrain4Subways(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
 
             return result
         end,

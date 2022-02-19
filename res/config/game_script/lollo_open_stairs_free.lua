@@ -1,7 +1,7 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
-local openStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
+local _guiOpenStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
 local streetUtils = require('lollo_freestyle_train_station.streetUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
@@ -10,7 +10,6 @@ local _compTypeBridge = 1
 local _eventId = 'lolloOpenStairsFree'
 local _eventNames = { BUILD_BRIDGE_REQUESTED = 'buildBridgeRequested' }
 
-local _guiOpenStairsHelpers = openStairsHelpers
 
 local _actions = {
     replaceEdgeWithSameOnBridge = function(oldEdgeId, bridgeTypeId)

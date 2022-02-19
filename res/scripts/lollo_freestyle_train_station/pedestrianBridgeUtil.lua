@@ -1,7 +1,7 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local bridgeutil = require 'bridgeutil'
 local mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
-local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local constants = require('lollo_freestyle_train_station.constants')
 
 local _lod0_skinMaterials_era_a_rep = {
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
@@ -59,12 +59,12 @@ local function getDynamicProps(eraPrefix)
 	local _lod0_skinMaterials_side = {}
 	local _lod0_skinMaterials_side_no_railing = {}
 	local _lod1_materials = {}
-	if eraPrefix == moduleHelpers.eras.era_a.prefix then
+	if eraPrefix == constants.eras.era_a.prefix then
 		_lod0_skinMaterials_rep = _lod0_skinMaterials_era_a_rep
 		_lod0_skinMaterials_side = _lod0_skinMaterials_era_a_side
 		_lod0_skinMaterials_side_no_railing = _lod0_skinMaterials_era_a_side_no_railing
 		_lod1_materials = _lod1_materials_era_a
-	elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
+	elseif eraPrefix == constants.eras.era_b.prefix then
 		_lod0_skinMaterials_rep = _lod0_skinMaterials_era_b_rep
 		_lod0_skinMaterials_side = _lod0_skinMaterials_era_b_side
 		_lod0_skinMaterials_side_no_railing = _lod0_skinMaterials_era_b_side_no_railing
@@ -80,7 +80,7 @@ local function getDynamicProps(eraPrefix)
 end
 
 local utils = {}
-utils.getData4Cement = function(isSides)
+utils.getData4CementOBSOLETE = function(isSides)
     local _pillarLength = 1
 
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
@@ -181,7 +181,7 @@ utils.getData4Cement = function(isSides)
         name = isSides and _('PedestrianCementBridgeNoPillars') or _('PedestrianCementBridgeNoPillarsNoSides'),
         yearFrom = 65535, --0, -- obsolete, keep it for compatibility
         yearTo = 0,
-        carriers = { 'ROAD' },
+        carriers = { 'RAIL', 'ROAD' },
         speedLimit = 20.0 / 3.6,
         pillarLen = _pillarLength,
         pillarMinDist = 65535,
@@ -333,10 +333,10 @@ utils.getData4Basic = function(eraPrefix, isSides)
     end
 
     return {
-        name = isSides and _('PedestrianBasicBridgeNoPillars') or _('PedestrianBasicBridgeNoPillarsNoSides'),
+        name = isSides and _(eraPrefix .. 'PedestrianBasicBridgeNoPillars') or _(eraPrefix .. 'PedestrianBasicBridgeNoPillarsNoSides'),
         yearFrom = 0, -- same as concrete paths
         yearTo = 0,
-        carriers = { 'ROAD' },
+        carriers = isSides and { 'ROAD' } or { 'RAIL', 'ROAD' },
         speedLimit = 20.0 / 3.6,
         pillarLen = _pillarLength,
         pillarMinDist = 65535,

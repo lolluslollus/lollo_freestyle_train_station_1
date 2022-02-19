@@ -4,7 +4,6 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
 
 
 function data()
@@ -354,7 +353,7 @@ return {
 		return {
 			{
 				id = _constants.terminalModelFileName,
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
+				transf = _constants.idTransf,
 			},
 		}
 	end

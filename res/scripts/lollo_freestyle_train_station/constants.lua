@@ -56,6 +56,12 @@ local constants = {
     slopeHigh = 999,
     slopeLow = 2.5,
 
+    eras = {
+        era_a = { prefix = 'era_a_', startYear = 1850 },
+        era_b = { prefix = 'era_b_', startYear = 1920 },
+        era_c = { prefix = 'era_c_', startYear = 1980 },
+    },
+
     era_a_groundFacesFillKey = 'lollo_freestyle_train_station/gravel_03_high_priority.lua', -- 'shared/gravel_02.gtex.lua',
     era_b_groundFacesFillKey = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua', -- 'shared/asphalt_01.gtex.lua',
     era_c_groundFacesFillKey = 'lollo_freestyle_train_station/asphalt_02_high_priority.lua', -- 'shared/asphalt_02.gtex.lua',

@@ -1,6 +1,5 @@
 function data()
     local _constants = require('lollo_freestyle_train_station.constants')
-    local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
     local _modulesutilUG = require('modulesutil')
     local _openStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
     local _transfUtilsUG = require('transf')
@@ -23,7 +22,7 @@ function data()
             return results
         end,
         heights = {2, 4, 6, 8, 10},
-        eraPrefixes = {_moduleHelpers.eras.era_a.prefix, _moduleHelpers.eras.era_b.prefix, _moduleHelpers.eras.era_c.prefix},
+        eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
         bridgeChunkLengths = {-2, -1, 4, 8, 16, 32, 64, 0, 1, 2, 3},
         maxBridgeChunkZAngleDeg = 90,
         bridgeChunkZAngleStep = 5,

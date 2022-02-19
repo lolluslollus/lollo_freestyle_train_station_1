@@ -5,120 +5,118 @@ local modulesutil = require "modulesutil"
 local openStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
 
 
 function data()
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "passenger-road-access", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("FlatPassengerStairsEdgeName"),
-		description = _("FlatPassengerStairsEdgeDesc"),
-		icon = "ui/lollo_freestyle_train_station/openStairsExitWithEdge2m.tga"
-	},
-	metadata = { },
-	order = {
-		value = 10,
-	},
-	type = _constants.flatPassengerStairsModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not baseId then return end
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("FlatPassengerStairsEdgeName"),
+			description = _("FlatPassengerStairsEdgeDesc"),
+			icon = "ui/lollo_freestyle_train_station/openStairsExitWithEdge2m.tga"
+		},
+		metadata = { },
+		order = {
+			value = 10,
+		},
+		type = _constants.flatPassengerStairsModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
 
-		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
-		-- in base_config.lua
-		-- Set it into the models, so the game knows what module they belong to.
+			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
+			-- in base_config.lua
+			-- Set it into the models, so the game knows what module they belong to.
 
-		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
-		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
-		local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
-		local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
+			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
+			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
 
-		result.models[#result.models + 1] = {
-			id = myModelId,
-			slotId = slotId,
-			transf = zAdjustedTransf,
-			tag = tag
-		}
-
-		-- this connects the platform to its outer edge (ie border)
-		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-
-		local _openStairsRefData = openStairsHelpers.getData4Era(eraPrefix)
-		table.insert(
-			result.edgeLists,
-			{
-				alignTerrain = false, -- only align on ground and in tunnels
-				edges = transfUtils.getPosTanX2Transformed(
-					{
-						{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
-						{ { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
-					},
-					zAdjustedTransf
-				),
-				-- better make it a bridge to avoid ugly autolinks between nearby modules
-				edgeType = 'BRIDGE',
-				edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
-				freeNodes = { 1 },
-				params = {
-					tramTrackType  = 'NO',
-					type = _openStairsRefData.streetTypeName_noBridge,
-				},
-				snapNodes = {},
-				tag2nodes = {},
-				type = 'STREET'
+			result.models[#result.models + 1] = {
+				id = myModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
 			}
-		)
 
-		local groundFace = {
-			{-1, -2, 0, 1},
-			{-1, 2, 0, 1},
-			{1.0, 2, 0, 1},
-			{1.0, -2, 0, 1},
-		}
-		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-		-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
+			-- this connects the platform to its outer edge (ie border)
+			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-		local terrainAlignmentList = {
-			faces = {
+			local _openStairsRefData = openStairsHelpers.getData4Era(eraPrefix)
+			table.insert(
+				result.edgeLists,
 				{
-					{-1, -2, _constants.platformSideBitsZ, 1},
-					{-1, 2, _constants.platformSideBitsZ, 1},
-					{1.0, 2, _constants.platformSideBitsZ, 1},
-					{1.0, -2, _constants.platformSideBitsZ, 1},
+					alignTerrain = false, -- only align on ground and in tunnels
+					edges = transfUtils.getPosTanX2Transformed(
+						{
+							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+							{ { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+						},
+						zAdjustedTransf
+					),
+					-- better make it a bridge to avoid ugly autolinks between nearby modules
+					edgeType = 'BRIDGE',
+					edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
+					freeNodes = { 1 },
+					params = {
+						tramTrackType  = 'NO',
+						type = _openStairsRefData.streetTypeName_noBridge,
+					},
+					snapNodes = {},
+					tag2nodes = {},
+					type = 'STREET'
 				}
-			},
-			optional = true,
-			slopeHigh = _constants.slopeHigh,
-			slopeLow = _constants.slopeLow,
-			type = 'LESS',
-		}
-		for _, face in pairs(terrainAlignmentList.faces) do
-			modulesutil.TransformFaces(zAdjustedTransf, face)
+			)
+
+			local groundFace = {
+				{-1, -2, 0, 1},
+				{-1, 2, 0, 1},
+				{1.0, 2, 0, 1},
+				{1.0, -2, 0, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
+
+			local terrainAlignmentList = {
+				faces = {
+					{
+						{-1, -2, _constants.platformSideBitsZ, 1},
+						{-1, 2, _constants.platformSideBitsZ, 1},
+						{1.0, 2, _constants.platformSideBitsZ, 1},
+						{1.0, -2, _constants.platformSideBitsZ, 1},
+					}
+				},
+				optional = true,
+				slopeHigh = _constants.slopeHigh,
+				slopeLow = _constants.slopeLow,
+				type = 'LESS',
+			}
+			for _, face in pairs(terrainAlignmentList.faces) do
+				modulesutil.TransformFaces(zAdjustedTransf, face)
+			end
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_stairs_edge.mdl',
+					transf = _constants.idTransf,
+				},
+			}
 		end
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_stairs_edge.mdl',
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
-			},
-		}
-	end
-}
-
+	}
 end

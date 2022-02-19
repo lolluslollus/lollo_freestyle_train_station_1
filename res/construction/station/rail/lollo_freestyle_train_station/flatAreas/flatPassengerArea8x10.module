@@ -4,97 +4,94 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
 
 
 function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("FlatPassengerArea8x10Name"),
+			description = _("FlatPassengerArea8x10Desc"),
+			icon = "ui/lollo_freestyle_train_station/flatPassengerArea8x10.tga"
+		},
+		metadata = { },
+		order = {
+			value = 23,
+		},
+		type = _constants.flatPassengerArea8x10ModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
 
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "passenger-road-access", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("FlatPassengerArea8x10Name"),
-		description = _("FlatPassengerArea8x10Desc"),
-		icon = "ui/lollo_freestyle_train_station/flatPassengerArea8x10.tga"
-	},
-	metadata = { },
-	order = {
-		value = 23,
-	},
-	type = _constants.flatPassengerArea8x10ModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not baseId then return end
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
-		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
-		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
+			local myModelId = _constants[era .. 'flatPassengerArea8x10ModelFileName']
 
-		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
-		local myModelId = _constants[era .. 'flatPassengerArea8x10ModelFileName']
+			result.models[#result.models + 1] = {
+				id = myModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
 
-		result.models[#result.models + 1] = {
-			id = myModelId,
-			slotId = slotId,
-			transf = zAdjustedTransf,
-			tag = tag
-		}
+			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			local groundFace = {
+				{-5.5, -6, 0, 1},
+				{-5.5, 6, 0, 1},
+				{8.5, 6, 0, 1},
+				{8.5, -6, 0, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
 
-		local groundFace = {
-			{-5.5, -6, 0, 1},
-			{-5.5, 6, 0, 1},
-			{8.5, 6, 0, 1},
-			{8.5, -6, 0, 1},
-		}
-		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
-
-		local terrainAlignmentList = {
-			faces = {
-				{
-					{-5, -6, _constants.platformSideBitsZ, 1},
-					{-5, 6, _constants.platformSideBitsZ, 1},
-					{3.5, 6, _constants.platformSideBitsZ, 1},
-					{3.5, -6, _constants.platformSideBitsZ, 1},
+			local terrainAlignmentList = {
+				faces = {
+					{
+						{-5, -6, _constants.platformSideBitsZ, 1},
+						{-5, 6, _constants.platformSideBitsZ, 1},
+						{3.5, 6, _constants.platformSideBitsZ, 1},
+						{3.5, -6, _constants.platformSideBitsZ, 1},
+					},
+					{
+						{3.5, -6, _constants.platformSideBitsZ, 1},
+						{3.5, 6, _constants.platformSideBitsZ, 1},
+						{8.5, 6, -_constants.stairsAndRampHeight, 1},
+						{8.5, -6, -_constants.stairsAndRampHeight, 1},
+					}
 				},
+				optional = true,
+				slopeHigh = _constants.slopeHigh,
+				slopeLow = _constants.slopeLow,
+				type = 'EQUAL',
+			}
+			for _, face in pairs(terrainAlignmentList.faces) do
+				modulesutil.TransformFaces(zAdjustedTransf, face)
+			end
+			-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+		end,
+
+		getModelsFn = function(params)
+			return {
 				{
-					{3.5, -6, _constants.platformSideBitsZ, 1},
-					{3.5, 6, _constants.platformSideBitsZ, 1},
-					{8.5, 6, -_constants.stairsAndRampHeight, 1},
-					{8.5, -6, -_constants.stairsAndRampHeight, 1},
-				}
-			},
-			optional = true,
-			slopeHigh = _constants.slopeHigh,
-			slopeLow = _constants.slopeLow,
-			type = 'EQUAL',
-		}
-		for _, face in pairs(terrainAlignmentList.faces) do
-			modulesutil.TransformFaces(zAdjustedTransf, face)
+					id = _constants.era_c_flatPassengerArea8x10ModelFileName,
+					transf = _constants.idTransf,
+				},
+			}
 		end
-		-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				id = _constants.era_c_flatPassengerArea8x10ModelFileName,
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
-			},
-		}
-	end
-}
-
+	}
 end

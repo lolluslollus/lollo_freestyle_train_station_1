@@ -4,60 +4,57 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
 
 
 function data()
+	return {
+		availability = {
+			yearFrom = -1,
+			yearTo = -1
+		},
+		category = {
+			categories = { "passenger-up-and-down", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("SubwayName"),
+			description = _("SubwayDesc"),
+			icon = "ui/lollo_freestyle_train_station/subway.tga"
+		},
+		metadata = { },
+		order = {
+			value = 55,
+		},
+		type = _constants.subwayModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 
-return {
-	availability = {
-		yearFrom = -1,
-		yearTo = -1
-	},
-	category = {
-		categories = { "passenger-up-and-down", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("SubwayName"),
-		description = _("SubwayDesc"),
-		icon = "ui/lollo_freestyle_train_station/subway.tga"
-	},
-	metadata = { },
-	order = {
-		value = 55,
-	},
-	type = _constants.subwayModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			local era = moduleHelpers.getEraPrefix(params, 1, 1)
+			local modelId = nil
+			if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_subwayModelId
+			elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_subwayModelId
+			else modelId = _constants.era_c_subwayModelId
+			end
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
 
-		local era = moduleHelpers.getEraPrefix(params, 1, 1)
-		local modelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_subwayModelId
-		elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_subwayModelId
-		else modelId = _constants.era_c_subwayModelId
+			moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
+			-- print('subway.module.updateFn ending')
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = _constants.era_c_subwayModelId,
+					transf = _constants.idTransf,
+				},
+			}
 		end
-		result.models[#result.models + 1] = {
-			id = modelId,
-			slotId = slotId,
-			transf = slotTransf,
-			tag = tag
-		}
-
-		moduleHelpers.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
-		-- print('subway.module.updateFn ending')
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				id = _constants.era_c_subwayModelId,
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
-			},
-		}
-	end
-}
-
+	}
 end

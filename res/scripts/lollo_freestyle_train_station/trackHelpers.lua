@@ -2,11 +2,17 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 local helpers = {
-    eras = {
-        era_a = { prefix = 'era_a_', startYear = 1850 },
-        era_b = { prefix = 'era_b_', startYear = 1920 },
-        era_c = { prefix = 'era_c_', startYear = 1980 },
-    },
+    getEraPrefix = function (trackTypeIndex)
+        if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return _constants.eras.era_c.prefix end
+
+        local fileName = api.res.trackTypeRep.getFileName(trackTypeIndex)
+        if stringUtils.stringContains(fileName, _constants.eras.era_a.prefix) then return _constants.eras.era_a.prefix
+        elseif stringUtils.stringContains(fileName, _constants.eras.era_b.prefix) then return _constants.eras.era_b.prefix
+        elseif stringUtils.stringContains(fileName, _constants.eras.era_c.prefix) then return _constants.eras.era_c.prefix
+        end
+
+        return _constants.eras.era_c.prefix
+    end,
     getInvisibleTwinFileName = function(trackFileName)
         local result = stringUtils.stringContains(trackFileName, '_cargo_')
             and trackFileName:gsub('_cargo_', '_invisible_')
@@ -17,7 +23,17 @@ local helpers = {
         result = result:gsub('era_c_', '')
         return result
     end,
-
+    getTrackAvailability = function(trackFileName)
+        if stringUtils.stringContains(trackFileName, 'era_c') then
+            return { yearFrom = _constants.eras.era_c.startYear, yearTo = 0 }
+        elseif stringUtils.stringContains(trackFileName, 'era_b') then
+            return { yearFrom = _constants.eras.era_b.startYear, yearTo = _constants.eras.era_c.startYear }
+        elseif stringUtils.stringContains(trackFileName, 'era_a') then
+            return { yearFrom = _constants.eras.era_a.startYear, yearTo = _constants.eras.era_b.startYear }
+        else
+            return { yearFrom = 0, yearTo = 0 }
+        end
+    end,
     isPlatform = function(trackTypeIndex)
         if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return false end
 
@@ -62,30 +78,6 @@ helpers.getAllPlatformTrackTypes = function()
     end
 
     return results
-end
-
-helpers.getEraPrefix = function (trackTypeIndex)
-    if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return helpers.eras.era_c.prefix end
-
-    local fileName = api.res.trackTypeRep.getFileName(trackTypeIndex)
-    if stringUtils.stringContains(fileName, helpers.eras.era_a.prefix) then return helpers.eras.era_a.prefix
-    elseif stringUtils.stringContains(fileName, helpers.eras.era_b.prefix) then return helpers.eras.era_b.prefix
-    elseif stringUtils.stringContains(fileName, helpers.eras.era_c.prefix) then return helpers.eras.era_c.prefix
-    end
-
-    return helpers.eras.era_c.prefix
-end
-
-helpers.getTrackAvailability = function(trackFileName)
-    if stringUtils.stringContains(trackFileName, 'era_c') then
-        return { yearFrom = helpers.eras.era_c.startYear, yearTo = 0 }
-    elseif stringUtils.stringContains(trackFileName, 'era_b') then
-        return { yearFrom = helpers.eras.era_b.startYear, yearTo = helpers.eras.era_c.startYear }
-    elseif stringUtils.stringContains(trackFileName, 'era_a') then
-        return { yearFrom = helpers.eras.era_a.startYear, yearTo = helpers.eras.era_b.startYear }
-    else
-        return { yearFrom = 0, yearTo = 0 }
-    end
 end
 
 return helpers

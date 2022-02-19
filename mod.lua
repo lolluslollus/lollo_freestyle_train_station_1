@@ -1,7 +1,7 @@
 function data()
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
     local _stringUtils = require('lollo_freestyle_train_station.stringUtils')
-    local _trackUtils = require('lollo_freestyle_train_station.trackHelpers')
+    local _trackHelpers = require('lollo_freestyle_train_station.trackHelpers')
 
     return {
         info = {
@@ -58,8 +58,8 @@ function data()
 
             for trackTypeIndex, trackFileName in pairs(trackFileNames) do
                 local track = api.res.trackTypeRep.get(trackTypeIndex)
-                if _trackUtils.isPlatform2(track) then
-                    local availability = _trackUtils.getTrackAvailability(trackFileName)
+                if _trackHelpers.isPlatform2(track) then
+                    local availability = _trackHelpers.getTrackAvailability(trackFileName)
                     track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
                     track.yearTo = availability.yearTo -- idem
                     --[[

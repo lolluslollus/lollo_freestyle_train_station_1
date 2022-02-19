@@ -4,103 +4,100 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
 
 
 function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "cargo-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("FlatCargoStation8x15Name"),
+			description = _("FlatCargoStation8x15Desc"),
+			icon = "ui/lollo_freestyle_train_station/flatCargoStation8x15.tga"
+		},
+		metadata = { },
+		order = {
+			value = 33,
+		},
+		type = _constants.flatCargoArea8x10ModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
 
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "cargo-road-access", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("FlatCargoStation8x15Name"),
-		description = _("FlatCargoStation8x15Desc"),
-		icon = "ui/lollo_freestyle_train_station/flatCargoStation8x15.tga"
-	},
-	metadata = { },
-	order = {
-		value = 33,
-	},
-	type = _constants.flatCargoArea8x10ModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not baseId then return end
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
-		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
-		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
+			local myModelId = eraPrefix == moduleHelpers.eras.era_a.prefix
+				and _constants.era_a_flatCargoStation8x15ModelFileName
+				or _constants.era_b_flatCargoStation8x15ModelFileName
 
-		local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
-		local myModelId = eraPrefix == moduleHelpers.eras.era_a.prefix
-			and _constants.era_a_flatCargoStation8x15ModelFileName
-			or _constants.era_b_flatCargoStation8x15ModelFileName
+			result.models[#result.models + 1] = {
+				id = myModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
 
-		result.models[#result.models + 1] = {
-			id = myModelId,
-			slotId = slotId,
-			transf = zAdjustedTransf,
-			tag = tag
-		}
+			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			local groundFace = {
+				{-5.5, -6, 0, 1},
+				{-5.5, 6, 0, 1},
+				{8.5, 6, 0, 1},
+				{8.5, -6, 0, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
 
-		local groundFace = {
-			{-5.5, -6, 0, 1},
-			{-5.5, 6, 0, 1},
-			{8.5, 6, 0, 1},
-			{8.5, -6, 0, 1},
-		}
-		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-		result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
-
-		local terrainAlignmentList = {
-			faces = {
-				{
-					{-5, -6, -_constants.stairsAndRampHeight, 1},
-					{-5, 6, -_constants.stairsAndRampHeight, 1},
-					{8.5, 6, -_constants.stairsAndRampHeight, 1},
-					{8.5, -6, -_constants.stairsAndRampHeight, 1},
+			local terrainAlignmentList = {
+				faces = {
+					{
+						{-5, -6, -_constants.stairsAndRampHeight, 1},
+						{-5, 6, -_constants.stairsAndRampHeight, 1},
+						{8.5, 6, -_constants.stairsAndRampHeight, 1},
+						{8.5, -6, -_constants.stairsAndRampHeight, 1},
+					},
 				},
-			},
-			optional = true,
-			slopeHigh = _constants.slopeHigh,
-			slopeLow = _constants.slopeLow,
-			type = 'EQUAL',
-		}
-		for _, face in pairs(terrainAlignmentList.faces) do
-			modulesutil.TransformFaces(zAdjustedTransf, face)
+				optional = true,
+				slopeHigh = _constants.slopeHigh,
+				slopeLow = _constants.slopeLow,
+				type = 'EQUAL',
+			}
+			for _, face in pairs(terrainAlignmentList.faces) do
+				modulesutil.TransformFaces(zAdjustedTransf, face)
+			end
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
+				shape = 1,
+				spacing = {1, 1, 2, 2},
+				transf = transfUtilsUG.mul(
+					zAdjustedTransf,
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, 0, -_constants.stairsAndRampHeight, 1 }
+				),
+				type = _constants.cargoStationSquareModuleType,
+			})
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = _constants.era_b_flatCargoStation8x15ModelFileName,
+					transf = _constants.idTransf,
+				},
+			}
 		end
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-
-		table.insert(result.slots, {
-			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
-			shape = 1,
-			spacing = {1, 1, 2, 2},
-			transf = transfUtilsUG.mul(
-				zAdjustedTransf,
-				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, 0, -_constants.stairsAndRampHeight, 1 }
-			),
-			type = _constants.cargoStationSquareModuleType,
-		})
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				id = _constants.era_b_flatCargoStation8x15ModelFileName,
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
-			},
-		}
-	end
-}
-
+	}
 end

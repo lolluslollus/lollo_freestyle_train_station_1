@@ -4,58 +4,55 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-local vec3 = require "vec3"
 
 
 function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-up-and-down", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("TunnelStairsUpDownName"),
+			description = _("TunnelStairsUpDownDesc"),
+			icon = "ui/lollo_freestyle_train_station/tunnelStairsUpDown.tga"
+		},
+		metadata = { },
+		order = {
+			value = 51,
+		},
+		type = _constants.tunnelStairsUpDownModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
 
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "passenger-up-and-down", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("TunnelStairsUpDownName"),
-		description = _("TunnelStairsUpDownDesc"),
-		icon = "ui/lollo_freestyle_train_station/tunnelStairsUpDown.tga"
-	},
-	metadata = { },
-	order = {
-		value = 51,
-	},
-	type = _constants.tunnelStairsUpDownModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not baseId then return end
+			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local modelId = nil
+			if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_tunnelStairsUpDownModelId
+			elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_tunnelStairsUpDownModelId
+			else modelId = _constants.era_c_tunnelStairsUpDownModelId
+			end
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+		end,
 
-		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local modelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_tunnelStairsUpDownModelId
-		elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_tunnelStairsUpDownModelId
-		else modelId = _constants.era_c_tunnelStairsUpDownModelId
+		getModelsFn = function(params)
+			return {
+				{
+					id = _constants.era_c_tunnelStairsUpDownModelId,
+					transf = _constants.idTransf,
+				},
+			}
 		end
-		result.models[#result.models + 1] = {
-			id = modelId,
-			slotId = slotId,
-			transf = slotTransf,
-			tag = tag
-		}
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				id = _constants.era_c_tunnelStairsUpDownModelId,
-				transf = transfUtilsUG.transl(vec3.new(0.0, 0.0, 0.0)),
-			},
-		}
-	end
-}
-
+	}
 end

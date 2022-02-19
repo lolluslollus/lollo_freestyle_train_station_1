@@ -1,6 +1,6 @@
 function data()
-	local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+	local constants = require('lollo_freestyle_train_station.constants')
 	local pedestrianBridgeUtil = require('lollo_freestyle_train_station.pedestrianBridgeUtil')
 
-	return pedestrianBridgeUtil.getModel4Basic_rep_side(moduleHelpers.eras.era_b.prefix, true)
+	return pedestrianBridgeUtil.getModel4Basic_rep_side(constants.eras.era_b.prefix, true)
 end
