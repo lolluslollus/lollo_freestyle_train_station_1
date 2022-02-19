@@ -479,6 +479,7 @@ local helpers = {
             results[#results+1] = {
                 -- catenary = edgeLists[i].catenary,
                 leadingIndex = edgeLists[i].leadingIndex,
+                -- LOLLO TODO try the new func transfUtils.getParallelSidewaysWithRotZ
                 posTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift),
                 -- trackType = edgeLists[i].trackType,
                 -- trackTypeName = edgeLists[i].trackTypeName,
