@@ -66,21 +66,28 @@ local helpers = {
                         -- logger.print('isOnlyPassengers =', isOnlyPassengers)
                         if not(isCargo) or not(isOnlyPassengers) then
                             local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
-                            local name = ''
-                            local stationGroupName = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
-                            if stationGroupName ~= nil then name = stationGroupName.name end
-
                             local isTwinCargo = false
                             local isTwinPassenger = false
+                            local cargoStationGroupName = nil
+                            local passengerStationGroupName = nil
 
                             if resultsIndexed[conId] ~= nil then
                                 -- logger.print('found a twin, it is') logger.debugPrint(resultsIndexed[conId])
-                                if stringUtils.isNullOrEmptyString(name) then
-                                    name = resultsIndexed[conId].name or ''
-                                end
                                 if resultsIndexed[conId].isCargo then isTwinCargo = true end
                                 if resultsIndexed[conId].isPassenger then isTwinPassenger = true end
+                                cargoStationGroupName = resultsIndexed[conId].cargoStationGroupName
+                                passengerStationGroupName = resultsIndexed[conId].passengerStationGroupName
                             end
+
+                            local stationGroupName_struct = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
+                            if stationGroupName_struct ~= nil then
+                                if isCargo and not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
+                                    cargoStationGroupName = stationGroupName_struct.name
+                                elseif not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
+                                    passengerStationGroupName = stationGroupName_struct.name
+                                end
+                            end
+
                             local position = transfUtils.transf2Position(
                                 transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
                             )
@@ -88,7 +95,8 @@ local helpers = {
                                 id = conId,
                                 isCargo = isCargo or isTwinCargo,
                                 isPassenger = not(isCargo) or isTwinPassenger,
-                                name = name,
+                                cargoStationGroupName = cargoStationGroupName,
+                                passengerStationGroupName = passengerStationGroupName,
                                 position = position
                             }
                         end
@@ -101,6 +109,13 @@ local helpers = {
         local results = {}
         for _, value in pairs(resultsIndexed) do
             results[#results+1] = value
+            if value.cargoStationGroupName and value.passengerStationGroupName then
+                value.name = value.cargoStationGroupName .. ' - ' .. value.passengerStationGroupName
+            else
+                value.name = (value.cargoStationGroupName or value.passengerStationGroupName) or ''
+            end
+            value.cargoStationGroupName = nil
+            value.passengerStationGroupName = nil
         end
         -- logger.print('# nearby freestyle stations = ', #results)
         -- logger.print('nearby freestyle stations = ') logger.debugPrint(results)
