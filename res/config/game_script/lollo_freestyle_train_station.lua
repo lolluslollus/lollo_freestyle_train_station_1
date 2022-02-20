@@ -1058,6 +1058,7 @@ local _guiActions = {
     tryJoinSubway = function(conId, con)
         if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return false end
 
+        logger.print('tryJoinSubway starting, conId =', conId or 'NIL')
         local subwayTransf_c = con.transf
         if subwayTransf_c == nil then return false end
 
@@ -1066,7 +1067,6 @@ local _guiActions = {
 
         logger.print('conTransf =') logger.debugPrint(subwayTransf_lua)
         local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
-        -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
         logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
         if #nearbyFreestyleStations == 0 then return false end
 
