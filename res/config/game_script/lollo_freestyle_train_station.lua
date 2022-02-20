@@ -1067,6 +1067,7 @@ local _guiActions = {
 
         logger.print('conTransf =') logger.debugPrint(subwayTransf_lua)
         local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
+
         logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
         if #nearbyFreestyleStations == 0 then return false end
 
