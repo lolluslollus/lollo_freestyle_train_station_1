@@ -41,6 +41,87 @@ local helpers = {
         return results
     end,
 
+    getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnlyPassengers)
+        if type(transf) ~= 'table' then return {} end
+        if tonumber(searchRadius) == nil then searchRadius = _constants.searchRadius4NearbyStation2Join end
+
+        -- LOLLO NOTE in the game and in this mod, there is one train station for each station group
+        -- and viceversa. Station groups hold some information that stations don't, tho.
+        -- Multiple station groups can share a construction.
+        -- What I really want here is a list with one item each construction, but that could be an expensive loop,
+        -- so I check the stations instead and index by the construction.
+        local stationIds = edgeUtils.getNearbyObjectIds(transf, searchRadius, api.type.ComponentType.STATION)
+        local _station2ConstructionMap = api.engine.system.streetConnectorSystem.getStation2ConstructionMap()
+        local resultsIndexed = {}
+        for _, stationId in pairs(stationIds) do
+            if edgeUtils.isValidAndExistingId(stationId) then
+                local conId = _station2ConstructionMap[stationId]
+                if edgeUtils.isValidAndExistingId(conId) then
+                    -- logger.print('getNearbyFreestyleStationConsList has found conId =', conId)
+                    local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                    if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
+                        -- logger.print('construction.name =') logger.debugPrint(con.name) nil
+                        local isCargo = api.engine.getComponent(stationId, api.type.ComponentType.STATION).cargo or false
+                        -- logger.print('isCargo =', isCargo)
+                        -- logger.print('isOnlyPassengers =', isOnlyPassengers)
+                        if not(isCargo) or not(isOnlyPassengers) then
+                            local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
+                            local isTwinCargo = false
+                            local isTwinPassenger = false
+                            local cargoStationGroupName = nil
+                            local passengerStationGroupName = nil
+
+                            if resultsIndexed[conId] ~= nil then
+                                -- logger.print('found a twin, it is') logger.debugPrint(resultsIndexed[conId])
+                                if resultsIndexed[conId].isCargo then isTwinCargo = true end
+                                if resultsIndexed[conId].isPassenger then isTwinPassenger = true end
+                                cargoStationGroupName = resultsIndexed[conId].cargoStationGroupName
+                                passengerStationGroupName = resultsIndexed[conId].passengerStationGroupName
+                            end
+
+                            local stationGroupName_struct = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
+                            if stationGroupName_struct ~= nil then
+                                if isCargo and not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
+                                    cargoStationGroupName = stationGroupName_struct.name
+                                elseif not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
+                                    passengerStationGroupName = stationGroupName_struct.name
+                                end
+                            end
+
+                            local position = transfUtils.transf2Position(
+                                transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
+                            )
+                            resultsIndexed[conId] = {
+                                id = conId,
+                                isCargo = isCargo or isTwinCargo,
+                                isPassenger = not(isCargo) or isTwinPassenger,
+                                cargoStationGroupName = cargoStationGroupName,
+                                passengerStationGroupName = passengerStationGroupName,
+                                position = position
+                            }
+                        end
+                    end
+                end
+            end
+        end
+
+        logger.print('resultsIndexed =') logger.debugPrint(resultsIndexed)
+        local results = {}
+        for _, value in pairs(resultsIndexed) do
+            results[#results+1] = value
+            if value.cargoStationGroupName and value.passengerStationGroupName then
+                value.name = value.cargoStationGroupName .. ' - ' .. value.passengerStationGroupName
+            else
+                value.name = (value.cargoStationGroupName or value.passengerStationGroupName) or ''
+            end
+            value.cargoStationGroupName = nil
+            value.passengerStationGroupName = nil
+        end
+        -- logger.print('# nearby freestyle stations = ', #results)
+        -- logger.print('nearby freestyle stations = ') logger.debugPrint(results)
+        return results
+    end,
+
     getNearbyFreestyleStationsList = function(transf, searchRadius, isOnlyPassengers)
         if type(transf) ~= 'table' then return {} end
         if tonumber(searchRadius) == nil then searchRadius = _constants.searchRadius4NearbyStation2Join end
