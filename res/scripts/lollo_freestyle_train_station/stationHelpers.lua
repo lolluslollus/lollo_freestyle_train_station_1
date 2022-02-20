@@ -80,10 +80,10 @@ local helpers = {
                             end
 
                             local stationGroupName_struct = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
-                            if stationGroupName_struct ~= nil then
-                                if isCargo and not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
+                            if stationGroupName_struct ~= nil and not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
+                                if isCargo then
                                     cargoStationGroupName = stationGroupName_struct.name
-                                elseif not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
+                                else
                                     passengerStationGroupName = stationGroupName_struct.name
                                 end
                             end
