@@ -22,6 +22,9 @@ local _guiPlatformWaypointModelId = nil
 local _guiTrackWaypointModelId = nil
 
 local _tryRenameStationGroup = function(conId)
+    -- For some reason, adding a cargo station to a passengers station (or viceversa)
+    -- sets the name of the older station to an empty string.
+    -- This function goes around it.
     if not edgeUtils.isValidAndExistingId(conId) then return end
 
     xpcall(
