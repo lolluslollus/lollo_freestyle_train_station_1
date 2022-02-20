@@ -270,8 +270,10 @@ local privateFuncs = {
             local platformWidth = cpl.width
 
             local xShift = nWaitingAreas <= 4 and -2.0 or 0.0
-            local yShift = -platformWidth / 2
-            if not(isTrackOnPlatformLeft) then yShift = -yShift end
+            local yShift1 = -platformWidth / 2 - 2.8
+            local yShift2 = -platformWidth / 2 - 1.0
+            local yShift3 = -platformWidth / 2 - 2.1
+            if not(isTrackOnPlatformLeft) then yShift1 = -yShift1 yShift2 = -yShift2 yShift3 = -yShift3 end
 
             local chairsModelId = nil
             local binModelId = nil
@@ -293,19 +295,19 @@ local privateFuncs = {
             result.models[#result.models + 1] = {
                 id = chairsModelId,
                 slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift - 2.8, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift1, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
                 tag = tag
             }
             result.models[#result.models + 1] = {
                 id = binModelId,
                 slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift - 1.0, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift2, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
                 tag = tag
             }
             result.models[#result.models + 1] = {
                 id = arrivalsModelId,
                 slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift + 6.2, yShift -2.1, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift + 6.2, yShift3, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
                 tag = tag
             }
         end,
