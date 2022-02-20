@@ -31,7 +31,7 @@ function data()
 				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
 				- To work underground, use <NumPad 4>.
 				- Platforms only carry passengers or cargo if they are part of a terminal.
-				- 2.5 m platforms do not agree with bridges and tunnels. My \"no railing\" bridges help, tunnels can't be helped.
+				- 2.5 m platforms do not agree with bridges and tunnels. My 'no railing' bridges help, tunnels can't be helped.
                 - Very thin paths help with certain setups: those are in my street fine tuning mod.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
