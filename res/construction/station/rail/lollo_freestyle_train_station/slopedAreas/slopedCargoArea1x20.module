@@ -34,9 +34,13 @@ function data()
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'slopedCargoArea1x20ModelFileName']
 
-			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 20,
-				myModelId, nil,
-				myGroundFacesFillKey)
+			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, nTrackEdge, era,
+				20,
+				myModelId,
+				nil,
+				myGroundFacesFillKey,
+				true
+			)
 		end,
 
 		getModelsFn = function(params)

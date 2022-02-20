@@ -33,11 +33,11 @@ function data()
             local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'slopedPassengerArea1x20ModelFileName']
 
-			moduleHelpers.slopedAreas.addAll(result, tag, params, nTerminal, nTrackEdge, 20,
-				myModelId, _constants.passengerWaitingAreaCentredModelFileName,
+			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, nTrackEdge, era,
+				20,
+				myModelId,
+				_constants.passengerWaitingAreaCentredModelFileName,
 				myGroundFacesFillKey)
-
-			moduleHelpers.slopedAreas.addSlopedPassengerAreaDeco(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, era, 20)
 		end,
 
 		getModelsFn = function(params)

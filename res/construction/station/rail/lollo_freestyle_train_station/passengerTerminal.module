@@ -54,21 +54,22 @@ return {
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		-- print('isTrackOnPlatformLeft =', isTrackOnPlatformLeft)
-		-- if isTrackOnPlatformLeft then
-		-- 	result.models[#result.models + 1] = {
-		-- 		id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 		slotId = slotId,
-		-- 		transf = slotTransf,
-		-- 		tag = tag
-		-- 	}
-		-- else
-		-- 	result.models[#result.models + 1] = {
-		-- 		id = 'lollo_freestyle_train_station/icon/red.mdl',
-		-- 		slotId = slotId,
-		-- 		transf = slotTransf,
-		-- 		tag = tag
-		-- 	}
-		-- end
+		-- LOLLO TODO comment out after testing
+		if isTrackOnPlatformLeft then
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/icon/green.mdl',
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+		else
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/icon/red.mdl',
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+		end
 		local isUnderpass = function(t, i)
 			return params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil

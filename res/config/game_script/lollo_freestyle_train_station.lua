@@ -290,10 +290,9 @@ local _actions = {
                 args.crossConnectors,
                 _getRelativePosTanX2s
             ),
-            -- cargoWaitingAreas = args.cargoWaitingAreas,
             cargoWaitingAreasRelative = {},
             isTrackOnPlatformLeft = args.isTrackOnPlatformLeft,
-            slopedAreasFineRelative = {},
+            -- slopedAreasFineRelative = {},
         }
 
         for _, cwas in pairs(args.cargoWaitingAreas) do
@@ -302,12 +301,12 @@ local _actions = {
                 _getRelativePosTanX2s
             )
         end
-        for width, slopedAreasFine4Width in pairs(args.slopedAreasFine) do
-            params_newTerminal.slopedAreasFineRelative[width] = arrayUtils.map(
-                slopedAreasFine4Width,
-                _getRelativePosTanX2s
-            )
-        end
+        -- for width, slopedAreasFine4Width in pairs(args.slopedAreasFine) do
+        --     params_newTerminal.slopedAreasFineRelative[width] = arrayUtils.map(
+        --         slopedAreasFine4Width,
+        --         _getRelativePosTanX2s
+        --     )
+        -- end
         -- logger.print('params_newTerminal =') logger.debugPrint(params_newTerminal)
 
         if oldCon == nil then
@@ -1646,20 +1645,20 @@ function data()
                         )
                         -- logger.print('centrePlatformsFine =') logger.debugPrint(centrePlatformsFine)
 
-                        logger.print('calculating slopedAreasFine, platformWidth =', platformWidth)
-                        eventArgs.slopedAreasFine = {}
-                        if eventArgs.isTrackOnPlatformLeft then
-                            -- I add 2 coz it is a little less than half the width of the 5m sloped area,
-                            eventArgs.slopedAreasFine[2.5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 0.75)
-                            eventArgs.slopedAreasFine[5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 2)
-                            eventArgs.slopedAreasFine[10] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 4.5)
-                            eventArgs.slopedAreasFine[20] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 9.5)
-                        else
-                            eventArgs.slopedAreasFine[2.5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 0.75)
-                            eventArgs.slopedAreasFine[5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 2)
-                            eventArgs.slopedAreasFine[10] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 4.5)
-                            eventArgs.slopedAreasFine[20] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 9.5)
-                        end
+                        -- logger.print('calculating slopedAreasFine, platformWidth =', platformWidth)
+                        -- eventArgs.slopedAreasFine = {}
+                        -- if eventArgs.isTrackOnPlatformLeft then
+                        --     -- I add 2 coz it is a little less than half the width of the 5m sloped area,
+                        --     eventArgs.slopedAreasFine[2.5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 0.75)
+                        --     eventArgs.slopedAreasFine[5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 2)
+                        --     eventArgs.slopedAreasFine[10] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 4.5)
+                        --     eventArgs.slopedAreasFine[20] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 9.5)
+                        -- else
+                        --     eventArgs.slopedAreasFine[2.5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 0.75)
+                        --     eventArgs.slopedAreasFine[5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 2)
+                        --     eventArgs.slopedAreasFine[10] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 4.5)
+                        --     eventArgs.slopedAreasFine[20] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 9.5)
+                        -- end
 
                         eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                         if args.isCargo then
