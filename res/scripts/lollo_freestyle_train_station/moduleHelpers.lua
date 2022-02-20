@@ -16,7 +16,7 @@ local privateConstants = {
         -- bridgeHeights = { 6.5, 11.5, 16.5, 21.5, 26.5, 31.5, 36.5, 41.5 }
     },
     slopedAreas = {
-        hunchLengthRatioToClaimBend = 0.01, -- must be positive
+        -- hunchLengthRatioToClaimBend = 0.01, -- must be positive
         hunchToClaimBend = 0.2, -- must be positive
         innerDegrees = {
             inner = 1,
@@ -1150,7 +1150,6 @@ return {
                                 id = waitingAreaModelId,
                                 transf = transfUtilsUG.mul(
                                     myTransf,
-                                    -- { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
                                     { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
                                 ),
                                 tag = slotUtils.mangleModelTag(nTerminal, true),
