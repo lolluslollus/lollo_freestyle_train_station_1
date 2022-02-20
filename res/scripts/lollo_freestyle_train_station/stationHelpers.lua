@@ -8,57 +8,6 @@ local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
 
-local _tryRenameStation = function(conId)
-    if not edgeUtils.isValidAndExistingId(conId) then return end
-
-    local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-    if not con or not(con.stations) then return end
-
-    local stationsIdsInCon = con.stations
-    local stationGroupIdsInCon = {}
-
-    for _, stationId in pairs(stationsIdsInCon) do
-        if edgeUtils.isValidAndExistingId(stationId) then
-            local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
-            if edgeUtils.isValidAndExistingId(stationGroupId) then
-                if not(stationGroupIdsInCon[stationGroupId]) then stationGroupIdsInCon[stationGroupId] = {} end
-                local stationGroupName_struct = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
-                if stationGroupName_struct and not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
-                    stationGroupIdsInCon[stationGroupId].name = stationGroupName_struct.name
-                end
-            end
-        end
-    end
-
-    logger.print('stationGroupIdsInCon =') logger.debugPrint(stationGroupIdsInCon)
-
-    local fallbackName_struct = {}
-    for stationGroupId, staGroupInfo in pairs(stationGroupIdsInCon) do
-        if staGroupInfo and not stringUtils.isNullOrEmptyString(staGroupInfo.name) then
-            fallbackName_struct = {stationGroupId = stationGroupId, name = staGroupInfo.name}
-        end
-    end
-
-    logger.print('fallbackName_struct =') logger.debugPrint(fallbackName_struct)
-
-    for stationGroupId, staGroupInfo in pairs(stationGroupIdsInCon) do
-        if staGroupInfo and stringUtils.isNullOrEmptyString(staGroupInfo.name) and not stringUtils.isNullOrEmptyString(fallbackName_struct.name) then
-            logger.print('renaming...')
-            local cmd = api.cmd.make.setName(
-                stationGroupId,
-                fallbackName_struct.name
-            )
-            api.cmd.sendCommand(
-                cmd,
-                function(result, success)
-                    logger.print('_tryRename sent out a command that returned success =', not(not(success)))
-                end
-            )
-        end
-    end
-end
-
-
 local helpers = {
     getNearbyFreestyleStationsListOLD = function(transf, searchRadius)
         if type(transf) ~= 'table' then return {} end
