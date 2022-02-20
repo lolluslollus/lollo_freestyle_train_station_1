@@ -1064,7 +1064,7 @@ local _guiActions = {
         if subwayTransf_lua == nil then return false end
 
         logger.print('conTransf =') logger.debugPrint(subwayTransf_lua)
-        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
+        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
         -- logger.print('nearbyFreestyleStations =') logger.debugPrint(nearbyFreestyleStations)
         logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
         if #nearbyFreestyleStations == 0 then return false end
@@ -2184,7 +2184,7 @@ function data()
                                             trackWaypoint2Id = distance11 < distance12 and trackWaypointIds[2] or trackWaypointIds[1],
                                         }
 
-                                        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
+                                        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
                                         if #nearbyFreestyleStations > 0 and #nearbyFreestyleStations < _constants.maxNTerminals then
                                             guiHelpers.showNearbyStationPicker(
                                                 isCargo,
