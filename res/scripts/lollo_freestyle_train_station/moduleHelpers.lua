@@ -237,7 +237,7 @@ local privateFuncs = {
             local xShift1 = nWaitingAreas <= 4 and -4.5 or -4.5
             local xShift2 = nWaitingAreas <= 4 and 0.7 or 3.7
             local yShift = (-platformWidth -areaWidth) / 2
-            if not(isTrackOnPlatformLeft) then xShift1 = -xShift1 xShift2 = -xShift2 yShift = -yShift end
+            if not(isTrackOnPlatformLeft) then yShift = -yShift end
 
             local roofModelId = nil
             if eraPrefix == constants.eras.era_a.prefix then
@@ -271,7 +271,7 @@ local privateFuncs = {
 
             local xShift = nWaitingAreas <= 4 and -2.0 or 0.0
             local yShift = -platformWidth / 2
-            if not(isTrackOnPlatformLeft) then xShift = -xShift yShift = -yShift end
+            if not(isTrackOnPlatformLeft) then yShift = -yShift end
 
             local chairsModelId = nil
             local binModelId = nil
