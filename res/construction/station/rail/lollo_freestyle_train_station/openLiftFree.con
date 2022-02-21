@@ -313,17 +313,16 @@ function data()
                         }
                     )
                     -- adjust the terrain so it does not cover the bridge
-                    -- table.insert(
-                    --     result.terrainAlignmentLists,
-                    --     { -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
-                    --         type = 'LESS',
-                    --         optional = true,
-                    --         faces =  {{
-                    --             { 0, -_yHalfSize, - 1}, { 0, _yHalfSize, - 1},
-                    --             { _bridgeLen, _yHalfSize, - 1}, { _bridgeLen, -_yHalfSize, - 1},
-                    --         }}
-                    --     }
-                    -- )
+                    table.insert(
+                        result.terrainAlignmentLists,
+                        {
+                            type = 'LESS',
+                            optional = true,
+                            faces =  {{
+                                {-2, -1, 0}, {-2, 1, 0}, {2, 1, 0}, {2, -1, 0},
+                            }}
+                        }
+                    )
                 end
             end
 
