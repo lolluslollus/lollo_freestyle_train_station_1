@@ -44,23 +44,6 @@ function data()
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    -- front doors
-                                    materials = {'lollo_freestyle_train_station/era_b_doors.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    transf = frontBelowTransf
-                                },
-                                {
-                                    --rear doors
-                                    materials = {'lollo_freestyle_train_station/era_b_doors.mtl'},
-                                    mesh = 'industry/oil_refinery/era_a/oil_refinery_wall_large/oil_refinery_wall_large_lod0.msh',
-                                    transf = rearBelowTransf
-                                },
-                            },
-                            transf = stationMainTransf
-                        },
-                        {
                             -- inner lift shaft
                             materials = {
                                 -- 'lollo_freestyle_train_station/shaft.mtl',
@@ -70,11 +53,13 @@ function data()
                             transf = groundLiftShaftTransf
                         },
                         {
-                            -- pillars
+                            -- pillars and doors
                             materials = {
                                 'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/era_b_doors.mtl',
+                                'lollo_freestyle_train_station/era_b_doors_solid.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars_w_doors.msh',
                             transf = pillarsTransf
                         },
                         {

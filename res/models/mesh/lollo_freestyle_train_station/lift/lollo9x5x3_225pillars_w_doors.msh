@@ -1,0 +1,98 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 576,
+					offset = 2624,
+				},
+				position = {
+					count = 576,
+					offset = 2048,
+				},
+				tangent = {
+					count = 576,
+					offset = 896,
+				},
+				uv0 = {
+					count = 576,
+					offset = 1472,
+				},
+			},
+			materials = {
+				"station/road/streetstation/streetstation_perron_base_old.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 96,
+					offset = 3488,
+				},
+				position = {
+					count = 96,
+					offset = 3392,
+				},
+				tangent = {
+					count = 96,
+					offset = 3200,
+				},
+				uv0 = {
+					count = 96,
+					offset = 3296,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/door.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 96,
+					offset = 3872,
+				},
+				position = {
+					count = 96,
+					offset = 3776,
+				},
+				tangent = {
+					count = 96,
+					offset = 3584,
+				},
+				uv0 = {
+					count = 96,
+					offset = 3680,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/door-solid.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 72,
+			numComp = 3,
+			offset = 824,
+		},
+		position = {
+			count = 504,
+			numComp = 3,
+			offset = 320,
+		},
+		tangent = {
+			count = 64,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 256,
+			numComp = 2,
+			offset = 64,
+		},
+	},
+}
+end
