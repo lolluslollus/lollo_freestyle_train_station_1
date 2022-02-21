@@ -8,11 +8,6 @@ function data()
         print('lollo openStairsFree.con ERROR: ', err)
     end
 
-    local _idTransf = {1, 0, 0, 0,
-        0, 1, 0, 0,
-        0, 0, 1, 0,
-        0, 0, 0, 1}
-
     local _paramHelpers = {
         getSliderValues = function(max, step)
             local results = {}
@@ -56,7 +51,11 @@ function data()
             return (math.floor(params.bridge_chunk_z_angle * _paramHelpers.bridgeChunkZAngleStep) - _paramHelpers.maxBridgeChunkZAngleDeg) or 0
         end,
         getBridgeChunkYAngle = function(params)
-            return (math.floor(params.bridge_chunk_y_angle * _paramHelpers.bridgeChunkYAngleStep) - _paramHelpers.maxBridgeChunkYAngleDeg) or 0
+            return -(math.floor(params.bridge_chunk_y_angle * _paramHelpers.bridgeChunkYAngleStep) - _paramHelpers.maxBridgeChunkYAngleDeg) or 0
+        end,
+        getSinYAngle = function(params)
+            local yAngleDeg = (math.floor(params.bridge_chunk_y_angle * _paramHelpers.bridgeChunkYAngleStep) - _paramHelpers.maxBridgeChunkYAngleDeg) or 0
+            return math.sin(yAngleDeg * math.pi / 180)
         end,
         getTerrainAlignmentType = function(params)
             return _paramValues.terrainAlignmentTypes[params.terrain_alignment_type + 1] or _paramValues.terrainAlignmentTypes[1]
@@ -107,14 +106,14 @@ function data()
             },
             {
                 key = 'bridge_chunk_z_angle',
-                name = _('TopPlatformZAngle'),
+                name = _('BridgeZAngle'),
                 values = _paramValues.bridgeChunkZAngles,
                 uiType = 'SLIDER',
                 defaultIndex = _paramValues.bridgeChunkZAngleDefaultIndex,
             },
             {
                 key = 'bridge_chunk_y_angle',
-                name = _('TopPlatformYAngle'),
+                name = _('BridgeYAngle'),
                 values = _paramValues.bridgeChunkYAngles,
                 uiType = 'SLIDER',
                 defaultIndex = _paramValues.bridgeChunkYAngleDefaultIndex,
@@ -236,19 +235,19 @@ function data()
                         -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
                         -- id = 'lollo_freestyle_train_station/empty.mdl',
                         id = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. (_bridgeChunkLength == -2 and 'open_stairs_no_top_railing_' or 'open_stairs_').. _height ..'m.mdl',
-                        transf = _idTransf,
+                        transf = _constants.idTransf,
                     },
                     {
                         id = baseLanesModelId,
-                        transf = _idTransf,
+                        transf = _constants.idTransf,
                     },
                     {
                         id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
-                        transf = _idTransf,
+                        transf = _constants.idTransf,
                     },
                     {
                         id = topLanesModelId,
-                        transf = _idTransf,
+                        transf = _constants.idTransf,
                     },
                 },
                 terrainAlignmentLists = {
@@ -326,7 +325,7 @@ function data()
                         result.models,
                         {
                             id = modelId,
-                            transf = _idTransf,
+                            transf = _constants.idTransf,
                         }
                     )
 
@@ -368,16 +367,15 @@ function data()
             local _addBridge = function()
                 if _bridgeChunkLength == 0 or _bridgeChunkLength == 1 then -- edge or snappy edge
                     local _bridgeLen = 2
+                    local _zShift = _bridgeLen * _paramReaders.getSinYAngle(params)
                     table.insert(
                         result.edgeLists,
                         {
                             alignTerrain = true, -- only align on ground and in tunnels
                             edges = {
-                                { { 0, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
-                                { { _bridgeLen, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
+                                { { 0, 0, _height }, { _bridgeLen, 0, _zShift } },  -- node 0 pos, tan
+                                { { _bridgeLen, 0, _height + _zShift}, { _bridgeLen, 0, _zShift } },  -- node 1 pos, tan
                             },
-                            -- edgeType = 'BRIDGE',
-                            -- edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
@@ -390,13 +388,14 @@ function data()
                     )
                 elseif _bridgeChunkLength == 2 or _bridgeChunkLength == 3 then -- bridge or snappy bridge
                     local _bridgeLen = 2
+                    local _zShift = _bridgeLen * _paramReaders.getSinYAngle(params)
                     table.insert(
                         result.edgeLists,
                         {
                             alignTerrain = false, -- only align on ground and in tunnels
                             edges = {
-                                { { 0, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 0 pos, tan
-                                { { _bridgeLen, 0, _height }, { _bridgeLen, 0, 0 } },  -- node 1 pos, tan
+                                { { 0, 0, _height }, { _bridgeLen, 0, _zShift } },  -- node 0 pos, tan
+                                { { _bridgeLen, 0, _height + _zShift}, { _bridgeLen, 0, _zShift } },  -- node 1 pos, tan
                             },
                             edgeType = 'BRIDGE',
                             edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,

@@ -1,0 +1,148 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 816,
+					offset = 3940,
+				},
+				position = {
+					count = 816,
+					offset = 4756,
+				},
+				tangent = {
+					count = 816,
+					offset = 6388,
+				},
+				uv0 = {
+					count = 816,
+					offset = 5572,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 7204,
+				},
+				position = {
+					count = 96,
+					offset = 7300,
+				},
+				tangent = {
+					count = 96,
+					offset = 7492,
+				},
+				uv0 = {
+					count = 96,
+					offset = 7396,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_lifts/doors.003.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 528,
+					offset = 7588,
+				},
+				position = {
+					count = 528,
+					offset = 8116,
+				},
+				tangent = {
+					count = 528,
+					offset = 9172,
+				},
+				uv0 = {
+					count = 528,
+					offset = 8644,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/roof.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 9700,
+				},
+				position = {
+					count = 24,
+					offset = 9724,
+				},
+				tangent = {
+					count = 24,
+					offset = 9772,
+				},
+				uv0 = {
+					count = 24,
+					offset = 9748,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_lifts/hole.002.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 9796,
+				},
+				position = {
+					count = 48,
+					offset = 9844,
+				},
+				tangent = {
+					count = 48,
+					offset = 9940,
+				},
+				uv0 = {
+					count = 48,
+					offset = 9892,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_lifts/doors-solid.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 396,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 1008,
+			numComp = 3,
+			offset = 396,
+		},
+		tangent = {
+			count = 992,
+			numComp = 4,
+			offset = 2948,
+		},
+		uv0 = {
+			count = 1544,
+			numComp = 2,
+			offset = 1404,
+		},
+	},
+}
+end

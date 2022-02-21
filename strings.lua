@@ -284,7 +284,11 @@ function data()
 			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot",
 			["WaypointsTooFar"] = "Too far from its twin",
 
-			-- free open stairs
+			-- free open stairs and free lifts
+			["BaseMode"] = "Base Mode",
+			["BridgeMode"] = "Bridge Mode",
+			["BridgeYAngle"] = "Bridge Tilt",
+			["BridgeZAngle"] = "Bridge Rotation",
 			["EdgeWithBridge"] = "Auto Bridge",
 			["EdgeWithNoBridge"] = "Auto Path",
 			["Era"] = "Era",
@@ -308,8 +312,6 @@ function data()
 			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
 			["TopPlatformLengthTooltip"] = "It might be easier to select \"Path\" when building and change it to \"Bridge\" once built",
-			["TopPlatformYAngle"] = "Top Platform Tilt",
-			["TopPlatformZAngle"] = "Top Platform Rotation",
 		},
 	}
 end
