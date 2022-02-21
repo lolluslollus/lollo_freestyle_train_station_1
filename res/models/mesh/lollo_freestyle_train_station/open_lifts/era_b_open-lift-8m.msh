@@ -10,19 +10,19 @@ return {
 			indices = {
 				normal = {
 					count = 816,
-					offset = 5980,
+					offset = 6028,
 				},
 				position = {
 					count = 816,
-					offset = 5164,
+					offset = 5212,
 				},
 				tangent = {
 					count = 816,
-					offset = 3532,
+					offset = 3580,
 				},
 				uv0 = {
 					count = 816,
-					offset = 4348,
+					offset = 4396,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 96,
-					offset = 7084,
+					offset = 7132,
 				},
 				position = {
 					count = 96,
-					offset = 6988,
+					offset = 7036,
 				},
 				tangent = {
 					count = 96,
-					offset = 6796,
+					offset = 6844,
 				},
 				uv0 = {
 					count = 96,
-					offset = 6892,
+					offset = 6940,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 528,
-					offset = 8764,
+					offset = 8812,
 				},
 				position = {
 					count = 528,
-					offset = 8236,
+					offset = 8284,
 				},
 				tangent = {
 					count = 528,
-					offset = 7180,
+					offset = 7228,
 				},
 				uv0 = {
 					count = 528,
-					offset = 7708,
+					offset = 7756,
 				},
 			},
 			materials = {
@@ -79,19 +79,19 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 9364,
+					offset = 9412,
 				},
 				position = {
 					count = 24,
-					offset = 9340,
+					offset = 9388,
 				},
 				tangent = {
 					count = 24,
-					offset = 9292,
+					offset = 9340,
 				},
 				uv0 = {
 					count = 24,
-					offset = 9316,
+					offset = 9364,
 				},
 			},
 			materials = {
@@ -102,19 +102,19 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 9532,
+					offset = 9580,
 				},
 				position = {
 					count = 48,
-					offset = 9484,
+					offset = 9532,
 				},
 				tangent = {
 					count = 48,
-					offset = 9388,
+					offset = 9436,
 				},
 				uv0 = {
 					count = 48,
-					offset = 9436,
+					offset = 9484,
 				},
 			},
 			materials = {
@@ -126,10 +126,10 @@ return {
 		normal = {
 			count = 396,
 			numComp = 3,
-			offset = 3136,
+			offset = 3184,
 		},
 		position = {
-			count = 960,
+			count = 1008,
 			numComp = 3,
 			offset = 2176,
 		},
