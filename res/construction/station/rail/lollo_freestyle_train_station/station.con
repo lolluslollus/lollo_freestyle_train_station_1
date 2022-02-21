@@ -235,7 +235,7 @@ function data()
 
 				local function _addPlatformRoofs()
 					if isCargoTerminal then return end
-
+-- LOLLO TODO try to make them cover the platform until the end, like the extensions
 					local iMax = #params.terminals[t].centrePlatformsRelative
 					local iss = {}
 					for i = 2, iMax, 3 do iss[#iss+1] = i end
@@ -244,7 +244,7 @@ function data()
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						if cpl.type ~= 2 then -- no platform roofs in tunnels
+						-- if cpl.type ~= 2 then -- no platform roofs in tunnels
 							local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
 							table.insert(result.slots, {
 								-- height = 0,
@@ -253,7 +253,7 @@ function data()
 								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 								type = _constants.platformRoofModuleType,
 							})
-						end
+						-- end
 					end
 				end
 				_addPlatformRoofs()
