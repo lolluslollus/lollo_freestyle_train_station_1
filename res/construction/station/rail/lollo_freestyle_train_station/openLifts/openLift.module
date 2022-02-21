@@ -19,7 +19,7 @@ function data()
 		description = {
 			name = _("OpenLiftName"),
 			description = _("OpenLiftDesc"),
-			icon = "ui/lollo_freestyle_train_station/openLift.tga" -- LOLLO TODO make this icon
+			icon = "ui/lollo_freestyle_train_station/openLift.tga"
 		},
 		metadata = { },
 		order = {
