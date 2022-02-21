@@ -286,6 +286,7 @@ function data()
 
 			-- free open stairs and free lifts
 			["BaseMode"] = "Base Mode",
+			["BridgeHeight"] = "Bridge Height",
 			["BridgeMode"] = "Bridge Mode",
 			["BridgeYAngle"] = "Bridge Tilt",
 			["BridgeZAngle"] = "Bridge Rotation",
@@ -302,6 +303,7 @@ function data()
 			["OpenStairsFreeName"] = "Stairs",
 			["PedestrianBridges"] = "Pedestrian Bridges",
 			["PedestrianPaths"] = "Pedestrian Paths",
+			["SimpleConnection"] = "Simple",
 			["SnappyEdgeWithBridge"] = "Snappy Bridge",
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["Stairs"] = "Stairs",

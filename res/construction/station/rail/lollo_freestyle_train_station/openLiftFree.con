@@ -19,7 +19,7 @@ function data()
         bridgeModes = {0, 1, 2, 3},
         maxBridgeChunkYAngleDeg = 15,
         bridgeChunkYAngleStep = 1,
-        baseModes = {0, 1, 2, 3,},
+        baseModes = {-1, 0, 1, 2, 3,},
     }
     local _paramValues = {
         heights = {'8 m', '10 m'},
@@ -27,7 +27,7 @@ function data()
         bridgeModes = {_('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
         bridgeChunkYAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkYAngleDeg, _paramHelpers.bridgeChunkYAngleStep),
         bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
-        baseModes = {_('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+        baseModes = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
     }
     local _paramReaders = {
         getHeight = function(params)
@@ -37,7 +37,7 @@ function data()
             return _paramHelpers.eraPrefixes[params.era_prefix + 1] or _paramHelpers.eraPrefixes[1]
         end,
         getBridgeMode = function(params)
-            return _paramHelpers.bridgeModes[params.lift_bridge_mode + 1] or -1
+            return _paramHelpers.bridgeModes[params.lift_bridge_mode + 1] or 2
         end,
         getSinYAngle = function(params)
             local yAngleDeg = (math.floor(params.bridge_chunk_y_angle * _paramHelpers.bridgeChunkYAngleStep) - _paramHelpers.maxBridgeChunkYAngleDeg) or 0
@@ -67,7 +67,7 @@ function data()
 		params = {
             {
                 key = 'lift_height',
-                name = _('OpenStairsFreeHeight'),
+                name = _('BridgeHeight'),
                 values = _paramValues.heights,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
@@ -82,7 +82,6 @@ function data()
             {
                 key = 'lift_bridge_mode',
                 name = _('BridgeMode'),
-                tooltip = _('TopPlatformLengthTooltip'),
                 values = _paramValues.bridgeModes,
                 uiType = 'BUTTON',
                 defaultIndex = 2,
@@ -97,7 +96,6 @@ function data()
             {
                 key = 'lift_base_mode',
                 name = _('BaseMode'),
-                tooltip = _('StairsBaseTooltip'),
                 values = _paramValues.baseModes,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
@@ -135,7 +133,9 @@ function data()
                         transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
                     },
                     {
-                        id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom.mdl',
+                        id = (_baseMode == -1
+                            and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp.mdl'
+                            or 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_edges.mdl'),
                         transf = _constants.idTransf,
                     },
                     {
