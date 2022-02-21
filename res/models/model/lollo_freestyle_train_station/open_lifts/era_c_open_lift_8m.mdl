@@ -12,7 +12,8 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
-                                'lollo_freestyle_train_station/shaft.mtl',
+                                -- 'lollo_freestyle_train_station/shaft.mtl',
+                                'lollo_freestyle_train_station/era_c_lift_doors.mtl',
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
                                 'lollo_freestyle_train_station/hole.mtl',
                             },
