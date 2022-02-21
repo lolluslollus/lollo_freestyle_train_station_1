@@ -43,10 +43,19 @@ local _actions = {
         elseif streetUtils.isStreetAllTramTracks((api.res.streetTypeRep.get(newEdge.streetEdge.streetType) or {}).laneConfigs) then
             newEdge.streetEdge.tramTrackType = 2
         end
-        -- add bus lane if the new street type wants so
+        -- add bus lane and bar tram if the new street type wants so (paths)
         if streetUtils.isPath(newEdge.streetEdge.streetType) then
             newEdge.streetEdge.hasBus = true
+            newEdge.streetEdge.tramTrackType = 0
         end
+
+        -- -- leave if nothing changed
+        -- if newEdge.streetEdge.streetType == oldEdgeStreet.streetType
+        -- and newEdge.streetEdge.tramTrackType == oldEdgeStreet.tramTrackType
+        -- and newEdge.streetEdge.hasBus == oldEdgeStreet.hasBus
+        -- and newEdge.comp.type == oldEdge.comp.type
+        -- and newEdge.comp.typeIndex == oldEdge.comp.typeIndex
+        -- then return end
 
         local proposal = api.type.SimpleProposal.new()
         proposal.streetProposal.edgesToRemove[1] = oldEdgeId
