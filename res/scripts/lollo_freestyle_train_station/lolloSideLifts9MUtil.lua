@@ -17,7 +17,8 @@ return function(height, era)
             roofDeco = 'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl',
         },
         era_b = {
-            shaft = 'lollo_freestyle_train_station/shaft.mtl',
+            -- shaft = 'lollo_freestyle_train_station/shaft.mtl',
+            shaft = 'lollo_freestyle_train_station/era_b_doors.mtl',
             stationSign = "lollo_freestyle_train_station/asset/era_b_station_signs.mtl",
             tiles = 'lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl',
             wallGrey = 'lollo_freestyle_train_station/wall_marble_2.mtl',
