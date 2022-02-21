@@ -235,7 +235,6 @@ function data()
 
 				local function _addPlatformRoofs()
 					if isCargoTerminal then return end
--- LOLLO TODO try to make them cover the platform until the end, like the extensions
 					local iMax = #params.terminals[t].centrePlatformsRelative
 					local iss = {}
 					for i = 2, iMax, 3 do iss[#iss+1] = i end
