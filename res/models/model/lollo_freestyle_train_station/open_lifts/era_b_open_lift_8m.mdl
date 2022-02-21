@@ -1,0 +1,33 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                'lollo_freestyle_train_station/shaft.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/open_lifts/era_b_open-lift-8m.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 250,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end
