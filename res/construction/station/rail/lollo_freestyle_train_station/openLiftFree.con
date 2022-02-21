@@ -129,7 +129,7 @@ function data()
                 models = {
                     {
                         -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
-                        id = 'lollo_freestyle_train_station/open_lifts/' .. _era_prefix .. ('open_lift_free_').. _height ..'m.mdl',
+                        id = 'lollo_freestyle_train_station/open_lifts_free/' .. _era_prefix .. ('open_lift_free_').. _height ..'m.mdl',
                         transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
                     },
                     {
