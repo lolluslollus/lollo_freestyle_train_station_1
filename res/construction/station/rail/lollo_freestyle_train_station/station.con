@@ -927,10 +927,9 @@ function data()
 								type = _constants.tunnelStairsUpDownModuleType,
 							})
 						else -- ground and bridges
-							local myId = result.mangleId(t, i, _constants.idBases.underpassSlotId)
 							table.insert(result.slots, {
 								-- height = 0,
-								id = myId,
+								id = result.mangleId(t, i, _constants.idBases.underpassSlotId),
 								-- shape 0 1 2 3, only graphical
 								spacing = mySpacing,
 								transf = myTransf,
@@ -939,7 +938,7 @@ function data()
 							if cpl.type == 0 then -- ground
                                 table.insert(result.slots, {
                                     -- height = 0,
-                                    id = myId,
+                                    id = result.mangleId(t, i, _constants.idBases.openLiftSlotId),
                                     -- shape 0 1 2 3, only graphical
                                     spacing = mySpacing,
                                     transf = myTransf,
