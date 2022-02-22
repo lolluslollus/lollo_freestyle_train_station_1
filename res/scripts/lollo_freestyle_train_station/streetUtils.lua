@@ -3,8 +3,7 @@ local fileUtils = require('lollo_freestyle_train_station.fileUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 local _streetDataBuffer = {
-    data = {},
-    filterId = nil
+    -- table indexed by filterId
 }
 local _bridgeDataBuffer = {
     data = {},
@@ -414,19 +413,15 @@ end
 
 local function _initLolloStreetDataWithApi(filter)
     -- print('_initLolloStreetDataWithApi starting with filter =') debugPrint(filter)
-    -- print('_streetDataBuffer.filterId =', _streetDataBuffer.filterId)
-    -- print('type(_streetDataBuffer.data) =', type(_streetDataBuffer.data))
-    -- if type(_streetDataBuffer.data) == 'table' then
-    --     print('#_streetDataBuffer.data =', #_streetDataBuffer.data)
-    -- end
+    -- print('_streetDataBuffer[filter.id] =', _streetDataBuffer[filter.id])
+    -- print('type(_streetDataBuffer[filter.id]) =', type(_streetDataBuffer[filter.id]))
 
-    if _streetDataBuffer.filterId ~= filter.id
-    or type(_streetDataBuffer.data) ~= 'table'
-    or #_streetDataBuffer.data < 1 then
-        _streetDataBuffer.data = filter.func(_getStreetTypesWithApi())
-        arrayUtils.sort(_streetDataBuffer.data, 'name')
+    if _streetDataBuffer[filter.id] == nil
+    or type(_streetDataBuffer[filter.id]) ~= 'table'
+    or #_streetDataBuffer[filter.id] < 1 then
+        _streetDataBuffer[filter.id] = filter.func(_getStreetTypesWithApi())
 
-        -- print('LOLLO street data initialised with api, it has', #(_streetDataBuffer.data or {}), 'records and type = ', type(_streetDataBuffer.data))
+        -- print('LOLLO street data initialised with api, it has', #(_streetDataBuffer[filter.id] or {}), 'records and type = ', type(_streetDataBuffer[filter.id]))
     end
 end
 
@@ -435,20 +430,18 @@ local function _initLolloBridgeDataWithApi(carrierId)
     or type(_bridgeDataBuffer.data) ~= 'table'
     or #_bridgeDataBuffer.data < 1 then
         _bridgeDataBuffer.data = _getBridgeTypes(carrierId)
-        arrayUtils.sort(_bridgeDataBuffer.data, 'name')
 
         -- print('LOLLO bridge data initialised with api, it has', #(_bridgeDataBuffer.data or {}), 'records and type = ', type(_bridgeDataBuffer.data))
     end
 end
 
 local function _initLolloStreetDataWithFiles(filter)
-    if _streetDataBuffer.filterId ~= filter.id
-    or type(_streetDataBuffer.data) ~= 'table'
-    or #_streetDataBuffer.data < 1 then
-        _streetDataBuffer.data = filter.func(_getStreetFilesContents(_getMyStreetDirPath()))
-        arrayUtils.sort(_streetDataBuffer.data, 'name')
+    if _streetDataBuffer[filter.id] == nil
+    or type(_streetDataBuffer[filter.id]) ~= 'table'
+    or #_streetDataBuffer[filter.id] < 1 then
+        _streetDataBuffer[filter.id] = filter.func(_getStreetFilesContents(_getMyStreetDirPath()))
 
-        -- print('LOLLO street data initialised with files, it has', #(_streetDataBuffer.data or {}), 'records and type = ', type(_streetDataBuffer.data))
+        -- print('LOLLO street data initialised with files, it has', #(_streetDataBuffer[filter.id] or {}), 'records and type = ', type(_streetDataBuffer[filter.id]))
     end
 end
 
@@ -596,17 +589,25 @@ helper.getStreetDataFilters = function()
     }
 end
 
-helper.getGlobalStreetData = function(filter)
-    if filter == nil then filter = helper.getStreetDataFilters().STOCK end
-    _initLolloStreetDataWithApi(filter)
+helper.getGlobalStreetData = function(filters)
+    if type(filters) ~= 'table' or #filters == 0 then filters = {helper.getStreetDataFilters().STOCK} end
+
+    local results = {}
+    for _, filter in pairs(filters) do
+        _initLolloStreetDataWithApi(filter)
+        arrayUtils.concatValues(results, _streetDataBuffer[filter.id])
+    end
     -- _initLolloStreetDataWithFiles(filter)
-    return _streetDataBuffer.data
+    arrayUtils.sort(results, 'name')
+
+    return results
 end
 
 helper.getGlobalBridgeData = function(carrierId)
     if not(carrierId) then carrierId = api.type.enum.Carrier.ROAD end
     _initLolloBridgeDataWithApi(carrierId)
-    return _bridgeDataBuffer.data
+
+    return arrayUtils.sort(_bridgeDataBuffer.data, 'name')
 end
 
 helper.getGlobalBridgeDataPlusNoBridge = function(carrierId)
