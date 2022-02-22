@@ -1,69 +1,16 @@
 function data()
     local _constants = require('lollo_freestyle_train_station.constants')
+    local logger = require('lollo_freestyle_train_station.logger')
     local _modulesutilUG = require('modulesutil')
-    local _openStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
+    local _openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
         print('lollo openStairsFree.con ERROR: ', err)
     end
 
-    local _paramHelpers = {
-        getSliderValues = function(max, step)
-            local results = {}
-            for i = -max, max, step do
-                results[#results+1] = tostring(i)
-            end
-            return results
-        end,
-        heights = {2, 4, 6, 8, 10},
-        eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
-        bridgeChunkLengths = {-2, -1, 4, 8, 16, 32, 64, 0, 1, 2, 3},
-        maxBridgeChunkZAngleDeg = 90,
-        bridgeChunkZAngleStep = 5,
-        maxBridgeChunkYAngleDeg = 15,
-        bridgeChunkYAngleStep = 1,
-        stairsBases = {-1, 99, 0, 1, 2, 3,},
-    }
-    local _paramValues = {
-        heights = {'2m', '4 m', '6m', '8 m', '10 m'},
-        eras = {'A', 'B', 'C'},
-        bridgeChunkLengths = {_('NoRailing0'), '0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
-        bridgeChunkZAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkZAngleDeg, _paramHelpers.bridgeChunkZAngleStep),
-        bridgeChunkZAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkZAngleDeg / _paramHelpers.bridgeChunkZAngleStep),
-        bridgeChunkYAngles = _paramHelpers.getSliderValues(_paramHelpers.maxBridgeChunkYAngleDeg, _paramHelpers.bridgeChunkYAngleStep),
-        bridgeChunkYAngleDefaultIndex = math.floor(_paramHelpers.maxBridgeChunkYAngleDeg / _paramHelpers.bridgeChunkYAngleStep),
-        terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
-        flatSlopedTerrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
-        stairsBases = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'),},
-    }
-    local _paramReaders = {
-        getHeight = function(params)
-            return _paramHelpers.heights[params.stairs_height + 1] or 8
-        end,
-        getEraPrefix = function(params)
-            return _paramHelpers.eraPrefixes[params.era_prefix + 1] or _paramHelpers.eraPrefixes[1]
-        end,
-        getBridgeChunkLength = function(params)
-            return _paramHelpers.bridgeChunkLengths[params.bridge_chunk_length + 1] or -1
-        end,
-        getBridgeChunkZAngle = function(params)
-            return (math.floor(params.bridge_chunk_z_angle * _paramHelpers.bridgeChunkZAngleStep) - _paramHelpers.maxBridgeChunkZAngleDeg) or 0
-        end,
-        getBridgeChunkYAngle = function(params)
-            return -(math.floor(params.bridge_chunk_y_angle * _paramHelpers.bridgeChunkYAngleStep) - _paramHelpers.maxBridgeChunkYAngleDeg) or 0
-        end,
-        getSinYAngle = function(params)
-            local yAngleDeg = (math.floor(params.bridge_chunk_y_angle * _paramHelpers.bridgeChunkYAngleStep) - _paramHelpers.maxBridgeChunkYAngleDeg) or 0
-            return math.sin(yAngleDeg * math.pi / 180)
-        end,
-        getTerrainAlignmentType = function(params)
-            return _paramValues.terrainAlignmentTypes[params.terrain_alignment_type + 1] or _paramValues.terrainAlignmentTypes[1]
-        end,
-        getStairsBase = function(params)
-            return _paramHelpers.stairsBases[params.stairs_base + 1] or -1
-        end,
-    }
+    local _paramValues = _openLiftOpenStairsHelpers.paramValues.stairs
+    local _paramReaders = _openLiftOpenStairsHelpers.paramReaders.stairs
 
 	return {
         type = 'ASSET_DEFAULT',
@@ -79,64 +26,64 @@ function data()
         categories = { 'stairs' },
 		order = 999,
 		autoRemovable = false,
-        buildMode = 'MULTI',
+        -- buildMode = 'MULTI',
 		skipCollision = false, -- true,
 		params = {
             {
                 key = 'stairs_height',
                 name = _('OpenStairsFreeHeight'),
-                values = _paramValues.heights,
+                values = _paramValues.stairs_height,
                 uiType = 'BUTTON',
                 defaultIndex = 1,
             },
             {
                 key = 'era_prefix',
                 name = _('Era'),
-                values = _paramValues.eras,
+                values = _paramValues.era_prefix,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
             {
-                key = 'bridge_chunk_length',
+                key = 'bridge_chunk_length', -- do not rename this param or chenga its values
                 name = _('TopPlatformLength'),
                 tooltip = _('TopPlatformLengthTooltip'),
-                values = _paramValues.bridgeChunkLengths,
+                values = _paramValues.bridge_chunk_length,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
             {
                 key = 'bridge_chunk_z_angle',
                 name = _('BridgeZAngle'),
-                values = _paramValues.bridgeChunkZAngles,
+                values = _paramValues.bridge_chunk_z_angle,
                 uiType = 'SLIDER',
-                defaultIndex = _paramValues.bridgeChunkZAngleDefaultIndex,
+                defaultIndex = _paramValues.bridge_chunk_z_angle_DefaultIndex,
             },
             {
                 key = 'bridge_chunk_y_angle',
                 name = _('BridgeYAngle'),
-                values = _paramValues.bridgeChunkYAngles,
+                values = _paramValues.bridge_chunk_y_angle,
                 uiType = 'SLIDER',
-                defaultIndex = _paramValues.bridgeChunkYAngleDefaultIndex,
+                defaultIndex = _paramValues.bridge_chunk_y_angle_DefaultIndex,
             },
             {
-                key = 'stairs_base',
+                key = 'stairs_base', -- do not rename this param or chenga its values
                 name = _('StairsBase'),
                 tooltip = _('StairsBaseTooltip'),
-                values = _paramValues.stairsBases,
+                values = _paramValues.stairs_base,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
             {
                 key = 'terrain_alignment_type',
                 name = _('TerrainAlignmentType'),
-                values = _paramValues.terrainAlignmentTypes,
+                values = _paramValues.terrain_alignment_type,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
             {
                 key = 'flat_sloped_terrain',
                 name = _('FlatSlopedTerrain'),
-                values = _paramValues.flatSlopedTerrain,
+                values = _paramValues.flat_sloped_terrain,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
             },
@@ -146,7 +93,7 @@ function data()
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
             local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
-            local _openStairsRefData = _openStairsHelpers.getData4Era(_era_prefix)
+            local _openStairsRefData = _openLiftOpenStairsHelpers.getData4Era(_era_prefix)
 
             local _yHalfSize = 1
 
@@ -260,6 +207,8 @@ function data()
                     },
                 },
             }
+
+            -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
 
             local _addBase = function()
                 if _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge

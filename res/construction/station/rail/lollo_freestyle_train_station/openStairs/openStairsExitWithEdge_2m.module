@@ -2,7 +2,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
-local openStairsHelpers = require('lollo_freestyle_train_station.openStairsHelpers')
+local openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
 
@@ -50,7 +50,7 @@ function data()
 				tag = tag
 			}
 
-			local _openStairsRefData = openStairsHelpers.getData4Era(eraPrefix)
+			local _openStairsRefData = openLiftOpenStairsHelpers.getData4Era(eraPrefix)
 			table.insert(
 				result.edgeLists,
 				{
