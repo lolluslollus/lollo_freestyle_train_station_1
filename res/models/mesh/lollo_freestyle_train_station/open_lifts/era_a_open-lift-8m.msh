@@ -2,27 +2,27 @@ function data()
 return {
 	matConfigs = {
 		{
-			0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 
 		}, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 864,
-					offset = 6716,
+					count = 528,
+					offset = 4156,
 				},
 				position = {
-					count = 864,
-					offset = 5852,
+					count = 528,
+					offset = 5740,
 				},
 				tangent = {
-					count = 864,
-					offset = 4124,
+					count = 528,
+					offset = 4684,
 				},
 				uv0 = {
-					count = 864,
-					offset = 4988,
+					count = 528,
+					offset = 5212,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 96,
-					offset = 7868,
+					offset = 6268,
 				},
 				position = {
 					count = 96,
-					offset = 7772,
+					offset = 6556,
 				},
 				tangent = {
 					count = 96,
-					offset = 7580,
+					offset = 6364,
 				},
 				uv0 = {
 					count = 96,
-					offset = 7676,
+					offset = 6460,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 720,
-					offset = 10124,
+					offset = 6652,
 				},
 				position = {
 					count = 720,
-					offset = 9404,
+					offset = 8812,
 				},
 				tangent = {
 					count = 720,
-					offset = 7964,
+					offset = 7372,
 				},
 				uv0 = {
 					count = 720,
-					offset = 8684,
+					offset = 8092,
 				},
 			},
 			materials = {
@@ -79,23 +79,46 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 10916,
+					offset = 9532,
 				},
 				position = {
 					count = 24,
-					offset = 10892,
+					offset = 9604,
 				},
 				tangent = {
 					count = 24,
-					offset = 10844,
+					offset = 9556,
 				},
 				uv0 = {
 					count = 24,
-					offset = 10868,
+					offset = 9580,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/open_lifts/hole.001.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 336,
+					offset = 9628,
+				},
+				position = {
+					count = 336,
+					offset = 10636,
+				},
+				tangent = {
+					count = 336,
+					offset = 9964,
+				},
+				uv0 = {
+					count = 336,
+					offset = 10300,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_lifts/wall-deco.001.mtl", 
 			},
 		}, 
 	},
@@ -103,22 +126,22 @@ return {
 		normal = {
 			count = 516,
 			numComp = 3,
-			offset = 3608,
+			offset = 0,
 		},
 		position = {
 			count = 1008,
 			numComp = 3,
-			offset = 2600,
+			offset = 3148,
 		},
 		tangent = {
-			count = 1008,
+			count = 1040,
 			numComp = 4,
-			offset = 0,
+			offset = 516,
 		},
 		uv0 = {
 			count = 1592,
 			numComp = 2,
-			offset = 1008,
+			offset = 1556,
 		},
 	},
 }
