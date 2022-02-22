@@ -43,7 +43,7 @@ function data()
 				tag = tag
 			}
 			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitInnerSlotId),
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openLiftExitInnerSlotId),
 				shape = 1,
 				spacing = {-1, 3, 0.5, 0.5},
 				transf = transfUtilsUG.mul(
@@ -53,7 +53,7 @@ function data()
 				type = _constants.openStairsExitModuleType,
 			})
 			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitOuterSlotId),
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openLiftExitOuterSlotId),
 				shape = 1,
 				spacing = {-1, 3, 0.5, 0.5},
 				transf = transfUtilsUG.mul(
