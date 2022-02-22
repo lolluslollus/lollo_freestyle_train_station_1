@@ -13,12 +13,11 @@ function data()
 
                 Now click your station to open the configuration menu and add some connections.
                 - Adjacent platforms are connected together automatically. If you added extra platforms or space between, you will have to connect them by hand instead: use a suitable street type and <shift>. Avoid this with tunnels and bridges, keep it simple.
-                - Every set of adjacent ground platforms requires street access or an underpass. This is like the stock stations.
+                - Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
                 - Every bridge level requires a lift.
                 - Every set of adjacent underground platforms requires stairs.
-                - Every underground level requires a subway entrance, or a ground platform with an underpass, or a bridge platform with a lift, or a higher underground level with stairs down.
-                - If you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels.
+                - Every underground level requires a subway entrance, or a ground platform with an underpass, or a bridge platform with a lift, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
 
                 You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, connect the platform ends by hand with a suitable street type and <shift>.
                 You cannot share one stretch of platform among multiple terminals.
@@ -29,17 +28,17 @@ function data()
 				[h1]Tips:[/h1]
                 - Platforms are tracks and they can also suffer from micro splits, very difficult to see.
 				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
-				- To work underground, use <NumPad 4>.
+				- To work underground, use <NumPad 4> or the 'Look Underground' track construction.
 				- Platforms only carry passengers or cargo if they are part of a terminal.
 				- 2.5 m platforms do not agree with bridges and tunnels. My 'no railing' bridges help, tunnels can't be helped.
+                - This mod adds extra bridges to help with elevated stations.
                 - Very thin paths help with certain setups: those are in my street fine tuning mod.
+				- This mod adds extra pedestrian paths and bridges. Some of those paths turn into bridges after placing them. They can be tricky to place, the street fine tuning 'chunks' and 'splitter' constructions come to the rescue.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
-				- Extra ground textures are in my terrain tweak mod.
-				- If you want large buildings, use assets. There are mods for those.
-				- This mod adds extra pedestrian paths and bridges.
-                - This mod adds extra bridges to help with elevated stations.
-				- This mod adds stairs as a configurable asset, which can be used anywhere. The construction mover helps to place them easily.
+				- Extra ground textures are in my terrain tweaks mod.
+				- If you want different buildings, use assets. There are mods with those.
+				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily.
 
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
