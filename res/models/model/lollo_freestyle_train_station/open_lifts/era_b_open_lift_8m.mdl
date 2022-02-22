@@ -22,6 +22,8 @@ function data()
 
                                 'lollo_freestyle_train_station/hole.mtl',
                                 'lollo_freestyle_train_station/era_b_doors_solid.mtl',
+
+                                'lollo_freestyle_train_station/era_b_lift_doors.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/open_lifts/era_b_open-lift-8m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
