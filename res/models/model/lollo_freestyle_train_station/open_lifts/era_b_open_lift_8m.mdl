@@ -11,10 +11,15 @@ function data()
                     children = {
                         {
                             materials = {
-                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                -- 'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+
                                 'lollo_freestyle_train_station/era_b_doors.mtl',
                                 -- 'lollo_freestyle_train_station/era_b_doors_barely_transparent.mtl',
-                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                
+                                -- 'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+
                                 'lollo_freestyle_train_station/hole.mtl',
                                 'lollo_freestyle_train_station/era_b_doors_solid.mtl',
                             },
