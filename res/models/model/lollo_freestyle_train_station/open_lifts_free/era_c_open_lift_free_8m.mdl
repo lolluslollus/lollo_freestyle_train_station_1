@@ -11,9 +11,14 @@ function data()
                     children = {
                         {
                             materials = {
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                -- 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+                                'lollo_freestyle_train_station/wall_white.mtl',
+
                                 'lollo_freestyle_train_station/era_c_lift_doors.mtl',
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
+
+                                -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
+                                'lollo_freestyle_train_station/wall_grey.mtl',
+
                                 'lollo_freestyle_train_station/hole.mtl',
                                 'lollo_freestyle_train_station/era_c_lift_doors_solid.mtl',
                                 'lollo_freestyle_train_station/era_c_doors.mtl',
