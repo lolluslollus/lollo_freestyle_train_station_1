@@ -2,7 +2,7 @@ function data()
 return {
 	matConfigs = {
 		{
-			0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 
 		}, 
 	},
 	subMeshes = {
@@ -10,19 +10,19 @@ return {
 			indices = {
 				normal = {
 					count = 1152,
-					offset = 8504,
+					offset = 6300,
 				},
 				position = {
 					count = 1152,
-					offset = 5048,
+					offset = 9756,
 				},
 				tangent = {
 					count = 1152,
-					offset = 6200,
+					offset = 7452,
 				},
 				uv0 = {
 					count = 1152,
-					offset = 7352,
+					offset = 8604,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 96,
-					offset = 9944,
+					offset = 10908,
 				},
 				position = {
 					count = 96,
-					offset = 9656,
+					offset = 11196,
 				},
 				tangent = {
 					count = 96,
-					offset = 9752,
+					offset = 11004,
 				},
 				uv0 = {
 					count = 96,
-					offset = 9848,
+					offset = 11100,
 				},
 			},
 			materials = {
@@ -55,20 +55,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 720,
-					offset = 12200,
+					count = 960,
+					offset = 11292,
 				},
 				position = {
-					count = 720,
-					offset = 10040,
+					count = 960,
+					offset = 14172,
 				},
 				tangent = {
-					count = 720,
-					offset = 10760,
+					count = 960,
+					offset = 12252,
 				},
 				uv0 = {
-					count = 720,
-					offset = 11480,
+					count = 960,
+					offset = 13212,
 				},
 			},
 			materials = {
@@ -79,46 +79,69 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 12992,
+					offset = 15132,
 				},
 				position = {
 					count = 24,
-					offset = 12920,
+					offset = 15204,
 				},
 				tangent = {
 					count = 24,
-					offset = 12944,
+					offset = 15156,
 				},
 				uv0 = {
 					count = 24,
-					offset = 12968,
+					offset = 15180,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/open_lifts/hole.001.mtl", 
 			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 192,
+					offset = 15228,
+				},
+				position = {
+					count = 192,
+					offset = 15804,
+				},
+				tangent = {
+					count = 192,
+					offset = 15420,
+				},
+				uv0 = {
+					count = 192,
+					offset = 15612,
+				},
+			},
+			materials = {
+				"iron_deco_2.mtl", 
+			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 516,
-			numComp = 3,
-			offset = 4532,
-		},
-		position = {
-			count = 1332,
+			count = 624,
 			numComp = 3,
 			offset = 0,
 		},
+		position = {
+			count = 1884,
+			numComp = 3,
+			offset = 4416,
+		},
 		tangent = {
-			count = 1264,
+			count = 1488,
 			numComp = 4,
-			offset = 1332,
+			offset = 624,
 		},
 		uv0 = {
-			count = 1936,
+			count = 2304,
 			numComp = 2,
-			offset = 2596,
+			offset = 2112,
 		},
 	},
 }
