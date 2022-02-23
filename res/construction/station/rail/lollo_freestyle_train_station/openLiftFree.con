@@ -69,12 +69,27 @@ function data()
             local _height = _paramReaders.getHeight(params)
             local _sinYAngle = _paramReaders.getSinYAngle(params)
             local _openStairsRefData = _openLiftOpenStairsHelpers.getData4Era(_era_prefix)
+            local _groundFacesFillKey = _constants[_era_prefix .. 'groundFacesFillKey']
 
             local result = {
                 colliders = {},
                 cost = 0,
                 edgeLists = {},
                 groundFaces = {
+                    {
+                        face = {
+                            {-1, -3, 0, 1}, {-1, 3, 0, 1}, {1, 3, 0, 1}, {1, -3, 0, 1}
+                        },
+                        loop = true,
+                        modes = {
+                            {
+                                -- key = 'lollo_freestyle_train_station/hole.lua',
+                                -- key = 'hole.lua',
+                                key = _groundFacesFillKey,
+                                type = 'FILL',
+                            },
+                        },
+                    },
                     -- {
                     --     face = faces[1],
                     --     loop = true,
