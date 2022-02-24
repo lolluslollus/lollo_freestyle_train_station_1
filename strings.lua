@@ -305,7 +305,7 @@ function data()
 			["SimpleConnection"] = "Simple",
 			["SnappyEdgeWithBridge"] = "Snappy Bridge",
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
-			["Stairs"] = "Stairs",
+			["Stairs"] = "Stairs, Lifts, Underground Entrances for the Freestyle Train Station",
             ["StairsBase"] = "Expand Base",
 			["StairsBaseTooltip"] = "It might be easier to select \"Path\" when building and change it to \"Bridge\" once built",
 			["TerrainAlignmentType"] = "Terrain Alignment",
