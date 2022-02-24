@@ -18,7 +18,6 @@ function data()
                                 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
                             },
                             -- mesh = 'lollo_freestyle_train_station/open_lifts/era_a_open-lift-8m.msh',
-                            -- mesh = 'lollo_freestyle_train_station/open_lifts/era_a_open-lift-round-top-8m.msh',
                             mesh = 'lollo_freestyle_train_station/open_lifts/era_a_open-lift-round-8m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
