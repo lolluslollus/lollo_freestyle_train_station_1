@@ -24,6 +24,8 @@ function data()
 
 				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
 				When you bulldoze the station, everything will be bulldozed.
+
+				Lifts, stairs and underground entrances are in the assets, search for "freestyle station".
 				
 				[h1]Tips:[/h1]
                 - Platforms are tracks and they can also suffer from micro splits, very difficult to see.
