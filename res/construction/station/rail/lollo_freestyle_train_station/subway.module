@@ -35,28 +35,32 @@ function data()
 			logger.print('slotId =') logger.debugPrint(slotId)
 			logger.print('updateScriptParams =') logger.debugPrint(updateScriptParams)
 			logger.print('params.subways =') logger.debugPrint(params.subways)
+			local subwayConFileName = params and params.subways and params.subways[slotId] and params.subways[slotId].subwayConFileName
+			logger.print('subwayConFileName =', subwayConFileName or 'NIL')
 
-			local era = moduleHelpers.getEraPrefix(params, 1, 1)
-			local modelId = nil
-			if era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_subwayModelId
-			elseif era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_subwayModelId
-			else modelId = _constants.era_c_subwayModelId
+			if not(subwayConFileName) or subwayConFileName == '' or subwayConFileName == 'station/rail/lollo_freestyle_train_station/subway.con' then
+				local era = moduleHelpers.getEraPrefix(params, 1, 1)
+				local modelId = nil
+				if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/subway/era_a_subway.mdl'
+				elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/subway/era_b_subway.mdl'
+				else modelId = 'lollo_freestyle_train_station/subway/era_c_subway.mdl'
+				end
+				result.models[#result.models + 1] = {
+					id = modelId,
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+
+				moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			end
-			result.models[#result.models + 1] = {
-				id = modelId,
-				slotId = slotId,
-				transf = slotTransf,
-				tag = tag
-			}
-
-			moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			-- print('subway.module.updateFn ending')
 		end,
 
 		getModelsFn = function(params)
 			return {
 				{
-					id = _constants.era_c_subwayModelId,
+					id = 'lollo_freestyle_train_station/subway/era_c_subway.mdl',
 					transf = _constants.idTransf,
 				},
 			}

@@ -73,9 +73,9 @@ local constants = {
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
     subwayConFileNames = {
         ['station/rail/lollo_freestyle_train_station/subway.con'] = true,
-        ['station/rail/lollo_freestyle_train_station/era_a_subway.con'] = true,
-        ['station/rail/lollo_freestyle_train_station/era_b_subway.con'] = true,
-        ['station/rail/lollo_freestyle_train_station/era_c_subway.con'] = true,
+        ['station/rail/lollo_freestyle_train_station/subwayHolloway.con'] = true,
+        ['station/rail/lollo_freestyle_train_station/subwayMetropolitain.con'] = true,
+        ['station/rail/lollo_freestyle_train_station/subwayTooting.con'] = true,
     },
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
 
@@ -251,10 +251,6 @@ local constants = {
     era_a_tunnelStairsUpDownModelId = 'lollo_freestyle_train_station/subway/era_a_stairsUpDown.mdl',
     era_b_tunnelStairsUpDownModelId = 'lollo_freestyle_train_station/subway/era_b_stairsUpDown.mdl',
     era_c_tunnelStairsUpDownModelId = 'lollo_freestyle_train_station/subway/era_c_stairsUpDown.mdl',
-    era_a_subwayModelId = 'lollo_freestyle_train_station/subway/era_a_subway.mdl',
-    era_b_subwayModelId = 'lollo_freestyle_train_station/subway/era_b_subway.mdl',
-    era_c_subwayModelId = 'lollo_freestyle_train_station/subway/era_c_subway.mdl',
-    subwayUnconnectedModelId = 'lollo_freestyle_train_station/subway/subway_unconnected.mdl',
     era_a_openStairsUpModelId = 'lollo_freestyle_train_station/open_stairs/era_a_open_stairs_up.mdl',
     era_b_openStairsUpModelId = 'lollo_freestyle_train_station/open_stairs/era_b_open_stairs_up.mdl',
     era_c_openStairsUpModelId = 'lollo_freestyle_train_station/open_stairs/era_c_open_stairs_up.mdl',
