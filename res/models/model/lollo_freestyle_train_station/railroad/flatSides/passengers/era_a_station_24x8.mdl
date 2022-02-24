@@ -219,7 +219,7 @@ function data()
                 labels = {
                     {
                         alignment = 'CENTER',
-                        alphaMode = 'BLEND',
+                        alphaMode = "CUTOUT",
                         childId = 'RootNode',
                         color = { 0, 0, 0, },
                         fitting = 'SCALE',

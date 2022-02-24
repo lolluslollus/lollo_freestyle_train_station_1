@@ -102,7 +102,7 @@ function data()
                 labels = {
                     {
                         alignment = 'CENTER',
-                        alphaMode = 'BLEND',
+                        alphaMode = "CUTOUT",
                         childId = 'RootNode',
                         fitting = 'SCALE',
                         nLines = 2,

@@ -30,7 +30,7 @@ function data()
                 labels = {
                     {
                         alignment = "CENTER",
-                        alphaMode = "BLEND",
+                        alphaMode = "CUTOUT",
                         childId = "RootNode",
                         color = {255 / 255, 190 / 255, 0 /255},
                         fitting = "SCALE",
@@ -42,7 +42,7 @@ function data()
                     },
                     {
                         alignment = "CENTER",
-                        alphaMode = "BLEND",
+                        alphaMode = "CUTOUT",
                         childId = "RootNode",
                         color = {255 / 255, 180 / 255, 0 /255},
                         fitting = "SCALE",

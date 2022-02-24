@@ -422,7 +422,7 @@ return function(height, era)
                 labels = {
                     {
                         alignment = 'CENTER',
-                        alphaMode = 'BLEND',
+                        alphaMode = "CUTOUT",
                         childId = 'RootNode',
                         color = _labelColour,
                         fitting = 'SCALE',

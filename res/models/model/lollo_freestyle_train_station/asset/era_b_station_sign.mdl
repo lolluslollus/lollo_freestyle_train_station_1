@@ -39,7 +39,7 @@ function data()
                     {
                         alignment = "CENTER",
                         alpha = 1,
-                        alphaMode = "BLEND",
+                        alphaMode = "CUTOUT",
                         childId = "RootNode",
                         color = { 0, 0, 0, },
                         fitting = "SCALE",
@@ -52,7 +52,7 @@ function data()
                     {
                         alignment = "CENTER",
                         alpha = 1,
-                        alphaMode = "BLEND",
+                        alphaMode = "CUTOUT",
                         childId = "RootNode",
                         color = { 0, 0, 0, },
                         fitting = "SCALE",
