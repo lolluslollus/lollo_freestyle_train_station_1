@@ -1,7 +1,7 @@
 function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
-    local metadata = _mdlHelpers.getSubwayMetadata()
+    local metadata = _mdlHelpers.getSubwayMetadataLarge()
     metadata.labelList = {
         labels = {
             {

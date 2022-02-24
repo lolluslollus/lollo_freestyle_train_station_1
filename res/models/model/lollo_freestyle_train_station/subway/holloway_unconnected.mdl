@@ -76,7 +76,7 @@ function data()
                 visibleTo = 2000
             },
         },
-        metadata = _mdlHelpers.getSubwayMetadata(),
+        metadata = _mdlHelpers.getSubwayMetadataLarge(),
         version = 1
     }
 end
