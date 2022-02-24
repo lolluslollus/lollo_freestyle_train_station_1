@@ -39,6 +39,26 @@ function data()
                 visibleFrom = 0,
                 visibleTo = 250,
             },
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/era_a_doors.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/open_lifts/era_a_open-lift-8m-lod1.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 250,
+                visibleTo = 2000,
+            },
         },
         metadata = { },
         version = 1
