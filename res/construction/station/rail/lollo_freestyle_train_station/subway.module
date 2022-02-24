@@ -53,6 +53,15 @@ function data()
 				}
 
 				moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
+			elseif subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayHolloway.con' then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/subway/holloway.mdl',
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+				-- LOLLO TODO fix this
+				moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			end
 			-- print('subway.module.updateFn ending')
 		end,
