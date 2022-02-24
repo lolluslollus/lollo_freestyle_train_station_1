@@ -5,7 +5,8 @@ local transf = require 'transf'
 
 function data()
     return {
-        type = 'RAIL_STATION',
+        -- type = 'RAIL_STATION',
+        type = 'ASSET_DEFAULT',
         description = {
             description = _("SubwayDesc"),
 			name = _("SubwayName"),
@@ -15,6 +16,7 @@ function data()
             yearFrom = 0,
             yearTo = 0
         },
+        categories = { 'stairs' },
         order = 1102,
         -- autoRemovable = true,
         -- skipCollision = true,
