@@ -9,9 +9,9 @@ function data()
         type = 'ASSET_DEFAULT',
         description = {
             description = _("SubwayDesc"),
-			name = _("SubwayName"),
+			name = _("UndergroundName"),
         },
-        icon = "ui/construction/station/rail/lollo_freestyle_train_station/subwayHolloway.tga",
+        icon = "ui/construction/station/rail/lollo_freestyle_train_station/subwayHollowayLarge.tga",
         availability = {
             yearFrom = 0,
             yearTo = 0
@@ -34,7 +34,7 @@ function data()
                 },
                 models = {
                     {
-                        id = 'lollo_freestyle_train_station/subway/holloway_unconnected.mdl',
+                        id = 'lollo_freestyle_train_station/subway/holloway_13_5_8_unconnected.mdl',
                         transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
                     },
                     {
@@ -45,7 +45,7 @@ function data()
                 terrainAlignmentLists = { },
             }
 
-            moduleHelpers.subways.doTerrain4ClosedSubways(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
+            moduleHelpers.subways.doTerrain4HollowayLarge(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
 
             return result
         end,

@@ -17,7 +17,7 @@ function data()
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
                 - Every bridge level requires a lift.
                 - Every set of adjacent underground platforms requires stairs.
-                - Every underground level requires a subway entrance, or a ground platform with an underpass, or a bridge platform with a lift, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
+                - Every underground level requires a subway entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
 
                 You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, connect the platform ends by hand with a suitable street type and <shift>.
                 You cannot share one stretch of platform among multiple terminals.
@@ -178,6 +178,7 @@ function data()
 			["TunnelStairsUpDesc"] = "Connects underground passenger platforms to the subway entrances and the other terminals above.",
 			["TunnelStairsUpDownName"] = "Subway stairs up and down",
 			["TunnelStairsUpDownDesc"] = "Connects underground passenger platforms to the subway entrances and the other terminals above and below.",
+			["UndergroundName"] = "Underground Station",
 			["UnderpassName"] = "Covered Underpass",
 			["UnderpassDesc"] = "Connects passenger platforms to the subway entrances and the other terminals.",
 			["UnderpassStairsName"] = "Underpass",
