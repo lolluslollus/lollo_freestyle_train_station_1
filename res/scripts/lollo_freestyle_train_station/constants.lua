@@ -74,8 +74,8 @@ local constants = {
     subwayConFileNames = {
         ['station/rail/lollo_freestyle_train_station/subway.con'] = true,
         ['station/rail/lollo_freestyle_train_station/subwayHolloway.con'] = true,
-        ['station/rail/lollo_freestyle_train_station/subwayMetropolitain.con'] = true,
-        ['station/rail/lollo_freestyle_train_station/subwayTooting.con'] = true,
+        -- ['station/rail/lollo_freestyle_train_station/subwayMetropolitain.con'] = true,
+        -- ['station/rail/lollo_freestyle_train_station/subwayTooting.con'] = true,
     },
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
 
