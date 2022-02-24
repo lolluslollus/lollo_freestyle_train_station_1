@@ -60,8 +60,7 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
-				-- LOLLO TODO fix this
-				moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
+				moduleHelpers.subways.doTerrain4ClosedSubways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			end
 			-- print('subway.module.updateFn ending')
 		end,

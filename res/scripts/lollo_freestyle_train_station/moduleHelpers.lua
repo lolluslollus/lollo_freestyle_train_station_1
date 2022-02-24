@@ -1223,5 +1223,53 @@ return {
                 }
             )
         end,
+        doTerrain4ClosedSubways = function(result, slotTransf, groundFacesStrokeOuterKey)
+            local _groundFacesFillKey = constants[constants.eras.era_c.prefix .. 'groundFacesFillKey']
+            -- local groundFace = { -- the ground faces ignore z, the alignment lists don't
+            --     {0.0, -0.95, 0, 1},
+            --     {0.0, 0.95, 0, 1},
+            --     {4.5, 0.95, 0, 1},
+            --     {4.5, -0.95, 0, 1},
+            -- }
+            local terrainFace = { -- the ground faces ignore z, the alignment lists don't
+                {-2.2, -4.15, constants.platformSideBitsZ, 1},
+                {-2.2, 4.15, constants.platformSideBitsZ, 1},
+                {4.7, 4.15, constants.platformSideBitsZ, 1},
+                {4.7, -4.15, constants.platformSideBitsZ, 1},
+            }
+            if type(slotTransf) == 'table' then
+                -- modulesutil.TransformFaces(slotTransf, groundFace)
+                modulesutil.TransformFaces(slotTransf, terrainFace)
+            end
+
+            table.insert(
+                result.groundFaces,
+                {
+                    -- face = groundFace,
+                    face = terrainFace,
+                    loop = true,
+                    modes = {
+                        {
+                            key = _groundFacesFillKey,
+                            type = 'FILL',
+                        },
+                        -- {
+                        --     key = groundFacesStrokeOuterKey,
+                        --     type = 'STROKE_OUTER',
+                        -- }
+                    }
+                }
+            )
+            table.insert(
+                result.terrainAlignmentLists,
+                {
+                    faces =  { terrainFace },
+                    optional = true,
+                    slopeHigh = constants.slopeHigh,
+                    slopeLow = constants.slopeLow,
+                    type = 'EQUAL',
+                }
+            )
+        end,
     },
 }

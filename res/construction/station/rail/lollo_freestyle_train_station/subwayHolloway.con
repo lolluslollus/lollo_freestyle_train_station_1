@@ -45,8 +45,7 @@ function data()
                 terrainAlignmentLists = { },
             }
 
-            -- LOLLO TODO fix this
-            moduleHelpers.subways.doTerrain4Subways(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
+            moduleHelpers.subways.doTerrain4ClosedSubways(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
 
             return result
         end,
