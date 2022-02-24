@@ -21,7 +21,8 @@ function data()
                                 -- 'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/wall_marble_2.mtl',
 
-                                'lollo_freestyle_train_station/hole.mtl',
+                                -- 'lollo_freestyle_train_station/hole.mtl',
+                                'lollo_freestyle_train_station/black_transparent.mtl',
                                 'lollo_freestyle_train_station/era_b_doors_solid.mtl',
 
                                 'lollo_freestyle_train_station/era_b_lift_doors.mtl',
