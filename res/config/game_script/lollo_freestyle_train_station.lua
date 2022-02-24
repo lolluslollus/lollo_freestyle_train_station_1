@@ -89,9 +89,10 @@ local _actions = {
         local oldCon = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
         if oldCon == nil then return end
 
-        local subwayTransf = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION).transf
-        -- print('subwayTransf =') logger.debugPrint(subwayTransf)
-        if subwayTransf == nil then print('lollo freestyle train station ERROR: no subway transf') return end
+        local subwayCon = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
+        if not(subwayCon) or not(subwayCon.transf) then logger.err('no subway con found') return end
+
+        local subwayTransf = subwayCon.transf
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
@@ -121,6 +122,7 @@ local _actions = {
         if not(newSubway_Key) then return end
 
         local newSubway_Value = {
+            subwayConFileName = subwayCon.fileName,
             transf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
         }
         newSubway_Value.transf2Link = transfUtilsUG.mul(
@@ -134,7 +136,7 @@ local _actions = {
             },
             name = _constants.subwayModuleFileName,
             updateScript = {
-                fileName = '',
+                fileName = '', -- 'construction/station/rail/lollo_freestyle_train_station/subwayUpdateFn.updateFn',
                 params = { -- it gets overwritten
                     -- myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
                 },
@@ -1062,7 +1064,7 @@ local _guiActions = {
         return true
     end,
     tryJoinSubway = function(conId, con)
-        if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.subwayConFileName or con.transf == nil then return false end
+        if con == nil or type(con.fileName) ~= 'string' or not(_constants.subwayConFileNames[con.fileName]) or con.transf == nil then return false end
 
         logger.print('tryJoinSubway starting, conId =', conId or 'NIL')
         local subwayTransf_c = con.transf

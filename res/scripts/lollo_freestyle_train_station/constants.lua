@@ -71,7 +71,12 @@ local constants = {
 
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
-    subwayConFileName = 'station/rail/lollo_freestyle_train_station/subway.con',
+    subwayConFileNames = {
+        ['station/rail/lollo_freestyle_train_station/subway.con'] = true,
+        ['station/rail/lollo_freestyle_train_station/era_a_subway.con'] = true,
+        ['station/rail/lollo_freestyle_train_station/era_b_subway.con'] = true,
+        ['station/rail/lollo_freestyle_train_station/era_c_subway.con'] = true,
+    },
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
 
     cargoStationSquareModuleType = 'freestyleTrainStationCargoStationSquare',

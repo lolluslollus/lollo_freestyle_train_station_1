@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
+local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -30,6 +31,10 @@ function data()
 		type = _constants.subwayModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			logger.print('subway.module.updateFn starting')
+			logger.print('slotId =') logger.debugPrint(slotId)
+			logger.print('updateScriptParams =') logger.debugPrint(updateScriptParams)
+			logger.print('params.subways =') logger.debugPrint(params.subways)
 
 			local era = moduleHelpers.getEraPrefix(params, 1, 1)
 			local modelId = nil

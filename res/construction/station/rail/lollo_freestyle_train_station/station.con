@@ -1040,10 +1040,10 @@ function data()
 					if params.modules[slotId] ~= nil then
 						local extraData = params.subways[slotId]
 						if extraData == nil then
-							print ('lollo freestyle train station - station.con ERROR: subway[', slotId, '] not found')
+							logger.err('subway[' .. (slotId or 'NIL') .. '] not found')
 						else
 							if extraData.transf == nil then
-								print ('lollo freestyle train station - station.con ERROR: subway[', slotId, '] has no transf')
+								logger.err('subway[' .. (slotId or 'NIL') .. '] has no transf')
 							else
 								-- logger.print('extraData =') logger.debugPrint(extraData)
 								table.insert(result.slots, {
@@ -1542,9 +1542,9 @@ function data()
 					local _linkSubways2 = function(positions)
 						for slotId, subway in pairs(params.subways) do
 							if subway == nil then
-								print ('lollo freestyle train station - station.con ERROR: subway[', slotId, '] not found')
+								logger.err('subway[' .. (slotId or 'NIL') .. '] not found')
 							elseif subway.transf == nil then
-								print ('lollo freestyle train station - station.con ERROR: subway[', slotId, '] has no transf')
+								logger.err('subway[' .. (slotId or 'NIL') .. '] has no transf')
 							elseif params.modules[slotId] ~= nil then
 								local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(params.inverseMainTransf, subway.transf2Link))
 								local isThisSubwayConnected = false
