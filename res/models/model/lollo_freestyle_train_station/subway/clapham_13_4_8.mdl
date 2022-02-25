@@ -5,7 +5,7 @@ function data()
     return {
         boundingInfo = {
             bbMax = {
-                4.9, 6.7, 5.5
+                2.2, 6.7, 8
             },
             bbMin = {
                 -2.2, -6.7, 0
@@ -19,7 +19,7 @@ function data()
                     2.7,
                 },
             },
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1.35, 0, 2.75, 1, },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 4, 1, },
             type = 'BOX',
         },
         lods = {
@@ -49,15 +49,25 @@ function data()
                             mesh = 'lollo_freestyle_train_station/subway/clapham_13x5x8_lod0.msh',
                             transf = _constants.idTransf
                         },
+                        {
+                            children = {
+                                {
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
+                                    transf = _constants.idTransf
+                                }
+                            },
+                            transf = {0, -1.15, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -3.32, 0, 3.60, 1}
+                        },
                         -- {
                         --     children = {
                         --         {
-                        --             materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
-                        --             mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
+                        --             materials = { "station/rail/era_c/era_c_trainstation_assets.mtl", },
+                        --             mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_lod0.msh',
                         --             transf = _constants.idTransf
                         --         }
                         --     },
-                        --     transf = {0, -1.15, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -3.27, 0, 3.10, 1}
+                        --     transf = {0, -0.82, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -3.32, 0, 3.60, 1}
                         -- }
                     },
                     name = 'RootNode',
@@ -104,7 +114,7 @@ function data()
             --             nLines = 2,
             --             -- renderMode = "EMISSIVE",
             --             size = {2.25, 0.45},
-            --             transf = { 0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 0,  -3.32, 1.12, 2.88, 1},
+            --             transf = { 0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 0,  -3.37, 1.12, 3.38, 1},
             --             type = 'STATION_NAME',
             --             verticalAlignment = 'CENTER'
             --         }

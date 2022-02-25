@@ -1291,5 +1291,14 @@ return {
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
+        doTerrain4ClaphamLarge = function(result, slotTransf, groundFacesStrokeOuterKey)
+            local terrainFace = { -- the ground faces ignore z, the alignment lists don't
+                {-2.8, -3.4, constants.platformSideBitsZ, 1},
+                {-2.8, 3.4, constants.platformSideBitsZ, 1},
+                {2.2, 7.2, constants.platformSideBitsZ, 1},
+                {2.2, -7.2, constants.platformSideBitsZ, 1},
+            }
+            return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
+        end,
     },
 }
