@@ -56,6 +56,8 @@ function data()
                                 'lollo_freestyle_train_station/windows_era_b.mtl',
                                 'lollo_freestyle_train_station/era_a_station_tiles_2.mtl',
                                 'lollo_freestyle_train_station/metal/rough_iron_dark.mtl',
+                                "lollo_freestyle_train_station/black_transparent_w_cutout.mtl",
+                                'lollo_freestyle_train_station/emissive/yellow_light_behind_half_transparent.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/subway/holloway_13x5x8_lod0.msh',
                             transf = _constants.idTransf

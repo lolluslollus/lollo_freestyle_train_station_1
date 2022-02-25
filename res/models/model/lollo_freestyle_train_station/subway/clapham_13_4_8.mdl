@@ -49,16 +49,16 @@ function data()
                             mesh = 'lollo_freestyle_train_station/subway/clapham_13x5x8_lod0.msh',
                             transf = _constants.idTransf
                         },
-                        {
-                            children = {
-                                {
-                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
-                                    mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
-                                    transf = _constants.idTransf
-                                }
-                            },
-                            transf = {0, -1.15, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -3.32, 0, 3.60, 1}
-                        },
+                        -- {
+                        --     children = {
+                        --         {
+                        --             materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                        --             mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
+                        --             transf = _constants.idTransf
+                        --         }
+                        --     },
+                        --     transf = {0, -1.15, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -3.32, 0, 3.60, 1}
+                        -- },
                         -- {
                         --     children = {
                         --         {
