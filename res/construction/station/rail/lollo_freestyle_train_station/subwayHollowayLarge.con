@@ -34,7 +34,7 @@ function data()
                 },
                 models = {
                     {
-                        id = 'lollo_freestyle_train_station/subway/holloway_13_5_8_unconnected.mdl',
+                        id = 'lollo_freestyle_train_station/subway/holloway_13_5_8.mdl',
                         transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
                     },
                     {

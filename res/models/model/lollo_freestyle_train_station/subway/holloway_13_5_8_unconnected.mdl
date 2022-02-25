@@ -1,3 +1,4 @@
+-- LOLLO TODO remove this file in Mar 2022 or so
 function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')

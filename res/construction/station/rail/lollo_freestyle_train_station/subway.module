@@ -38,11 +38,11 @@ function data()
 			local subwayConFileName = params and params.subways and params.subways[slotId] and params.subways[slotId].subwayConFileName
 			logger.print('subwayConFileName =', subwayConFileName or 'NIL')
 
+            local eraPrefix = moduleHelpers.getEraPrefix(params, 1, 1)
 			if not(subwayConFileName) or subwayConFileName == '' or subwayConFileName == 'station/rail/lollo_freestyle_train_station/subway.con' then
-				local era = moduleHelpers.getEraPrefix(params, 1, 1)
 				local modelId = nil
-				if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/subway/era_a_subway.mdl'
-				elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/subway/era_b_subway.mdl'
+				if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/subway/era_a_subway.mdl'
+				elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/subway/era_b_subway.mdl'
 				else modelId = 'lollo_freestyle_train_station/subway/era_c_subway.mdl'
 				end
 				result.models[#result.models + 1] = {
@@ -60,10 +60,28 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
+                local modelId = eraPrefix == _constants.eras.era_c.prefix
+                    and 'lollo_freestyle_train_station/subway/holloway_signs_era_c.mdl'
+                    or 'lollo_freestyle_train_station/subway/holloway_signs_era_a.mdl'
+                result.models[#result.models + 1] = {
+					id = modelId,
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
 				moduleHelpers.subways.doTerrain4HollowayMedium(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			elseif subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayHollowayLarge.con' then
 				result.models[#result.models + 1] = {
 					id = 'lollo_freestyle_train_station/subway/holloway_13_5_8.mdl',
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+                local modelId = eraPrefix == _constants.eras.era_c.prefix
+                    and 'lollo_freestyle_train_station/subway/holloway_signs_era_c.mdl'
+                    or 'lollo_freestyle_train_station/subway/holloway_signs_era_a.mdl'
+                result.models[#result.models + 1] = {
+					id = modelId,
 					slotId = slotId,
 					transf = slotTransf,
 					tag = tag

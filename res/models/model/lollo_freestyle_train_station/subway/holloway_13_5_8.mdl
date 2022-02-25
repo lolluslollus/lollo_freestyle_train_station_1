@@ -2,23 +2,23 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
     local metadata = _mdlHelpers.getSubwayMetadataLarge()
-    metadata.labelList = {
-        labels = {
-            {
-                alignment = 'CENTER',
-                alphaMode = 'CUTOUT',
-                childId = 'RootNode',
-                color = {0, 0, 0},
-                fitting = 'SCALE',
-                nLines = 2,
-                -- renderMode = "EMISSIVE",
-                size = {2.25, 0.45},
-                transf = { 0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 0,  -3.32, 1.12, 2.88, 1},
-                type = 'STATION_NAME',
-                verticalAlignment = 'CENTER'
-            }
-        }
-    }
+    -- metadata.labelList = {
+    --     labels = {
+    --         {
+    --             alignment = 'CENTER',
+    --             alphaMode = 'CUTOUT',
+    --             childId = 'RootNode',
+    --             color = {0, 0, 0},
+    --             fitting = 'SCALE',
+    --             nLines = 2,
+    --             -- renderMode = "EMISSIVE",
+    --             size = {2.25, 0.45},
+    --             transf = { 0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 0,  -3.32, 1.12, 2.88, 1},
+    --             type = 'STATION_NAME',
+    --             verticalAlignment = 'CENTER'
+    --         }
+    --     }
+    -- }
 
     return {
         boundingInfo = {
@@ -78,16 +78,16 @@ function data()
                             mesh = 'lollo_freestyle_train_station/subway/holloway_13x5x8_lod0.msh',
                             transf = _constants.idTransf
                         },
-                        {
-                            children = {
-                                {
-                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
-                                    mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
-                                    transf = _constants.idTransf
-                                }
-                            },
-                            transf = {0, -1.15, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -3.27, 0, 3.10, 1}
-                        }
+                        -- {
+                        --     children = {
+                        --         {
+                        --             materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                        --             mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
+                        --             transf = _constants.idTransf
+                        --         }
+                        --     },
+                        --     transf = {0, -1.15, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -3.27, 0, 3.10, 1}
+                        -- }
                     },
                     name = 'RootNode',
                     transf = _constants.idTransf
