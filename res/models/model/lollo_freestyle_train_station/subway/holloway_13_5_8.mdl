@@ -54,7 +54,6 @@ function data()
                                 "lollo_freestyle_train_station/bricks_old.mtl",
                                 
                                 "lollo_freestyle_train_station/bricks_old.mtl",
-                                -- "lollo_freestyle_train_station/bricks_old_deco.mtl",
 
                                 'lollo_freestyle_train_station/industry_wall_3.mtl',
                                 'lollo_freestyle_train_station/windows_era_b.mtl',
