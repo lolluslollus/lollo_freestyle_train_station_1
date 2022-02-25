@@ -27,26 +27,6 @@ function data()
             {
                 node = {
                     children = {
-                        -- {
-                        --     materials = {'station/road/streetstation/streetstation_1.mtl'},
-                        --     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
-                        --     transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.32, -3.68, 0, 1}
-                        -- },
-                        -- {
-                        --     materials = {'station/road/streetstation/streetstation_1.mtl'},
-                        --     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
-                        --     transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.32, -3.68, 0, 1}
-                        -- },
-                        -- {
-                        --     materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
-                        --     mesh = "lollo_freestyle_train_station/asset/arrivi.msh",
-                        --     transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.77, -5.5, 0, 1 }
-                        -- },
-                        -- {
-                        --     materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
-                        --     mesh = "lollo_freestyle_train_station/asset/partenze.msh",
-                        --     transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.77, -5.5, 0, 1 }
-                        -- },
                         {
                             -- building
                             materials = {
