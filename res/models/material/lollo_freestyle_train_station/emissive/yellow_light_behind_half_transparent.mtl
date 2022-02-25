@@ -1,0 +1,29 @@
+function data()
+    return {
+        order = 0,
+        params = {
+            emissive_scale = {
+                emissiveScale = { 10, 8, 2, },
+            },
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            map_emissive = {
+                -- fileName = "transparent.tga",
+                fileName = "unknown_albedo_1k.dds",
+                type = "TWOD",
+            },
+            -- polygon_offset = {
+            --     factor = -99,
+            --     forceDepthWrite = true,
+            --     units = -99,
+            -- },
+            two_sided = {
+                flipNormal = false,
+                twoSided = false,
+            },
+        },
+        type = "EMISSIVE",
+    }
+end
