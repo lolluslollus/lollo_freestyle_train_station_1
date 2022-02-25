@@ -1,23 +1,6 @@
 function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
-    local metadata = _mdlHelpers.getSubwayMetadata()
-    metadata.labelList = {
-        labels = {
-            {
-                alignment = 'CENTER',
-                alphaMode = "CUTOUT",
-                childId = 'RootNode',
-                fitting = 'SCALE',
-                nLines = 2,
-                -- renderMode = "EMISSIVE",
-                size = {2.5, 0.6},
-                transf = { 0, -0.6, 0, 0,  0, 0, 0.65, 0,  -1, 0, 0, 0,  -0.09, 0.76, 3.05, 1, },
-                type = 'STATION_NAME',
-                verticalAlignment = 'CENTER'
-            }
-        }
-    }
 
     return {
         boundingInfo = _mdlHelpers.getSubwayBoundingInfo(),
@@ -76,7 +59,25 @@ function data()
                 visibleTo = 1000,
             },
         },
-        metadata = metadata,
+        metadata = {
+            transportNetworkProvider = _mdlHelpers.subway.getSubwayTransportNetworkProvider(),
+            labelList = {
+                labels = {
+                    {
+                        alignment = 'CENTER',
+                        alphaMode = "CUTOUT",
+                        childId = 'RootNode',
+                        fitting = 'SCALE',
+                        nLines = 2,
+                        -- renderMode = "EMISSIVE",
+                        size = {2.5, 0.6},
+                        transf = { 0, -0.6, 0, 0,  0, 0, 0.65, 0,  -1, 0, 0, 0,  -0.09, 0.76, 3.05, 1, },
+                        type = 'STATION_NAME',
+                        verticalAlignment = 'CENTER'
+                    }
+                }
+            }
+        },
         version = 1
     }
 end

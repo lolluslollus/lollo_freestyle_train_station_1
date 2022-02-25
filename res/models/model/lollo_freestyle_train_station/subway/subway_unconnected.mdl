@@ -53,7 +53,9 @@ function data()
                 visibleTo = 1000,
             },
         },
-        metadata = _mdlHelpers.getSubwayMetadata(),
+        metadata = {
+            transportNetworkProvider = _mdlHelpers.subway.getSubwayTransportNetworkProvider()
+        },
         version = 1
     }
 end

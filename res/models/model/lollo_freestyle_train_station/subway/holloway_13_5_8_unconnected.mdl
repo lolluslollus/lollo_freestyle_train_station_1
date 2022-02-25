@@ -94,7 +94,9 @@ function data()
                 visibleTo = 2000
             },
         },
-        metadata = _mdlHelpers.getSubwayMetadataLarge(),
+        metadata = {
+            transportNetworkProvider = _mdlHelpers.subway.getHollowayTransportNetworkProvider()
+        },
         version = 1
     }
 end

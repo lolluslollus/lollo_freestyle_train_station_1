@@ -153,54 +153,9 @@ local helpers = {}
         }
     end
 
-    helpers.getSubwayMetadata = function()
-        return {
-            transportNetworkProvider = {
-                laneLists = {
-                    { -- into the model
-                        linkable = true,
-                        nodes = {
-                            {
-                                { -1, 0, 0 },
-                                { 1, 0, 0 },
-                                3,
-                            },
-                            {
-                                { 0, 0, 0 },
-                                { 1, 0, 0 },
-                                3,
-                            },
-                        },
-                        transportModes = { 'PERSON', },
-                        speedLimit = 20,
-                    },
-                    { -- down into the earth
-                        linkable = false,
-                        nodes = {
-                            {
-                                { 0, 0, 0 },
-                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, 0 },
-                                3,
-                            },
-                            {
-                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, _constants.subwayPos2LinkZ },
-                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, 0 },
-                                3,
-                            },
-                        },
-                        transportModes = { 'PERSON', },
-                        speedLimit = 20,
-                    },
-                },
-                runways = { },
-                terminals = { },
-            },
-        }
-    end
-
-    helpers.getSubwayMetadataLarge = function()
-        return {
-            transportNetworkProvider = {
+    helpers.subway = {
+        getHollowayTransportNetworkProvider = function()
+            return {
                 laneLists = {
                     { -- across the model
                         linkable = true,
@@ -273,8 +228,50 @@ local helpers = {}
                 },
                 runways = { },
                 terminals = { },
-            },
-        }
-    end
+            }
+        end,
+        getSubwayTransportNetworkProvider = function()
+            return {
+                laneLists = {
+                    { -- into the model
+                        linkable = true,
+                        nodes = {
+                            {
+                                { -1, 0, 0 },
+                                { 1, 0, 0 },
+                                3,
+                            },
+                            {
+                                { 0, 0, 0 },
+                                { 1, 0, 0 },
+                                3,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                    { -- down into the earth
+                        linkable = false,
+                        nodes = {
+                            {
+                                { 0, 0, 0 },
+                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, 0 },
+                                3,
+                            },
+                            {
+                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, _constants.subwayPos2LinkZ },
+                                { _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, 0 },
+                                3,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = { },
+            }
+        end,
+    }
 
 return helpers
