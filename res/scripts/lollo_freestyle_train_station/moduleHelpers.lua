@@ -1275,28 +1275,28 @@ return {
         end,
         doTerrain4HollowayMedium = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-                {-2.2, -4.15, constants.platformSideBitsZ, 1},
-                {-2.2, 4.15, constants.platformSideBitsZ, 1},
-                {4.7, 4.15, constants.platformSideBitsZ, 1},
-                {4.7, -4.15, constants.platformSideBitsZ, 1},
+                {-3.4, -4.7, constants.platformSideBitsZ, 1},
+                {-3.4, 4.7, constants.platformSideBitsZ, 1},
+                {4.9, 4.7, constants.platformSideBitsZ, 1},
+                {4.9, -4.7, constants.platformSideBitsZ, 1},
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
         doTerrain4HollowayLarge = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-                {-2.2, -6.65, constants.platformSideBitsZ, 1},
-                {-2.2, 6.65, constants.platformSideBitsZ, 1},
-                {4.7, 6.65, constants.platformSideBitsZ, 1},
-                {4.7, -6.65, constants.platformSideBitsZ, 1},
+                {-3.4, -7.5, constants.platformSideBitsZ, 1},
+                {-3.4, 7.5, constants.platformSideBitsZ, 1},
+                {4.9, 7.5, constants.platformSideBitsZ, 1},
+                {4.9, -7.5, constants.platformSideBitsZ, 1},
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
         doTerrain4ClaphamLarge = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-                {-2.8, -3.4, constants.platformSideBitsZ, 1},
-                {-2.8, 3.4, constants.platformSideBitsZ, 1},
-                {2.2, 7.2, constants.platformSideBitsZ, 1},
-                {2.2, -7.2, constants.platformSideBitsZ, 1},
+                {-3.4, -3.4, constants.platformSideBitsZ, 1},
+                {-3.4, 3.4, constants.platformSideBitsZ, 1},
+                {2.2, 7.4, constants.platformSideBitsZ, 1},
+                {2.2, -7.4, constants.platformSideBitsZ, 1},
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
