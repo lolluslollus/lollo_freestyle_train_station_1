@@ -50,13 +50,8 @@ function data()
                             -- building
                             materials = {
                                 "lollo_freestyle_train_station/wall_grey_3.mtl",
-
-                                -- "lollo_freestyle_train_station/bricks_old.mtl",
                                 "lollo_freestyle_train_station/holloway_tiles.mtl",
-                                
-                                "lollo_freestyle_train_station/bricks_old.mtl",
-                                
-
+                                "lollo_freestyle_train_station/holloway_deco.mtl",
                                 'lollo_freestyle_train_station/industry_wall_3.mtl',
                                 'lollo_freestyle_train_station/windows_era_b.mtl',
                                 'lollo_freestyle_train_station/era_a_station_tiles_2.mtl',
@@ -101,9 +96,9 @@ function data()
                         {
                             -- building
                             materials = {
-                                "lollo_freestyle_train_station/bricks_old.mtl",
-                                "lollo_freestyle_train_station/bricks_old.mtl",
-                                "lollo_freestyle_train_station/bricks_old.mtl",
+                                "lollo_freestyle_train_station/wall_grey_3.mtl",
+                                "lollo_freestyle_train_station/holloway_tiles.mtl",
+                                "lollo_freestyle_train_station/holloway_deco.mtl",
                                 'lollo_freestyle_train_station/industry_wall_1.mtl',
                                 'lollo_freestyle_train_station/windows_era_b.mtl',
                                 'lollo_freestyle_train_station/metal/rough_iron_dark.mtl',

@@ -68,5 +68,4 @@ function data()
         },
         type = "PHYSICAL_NRML_MAP_OP",
     }
-    end
-    
+end
