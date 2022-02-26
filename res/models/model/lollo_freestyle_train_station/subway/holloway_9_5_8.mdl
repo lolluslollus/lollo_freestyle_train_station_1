@@ -15,7 +15,7 @@ function data()
             params = {
                 halfExtents = {
                     3.5,
-                    4.15,
+                    4.1,
                     2.7,
                 },
             },
