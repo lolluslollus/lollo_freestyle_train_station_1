@@ -42,6 +42,9 @@ function data()
 				- If you want different buildings, use assets. There are mods with those.
 				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily.
 
+				[h1]Note:[/h1]
+				Underground stations are now in the assets.
+
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
 				- Station naming does not work properly.
