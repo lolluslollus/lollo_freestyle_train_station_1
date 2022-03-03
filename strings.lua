@@ -17,7 +17,7 @@ function data()
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
                 - Every bridge level requires a lift.
                 - Every set of adjacent underground platforms requires stairs.
-                - Every underground level requires a subway entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
+                - Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
 
                 You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, connect the platform ends by hand with a suitable street type and <shift>.
                 You cannot share one stretch of platform among multiple terminals.
@@ -175,7 +175,7 @@ function data()
 			["SlopedPassengerAreaWaiting1x10Desc"] = "Platform extension, 10 m. It holds extra passengers.",
 			["SlopedPassengerAreaWaiting1x20Name"] = "20 m platform extension, to hold extra passengers",
 			["SlopedPassengerAreaWaiting1x20Desc"] = "Platform extension, 20 m. It holds extra passengers.",
-			["SubwayName"] = "Subway entrance",
+			["SubwayName"] = "Underground entrance",
 			["SubwayDesc"] = "Plop these near a freestyle station and join them with the popup. Make sure your station has underpasses and / or subway stairs.",
 			["TrackCrossingName"] = "Track crossing",
 			["TrackCrossingDesc"] = "Track crossing. It can connect to the roads.",
@@ -273,8 +273,8 @@ function data()
 			["ShowUnderground"] = "Show Underground",
 			["ShowUndergroundTooltip"] = "It cannot be changed once plopped. If you want assistance to place it easily, use the 'Look Underground' track construction instead of this.",
 			["StationPickerWindowTitle"] = "Pick a station to join",
-			["SubwayCannotConnect"] = "Add stairs or underpasses to connect this subway entrance",
-			["SubwayNotConnected"] = "Join this subway entrance to a station",
+			["SubwayCannotConnect"] = "Add stairs or underpasses to connect this underground entrance",
+			["SubwayNotConnected"] = "Join this underground entrance to a station",
 			["TrackWaypointBuiltOnPlatform"] = "You can only build track markers on tracks and platform markers on platforms",
 			["TrackWaypointsMissing"] = "Build two track markers first",
 			["UndergroundTrainDepotName"] = "Underground Train depot",

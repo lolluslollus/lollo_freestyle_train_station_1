@@ -17,7 +17,7 @@ function data()
             yearTo = 0
         },
         categories = { 'stairs' },
-        order = 1102,
+        order = 1030,
         -- autoRemovable = true,
         -- skipCollision = true,
         updateFn = function(params)

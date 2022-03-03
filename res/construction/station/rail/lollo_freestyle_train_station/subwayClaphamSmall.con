@@ -9,15 +9,15 @@ function data()
         type = 'ASSET_DEFAULT',
         description = {
             description = _("SubwayDesc"),
-			name = _("SubwayName"),
+			name = _("UndergroundName"),
         },
-        icon = "ui/lollo_freestyle_train_station/subway.tga",
+        icon = "ui/construction/station/rail/lollo_freestyle_train_station/subwayClaphamSmall.tga",
         availability = {
             yearFrom = 0,
             yearTo = 0
         },
         categories = { 'stairs' },
-        order = 1010,
+        order = 1020,
         -- autoRemovable = true,
         -- skipCollision = true,
         updateFn = function(params)
@@ -34,7 +34,7 @@ function data()
                 },
                 models = {
                     {
-                        id = 'lollo_freestyle_train_station/subway/subway_unconnected.mdl',
+                        id = 'lollo_freestyle_train_station/subway/clapham_6_3_8.mdl',
                         transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
                     },
                     {
@@ -45,7 +45,7 @@ function data()
                 terrainAlignmentLists = { },
             }
 
-            moduleHelpers.subways.doTerrain4Subways(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
+            moduleHelpers.subways.doTerrain4ClaphamSmall(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
 
             return result
         end,
