@@ -104,6 +104,23 @@ function data()
 					tag = tag
 				}
 				moduleHelpers.subways.doTerrain4ClaphamLarge(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
+			elseif subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayClaphamMedium.con' then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/subway/clapham_10_3_8.mdl',
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+                local modelId = eraPrefix == _constants.eras.era_c.prefix
+                    and 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_c.mdl'
+                    or 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_a.mdl'
+                result.models[#result.models + 1] = {
+					id = modelId,
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+				moduleHelpers.subways.doTerrain4ClaphamMedium(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			end
 			-- print('subway.module.updateFn ending')
 		end,
