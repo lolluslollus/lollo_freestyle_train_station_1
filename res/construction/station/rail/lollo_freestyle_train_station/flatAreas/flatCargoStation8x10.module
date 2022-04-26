@@ -23,7 +23,12 @@ function data()
 			description = _("FlatCargoStation8x10Desc"),
 			icon = "ui/lollo_freestyle_train_station/flatCargoStation8x10.tga"
 		},
-		metadata = { },
+		metadata = {
+			moreCapacity = {
+				cargo = 20,
+				passenger = 0
+			}
+		},
 		order = {
 			value = 31,
 		},

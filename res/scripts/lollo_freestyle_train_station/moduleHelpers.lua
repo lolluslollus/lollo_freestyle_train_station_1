@@ -734,6 +734,25 @@ return {
             -- print('moduleHelpers.edges.addEdges ending for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
         end,
     },
+    extraStationCapacity = {
+        getStationPoolCapacities = function(modules, result)
+            local extraCargoCapacity = 0
+            local extraPassengersCapacity = 0
+
+            for num, slot in pairs(result.slots) do
+                local module = modules[slot.id]
+                if module and module.metadata and module.metadata.moreCapacity then
+                    if type(module.metadata.moreCapacity.cargo) == 'number' then
+                        extraCargoCapacity = extraCargoCapacity + module.metadata.moreCapacity.cargo
+                    end
+                    if type(module.metadata.moreCapacity.passenger) == 'number' then
+                        extraPassengersCapacity = extraPassengersCapacity + module.metadata.moreCapacity.passenger
+                    end
+                end
+            end
+            return extraCargoCapacity, extraPassengersCapacity
+        end,
+    },
     flatAreas = {
         getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
             local variant = privateFuncs.getVariant(params, slotId)
