@@ -3,7 +3,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 function data()
 	return {
 		availability = {
-			yearFrom = _constants.eras.era_b.startYear,
+			yearFrom = _constants.eras.era_a.startYear,
 			yearTo = 0
 		},
 		category = {
