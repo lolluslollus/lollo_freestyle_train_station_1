@@ -1,4 +1,5 @@
 local bridgeutil = require 'bridgeutil'
+local constants = require('lollo_freestyle_train_station.constants')
 
 function data()
     local pillarDir = 'bridge/lollo_freestyle_train_station/iron_pillars/'
@@ -30,7 +31,7 @@ function data()
 
     return {
         name = _('IronBridgeNoPillarsNoSides'),
-        yearFrom = 1850,
+        yearFrom = constants.eras.era_a.startYear,
         yearTo = 0,
         carriers = { 'RAIL', 'ROAD' },
         speedLimit = 320.0 / 3.6,
