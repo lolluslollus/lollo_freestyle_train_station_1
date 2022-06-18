@@ -5,7 +5,7 @@ function data()
 
     return {
         info = {
-            minorVersion = 62,
+            minorVersion = 63,
             severityAdd = 'NONE',
             severityRemove = 'WARNING',
             name = _('NAME'),
@@ -62,14 +62,6 @@ function data()
                     local availability = _trackHelpers.getTrackAvailability(trackFileName)
                     track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
                     track.yearTo = availability.yearTo -- idem
-                    --[[
-                        local newTrack = api.type.TrackType.new()
-                        -- the api won't allow looping over properties with for key, value in pairs(oldTrack)
-                        -- _cloneIntoObjectOmittingFields(oldTrack, newTrack, nil, true)
-                        newTrack = oldTrack
-                        newTrack.yearFrom = 0 -- we just change the value of the existing ref
-                        newTrack.yearTo = 0 -- idem
-                    ]]
                 end
             end
         end
