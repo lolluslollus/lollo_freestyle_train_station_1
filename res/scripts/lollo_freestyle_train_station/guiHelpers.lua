@@ -20,7 +20,8 @@ local _texts = {
     waypointDistanceWindowTitle = _('WaypointDistanceWindowTitle'),
 }
 
-local _windowXShift = -200
+local _windowXShift = 40
+local _windowYShift = 40
 
 local guiHelpers = {
     isShowingWarning = false,
@@ -155,7 +156,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
 
     -- window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x + _windowXShift, position.y)
+    window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
     window:onClose(
         function()
             if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
@@ -244,7 +245,7 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
 
     window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x + _windowXShift, position.y)
+    window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
     window:addHideOnCloseHandler()
 end
 
@@ -264,7 +265,7 @@ guiHelpers.showWarningWindowWithState = function(text)
 
     window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x + _windowXShift, position.y)
+    window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
@@ -295,7 +296,7 @@ guiHelpers.showWaypointDistance = function(text)
     content:addItem(api.gui.comp.TextView.new(text))
 
     local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x + _windowXShift, position.y)
+    window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
 
     -- make title bar invisible without that dumb pseudo css
     window:getLayout():getItem(0):setVisible(false, false)
