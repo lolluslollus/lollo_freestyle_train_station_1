@@ -190,6 +190,7 @@ return {
 			end
 		end
 		-- station name signs
+		-- LOLLO NOTE update platformRoofs.doPlatformRoof if you change this - dirty but faster
 		for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width

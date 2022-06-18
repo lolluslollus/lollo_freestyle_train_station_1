@@ -239,7 +239,7 @@ function data()
 					local iss = {}
 					for i = 2, iMax, 3 do iss[#iss+1] = i end
 					-- fill the last if any
-					if math.fmod(iMax, 3) == 1 then iss[#iss+1] = iMax end
+					if moduleHelpers.getIsEndFiller(iMax) then iss[#iss+1] = iMax end
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
@@ -262,7 +262,7 @@ function data()
 					local iss = {}
 					for i = 2, iMax, 3 do iss[#iss+1] = i end
 					-- fill the last if any
-					if math.fmod(iMax, 3) == 1 then iss[#iss+1] = iMax end
+					if moduleHelpers.getIsEndFiller(iMax) then iss[#iss+1] = iMax end
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]

@@ -39,14 +39,20 @@ local privateFuncs = {
                 result = constants.eras.era_c.prefix
             end
         end
-    
+
         return result
+    end,
+    getIsEndFiller = function(nTrackEdge)
+        -- this is for platform roofs and outside extensions, which have a slot every 3 track edge counts.
+        -- to fill the last, if it is 4, 7, etc, we add an extra slot: this slot has a special behaviour,
+        -- ie it does not draw on the adjacent track edges
+        return math.fmod(nTrackEdge, 3) == 1
     end,
     getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
         -- print('getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =') debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
-    
+
         local newTransf = transfUtilsUG.rotZTransl(
             math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
             {
@@ -55,7 +61,7 @@ local privateFuncs = {
                 z = (pos1[3] + pos2[3]) * 0.5,
             }
         )
-    
+
         -- print('newTransf =') debugPrint(newTransf)
         return newTransf
     end,
@@ -107,542 +113,542 @@ local privateFuncs = {
         end
         return variant
     end,
-    edges = {
-        _addTrackEdges = function(result, tag2nodes, params, t)
-            result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
-        
-            -- print('_addTrackEdges starting for terminal =', t)
-            local forceCatenary = 0
-            local trackElectrificationModuleKey = slotUtils.mangleId(t, 0, constants.idBases.trackElectrificationSlotId)
-            if params.modules[trackElectrificationModuleKey] ~= nil then
-                if params.modules[trackElectrificationModuleKey].name == constants.trackElectrificationYesModuleFileName then
-                    forceCatenary = 2
-                elseif params.modules[trackElectrificationModuleKey].name == constants.trackElectrificationNoModuleFileName then
-                    forceCatenary = 1
-                end
-            end
-            -- print('forceCatenary =', forceCatenary)
-            local forceFast = 0
-            local trackSpeedModuleKey = slotUtils.mangleId(t, 0, constants.idBases.trackSpeedSlotId)
-            if params.modules[trackSpeedModuleKey] ~= nil then
-                if params.modules[trackSpeedModuleKey].name == constants.trackSpeedFastModuleFileName then
-                    forceFast = 2
-                elseif params.modules[trackSpeedModuleKey].name == constants.trackSpeedSlowModuleFileName then
-                    forceFast = 1
-                end
-            end
-            -- print('forceFast =', forceFast)
-        
-            for i = 1, #params.terminals[t].trackEdgeLists do
-                local tel = params.terminals[t].trackEdgeLists[i]
-        
-                local overriddenCatenary = tel.catenary
-                if forceCatenary == 1 then overriddenCatenary = false
-                elseif forceCatenary == 2 then overriddenCatenary = true
-                end
-        
-                local overriddenTrackType = tel.trackTypeName
-                if forceFast == 1 then overriddenTrackType = 'standard.lua'
-                elseif forceFast == 2 then overriddenTrackType = 'high_speed.lua'
-                end
-        
-                local newEdgeList = {
-                    alignTerrain = tel.type == 0 or tel.type == 2, -- only align on ground and in tunnels
-                    edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf),
-                    edgeType = tel.edgeType,
-                    edgeTypeName = tel.edgeTypeName,
-                    -- freeNodes = {},
-                    params = {
-                        catenary = overriddenCatenary,
-                        type = overriddenTrackType,
-                    },
-                    snapNodes = {},
-                    tag2nodes = tag2nodes,
-                    type = 'TRACK'
-                }
-        
-                if i == 1 then
-                    -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
-                    newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
-                end
-                if i == #params.terminals[t].trackEdgeLists then
-                    -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
-                    newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
-                end
-        
-                -- LOLLO NOTE the edges won't snap to the neighbours
-                -- unless you rebuild those neighbours, by hand or by script,
-                -- and make them snap to the station own nodes.
-                result.edgeLists[#result.edgeLists+1] = newEdgeList
-            end
-        end,
-        _addPlatformEdges = function(result, tag2nodes, params, t)
-            for i = 1, #params.terminals[t].platformEdgeLists do
-                local pel = params.terminals[t].platformEdgeLists[i]
-        
-                local newEdgeList = {
-                    alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
-                    edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, params.inverseMainTransf),
-                    edgeType = pel.edgeType,
-                    edgeTypeName = pel.edgeTypeName,
-                    -- freeNodes = {},
-                    params = {
-                        -- type = pel.trackTypeName,
-                        type = trackUtils.getInvisibleTwinFileName(pel.trackTypeName),
-                        catenary = false --pel.catenary
-                    },
-                    snapNodes = {},
-                    tag2nodes = tag2nodes,
-                    type = 'TRACK'
-                }
-        
-                if i == 1 then
-                    -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
-                    newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
-                end
-                if i == #params.terminals[t].platformEdgeLists then
-                    -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
-                    newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
-                end
-        
-                result.edgeLists[#result.edgeLists+1] = newEdgeList
-            end
-        end,
-        _getNNodesInTerminalsSoFar = function(params, t)
-            local result = 0
-            for tt = 1, t - 1 do
-                if params.terminals[tt] ~= nil then
-                    if params.terminals[tt].platformEdgeLists ~= nil then
-                        result = result + #params.terminals[tt].platformEdgeLists * 2
-                    end
-                    if params.terminals[tt].trackEdgeLists ~= nil then
-                        result = result + #params.terminals[tt].trackEdgeLists * 2
-                    end
-                end
-            end
-            return result
-        end,
-    },
-    slopedAreas = {
-        addSlopedCargoAreaDeco = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
-            if areaWidth < 5 then return end
+}
 
-            local isEndFiller = math.fmod(nTrackEdge, 3) == 1
-            if isEndFiller then return end
-
-            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-            local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            local platformWidth = cpl.width
-
-            local xShift1 = nWaitingAreas <= 4 and -4.5 or -4.5
-            local xShift2 = nWaitingAreas <= 4 and 0.7 or 3.7
-            local yShift = (-platformWidth -areaWidth) / 2
-            if not(isTrackOnPlatformLeft) then yShift = -yShift end
-
-            local roofModelId = nil
-            if eraPrefix == constants.eras.era_a.prefix then
-                roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_dark_4x4.mdl'
-            else
-                roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl'
+privateFuncs.edges = {
+    _addTrackEdges = function(result, tag2nodes, params, t)
+        result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
+    
+        -- print('_addTrackEdges starting for terminal =', t)
+        local forceCatenary = 0
+        local trackElectrificationModuleKey = slotUtils.mangleId(t, 0, constants.idBases.trackElectrificationSlotId)
+        if params.modules[trackElectrificationModuleKey] ~= nil then
+            if params.modules[trackElectrificationModuleKey].name == constants.trackElectrificationYesModuleFileName then
+                forceCatenary = 2
+            elseif params.modules[trackElectrificationModuleKey].name == constants.trackElectrificationNoModuleFileName then
+                forceCatenary = 1
             end
-
-            result.models[#result.models + 1] = {
-                id = roofModelId,
-                slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift1, yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
-                tag = tag
+        end
+        -- print('forceCatenary =', forceCatenary)
+        local forceFast = 0
+        local trackSpeedModuleKey = slotUtils.mangleId(t, 0, constants.idBases.trackSpeedSlotId)
+        if params.modules[trackSpeedModuleKey] ~= nil then
+            if params.modules[trackSpeedModuleKey].name == constants.trackSpeedFastModuleFileName then
+                forceFast = 2
+            elseif params.modules[trackSpeedModuleKey].name == constants.trackSpeedSlowModuleFileName then
+                forceFast = 1
+            end
+        end
+        -- print('forceFast =', forceFast)
+    
+        for i = 1, #params.terminals[t].trackEdgeLists do
+            local tel = params.terminals[t].trackEdgeLists[i]
+    
+            local overriddenCatenary = tel.catenary
+            if forceCatenary == 1 then overriddenCatenary = false
+            elseif forceCatenary == 2 then overriddenCatenary = true
+            end
+    
+            local overriddenTrackType = tel.trackTypeName
+            if forceFast == 1 then overriddenTrackType = 'standard.lua'
+            elseif forceFast == 2 then overriddenTrackType = 'high_speed.lua'
+            end
+    
+            local newEdgeList = {
+                alignTerrain = tel.type == 0 or tel.type == 2, -- only align on ground and in tunnels
+                edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf),
+                edgeType = tel.edgeType,
+                edgeTypeName = tel.edgeTypeName,
+                -- freeNodes = {},
+                params = {
+                    catenary = overriddenCatenary,
+                    type = overriddenTrackType,
+                },
+                snapNodes = {},
+                tag2nodes = tag2nodes,
+                type = 'TRACK'
             }
-            result.models[#result.models + 1] = {
-                id = roofModelId,
-                slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  xShift2, yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
-                tag = tag
-            }
-        end,
-        addSlopedPassengerAreaDeco = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
-            if areaWidth < 5 then return end
-
-            local isEndFiller = math.fmod(nTrackEdge, 3) == 1
-            if isEndFiller then return end
-
-            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-            local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            local platformWidth = cpl.width
-
-            local xShift = nWaitingAreas <= 4 and -2.0 or 0.0
-            local yShift1 = -platformWidth / 2 - 2.8
-            local yShift2 = -platformWidth / 2 - 1.0
-            local yShift3 = -platformWidth / 2 - 2.1
-            if not(isTrackOnPlatformLeft) then yShift1 = -yShift1 yShift2 = -yShift2 yShift3 = -yShift3 end
-
-            local chairsModelId = nil
-            local binModelId = nil
-            local arrivalsModelId = nil
-            if eraPrefix == constants.eras.era_a.prefix then
-                chairsModelId = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl'
-                binModelId = 'station/rail/asset/era_a_trashcan.mdl'
-                arrivalsModelId = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl'
-            elseif eraPrefix == constants.eras.era_b.prefix then
-                chairsModelId = 'lollo_freestyle_train_station/asset/era_b_four_chairs.mdl'
-                binModelId = 'station/rail/asset/era_b_trashcan.mdl'
-                arrivalsModelId = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl'
-            else
-                chairsModelId = 'lollo_freestyle_train_station/asset/era_c_four_chairs.mdl'
-                binModelId = 'station/rail/asset/era_c_trashcan.mdl'
-                arrivalsModelId = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl'
+    
+            if i == 1 then
+                -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
+                newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
             end
-
-            result.models[#result.models + 1] = {
-                id = chairsModelId,
-                slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift1, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
-                tag = tag
-            }
-            result.models[#result.models + 1] = {
-                id = binModelId,
-                slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift2, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
-                tag = tag
-            }
-            result.models[#result.models + 1] = {
-                id = arrivalsModelId,
-                slotId = slotId,
-                transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift + 6.2, yShift3, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
-                tag = tag
-            }
-        end,
-        _getSlopedAreaInnerDegree = function(params, nTerminal, nTrackEdge)
-            local centrePlatforms = params.terminals[nTerminal].centrePlatformsRelative
-        
-            local x1 = 0
-            local y1 = 0
-            local xM = 0
-            local yM = 0
-            local x2 = 0
-            local y2 = 0
-            if centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
-                x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
-                y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
-                x2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][1]
-                y2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][2]
-                xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
-                yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
-            elseif centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil then
-                x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
-                y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
-                x2 = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
-                y2 = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
-                xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
-                yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
-            elseif centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
-                x1 = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
-                y1 = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
-                x2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][1]
-                y2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][2]
-                xM = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
-                yM = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
-            else
-                logger.warn('cannot get inner degree')
-                return privateConstants.slopedAreas.innerDegrees.neutral
+            if i == #params.terminals[t].trackEdgeLists then
+                -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
+                newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
             end
-        
-            local segmentHunch = transfUtils.getDistanceBetweenPointAndStraight(
-                {x1, y1, 0},
-                {x2, y2, 0},
-                {xM, yM, 0}
-            )
-            -- print('segmentHunch =', segmentHunch)
-        
-            -- local segmentLength = transfUtils.getPositionsDistance(
-            --     centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
-            --     centrePlatforms[nTrackEdge + 1].posTanX2[1][1]
-            -- )
-            -- print('segmentLength =', segmentLength)
-            -- if segmentHunch / segmentLength < privateConstants.slopedAreas.hunchLengthRatioToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
-            if segmentHunch < privateConstants.slopedAreas.hunchToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
-        
-            -- a + bx = y
-            -- => a + b * x1 = y1
-            -- => a + b * x2 = y2
-            -- => b * (x1 - x2) = y1 - y2
-            -- => b = (y1 - y2) / (x1 - x2)
-            -- OR division by zero
-            -- => a = y1 - b * x1
-            -- => a = y1 - (y1 - y2) / (x1 - x2) * x1
-            -- a + b * xM > yM <= this is what we want to know
-            -- => y1 - (y1 - y2) / (x1 - x2) * x1 + (y1 - y2) / (x1 - x2) * xM > yM
-            -- => y1 * (x1 - x2) - (y1 - y2) * x1 + (y1 - y2) * xM > yM * (x1 - x2)
-            -- => (y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1) > 0
-        
-            local innerSign = transfUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
-        
-            if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
-            -- print('terminal', nTerminal, 'innerSign =', innerSign)
-            return innerSign
-        end,
-        _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
-            local waitingAreaScaleFactor = areaWidth * 0.8
-        
-            -- LOLLO NOTE sloped areas are parallelepipeds that extend the parallelepipeds that make up the platform sideways.
-            -- I don't know of any transformation to twist or deform a model, so either I make an arsenal of meshes (no!) or I adjust things.
-            -- 1) If I am outside a bend, I must stretch the sloped areas so there are no holes between them.
-            -- Inside a bend, I haven't got this problem but I cannot shrink them, either, lest I get holes.
-            -- 2) As I approach the centre of a bend, the slope should increase, and it should decrease as I move outwards.
-            -- To visualise this, imagine building a helter skelter with horizontal planks, or a tight staircase: the centre will be super steep.
-            -- Since there is no transf for this, I tweak the angle around the Y axis.
-        
-            -- These tricks work to a certain extent, but since I cannot skew or twist my models,
-            -- I work out a new cleaner series of segments to follow, instead of extending the platform sideways.
-            -- It is cleaner (the Y angle is optimised by construction) but slow, so we run the calculations in advance in the big script.
-            -- And we still need to tweak it a little.
-        
-            -- Using multiple thin parallel extensions is slow and brings nothing at all.
-        
-            -- The easiest is: leave the narrower slopes since they don't cause much grief, and bridges need them,
-            -- and use the terrain for the wider ones. Even the smaller sloped areas need quite a bit of stretch, but they are less sensiitive to the angle problem.
-            -- However, the terrain will never look as good as a dedicated model.
-            -- local angleYFactor = 1
-            local xScaleFactor = 1
-            -- local waitingAreaPeriod = 5
-            -- outside a bend
-            if innerDegree < 0 then
-                -- waitingAreaPeriod = 4
-                if areaWidth <= 5 then
-                    xScaleFactor = 1.20
-                    -- angleYFactor = 1.0625
-                elseif areaWidth <= 10 then
-                    xScaleFactor = 1.30
-                    -- angleYFactor = 1.10
-                elseif areaWidth <= 20 then
-                    xScaleFactor = 1.40
-                    -- angleYFactor = 1.20
+    
+            -- LOLLO NOTE the edges won't snap to the neighbours
+            -- unless you rebuild those neighbours, by hand or by script,
+            -- and make them snap to the station own nodes.
+            result.edgeLists[#result.edgeLists+1] = newEdgeList
+        end
+    end,
+    _addPlatformEdges = function(result, tag2nodes, params, t)
+        for i = 1, #params.terminals[t].platformEdgeLists do
+            local pel = params.terminals[t].platformEdgeLists[i]
+    
+            local newEdgeList = {
+                alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
+                edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, params.inverseMainTransf),
+                edgeType = pel.edgeType,
+                edgeTypeName = pel.edgeTypeName,
+                -- freeNodes = {},
+                params = {
+                    -- type = pel.trackTypeName,
+                    type = trackUtils.getInvisibleTwinFileName(pel.trackTypeName),
+                    catenary = false --pel.catenary
+                },
+                snapNodes = {},
+                tag2nodes = tag2nodes,
+                type = 'TRACK'
+            }
+    
+            if i == 1 then
+                -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
+                newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
+            end
+            if i == #params.terminals[t].platformEdgeLists then
+                -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
+                newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
+            end
+    
+            result.edgeLists[#result.edgeLists+1] = newEdgeList
+        end
+    end,
+    _getNNodesInTerminalsSoFar = function(params, t)
+        local result = 0
+        for tt = 1, t - 1 do
+            if params.terminals[tt] ~= nil then
+                if params.terminals[tt].platformEdgeLists ~= nil then
+                    result = result + #params.terminals[tt].platformEdgeLists * 2
                 end
-            -- inside a bend
-            elseif innerDegree > 0 then
-                -- waitingAreaPeriod = 6
-                xScaleFactor = 0.95
-                -- if areaWidth <= 5 then
-                --     angleYFactor = 0.9
-                -- elseif areaWidth <= 10 then
-                --     angleYFactor = 0.825
-                -- elseif areaWidth <= 20 then
-                --     angleYFactor = 0.75
-                -- end
-            -- more or less straight
-            else
-                if areaWidth <= 5 then
-                    xScaleFactor = 1.05
-                elseif areaWidth <= 10 then
-                    xScaleFactor = 1.15
-                elseif areaWidth <= 20 then
-                    xScaleFactor = 1.25
+                if params.terminals[tt].trackEdgeLists ~= nil then
+                    result = result + #params.terminals[tt].trackEdgeLists * 2
                 end
             end
-            -- print('xScaleFactor =', xScaleFactor)
-            -- print('angleYFactor =', angleYFactor)
-        
-            return waitingAreaScaleFactor, xScaleFactor
-        end,
-        _doTerrain4SlopedAreaOLD = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey, isGroundLevel)
-            -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
-            local terrainCoordinates = {}
-        
-            local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-            local iN = nTrackEdge + 1
-            local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
-            if not(safs) then return end
-            for ii = 1, #safs do
-                local leadingIndex = safs[ii].leadingIndex
-                if leadingIndex > iN then break end
-                local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-                if cpl.type == 0 then -- only on ground
-                    if leadingIndex >= i1 then
-                        local saf = safs[ii]
-                        local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
-                        local pos1Inner = cpf.posTanX2[1][1]
-                        local pos2Inner = cpf.posTanX2[2][1]
-                        local pos2Outer = saf.posTanX2[2][1]
-                        local pos1Outer = saf.posTanX2[1][1]
-                        terrainCoordinates[#terrainCoordinates+1] = {
-                            pos1Inner,
-                            pos2Inner,
-                            transfUtils.getExtrapolatedPosX2Continuation(pos2Inner, pos2Outer, areaWidth * 0.5),
-                            transfUtils.getExtrapolatedPosX2Continuation(pos1Inner, pos1Outer, areaWidth * 0.5),
-                        }
-                    end
-                end
+        end
+        return result
+    end,
+}
+privateFuncs.slopedAreas = {
+    addSlopedCargoAreaDeco = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
+        if areaWidth < 5 then return end
+
+        local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+        if isEndFiller then return end
+
+        local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+        local platformWidth = cpl.width
+
+        local xShift1 = nWaitingAreas <= 4 and -4.5 or -4.5
+        local xShift2 = nWaitingAreas <= 4 and 0.7 or 3.7
+        local yShift = (-platformWidth -areaWidth) / 2
+        if not(isTrackOnPlatformLeft) then yShift = -yShift end
+
+        local roofModelId = nil
+        if eraPrefix == constants.eras.era_a.prefix then
+            roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_dark_4x4.mdl'
+        else
+            roofModelId = 'lollo_freestyle_train_station/asset/cargo_roof_grid_4x4.mdl'
+        end
+
+        result.models[#result.models + 1] = {
+            id = roofModelId,
+            slotId = slotId,
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift1, yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = roofModelId,
+            slotId = slotId,
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  xShift2, yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            tag = tag
+        }
+    end,
+    addSlopedPassengerAreaDeco = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
+        if areaWidth < 5 then return end
+
+        local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+        if isEndFiller then return end
+
+        local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+        local platformWidth = cpl.width
+
+        local xShift = nWaitingAreas <= 4 and -2.0 or 0.0
+        local yShift1 = -platformWidth / 2 - 2.8
+        local yShift2 = -platformWidth / 2 - 1.0
+        local yShift3 = -platformWidth / 2 - 2.1
+        if not(isTrackOnPlatformLeft) then yShift1 = -yShift1 yShift2 = -yShift2 yShift3 = -yShift3 end
+
+        local chairsModelId = nil
+        local binModelId = nil
+        local arrivalsModelId = nil
+        if eraPrefix == constants.eras.era_a.prefix then
+            chairsModelId = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl'
+            binModelId = 'station/rail/asset/era_a_trashcan.mdl'
+            arrivalsModelId = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl'
+        elseif eraPrefix == constants.eras.era_b.prefix then
+            chairsModelId = 'lollo_freestyle_train_station/asset/era_b_four_chairs.mdl'
+            binModelId = 'station/rail/asset/era_b_trashcan.mdl'
+            arrivalsModelId = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl'
+        else
+            chairsModelId = 'lollo_freestyle_train_station/asset/era_c_four_chairs.mdl'
+            binModelId = 'station/rail/asset/era_c_trashcan.mdl'
+            arrivalsModelId = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl'
+        end
+
+        result.models[#result.models + 1] = {
+            id = chairsModelId,
+            slotId = slotId,
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift1, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = binModelId,
+            slotId = slotId,
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift2, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            tag = tag
+        }
+        result.models[#result.models + 1] = {
+            id = arrivalsModelId,
+            slotId = slotId,
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift + 6.2, yShift3, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            tag = tag
+        }
+    end,
+    _getSlopedAreaInnerDegree = function(params, nTerminal, nTrackEdge)
+        local centrePlatforms = params.terminals[nTerminal].centrePlatformsRelative
+    
+        local x1 = 0
+        local y1 = 0
+        local xM = 0
+        local yM = 0
+        local x2 = 0
+        local y2 = 0
+        if centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
+            x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
+            y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
+            x2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][1]
+            y2 = centrePlatforms[nTrackEdge + 1].posTanX2[1][1][2]
+            xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+            yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+        elseif centrePlatforms[nTrackEdge - 1] ~= nil and centrePlatforms[nTrackEdge] ~= nil then
+            x1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][1]
+            y1 = centrePlatforms[nTrackEdge - 1].posTanX2[1][1][2]
+            x2 = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
+            y2 = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
+            xM = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+            yM = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+        elseif centrePlatforms[nTrackEdge] ~= nil and centrePlatforms[nTrackEdge + 1] ~= nil then
+            x1 = centrePlatforms[nTrackEdge].posTanX2[1][1][1]
+            y1 = centrePlatforms[nTrackEdge].posTanX2[1][1][2]
+            x2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][1]
+            y2 = centrePlatforms[nTrackEdge + 1].posTanX2[2][1][2]
+            xM = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
+            yM = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
+        else
+            logger.warn('cannot get inner degree')
+            return privateConstants.slopedAreas.innerDegrees.neutral
+        end
+    
+        local segmentHunch = transfUtils.getDistanceBetweenPointAndStraight(
+            {x1, y1, 0},
+            {x2, y2, 0},
+            {xM, yM, 0}
+        )
+        -- print('segmentHunch =', segmentHunch)
+    
+        -- local segmentLength = transfUtils.getPositionsDistance(
+        --     centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
+        --     centrePlatforms[nTrackEdge + 1].posTanX2[1][1]
+        -- )
+        -- print('segmentLength =', segmentLength)
+        -- if segmentHunch / segmentLength < privateConstants.slopedAreas.hunchLengthRatioToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
+        if segmentHunch < privateConstants.slopedAreas.hunchToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
+    
+        -- a + bx = y
+        -- => a + b * x1 = y1
+        -- => a + b * x2 = y2
+        -- => b * (x1 - x2) = y1 - y2
+        -- => b = (y1 - y2) / (x1 - x2)
+        -- OR division by zero
+        -- => a = y1 - b * x1
+        -- => a = y1 - (y1 - y2) / (x1 - x2) * x1
+        -- a + b * xM > yM <= this is what we want to know
+        -- => y1 - (y1 - y2) / (x1 - x2) * x1 + (y1 - y2) / (x1 - x2) * xM > yM
+        -- => y1 * (x1 - x2) - (y1 - y2) * x1 + (y1 - y2) * xM > yM * (x1 - x2)
+        -- => (y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1) > 0
+    
+        local innerSign = transfUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
+    
+        if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
+        -- print('terminal', nTerminal, 'innerSign =', innerSign)
+        return innerSign
+    end,
+    _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
+        local waitingAreaScaleFactor = areaWidth * 0.8
+    
+        -- LOLLO NOTE sloped areas are parallelepipeds that extend the parallelepipeds that make up the platform sideways.
+        -- I don't know of any transformation to twist or deform a model, so either I make an arsenal of meshes (no!) or I adjust things.
+        -- 1) If I am outside a bend, I must stretch the sloped areas so there are no holes between them.
+        -- Inside a bend, I haven't got this problem but I cannot shrink them, either, lest I get holes.
+        -- 2) As I approach the centre of a bend, the slope should increase, and it should decrease as I move outwards.
+        -- To visualise this, imagine building a helter skelter with horizontal planks, or a tight staircase: the centre will be super steep.
+        -- Since there is no transf for this, I tweak the angle around the Y axis.
+    
+        -- These tricks work to a certain extent, but since I cannot skew or twist my models,
+        -- I work out a new cleaner series of segments to follow, instead of extending the platform sideways.
+        -- It is cleaner (the Y angle is optimised by construction) but slow, so we run the calculations in advance in the big script.
+        -- And we still need to tweak it a little.
+    
+        -- Using multiple thin parallel extensions is slow and brings nothing at all.
+    
+        -- The easiest is: leave the narrower slopes since they don't cause much grief, and bridges need them,
+        -- and use the terrain for the wider ones. Even the smaller sloped areas need quite a bit of stretch, but they are less sensiitive to the angle problem.
+        -- However, the terrain will never look as good as a dedicated model.
+        -- local angleYFactor = 1
+        local xScaleFactor = 1
+        -- local waitingAreaPeriod = 5
+        -- outside a bend
+        if innerDegree < 0 then
+            -- waitingAreaPeriod = 4
+            if areaWidth <= 5 then
+                xScaleFactor = 1.20
+                -- angleYFactor = 1.0625
+            elseif areaWidth <= 10 then
+                xScaleFactor = 1.30
+                -- angleYFactor = 1.10
+            elseif areaWidth <= 20 then
+                xScaleFactor = 1.40
+                -- angleYFactor = 1.20
             end
-            -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
-        
-            local faces = {}
-            for tc = 1, #terrainCoordinates do
-                local face = { }
-                for i = 1, 4 do
-                    face[i] = {
-                        terrainCoordinates[tc][i][1],
-                        terrainCoordinates[tc][i][2],
-                        isGroundLevel
-                            and terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] + constants.platformSideBitsZ
-                            or terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + constants.platformSideBitsZ,
-                        1
-                    }
-                end
-                faces[#faces+1] = face
-                if groundFacesFillKey ~= nil then
-                    result.groundFaces[#result.groundFaces + 1] = {
-                        face = face, -- Z is ignored here
-                        loop = true,
-                        modes = {
-                            {
-                                type = 'FILL',
-                                key = groundFacesFillKey,
-                            },
-                            {
-                                type = 'STROKE_OUTER',
-                                key = groundFacesFillKey
-                            }
-                        }
+        -- inside a bend
+        elseif innerDegree > 0 then
+            -- waitingAreaPeriod = 6
+            xScaleFactor = 0.95
+            -- if areaWidth <= 5 then
+            --     angleYFactor = 0.9
+            -- elseif areaWidth <= 10 then
+            --     angleYFactor = 0.825
+            -- elseif areaWidth <= 20 then
+            --     angleYFactor = 0.75
+            -- end
+        -- more or less straight
+        else
+            if areaWidth <= 5 then
+                xScaleFactor = 1.05
+            elseif areaWidth <= 10 then
+                xScaleFactor = 1.15
+            elseif areaWidth <= 20 then
+                xScaleFactor = 1.25
+            end
+        end
+        -- print('xScaleFactor =', xScaleFactor)
+        -- print('angleYFactor =', angleYFactor)
+    
+        return waitingAreaScaleFactor, xScaleFactor
+    end,
+    _doTerrain4SlopedAreaOLD = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey, isGroundLevel)
+        -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
+        local terrainCoordinates = {}
+    
+        local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+        local iN = nTrackEdge + 1
+        local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
+        if not(safs) then return end
+        for ii = 1, #safs do
+            local leadingIndex = safs[ii].leadingIndex
+            if leadingIndex > iN then break end
+            local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+            if cpl.type == 0 then -- only on ground
+                if leadingIndex >= i1 then
+                    local saf = safs[ii]
+                    local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+                    local pos1Inner = cpf.posTanX2[1][1]
+                    local pos2Inner = cpf.posTanX2[2][1]
+                    local pos2Outer = saf.posTanX2[2][1]
+                    local pos1Outer = saf.posTanX2[1][1]
+                    terrainCoordinates[#terrainCoordinates+1] = {
+                        pos1Inner,
+                        pos2Inner,
+                        transfUtils.getExtrapolatedPosX2Continuation(pos2Inner, pos2Outer, areaWidth * 0.5),
+                        transfUtils.getExtrapolatedPosX2Continuation(pos1Inner, pos1Outer, areaWidth * 0.5),
                     }
                 end
             end
-            if #faces > 1 then
-                result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
-                    faces = faces, -- Z is accounted here
-                    optional = true,
-                    slopeHigh = constants.slopeHigh,
-                    slopeLow = constants.slopeLow,
-                    type = 'EQUAL', -- GREATER, LESS
+        end
+        -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
+    
+        local faces = {}
+        for tc = 1, #terrainCoordinates do
+            local face = { }
+            for i = 1, 4 do
+                face[i] = {
+                    terrainCoordinates[tc][i][1],
+                    terrainCoordinates[tc][i][2],
+                    isGroundLevel
+                        and terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] + constants.platformSideBitsZ
+                        or terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + constants.platformSideBitsZ,
+                    1
                 }
             end
-        end,
-        _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
-            -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
-            local terrainCoordinates = {}
-        
-            local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-            local iN = nTrackEdge + 1
-            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-
-            local cpfs = params.terminals[nTerminal].centrePlatformsFineRelative
-            for ii = 1, #cpfs do
-                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
-                local leadingIndex = cpf.leadingIndex
-                if leadingIndex > iN then break end
-                local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-                if cpl.type == 0 then -- only on ground
-                    if leadingIndex >= i1 then
-                        local platformWidth = cpl.width
-                        local outerAreaEdgePosTanX2 = transfUtils.getParallelSidewaysWithRotZ(
-                            cpf.posTanX2,
-                            (isTrackOnPlatformLeft and (-areaWidth -platformWidth * 0.5) or (areaWidth + platformWidth * 0.5))
-                        )
-                        local pos1Inner = cpf.posTanX2[1][1]
-                        local pos2Inner = cpf.posTanX2[2][1]
-                        local pos2Outer = outerAreaEdgePosTanX2[2][1]
-                        local pos1Outer = outerAreaEdgePosTanX2[1][1]
-                        terrainCoordinates[#terrainCoordinates+1] = {
-                            pos1Inner,
-                            pos2Inner,
-                            pos2Outer,
-                            pos1Outer,
-                        }
-                    end
-                end
-            end
-            -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
-        
-            local faces = {}
-            for tc = 1, #terrainCoordinates do
-                local face = { }
-                for i = 1, 4 do
-                    face[i] = {
-                        terrainCoordinates[tc][i][1],
-                        terrainCoordinates[tc][i][2],
-                        terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + constants.platformSideBitsZ,
-                        1
-                    }
-                end
-                faces[#faces+1] = face
-                if groundFacesFillKey ~= nil then
-                    result.groundFaces[#result.groundFaces + 1] = {
-                        face = face, -- Z is ignored here
-                        loop = true,
-                        modes = {
-                            {
-                                type = 'FILL',
-                                key = groundFacesFillKey,
-                            },
-                            {
-                                type = 'STROKE_OUTER',
-                                key = groundFacesFillKey
-                            }
-                        }
-                    }
-                end
-            end
-            if #faces > 1 then
-                result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
-                    faces = faces, -- Z is accounted here
-                    optional = true,
-                    slopeHigh = constants.slopeHigh,
-                    slopeLow = constants.slopeLow,
-                    type = 'EQUAL', -- GREATER, LESS
-                }
-            end
-        end,
-    },
-    subways = {
-        doTerrain4ClosedSubways = function(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
-            local _groundFacesFillKey = constants[constants.eras.era_c.prefix .. 'groundFacesFillKey']
-            -- local groundFace = { -- the ground faces ignore z, the alignment lists don't
-            --     {0.0, -0.95, 0, 1},
-            --     {0.0, 0.95, 0, 1},
-            --     {4.5, 0.95, 0, 1},
-            --     {4.5, -0.95, 0, 1},
-            -- }
-            -- local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-            --     {-2.2, -4.15, constants.platformSideBitsZ, 1},
-            --     {-2.2, 4.15, constants.platformSideBitsZ, 1},
-            --     {4.7, 4.15, constants.platformSideBitsZ, 1},
-            --     {4.7, -4.15, constants.platformSideBitsZ, 1},
-            -- }
-            if type(slotTransf) == 'table' then
-                -- modulesutil.TransformFaces(slotTransf, groundFace)
-                modulesutil.TransformFaces(slotTransf, terrainFace)
-            end
-
-            table.insert(
-                result.groundFaces,
-                {
-                    -- face = groundFace,
-                    face = terrainFace,
+            faces[#faces+1] = face
+            if groundFacesFillKey ~= nil then
+                result.groundFaces[#result.groundFaces + 1] = {
+                    face = face, -- Z is ignored here
                     loop = true,
                     modes = {
                         {
-                            key = _groundFacesFillKey,
                             type = 'FILL',
+                            key = groundFacesFillKey,
                         },
-                        -- {
-                        --     key = groundFacesStrokeOuterKey,
-                        --     type = 'STROKE_OUTER',
-                        -- }
+                        {
+                            type = 'STROKE_OUTER',
+                            key = groundFacesFillKey
+                        }
                     }
                 }
-            )
-            table.insert(
-                result.terrainAlignmentLists,
-                {
-                    faces =  { terrainFace },
-                    optional = true,
-                    slopeHigh = constants.slopeHigh,
-                    slopeLow = constants.slopeLow,
-                    type = 'EQUAL',
-                }
-            )
-        end,
-    }
-}
+            end
+        end
+        if #faces > 1 then
+            result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
+                faces = faces, -- Z is accounted here
+                optional = true,
+                slopeHigh = constants.slopeHigh,
+                slopeLow = constants.slopeLow,
+                type = 'EQUAL', -- GREATER, LESS
+            }
+        end
+    end,
+    _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
+        -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
+        local terrainCoordinates = {}
+    
+        local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+        local iN = nTrackEdge + 1
+        local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 
+        local cpfs = params.terminals[nTerminal].centrePlatformsFineRelative
+        for ii = 1, #cpfs do
+            local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+            local leadingIndex = cpf.leadingIndex
+            if leadingIndex > iN then break end
+            local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+            if cpl.type == 0 then -- only on ground
+                if leadingIndex >= i1 then
+                    local platformWidth = cpl.width
+                    local outerAreaEdgePosTanX2 = transfUtils.getParallelSidewaysWithRotZ(
+                        cpf.posTanX2,
+                        (isTrackOnPlatformLeft and (-areaWidth -platformWidth * 0.5) or (areaWidth + platformWidth * 0.5))
+                    )
+                    local pos1Inner = cpf.posTanX2[1][1]
+                    local pos2Inner = cpf.posTanX2[2][1]
+                    local pos2Outer = outerAreaEdgePosTanX2[2][1]
+                    local pos1Outer = outerAreaEdgePosTanX2[1][1]
+                    terrainCoordinates[#terrainCoordinates+1] = {
+                        pos1Inner,
+                        pos2Inner,
+                        pos2Outer,
+                        pos1Outer,
+                    }
+                end
+            end
+        end
+        -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
+    
+        local faces = {}
+        for tc = 1, #terrainCoordinates do
+            local face = { }
+            for i = 1, 4 do
+                face[i] = {
+                    terrainCoordinates[tc][i][1],
+                    terrainCoordinates[tc][i][2],
+                    terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + constants.platformSideBitsZ,
+                    1
+                }
+            end
+            faces[#faces+1] = face
+            if groundFacesFillKey ~= nil then
+                result.groundFaces[#result.groundFaces + 1] = {
+                    face = face, -- Z is ignored here
+                    loop = true,
+                    modes = {
+                        {
+                            type = 'FILL',
+                            key = groundFacesFillKey,
+                        },
+                        {
+                            type = 'STROKE_OUTER',
+                            key = groundFacesFillKey
+                        }
+                    }
+                }
+            end
+        end
+        if #faces > 1 then
+            result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
+                faces = faces, -- Z is accounted here
+                optional = true,
+                slopeHigh = constants.slopeHigh,
+                slopeLow = constants.slopeLow,
+                type = 'EQUAL', -- GREATER, LESS
+            }
+        end
+    end,
+}
+privateFuncs.subways = {
+    doTerrain4ClosedSubways = function(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
+        local _groundFacesFillKey = constants[constants.eras.era_c.prefix .. 'groundFacesFillKey']
+        -- local groundFace = { -- the ground faces ignore z, the alignment lists don't
+        --     {0.0, -0.95, 0, 1},
+        --     {0.0, 0.95, 0, 1},
+        --     {4.5, 0.95, 0, 1},
+        --     {4.5, -0.95, 0, 1},
+        -- }
+        -- local terrainFace = { -- the ground faces ignore z, the alignment lists don't
+        --     {-2.2, -4.15, constants.platformSideBitsZ, 1},
+        --     {-2.2, 4.15, constants.platformSideBitsZ, 1},
+        --     {4.7, 4.15, constants.platformSideBitsZ, 1},
+        --     {4.7, -4.15, constants.platformSideBitsZ, 1},
+        -- }
+        if type(slotTransf) == 'table' then
+            -- modulesutil.TransformFaces(slotTransf, groundFace)
+            modulesutil.TransformFaces(slotTransf, terrainFace)
+        end
+
+        table.insert(
+            result.groundFaces,
+            {
+                -- face = groundFace,
+                face = terrainFace,
+                loop = true,
+                modes = {
+                    {
+                        key = _groundFacesFillKey,
+                        type = 'FILL',
+                    },
+                    -- {
+                    --     key = groundFacesStrokeOuterKey,
+                    --     type = 'STROKE_OUTER',
+                    -- }
+                }
+            }
+        )
+        table.insert(
+            result.terrainAlignmentLists,
+            {
+                faces =  { terrainFace },
+                optional = true,
+                slopeHigh = constants.slopeHigh,
+                slopeLow = constants.slopeLow,
+                type = 'EQUAL',
+            }
+        )
+    end,
+}
 
 return {
     eras = constants.eras,
@@ -660,6 +666,9 @@ return {
                 }
             }
         }
+    end,
+    getIsEndFiller = function(nTrackEdge)
+        return privateFuncs.getIsEndFiller(nTrackEdge)
     end,
     getTerrainAlignmentList = function(face, raiseBy, alignmentType, slopeHigh, slopeLow)
         if type(raiseBy) ~= 'number' then raiseBy = 0 end
@@ -1035,22 +1044,21 @@ return {
                 local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
                 local transfXZoom = isTrackOnPlatformLeft and -1 or 1
                 local transfYZoom = isTrackOnPlatformLeft and -1 or 1
-                local isEndFiller = math.fmod(nTrackEdge, 3) == 1
-            
+                local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+
                 -- LOLLO NOTE setting this to 2 gets a negligible performance boost and uglier joints,
                 -- particularly on slopes and bends
                 local _ceilingStep = 1
                 local _pillarPeriod = 4 -- it would be math.ceil(4 / _ceilingStep)
                 local _numberSignPeriod = 6
                 local _barredNumberSignIs = {}
-                for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do -- copied from passengerTerminal
+                -- LOLLO NOTE this is copied from passengerTerminal, keep them both in sync - dirty but faster
+                for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
                     _barredNumberSignIs[i] = true
                 end
-            
+
                 local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-                local iiN = nTrackEdge + 1
-                local ceilingCounter = -math.ceil(_pillarPeriod * 0.5)
-                local pillarCounter = -math.ceil(_numberSignPeriod * 0.5)
+                local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
                 for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, _ceilingStep do
                     local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                     local leadingIndex = cpf.leadingIndex
@@ -1059,7 +1067,7 @@ return {
                         local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpl.width
-            
+
                         if cpf.type ~= 2 then -- outside or bridge
                             result.models[#result.models+1] = {
                                 id = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId,
@@ -1070,46 +1078,46 @@ return {
                                 tag = tag
                             }
                         end
-            
-                        ceilingCounter = ceilingCounter + 1
-                        if params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep]
-                        and params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep].leadingIndex <= iiN
-                        and math.fmod(ceilingCounter, _pillarPeriod) == 0 then
-                            pillarCounter = pillarCounter + 1
-                            if cpf.type ~= 2 then -- outside or bridge
-                                local myTransf = transfUtilsUG.mul(
-                                    privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
-                                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
-                                )
-                                result.models[#result.models+1] = {
-                                    id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
-                                    transf = myTransf,
-                                    tag = tag,
-                                }
-            
-                                if not(_barredNumberSignIs[leadingIndex]) then -- prevent overlapping with station name signs
-                                    if math.fmod(pillarCounter, _numberSignPeriod) == 0 then
-                                        -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
-                                        local yShift = -platformWidth * 0.5 + 0.20
-                                        local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                                        if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                                        elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+
+                        -- if params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep]
+                        -- and params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep].leadingIndex <= iiN
+                        -- then
+                            if math.fmod(ii, _pillarPeriod) == 0 then
+                                if cpf.type ~= 2 then -- outside or bridge
+                                    local myTransf = transfUtilsUG.mul(
+                                        privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
+                                        { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                                    )
+                                    result.models[#result.models+1] = {
+                                        id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
+                                        transf = myTransf,
+                                        tag = tag,
+                                    }
+
+                                    if not(_barredNumberSignIs[leadingIndex]) then -- prevent overlapping with station name signs
+                                        if math.fmod(ii, _numberSignPeriod) == 0 then
+                                            -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+                                            local yShift = -platformWidth * 0.5 + 0.20
+                                            local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                                            if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                                            elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                                            end
+                                            result.models[#result.models + 1] = {
+                                                id = perronNumberModelId,
+                                                slotId = slotId,
+                                                transf = transfUtilsUG.mul(
+                                                    myTransf,
+                                                    { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                                                ),
+                                                tag = tag
+                                            }
+                                            -- the model index must be in base 0 !
+                                            result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
                                         end
-                                        result.models[#result.models + 1] = {
-                                            id = perronNumberModelId,
-                                            slotId = slotId,
-                                            transf = transfUtilsUG.mul(
-                                                myTransf,
-                                                { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
-                                            ),
-                                            tag = tag
-                                        }
-                                        -- the model index must be in base 0 !
-                                        result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
                                     end
                                 end
                             end
-                        end
+                        -- end
                     end
                 end
             end,
@@ -1128,7 +1136,7 @@ return {
             return yShiftOutside, yShiftOutside4StreetAccess
         end,
         addAllOLD = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey)
-            local isEndFiller = math.fmod(nTrackEdge, 3) == 1
+            local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
             local innerDegree = privateFuncs.slopedAreas._getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
         --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
             local waitingAreaScaleFactor, xScaleFactor = privateFuncs.slopedAreas._getSlopedAreaTweakFactors(innerDegree, areaWidth)
@@ -1136,7 +1144,7 @@ return {
             local waitingAreaIndex = 0
         
             local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-            local iiN = nTrackEdge + 1
+            local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
         
             local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
             if not(safs) then return end
@@ -1178,13 +1186,13 @@ return {
             privateFuncs.slopedAreas._doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
         end,
         addAll = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey, isCargo)
-            local isEndFiller = math.fmod(nTrackEdge, 3) == 1
+            local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
             local innerDegree = privateFuncs.slopedAreas._getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
         --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
             local waitingAreaScaleFactor, xScaleFactor = privateFuncs.slopedAreas._getSlopedAreaTweakFactors(innerDegree, areaWidth)
             -- local waitingAreaShift = params.terminals[nTerminal].isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
             local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-            local iiN = nTrackEdge + 1
+            local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local waitingAreaIndex = 0
             local nWaitingAreas = 0
