@@ -912,20 +912,28 @@ function data()
 							)
 						if cpl.type == 2 then -- tunnels
 							-- LOLLO TODO MAYBE place one automatically when... When? When adding a subway?
-							table.insert(result.slots, {
-								-- height = 0,
-								id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId),
-								spacing = mySpacing,
-								transf = myTransf,
-								type = _constants.tunnelStairsUpModuleType,
-							})
-							table.insert(result.slots, {
-								-- height = 0,
-								id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId),
-								spacing = mySpacing,
-								transf = myTransf,
-								type = _constants.tunnelStairsUpDownModuleType,
-							})
+							local idM1_TunnelStairsUp = result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpSlotId)
+							local idP1_TunnelStairsUp = result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpSlotId)
+							local idM1_TunnelStairsUpDown = result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpDownSlotId)
+							local idP1_TunnelStairsUpDown = result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpDownSlotId)
+							if not(params.modules[idM1_TunnelStairsUp]) and not(params.modules[idP1_TunnelStairsUp])
+							and not(params.modules[idM1_TunnelStairsUpDown]) and not(params.modules[idP1_TunnelStairsUpDown])
+							then
+								table.insert(result.slots, {
+									-- height = 0,
+									id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId),
+									spacing = mySpacing,
+									transf = myTransf,
+									type = _constants.tunnelStairsUpModuleType,
+								})
+								table.insert(result.slots, {
+									-- height = 0,
+									id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId),
+									spacing = mySpacing,
+									transf = myTransf,
+									type = _constants.tunnelStairsUpDownModuleType,
+								})
+							end
 						else -- ground and bridges
 							local id_Underpass = result.mangleId(t, i, _constants.idBases.underpassSlotId)
 							local idM1_Underpass = result.mangleId(t, i-1, _constants.idBases.underpassSlotId)
