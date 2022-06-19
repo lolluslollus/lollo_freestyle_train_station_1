@@ -1059,11 +1059,19 @@ return {
 
                 local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
                 local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+                local isFreeFromOpenStairsLeft = {}
+                local isFreeFromOpenStairsRight = {}
+                for i = ii1, iiN, 1 do
+                    isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)])
+                    and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
+                    isFreeFromOpenStairsRight[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)])
+                    and not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)])
+                end
                 for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, _ceilingStep do
                     local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                     local leadingIndex = cpf.leadingIndex
                     if leadingIndex > iiN then break end
-                    if leadingIndex >= ii1 then
+                    if leadingIndex >= ii1 and isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex] then
                         local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpl.width
@@ -1077,47 +1085,45 @@ return {
                                 ),
                                 tag = tag
                             }
-                        end
 
                         -- if params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep]
                         -- and params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep].leadingIndex <= iiN
                         -- then
                             if math.fmod(ii, _pillarPeriod) == 0 then
-                                if cpf.type ~= 2 then -- outside or bridge
-                                    local myTransf = transfUtilsUG.mul(
-                                        privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
-                                        { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
-                                    )
-                                    result.models[#result.models+1] = {
-                                        id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
-                                        transf = myTransf,
-                                        tag = tag,
-                                    }
+                                local myTransf = transfUtilsUG.mul(
+                                    privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
+                                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                                )
+                                result.models[#result.models+1] = {
+                                    id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
+                                    transf = myTransf,
+                                    tag = tag,
+                                }
 
-                                    if not(_barredNumberSignIs[leadingIndex]) then -- prevent overlapping with station name signs
-                                        if math.fmod(ii, _numberSignPeriod) == 0 then
-                                            -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
-                                            local yShift = -platformWidth * 0.5 + 0.20
-                                            local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                                            if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                                            elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
-                                            end
-                                            result.models[#result.models + 1] = {
-                                                id = perronNumberModelId,
-                                                slotId = slotId,
-                                                transf = transfUtilsUG.mul(
-                                                    myTransf,
-                                                    { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
-                                                ),
-                                                tag = tag
-                                            }
-                                            -- the model index must be in base 0 !
-                                            result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+                                if not(_barredNumberSignIs[leadingIndex]) then -- prevent overlapping with station name signs
+                                    if math.fmod(ii, _numberSignPeriod) == 0 then
+                                        -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+                                        local yShift = -platformWidth * 0.5 + 0.20
+                                        local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                                        if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                                        elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
                                         end
+                                        result.models[#result.models + 1] = {
+                                            id = perronNumberModelId,
+                                            slotId = slotId,
+                                            transf = transfUtilsUG.mul(
+                                                myTransf,
+                                                { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                                            ),
+                                            tag = tag
+                                        }
+                                        -- the model index must be in base 0 !
+                                        result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
                                     end
                                 end
                             end
                         -- end
+                        end
                     end
                 end
             end,
