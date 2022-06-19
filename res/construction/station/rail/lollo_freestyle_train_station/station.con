@@ -902,7 +902,7 @@ function data()
 				local _addUpDownSlots = function()
 					if isCargoTerminal then return end
 
-					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 2 do
+					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 1 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						local era = moduleHelpers.getEraPrefix(params, t, i)
 						local mySpacing = {3, -0.1, 1, 1}
@@ -927,47 +927,65 @@ function data()
 								type = _constants.tunnelStairsUpDownModuleType,
 							})
 						else -- ground and bridges
-							table.insert(result.slots, {
-								-- height = 0,
-								id = result.mangleId(t, i, _constants.idBases.underpassSlotId),
-								-- shape 0 1 2 3, only graphical
-								spacing = mySpacing,
-								transf = myTransf,
-								type = _constants.underpassModuleType,
-							})
-							if cpl.type == 0 then -- ground
-                                table.insert(result.slots, {
-                                    -- height = 0,
-                                    id = result.mangleId(t, i, _constants.idBases.openLiftSlotId),
-                                    -- shape 0 1 2 3, only graphical
-                                    spacing = mySpacing,
-                                    transf = myTransf,
-                                    type = _constants.openLiftModuleType,
-                                })
-								local idM2 = result.mangleId(t, i-2, _constants.idBases.openStairsUpLeftSlotId)
-								local idP2 = result.mangleId(t, i+2, _constants.idBases.openStairsUpLeftSlotId)
-								if not(params.modules[idM2]) and not(params.modules[idP2]) then
+							local id_Underpass = result.mangleId(t, i, _constants.idBases.underpassSlotId)
+							local idM1_Underpass = result.mangleId(t, i-1, _constants.idBases.underpassSlotId)
+							local idP1_Underpass = result.mangleId(t, i+1, _constants.idBases.underpassSlotId)
+							local idM1_OpenStairsUpLeft = result.mangleId(t, i-1, _constants.idBases.openStairsUpLeftSlotId)
+							local idP1_OpenStairsUpLeft = result.mangleId(t, i+1, _constants.idBases.openStairsUpLeftSlotId)
+							local idM1_OpenStairsUpRight = result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)
+							local idP1_OpenStairsUpRight = result.mangleId(t, i+1, _constants.idBases.openStairsUpRightSlotId)
+							if not(params.modules[idM1_OpenStairsUpLeft]) and not(params.modules[idP1_OpenStairsUpLeft])
+							and not(params.modules[idM1_OpenStairsUpRight]) and not(params.modules[idP1_OpenStairsUpRight])
+							then
+								if not(params.modules[idM1_Underpass]) and not(params.modules[idP1_Underpass]) then
 									table.insert(result.slots, {
 										-- height = 0,
-										id = result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId),
+										-- id = result.mangleId(t, i, _constants.idBases.underpassSlotId),
+										id = id_Underpass,
+										-- shape 0 1 2 3, only graphical
 										spacing = mySpacing,
 										transf = myTransf,
-										type = _constants.openStairsUpLeftModuleType,
+										type = _constants.underpassModuleType,
 									})
 								end
-								idM2 = result.mangleId(t, i-2, _constants.idBases.openStairsUpRightSlotId)
-								idP2 = result.mangleId(t, i+2, _constants.idBases.openStairsUpRightSlotId)
-								if not(params.modules[idM2]) and not(params.modules[idP2]) then
-									table.insert(result.slots, {
-										-- height = 0,
-										id = result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId),
-										spacing = mySpacing,
-										transf = transfUtilsUG.mul(
-											myTransf,
-											{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-										),
-										type = _constants.openStairsUpRightModuleType,
-									})
+								if cpl.type == 0 then -- ground
+									if not(params.modules[id_Underpass]) then
+										table.insert(result.slots, {
+											-- height = 0,
+											id = result.mangleId(t, i, _constants.idBases.openLiftSlotId),
+											-- shape 0 1 2 3, only graphical
+											spacing = mySpacing,
+											transf = myTransf,
+											type = _constants.openLiftModuleType,
+										})
+										if not(params.modules[idM1_Underpass]) and not(params.modules[idP1_Underpass]) then
+											local idM2_OpenStairsUpRight = result.mangleId(t, i-2, _constants.idBases.openStairsUpRightSlotId)
+											local idP2_OpenStairsUpRight = result.mangleId(t, i+2, _constants.idBases.openStairsUpRightSlotId)
+											local idM2_OpenStairsUpLeft = result.mangleId(t, i-2, _constants.idBases.openStairsUpLeftSlotId)
+											local idP2_OpenStairsUpLeft = result.mangleId(t, i+2, _constants.idBases.openStairsUpLeftSlotId)
+											if not(params.modules[idM2_OpenStairsUpRight]) and not(params.modules[idP2_OpenStairsUpRight])
+											and not(params.modules[idM2_OpenStairsUpLeft]) and not(params.modules[idP2_OpenStairsUpLeft])
+											then
+												table.insert(result.slots, {
+													-- height = 0,
+													id = result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId),
+													spacing = mySpacing,
+													transf = myTransf,
+													type = _constants.openStairsUpLeftModuleType,
+												})
+												table.insert(result.slots, {
+													-- height = 0,
+													id = result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId),
+													spacing = mySpacing,
+													transf = transfUtilsUG.mul(
+														myTransf,
+														{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+													),
+													type = _constants.openStairsUpRightModuleType,
+												})
+											end
+										end
+									end
 								end
 							end
 						end
