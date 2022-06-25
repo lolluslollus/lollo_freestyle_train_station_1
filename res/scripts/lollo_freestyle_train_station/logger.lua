@@ -6,7 +6,7 @@ local _isTimersActive = false
 return {
     print = function(...)
         if not(_isExtendedLogActive) then return end
-        print(...)
+        print('lollo_freestyle_train_station INFO: ', ...)
     end,
     warn = function(label, ...)
         if not(_isWarningLogActive) then return end
