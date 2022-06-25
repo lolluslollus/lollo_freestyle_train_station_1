@@ -126,7 +126,7 @@ local _actions = {
 
         local newEdge = api.type.SegmentAndEntity.new()
         newEdge.entity = -1
-        newEdge.type = 0 -- 0 is ROAD, 1 is TRACK
+        newEdge.type = 0 -- 0 is api.type.enum.Carrier.ROAD, 1 is api.type.enum.Carrier.RAIL
         newEdge.comp = oldEdge
         newEdge.comp.type = _compTypeBridge
         newEdge.comp.typeIndex = bridgeTypeId -- bridge type
