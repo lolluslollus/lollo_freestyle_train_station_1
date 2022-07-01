@@ -205,14 +205,12 @@ function data()
                     logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
 
                     if edgeUtils.isValidAndExistingId(args.edgeId) then
---[[
                         if name == _eventProperties.buildBridgeRequested.eventName then
                             _actions.replaceEdgeWithSameOnBridge(
                                 args.edgeId,
                                 args.bridgeTypeId
                             )
                         end
-]]
                     elseif edgeUtils.isValidAndExistingId(args.conId) then
                         if name == _eventProperties.openLiftBuilt.eventName or name == _eventProperties.openStairsBuilt.eventName then
                             logger.print('TWO')
@@ -227,7 +225,6 @@ function data()
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
             if (name == 'builder.apply') then
                 if id == 'streetBuilder' or id == 'streetTrackModifier' then
---[[                    
                     xpcall(
                         function()
                             logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') logger.debugPrint(args)
@@ -260,7 +257,6 @@ function data()
                         end,
                         logger.xpErrorHandler
                     )
-]]
                 elseif id == 'constructionBuilder' then
                     logger.print('guiHandleEvent caught id = constructionBuilder and name = builder.apply')
                     xpcall(

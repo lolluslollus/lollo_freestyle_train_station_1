@@ -55,21 +55,13 @@ function data()
             -- and then I restore them here.
             -- This works because this code always fires after base_mod.lua .
             local trackFileNames = api.res.trackTypeRep.getAll()
+
             for trackTypeIndex, trackFileName in pairs(trackFileNames) do
                 local track = api.res.trackTypeRep.get(trackTypeIndex)
                 if _trackHelpers.isPlatform2(track) then
                     local availability = _trackHelpers.getTrackAvailability(trackFileName)
                     track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
                     track.yearTo = availability.yearTo -- idem
-                end
-            end
-
-            local streetFileNames = api.res.streetTypeRep.getAll()
-            for streetTypeIndex, streetTypeFileName in pairs(streetFileNames) do
-                local streetType = api.res.streetTypeRep.get(streetTypeIndex)
-                if streetType.categories and _stringUtils.arrayHasValue(streetType.categories, 'paths-on-forced-bridge') then
-                    streetType.yearFrom = -1 -- availability.yearFrom -- we just change the value of the existing ref
-                    streetType.yearTo = -1 -- availability.yearTo -- idem
                 end
             end
         end
