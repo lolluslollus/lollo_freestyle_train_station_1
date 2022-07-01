@@ -35,7 +35,7 @@ function data()
 				- 2.5 m platforms do not agree with bridges and tunnels. My 'no railing' bridges help, tunnels can't be helped.
                 - This mod adds extra bridges to help with elevated stations.
                 - Very thin paths help with certain setups: those are in my street fine tuning mod.
-				- This mod adds extra pedestrian paths and bridges. Some of those paths turn into bridges after placing them. They can be tricky to place, the street fine tuning 'chunks' and 'splitter' constructions come to the rescue.
+				- This mod adds extra pedestrian paths and bridges. They can be tricky to place, the street fine tuning 'chunks' and 'splitter' constructions come to the rescue.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweaks mod.
