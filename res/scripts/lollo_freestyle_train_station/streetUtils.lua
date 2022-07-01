@@ -303,19 +303,19 @@ local function _getStreetDataFiltered_Paths(streetDataTable)
     return results
 end
 
-local function _getStreetDataFiltered_PathsOnForcedBridge(streetDataTable)
-    if type(streetDataTable) ~= 'table' then return {} end
+-- local function _getStreetDataFiltered_PathsOnForcedBridge(streetDataTable)
+--     if type(streetDataTable) ~= 'table' then return {} end
 
-    local results = {}
-    for _, strDataRecord in pairs(streetDataTable) do
-        if strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true then
-            if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().PATHS_ON_FORCED_BRIDGE) then
-                table.insert(results, #results + 1, strDataRecord)
-            end
-        end
-    end
-    return results
-end
+--     local results = {}
+--     for _, strDataRecord in pairs(streetDataTable) do
+--         if strDataRecord.visibility == true or strDataRecord.isAllTramTracks == true then
+--             if arrayUtils.arrayHasValue(strDataRecord.categories, helper.getStreetCategories().PATHS_ON_FORCED_BRIDGE) then
+--                 table.insert(results, #results + 1, strDataRecord)
+--             end
+--         end
+--     end
+--     return results
+-- end
 
 local function _getStreetDataFiltered_Stock(streetDataTable)
     if type(streetDataTable) ~= 'table' then return {} end
@@ -560,7 +560,7 @@ helper.getStreetCategories = function()
         ONE_WAY_TRAM_RIGHT = 'one-way-tram-right',
         ONE_WAY_TYRES_RIGHT = 'one-way-tyres-right',
         PATHS = 'paths',
-        PATHS_ON_FORCED_BRIDGE = 'paths-on-forced-bridge',
+        -- PATHS_ON_FORCED_BRIDGE = 'paths-on-forced-bridge',
         URBAN = 'urban',
         URBAN_BUS_RIGHT = 'urban-bus-right',
         URBAN_CARGO_RIGHT = 'urban-cargo-right',
@@ -583,7 +583,7 @@ end
 helper.getStreetDataFilters = function()
     return {
         PATHS = { id = 'paths', func = _getStreetDataFiltered_Paths },
-        PATHS_ON_FORCED_BRIDGE = { id = 'paths-on-forced-bridge', func = _getStreetDataFiltered_PathsOnForcedBridge },
+        -- PATHS_ON_FORCED_BRIDGE = { id = 'paths-on-forced-bridge', func = _getStreetDataFiltered_PathsOnForcedBridge },
         STOCK = { id = 'stock', func = _getStreetDataFiltered_Stock },
         STOCK_AND_RESERVED_LANES = { id = 'stock-and-reserved-lanes', func = _getStreetDataFiltered_StockAndReservedLanes },
     }
