@@ -2,6 +2,7 @@ local constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local logger = require('lollo_freestyle_train_station.logger')
 local modulesutil = require 'modulesutil'
+local openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
 local slotUtils = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
@@ -229,6 +230,60 @@ privateFuncs.edges = {
             end
         end
         return result
+    end,
+}
+privateFuncs.flatAreas = {
+    addLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
+        local lane2AreaTransf = transfUtils.get1MLaneTransf(
+            transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
+            transfUtils.transf2Position(slotAdjustedTransf)
+        )
+        result.models[#result.models+1] = {
+            id = constants.passengerLaneModelId,
+            slotId = slotId,
+            transf = lane2AreaTransf,
+            tag = tag
+        }
+    end,
+    getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
+        local variant = privateFuncs.getVariant(params, slotId)
+        local deltaZ = variant * 0.1 + constants.platformSideBitsZ
+        if deltaZ < -1 then deltaZ = -1 elseif deltaZ > 1 then deltaZ = 1 end
+
+        return transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, deltaZ, 1 })
+    end,
+}
+privateFuncs.openStairs = {
+    getExitModelTransf = function(slotTransf, slotId, params)
+        local _maxRad = 0.36
+
+        local variant = privateFuncs.getVariant(params, slotId) * 0.0125
+        if variant > _maxRad then variant = _maxRad elseif variant < -_maxRad then variant = -_maxRad end
+
+        return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
+    end,
+    getPedestrianBridgeModelId = function(length, eraPrefix, isWithEdge)
+        -- eraPrefix is a string like 'era_a_'
+        local lengthStr = '4'
+        if length < 3 then lengthStr = '2'
+        elseif length < 6 then lengthStr = '4'
+        elseif length < 12 then lengthStr = '8'
+        elseif length < 24 then lengthStr = '16'
+        elseif length < 48 then lengthStr = '32'
+        else lengthStr = '64'
+        end
+
+        local newEraPrefix = eraPrefix
+        if newEraPrefix ~= constants.eras.era_a.prefix and newEraPrefix ~= constants.eras.era_b.prefix and newEraPrefix ~= constants.eras.era_c.prefix then
+            newEraPrefix = constants.eras.era_c.prefix
+        end
+
+        if isWithEdge then
+            return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_with_edge_' .. lengthStr .. 'm.mdl'
+        else
+            return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_' .. lengthStr .. 'm.mdl'
+        end
     end,
 }
 privateFuncs.slopedAreas = {
@@ -764,26 +819,94 @@ return {
     },
     flatAreas = {
         getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
-            local variant = privateFuncs.getVariant(params, slotId)
-            local deltaZ = variant * 0.1 + constants.platformSideBitsZ
-            if deltaZ < -1 then deltaZ = -1 elseif deltaZ > 1 then deltaZ = 1 end
-    
-            return transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, deltaZ, 1 })
+            return privateFuncs.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
         end,
     
         addLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
-            local lane2AreaTransf = transfUtils.get1MLaneTransf(
-                transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
-                transfUtils.transf2Position(slotAdjustedTransf)
-            )
-            result.models[#result.models+1] = {
-                id = constants.passengerLaneModelId,
-                slotId = slotId,
-                transf = lane2AreaTransf,
-                tag = tag
-            }
-        end
+            return privateFuncs.flatAreas.addLaneToStreet(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        end,
+
+        exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
+			-- in base_config.lua
+			-- Set it into the models, so the game knows what module they belong to.
+
+			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+
+			local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
+
+			result.models[#result.models + 1] = {
+				id = myModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
+
+			-- this connects the platform to its outer edge (ie border)
+			privateFuncs.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+
+			local _openStairsRefData = openLiftOpenStairsHelpers.getData4Era(eraPrefix)
+			table.insert(
+				result.edgeLists,
+				{
+					alignTerrain = false, -- only align on ground and in tunnels
+					edges = transfUtils.getPosTanX2Transformed(
+						{
+							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+							{ { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+						},
+						zAdjustedTransf
+					),
+					-- better make it a bridge to avoid ugly autolinks between nearby modules
+					edgeType = 'BRIDGE',
+					edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
+					freeNodes = { 1 },
+					params = {
+						hasBus = true,
+						tramTrackType  = 'NO',
+						type = _openStairsRefData.streetTypeName_noBridge,
+					},
+					snapNodes = isSnap and { 1 } or {},
+					tag2nodes = {},
+					type = 'STREET'
+				}
+			)
+
+			local groundFace = {
+				{-1, -2, 0, 1},
+				{-1, 2, 0, 1},
+				{1.0, 2, 0, 1},
+				{1.0, -2, 0, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
+
+			local terrainAlignmentList = {
+				faces = {
+					{
+						{-1, -2, constants.platformSideBitsZ, 1},
+						{-1, 2, constants.platformSideBitsZ, 1},
+						{1.0, 2, constants.platformSideBitsZ, 1},
+						{1.0, -2, constants.platformSideBitsZ, 1},
+					}
+				},
+				optional = true,
+				slopeHigh = constants.slopeHigh,
+				slopeLow = constants.slopeLow,
+				type = 'LESS',
+			}
+			for _, face in pairs(terrainAlignmentList.faces) do
+				modulesutil.TransformFaces(zAdjustedTransf, face)
+			end
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+		end,
     },
     lifts = {
         tryGetLiftHeight = function(params, nTerminal, nTrackEdge, slotId)
@@ -924,35 +1047,58 @@ return {
         end,
     },
     openStairs = {
+        exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+			local modelId = privateFuncs.openStairs.getPedestrianBridgeModelId(2, eraPrefix, true)
+			local transf = privateFuncs.openStairs.getExitModelTransf(slotTransf, slotId, params)
+
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = transf,
+				tag = tag
+			}
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/passenger_lane.mdl',
+				slotId = slotId,
+				transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}),
+				tag = tag
+			}
+
+			local _openStairsRefData = openLiftOpenStairsHelpers.getData4Era(eraPrefix)
+			table.insert(
+				result.edgeLists,
+				{
+					alignTerrain = false, -- only align on ground and in tunnels
+					edges = transfUtils.getPosTanX2Transformed(
+						{
+							{ { 2, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+							{ { 3, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+						},
+						transf
+					),
+					edgeType = 'BRIDGE',
+					edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
+					freeNodes = { 1 },
+					params = {
+						hasBus = true,
+						tramTrackType  = 'NO',
+						type = _openStairsRefData.streetTypeName_noBridge,
+					},
+					snapNodes = isSnap and { 1 } or {},
+					tag2nodes = {},
+					type = 'STREET'
+				}
+			)
+		end,
         getExitModelTransf = function(slotTransf, slotId, params)
-            local _maxRad = 0.36
-    
-            local variant = privateFuncs.getVariant(params, slotId) * 0.0125
-            if variant > _maxRad then variant = _maxRad elseif variant < -_maxRad then variant = -_maxRad end
-    
-            return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
+            return privateFuncs.openStairs.getExitModelTransf(slotTransf, slotId, params)
         end,
         getPedestrianBridgeModelId = function(length, eraPrefix, isWithEdge)
-            -- eraPrefix is a string like 'era_a_'
-            local lengthStr = '4'
-            if length < 3 then lengthStr = '2'
-            elseif length < 6 then lengthStr = '4'
-            elseif length < 12 then lengthStr = '8'
-            elseif length < 24 then lengthStr = '16'
-            elseif length < 48 then lengthStr = '32'
-            else lengthStr = '64'
-            end
-    
-            local newEraPrefix = eraPrefix
-            if newEraPrefix ~= constants.eras.era_a.prefix and newEraPrefix ~= constants.eras.era_b.prefix and newEraPrefix ~= constants.eras.era_c.prefix then
-                newEraPrefix = constants.eras.era_c.prefix
-            end
-    
-            if isWithEdge then
-                return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_with_edge_' .. lengthStr .. 'm.mdl'
-            else
-                return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_' .. lengthStr .. 'm.mdl'
-            end
+            return privateFuncs.openStairs.getPedestrianBridgeModelId(length, eraPrefix, isWithEdge)
         end,
         getPedestrianBridgeModelId_Compressed = function(length, eraOfT1Prefix, eraOfT2Prefix)
             -- eraOfT1 and eraOfT2 are strings like 'era_a_'

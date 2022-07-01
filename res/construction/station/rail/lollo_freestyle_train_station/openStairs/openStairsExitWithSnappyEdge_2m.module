@@ -15,9 +15,9 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("OpenStairsExitWithEdgeName_2m"),
-			description = _("OpenStairsExitWithEdgeDesc"),
-			icon = "ui/lollo_freestyle_train_station/openStairsExitWithEdge2m.tga"
+			name = _("OpenStairsExitWithSnappyEdgeName_2m"),
+			description = _("OpenStairsExitWithSnappyEdgeDesc"),
+			icon = "ui/lollo_freestyle_train_station/openStairsExitWithSnappyEdge2m.tga"
 		},
 		metadata = { },
 		order = {
@@ -25,7 +25,7 @@ function data()
 		},
 		type = _constants.openStairsExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-			return moduleHelpers.openStairs.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false)
+			return moduleHelpers.openStairs.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true)
 		end,
 
 		getModelsFn = function(params)

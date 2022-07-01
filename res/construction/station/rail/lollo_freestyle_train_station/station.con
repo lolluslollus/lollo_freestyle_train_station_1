@@ -1717,6 +1717,7 @@ function data()
 			-- logger.print('LOLLO preProcessFn')
 			-- logger.print('modules =') logger.debugPrint(modules)
 			-- logger.print('change =') logger.debugPrint(change)
+			-- logger.print('three =') logger.debugPrint(three)
 
 			-- default behaviour
 			-- if change.added then
@@ -1724,6 +1725,34 @@ function data()
 			-- else
 			-- 	modules[change.slotId] = nil
 			-- end
+
+			-- Replace pedestrian edges with snappy pedestrian edges.
+			-- Otherwise, whenever a change is made to the station, existing connections will break seamlessly
+			-- (you can only see this with AltGr + L)
+			if change ~= nil and modules ~= nil then
+				local slotIdToBeLeftAlone = nil -- do not replace the module if the user is placing it
+				if change.added then
+					if change.module then
+						if change.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
+						or change.module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m.module'
+						then
+							slotIdToBeLeftAlone = change.slotId
+						end
+					end
+				end
+
+				for slotId, module in pairs(modules) do
+					if module then
+						if module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
+						and (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
+							module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
+						elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m.module'
+						and (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
+							module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m.module'
+						end
+					end
+				end
+			end
 
 			if change.added then
 				-- remove the older platform era modules whenever one is added, in each terminal
@@ -1759,6 +1788,7 @@ function data()
 				end
 				modules[change.slotId] = nil
 			end
+
 			-- airport behaviour
 			-- if change.added then
 			-- 	if change.slotId == landingSlotId + 1 then

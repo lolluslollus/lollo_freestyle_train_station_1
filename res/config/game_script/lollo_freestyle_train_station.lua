@@ -1773,7 +1773,6 @@ function data()
             -- logger.print('guiHandleEvent caught id =', id, 'name =', name)
             local isHideDistance = true
             if (name == 'builder.proposalCreate' or name == 'builder.apply' or name == 'select') then -- for performance
-
                 xpcall(
                     function()
                         if name == 'builder.proposalCreate' then

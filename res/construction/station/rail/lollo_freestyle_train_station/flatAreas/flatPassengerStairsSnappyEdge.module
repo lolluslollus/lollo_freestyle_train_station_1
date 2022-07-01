@@ -9,29 +9,29 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "passenger-road-access-stairs", },
+			categories = { "passenger-road-access", },
 		},
 		cost = {
 			price = 0,
 		},
 		description = {
-			name = _("OpenStairsExitWithEdgeName_2m"),
-			description = _("OpenStairsExitWithEdgeDesc"),
-			icon = "ui/lollo_freestyle_train_station/openStairsExitWithEdge2m.tga"
+			name = _("FlatPassengerStairsSnappyEdgeName"),
+			description = _("FlatPassengerStairsSnappyEdgeDesc"),
+			icon = "ui/lollo_freestyle_train_station/openStairsExitWithSnappyEdge2m.tga"
 		},
 		metadata = { },
 		order = {
-			value = 61,
+			value = 10,
 		},
-		type = _constants.openStairsExitModuleType,
+		type = _constants.flatPassengerStairsModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-			return moduleHelpers.openStairs.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false)
+			return moduleHelpers.flatAreas.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true)
 		end,
 
 		getModelsFn = function(params)
 			return {
 				{
-					id = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl',
+					id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_stairs_edge.mdl',
 					transf = _constants.idTransf,
 				},
 			}
