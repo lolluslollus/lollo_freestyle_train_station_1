@@ -114,7 +114,6 @@ local _actions = {
         end)
     end,
     replaceEdgeWithSameOnBridge = function(oldEdgeId, bridgeTypeId)
-        -- LOLLO NOTE with build 35050, if the edge snaps to a construction edge, the new edge won't snap anymore.
         logger.print('replaceEdgeWithSameOnBridge starting, oldEdgeId =', oldEdgeId, 'bridgeTypeId =', bridgeTypeId or 'NIL')
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
 
