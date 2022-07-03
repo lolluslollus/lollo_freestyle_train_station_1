@@ -38,13 +38,13 @@ local function _isBuildingOpenStairs(args)
 end
 
 local _actions = {
-    replaceConWithSnappyCopy = function(oldConstructionId)
+    replaceConWithSnappyCopy = function(oldConId)
         -- rebuild the station with the same but snappy, to prevent pointless internal conflicts
         -- that will prevent using the construction mover
-        logger.print('replaceConWithSnappyCopy starting, oldConstructionId =', oldConstructionId)
-        if not(edgeUtils.isValidAndExistingId(oldConstructionId)) then return end
+        logger.print('replaceConWithSnappyCopy starting, oldConId =', oldConId)
+        if not(edgeUtils.isValidAndExistingId(oldConId)) then return end
 
-        local oldConstruction = api.engine.getComponent(oldConstructionId, api.type.ComponentType.CONSTRUCTION)
+        local oldConstruction = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
         logger.print('oldConstruction =') logger.debugPrint(oldConstruction)
         if not(oldConstruction)
         or not(oldConstruction.params)
@@ -70,8 +70,8 @@ local _actions = {
         -- this is what this is all about
         if newBaseParamValue then newParams[newBaseParamValue.name] = newBaseParamValue.value end
         if newBridgeParamValue then newParams[newBridgeParamValue.name] = newBridgeParamValue.value end
-
         logger.print('newParams =') logger.debugPrint(newParams)
+        local paramsBak = arrayUtils.cloneDeepOmittingFields(newParams, {'seed'})
         newConstruction.params = newParams
 
         newConstruction.transf = oldConstruction.transf
@@ -81,17 +81,17 @@ local _actions = {
         proposal.constructionsToAdd[1] = newConstruction
         -- LOLLO NOTE different tables are handled differently.
         -- This one requires this system, UG says they will document it or amend it.
-        proposal.constructionsToRemove = { oldConstructionId }
-        -- proposal.constructionsToRemove[1] = oldConstructionId -- fails to add
-        -- proposal.constructionsToRemove:add(oldConstructionId) -- fails to add
+        proposal.constructionsToRemove = { oldConId }
+        -- proposal.constructionsToRemove[1] = oldConId -- fails to add
+        -- proposal.constructionsToRemove:add(oldConId) -- fails to add
         -- proposal.old2new = { -- expected number, received table
-        --     { oldConstructionId, 1 }
+        --     { oldConId, 1 }
         -- }
         -- proposal.old2new = {
-        --     oldConstructionId, 1
+        --     oldConId, 1
         -- }
         -- proposal.old2new = {
-        --     oldConstructionId,
+        --     oldConId,
         -- }
 
         -- local context = api.type.Context:new()
@@ -102,32 +102,30 @@ local _actions = {
         -- context.player = api.engine.util.getPlayer()
 
         local cmd = api.cmd.make.buildProposal(proposal, nil, true) -- the 3rd param is "ignore errors"
-        api.cmd.sendCommand(cmd, function(res, success)
-            -- logger.print('LOLLO _replaceConWithSnappyCopy res = ')
-            -- logger.debugPrint(res)
-            --for _, v in pairs(res.entities) do logger.print(v) end
+        api.cmd.sendCommand(cmd, function(result, success)
+            -- logger.print('LOLLO _replaceConWithSnappyCopy result = ') logger.debugPrint(result)
+            --for _, v in pairs(result.entities) do logger.print(v) end
             logger.print('LOLLO _replaceConWithSnappyCopy success = ') logger.debugPrint(success)
-            -- if success then
-                -- LOLLO NOTE the following was not required before beta 350**, it is useless after 35041
-                -- xpcall(
-                --     function()
-                --         -- UG TODO there is no such thing in the new api,
-                --         -- nor an upgrade event, which could be useful
-                --         logger.print('oldConId =') logger.debugPrint(oldConId)
-                --         logger.print('result.resultEntities[1] =') logger.debugPrint(result.resultEntities[1])
-                --         logger.print('oldConstruction.fileName =') logger.debugPrint(oldConstruction.fileName)
-                --         local upgradedConId = game.interface.upgradeConstruction(
-                --             result.resultEntities[1],
-                --             oldConstruction.fileName,
-                --             paramsBak
-                --         )
-                --         logger.print('upgradeConstruction succeeded') logger.debugPrint(upgradedConId)
-                --     end,
-                --     function(error)
-                --         logger.err(error)
-                --     end
-                -- )
-            -- end
+            if success then
+                xpcall(
+                    function()
+                        -- UG TODO there is no such thing in the new api,
+                        -- nor an upgrade event, which could be useful
+                        logger.print('oldConId =') logger.debugPrint(oldConId)
+                        logger.print('result.resultEntities[1] =') logger.debugPrint(result.resultEntities[1])
+                        logger.print('oldConstruction.fileName =') logger.debugPrint(oldConstruction.fileName)
+                        local upgradedConId = game.interface.upgradeConstruction(
+                            result.resultEntities[1],
+                            oldConstruction.fileName,
+                            paramsBak
+                        )
+                        logger.print('upgradeConstruction succeeded') logger.debugPrint(upgradedConId)
+                    end,
+                    function(error)
+                        logger.err(error)
+                    end
+                )
+            end
         end)
     end,
     replaceEdgeWithSameOnBridge = function(oldEdgeId, bridgeTypeId)
