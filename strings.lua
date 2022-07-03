@@ -302,6 +302,7 @@ function data()
 			["EdgeWithBridge"] = "Auto Bridge",
 			["EdgeWithNoBridge"] = "Auto Path",
 			["Era"] = "Era",
+			["ErrorReplacingConWithSnappyCopy"] = "This object cannot connect to nearby roads, change it or move it somewhere else",
 			["FlatSlopedTerrain"] = "Terrain Incline",
 			["Model"] = "Platform",
 			["NoRailing0"] = "0 - No Railing",

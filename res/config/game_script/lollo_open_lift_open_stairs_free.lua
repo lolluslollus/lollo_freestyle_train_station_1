@@ -13,6 +13,7 @@ local _eventProperties = {
     openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree.con', eventName = 'openLiftBuilt' },
     openStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openStairsFree.con', eventName = 'openStairsBuilt' },
 }
+
 local function _isBuildingConstructionWithFileName(args, fileName)
     local toAdd =
         type(args) == 'table' and type(args.proposal) == 'userdata' and type(args.proposal.toAdd) == 'userdata' and
@@ -60,7 +61,7 @@ local _actions = {
         else
             return
         end
-        if not(newBaseParamValue) and not(newBridgeParamValue) then return end
+        if not(newBaseParamValue) and not(newBridgeParamValue) then return end -- leave if nothing is going to change
 
         local newConstruction = api.type.SimpleProposal.ConstructionEntity.new()
         newConstruction.fileName = oldConstruction.fileName
@@ -94,14 +95,14 @@ local _actions = {
         --     oldConId,
         -- }
 
-        -- local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = false -- true gives smoother z, default is false
-        -- context.cleanupStreetGraph = false -- default is false
-        -- context.gatherBuildings = false -- default is false
+        -- local context = api.type.Context:new() -- useless: sometimes, snappy connections will break when rebuilding the con
+        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true -- default is false
         -- context.gatherFields = true -- default is true
         -- context.player = api.engine.util.getPlayer()
 
-        local cmd = api.cmd.make.buildProposal(proposal, nil, true) -- the 3rd param is "ignore errors"
+        local cmd = api.cmd.make.buildProposal(proposal, nil, false) -- the 2nd param is context, the 3rd is "ignore errors"
         api.cmd.sendCommand(cmd, function(result, success)
             -- logger.print('LOLLO _replaceConWithSnappyCopy result = ') logger.debugPrint(result)
             logger.print('LOLLO _replaceConWithSnappyCopy success = ') logger.debugPrint(success)
@@ -132,7 +133,7 @@ local _actions = {
                         end
                     end,
                     function(error)
-                        logger.err(error)
+                        logger.warn(error)
                     end
                 )
             end
@@ -221,31 +222,8 @@ function data()
             openStairsHelpers.eraB.streetTypeId_withBridge = api.res.streetTypeRep.find(openStairsHelpers.eraB.streetTypeName_withBridge)
             openStairsHelpers.eraC.streetTypeId_withBridge = api.res.streetTypeRep.find(openStairsHelpers.eraC.streetTypeName_withBridge)
         end,
-        handleEvent = function(src, id, name, args)
-            if (id ~= _eventId) then return end
-            if type(args) ~= 'table' then return end
-
-            xpcall(
-                function()
-                    logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
-
-                    if edgeUtils.isValidAndExistingId(args.edgeId) then
-                        if name == _eventProperties.buildBridgeRequested.eventName then
-                            _actions.replaceEdgeWithSameOnBridge(
-                                args.edgeId,
-                                args.bridgeTypeId
-                            )
-                        end
-                    elseif edgeUtils.isValidAndExistingId(args.conId) then
-                        if name == _eventProperties.openLiftBuilt.eventName or name == _eventProperties.openStairsBuilt.eventName then
-                            logger.print('TWO')
-                            _actions.replaceConWithSnappyCopy(args.conId)
-                        end
-                    end
-                end,
-                logger.xpErrorHandler
-            )
-        end,
+        -- guiUpdate = function()
+        -- end,
         guiHandleEvent = function(id, name, args)
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
             if (name == 'builder.apply') then
@@ -283,6 +261,11 @@ function data()
                         logger.xpErrorHandler
                     )
                 elseif id == 'constructionBuilder' then
+                    -- LOLLO NOTE as of build 35050 (or the one before),
+                    -- transforming unsnapping edge nodes into snapping ones might break the connection
+                    -- and game.interface.upgradeConstruction often fails to restore it.
+                    -- This breaks wysiwyg, so we don't do it anymore.
+--[[
                     logger.print('guiHandleEvent caught id = constructionBuilder and name = builder.apply')
                     xpcall(
                         function()
@@ -308,18 +291,53 @@ function data()
                         end,
                         logger.xpErrorHandler
                     )
+]]
                 end
             end
         end,
+        handleEvent = function(src, id, name, args)
+            if (id ~= _eventId) then return end
+            if type(args) ~= 'table' then return end
+
+            xpcall(
+                function()
+                    logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+
+                    if edgeUtils.isValidAndExistingId(args.edgeId) then
+                        if name == _eventProperties.buildBridgeRequested.eventName then
+                            _actions.replaceEdgeWithSameOnBridge(
+                                args.edgeId,
+                                args.bridgeTypeId
+                            )
+                        end
+                    elseif edgeUtils.isValidAndExistingId(args.conId) then
+                        if name == _eventProperties.openLiftBuilt.eventName or name == _eventProperties.openStairsBuilt.eventName then
+                            logger.print('TWO')
+                            _actions.replaceConWithSnappyCopy(args.conId)
+                        end
+                    end
+                end,
+                logger.xpErrorHandler
+            )
+        end,
         -- update = function()
-        -- end,
-        -- guiUpdate = function()
         -- end,
         -- save = function()
         --     -- only fires when the worker thread changes the state
+        --     if not state then state = {} end
+        --     if not state.isErrorReplacingConWithSnappyCopy then state.isErrorReplacingConWithSnappyCopy = false end
+        --     return state
         -- end,
         -- load = function(loadedState)
         --     -- fires once in the worker thread, at game load, and many times in the UI thread
+        --     if loadedState then
+        --         state = {}
+        --         state.isErrorReplacingConWithSnappyCopy = loadedState.isErrorReplacingConWithSnappyCopy or false
+        --     else
+        --         state = {
+        --             isErrorReplacingConWithSnappyCopy = false,
+        --         }
+        --     end
         -- end,
     }
 end
