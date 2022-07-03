@@ -40,7 +40,9 @@ end
 
 local _actions = {
     replaceConWithSnappyCopy = function(oldConId)
-        -- rebuild the station with the same but snappy, to prevent pointless internal conflicts
+        -- We don't use this anymore, check out the NOTE below.
+
+        -- Rebuild the station with the same but snappy, to prevent pointless internal conflicts
         -- that will prevent using the construction mover
         logger.print('replaceConWithSnappyCopy starting, oldConId =', oldConId)
         if not(edgeUtils.isValidAndExistingId(oldConId)) then return end
