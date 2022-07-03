@@ -267,7 +267,6 @@ function data()
                     -- transforming unsnapping edge nodes into snapping ones might break the connection
                     -- and game.interface.upgradeConstruction often fails to restore it.
                     -- This breaks wysiwyg, so we don't do it anymore.
-                    -- This problem, which is a game error, is probably linked to the pedestrian paths being so damn narrow.
 --[[
                     logger.print('guiHandleEvent caught id = constructionBuilder and name = builder.apply')
                     xpcall(
