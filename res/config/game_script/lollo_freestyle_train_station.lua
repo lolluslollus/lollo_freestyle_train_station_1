@@ -2316,7 +2316,9 @@ function data()
         -- update = function()
         -- end,
         guiUpdate = function()
-            if state.isShowBuildSnappyTracksFailed and not(guiHelpers.isShowingWarning) then guiHelpers.showWarningWindowWithState(_('BuildSnappyTracksFailed')) end
+            if state.isShowBuildSnappyTracksFailed and not(guiHelpers.isShowingWarning) then
+                guiHelpers.showWarningWindowWithState(_('BuildSnappyTracksFailed'))
+            end
         end,
         save = function()
             -- only fires when the worker thread changes the state
