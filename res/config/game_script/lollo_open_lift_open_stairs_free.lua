@@ -239,7 +239,7 @@ function data()
                     elseif edgeUtils.isValidAndExistingId(args.conId) then
                         if name == _eventProperties.openLiftBuilt.eventName or name == _eventProperties.openStairsBuilt.eventName then
                             logger.print('TWO')
-                            _actions.replaceConWithSnappyCopy(args.conId)
+                            -- _actions.replaceConWithSnappyCopy(args.conId)
                         end
                     end
                 end,
