@@ -103,13 +103,30 @@ local _actions = {
 
         local cmd = api.cmd.make.buildProposal(proposal, nil, true) -- the 3rd param is "ignore errors"
         api.cmd.sendCommand(cmd, function(res, success)
-            -- if I bulldoze here, the station will inherit the old name
             -- logger.print('LOLLO _replaceConWithSnappyCopy res = ')
             -- logger.debugPrint(res)
             --for _, v in pairs(res.entities) do logger.print(v) end
             logger.print('LOLLO _replaceConWithSnappyCopy success = ') logger.debugPrint(success)
             -- if success then
-                -- if I bulldoze here, the station will get the new name
+                -- LOLLO NOTE the following was not required before beta 350**, it is useless after 35041
+                -- xpcall(
+                --     function()
+                --         -- UG TODO there is no such thing in the new api,
+                --         -- nor an upgrade event, which could be useful
+                --         logger.print('oldConId =') logger.debugPrint(oldConId)
+                --         logger.print('result.resultEntities[1] =') logger.debugPrint(result.resultEntities[1])
+                --         logger.print('oldConstruction.fileName =') logger.debugPrint(oldConstruction.fileName)
+                --         local upgradedConId = game.interface.upgradeConstruction(
+                --             result.resultEntities[1],
+                --             oldConstruction.fileName,
+                --             paramsBak
+                --         )
+                --         logger.print('upgradeConstruction succeeded') logger.debugPrint(upgradedConId)
+                --     end,
+                --     function(error)
+                --         logger.err(error)
+                --     end
+                -- )
             -- end
         end)
     end,
