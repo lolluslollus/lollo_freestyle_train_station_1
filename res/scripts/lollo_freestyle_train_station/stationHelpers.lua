@@ -1059,7 +1059,7 @@ end
 
 helpers.getStationEndEntities4T = function(stationConstructionId, t)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        logger.err('getStationEndEntities4T invalid stationConstructionId')
+        logger.err('getStationEndEntities4T received an invalid stationConstructionId')
         logger.errorDebugPrint(stationConstructionId)
         return nil
     end
@@ -1069,7 +1069,7 @@ helpers.getStationEndEntities4T = function(stationConstructionId, t)
     -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
         logger.err('getStationEndEntities4T con.fileName =')
-        logger.debugPrint(con.fileName)
+        logger.errorDebugPrint(con.fileName)
         return nil
     end
 
