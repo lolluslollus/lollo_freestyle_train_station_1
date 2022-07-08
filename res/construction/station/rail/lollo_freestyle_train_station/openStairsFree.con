@@ -1,4 +1,5 @@
 function data()
+    local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
     local logger = require('lollo_freestyle_train_station.logger')
     local _modulesutilUG = require('modulesutil')
@@ -93,7 +94,7 @@ function data()
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
             local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
-            local _openStairsRefData = _openLiftOpenStairsHelpers.getData4Era(_era_prefix)
+            local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
 
             local _yHalfSize = 1
 
@@ -234,11 +235,11 @@ function data()
                                 { { edgeX0 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
                             },
                             edgeType = (_stairsBase == 2 or _stairsBase == 3) and 'BRIDGE' or nil,
-                            edgeTypeName = (_stairsBase == 2 or _stairsBase == 3) and _openStairsRefData.bridgeTypeName_withRailing or nil,
+                            edgeTypeName = (_stairsBase == 2 or _stairsBase == 3) and _autoBridgePathsRefData.bridgeTypeName_withRailing or nil,
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
-                                type = _openStairsRefData.streetTypeName_noBridge,
+                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
                             snapNodes = (_stairsBase == 1 or _stairsBase == 3) and { 1 } or { },
                             tag2nodes = {},
@@ -328,7 +329,7 @@ function data()
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
-                                type = _openStairsRefData.streetTypeName_noBridge,
+                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
                             snapNodes = _bridgeChunkLength == 0 and { } or { 1 },
                             tag2nodes = {},
@@ -347,11 +348,11 @@ function data()
                                 { { _bridgeLen, 0, _height + _zShift}, { _bridgeLen, 0, _zShift } },  -- node 1 pos, tan
                             },
                             edgeType = 'BRIDGE',
-                            edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
+                            edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
-                                type = _openStairsRefData.streetTypeName_noBridge,
+                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
                             snapNodes = _bridgeChunkLength == 2 and { } or { 1 },
                             tag2nodes = {},

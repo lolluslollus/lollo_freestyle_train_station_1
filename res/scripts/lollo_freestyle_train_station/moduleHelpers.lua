@@ -1,5 +1,6 @@
-local constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
+local constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
 local modulesutil = require 'modulesutil'
 local openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
@@ -852,7 +853,7 @@ return {
 			-- this connects the platform to its outer edge (ie border)
 			privateFuncs.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-			local _openStairsRefData = openLiftOpenStairsHelpers.getData4Era(eraPrefix)
+			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
 			table.insert(
 				result.edgeLists,
 				{
@@ -866,12 +867,12 @@ return {
 					),
 					-- better make it a bridge to avoid ugly autolinks between nearby modules
 					edgeType = 'BRIDGE',
-					edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
+					edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
 					freeNodes = { 1 },
 					params = {
 						hasBus = true,
 						tramTrackType  = 'NO',
-						type = _openStairsRefData.streetTypeName_noBridge,
+						type = _autoBridgePathsRefData.streetTypeName_noBridge,
 					},
 					snapNodes = isSnap and { 1 } or {},
 					tag2nodes = {},
@@ -1068,7 +1069,7 @@ return {
 				tag = tag
 			}
 
-			local _openStairsRefData = openLiftOpenStairsHelpers.getData4Era(eraPrefix)
+			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
 			table.insert(
 				result.edgeLists,
 				{
@@ -1081,12 +1082,12 @@ return {
 						transf
 					),
 					edgeType = 'BRIDGE',
-					edgeTypeName = _openStairsRefData.bridgeTypeName_withRailing,
+					edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
 					freeNodes = { 1 },
 					params = {
 						hasBus = true,
 						tramTrackType  = 'NO',
-						type = _openStairsRefData.streetTypeName_noBridge,
+						type = _autoBridgePathsRefData.streetTypeName_noBridge,
 					},
 					snapNodes = isSnap and { 1 } or {},
 					tag2nodes = {},
