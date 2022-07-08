@@ -1730,15 +1730,13 @@ function data()
 			-- Replace pedestrian edges with snappy pedestrian edges.
 			-- Otherwise, whenever a change is made to the station, existing connections will break seamlessly
 			-- (you can only see this with AltGr + L)
-			if change ~= nil and modules ~= nil then
+			if modules ~= nil then
 				local slotIdToBeLeftAlone = nil -- do not replace the module if the user is placing it
-				if change.added then
-					if change.module then
-						if change.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
-						or change.module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m.module'
-						then
-							slotIdToBeLeftAlone = change.slotId
-						end
+				if change ~= nil and change.added and change.module then
+					if change.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
+					or change.module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m.module'
+					then
+						slotIdToBeLeftAlone = change.slotId
 					end
 				end
 
