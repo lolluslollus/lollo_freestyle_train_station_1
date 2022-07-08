@@ -1269,7 +1269,12 @@ end
 _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     -- see the comments in buildSnappyPlatforms
     logger.print('buildSnappyTracks starting')
-    if type(t) ~= 'number' or type(tMax) ~= 'number' then logger.warn('buildSnappyTracks received wrong t or tMax') logger.warningDebugPrint(t) logger.warningDebugPrint(tMax) return end
+    if type(t) ~= 'number' or type(tMax) ~= 'number' then
+        logger.warn('buildSnappyTracks received wrong t or tMax')
+        logger.warningDebugPrint(t)
+        logger.warningDebugPrint(tMax)
+        return
+    end
     if t > tMax then logger.print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
@@ -1301,7 +1306,7 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
 
         local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
         if expectedResult.errorState.critical then
-            logger.print('expectedResult =') logger.debugPrint(expectedResult)
+            logger.print('critical error when building snappy tracks, expectedResult =') logger.debugPrint(expectedResult)
             isAnyTrackFailed = true
             _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
         else

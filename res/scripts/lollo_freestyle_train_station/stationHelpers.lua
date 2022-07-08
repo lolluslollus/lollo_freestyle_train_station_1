@@ -327,8 +327,8 @@ local helpers = {
                 )
                 -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                 if nodeBetween == nil then
-                    logger.print('lollo freestyle train station ERROR: nodeBetween not found')
-                    logger.print('pel =') logger.debugPrint(pel)
+                    logger.err('nodeBetween not found; pel =')
+                    logger.errorDebugPrint(pel)
                     return {}
                 end
                 local newEdgeLength = nodeBetween.refDistance0 - lengthCovered
@@ -870,20 +870,20 @@ local _getStationEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNode
     }
 
     if result.platforms.node1Id == nil then
-        logger.print('WARNING: could not find platformnode1Id in station construction')
-        logger.print('nTerminal =') logger.debugPrint(nTerminal)
+        logger.warn('could not find platformnode1Id in station construction; nTerminal =')
+        logger.warningDebugPrint(nTerminal)
     end
     if result.platforms.node2Id == nil then
-        logger.print('WARNING: could not find platformnode2Id in station construction')
-        logger.print('nTerminal =') logger.debugPrint(nTerminal)
+        logger.warn('could not find platformnode2Id in station construction; nTerminal =')
+        logger.warningDebugPrint(nTerminal)
     end
     if result.tracks.node1Id == nil then
-        logger.print('WARNING: could not find tracknode1Id in station construction')
-        logger.print('nTerminal =') logger.debugPrint(nTerminal)
+        logger.warn('could not find tracknode1Id in station construction; nTerminal =')
+        logger.warningDebugPrint(nTerminal)
     end
     if result.tracks.node2Id == nil then
-        logger.print('WARNING: could not find tracknode2Id in station construction')
-        logger.print('nTerminal =') logger.debugPrint(nTerminal)
+        logger.warn('WARNING: could not find tracknode2Id in station construction; nTerminal =')
+        logger.warningDebugPrint(nTerminal)
     end
 
     return result
@@ -893,7 +893,8 @@ local _getStationEndEntities4T = function(con, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        logger.print('lollo freestyle train station ERROR: _getStationEndEntities4T con.fileName =') logger.debugPrint(con.fileName)
+        logger.err('_getStationEndEntities4T con.fileName =')
+        logger.errorDebugPrint(con.fileName)
         return nil
     end
 
@@ -1035,7 +1036,7 @@ end
 helpers.getStationEndEntities = function(stationConstructionId)
     logger.print('getStationEndEntities started, conId =', stationConstructionId or 'NIL')
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        logger.print('lollo freestyle train station ERROR: getStationEndEntities invalid stationConstructionId') logger.debugPrint(stationConstructionId)
+        logger.err('getStationEndEntities invalid stationConstructionId') logger.errorDebugPrint(stationConstructionId)
         return nil
     end
 
@@ -1043,7 +1044,7 @@ helpers.getStationEndEntities = function(stationConstructionId)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        logger.print('lollo freestyle train station ERROR: getStationEndEntities con.fileName =') logger.debugPrint(con.fileName)
+        logger.err('getStationEndEntities con.fileName =') logger.errorDebugPrint(con.fileName)
         return nil
     end
 
@@ -1058,7 +1059,8 @@ end
 
 helpers.getStationEndEntities4T = function(stationConstructionId, t)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        logger.print('lollo freestyle train station ERROR: getStationEndEntities4T invalid stationConstructionId') logger.debugPrint(stationConstructionId)
+        logger.err('getStationEndEntities4T invalid stationConstructionId')
+        logger.errorDebugPrint(stationConstructionId)
         return nil
     end
 
@@ -1066,12 +1068,14 @@ helpers.getStationEndEntities4T = function(stationConstructionId, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        logger.print('lollo freestyle train station ERROR: getStationEndEntities4T con.fileName =') logger.debugPrint(con.fileName)
+        logger.err('getStationEndEntities4T con.fileName =')
+        logger.debugPrint(con.fileName)
         return nil
     end
 
     if type(t) ~= 'number' or t < 1 or t > #con.params.terminals then
-        logger.print('Warning: getStationEndEntities4T received invalid t =') logger.debugPrint(t)
+        logger.warn('getStationEndEntities4T received invalid t =')
+        logger.warningDebugPrint(t)
         return nil
     end
 
@@ -1440,7 +1444,7 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     -- end
     logger.print('trackEdgeIdsBetweenEdgeIds after pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
     if arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds]) then return trackEdgeIdsBetweenEdgeIds end
-    logger.print('Warning: the last edge does not connect, this should never happen')
+    logger.warn('the last edge does not connect, this should never happen')
     return {}
 end
 
@@ -1536,7 +1540,8 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
     logger.print('now I have path =') logger.debugPrint(myPath)
     logger.print('now I have clean path =') logger.debugPrint(_getCleanPath(myPath))
     if #myPath < 1 or not(_isIdInPath(myPath, edge2Id)) then
-        logger.print('WARNING: cannot find a path including both edges, all I found was ') logger.debugPrint(myPath)
+        logger.warn('cannot find a path including both edges, all I found was ')
+        logger.warningDebugPrint(myPath)
         return {}
     end
     return _getCleanPath(myPath)
