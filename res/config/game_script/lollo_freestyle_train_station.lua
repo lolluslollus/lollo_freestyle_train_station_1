@@ -169,15 +169,34 @@ local _actions = {
             function(result, success)
                 logger.print('addSubway callback, success =', success)
                 -- logger.debugPrint(result)
-                if success and successEventName ~= nil then
-                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                        string.sub(debug.getinfo(1, 'S').source, 1),
-                        _eventId,
-                        successEventName,
-                        {
-                            stationConstructionId = result.resultEntities[1]
-                        }
-                    ))
+                if success then
+                    -- upgrade to restore snap -- fails with pr.second LOLLO TODO resnap the road edges the same way you resnap tracks
+--[[
+                    logger.print('stationConstructionId =', stationConstructionId)
+                    logger.print('result.resultEntities[1] =', result.resultEntities[1])
+                    xpcall(
+                        function()
+                            game.interface.upgradeConstruction(
+                                result.resultEntities[1],
+                                oldCon.fileName,
+                                newParams
+                            )
+                        end,
+                        function(error)
+                            logger.warn(error)
+                        end
+                    )
+]]
+                    if successEventName ~= nil then
+                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                            string.sub(debug.getinfo(1, 'S').source, 1),
+                            _eventId,
+                            successEventName,
+                            {
+                                stationConstructionId = result.resultEntities[1]
+                            }
+                        ))
+                    end
                 end
             end
         )
