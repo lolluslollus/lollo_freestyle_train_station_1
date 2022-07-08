@@ -1181,7 +1181,7 @@ local _tryReplaceSegment = function(edgeId, endEntities4T_plOrTr, proposal, nNew
         newSegment.trackEdge.trackType = baseEdgeTrack.trackType
         newSegment.trackEdge.catenary = baseEdgeTrack.catenary
     elseif baseEdgeStreet ~= nil then
-        logger.print('Warning: edgeId', edgeId, 'is street')
+        logger.warn('edgeId', edgeId, 'is street')
         newSegment.streetEdge.streetType = baseEdgeStreet.streetType
         newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
         newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
@@ -1263,6 +1263,109 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     else
         isAnyPlatformFailed = true
         _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
+    end
+end
+
+_actions.buildSnappyStreetEdges = function(stationConstructionId)
+    -- stationHelpers._getStationStreetEndNodeIds
+    -- LOLLO TODO implement this
+    logger.print('buildSnappyStreetEdges starting')
+
+    local endEntities = stationHelpers.getStationStreetEndEntities(stationConstructionId)
+    local proposal = api.type.SimpleProposal.new()
+    local _addNodeToRemove = function(nodeId)
+        if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove, nodeId)) then
+            proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeId
+        end
+    end
+    local nNewEntities = 0
+    local isSuccess = true
+
+    for _, endEntity in pairs(endEntities) do
+        if not(isSuccess) then break end
+
+        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
+            if not(edgeUtils.isValidAndExistingId(edgeId)) then
+                logger.warn('invalid edgeId in buildSnappyStreetEdges')
+                isSuccess = false
+            else
+                logger.print('valid edgeId in buildSnappyStreetEdges, going ahead')
+                local newSegment = api.type.SegmentAndEntity.new()
+                local nNewEntities_ = nNewEntities - 1
+                newSegment.entity = nNewEntities_
+
+                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+                if baseEdge.node0 == endEntity.disjointNeighbourNodeId then
+                    newSegment.comp.node0 = endEntity.nodeId
+                    _addNodeToRemove(endEntity.disjointNeighbourNodeId)
+                    logger.print('twenty-one')
+                else
+                    newSegment.comp.node0 = baseEdge.node0
+                    logger.print('twenty-three')
+                end
+
+                if baseEdge.node1 == endEntity.disjointNeighbourNodeId then
+                    newSegment.comp.node1 = endEntity.nodeId
+                    _addNodeToRemove(endEntity.disjointNeighbourNodeId)
+                    logger.print('twenty-four')
+                else
+                    newSegment.comp.node1 = baseEdge.node1
+                    logger.print('twenty-six')
+                end
+
+                newSegment.comp.tangent0.x = baseEdge.tangent0.x
+                newSegment.comp.tangent0.y = baseEdge.tangent0.y
+                newSegment.comp.tangent0.z = baseEdge.tangent0.z
+                newSegment.comp.tangent1.x = baseEdge.tangent1.x
+                newSegment.comp.tangent1.y = baseEdge.tangent1.y
+                newSegment.comp.tangent1.z = baseEdge.tangent1.z
+                newSegment.comp.type = baseEdge.type
+                newSegment.comp.typeIndex = baseEdge.typeIndex
+                newSegment.comp.objects = baseEdge.objects
+                -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+                newSegment.type = _constants.streetEdgeType
+                local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
+                if baseEdgeStreet ~= nil then
+                    logger.print('edgeId', edgeId, 'is street')
+                    newSegment.streetEdge.streetType = baseEdgeStreet.streetType
+                    newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
+                    newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
+                    -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
+                    -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
+                end
+
+                proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+                if not(arrayUtils.arrayHasValue(proposal.streetProposal.edgesToRemove, edgeId)) then
+                    proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
+                end
+
+                nNewEntities = nNewEntities_
+            end
+        end
+        logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
+    end
+
+    logger.print('proposal =') logger.debugPrint(proposal)
+    -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
+    if isSuccess then
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = false -- default is false
+        -- context.gatherFields = true -- default is true
+        -- context.player = api.engine.util.getPlayer()
+
+        local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+        if expectedResult.errorState.critical then
+            logger.print('expectedResult =') logger.debugPrint(expectedResult)
+        else
+            api.cmd.sendCommand(
+                api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                function(result, success)
+                    logger.print('buildSnappyStreetEdges callback, success =', success)
+                end
+            )
+        end
     end
 end
 
@@ -1779,6 +1882,7 @@ function data()
                             return
                         end
                         _actions.buildSnappyPlatforms(args.stationConstructionId, 1, #con.params.terminals)
+                        _actions.buildSnappyStreetEdges(args.stationConstructionId)
                         _actions.buildSnappyTracks(args.stationConstructionId, 1, #con.params.terminals)
                     elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
                         _actions.bulldozeStation(args.stationConstructionId)
