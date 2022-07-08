@@ -391,6 +391,8 @@ local _actions = {
                             }
                         ))
                     end
+                else
+                    logger.warn('result =') logger.warningDebugPrint(result)
                 end
             end
         )
