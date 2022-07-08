@@ -239,14 +239,22 @@ function data()
                             then
                                 local forceBridgeEventParams = {}
                                 for _, addedSegment in pairs(args.proposal.proposal.addedSegments) do
-                                    if addedSegment and addedSegment.streetEdge and addedSegment.comp and addedSegment.comp.type ~= _compTypeBridge then
+                                    if addedSegment
+                                    and addedSegment.streetEdge
+                                    and addedSegment.comp
+                                    and addedSegment.comp.type ~= _compTypeBridge
+                                    and edgeUtils.isValidAndExistingId(addedSegment.entity)
+                                    then
                                         -- print('addedSegment =') debugPrint(addedSegment)
-                                        local bridgeTypeId = openStairsHelpers.getBridgeTypeId(addedSegment.streetEdge.streetType, true)
-                                        if bridgeTypeId then
-                                            forceBridgeEventParams[#forceBridgeEventParams+1] = {
-                                                edgeId = addedSegment.entity,
-                                                bridgeTypeId = bridgeTypeId
-                                            }
+                                        local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(addedSegment.entity)
+                                        if not(edgeUtils.isValidId(conId)) then -- do not touch frozen segments
+                                            local bridgeTypeId = openStairsHelpers.getBridgeTypeId(addedSegment.streetEdge.streetType, true)
+                                            if bridgeTypeId then
+                                                forceBridgeEventParams[#forceBridgeEventParams+1] = {
+                                                    edgeId = addedSegment.entity,
+                                                    bridgeTypeId = bridgeTypeId
+                                                }
+                                            end
                                         end
                                     end
                                 end
