@@ -15,7 +15,7 @@ function data()
                 - Adjacent platforms are connected together automatically. If you added extra platforms or space between, you will have to connect them by hand instead: use a suitable street type and <shift>. Avoid this with tunnels and bridges, keep it simple.
                 - Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
-                - Every bridge level requires a lift.
+                - Every bridge level requires a lift, or an underpass near a ground platform lift or stairs.
                 - Every set of adjacent underground platforms requires stairs.
                 - Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
 
