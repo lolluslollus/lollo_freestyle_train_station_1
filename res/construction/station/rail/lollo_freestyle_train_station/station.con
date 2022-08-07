@@ -562,6 +562,7 @@ function data()
 												result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
 												{
 													t = t,
+													era = moduleHelpers.getEraPrefix(params, t, i),
 													lanePosTanX2 = cpl.posTanX2,
 													pos2Link = transfUtils.transf2Position(underpassBottomTransf)
 												}
@@ -821,6 +822,7 @@ function data()
 								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
 								{
 									t = t,
+									era = moduleHelpers.getEraPrefix(params, t, i),
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
 										transfUtilsUG.mul(
@@ -1425,6 +1427,11 @@ function data()
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge
 					)
 
+					local shortSegmentsStairsOrLifts2Bridges = _getSegmentsBetweenPos2Links_AcrossTerminals(
+						result.terminateConstructionHookInfo.openStairsOrLiftsPositions,
+						result.terminateConstructionHookInfo.underpassPositionsOnBridge
+					)
+
 					local shortSegmentsTunnelTops2BridgeBottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
                         result.terminateConstructionHookInfo.liftBottomPositions
@@ -1504,12 +1511,15 @@ function data()
 					_reduceUpDownConnectors()
 
 					logger.print('shortSegmentsOpenStairsOrLifts =') logger.debugPrint(shortSegmentsOpenStairsOrLifts)
-					_linkAcross(shortSegmentsOpenStairsOrLifts, 99, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
+					_linkAcross(shortSegmentsOpenStairsOrLifts, 99.0, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
 
 					logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
-					_linkAcross(shortSegmentsOnBridge, 40.0)
+					_linkAcross(shortSegmentsOnBridge, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed)
+
+					logger.print('shortSegmentsStairsOrLifts2Bridges =') logger.debugPrint(shortSegmentsStairsOrLifts2Bridges)
+					_linkAcross(shortSegmentsStairsOrLifts2Bridges, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed)
 
 					logger.print('shortSegmentsTunnelTops2BridgeBottoms =') logger.debugPrint(shortSegmentsTunnelTops2BridgeBottoms)
 					_linkAcross(shortSegmentsTunnelTops2BridgeBottoms)

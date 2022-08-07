@@ -1,0 +1,115 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				jointWeights = {
+					count = 192,
+					offset = 1584,
+				},
+				normal = {
+					count = 192,
+					offset = 1008,
+				},
+				position = {
+					count = 192,
+					offset = 1392,
+				},
+				tangent = {
+					count = 192,
+					offset = 1200,
+				},
+				uv0 = {
+					count = 192,
+					offset = 816,
+				},
+			},
+			materials = {
+				"TOP.mtl", 
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 144,
+					offset = 2352,
+				},
+				normal = {
+					count = 144,
+					offset = 1920,
+				},
+				position = {
+					count = 144,
+					offset = 2208,
+				},
+				tangent = {
+					count = 144,
+					offset = 2064,
+				},
+				uv0 = {
+					count = 144,
+					offset = 1776,
+				},
+			},
+			materials = {
+				"IRON.mtl", 
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 72,
+					offset = 2784,
+				},
+				normal = {
+					count = 72,
+					offset = 2568,
+				},
+				position = {
+					count = 72,
+					offset = 2712,
+				},
+				tangent = {
+					count = 72,
+					offset = 2640,
+				},
+				uv0 = {
+					count = 72,
+					offset = 2496,
+				},
+			},
+			materials = {
+				"BOTTOM.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		jointWeights = {
+			count = 32,
+			numComp = 4,
+			offset = 784,
+		},
+		normal = {
+			count = 96,
+			numComp = 3,
+			offset = 336,
+		},
+		position = {
+			count = 288,
+			numComp = 3,
+			offset = 496,
+		},
+		tangent = {
+			count = 64,
+			numComp = 4,
+			offset = 432,
+		},
+		uv0 = {
+			count = 336,
+			numComp = 2,
+			offset = 0,
+		},
+	},
+}
+end

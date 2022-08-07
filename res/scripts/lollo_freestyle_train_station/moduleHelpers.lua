@@ -1499,4 +1499,25 @@ return {
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
     },
+    tubeBridge = {
+        getPedestrianBridgeModelId_Compressed = function(length, eraOfT1Prefix, eraOfT2Prefix)
+            -- eraOfT1 and eraOfT2 are strings like 'era_a_'
+            local newEraPrefix1 = eraOfT1Prefix
+            if newEraPrefix1 ~= constants.eras.era_a.prefix and newEraPrefix1 ~= constants.eras.era_b.prefix and newEraPrefix1 ~= constants.eras.era_c.prefix then
+                newEraPrefix1 = constants.eras.era_c.prefix
+            end
+            local newEraPrefix2 = eraOfT2Prefix
+            if newEraPrefix2 ~= constants.eras.era_a.prefix and newEraPrefix2 ~= constants.eras.era_b.prefix and newEraPrefix2 ~= constants.eras.era_c.prefix then
+                newEraPrefix2 = constants.eras.era_c.prefix
+            end
+            local newEraPrefix = (newEraPrefix1 > newEraPrefix2) and newEraPrefix1 or newEraPrefix2
+
+            if length < 6 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_4m.mdl'
+            elseif length < 12 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_8m.mdl'
+            elseif length < 24 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_16m.mdl'
+            elseif length < 48 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_32m.mdl'
+            else return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_64m.mdl'
+            end
+        end,
+    },
 }
