@@ -10,19 +10,19 @@ return {
 			indices = {
 				normal = {
 					count = 264,
-					offset = 6108,
+					offset = 6016,
 				},
 				position = {
 					count = 264,
-					offset = 5844,
+					offset = 5752,
 				},
 				tangent = {
 					count = 264,
-					offset = 5316,
+					offset = 5224,
 				},
 				uv0 = {
 					count = 264,
-					offset = 5580,
+					offset = 5488,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 1248,
-					offset = 10116,
+					offset = 10024,
 				},
 				position = {
 					count = 1248,
-					offset = 8868,
+					offset = 8776,
 				},
 				tangent = {
 					count = 1248,
-					offset = 6372,
+					offset = 6280,
 				},
 				uv0 = {
 					count = 1248,
-					offset = 7620,
+					offset = 7528,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 360,
-					offset = 12444,
+					offset = 12352,
 				},
 				position = {
 					count = 360,
-					offset = 12084,
+					offset = 11992,
 				},
 				tangent = {
 					count = 360,
-					offset = 11364,
+					offset = 11272,
 				},
 				uv0 = {
 					count = 360,
-					offset = 11724,
+					offset = 11632,
 				},
 			},
 			materials = {
@@ -79,19 +79,19 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 12948,
+					offset = 12856,
 				},
 				position = {
 					count = 48,
-					offset = 12900,
+					offset = 12808,
 				},
 				tangent = {
 					count = 48,
-					offset = 12804,
+					offset = 12712,
 				},
 				uv0 = {
 					count = 48,
-					offset = 12852,
+					offset = 12760,
 				},
 			},
 			materials = {
@@ -101,24 +101,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 696,
+			count = 684,
 			numComp = 3,
-			offset = 4620,
+			offset = 4540,
 		},
 		position = {
 			count = 1428,
 			numComp = 3,
-			offset = 3192,
+			offset = 3112,
 		},
 		tangent = {
-			count = 928,
+			count = 848,
 			numComp = 4,
 			offset = 0,
 		},
 		uv0 = {
 			count = 2264,
 			numComp = 2,
-			offset = 928,
+			offset = 848,
 		},
 	},
 }
