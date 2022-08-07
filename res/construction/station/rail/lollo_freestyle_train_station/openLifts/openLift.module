@@ -53,12 +53,32 @@ function data()
 				type = _constants.openStairsExitModuleType,
 			})
 			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openLiftExitForwardSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtilsUG.mul(
+					slotTransf,
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1, 0, _constants.openStairsUpZ, 1 }
+				),
+				type = _constants.openStairsExitModuleType,
+			})
+			table.insert(result.slots, {
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openLiftExitOuterSlotId),
 				shape = 1,
 				spacing = {-1, 3, 0.5, 0.5},
 				transf = transfUtilsUG.mul(
 					slotTransf,
 					{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 1, _constants.openStairsUpZ, 1 }
+				),
+				type = _constants.openStairsExitModuleType,
+			})
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openLiftExitBackwardSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtilsUG.mul(
+					slotTransf,
+					{ -1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, _constants.openStairsUpZ, 1 }
 				),
 				type = _constants.openStairsExitModuleType,
 			})

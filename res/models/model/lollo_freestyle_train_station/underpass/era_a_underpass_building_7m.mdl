@@ -1,5 +1,4 @@
 local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
-
 function data()
     return {
         boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
@@ -10,11 +9,14 @@ function data()
                     children = {
                         {
                             materials = {
-                                "lollo_freestyle_train_station/hole.mtl",
-                                "lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl",
+                                -- 'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
+                                'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl',
+                                'lollo_freestyle_train_station/era_a_doors.mtl'
                             },
-                            mesh = 'lollo_freestyle_train_station/underpass/plate7x1_4_centred_stripes.msh',
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.025, 1}
+                            mesh = 'lollo_freestyle_train_station/underpass/era_a_underpass_building_7m.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1}
                         },
                     },
                     name = 'RootNode',
@@ -22,7 +24,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 100
+                visibleTo = 1000
             },
         },
         metadata = { },

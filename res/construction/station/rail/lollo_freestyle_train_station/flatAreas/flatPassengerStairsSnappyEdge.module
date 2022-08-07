@@ -23,7 +23,7 @@ function data()
 		order = {
 			value = 10,
 		},
-		type = _constants.flatPassengerStairsModuleType,
+		type = _constants.flatPassengerEdgeModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			return moduleHelpers.flatAreas.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true)
 		end,

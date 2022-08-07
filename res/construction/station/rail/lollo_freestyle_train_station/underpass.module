@@ -33,14 +33,11 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			-- local era = cpl.era or moduleHelpers.eras.era_c.prefix
-			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-			local modelId = _constants.era_c_underpassBuilding10MModelFileName
-			if era == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_underpassBuilding10MModelFileName
-			elseif era == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_underpassBuilding10MModelFileName
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local modelId = _constants.era_c_underpassBuilding7MModelFileName
+			if eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_underpassBuilding7MModelFileName
+			elseif eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_underpassBuilding7MModelFileName
 			end
-			-- if cpl.type == 1 then modelId = _constants.underpassBuildingWBottom10MModelFileName
-			-- end
 			result.models[#result.models + 1] = {
 				id = modelId,
 				slotId = slotId,
@@ -49,14 +46,14 @@ function data()
 			}
 
 			local underpassFloorModelId = _constants.era_c_underpassGroundModelFileName
-			if era == moduleHelpers.eras.era_b.prefix then underpassFloorModelId = _constants.era_b_underpassGroundModelFileName
-			elseif era == moduleHelpers.eras.era_a.prefix then underpassFloorModelId = _constants.era_a_underpassGroundModelFileName
+			if eraPrefix == moduleHelpers.eras.era_b.prefix then underpassFloorModelId = _constants.era_b_underpassGroundModelFileName
+			elseif eraPrefix == moduleHelpers.eras.era_a.prefix then underpassFloorModelId = _constants.era_a_underpassGroundModelFileName
 			end
 			result.models[#result.models+1] = {
 				id = underpassFloorModelId,
 				transf = transfUtilsUG.mul(
 					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal] - 0.02, 1 }
 				),
 			}
 		end,
@@ -64,7 +61,7 @@ function data()
 		getModelsFn = function(params)
 			return {
 				{
-					id = _constants.era_c_underpassBuilding10MModelFileName,
+					id = _constants.era_c_underpassBuilding7MModelFileName,
 					transf = _constants.idTransf,
 				},
 			}
