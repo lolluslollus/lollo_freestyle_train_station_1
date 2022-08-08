@@ -1375,7 +1375,7 @@ function data()
 					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
 					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
 					local _linkedTerminals = {}
-					local function _linkAcross(segments, maxDistance, getModelId, linkedTerminals)
+					local function _linkAcross(segments, maxDistance, getModelId, linkedTerminals, maxSlope)
 						local maxT = #params.terminals
 						for t = 1, maxT do
 							if segments[t] ~= nil then
@@ -1383,30 +1383,32 @@ function data()
 									if segments[t][tt] ~= nil then
 										for _, value in pairs(segments[t][tt]) do
 											if not(maxDistance) or value.distance <= maxDistance then
-												-- LOLLO NOTE this estimator could be improved to check indirect connections,
-												-- but I like it simple
-												if not(linkedTerminals) or not(linkedTerminals[t]) or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
-													if getModelId then
-														result.models[#result.models+1] = {
-															id = getModelId(value.distance, value.eraOfT1, value.eraOfT2),
-															transf = transfUtils.get1MModelTransf(
-																value.pos2Link1,
-																value.pos2Link2
-															)
-														}
-													else
-														result.models[#result.models+1] = {
-															id = _constants.passengerLaneModelId,
-															transf = transfUtils.get1MLaneTransf(
-																value.pos2Link1,
-																value.pos2Link2
-															)
-														}
+												if not(maxSlope) or math.abs((value.pos2Link1[3] - value.pos2Link2[3]) / value.distance) <= maxSlope then
+													-- LOLLO NOTE this estimator could be improved to check indirect connections,
+													-- but I like it simple
+													if not(linkedTerminals) or not(linkedTerminals[t]) or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
+														if getModelId then
+															result.models[#result.models+1] = {
+																id = getModelId(value.distance, value.eraOfT1, value.eraOfT2),
+																transf = transfUtils.get1MModelTransf(
+																	value.pos2Link1,
+																	value.pos2Link2
+																)
+															}
+														else
+															result.models[#result.models+1] = {
+																id = _constants.passengerLaneModelId,
+																transf = transfUtils.get1MLaneTransf(
+																	value.pos2Link1,
+																	value.pos2Link2
+																)
+															}
+														end
+														if _linkedTerminals[t] == nil then _linkedTerminals[t] = {} end
+														if _linkedTerminals[tt] == nil then _linkedTerminals[tt] = {} end
+														arrayUtils.addUnique(_linkedTerminals[t], tt)
+														arrayUtils.addUnique(_linkedTerminals[tt], t)
 													end
-													if _linkedTerminals[t] == nil then _linkedTerminals[t] = {} end
-													if _linkedTerminals[tt] == nil then _linkedTerminals[tt] = {} end
-													arrayUtils.addUnique(_linkedTerminals[t], tt)
-													arrayUtils.addUnique(_linkedTerminals[tt], t)
 												end
 											end
 										end
@@ -1516,10 +1518,10 @@ function data()
 					logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
 					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
-					_linkAcross(shortSegmentsOnBridge, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed)
+					_linkAcross(shortSegmentsOnBridge, 40.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
 
 					logger.print('shortSegmentsStairsOrLifts2Bridges =') logger.debugPrint(shortSegmentsStairsOrLifts2Bridges)
-					_linkAcross(shortSegmentsStairsOrLifts2Bridges, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed)
+					_linkAcross(shortSegmentsStairsOrLifts2Bridges, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
 
 					logger.print('shortSegmentsTunnelTops2BridgeBottoms =') logger.debugPrint(shortSegmentsTunnelTops2BridgeBottoms)
 					_linkAcross(shortSegmentsTunnelTops2BridgeBottoms)
