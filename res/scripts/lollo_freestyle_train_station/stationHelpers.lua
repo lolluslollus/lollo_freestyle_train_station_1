@@ -823,7 +823,7 @@ local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePosition,
         0.001,
         api.type.ComponentType.BASE_NODE
     )
-    -- logger.print('getDisjointNeighbourNodes found') logger.debugPrint(nearbyNodeIds)
+    -- logger.print('_getDisjointNeighbourNodeId found') logger.debugPrint(nearbyNodeIds)
     for _, nearbyNodeId in pairs(nearbyNodeIds) do
         if edgeUtils.isValidAndExistingId(nearbyNodeId)
         and nearbyNodeId ~= stationNodeId
@@ -840,7 +840,10 @@ local _getDisjointNeighbourEdgeIds = function(nodeId, frozenEdgeIds)
     local connectedEdgeIds = edgeUtils.getConnectedEdgeIds({nodeId})
     for _, edgeId in pairs(connectedEdgeIds) do
         if not(arrayUtils.arrayHasValue(frozenEdgeIds, edgeId)) then
-            results[#results+1] = edgeId
+            -- check that the edge is not frozen in another construction, such as nearby stairs with a snappy bridge
+            if not(edgeUtils.isValidId(api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId))) then
+                results[#results+1] = edgeId
+            end
         end
     end
     return results
