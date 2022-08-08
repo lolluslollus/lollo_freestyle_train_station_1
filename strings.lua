@@ -273,6 +273,7 @@ function data()
 			["GoBack"] = "Go back",
 			["GoThere"] = "Go there",
 			["Join"] = "Join",
+			["NeedAdjust4Snap"] = "Some street connections have unsnapped: make any change to the station configuration to fix this",
 			["NoJoin"] = "Do not join",
 			["ShowUnderground"] = "Show Underground",
 			["ShowUndergroundTooltip"] = "It cannot be changed once plopped. If you want assistance to place it easily, use the 'Look Underground' track construction instead of this.",

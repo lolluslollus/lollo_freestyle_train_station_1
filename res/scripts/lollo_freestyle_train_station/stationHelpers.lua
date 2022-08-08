@@ -836,17 +836,21 @@ local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePosition,
 end
 
 local _getDisjointNeighbourEdgeIds = function(nodeId, frozenEdgeIds)
-    local results = {}
+    local resultEdgeIds = {}
+    local resultIsAdjoiningConstruction = false
+
     local connectedEdgeIds = edgeUtils.getConnectedEdgeIds({nodeId})
     for _, edgeId in pairs(connectedEdgeIds) do
         if not(arrayUtils.arrayHasValue(frozenEdgeIds, edgeId)) then
             -- check that the edge is not frozen in another construction, such as nearby stairs with a snappy bridge
-            if not(edgeUtils.isValidId(api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId))) then
-                results[#results+1] = edgeId
+            if edgeUtils.isValidId(api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)) then
+                resultIsAdjoiningConstruction = true
+            else
+                resultEdgeIds[#resultEdgeIds+1] = edgeId
             end
         end
     end
-    return results
+    return resultEdgeIds, resultIsAdjoiningConstruction
 end
 
 local _getStationStreetEndNodes = function(con, frozenEdges, frozenNodes)
@@ -905,7 +909,8 @@ local _getStationStreetEndEntities = function(con, t)
 
     for _, record in pairs(result) do
         record.disjointNeighbourNodeId = _getDisjointNeighbourNodeId(record.nodeId, record.nodePosition, frozenNodeIds)
-        record.disjointNeighbourEdgeIds = _getDisjointNeighbourEdgeIds(record.disjointNeighbourNodeId, frozenEdgeIds)
+        record.disjointNeighbourEdgeIds = {}
+        record.disjointNeighbourEdgeIds.edgeIds, record.disjointNeighbourEdgeIds.isAdjoiningConstruction = _getDisjointNeighbourEdgeIds(record.disjointNeighbourNodeId, frozenEdgeIds)
     end
 
     logger.print('_getStationStreetEndEntities result =') logger.debugPrint(result)
@@ -1088,10 +1093,10 @@ local _getStationEndEntities4T = function(con, t)
     result.tracks.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node1Id, result.tracks.stationEndNodePositions.node1, frozenNodeIds)
     result.tracks.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node2Id, result.tracks.stationEndNodePositions.node2, frozenNodeIds)
 
-    result.platforms.disjointNeighbourEdgeIds.edge1Ids = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node1Id, frozenEdgeIds)
-    result.platforms.disjointNeighbourEdgeIds.edge2Ids = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node2Id, frozenEdgeIds)
-    result.tracks.disjointNeighbourEdgeIds.edge1Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node1Id, frozenEdgeIds)
-    result.tracks.disjointNeighbourEdgeIds.edge2Ids = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node2Id, frozenEdgeIds)
+    result.platforms.disjointNeighbourEdgeIds.edge1Ids, result.platforms.disjointNeighbourEdgeIds.is1AdjoiningConstruction = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node1Id, frozenEdgeIds)
+    result.platforms.disjointNeighbourEdgeIds.edge2Ids, result.platforms.disjointNeighbourEdgeIds.is2AdjoiningConstruction = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node2Id, frozenEdgeIds)
+    result.tracks.disjointNeighbourEdgeIds.edge1Ids, result.tracks.disjointNeighbourEdgeIds.is1AdjoiningConstruction = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node1Id, frozenEdgeIds)
+    result.tracks.disjointNeighbourEdgeIds.edge2Ids, result.tracks.disjointNeighbourEdgeIds.is2AdjoiningConstruction = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node2Id, frozenEdgeIds)
 
     -- logger.print('_getStationEndEntities4T result =') logger.debugPrint(result)
     return result

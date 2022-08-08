@@ -1225,6 +1225,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
+    local isAdjoiningConstruction = endEntities4T.platforms.disjointNeighbourEdgeIds.is1AdjoiningConstruction or endEntities4T.platforms.disjointNeighbourEdgeIds.is2AdjoiningConstruction
     for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
@@ -1280,11 +1281,13 @@ _actions.buildSnappyStreetEdges = function(stationConstructionId)
     end
     local nNewEntities = 0
     local isSuccess = true
+    local isAdjoiningConstruction = false
 
     for _, endEntity in pairs(endEntities) do
         if not(isSuccess) then break end
 
-        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
+        isAdjoiningConstruction = isAdjoiningConstruction or endEntity.disjointNeighbourEdgeIds.isAdjoiningConstruction
+        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds.edgeIds) do
             if not(edgeUtils.isValidAndExistingId(edgeId)) then
                 logger.warn('invalid edgeId in buildSnappyStreetEdges')
                 isSuccess = false
@@ -1346,6 +1349,7 @@ _actions.buildSnappyStreetEdges = function(stationConstructionId)
     end
 
     logger.print('proposal =') logger.debugPrint(proposal)
+    logger.print('isAdjoiningConstruction =') logger.debugPrint(isAdjoiningConstruction)
     -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
     if isSuccess then
         local context = api.type.Context:new()
@@ -1363,6 +1367,7 @@ _actions.buildSnappyStreetEdges = function(stationConstructionId)
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
                     logger.print('buildSnappyStreetEdges callback, success =', success)
+                    state.isShowNeedAdjust4Snap = isAdjoiningConstruction
                 end
             )
         end
@@ -1390,6 +1395,7 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
+    local isAdjoiningConstruction = endEntities4T.tracks.disjointNeighbourEdgeIds.is1AdjoiningConstruction or endEntities4T.tracks.disjointNeighbourEdgeIds.is2AdjoiningConstruction
     for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
@@ -1462,6 +1468,7 @@ function data()
 
                     if name == _eventNames.HIDE_WARNINGS then
                         state.isShowBuildSnappyTracksFailed = false
+                        state.isShowNeedAdjust4Snap = false
                         guiHelpers.isShowingWarning = false
                     elseif name == _eventNames.HIDE_HOLE_REQUESTED then
                         -- _actions.rebuildUndergroundDepotWithoutHole(args.conId)
@@ -2446,14 +2453,19 @@ function data()
         -- update = function()
         -- end,
         guiUpdate = function()
-            if state.isShowBuildSnappyTracksFailed and not(guiHelpers.isShowingWarning) then
-                guiHelpers.showWarningWindowWithState(_('BuildSnappyTracksFailed'))
+            if not(guiHelpers.isShowingWarning) then
+                if state.isShowBuildSnappyTracksFailed then
+                    guiHelpers.showWarningWindowWithState(_('BuildSnappyTracksFailed'))
+                elseif state.isShowNeedAdjust4Snap then
+                    guiHelpers.showWarningWindowWithState(_('NeedAdjust4Snap'))
+                end
             end
         end,
         save = function()
             -- only fires when the worker thread changes the state
             if not state then state = {} end
             if not state.isShowBuildSnappyTracksFailed then state.isShowBuildSnappyTracksFailed = false end
+            if not state.isShowNeedAdjust4Snap then state.isShowNeedAdjust4Snap = false end
             return state
         end,
         load = function(loadedState)
@@ -2461,9 +2473,11 @@ function data()
             if loadedState then
                 state = {}
                 state.isShowBuildSnappyTracksFailed = loadedState.isShowBuildSnappyTracksFailed or false
+                state.isShowNeedAdjust4Snap = loadedState.isShowNeedAdjust4Snap or false
             else
                 state = {
                     isShowBuildSnappyTracksFailed = false,
+                    isShowNeedAdjust4Snap = false,
                 }
             end
         end,
