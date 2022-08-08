@@ -1064,6 +1064,37 @@ local _actions = {
         )
     ]]
     end,
+
+    upgradeStationConstruction = function(oldConId)
+        logger.print('upgradeStationConstruction starting, oldConId =', oldConId)
+        if not(edgeUtils.isValidAndExistingId(oldConId)) then return end
+
+        local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
+        -- logger.print('oldCon =') logger.debugPrint(oldCon)
+        if not(oldCon)
+        or oldCon.fileName ~= _constants.stationConFileName
+        or not(oldCon.params)
+        then return end
+
+        local paramsBak = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
+        xpcall(
+            function()
+                -- UG TODO there is no such thing in the new api,
+                -- nor an upgrade event, both would be useful
+
+                local upgradedConId = game.interface.upgradeConstruction(
+                    oldConId,
+                    oldCon.fileName,
+                    paramsBak
+                )
+                logger.print('upgradeStationConstruction succeeded') logger.debugPrint(upgradedConId)
+            end,
+            function(error)
+                state.isShowNeedAdjust4Snap = true
+                logger.warn(error)
+            end
+        )
+    end,
 }
 
 local _guiActions = {
@@ -1267,12 +1298,12 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     end
 end
 
-_actions.buildSnappyStreetEdges = function(stationConstructionId)
+_actions.buildSnappyStreetEdges = function(stationConId)
     -- stationHelpers._getStationStreetEndNodeIds
     -- LOLLO TODO implement this
     logger.print('buildSnappyStreetEdges starting')
 
-    local endEntities = stationHelpers.getStationStreetEndEntities(stationConstructionId)
+    local endEntities = stationHelpers.getStationStreetEndEntities(stationConId)
     local proposal = api.type.SimpleProposal.new()
     local _addNodeToRemove = function(nodeId)
         if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove, nodeId)) then
@@ -1367,7 +1398,9 @@ _actions.buildSnappyStreetEdges = function(stationConstructionId)
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
                     logger.print('buildSnappyStreetEdges callback, success =', success)
-                    state.isShowNeedAdjust4Snap = isAdjoiningConstruction
+                    if isAdjoiningConstruction then
+                        _actions.upgradeStationConstruction(stationConId)
+                    end
                 end
             )
         end
