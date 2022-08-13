@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 624,
+					offset = 4260,
+				},
+				position = {
+					count = 624,
+					offset = 2388,
+				},
+				tangent = {
+					count = 624,
+					offset = 3012,
+				},
+				uv0 = {
+					count = 624,
+					offset = 3636,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 5028,
+				},
+				position = {
+					count = 48,
+					offset = 4884,
+				},
+				tangent = {
+					count = 48,
+					offset = 4932,
+				},
+				uv0 = {
+					count = 48,
+					offset = 4980,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_lifts/doors.003.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 240,
+					offset = 5796,
+				},
+				position = {
+					count = 240,
+					offset = 5076,
+				},
+				tangent = {
+					count = 240,
+					offset = 5316,
+				},
+				uv0 = {
+					count = 240,
+					offset = 5556,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/roof.002.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 6324,
+				},
+				position = {
+					count = 96,
+					offset = 6036,
+				},
+				tangent = {
+					count = 96,
+					offset = 6132,
+				},
+				uv0 = {
+					count = 96,
+					offset = 6228,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_lifts/hole.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 252,
+			numComp = 3,
+			offset = 2136,
+		},
+		position = {
+			count = 672,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 352,
+			numComp = 4,
+			offset = 672,
+		},
+		uv0 = {
+			count = 1112,
+			numComp = 2,
+			offset = 1024,
+		},
+	},
+}
+end

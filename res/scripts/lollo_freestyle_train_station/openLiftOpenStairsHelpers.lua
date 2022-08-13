@@ -1,4 +1,10 @@
+local _arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local _constants = require('lollo_freestyle_train_station.constants')
+
+local _liftHeights = {}
+for i = 8, 40, 2 do
+    _liftHeights[#_liftHeights+1] = i
+end
 
 local _paramHelpers = {
     getSliderValues = function(max, step)
@@ -9,7 +15,7 @@ local _paramHelpers = {
         return results
     end,
     lift = {
-        heights = {8, 10},
+        heights = _liftHeights,
         eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
         bridgeModes = {0, 1, 2, 3},
         maxBridgeChunkYAngleDeg = 15,
@@ -84,7 +90,7 @@ local public = {
             era_prefix = {'A', 'B', 'C'},
             lift_base_mode = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
             lift_bridge_mode = {_('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
-            lift_height = {'8 m', '10 m'},
+            lift_height = _arrayUtils.map(_paramHelpers.lift.heights, function(int) return tostring(int) .. 'm' end)
         },
         stairs = {
             bridge_chunk_length = {_('NoRailing0'), '0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
@@ -95,7 +101,7 @@ local public = {
             era_prefix = {'A', 'B', 'C'},
             flat_sloped_terrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
             stairs_base = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'),},
-            stairs_height = {'2m', '4 m', '6m', '8 m', '10 m'},
+            stairs_height = _arrayUtils.map(_paramHelpers.stairs.heights, function(int) return tostring(int) .. 'm' end),
             terrain_alignment_type = {'EQUAL', 'LESS', 'GREATER'},
         },
     },

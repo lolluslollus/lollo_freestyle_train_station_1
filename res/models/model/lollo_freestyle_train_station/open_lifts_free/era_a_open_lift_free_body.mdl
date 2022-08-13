@@ -3,17 +3,6 @@ local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
 
 function data()
     return {
-        -- boundingInfo = {
-        --     bbMax = { 2.6, 1.1, 10.5, },
-        --     bbMin = { -2.6, -1.1, 0, },
-        -- },
-        -- collider = {
-        --     params = {
-        --         halfExtents = { 2.6, 1.1, 5.25, },
-        --     },
-        --     transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 5.25, 1, },
-        --     type = "BOX",
-        -- },
         boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
         collider = _mdlHelpers.getVoidCollider(),
         lods = {
@@ -23,15 +12,12 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/era_a_doors.mtl',
-                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
-                                -- 'lollo_freestyle_train_station/hole.mtl',
                                 'lollo_freestyle_train_station/black_transparent.mtl',
-                                'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
                                 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/open_lifts/era_a_open-lift-free-8m.msh',
+                            mesh = 'lollo_freestyle_train_station/open_lifts/era_a_open-lift-free-body.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
-                        },
+                        }
                     },
                     name = 'RootNode',
                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -46,12 +32,11 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/era_a_doors.mtl',
-                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
                                 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/open_lifts/era_a_open-lift-8m-lod1.msh',
+                            mesh = 'lollo_freestyle_train_station/open_lifts/era_a_open-lift-free-body-lod1.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
-                        },
+                        }
                     },
                     name = 'RootNode',
                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },

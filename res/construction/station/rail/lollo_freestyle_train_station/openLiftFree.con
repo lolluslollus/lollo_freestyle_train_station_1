@@ -1,4 +1,5 @@
 function data()
+    local _arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
     local _openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
@@ -104,11 +105,10 @@ function data()
                     -- }
                 },
                 models = {
-                    {
-                        -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
-                        id = 'lollo_freestyle_train_station/open_lifts_free/' .. _era_prefix .. ('open_lift_free_').. _height ..'m.mdl',
-                        transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
-                    },
+                    -- {
+                    --     id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
+                    --     transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
+                    -- },
                     {
                         id = (_baseMode == -1
                             and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp.mdl'
@@ -303,14 +303,45 @@ function data()
                 end
             end
 
+            local _addModels = function()
+                local _bodyHeight = 2 -- comes from the meshes
+                local _bottomHeight = 6 -- comes from the meshes
+                local _bodyCount = math.floor((_height -_bottomHeight) / _bodyHeight)
+                local _topZ = _height
+                table.insert(
+                    result.models,
+                    {
+                        id = 'lollo_freestyle_train_station/open_lifts_free/' .. _era_prefix .. 'open_lift_free_bottom.mdl',
+                        transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
+                    }
+                )
+                table.insert(
+                    result.models,
+                    {
+                        id = 'lollo_freestyle_train_station/open_lifts_free/' .. _era_prefix .. 'open_lift_free_top.mdl',
+                        transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _topZ, 1},
+                    }
+                )
+                for i = 1, _bodyCount, 1 do
+                    table.insert(
+                        result.models,
+                        {
+                            id = 'lollo_freestyle_train_station/open_lifts_free/' .. _era_prefix .. 'open_lift_free_body.mdl',
+                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _bottomHeight + (i-1) * _bodyHeight, 1},
+                        }
+                    )
+                end
+            end
+
             xpcall(
                 function()
                     _addBase()
                     _addBridge()
+                    _addModels()
                 end,
                 _myErrorHandler
             )
-
+            -- print('result.models =') debugPrint(result.models)
 			return result
 		end,
 
