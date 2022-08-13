@@ -1,5 +1,4 @@
 function data()
-    local _arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
     local _openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
