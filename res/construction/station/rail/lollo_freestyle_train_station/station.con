@@ -1110,6 +1110,15 @@ function data()
 				logger.print('terminateConstructionHook starting')
 		-- xpcall(
 		-- 	function()
+				local _getAllPositions_UndergroundBottom_GroundBottom = function()
+					local results = {}
+					for t = 1, #params.terminals do
+						results[t] = {}
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] or {})
+					end
+					return results
+				end
 				local _getAllPositions_UndergroundTop_GroundBottom = function()
 					local results = {}
 					for t = 1, #params.terminals do
@@ -1464,16 +1473,10 @@ function data()
 						-- 'EIGHT'
 						false
 					)
-					local shortSegmentsTunnelTops2Surface = _getSegmentsBetweenPos2Links_AcrossTerminals(
-                        result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-                        result.terminateConstructionHookInfo.underpassPositionsOnGround,
-						-- 'NINE'
-						false
-					)
 					local shortSegmentsTunnelTops2Bottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
                         result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-                        result.terminateConstructionHookInfo.tunnelStairsBottomPositions,
-						-- 'TEN'
+						_getAllPositions_UndergroundBottom_GroundBottom(),
+						-- 'NINE'
 						false
                     )
 
@@ -1483,7 +1486,7 @@ function data()
                     -- and we cannot just check the height of either coz there is too much freedom.
 					-- We try to get past it choosing the shortest path and always associating stairs down to stairs up
 					-- - we never have stairs down without stairs up.
-					local _reduceUpDownConnectors = function()
+					local _reduceUpDownUndergroundConnectors = function()
 						local maxT = #params.terminals
 						logger.print('shortSegmentsTunnelTops2Bottoms before reducing =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
 						logger.print('shortSegmentsTunnelTops2Tops before reducing =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
@@ -1517,7 +1520,7 @@ function data()
 						logger.print('shortSegmentsTunnelTops2Bottoms after reducing =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
 						logger.print('shortSegmentsTunnelTops2Tops after reducing =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 					end
-					_reduceUpDownConnectors()
+					_reduceUpDownUndergroundConnectors()
 
 					logger.print('shortSegmentsOpenStairsOrLifts =') logger.debugPrint(shortSegmentsOpenStairsOrLifts)
 					_linkAcross(shortSegmentsOpenStairsOrLifts, 99.0, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
@@ -1544,10 +1547,6 @@ function data()
 
 					logger.print('shortSegmentsTunnelTops2Bottoms =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
 					_linkAcross(shortSegmentsTunnelTops2Bottoms)
-
-					logger.print('shortSegmentsTunnelTops2Surface =') logger.debugPrint(shortSegmentsTunnelTops2Surface)
-					-- LOLLO TODO only make these connections if there are no other peer-to-peer connections between the terminals
-					_linkAcross(shortSegmentsTunnelTops2Surface, nil, nil, _linkedTerminals)
 				end
 				_linkUnderpassesAndStairs()
 				logger.print('passengers and stairs linked')
