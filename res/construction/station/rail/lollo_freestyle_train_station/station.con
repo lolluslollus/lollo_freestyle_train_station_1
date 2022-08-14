@@ -1488,32 +1488,28 @@ function data()
 						logger.print('shortSegmentsTunnelTops2Bottoms before reducing =') logger.debugPrint(shortSegmentsTunnelTops2Bottoms)
 						logger.print('shortSegmentsTunnelTops2Tops before reducing =') logger.debugPrint(shortSegmentsTunnelTops2Tops)
 						for t = 1, maxT do
-							local top2BottomsT = shortSegmentsTunnelTops2Bottoms[t]
-							if top2BottomsT ~= nil then
-								for tt = t+1, maxT do
-									local top2BottomsT_TT = top2BottomsT[tt]
-									if top2BottomsT_TT ~= nil then
-										local minDistanceTops2BottomsT_TT = nil
-										for _, top2Bottom in pairs(top2BottomsT_TT) do
-											if minDistanceTops2BottomsT_TT == nil or minDistanceTops2BottomsT_TT > top2Bottom.distance then
-												minDistanceTops2BottomsT_TT = top2Bottom.distance
-											end
+							local top2BottomsT = shortSegmentsTunnelTops2Bottoms[t] or {}
+							for tt = t+1, maxT do
+								local top2BottomsT_TT = top2BottomsT[tt] or {}
+								local minDistanceTops2BottomsT_TT = nil
+								for _, top2Bottom in pairs(top2BottomsT_TT) do
+									if minDistanceTops2BottomsT_TT == nil or minDistanceTops2BottomsT_TT > top2Bottom.distance then
+										minDistanceTops2BottomsT_TT = top2Bottom.distance
+									end
+								end
+								local minDistanceTops2TopsT_TT = nil
+								if shortSegmentsTunnelTops2Tops[t] and shortSegmentsTunnelTops2Tops[t][tt] then
+									for _, top2Top in pairs(shortSegmentsTunnelTops2Tops[t][tt]) do
+										if minDistanceTops2TopsT_TT == nil or minDistanceTops2TopsT_TT > top2Top.distance then
+											minDistanceTops2TopsT_TT = top2Top.distance
 										end
-										local minDistanceTops2TopsT_TT = nil
-										if shortSegmentsTunnelTops2Tops[t] and shortSegmentsTunnelTops2Tops[t][tt] then
-											for _, top2Top in pairs(shortSegmentsTunnelTops2Tops[t][tt]) do
-												if minDistanceTops2TopsT_TT == nil or minDistanceTops2TopsT_TT > top2Top.distance then
-													minDistanceTops2TopsT_TT = top2Top.distance
-												end
-											end
-										end
-										if minDistanceTops2BottomsT_TT ~= nil and minDistanceTops2TopsT_TT ~= nil then
-											if minDistanceTops2BottomsT_TT < minDistanceTops2TopsT_TT then
-												shortSegmentsTunnelTops2Tops[t][tt] = {}
-											else
-												shortSegmentsTunnelTops2Bottoms[t][tt] = {}
-											end
-										end
+									end
+								end
+								if minDistanceTops2BottomsT_TT ~= nil and minDistanceTops2TopsT_TT ~= nil then
+									if minDistanceTops2BottomsT_TT < minDistanceTops2TopsT_TT then
+										shortSegmentsTunnelTops2Tops[t][tt] = {}
+									else
+										shortSegmentsTunnelTops2Bottoms[t][tt] = {}
 									end
 								end
 							end
@@ -1550,7 +1546,7 @@ function data()
 					_linkAcross(shortSegmentsTunnelTops2Bottoms)
 
 					logger.print('shortSegmentsTunnelTops2Surface =') logger.debugPrint(shortSegmentsTunnelTops2Surface)
-					-- only make these connections if there are no other peer-to-peer connections between the terminals
+					-- LOLLO TODO only make these connections if there are no other peer-to-peer connections between the terminals
 					_linkAcross(shortSegmentsTunnelTops2Surface, nil, nil, _linkedTerminals)
 				end
 				_linkUnderpassesAndStairs()
