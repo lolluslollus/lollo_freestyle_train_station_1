@@ -319,12 +319,12 @@ function data()
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["Stairs"] = "Stairs, Lifts, Underground Entrances for the Freestyle Train Station",
             ["StairsBase"] = "Expand Base",
-			["StairsBaseTooltip"] = "It might be easier to select \"Path\" or \"Auto\" when building or changing properties and change it to \"Bridge\" or \"Snappy\" once done",
+			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Help yourself with AltGr + L.",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",
 			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
-			["TopPlatformLengthTooltip"] = "It might be easier to select \"Path\" or \"Auto\" when building or changing properties and change it to \"Bridge\" or \"Snappy\" once done",
+			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Help yourself with AltGr + L.",
 		},
 	}
 end
