@@ -1192,37 +1192,6 @@ function data()
 						return isNorthResult
 					end
 
-					local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
-                        local newSegment = {}
-						if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
-                        or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
-							newSegment.t1 = oldSegment.t1
-							newSegment.t2 = oldSegment.t2
-							newSegment.t1Index = oldSegment.t1Index
-							newSegment.t2Index = oldSegment.t2Index
-							newSegment.distance = oldSegment.distance
-							newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
-							newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
-							newSegment.pos2Link1 = oldSegment.pos2Link1
-							newSegment.pos2Link2 = oldSegment.pos2Link2
-							newSegment.eraOfT1 = oldSegment.eraOfT1
-							newSegment.eraOfT2 = oldSegment.eraOfT2
-						else
-							newSegment.t1 = oldSegment.t2
-							newSegment.t2 = oldSegment.t1
-							newSegment.t1Index = oldSegment.t2Index
-							newSegment.t2Index = oldSegment.t1Index
-							newSegment.distance = oldSegment.distance
-							newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
-							newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
-							newSegment.pos2Link1 = oldSegment.pos2Link2
-							newSegment.pos2Link2 = oldSegment.pos2Link1
-							newSegment.eraOfT1 = oldSegment.eraOfT2
-							newSegment.eraOfT2 = oldSegment.eraOfT1
-						end
-                        return newSegment
-                    end
-
 					local _maxT = #params.terminals
 					local _getMinDistanceSegments = function()
 						-- for each terminal, then for each connected point, 
@@ -1400,11 +1369,52 @@ function data()
 					end
 
 					-- Now we put all segments together, avoiding duplicates or redundant links.
-					local _pruneSegments = function(segments, outTable, isMakeT1LessThanT2)
-						-- segments is arranged with t1 = lowest terminal of each link if isMakeT1LessThanT2,
-						-- otherwise with the highest
+					local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
+                        local newSegment = {}
+						if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
+                        or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
+							newSegment.t1 = oldSegment.t1
+							newSegment.t2 = oldSegment.t2
+							newSegment.t1Index = oldSegment.t1Index
+							newSegment.t2Index = oldSegment.t2Index
+							newSegment.distance = oldSegment.distance
+							newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
+							newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
+							newSegment.pos2Link1 = oldSegment.pos2Link1
+							newSegment.pos2Link2 = oldSegment.pos2Link2
+							newSegment.eraOfT1 = oldSegment.eraOfT1
+							newSegment.eraOfT2 = oldSegment.eraOfT2
+						else
+							newSegment.t1 = oldSegment.t2
+							newSegment.t2 = oldSegment.t1
+							newSegment.t1Index = oldSegment.t2Index
+							newSegment.t2Index = oldSegment.t1Index
+							newSegment.distance = oldSegment.distance
+							newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
+							newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
+							newSegment.pos2Link1 = oldSegment.pos2Link2
+							newSegment.pos2Link2 = oldSegment.pos2Link1
+							newSegment.eraOfT1 = oldSegment.eraOfT2
+							newSegment.eraOfT2 = oldSegment.eraOfT1
+						end
+                        return newSegment
+                    end
+
+					local _getIndexedTable = function(inTable, isMakeT1LessThanT2)
+						local outTable = {}
+						for _, segment in pairs(inTable) do
+							local newSegment = _getSegmentWithT1AndT2Sorted(segment, isMakeT1LessThanT2)
+							local t1, t1Index = newSegment.t1, newSegment.t1Index
+							if outTable[t1] == nil then outTable[t1] = {} end
+							if outTable[t1][t1Index] == nil then outTable[t1][t1Index] = {} end
+							table.insert(outTable[t1][t1Index], newSegment)
+						end
+					end
+					local _pruneSegments = function(segments, outTable)
+						-- segments are arranged with t1 = always the lowest terminal of each link, or always the highest
 						-- In the following, I:
-						-- remove redundant links (eg if there are two or more links heading left or right, I only keep the shortest)
+						-- remove redundant links (eg if there are two or more links heading left or right from any point,
+						-- I only keep the shortest)
 						for _, isNorthOfT1 in pairs({true, false}) do
 							local newSegment = {distance = 9999}
 							local isNewSegmentThere = false
@@ -1417,8 +1427,7 @@ function data()
 								end
 							end
 							if isNewSegmentThere then
-								newSegment = _getSegmentWithT1AndT2Sorted(newSegment, isMakeT1LessThanT2)
-								local t1, t2 = newSegment.t1, newSegment.t2
+								-- newSegment = _getSegmentWithT1AndT2Sorted(newSegment, isMakeT1LessThanT2)
 								table.insert(outTable, newSegment)
 								-- if isOutputLog then print('# isNorthOfT1 =', isNorthOfT1, ', inserted segment ') debugPrint(newSegment) end
 							end
@@ -1426,39 +1435,25 @@ function data()
 					end
 
 					-- First with the small terminal first...
-					local minDistanceSegments_T_I_SmallTFirst = {}
-					for _, segment in pairs(minDistanceSegments) do
-						local newSegment = _getSegmentWithT1AndT2Sorted(segment, true)
-						local t1, t1Index = newSegment.t1, newSegment.t1Index
-						if minDistanceSegments_T_I_SmallTFirst[t1] == nil then minDistanceSegments_T_I_SmallTFirst[t1] = {} end
-						if minDistanceSegments_T_I_SmallTFirst[t1][t1Index] == nil then minDistanceSegments_T_I_SmallTFirst[t1][t1Index] = {} end
-						table.insert(minDistanceSegments_T_I_SmallTFirst[t1][t1Index], newSegment)
-					end
+					local minDistanceSegments_T_I_SmallTFirst = _getIndexedTable(minDistanceSegments, true)
 					if isOutputLog then print('minDistanceSegments_T_I_SmallTFirst =') debugPrint(minDistanceSegments_T_I_SmallTFirst) end
 
 					local prunedSegments_SmallTFirst = {}
                     for t = 1, _maxT do
 						for _, segmentsTouchingPointI in pairs(minDistanceSegments_T_I_SmallTFirst[t] or {}) do
-							_pruneSegments(segmentsTouchingPointI, prunedSegments_SmallTFirst, true)
+							_pruneSegments(segmentsTouchingPointI, prunedSegments_SmallTFirst)
 						end
 					end
 					if isOutputLog then print('prunedSegments_SmallTFirst =') debugPrint(prunedSegments_SmallTFirst) end
 
 					-- ...and now we repeat with the large terminals first
-					local minDistanceSegments_T_I_LargeTFirst = {}
-					for _, segment in pairs(prunedSegments_SmallTFirst) do
-						local newSegment = _getSegmentWithT1AndT2Sorted(segment, false)
-						local t1, t1Index = newSegment.t1, newSegment.t1Index
-						if minDistanceSegments_T_I_LargeTFirst[t1] == nil then minDistanceSegments_T_I_LargeTFirst[t1] = {} end
-						if minDistanceSegments_T_I_LargeTFirst[t1][t1Index] == nil then minDistanceSegments_T_I_LargeTFirst[t1][t1Index] = {} end
-						table.insert(minDistanceSegments_T_I_LargeTFirst[t1][t1Index], newSegment)
-					end
+					local minDistanceSegments_T_I_LargeTFirst = _getIndexedTable(prunedSegments_SmallTFirst, false)
 					if isOutputLog then print('minDistanceSegments_T_I_LargeTFirst =') debugPrint(minDistanceSegments_T_I_LargeTFirst) end
 
 					local prunedSegments_LargeTFirst = {}
                     for t = 1, _maxT do
 						for _, segmentsTouchingPointI in pairs(minDistanceSegments_T_I_LargeTFirst[t] or {}) do
-							_pruneSegments(segmentsTouchingPointI, prunedSegments_LargeTFirst, true)
+							_pruneSegments(segmentsTouchingPointI, prunedSegments_LargeTFirst)
 						end
 					end
 					if isOutputLog then print('prunedSegments_LargeTFirst =') debugPrint(prunedSegments_LargeTFirst) end
