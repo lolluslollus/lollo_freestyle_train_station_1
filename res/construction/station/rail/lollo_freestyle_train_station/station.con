@@ -1132,7 +1132,7 @@ function data()
 				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
-					if isOutputLog then print('#### _getSegmentsBetweenPos2Links_AcrossTerminals starting ' .. tostring(isOutputLog)) end
+					if not(not(isOutputLog)) then print('#### _getSegmentsBetweenPos2Links_AcrossTerminals starting ' .. tostring(isOutputLog)) end
 
 					local _isNorth = function(posTanX2, pos, distance)
 						-- distance is only for debugging purposes
@@ -1219,14 +1219,15 @@ function data()
 					local _getMinDistanceSegments = function()
 						-- for each terminal, then for each connected point, 
 						-- get the connecting segments.
-						-- Purge the segments connecting T, i to the same TT (never mind ii) except the shortest,
+						-- For all connections T, i, only keep the shortest to any given TT (never mind ii),
 						-- since _isNorth is only reliable locally, and it can produce extra segments (see note above)
 						local minDistance_T_I_TT_segments = {}
 						for t = 1, _maxT do
 							local positionsInT = positionsA[t] or {}
 							for i = 1, #positionsInT do
-								for tt = 1, _maxT do
-									if t ~= tt then
+								-- for tt = 1, _maxT do
+								-- if t ~= tt then
+									for tt = t+1, _maxT do
 										local minDistance_T_I_TT_segment = nil
 										local positionsInTT = positionsB[tt] or {}
 										for ii = 1, #positionsInTT do
@@ -1257,7 +1258,7 @@ function data()
 											minDistance_T_I_TT_segments[t][i][tt] = minDistance_T_I_TT_segment
 										end
 									end
-								end
+								-- end
 							end
 						end
 						if isOutputLog then print('minDistance_T_TT_I_segments =') debugPrint(minDistance_T_I_TT_segments) end
@@ -1301,8 +1302,8 @@ function data()
 					if isOutputLog then
 						print('minDistanceSegments =') debugPrint(minDistanceSegments)
 					end
-					-- Now we put all segments together, avoiding duplicates or redundant links.
 
+					-- Now we put all segments together, avoiding duplicates or redundant links.
 					local minDistance_T_I_Segments_SmallTFirst = {}
 					for _, segment in pairs(minDistanceSegments) do
 						local newSegment = _getSegmentWithT1AndT2Sorted(segment, true)
@@ -1312,40 +1313,40 @@ function data()
 						if minDistance_T_I_Segments_SmallTFirst[t1][t1Index] == nil then minDistance_T_I_Segments_SmallTFirst[t1][t1Index] = {} end
 						table.insert(minDistance_T_I_Segments_SmallTFirst[t1][t1Index], newSegment)
 					end
-
 					if isOutputLog then
 						print('minDistance_T_I_Segments_SmallTFirst =') debugPrint(minDistance_T_I_Segments_SmallTFirst)
 					end
+
 					-- minDistance_T_I_Segments_SmallTFirst is indexed by t1 (lowest terminal of each link)
 					-- and t1Index (index of connection point along it).
 					-- In the following, I:
 					-- remove duplicate links (eg terminal 1, index 1 to terminal 2, index 1 and viceversa)
 					-- remove redundant links (eg if there are two or more links heading left or right, I only keep the shortest)
 					-- index the remaining links by terminal 1 and then terminal 2
-					local short_T_TT_Segments_SmallTFirst = {}
+					local final_T_TT_Segments_SmallTFirst = {}
                     for t = 1, _maxT do
 						if minDistance_T_I_Segments_SmallTFirst[t] then
-							for _, segmentsTouchingPointWithIndex in pairs(minDistance_T_I_Segments_SmallTFirst[t]) do
+							for _, segmentsTouchingPointI in pairs(minDistance_T_I_Segments_SmallTFirst[t]) do
 								for _, isNorthOfT1 in pairs({true, false}) do
-									local testSegment = {distance = 9999}
+									local newSegment = {distance = 9999}
 									local isNewSegmentThere = false
-									for _, segment in pairs(segmentsTouchingPointWithIndex) do
+									for _, segment in pairs(segmentsTouchingPointI) do
 										if segment.isNorthOfT1 == isNorthOfT1
-										and segment.distance < testSegment.distance
+										and segment.distance < newSegment.distance
 										then
-											testSegment = segment
+											newSegment = segment
 											isNewSegmentThere = true
 										end
 									end
 									if isNewSegmentThere then
-                                        local newSegment = _getSegmentWithT1AndT2Sorted(testSegment, true)
+                                        newSegment = _getSegmentWithT1AndT2Sorted(newSegment, true) -- probably redundant
 										local t1 = newSegment.t1
 										local t2 = newSegment.t2
-										if short_T_TT_Segments_SmallTFirst[t1] == nil then short_T_TT_Segments_SmallTFirst[t1] = {} end
-										if short_T_TT_Segments_SmallTFirst[t1][t2] == nil then short_T_TT_Segments_SmallTFirst[t1][t2] = {} end
-										table.insert(short_T_TT_Segments_SmallTFirst[t1][t2], newSegment)
+										if final_T_TT_Segments_SmallTFirst[t1] == nil then final_T_TT_Segments_SmallTFirst[t1] = {} end
+										if final_T_TT_Segments_SmallTFirst[t1][t2] == nil then final_T_TT_Segments_SmallTFirst[t1][t2] = {} end
+										table.insert(final_T_TT_Segments_SmallTFirst[t1][t2], newSegment)
 										if isOutputLog then
-											print('isNorthOfT1 =', isNorthOfT1, ', inserted segment ') debugPrint(newSegment) print('with t1 =', t1, 'and t2 =', t2)
+											print('# isNorthOfT1 =', isNorthOfT1, ', inserted segment ') debugPrint(newSegment) print('with t =', t)
 										end
 									end
 								end
@@ -1353,10 +1354,10 @@ function data()
 						end
 					end
 					if isOutputLog then
-						print('short_T_TT_Segments_SmallTFirst =') debugPrint(short_T_TT_Segments_SmallTFirst)
+						print('final_T_TT_Segments_SmallTFirst =') debugPrint(final_T_TT_Segments_SmallTFirst)
 					end
 
-					return short_T_TT_Segments_SmallTFirst
+					return final_T_TT_Segments_SmallTFirst
 				end
 
 				local _linkUnderpassesAndStairs = function()
