@@ -1149,6 +1149,9 @@ function data()
 						-- Terminal 1 is above, terminal 2 is below.
 						-- Take the T1 SE segment: the T2 SE position is south, the T2 SW position too.
 						-- Take the T2 SE segment: the T1 SE position is north, the T1 SW position is north.
+						-- /A - \B -- a terminal with two points to be linked
+						-- /C - \D -- a parallel terminal just below
+						-- It can happen that D is south of A and A is south of D
 						-- As you see, this function needs calculating for each reference segment and point
 						-- of a pair of bits to join.
 						-- a + b * x = y
