@@ -1115,13 +1115,14 @@ function data()
 				logger.print('terminateConstructionHook starting')
 		-- xpcall(
 		-- 	function()
-				local _getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom = function()
+				local _getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom = function()
 					local results = {}
 					for t = 1, #params.terminals do
 						results[t] = {}
 						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
 						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] or {})
 						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
+						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
 					end
 					return results
 				end
@@ -1535,7 +1536,7 @@ function data()
 						false
 					)
 
-					local shortSegmentsOnBridge = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					local shortSegmentsInBridgeBelly = _getSegmentsBetweenPos2Links_AcrossTerminals(
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
 						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
 						false
@@ -1547,15 +1548,16 @@ function data()
 						false
 					)
 
-					local shortSegmentsTunnelTops2BridgeBottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
-                        result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-                        result.terminateConstructionHookInfo.liftBottomPositions,
-						false
-					)
+					-- local shortSegmentsTunnelTops2LiftBottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
+					-- 	-- result.terminateConstructionHookInfo.tunnelStairsTopPositions,
+					-- 	_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom()
+                    --     result.terminateConstructionHookInfo.liftBottomPositions,
+					-- 	false
+					-- )
 
 					local shortSegmentsInTheEarth = _getSegmentsBetweenPos2Links_AcrossTerminals(
-						_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom(),
-						_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom(),
+						_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom(),
+						_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom(),
 						-- 'shortSegmentsInTheEarth'
 						false
 					)
@@ -1563,16 +1565,16 @@ function data()
 					logger.print('shortSegmentsOpenStairsOrLifts =') logger.debugPrint(shortSegmentsOpenStairsOrLifts)
 					_linkAcross(shortSegmentsOpenStairsOrLifts, 99.0, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
 
-					logger.print('shortSegmentsOnBridge =') logger.debugPrint(shortSegmentsOnBridge)
-					-- lifts can connect to other lifts on other terminals, even if they are far away and there is an S bend:
+					logger.print('shortSegmentsInBridgeBelly =') logger.debugPrint(shortSegmentsInBridgeBelly)
+					-- bridge underpasses can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 					-- we try to avoid this with maxDistance
-					_linkAcross(shortSegmentsOnBridge, 40.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
+					_linkAcross(shortSegmentsInBridgeBelly, 40.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
 
 					logger.print('shortSegmentsStairsOrLifts2Bridges =') logger.debugPrint(shortSegmentsStairsOrLifts2Bridges)
 					_linkAcross(shortSegmentsStairsOrLifts2Bridges, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
 
-					logger.print('shortSegmentsTunnelTops2BridgeBottoms =') logger.debugPrint(shortSegmentsTunnelTops2BridgeBottoms)
-					_linkAcross(shortSegmentsTunnelTops2BridgeBottoms)
+					-- logger.print('shortSegmentsTunnelTops2LiftBottoms =') logger.debugPrint(shortSegmentsTunnelTops2LiftBottoms)
+					-- _linkAcross(shortSegmentsTunnelTops2LiftBottoms)
 
 					logger.print('shortSegmentsInTheEarth =') logger.debugPrint(shortSegmentsInTheEarth)
 					_linkAcross(shortSegmentsInTheEarth)
