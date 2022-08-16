@@ -189,9 +189,9 @@ function data()
 			["TunnelStairsUpDownDesc"] = "Connects underground passenger platforms to the subway entrances and the other terminals above and below.",
 			["UndergroundName"] = "Underground Station",
 			["UnderpassName"] = "Covered Underpass",
-			["UnderpassDesc"] = "Connects passenger platforms to the subway entrances and the other terminals. If it is close to platform stairs or lifts, it will connect to those too.",
+			["UnderpassDesc"] = "Connects passenger platforms to the subway entrances and the other terminals. If it is on a bridge and close to platform stairs or lifts, it will connect to those too.",
 			["UnderpassStairsName"] = "Underpass",
-			["UnderpassStairsDesc"] = "Connects passenger platforms to the subway entrances and the other terminals. If it is close to platform stairs or lifts, it will connect to those too.",
+			["UnderpassStairsDesc"] = "Connects passenger platforms to the subway entrances and the other terminals. If it is on a bridge and close to platform stairs or lifts, it will connect to those too.",
 
 			["EraACargoPlatform5MName"] = "5 m cargo platform, era A",
 			["EraACargoPlatform5MDesc"] = "Cargo platforms to be laid as tracks, 5 m wide, era A. They are in fact slow train tracks; they are not meant to be crossed.",
