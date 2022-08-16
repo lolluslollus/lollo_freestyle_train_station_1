@@ -1181,6 +1181,37 @@ function data()
 						return isNorthResult
 					end
 
+					local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
+                        local newSegment = {}
+						if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
+                        or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
+							newSegment.t1 = oldSegment.t1
+							newSegment.t2 = oldSegment.t2
+							newSegment.t1Index = oldSegment.t1Index
+							newSegment.t2Index = oldSegment.t2Index
+							newSegment.distance = oldSegment.distance
+							newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
+							newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
+							newSegment.pos2Link1 = oldSegment.pos2Link1
+							newSegment.pos2Link2 = oldSegment.pos2Link2
+							newSegment.eraOfT1 = oldSegment.eraOfT1
+							newSegment.eraOfT2 = oldSegment.eraOfT2
+						else
+							newSegment.t1 = oldSegment.t2
+							newSegment.t2 = oldSegment.t1
+							newSegment.t1Index = oldSegment.t2Index
+							newSegment.t2Index = oldSegment.t1Index
+							newSegment.distance = oldSegment.distance
+							newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
+							newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
+							newSegment.pos2Link1 = oldSegment.pos2Link2
+							newSegment.pos2Link2 = oldSegment.pos2Link1
+							newSegment.eraOfT1 = oldSegment.eraOfT2
+							newSegment.eraOfT2 = oldSegment.eraOfT1
+						end
+                        return newSegment
+                    end
+
 					local _maxT = #params.terminals
 					local _getMinDistanceSegments = function()
 						-- for each terminal, then for each connected point, 
@@ -1268,37 +1299,6 @@ function data()
 						print('minDistanceSegments =') debugPrint(minDistanceSegments)
 					end
 					-- Now we put all segments together, avoiding duplicates or redundant links.
-
-					local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
-                        local newSegment = {}
-						if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
-                        or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
-							newSegment.t1 = oldSegment.t1
-							newSegment.t2 = oldSegment.t2
-							newSegment.t1Index = oldSegment.t1Index
-							newSegment.t2Index = oldSegment.t2Index
-							newSegment.distance = oldSegment.distance
-							newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
-							newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
-							newSegment.pos2Link1 = oldSegment.pos2Link1
-							newSegment.pos2Link2 = oldSegment.pos2Link2
-							newSegment.eraOfT1 = oldSegment.eraOfT1
-							newSegment.eraOfT2 = oldSegment.eraOfT2
-						else
-							newSegment.t1 = oldSegment.t2
-							newSegment.t2 = oldSegment.t1
-							newSegment.t1Index = oldSegment.t2Index
-							newSegment.t2Index = oldSegment.t1Index
-							newSegment.distance = oldSegment.distance
-							newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
-							newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
-							newSegment.pos2Link1 = oldSegment.pos2Link2
-							newSegment.pos2Link2 = oldSegment.pos2Link1
-							newSegment.eraOfT1 = oldSegment.eraOfT2
-							newSegment.eraOfT2 = oldSegment.eraOfT1
-						end
-                        return newSegment
-                    end
 
 					local minDistance_T_I_Segments_SmallTFirst = {}
 					for _, segment in pairs(minDistanceSegments) do
