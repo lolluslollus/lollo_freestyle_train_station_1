@@ -1222,13 +1222,14 @@ function data()
 						-- For all connections T, i, only keep the shortest to any given TT (never mind ii),
 						-- since _isNorth is only reliable locally, and it can produce extra segments (see note above)
 						local minDistance_T_I_TT_segments = {}
+						local minDistance_T_TT_II_segments = {}
 						for t = 1, _maxT do
 							local positionsInT = positionsA[t] or {}
 							for i = 1, #positionsInT do
 								-- for tt = 1, _maxT do
 								-- if t ~= tt then
 									for tt = t+1, _maxT do
-										local minDistance_T_I_TT_segment = nil
+										local minDistanceSegment = nil
 										local positionsInTT = positionsB[tt] or {}
 										for ii = 1, #positionsInTT do
 											local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
@@ -1247,15 +1248,31 @@ function data()
 												eraOfT1 = positionsInT[i].era,
 												eraOfT2 = positionsInTT[ii].era,
 											}
-											if minDistance_T_I_TT_segment == nil or minDistance_T_I_TT_segment.distance > distance then
-												minDistance_T_I_TT_segment = newSegment
+											if minDistanceSegment == nil or minDistanceSegment.distance > distance then
+												minDistanceSegment = newSegment
 											end
 										end
-										if minDistance_T_I_TT_segment ~= nil then
-											if minDistance_T_I_TT_segments[t] == nil then minDistance_T_I_TT_segments[t] = {} end
-											if minDistance_T_I_TT_segments[t][i] == nil then minDistance_T_I_TT_segments[t][i] = {} end
-											if minDistance_T_I_TT_segments[t][i][tt] == nil then minDistance_T_I_TT_segments[t][i][tt] = {} end
-											minDistance_T_I_TT_segments[t][i][tt] = minDistance_T_I_TT_segment
+										if minDistanceSegment ~= nil then
+											-- some segments may still be redundant, even if we proceed index by index:
+											-- for example, t i <-> tt ii and t iother <-> tt ii
+											local isInsertRequired = true
+											if minDistance_T_TT_II_segments[t] == nil then minDistance_T_TT_II_segments[t] = {} end
+											if minDistance_T_TT_II_segments[t][tt] == nil then minDistance_T_TT_II_segments[t][tt] = {} end
+											local cachedSegment = minDistance_T_TT_II_segments[t][tt][minDistanceSegment.t2Index]
+											if cachedSegment == nil then
+												minDistance_T_TT_II_segments[t][tt][minDistanceSegment.t2Index] = minDistanceSegment
+											elseif cachedSegment.distance > minDistanceSegment.distance then
+												minDistance_T_I_TT_segments[cachedSegment.t1][cachedSegment.t1Index][cachedSegment.t2] = nil
+												minDistance_T_TT_II_segments[t][tt][minDistanceSegment.t2Index] = minDistanceSegment
+											else
+												isInsertRequired = false
+											end
+
+											if isInsertRequired then
+												if minDistance_T_I_TT_segments[t] == nil then minDistance_T_I_TT_segments[t] = {} end
+												if minDistance_T_I_TT_segments[t][i] == nil then minDistance_T_I_TT_segments[t][i] = {} end
+												minDistance_T_I_TT_segments[t][i][tt] = minDistanceSegment
+											end
 										end
 									end
 								-- end
