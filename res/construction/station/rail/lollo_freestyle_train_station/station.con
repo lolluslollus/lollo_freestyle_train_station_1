@@ -1137,61 +1137,126 @@ function data()
 					return results
 				end
 
+				local _isNorth = function(posTanX2, pos, distance)
+					-- distance is only for debugging purposes
+					-- We imagine walking along a platform from end to end, and checking connections heading left and right.
+					-- We approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short.
+					-- The direction ought to be irrelevant coz the calc is based on absolute positions
+					-- LOLLO NOTE
+					-- Suppose I have two curvy tracks, or 2 tracks that cross, maybe at different heights.
+					-- Imagine two pos2Links in the left part of the cross and two in the right.
+					-- Terminal 1 goes from NW to SE, terminal 2 goes from SW to NE.
+					-- The SE point is south of any segments in terminal 2.
+					-- The SW point is south of any segments in terminal 1.
+					-- Imagine I have two curvx tracks, parallel. They go from SW to N and SE.
+					-- Terminal 1 is above, terminal 2 is below.
+					-- Take the T1 SE segment: the T2 SE position is south, the T2 SW position too.
+					-- Take the T2 SE segment: the T1 SE position is north, the T1 SW position is north.
+					-- /A - \B -- a terminal with two points to be linked
+					-- /C - \D -- a parallel terminal just below
+					-- It can happen that D is south of A and A is south of D
+					-- As you see, this function needs calculating for each reference segment and point
+					-- of a pair of bits to join.
+					-- a + b * x = y
+					-- b = dY / dX
+					-- a = y - dY / dX * x
+					local x0, x1 = posTanX2[1][1][1], posTanX2[2][1][1]
+					local y0, y1 = posTanX2[1][1][2], posTanX2[2][1][2]
+					local dX = x1 - x0
+					local dY = y1 - y0
+					local _isOutputLog = false
+					if _isOutputLog then
+						print('_isNorth received posTanX2 =') debugPrint(posTanX2)
+						print(', pos =') debugPrint(pos)
+						print(', dX =', dX, 'dY =', dY)
+						print(', distance =', distance or 'NIL')
+					end
+					if dX == 0 then
+						local isNorthResult = pos[1] < x0
+						if _isOutputLog then
+							print('_isNorth has calculated result = ', isNorthResult)
+						end
+						return isNorthResult
+					end
+					local b = dY / dX
+					local a = y0 - b * x0
+					local isNorthResult = a + b * pos[1] < pos[2]
+					if _isOutputLog then
+						print('_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult)
+						print('a + b * x0 =', a + b * x0, 'y0 =', y0, 'a + b * x1 =', a + b * x1, 'y1 =', y1, 'a + b * pos[1] =', a + b * pos[1], 'pos[2] =', pos[2])
+					end
+					return isNorthResult
+				end
+
+				local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
+					local newSegment = {}
+					if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
+					or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
+						newSegment.t1 = oldSegment.t1
+						newSegment.t2 = oldSegment.t2
+						newSegment.t1Index = oldSegment.t1Index
+						newSegment.t2Index = oldSegment.t2Index
+						newSegment.distance = oldSegment.distance
+						newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
+						newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
+						newSegment.pos2Link1 = oldSegment.pos2Link1
+						newSegment.pos2Link2 = oldSegment.pos2Link2
+						newSegment.eraOfT1 = oldSegment.eraOfT1
+						newSegment.eraOfT2 = oldSegment.eraOfT2
+					else
+						newSegment.t1 = oldSegment.t2
+						newSegment.t2 = oldSegment.t1
+						newSegment.t1Index = oldSegment.t2Index
+						newSegment.t2Index = oldSegment.t1Index
+						newSegment.distance = oldSegment.distance
+						newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
+						newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
+						newSegment.pos2Link1 = oldSegment.pos2Link2
+						newSegment.pos2Link2 = oldSegment.pos2Link1
+						newSegment.eraOfT1 = oldSegment.eraOfT2
+						newSegment.eraOfT2 = oldSegment.eraOfT1
+					end
+					return newSegment
+				end
+
+				local _get_T_I_IndexedTable = function(inTable, isMakeT1LessThanT2)
+					local outTable = {}
+					for _, segment in pairs(inTable) do
+						local newSegment = _getSegmentWithT1AndT2Sorted(segment, isMakeT1LessThanT2)
+						local t1, t1Index = newSegment.t1, newSegment.t1Index
+						if outTable[t1] == nil then outTable[t1] = {} end
+						if outTable[t1][t1Index] == nil then outTable[t1][t1Index] = {} end
+						table.insert(outTable[t1][t1Index], newSegment)
+					end
+				end
+				local _pruneSegments = function(segments, outTable)
+					-- segments are arranged with t1 = always the lowest terminal of each link, or always the highest
+					-- In the following, I:
+					-- remove redundant links (eg if there are two or more links heading left or right from any point,
+					-- I only keep the shortest)
+					for _, isNorthOfT1 in pairs({true, false}) do
+						local newSegment = {distance = 9999}
+						local isNewSegmentThere = false
+						for _, segment in pairs(segments) do
+							if segment.isNorthOfT1 == isNorthOfT1
+							and segment.distance < newSegment.distance
+							then
+								newSegment = segment
+								isNewSegmentThere = true
+							end
+						end
+						if isNewSegmentThere then
+							-- newSegment = _getSegmentWithT1AndT2Sorted(newSegment, isMakeT1LessThanT2)
+							table.insert(outTable, newSegment)
+							-- if isOutputLog then print('# isNorthOfT1 =', isNorthOfT1, ', inserted segment ') debugPrint(newSegment) end
+						end
+					end
+				end
+
 				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
 					-- for each combination of terminals, return the shortest paths.
 					-- sort the results so that the first index is always < the second index
 					if not(not(isOutputLog)) then print('#### _getSegmentsBetweenPos2Links_AcrossTerminals starting ' .. tostring(isOutputLog)) end
-
-					local _isNorth = function(posTanX2, pos, distance)
-						-- distance is only for debugging purposes
-						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
-						-- We approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short.
-						-- The direction ought to be irrelevant coz the calc is based on absolute positions
-						-- LOLLO NOTE
-						-- Suppose I have two curvy tracks, or 2 tracks that cross, maybe at different heights.
-						-- Imagine two pos2Links in the left part of the cross and two in the right.
-						-- Terminal 1 goes from NW to SE, terminal 2 goes from SW to NE.
-						-- The SE point is south of any segments in terminal 2.
-						-- The SW point is south of any segments in terminal 1.
-						-- Imagine I have two curvx tracks, parallel. They go from SW to N and SE.
-						-- Terminal 1 is above, terminal 2 is below.
-						-- Take the T1 SE segment: the T2 SE position is south, the T2 SW position too.
-						-- Take the T2 SE segment: the T1 SE position is north, the T1 SW position is north.
-						-- /A - \B -- a terminal with two points to be linked
-						-- /C - \D -- a parallel terminal just below
-						-- It can happen that D is south of A and A is south of D
-						-- As you see, this function needs calculating for each reference segment and point
-						-- of a pair of bits to join.
-						-- a + b * x = y
-						-- b = dY / dX
-						-- a = y - dY / dX * x
-						local x0, x1 = posTanX2[1][1][1], posTanX2[2][1][1]
-						local y0, y1 = posTanX2[1][1][2], posTanX2[2][1][2]
-						local dX = x1 - x0
-						local dY = y1 - y0
-						local _isOutputLog = false
-						if _isOutputLog then
-							print('_isNorth received posTanX2 =') debugPrint(posTanX2)
-							print(', pos =') debugPrint(pos)
-							print(', dX =', dX, 'dY =', dY)
-							print(', distance =', distance or 'NIL')
-						end
-						if dX == 0 then
-							local isNorthResult = pos[1] < x0
-							if _isOutputLog then
-								print('_isNorth has calculated result = ', isNorthResult)
-							end
-							return isNorthResult
-						end
-						local b = dY / dX
-						local a = y0 - b * x0
-						local isNorthResult = a + b * pos[1] < pos[2]
-						if _isOutputLog then
-							print('_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult)
-							print('a + b * x0 =', a + b * x0, 'y0 =', y0, 'a + b * x1 =', a + b * x1, 'y1 =', y1, 'a + b * pos[1] =', a + b * pos[1], 'pos[2] =', pos[2])
-						end
-						return isNorthResult
-					end
 
 					local _maxT = #params.terminals
 					local _getMinDistanceSegments = function()
@@ -1370,73 +1435,8 @@ function data()
 					end
 
 					-- Now we put all segments together, avoiding duplicates or redundant links.
-					local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
-                        local newSegment = {}
-						if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
-                        or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
-							newSegment.t1 = oldSegment.t1
-							newSegment.t2 = oldSegment.t2
-							newSegment.t1Index = oldSegment.t1Index
-							newSegment.t2Index = oldSegment.t2Index
-							newSegment.distance = oldSegment.distance
-							newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
-							newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
-							newSegment.pos2Link1 = oldSegment.pos2Link1
-							newSegment.pos2Link2 = oldSegment.pos2Link2
-							newSegment.eraOfT1 = oldSegment.eraOfT1
-							newSegment.eraOfT2 = oldSegment.eraOfT2
-						else
-							newSegment.t1 = oldSegment.t2
-							newSegment.t2 = oldSegment.t1
-							newSegment.t1Index = oldSegment.t2Index
-							newSegment.t2Index = oldSegment.t1Index
-							newSegment.distance = oldSegment.distance
-							newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
-							newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
-							newSegment.pos2Link1 = oldSegment.pos2Link2
-							newSegment.pos2Link2 = oldSegment.pos2Link1
-							newSegment.eraOfT1 = oldSegment.eraOfT2
-							newSegment.eraOfT2 = oldSegment.eraOfT1
-						end
-                        return newSegment
-                    end
-
-					local _getIndexedTable = function(inTable, isMakeT1LessThanT2)
-						local outTable = {}
-						for _, segment in pairs(inTable) do
-							local newSegment = _getSegmentWithT1AndT2Sorted(segment, isMakeT1LessThanT2)
-							local t1, t1Index = newSegment.t1, newSegment.t1Index
-							if outTable[t1] == nil then outTable[t1] = {} end
-							if outTable[t1][t1Index] == nil then outTable[t1][t1Index] = {} end
-							table.insert(outTable[t1][t1Index], newSegment)
-						end
-					end
-					local _pruneSegments = function(segments, outTable)
-						-- segments are arranged with t1 = always the lowest terminal of each link, or always the highest
-						-- In the following, I:
-						-- remove redundant links (eg if there are two or more links heading left or right from any point,
-						-- I only keep the shortest)
-						for _, isNorthOfT1 in pairs({true, false}) do
-							local newSegment = {distance = 9999}
-							local isNewSegmentThere = false
-							for _, segment in pairs(segments) do
-								if segment.isNorthOfT1 == isNorthOfT1
-								and segment.distance < newSegment.distance
-								then
-									newSegment = segment
-									isNewSegmentThere = true
-								end
-							end
-							if isNewSegmentThere then
-								-- newSegment = _getSegmentWithT1AndT2Sorted(newSegment, isMakeT1LessThanT2)
-								table.insert(outTable, newSegment)
-								-- if isOutputLog then print('# isNorthOfT1 =', isNorthOfT1, ', inserted segment ') debugPrint(newSegment) end
-							end
-						end
-					end
-
 					-- First with the small terminal first...
-					local minDistanceSegments_T_I_SmallTFirst = _getIndexedTable(minDistanceSegments, true)
+					local minDistanceSegments_T_I_SmallTFirst = _get_T_I_IndexedTable(minDistanceSegments, true)
 					if isOutputLog then print('minDistanceSegments_T_I_SmallTFirst =') debugPrint(minDistanceSegments_T_I_SmallTFirst) end
 
 					local prunedSegments_SmallTFirst = {}
@@ -1448,7 +1448,7 @@ function data()
 					if isOutputLog then print('prunedSegments_SmallTFirst =') debugPrint(prunedSegments_SmallTFirst) end
 
 					-- ...and now we repeat with the large terminals first
-					local minDistanceSegments_T_I_LargeTFirst = _getIndexedTable(prunedSegments_SmallTFirst, false)
+					local minDistanceSegments_T_I_LargeTFirst = _get_T_I_IndexedTable(prunedSegments_SmallTFirst, false)
 					if isOutputLog then print('minDistanceSegments_T_I_LargeTFirst =') debugPrint(minDistanceSegments_T_I_LargeTFirst) end
 
 					local prunedSegments_LargeTFirst = {}
