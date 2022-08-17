@@ -1331,6 +1331,8 @@ function data()
 												-- end
 											else
 												isInsertRequired = false
+												-- keep the cache tidy, ie mirroring the data
+												minDistance_T_TT_II_segments_1[t][tt][minDistanceSegment.t2Index] = nil
 												-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
 												-- 	print('do not change anything 1')
 												-- end
@@ -1346,6 +1348,7 @@ function data()
 													-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
 													-- 	print('checking cache segment =') debugPrint(segment)
 													-- end
+
 													if segment.bottomTwinIndexT1 ~= nil
 													and segment.bottomTwinIndexT2 ~= nil
 													and segment.bottomTwinIndexT1 == minDistanceSegment.topTwinIndexT1
