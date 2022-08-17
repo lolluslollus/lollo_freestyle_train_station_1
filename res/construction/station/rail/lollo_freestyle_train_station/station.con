@@ -1265,9 +1265,8 @@ function data()
 						-- get the connecting segments.
 						-- For all connections touching t i, only keep the shortest to any given tt (never mind ii),
 						-- since _isNorth is only reliable locally, and it can produce extra segments (see note above)
-						local minDistance_T_I_TT_segments = {}
-						local minDistance_T_TT_II_segments_1 = {}
-						local minDistance_T_TT_II_segments_2 = {}
+						local minDistanceSegments_T_I_TT = {}
+						local minDistanceSegments_T_TT_II = {}
 						for t = 1, _maxT do
 							local positionsInT = positionsA[t] or {}
 							for i = 1, #positionsInT do
@@ -1302,112 +1301,41 @@ function data()
 											end
 										end
 										if minDistanceSegment ~= nil then
-											-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
-											-- 	print('# minDistanceSegment =') debugPrint(minDistanceSegment)
-											-- end
-											-- some segments may still be redundant, even if we proceed index by index:
-											-- for example, t i <-> tt ii and t iother <-> tt ii
+											-- some segments may still be redundant:
+											-- for example, t i <-> tt ii and t i-other <-> tt ii
 											-- Now we get rid of them
-											local isInsertRequired = true
-											if minDistance_T_TT_II_segments_1[t] == nil then minDistance_T_TT_II_segments_1[t] = {} end
-											if minDistance_T_TT_II_segments_1[t][tt] == nil then minDistance_T_TT_II_segments_1[t][tt] = {} end
+											if minDistanceSegments_T_TT_II[t] == nil then minDistanceSegments_T_TT_II[t] = {} end
+											if minDistanceSegments_T_TT_II[t][tt] == nil then minDistanceSegments_T_TT_II[t][tt] = {} end
 
-											local cachedSegment = minDistance_T_TT_II_segments_1[t][tt][minDistanceSegment.t2Index]
-											if cachedSegment == nil then
-												minDistance_T_TT_II_segments_1[t][tt][minDistanceSegment.t2Index] = minDistanceSegment
-												-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
-												-- 	print('cache was nil')
-												-- end
-											elseif cachedSegment.distance > minDistanceSegment.distance then
-												if minDistance_T_I_TT_segments[t] ~= nil
-												and minDistance_T_I_TT_segments[t][i] ~= nil
-												then
-													minDistance_T_I_TT_segments[t][i][tt] = nil
-												end
-												minDistance_T_TT_II_segments_1[t][tt][minDistanceSegment.t2Index] = minDistanceSegment
-												-- cachedSegment = minDistanceSegment NO!
-												-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
-												-- 	print('cache was replaced')
-												-- end
-											else
-												isInsertRequired = false
-												-- keep the cache tidy, ie mirroring the data
-												minDistance_T_TT_II_segments_1[t][tt][minDistanceSegment.t2Index] = nil
-												-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
-												-- 	print('do not change anything 1')
-												-- end
-											end
-											-- there is a special sort of redundant links: those between tunnel stairs tops and bottoms.
-											-- now we get rid of them
-											-- We use a second cache for the sake of nitpicking
-											if isInsertRequired then
-												if minDistance_T_TT_II_segments_2[t] == nil then minDistance_T_TT_II_segments_2[t] = {} end
-												if minDistance_T_TT_II_segments_2[t][tt] == nil then minDistance_T_TT_II_segments_2[t][tt] = {} end
-												minDistance_T_TT_II_segments_2[t][tt][minDistanceSegment.t2Index] = minDistanceSegment
-												for _, segment in pairs(minDistance_T_TT_II_segments_2[t][tt]) do
-													-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
-													-- 	print('checking cache segment =') debugPrint(segment)
-													-- end
+											local cachedSegment = minDistanceSegments_T_TT_II[t][tt][minDistanceSegment.t2Index]
+											if cachedSegment == nil or cachedSegment.distance > minDistanceSegment.distance then
+												minDistanceSegments_T_TT_II[t][tt][minDistanceSegment.t2Index] = minDistanceSegment
 
-													if segment.bottomTwinIndexT1 ~= nil
-													and segment.bottomTwinIndexT2 ~= nil
-													and segment.bottomTwinIndexT1 == minDistanceSegment.topTwinIndexT1
-													and segment.bottomTwinIndexT2 == minDistanceSegment.topTwinIndexT2
-													then
-														-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
-														-- 	print('cache segment needs replacing')
-														-- end
-														if minDistance_T_I_TT_segments[segment.t1] ~= nil
-														and minDistance_T_I_TT_segments[segment.t1][segment.t1Index] ~= nil
-														then
-															minDistance_T_I_TT_segments[segment.t1][segment.t1Index][segment.t2] = nil
-														end
-														minDistance_T_TT_II_segments_2[t][tt][segment.t2Index] = nil
-														-- segment = minDistanceSegment NO!
-														break
-													elseif segment.topTwinIndexT1 ~= nil
-													and segment.topTwinIndexT2 ~= nil
-													and segment.topTwinIndexT1 == minDistanceSegment.bottomTwinIndexT1
-													and segment.topTwinIndexT2 == minDistanceSegment.bottomTwinIndexT2
-													then
-														-- if isOutputLog and ((t == 2 and tt == 5) or (t == 5 and tt == 2)) then
-														-- 	print('do not change anything 2')
-														-- end
-														-- keep the cache tidy, ie mirroring the data
-														minDistance_T_TT_II_segments_2[t][tt][minDistanceSegment.t2Index] = nil
-														isInsertRequired = false
-														break
-													end
-												end
-											end
-
-											-- finally
-											if isInsertRequired then
-												if minDistance_T_I_TT_segments[t] == nil then minDistance_T_I_TT_segments[t] = {} end
-												if minDistance_T_I_TT_segments[t][i] == nil then minDistance_T_I_TT_segments[t][i] = {} end
-												minDistance_T_I_TT_segments[t][i][tt] = minDistanceSegment
+												if minDistanceSegments_T_I_TT[t] == nil then minDistanceSegments_T_I_TT[t] = {} end
+												if minDistanceSegments_T_I_TT[t][i] == nil then minDistanceSegments_T_I_TT[t][i] = {} end
+												minDistanceSegments_T_I_TT[t][i][tt] = minDistanceSegment
 											end
 										end
 									end
 								-- end
 							end
 						end
-						if isOutputLog then print('minDistance_T_I_TT_segments =') debugPrint(minDistance_T_I_TT_segments) end
+						if isOutputLog then print('minDistanceSegments_T_I_TT =') debugPrint(minDistanceSegments_T_I_TT) end
 						-- if isOutputLog then print('minDistance_T_TT_II_segments =') debugPrint(minDistance_T_TT_II_segments) end
 
-					-- For each terminal, then for each connected point,
-					-- get the shortest segment on the left and the shortest segment on the right.
-						local results = {}
+						-- For each terminal, then for each connected point,
+						-- get the shortest segment on the left and the shortest segment on the right.
+						local minDistanceSegments_T_TT = {}
 						for t = 1, _maxT do
-							if minDistance_T_I_TT_segments[t] ~= nil then
+							if minDistanceSegments_T_I_TT[t] ~= nil then
 								local positionsInT = positionsA[t] or {}
 								for i = 1, #positionsInT do
-									if minDistance_T_I_TT_segments[t][i] ~= nil then
+									if minDistanceSegments_T_I_TT[t][i] ~= nil then
 										local minDistance_T_I_SegmentLeft = nil
 										local minDistance_T_I_SegmentRight = nil
 										for tt = 1, _maxT do
-											if t ~= tt and minDistance_T_I_TT_segments[t][i][tt] ~= nil then
-												local newSegment = minDistance_T_I_TT_segments[t][i][tt]
+											if t ~= tt and minDistanceSegments_T_I_TT[t][i][tt] ~= nil then
+												local newSegment = minDistanceSegments_T_I_TT[t][i][tt]
 												if newSegment.isNorthOfT1 then
 													if minDistance_T_I_SegmentLeft == nil or minDistance_T_I_SegmentLeft.distance > newSegment.distance then
 														minDistance_T_I_SegmentLeft = newSegment
@@ -1419,16 +1347,57 @@ function data()
 												end
 											end
 										end
-										for _, newMds in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
-											if newMds ~= nil then
-												table.insert(results, newMds)
+										for _, newSegment in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
+											if newSegment ~= nil then
+												if minDistanceSegments_T_TT[newSegment.t1] == nil then minDistanceSegments_T_TT[newSegment.t1] = {} end
+												if minDistanceSegments_T_TT[newSegment.t1][newSegment.t2] == nil then minDistanceSegments_T_TT[newSegment.t1][newSegment.t2] = {} end
+												table.insert(minDistanceSegments_T_TT[newSegment.t1][newSegment.t2], newSegment)
 											end
 										end
 									end
 								end
 							end
 						end
-						return results
+
+						-- there is still a special sort of redundant links: those between tunnel stairs tops and bottoms.
+						-- now we take care of them
+						for t = 1, _maxT do
+							if minDistanceSegments_T_TT[t] ~= nil then
+								for tt = 1, _maxT do
+									if minDistanceSegments_T_TT[t][tt] ~= nil then
+										for _, segmentA in pairs(minDistanceSegments_T_TT[t][tt]) do
+											if segmentA ~= nil and segmentA.bottomTwinIndexT1 ~= nil and segmentA.bottomTwinIndexT2 ~= nil then
+												for _, segmentB in pairs(minDistanceSegments_T_TT[t][tt]) do
+													if segmentB.topTwinIndexT1 == segmentA.bottomTwinIndexT1
+													and segmentB.topTwinIndexT2 == segmentA.bottomTwinIndexT2
+													then
+														segmentA.isNeedDeleting = true
+														break
+													end
+												end
+											end
+										end
+									end
+								end
+							end
+						end
+
+						local minDistanceSegments = {}
+						for t = 1, _maxT do
+							if minDistanceSegments_T_TT[t] ~= nil then
+								for tt = 1, _maxT do
+									if minDistanceSegments_T_TT[t][tt] ~= nil then
+										for _, segmentA in pairs(minDistanceSegments_T_TT[t][tt]) do
+											if segmentA ~= nil and not(segmentA.isNeedDeleting) then
+												table.insert(minDistanceSegments, segmentA)
+											end
+										end
+									end
+								end
+							end
+						end
+
+						return minDistanceSegments
 					end
 					local minDistanceSegments = _getMinDistanceSegments()
 					if isOutputLog then print('minDistanceSegments =') debugPrint(minDistanceSegments) end
