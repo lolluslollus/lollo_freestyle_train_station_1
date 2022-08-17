@@ -1187,7 +1187,6 @@ function data()
 					end
 					return isNorthResult
 				end
-
 				local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
 					local newSegment = {}
 					if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
@@ -1228,7 +1227,6 @@ function data()
 					end
 					return newSegment
 				end
-
 				local _get_T_I_IndexedTable = function(inTable, isMakeT1LessThanT2)
 					local outTable = {}
 					for _, segment in pairs(inTable) do
