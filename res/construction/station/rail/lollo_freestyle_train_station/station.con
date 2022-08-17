@@ -1127,15 +1127,15 @@ function data()
 					return results
 				end
 
-				local _getAllPositions_UndergroundTop_GroundBottom = function()
-					local results = {}
-					for t = 1, #params.terminals do
-						results[t] = {}
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
-					end
-					return results
-				end
+				-- local _getAllPositions_UndergroundTop_GroundBottom = function()
+				-- 	local results = {}
+				-- 	for t = 1, #params.terminals do
+				-- 		results[t] = {}
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
+				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
+				-- 	end
+				-- 	return results
+				-- end
 
 				local _isNorth = function(posTanX2, pos, distance)
 					-- distance is only for debugging purposes
@@ -1581,7 +1581,7 @@ function data()
 				_linkUnderpassesAndStairs()
 				logger.print('passengers and stairs linked')
 
-				local _linkPassengerPlatforms = function(maxLinkLength, positions, modelId, raiseHowMuch)
+				local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, raiseHowMuch)
 					-- link platforms across terminals, on the ground, if they are close enough
 					local maxT = #params.terminals
 					for t = 1, maxT do
@@ -1613,12 +1613,12 @@ function data()
 						end
 					end
 				end
-				_linkPassengerPlatforms(
+				_linkNearbyPassengerPlatforms(
 					6,
 					result.terminateConstructionHookInfo.crossConnectorPositions,
 					_constants.passengerLaneModelId
 				)
-				_linkPassengerPlatforms(
+				_linkNearbyPassengerPlatforms(
 					8,
 					result.terminateConstructionHookInfo.trackCrossingPositions,
 					_constants.passengerLaneModelId,
@@ -1677,8 +1677,8 @@ function data()
 							end
 						end
 					end
-					_linkSubways2(_getAllPositions_UndergroundTop_GroundBottom())
-					-- _linkSubways2(result.terminateConstructionHookInfo.liftBottomPositions)
+					_linkSubways2(_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom())
+					-- _linkSubways2(_getAllPositions_UndergroundTop_GroundBottom())
 				end
 				_linkSubways()
 				logger.print('subways linked')
