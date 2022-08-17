@@ -1228,6 +1228,7 @@ function data()
 						if outTable[t1][t1Index] == nil then outTable[t1][t1Index] = {} end
 						table.insert(outTable[t1][t1Index], newSegment)
 					end
+					return outTable
 				end
 				local _pruneSegments = function(segments, outTable)
 					-- segments are arranged with t1 = always the lowest terminal of each link, or always the highest
@@ -1430,9 +1431,7 @@ function data()
 						return results
 					end
 					local minDistanceSegments = _getMinDistanceSegments()
-					if isOutputLog then
-						print('minDistanceSegments =') debugPrint(minDistanceSegments)
-					end
+					if isOutputLog then print('minDistanceSegments =') debugPrint(minDistanceSegments) end
 
 					-- Now we put all segments together, avoiding duplicates or redundant links.
 					-- First with the small terminal first...
