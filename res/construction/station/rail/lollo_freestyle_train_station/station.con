@@ -1203,6 +1203,10 @@ function data()
 						newSegment.pos2Link2 = oldSegment.pos2Link2
 						newSegment.eraOfT1 = oldSegment.eraOfT1
 						newSegment.eraOfT2 = oldSegment.eraOfT2
+						newSegment.bottomTwinIndexT1 = oldSegment.bottomTwinIndexT1
+						newSegment.bottomTwinIndexT2 = oldSegment.bottomTwinIndexT2
+						newSegment.topTwinIndexT1 = oldSegment.topTwinIndexT1
+						newSegment.topTwinIndexT2 = oldSegment.topTwinIndexT2
 					else
 						newSegment.t1 = oldSegment.t2
 						newSegment.t2 = oldSegment.t1
@@ -1215,6 +1219,10 @@ function data()
 						newSegment.pos2Link2 = oldSegment.pos2Link1
 						newSegment.eraOfT1 = oldSegment.eraOfT2
 						newSegment.eraOfT2 = oldSegment.eraOfT1
+						newSegment.bottomTwinIndexT1 = oldSegment.bottomTwinIndexT2
+						newSegment.bottomTwinIndexT2 = oldSegment.bottomTwinIndexT1
+						newSegment.topTwinIndexT1 = oldSegment.topTwinIndexT2
+						newSegment.topTwinIndexT2 = oldSegment.topTwinIndexT1
 					end
 					return newSegment
 				end
