@@ -5,7 +5,7 @@ function data()
 
     return {
         info = {
-            minorVersion = 71,
+            minorVersion = 72,
             severityAdd = 'NONE',
             severityRemove = 'WARNING',
             name = _('NAME'),
