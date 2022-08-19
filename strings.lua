@@ -41,6 +41,7 @@ function data()
 				- Extra ground textures are in my terrain tweaks mod.
 				- If you want different buildings, use assets. There are mods with those.
 				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily.
+				- Use the track constructions "Smart track splitter" to do precision work.
 
 				[h1]Note:[/h1]
 				Underground stations are now in the assets.
@@ -324,6 +325,10 @@ function data()
 			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
 			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Help yourself with AltGr + L.",
+
+			-- track splitter
+			["SmartTrackSplitterName"] = "Smart track splitter",
+			["SmartTrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use AltGr + L to see its effect.",
 		},
 	}
 end
