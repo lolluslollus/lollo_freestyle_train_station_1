@@ -29,7 +29,7 @@ function data()
 				
 				[h1]Tips:[/h1]
                 - Platforms are tracks and they can also suffer from micro splits, very difficult to see.
-				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>.
+				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>. This is particularly useful with multi-level underground stations.
 				- To work underground, use <NumPad 4> or the 'Look Underground' track construction.
 				- Platforms only carry passengers or cargo if they are part of a terminal.
 				- 2.5 m platforms do not agree with bridges and tunnels. My 'no railing' bridges help, tunnels can't be helped.
