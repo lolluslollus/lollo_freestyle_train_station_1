@@ -1,11 +1,12 @@
 function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
     local _stringUtils = require('lollo_freestyle_train_station.stringUtils')
     local _trackHelpers = require('lollo_freestyle_train_station.trackHelpers')
 
     return {
         info = {
-            minorVersion = 74,
+            minorVersion = 75,
             severityAdd = 'NONE',
             severityRemove = 'WARNING',
             name = _('NAME'),
@@ -54,6 +55,8 @@ function data()
             -- so I set yearFrom = -1 and yearTo = -1 in the track files to make them invisible
             -- and then I restore them here.
             -- This works because this code always fires after base_mod.lua .
+            -- As of version 1.75, platforms never expire.
+            -- To keep the track construction menu tidy, we introduce a new category for non-platform tracks.
             local trackFileNames = api.res.trackTypeRep.getAll()
 
             for trackTypeIndex, trackFileName in pairs(trackFileNames) do
@@ -61,7 +64,10 @@ function data()
                 if _trackHelpers.isPlatform2(track) then
                     local availability = _trackHelpers.getTrackAvailability(trackFileName)
                     track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
-                    track.yearTo = availability.yearTo -- idem
+                    -- track.yearTo = availability.yearTo -- idem
+                    track.yearTo = 0 -- as of version 1.75, platforms never expire
+                else
+                    _trackHelpers.addCategory(track, _constants.trainTracksCategory)
                 end
             end
         end

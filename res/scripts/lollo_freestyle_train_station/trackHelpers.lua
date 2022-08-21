@@ -2,6 +2,12 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 local helpers = {
+    addCategory = function(trackType, category)
+        if trackType == nil or type(trackType.categories) ~= 'userdata' or stringUtils.isNullOrEmptyString(category) then return false end
+
+        trackType.categories[#trackType.categories + 1] = category
+        return true
+    end,
     getEraPrefix = function (trackTypeIndex)
         if type(trackTypeIndex) ~= 'number' or trackTypeIndex < 0 then return _constants.eras.era_c.prefix end
 
@@ -66,7 +72,17 @@ local helpers = {
         end
 
         return false
-    end
+    end,
+    isUncategorised = function(trackType)
+        if trackType == nil then return false end
+
+        local isCategorised = false
+        for _, cat in pairs(trackType.categories) do
+            isCategorised = true
+        end
+
+        return not(isCategorised)
+    end,
 }
 
 helpers.getAllPlatformTrackTypes = function()

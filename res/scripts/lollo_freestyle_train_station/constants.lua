@@ -6,6 +6,7 @@ local constants = {
     cargoPlatformTracksCategory = 'cargo-platform-tracks',
     invisiblePlatformTracksCategory = 'invisible-platform-tracks',
     passengerPlatformTracksCategory = 'passenger-platform-tracks',
+    trainTracksCategory = 'train-tracks',
 
     eventData = {
         eventId = '__lolloFreestyleTrainStation__',
