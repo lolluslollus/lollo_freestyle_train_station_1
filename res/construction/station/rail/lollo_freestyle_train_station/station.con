@@ -1863,7 +1863,7 @@ function data()
 			-- logger.print('args.catenary =') logger.debugPrint(args.catenary)
 			-- logger.print('args.trackTypeToggle =') logger.debugPrint(args.trackTypeToggle)
 			-- logger.print('args.trackType =') logger.debugPrint(args.trackType)
-			logger.print('args =') logger.debugPrint(arrayUtils.cloneOmittingFields(args, {'modules'}, true)) -- hangs!
+			-- logger.print('### args without modules and terminals =') logger.debugPrint(arrayUtils.cloneOmittingFields(args, {'modules', 'terminals'}, true))
 
 			-- if args.slotId == nil or args.slotId < 0 then return {} end
 
@@ -1878,7 +1878,7 @@ function data()
 					affectedTerminals[t] = t
 				end
 			end
-			logger.print('affectedTerminals =') logger.debugPrint(affectedTerminals)
+			-- logger.print('affectedTerminals =') logger.debugPrint(affectedTerminals)
 
 			local upgradeResults = {}
 			for _, nTerminal in pairs(affectedTerminals) do
@@ -1886,7 +1886,7 @@ function data()
 				if args.catenaryToggle == 1 then
 					local slotId = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackElectrificationSlotId)
 					local oldModuleValue = args.modules[slotId]
-					logger.print('oldModuleValue =') logger.debugPrint(oldModuleValue)
+					-- logger.print('oldModuleValue =') logger.debugPrint(oldModuleValue)
 
 					if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
 						if oldModuleValue.name == _constants.trackElectrificationNoModuleFileName
@@ -1898,14 +1898,14 @@ function data()
 						end
 					else
 						newModuleFileName = _constants.trackElectrificationYesModuleFileName
-						logger.warn('upgradeFn could not find the old module')
+						logger.warn('upgradeFn could not find the old module, args.catenaryToggle == 1')
 					end
 
 					upgradeResults[#upgradeResults+1] = { slotId, newModuleFileName }
 				elseif args.trackTypeToggle == 1 then
 					local slotId = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackSpeedSlotId)
 					local oldModuleValue = args.modules[slotId]
-					logger.print('oldModuleValue =') logger.debugPrint(oldModuleValue)
+					-- logger.print('oldModuleValue =') logger.debugPrint(oldModuleValue)
 
 					if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
 						if oldModuleValue.name == _constants.trackSpeedSlowModuleFileName
@@ -1917,14 +1917,14 @@ function data()
 						end
 					else
 						newModuleFileName = _constants.trackSpeedFastModuleFileName
-						print('WARNING: upgradeFn could not find the old module')
+						logger.warn('upgradeFn could not find the old module, args.trackTypeToggle == 1')
 					end
 
 					upgradeResults[#upgradeResults+1] = { slotId, newModuleFileName }
 				end
 			end
 
-			logger.print('results =') debugPrint(upgradeResults)
+			-- logger.print('results =') logger.debugPrint(upgradeResults)
 			return upgradeResults
 
 			-- The return structure is a list like:

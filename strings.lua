@@ -49,7 +49,6 @@ function data()
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
 				- Station naming does not work properly.
-				- Upgrading tracks works meh.
 				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
 				- The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
 				- Some track and signal mods are incompatible.
