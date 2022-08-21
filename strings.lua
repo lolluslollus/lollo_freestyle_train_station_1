@@ -42,6 +42,7 @@ function data()
 				- If you want different buildings, use assets. There are mods with those.
 				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily.
 				- Use the track constructions "Smart track splitter" to do precision work.
+				- Upgrading tracks does all tracks at once.
 
 				[h1]Note:[/h1]
 				Underground stations are now in the assets.
