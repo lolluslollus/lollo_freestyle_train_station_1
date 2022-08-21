@@ -121,7 +121,7 @@ privateFuncs.edges = {
     _addTrackEdges = function(result, tag2nodes, params, t)
         result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
     
-        -- print('_addTrackEdges starting for terminal =', t)
+        logger.print('_addTrackEdges starting for terminal =', t)
         local forceCatenary = 0
         local trackElectrificationModuleKey = slotUtils.mangleId(t, 0, constants.idBases.trackElectrificationSlotId)
         if params.modules[trackElectrificationModuleKey] ~= nil then
@@ -131,7 +131,7 @@ privateFuncs.edges = {
                 forceCatenary = 1
             end
         end
-        -- print('forceCatenary =', forceCatenary)
+        logger.print('forceCatenary =', forceCatenary)
         local forceFast = 0
         local trackSpeedModuleKey = slotUtils.mangleId(t, 0, constants.idBases.trackSpeedSlotId)
         if params.modules[trackSpeedModuleKey] ~= nil then
@@ -141,7 +141,7 @@ privateFuncs.edges = {
                 forceFast = 1
             end
         end
-        -- print('forceFast =', forceFast)
+        logger.print('forceFast =', forceFast)
     
         for i = 1, #params.terminals[t].trackEdgeLists do
             local tel = params.terminals[t].trackEdgeLists[i]
@@ -777,7 +777,7 @@ return {
     end,
     edges = {
         addEdges = function(result, tag, params, t)
-            -- print('moduleHelpers.edges.addEdges starting for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
+            -- logger.print('moduleHelpers.edges.addEdges starting for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
     
             local nNodesInTerminalSoFar = privateFuncs.edges._getNNodesInTerminalsSoFar(params, t)
     
