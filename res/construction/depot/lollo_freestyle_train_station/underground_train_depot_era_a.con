@@ -107,10 +107,5 @@ function data()
 
 			return result
 		end,
-		upgradeFn = function(args1, args2)
-			-- this one never fires
-			logger.print('args1 =') logger.debugPrint(args1)
-			logger.print('args2 =') logger.debugPrint(args2)
-		end,
 	}
 end
