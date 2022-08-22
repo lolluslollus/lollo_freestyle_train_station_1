@@ -106,18 +106,6 @@ local _utils = {
         -- debugPrint(result)
         return result
     end,
-    sendCommand = function(eventName, args)
-        if not args or not args.result or not args.result[1] then return end
-
-        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-            string.sub(debug.getinfo(1, 'S').source, 1),
-            _eventId,
-            eventName,
-            {
-                constructionEntityId = args.result[1]
-            }
-        ))
-    end,
 }
 
 local _actions = {
@@ -292,9 +280,9 @@ function data()
                 function()
                     -- print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') debugPrint(args)
 
-                    local conTransf = api.engine.getComponent(args.constructionEntityId, api.type.ComponentType.CONSTRUCTION).transf
+                    local conTransf = api.engine.getComponent(args.conId, api.type.ComponentType.CONSTRUCTION).transf
                     conTransf = transfUtilUG.new(conTransf:cols(0), conTransf:cols(1), conTransf:cols(2), conTransf:cols(3))
-                    -- print('type(constructionTransf) =', type(constructionTransf)) debugPrint(constructionTransf)
+                    -- print('type(conTransf) =', type(conTransf)) debugPrint(conTransf)
                     if name == _eventProperties.lollo_track_splitter_w_api.eventName then
                         local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf)
                         -- print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
@@ -313,7 +301,7 @@ function data()
                         end
                     end
 
-                    _actions.bulldozeConstruction(args.constructionEntityId)
+                    _actions.bulldozeConstruction(args.conId)
                 end,
                 logger.xpErrorHandler
             )
@@ -325,10 +313,19 @@ function data()
                 -- logger.print('guiHandleEvent caught id = constructionBuilder and name = builder.apply')
                 xpcall(
                     function()
-                        if not args.result or not args.result[1] then return end
+                        if not args or not args.result or not args.result[1] then return end
 
                         if _isBuildingTrackSplitterWithApi(args) then
-                            _utils.sendCommand(_eventProperties.lollo_track_splitter_w_api.eventName, args)
+                            api.cmd.sendCommand(
+                                api.cmd.make.sendScriptEvent(
+                                    string.sub(debug.getinfo(1, 'S').source, 1),
+                                    _eventId,
+                                    _eventProperties.lollo_track_splitter_w_api.eventName,
+                                    {
+                                        conId = args.result[1]
+                                    }
+                                )
+                            )
                         end
                     end,
                     logger.xpErrorHandler

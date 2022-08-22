@@ -28,7 +28,7 @@ function data()
                     },
                     autoRemovable = true,
                     skipCollision = true,
-                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -20, 1}
+                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -40, 1}
                 }
             }
             --		result.h0 = {}
