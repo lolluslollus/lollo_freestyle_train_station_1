@@ -37,9 +37,8 @@ function data()
             -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
             result.terrainAlignmentLists = { { type = "EQUAL", optional = true, faces =  { } } }
 
-            local size = 20
             local faces = { }
-            local radius = size
+            local radius = 20
             local wedgeCount = 10
             for i = 1, wedgeCount do
                 local theta = 2 * math.pi / wedgeCount * i
