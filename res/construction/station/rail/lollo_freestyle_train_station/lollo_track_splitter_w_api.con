@@ -12,9 +12,6 @@ function data()
             yearTo = 0
         },
         order = 1102,
-        collider = {
-            type = 'NONE'
-        },
         autoRemovable = true,
         skipCollision = true,
         updateFn = function(params)
@@ -23,28 +20,45 @@ function data()
             result.colliders = {}
             result.cost = 0
             result.edgeLists = {}
-            result.models = {}
-            --		result.groundFaces = {}
-            --		result.h0 = {}
-            --		result.h1 = {}
-            result.collider = {
-                type = 'NONE'
-            }
-            -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
-            result.terrainAlignmentLists = { { type = "EQUAL", optional = true, faces =  { } } }
-
-            table.insert(
-                result.models,
+            result.models = {
                 {
-                    id = 'lollo_freestyle_train_station/icon/yellow.mdl',
+                    id = 'lollo_freestyle_train_station/icon/yellow_huge.mdl',
                     collider = {
                         type = 'NONE'
                     },
                     autoRemovable = true,
                     skipCollision = true,
-                    transf = constants.idTransf
+                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -20, 1}
                 }
-            )
+            }
+            --		result.h0 = {}
+            --		result.h1 = {}
+
+            -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+            result.terrainAlignmentLists = { { type = "EQUAL", optional = true, faces =  { } } }
+
+            local size = 20
+            local faces = { }
+            local radius = size
+            local wedgeCount = 10
+            for i = 1, wedgeCount do
+                local theta = 2 * math.pi / wedgeCount * i
+                faces[#faces+1] = { radius * math.cos(theta), radius * math.sin(theta), 0 }
+            end
+            faces = { faces }
+
+            result.groundFaces = { -- the ground faces ignore z, the alignment lists don't
+                {
+                    face = faces[1],
+                    loop = true,
+                    modes = {
+                        {
+                            key = 'hole.lua',
+                            type = 'FILL',
+                        },
+                    }
+                }
+            }
 
             return result
         end,
