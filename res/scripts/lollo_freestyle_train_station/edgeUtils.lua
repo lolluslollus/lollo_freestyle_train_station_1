@@ -355,6 +355,13 @@ helper.getNodeBetweenByPosition = function(edgeId, position)
         z = (position[3] or position.z) - baseNode1.position.z,
     })
 
+    -- print('getNodeBetweenByPosition firing')
+    -- print('baseNode0.position =') debugPrint(baseNode0.position)
+    -- print('length0 =', length0)
+    -- print('baseNode1.position =') debugPrint(baseNode1.position)
+    -- print('length1 =', length1)
+    -- print('getNodeBetween about to fire')
+
     return helper.getNodeBetween(baseNode0.position, baseNode1.position, baseEdge.tangent0, baseEdge.tangent1, length0 / (length0 + length1))
 end
 
