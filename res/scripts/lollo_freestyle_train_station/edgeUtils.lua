@@ -927,6 +927,7 @@ helper.track.getNearestEdgeIdStrict = function(transf)
     if type(transf) ~= 'table' then return nil end
 
     local _position = transfUtils.getVec123Transformed({0, 0, 0}, transf)
+    -- print('position =') debugPrint(_position)
     local _searchRadius = 0.5
     local _box0 = api.type.Box3.new(
         api.type.Vec3f.new(_position[1] - _searchRadius, _position[2] - _searchRadius, -9999),
@@ -1016,7 +1017,7 @@ helper.track.getNearestEdgeIdStrict = function(transf)
         --         end
         --     end
         -- end
-        print('WARNING track.getNearestEdgeIdStrict falling back')
+        print('track.getNearestEdgeIdStrict falling back, could not find an edge covering the position')
         return baseEdgeIds[1] -- fallback
     end
 end
