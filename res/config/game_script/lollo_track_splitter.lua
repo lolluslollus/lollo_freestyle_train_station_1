@@ -41,11 +41,11 @@ local _utils = {
         local result = {
             assignToSide = nil,
         }
-        -- print('LOLLO attempting to place edge object with position =') debugPrint(edgeObjPosition)
-        -- print('wholeEdge.node0pos =') debugPrint(node0pos)
-        -- print('nodeBetween.position =') debugPrint(nodeBetween.position)
-        -- print('nodeBetween.tangent =') debugPrint(nodeBetween.tangent)
-        -- print('wholeEdge.node1pos =') debugPrint(node1pos)
+        -- logger.print('LOLLO attempting to place edge object with position =') logger.debugPrint(edgeObjPosition)
+        -- logger.print('wholeEdge.node0pos =') logger.debugPrint(node0pos)
+        -- logger.print('nodeBetween.position =') logger.debugPrint(nodeBetween.position)
+        -- logger.print('nodeBetween.tangent =') logger.debugPrint(nodeBetween.tangent)
+        -- logger.print('wholeEdge.node1pos =') logger.debugPrint(node1pos)
 
         local edgeObjPosition_assignTo = nil
         local node0_assignTo = nil
@@ -102,20 +102,17 @@ local _utils = {
             result.assignToSide = 1
         end
 
-        -- print('LOLLO assignment =')
-        -- debugPrint(result)
+        -- logger.print('LOLLO assignment =') logger.debugPrint(result)
         return result
     end,
 }
 
 local _actions = {
     bulldozeConstruction = function(conId)
-        -- print('conId =', conId)
+        logger.print('bulldozeConstruction firing, conId =', conId or 'NIL')
         if type(conId) ~= 'number' or conId < 0 then return end
 
         local oldConstruction = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-        -- print('oldConstruction =')
-        -- debugPrint(oldConstruction)
         if not(oldConstruction) or not(oldConstruction.params) then return end
 
         local proposal = api.type.SimpleProposal.new()
@@ -128,8 +125,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, nil, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(res, success)
-                -- print('LOLLO _bulldozeConstruction res = ') debugPrint(res)
-                -- print('LOLLO _bulldozeConstruction success = ') debugPrint(success)
+                -- logger.print('LOLLO _bulldozeConstruction res = ') logger.debugPrint(res)
+                logger.print('LOLLO _bulldozeConstruction success = ') logger.debugPrint(success)
             end
         )
     end,
@@ -211,7 +208,7 @@ local _actions = {
             local edge1Objects = {}
             for _, edgeObj in pairs(oldBaseEdge.objects) do
                 local edgeObjPosition = edgeUtils.getObjectPosition(edgeObj[1])
-                -- print('edge object position =') debugPrint(edgeObjPosition)
+                -- logger.print('edge object position =') logger.debugPrint(edgeObjPosition)
                 if type(edgeObjPosition) ~= 'table' then return end -- change nothing and leave
                 local assignment = _utils.getWhichEdgeGetsEdgeObjectAfterSplit(
                     edgeObjPosition,
@@ -233,8 +230,8 @@ local _actions = {
                     -- if edgeUtils.isValidId(stationGroupId) then table.insert(edge1StationGroups, stationGroupId) end
                     table.insert(edge1Objects, { edgeObj[1], edgeObj[2] })
                 else
-                    -- print('don\'t change anything and leave')
-                    -- print('LOLLO error, assignment.assignToSide =', assignment.assignToSide)
+                    -- logger.print('don\'t change anything and leave')
+                    -- logger.print('LOLLO error, assignment.assignToSide =', assignment.assignToSide)
                     return -- change nothing and leave
                 end
             end
@@ -258,8 +255,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                -- print('LOLLO track splitter callback returned result = ') debugPrint(result)
-                -- print('LOLLO track splitter callback returned success = ', success)
+                -- logger.print('LOLLO track splitter callback returned result = ') logger.debugPrint(result)
+                logger.print('LOLLO track splitter callback returned success = ', success)
                 if not(success) then
                     logger.warn('splitTrackEdge failed, proposal = ') logger.warningDebugPrint(proposal)
                 end
@@ -278,14 +275,14 @@ function data()
 
             xpcall(
                 function()
-                    -- print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') debugPrint(args)
+                    logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
 
                     local conTransf = api.engine.getComponent(args.conId, api.type.ComponentType.CONSTRUCTION).transf
                     conTransf = transfUtilUG.new(conTransf:cols(0), conTransf:cols(1), conTransf:cols(2), conTransf:cols(3))
-                    -- print('type(conTransf) =', type(conTransf)) debugPrint(conTransf)
+                    logger.print('type(conTransf) =', type(conTransf)) logger.debugPrint(conTransf)
                     if name == _eventProperties.lollo_track_splitter_w_api.eventName then
                         local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf)
-                        -- print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
+                        logger.print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
                         if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then
                             local nodeBetween = edgeUtils.getNodeBetweenByPosition(
                                 nearestEdgeId,
@@ -296,7 +293,7 @@ function data()
                                     z = conTransf[15],
                                 }
                             )
-                            -- print('nodeBetween =') debugPrint(nodeBetween)
+                            logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                             _actions.splitTrackEdge(nearestEdgeId, nodeBetween)
                         end
                     end
