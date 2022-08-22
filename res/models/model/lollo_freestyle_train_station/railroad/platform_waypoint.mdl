@@ -36,6 +36,11 @@ function data()
 				yearFrom = 0,
 				yearTo = 0,
 			},
+			category = {
+				categories = {
+					'waypoints-for-freestyle-station'
+				},
+			},
 			cost = {
 				price = 2000,
 			},
