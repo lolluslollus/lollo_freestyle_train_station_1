@@ -43,6 +43,7 @@ function data()
 				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily.
 				- Use the track constructions "Smart track splitter" to do precision work.
 				- Upgrading tracks does all tracks at once.
+				- If you have too many track types, use the categories in the menu to make life easier.
 
 				[h1]Note:[/h1]
 				Underground stations are now in the assets.
