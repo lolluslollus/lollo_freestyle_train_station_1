@@ -268,7 +268,7 @@ function data()
 			["passenger-road-access-stairs"] = "Stairs -> road",
 			["passenger-up-and-down"] = "Up and down",
 			["train-tracks"] = "Train tracks",
-			["waypoints-for-freestyle-station"] = "Waypoints For Freestyle Station",
+			["waypoints-for-freestyle-station"] = "Waypoints For Freestyle Stations",
 
 			["BuildMoreWaypoints"] = "Plop two track markers and two platform markers to build a freestyle station",
 			["BuildSnappyTracksFailed"] = "Fix the station connections to the adjacent tracks, the game cannot do it for you this time",
