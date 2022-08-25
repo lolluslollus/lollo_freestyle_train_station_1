@@ -28,7 +28,7 @@ function data()
 		order = {
 			value = 18,
 		},
-		type = _constants.wallModuleType,
+		type = _constants.platformRoofModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
