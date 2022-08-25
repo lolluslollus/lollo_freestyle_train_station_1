@@ -245,8 +245,9 @@ function data()
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local cplM2 = params.terminals[t].centrePlatformsRelative[i-2] or {}
-						if cpl.type ~= 2 or cplM2.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
+						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {}
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
 							local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
 							table.insert(result.slots, {
 								-- height = 0,
@@ -260,7 +261,7 @@ function data()
 				end
 				_addPlatformRoofs()
 
-				local function _addWalls()
+				local function _addPlatformWalls()
 					if isCargoTerminal then return end
 					local iMax = #params.terminals[t].centrePlatformsRelative
 					local iss = {}
@@ -280,7 +281,7 @@ function data()
 						})
 					end
 				end
-				_addWalls()
+				_addPlatformWalls()
 
 				local function _addOutsideExtensions()
 					local iMax = #params.terminals[t].centrePlatformsRelative
@@ -291,8 +292,9 @@ function data()
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local cplM2 = params.terminals[t].centrePlatformsRelative[i-2] or {}
-						if (cpl.type ~= 2 or cplM2.type ~= 2) -- no thin extensions in tunnels unless we are at the entrance
+						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {}
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) -- no thin extensions in tunnels unless we are at the entrance
 						and not(isCargoTerminal)
 						-- and params.terminals[t].slopedAreasFineRelative[2.5] -- thin sloped areas were added later and they are burnt into the initial data
 						then
@@ -316,7 +318,7 @@ function data()
 								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess)
 							end
 						end
-						if cpl.type == 0 or (cpl.type == 2 and cplM2.type == 0) then -- thick extensions only on ground or at tunnel entrances
+						if cpl.type == 0 or (cpl.type == 2 and cplM1.type == 0) or (cpl.type == 2 and cplP1.type == 0) then -- thick extensions only on ground or at tunnel entrances
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)

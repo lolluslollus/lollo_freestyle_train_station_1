@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
+local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -38,37 +39,25 @@ return {
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
 		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal)
 
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = slotTransf,
-		-- 	tag = tag
-		-- }
-		-- result.models[#result.models + 1] = {
-		-- 	id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 	slotId = slotId,
-		-- 	transf = slotTransf,
-		-- 	tag = tag
-		-- }
-
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-		-- print('isTrackOnPlatformLeft =', isTrackOnPlatformLeft)
-		-- if isTrackOnPlatformLeft then
-		-- 	result.models[#result.models + 1] = {
-		-- 		id = 'lollo_freestyle_train_station/icon/green.mdl',
-		-- 		slotId = slotId,
-		-- 		transf = slotTransf,
-		-- 		tag = tag
-		-- 	}
-		-- else
-		-- 	result.models[#result.models + 1] = {
-		-- 		id = 'lollo_freestyle_train_station/icon/red.mdl',
-		-- 		slotId = slotId,
-		-- 		transf = slotTransf,
-		-- 		tag = tag
-		-- 	}
-		-- end
+		if logger.isExtendedLog() then
+			if isTrackOnPlatformLeft then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/icon/green.mdl',
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+			else
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/icon/red.mdl',
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+			end
+		end
 		local isUnderpass = function(t, i)
 			return params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
