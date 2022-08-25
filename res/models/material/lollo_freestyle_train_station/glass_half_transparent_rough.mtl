@@ -3,14 +3,14 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 1, 1, 1, },
+                albedoScale = { 2, 2, 2, },
             },
             alpha_scale = {
-                alphaScale = 1,
+                alphaScale = 2,
             },
             alpha_test = {
-                alphaThreshold = 0.75,
-                cutout = true,
+                alphaThreshold = 0.5,
+                cutout = false,
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
@@ -54,13 +54,13 @@ function data()
             operation_1 = {
                 mode = "WORLD_XY",
                 op = "OVERLAY",
-                opacity = 0.64999997615814,
+                opacity = 0.1,
                 scale = { 0.8, 0.8, },
             },
             operation_2 = {
                 mode = "WORLD_XY",
                 op = "MULTIPLICATION",
-                opacity = 0.2,
+                opacity = 0.05,
                 scale = { 0.35, 0.35, },
             },
             polygon_offset = {

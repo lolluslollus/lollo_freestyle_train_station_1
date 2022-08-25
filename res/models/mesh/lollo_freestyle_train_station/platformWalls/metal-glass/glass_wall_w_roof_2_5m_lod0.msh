@@ -1,26 +1,26 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 288,
-					offset = 5036,
+					count = 144,
+					offset = 4716,
 				},
 				position = {
-					count = 288,
-					offset = 4172,
+					count = 144,
+					offset = 4428,
 				},
 				tangent = {
-					count = 288,
-					offset = 4460,
+					count = 144,
+					offset = 4284,
 				},
 				uv0 = {
-					count = 288,
-					offset = 4748,
+					count = 144,
+					offset = 4572,
 				},
 			},
 			materials = {
@@ -29,20 +29,42 @@ return {
 		}, {
 			indices = {
 				normal = {
+					count = 144,
+					offset = 5292,
+				},
+				position = {
+					count = 144,
+					offset = 5004,
+				},
+				tangent = {
+					count = 144,
+					offset = 4860,
+				},
+				uv0 = {
+					count = 144,
+					offset = 5148,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/platformWalls/metal-glass/opaque-glass.001.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
 					count = 2016,
-					offset = 11372,
+					offset = 11484,
 				},
 				position = {
 					count = 2016,
-					offset = 5324,
+					offset = 7452,
 				},
 				tangent = {
 					count = 2016,
-					offset = 7340,
+					offset = 5436,
 				},
 				uv0 = {
 					count = 2016,
-					offset = 9356,
+					offset = 9468,
 				},
 			},
 			materials = {
@@ -54,22 +76,22 @@ return {
 		normal = {
 			count = 612,
 			numComp = 3,
-			offset = 3560,
+			offset = 3672,
 		},
 		position = {
 			count = 1344,
 			numComp = 3,
-			offset = 0,
+			offset = 848,
 		},
 		tangent = {
-			count = 736,
+			count = 848,
 			numComp = 4,
-			offset = 1344,
+			offset = 0,
 		},
 		uv0 = {
 			count = 1480,
 			numComp = 2,
-			offset = 2080,
+			offset = 2192,
 		},
 	},
 }
