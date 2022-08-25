@@ -1,0 +1,57 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local modulesutil = require "modulesutil"
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = moduleHelpers.eras.era_c.startYear,
+			yearTo = 0
+		},
+		category = {
+			categories = { "deco", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("WallMetalGlassName"),
+			description = _("WallMetalGlassDesc"),
+			icon = "ui/lollo_freestyle_train_station/wallMetalGlass.tga"
+		},
+		metadata = { },
+		order = {
+			value = 24,
+		},
+		type = _constants.wallModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not nTrackEdge or not baseId then return end
+
+			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+			_constants.platformWallMetalGlass2_5MModelFileName, _constants.platformWallMetalGlass5MModelFileName,
+			_constants.platformWallMetalGlassPillar2_5MModelFileName, _constants.platformWallMetalGlassPillar5MModelFileName,
+			true)
+		end,
+
+		getModelsFn = function(params)
+			local results = {}
+			for y = -2, 2 do
+				results[#results+1] = {
+					id = _constants.platformWallMetalGlass2_5MModelFileName,
+					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+				}
+			end
+			results[#results+1] = {
+				id = _constants.platformWallMetalGlassPillar2_5MModelFileName,
+				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
+			}
+		return results
+		end
+	}
+end
