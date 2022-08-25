@@ -96,7 +96,7 @@ return {
 		end
 		local isPlatformRoofOrWall = function(t, i)
 			return params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil
-			or params.modules[result.mangleId(t, i+1, _constants.idBases.wallSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i+1, _constants.idBases.platformWallSlotId)] ~= nil
 		end
 		local isUnderpass_indexed = {}
 		local isOpenLift_indexed = {}

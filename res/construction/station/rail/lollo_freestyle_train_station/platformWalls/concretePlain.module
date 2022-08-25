@@ -10,7 +10,7 @@ local transfUtilsUG = require "transf"
 function data()
 	return {
 		availability = {
-			yearFrom = moduleHelpers.eras.era_a.startYear,
+			yearFrom = moduleHelpers.eras.era_b.startYear,
 			yearTo = 0
 		},
 		category = {
@@ -20,22 +20,22 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("WallTiledName"),
-			description = _("WallTiledDesc"),
-			icon = "ui/lollo_freestyle_train_station/wallTiled.tga"
+			name = _("WallConcretePlainName"),
+			description = _("WallConcretePlainDesc"),
+			icon = "ui/lollo_freestyle_train_station/wallConcretePlain.tga"
 		},
 		metadata = { },
 		order = {
-			value = 21,
+			value = 22,
 		},
 		type = _constants.wallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			moduleHelpers.deco.doWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-			_constants.wallTiledCeiling2_5MModelFileName, _constants.wallTiledCeiling5MModelFileName,
-			_constants.wallTiledPillar2_5MModelFileName, _constants.wallTiledPillar5MModelFileName,
+			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+			_constants.platformWallConcretePlain2_5MModelFileName, _constants.platformWallConcretePlain5MModelFileName,
+			_constants.platformWallConcretePlainPillar2_5MModelFileName, _constants.platformWallConcretePlainPillar5MModelFileName,
 			true)
 		end,
 
@@ -43,12 +43,12 @@ function data()
 			local results = {}
 			for y = -2, 2 do
 				results[#results+1] = {
-					id = _constants.wallTiledCeiling2_5MModelFileName,
+					id = _constants.platformWallConcretePlain2_5MModelFileName,
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end
 			results[#results+1] = {
-				id = _constants.wallTiledPillar2_5MModelFileName,
+				id = _constants.platformWallConcretePlainPillar2_5MModelFileName,
 				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results

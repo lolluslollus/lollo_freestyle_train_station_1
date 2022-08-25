@@ -20,22 +20,23 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("WallConcretePlainName"),
-			description = _("WallConcretePlainDesc"),
-			icon = "ui/lollo_freestyle_train_station/wallConcretePlain.tga"
+			name = _("WallConcretePlainWRoofName"),
+			description = _("WallConcretePlainWRoofDesc"),
+			icon = "ui/lollo_freestyle_train_station/wallConcretePlainWRoof.tga"
 		},
 		metadata = { },
 		order = {
-			value = 22,
+			value = 18,
 		},
 		type = _constants.wallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			moduleHelpers.deco.doWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-			_constants.wallConcretePlainCeiling2_5MModelFileName, _constants.wallConcretePlainCeiling5MModelFileName,
-			_constants.wallConcretePlainPillar2_5MModelFileName, _constants.wallConcretePlainPillar5MModelFileName,
+			moduleHelpers.deco.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+			_constants.platformWallConcretePlainWRoof2_5MModelFileName, _constants.platformWallConcretePlainWRoof5MModelFileName,
+			_constants.platformWallConcretePlainPillar2_5MModelFileName, _constants.platformWallConcretePlainPillar5MModelFileName,
+			_constants.platformWallConcretePlain2_5MModelFileName, _constants.platformWallConcretePlain5MModelFileName,
 			true)
 		end,
 
@@ -43,12 +44,12 @@ function data()
 			local results = {}
 			for y = -2, 2 do
 				results[#results+1] = {
-					id = _constants.wallConcretePlainCeiling2_5MModelFileName,
+					id = _constants.platformWallConcretePlainWRoof2_5MModelFileName,
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end
 			results[#results+1] = {
-				id = _constants.wallConcretePlainPillar2_5MModelFileName,
+				id = _constants.platformWallConcretePlainPillar2_5MModelFileName,
 				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results
