@@ -94,8 +94,9 @@ return {
 			or params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
 		end
-		local isPlatformRoof = function(t, i)
+		local isPlatformRoofOrWall = function(t, i)
 			return params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i+1, _constants.idBases.wallSlotId)] ~= nil
 		end
 		local isUnderpass_indexed = {}
 		local isOpenLift_indexed = {}
@@ -190,7 +191,7 @@ return {
 			end
 		end
 		-- station name signs
-		-- LOLLO NOTE update platformRoofs.doPlatformRoof if you change this - dirty but faster
+		-- LOLLO NOTE update deco.doPlatformRoof if you change this - dirty but faster
 		for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local platformWidth = cpl.width
@@ -267,7 +268,7 @@ return {
 					result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal) }
 				end
 			else
-				if not(isPlatformRoof(nTerminal, i)) and (platformWidth > 4 or (not(isUnderpass_indexed[i]) and not(isOpenLift_indexed[i]) and not(isStairs_indexed[i]))) then
+				if not(isPlatformRoofOrWall(nTerminal, i)) and (platformWidth > 4 or (not(isUnderpass_indexed[i]) and not(isOpenLift_indexed[i]) and not(isStairs_indexed[i]))) then
 					-- very close to the track
 					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
 					-- sign 1.5 m from the track and facing outwards

@@ -12,6 +12,12 @@ local transfUtilsUG = require 'transf'
 
 
 local privateConstants = {
+    deco = {
+        -- LOLLO NOTE setting this to 2 gets a negligible performance boost and uglier joints,
+        -- particularly on slopes and bends
+        ceilingStep = 1,
+        numberSignPeriod = 32,
+    },
     lifts = {
         -- bridgeHeights = { 5, 10, 15, 20, 25, 30, 35, 40 } -- too little, stations get buried
         bridgeHeights = { 2.5, 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
@@ -775,6 +781,169 @@ return {
     getVariant = function(params, slotId)
         return privateFuncs.getVariant(params, slotId)
     end,
+    deco = {
+        doPlatformRoof = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+            ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId, isTunnelOk)
+            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local transfXZoom = isTrackOnPlatformLeft and -1 or 1
+            local transfYZoom = isTrackOnPlatformLeft and -1 or 1
+            local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+
+            local _pillarPeriod = 4 -- it would be math.ceil(4 / ceilingStep); easier if it is a submultiple of numberSignPeriod
+            local _barredNumberSignIs = {}
+            -- LOLLO NOTE this is copied from passengerTerminal, keep them both in sync - dirty but faster
+            for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
+                _barredNumberSignIs[i] = true
+            end
+
+            local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+            local iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+            local isFreeFromOpenStairsLeft = {}
+            local isFreeFromOpenStairsRight = {}
+            for i = i1, iMax, 1 do
+                isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)])
+                and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
+                isFreeFromOpenStairsRight[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)])
+                and not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)])
+            end
+            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
+                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+                local leadingIndex = cpf.leadingIndex
+                if leadingIndex > iMax then break end
+                if leadingIndex >= i1 and isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex] then
+                    local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+                    local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
+                    local platformWidth = cpl.width
+
+                    if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
+                        result.models[#result.models+1] = {
+                            id = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId,
+                            transf = transfUtilsUG.mul(
+                                privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+                                { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                            ),
+                            tag = tag
+                        }
+
+                        if math.fmod(ii, _pillarPeriod) == 0 then
+                            local myTransf = transfUtilsUG.mul(
+                                privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
+                                { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                            )
+                            result.models[#result.models+1] = {
+                                id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
+                                transf = myTransf,
+                                tag = tag,
+                            }
+
+                            if not(_barredNumberSignIs[leadingIndex]) then -- prevent overlapping with station name signs
+                                if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
+                                    -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+                                    local yShift = -platformWidth * 0.5 + 0.20
+                                    local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                                    if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                                    elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                                    end
+                                    result.models[#result.models + 1] = {
+                                        id = perronNumberModelId,
+                                        slotId = slotId,
+                                        transf = transfUtilsUG.mul(
+                                            myTransf,
+                                            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                                        ),
+                                        tag = tag
+                                    }
+                                    -- the model index must be in base 0 !
+                                    result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end,
+        doWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+            ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId, isTunnelOk)
+            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local transfXZoom = isTrackOnPlatformLeft and -1 or 1
+            local transfYZoom = isTrackOnPlatformLeft and -1 or 1
+            local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+
+            local _barredNumberSignIs = {}
+            -- LOLLO NOTE this is copied from passengerTerminal, keep them both in sync - dirty but faster
+            for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
+                _barredNumberSignIs[i] = true
+            end
+
+            local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+            local iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+            local isFreeFromOpenStairsLeft = {}
+            local isFreeFromOpenStairsRight = {}
+            for i = i1, iMax, 1 do
+                isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)])
+                -- and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
+                isFreeFromOpenStairsRight[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)])
+                -- and not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)])
+            end
+
+            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
+                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+                local leadingIndex = cpf.leadingIndex
+                if leadingIndex > iMax then break end
+                if leadingIndex >= i1 then
+                    local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+                    local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
+                    local platformWidth = cpl.width
+
+                    if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
+                        result.models[#result.models+1] = {
+                            id = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId,
+                            transf = transfUtilsUG.mul(
+                                privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+                                { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                            ),
+                            tag = tag
+                        }
+
+                        if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
+                            if not(_barredNumberSignIs[leadingIndex])
+                            and isFreeFromOpenStairsLeft[leadingIndex]
+                            and isFreeFromOpenStairsRight[leadingIndex]
+                            then -- prevent overlapping with station name signs or stairs
+                                local myTransf = transfUtilsUG.mul(
+                                    privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
+                                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                                )
+                                result.models[#result.models+1] = {
+                                    id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
+                                    transf = myTransf,
+                                    tag = tag,
+                                }
+
+                                -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+                                local yShift = -platformWidth * 0.5 + 0.20
+                                local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                                if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                                elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                                end
+                                result.models[#result.models + 1] = {
+                                    id = perronNumberModelId,
+                                    slotId = slotId,
+                                    transf = transfUtilsUG.mul(
+                                        myTransf,
+                                        { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                                    ),
+                                    tag = tag
+                                }
+                                -- the model index must be in base 0 !
+                                result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+                            end
+                        end
+                    end
+                end
+            end
+        end,
+    },
     edges = {
         addEdges = function(result, tag, params, t)
             -- logger.print('moduleHelpers.edges.addEdges starting for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
@@ -1184,96 +1353,6 @@ return {
                 }
             end
         end,
-    },
-    platformRoofs = {
-        doPlatformRoof = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-            ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId)
-                local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-                local transfXZoom = isTrackOnPlatformLeft and -1 or 1
-                local transfYZoom = isTrackOnPlatformLeft and -1 or 1
-                local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
-
-                -- LOLLO NOTE setting this to 2 gets a negligible performance boost and uglier joints,
-                -- particularly on slopes and bends
-                local _ceilingStep = 1
-                local _pillarPeriod = 4 -- it would be math.ceil(4 / _ceilingStep)
-                local _numberSignPeriod = 6
-                local _barredNumberSignIs = {}
-                -- LOLLO NOTE this is copied from passengerTerminal, keep them both in sync - dirty but faster
-                for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-                    _barredNumberSignIs[i] = true
-                end
-
-                local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-                local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
-                local isFreeFromOpenStairsLeft = {}
-                local isFreeFromOpenStairsRight = {}
-                for i = ii1, iiN, 1 do
-                    isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)])
-                    and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
-                    isFreeFromOpenStairsRight[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)])
-                    and not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)])
-                end
-                for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, _ceilingStep do
-                    local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
-                    local leadingIndex = cpf.leadingIndex
-                    if leadingIndex > iiN then break end
-                    if leadingIndex >= ii1 and isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex] then
-                        local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-                        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                        local platformWidth = cpl.width
-
-                        if cpf.type ~= 2 then -- outside or bridge
-                            result.models[#result.models+1] = {
-                                id = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId,
-                                transf = transfUtilsUG.mul(
-                                    privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-                                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
-                                ),
-                                tag = tag
-                            }
-
-                        -- if params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep]
-                        -- and params.terminals[nTerminal].centrePlatformsFineRelative[ii + _ceilingStep].leadingIndex <= iiN
-                        -- then
-                            if math.fmod(ii, _pillarPeriod) == 0 then
-                                local myTransf = transfUtilsUG.mul(
-                                    privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
-                                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
-                                )
-                                result.models[#result.models+1] = {
-                                    id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
-                                    transf = myTransf,
-                                    tag = tag,
-                                }
-
-                                if not(_barredNumberSignIs[leadingIndex]) then -- prevent overlapping with station name signs
-                                    if math.fmod(ii, _numberSignPeriod) == 0 then
-                                        -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
-                                        local yShift = -platformWidth * 0.5 + 0.20
-                                        local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                                        if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                                        elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
-                                        end
-                                        result.models[#result.models + 1] = {
-                                            id = perronNumberModelId,
-                                            slotId = slotId,
-                                            transf = transfUtilsUG.mul(
-                                                myTransf,
-                                                { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
-                                            ),
-                                            tag = tag
-                                        }
-                                        -- the model index must be in base 0 !
-                                        result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
-                                    end
-                                end
-                            end
-                        -- end
-                        end
-                    end
-                end
-            end,
     },
     slopedAreas = {
         getYShift = function(params, t, i, slopedAreaWidth)

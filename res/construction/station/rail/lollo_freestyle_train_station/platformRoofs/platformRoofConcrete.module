@@ -33,7 +33,7 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			moduleHelpers.platformRoofs.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+			moduleHelpers.deco.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
 			_constants.platformRoofConcreteCeiling2_5MModelFileName, _constants.platformRoofConcreteCeiling5MModelFileName,
 			_constants.platformRoofConcretePillar2_5MModelFileName, _constants.platformRoofConcretePillar5MModelFileName)
 		end,
