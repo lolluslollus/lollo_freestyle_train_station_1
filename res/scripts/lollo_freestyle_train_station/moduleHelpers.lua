@@ -50,7 +50,7 @@ local privateFuncs = {
 
         return result
     end,
-    getIsEndFiller = function(nTrackEdge)
+    getIsEndFillerEvery3 = function(nTrackEdge)
         -- this is for platform roofs and outside extensions, which have a slot every 3 track edge counts.
         -- to fill the last, if it is 4, 7, etc, we add an extra slot: this slot has a special behaviour,
         -- ie it does not draw on the adjacent track edges
@@ -297,7 +297,7 @@ privateFuncs.slopedAreas = {
     addSlopedCargoAreaDeco = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
         if areaWidth < 5 then return end
 
-        local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+        local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
         if isEndFiller then return end
 
         local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
@@ -332,7 +332,7 @@ privateFuncs.slopedAreas = {
     addSlopedPassengerAreaDeco = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
         if areaWidth < 5 then return end
 
-        local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+        local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
         if isEndFiller then return end
 
         local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
@@ -729,8 +729,8 @@ return {
             }
         }
     end,
-    getIsEndFiller = function(nTrackEdge)
-        return privateFuncs.getIsEndFiller(nTrackEdge)
+    getIsEndFillerEvery3 = function(nTrackEdge)
+        return privateFuncs.getIsEndFillerEvery3(nTrackEdge)
     end,
     getTerrainAlignmentList = function(face, raiseBy, alignmentType, slopeHigh, slopeLow)
         if type(raiseBy) ~= 'number' then raiseBy = 0 end
@@ -787,7 +787,7 @@ return {
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
-            local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
             local _pillarPeriod = 4 -- it would be math.ceil(4 / ceilingStep); easier if it is a submultiple of numberSignPeriod
             local _barredNumberSignIs = {}
@@ -872,7 +872,7 @@ return {
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
-            local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
             local _barredNumberSignIs = {}
             -- LOLLO NOTE this is copied from passengerTerminal, keep them both in sync - dirty but faster
@@ -1373,7 +1373,7 @@ return {
             return yShiftOutside, yShiftOutside4StreetAccess
         end,
         addAllOLD = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey)
-            local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
             local innerDegree = privateFuncs.slopedAreas._getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
         --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
             local waitingAreaScaleFactor, xScaleFactor = privateFuncs.slopedAreas._getSlopedAreaTweakFactors(innerDegree, areaWidth)
@@ -1423,7 +1423,7 @@ return {
             privateFuncs.slopedAreas._doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
         end,
         addAll = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey, isCargo)
-            local isEndFiller = privateFuncs.getIsEndFiller(nTrackEdge)
+            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
             local innerDegree = privateFuncs.slopedAreas._getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
         --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
             local waitingAreaScaleFactor, xScaleFactor = privateFuncs.slopedAreas._getSlopedAreaTweakFactors(innerDegree, areaWidth)
