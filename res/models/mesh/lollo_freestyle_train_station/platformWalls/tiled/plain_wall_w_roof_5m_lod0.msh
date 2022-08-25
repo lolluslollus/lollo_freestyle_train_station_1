@@ -1,26 +1,26 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 576,
-					offset = 2296,
+					count = 24,
+					offset = 1792,
 				},
 				position = {
-					count = 576,
+					count = 24,
 					offset = 1720,
 				},
 				tangent = {
-					count = 576,
-					offset = 2872,
+					count = 24,
+					offset = 1744,
 				},
 				uv0 = {
-					count = 576,
-					offset = 3448,
+					count = 24,
+					offset = 1768,
 				},
 			},
 			materials = {
@@ -29,24 +29,46 @@ return {
 		}, {
 			indices = {
 				normal = {
-					count = 288,
-					offset = 4312,
+					count = 48,
+					offset = 1960,
 				},
 				position = {
-					count = 288,
-					offset = 4024,
+					count = 48,
+					offset = 1816,
 				},
 				tangent = {
-					count = 288,
-					offset = 4600,
+					count = 48,
+					offset = 1864,
 				},
 				uv0 = {
-					count = 288,
-					offset = 4888,
+					count = 48,
+					offset = 1912,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/roofs/iron_glass_copper/light.004.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 792,
+					offset = 4384,
+				},
+				position = {
+					count = 792,
+					offset = 2008,
+				},
+				tangent = {
+					count = 792,
+					offset = 2800,
+				},
+				uv0 = {
+					count = 792,
+					offset = 3592,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/platformWalls/tiled/concrete.mtl", 
 			},
 		}, 
 	},
@@ -54,7 +76,7 @@ return {
 		normal = {
 			count = 216,
 			numComp = 3,
-			offset = 576,
+			offset = 1504,
 		},
 		position = {
 			count = 576,
@@ -64,12 +86,12 @@ return {
 		tangent = {
 			count = 304,
 			numComp = 4,
-			offset = 792,
+			offset = 576,
 		},
 		uv0 = {
 			count = 624,
 			numComp = 2,
-			offset = 1096,
+			offset = 880,
 		},
 	},
 }
