@@ -47,13 +47,13 @@ function data()
             operation_1 = {
                 mode = "NORMAL",
                 op = "OVERLAY",
-                opacity = 0.3,
+                opacity = 0.1,
                 scale = { 0.10000000149012, 0.10000000149012, },
             },
             operation_2 = {
                 mode = "NORMAL",
                 op = "OVERLAY",
-                opacity = 0.30000001192093,
+                opacity = 0.1,
                 scale = { 0.050000000745058, 0.050000000745058, },
             },
             polygon_offset = {
