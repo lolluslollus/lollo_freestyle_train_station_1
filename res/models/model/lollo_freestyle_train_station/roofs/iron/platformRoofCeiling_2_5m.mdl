@@ -14,7 +14,7 @@ function data()
                                 "lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl",
                                 "lollo_freestyle_train_station/metal/metal_deco.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/roofs/iron/iron_roof_2_5m_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/roofs/iron/roof_2_5m_lod0.msh',
                             transf = {1.02, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },
