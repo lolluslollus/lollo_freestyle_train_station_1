@@ -10,7 +10,7 @@ local transfUtilsUG = require "transf"
 function data()
 	return {
 		availability = {
-			yearFrom = moduleHelpers.eras.era_b.startYear,
+			yearFrom = moduleHelpers.eras.era_a.startYear,
 			yearTo = 0
 		},
 		category = {
@@ -20,13 +20,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("WallConcretePlainName"),
-			description = _("WallConcretePlainDesc"),
-			icon = "ui/lollo_freestyle_train_station/wallConcretePlain.tga"
+			name = _("WallIronGlassCopperName"),
+			description = _("WallTIronGlassCopperDesc"),
+			icon = "ui/lollo_freestyle_train_station/wallIronGlassCopper.tga"
 		},
 		metadata = { },
 		order = {
-			value = 34,
+			value = 32,
 		},
 		type = _constants.wallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -34,8 +34,8 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-			_constants.platformWallConcretePlain2_5MModelFileName, _constants.platformWallConcretePlain5MModelFileName,
-			_constants.platformWallConcretePlainPillar2_5MModelFileName, _constants.platformWallConcretePlainPillar5MModelFileName,
+			_constants.platformWallIronGlassCopper2_5MModelFileName, _constants.platformWallIronGlassCopper5MModelFileName,
+			_constants.platformWallIronGlassCopperPillar2_5MModelFileName, _constants.platformWallIronGlassCopperPillar5MModelFileName,
 			true)
 		end,
 
@@ -43,12 +43,12 @@ function data()
 			local results = {}
 			for y = -2, 2 do
 				results[#results+1] = {
-					id = _constants.platformWallConcretePlain2_5MModelFileName,
+					id = _constants.platformWallIronGlassCopper2_5MModelFileName,
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end
 			results[#results+1] = {
-				id = _constants.platformWallConcretePlainPillar2_5MModelFileName,
+				id = _constants.platformWallIronGlassCopperPillar2_5MModelFileName,
 				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results
