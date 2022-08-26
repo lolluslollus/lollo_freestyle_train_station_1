@@ -53,6 +53,7 @@ function data()
 				- Station naming does not work properly.
 				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
 				- The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
+				- Some modules can only be placed after some others, eg stairs exits after stairs, but the menu does not refresh automatically. After placing the first set of stairs, you need to close and reopen the menu for stairs exits to appear.
 				- Some track and signal mods are incompatible.
 			]],
 			["NAME"] = "Freestyle train station",
