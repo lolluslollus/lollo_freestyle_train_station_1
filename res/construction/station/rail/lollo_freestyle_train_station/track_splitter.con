@@ -14,6 +14,12 @@ function data()
         order = 1102,
         autoRemovable = true,
         skipCollision = true,
+        -- useless
+        -- snapping = {
+        --     rail = true,
+        --     road = false,
+        --     water = false,
+        -- },
         updateFn = function(params)
             -- print('lollo track splitter updateFn starting, params =') debugPrint(params)
             local result = {}
@@ -22,7 +28,7 @@ function data()
             result.edgeLists = {}
             result.models = {
                 {
-                    id = 'lollo_freestyle_train_station/icon/orange_huge.mdl',
+                    id = 'lollo_freestyle_train_station/icon/orange_huge_target.mdl',
                     autoRemovable = true,
                     skipCollision = true,
                     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, constants.splitterZShift, 1}

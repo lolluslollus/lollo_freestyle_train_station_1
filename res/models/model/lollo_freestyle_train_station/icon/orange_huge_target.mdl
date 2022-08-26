@@ -11,8 +11,8 @@ function data()
                         {
                             materials = {'lollo_freestyle_train_station/icon/orange.mtl'},
                             -- mesh = 'asset/icon/lod_0_icon_exclamation_mark.msh',
-                            mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer.msh',
-                            transf = {2, 0, 0, 0,  0, 2, 0, 0,  0, 0, 10, 0,  0, 0, 0, 1}
+                            mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer_target.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },
                     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}

@@ -1983,7 +1983,11 @@ function data()
                                 local conTransf = api.engine.getComponent(args.conId, api.type.ComponentType.CONSTRUCTION).transf
                                 conTransf = transfUtilsUG.new(conTransf:cols(0), conTransf:cols(1), conTransf:cols(2), conTransf:cols(3))
                                 logger.print('type(conTransf) =', type(conTransf)) logger.debugPrint(conTransf)
-                                local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf, conTransf[15] + _constants.splitterZShift)
+                                local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(
+                                    conTransf,
+                                    conTransf[15] + _constants.splitterZShift - _constants.splitterZToleranceM,
+                                    conTransf[15] + _constants.splitterZShift + _constants.splitterZToleranceM
+                                )
                                 logger.print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
                                 if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then
                                     local averageZ = getAverageZ(nearestEdgeId)
@@ -2010,6 +2014,28 @@ function data()
                                             true
                                         )
                                     end
+                                    -- this is a little more accurate, but it's also harder to use with tunnels and bridges.
+                                    -- a user error can throw it out of whack more than the averageZ does.
+                                    -- local nodeBetween = edgeUtils.getNodeBetweenByPosition(
+                                    --     nearestEdgeId,
+                                    --     -- LOLLO NOTE position and transf are always very similar
+                                    --     {
+                                    --         x = conTransf[13],
+                                    --         y = conTransf[14],
+                                    --         z = conTransf[15] + _constants.splitterZShift,
+                                    --     },
+                                    --     logger.isExtendedLog()
+                                    -- )
+                                    -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                    -- _actions.splitEdgeRemovingObject(
+                                    --     nearestEdgeId,
+                                    --     nodeBetween,
+                                    --     nil,
+                                    --     nil,
+                                    --     nil,
+                                    --     nil,
+                                    --     true
+                                    -- )
                                 end
                             end
                             _actions.bulldozeConstruction(args.conId)

@@ -61,6 +61,7 @@ local constants = {
     slopeLow = 2.5,
 
     splitterZShift = 0,
+    splitterZToleranceM = 1, -- must be positive
 
     eras = {
         era_a = { prefix = 'era_a_', startYear = 1850 },
