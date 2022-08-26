@@ -349,7 +349,7 @@ function data()
 
 			-- track splitter
 			["SmartTrackSplitterName"] = "Smart track splitter",
-			["SmartTrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use , and . to split tracks at different heights. Use AltGr + L to see its effect.",
+			["SmartTrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use AltGr + L to see its effect.",
 		},
 	}
 end

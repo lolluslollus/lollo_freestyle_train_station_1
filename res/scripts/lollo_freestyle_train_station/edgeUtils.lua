@@ -72,6 +72,7 @@ end
 -- end
 
 -- useless coz the refs to any1 and any2 are passed by val
+-- and lua has a smarter way to do that
 -- helper.swap = function(any1, any2)
 --     -- local swapTemp = any1
 --     -- any1 = any2

@@ -60,7 +60,7 @@ local constants = {
     slopeHigh = 999,
     slopeLow = 2.5,
 
-    splitterZShift = -40,
+    splitterZShift = 0,
 
     eras = {
         era_a = { prefix = 'era_a_', startYear = 1850 },

@@ -22,10 +22,7 @@ function data()
             result.edgeLists = {}
             result.models = {
                 {
-                    id = 'lollo_freestyle_train_station/icon/yellow_huge.mdl',
-                    collider = {
-                        type = 'NONE'
-                    },
+                    id = 'lollo_freestyle_train_station/icon/orange_huge.mdl',
                     autoRemovable = true,
                     skipCollision = true,
                     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, constants.splitterZShift, 1}
@@ -33,7 +30,6 @@ function data()
             }
             --		result.h0 = {}
             --		result.h1 = {}
-
             -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
             result.terrainAlignmentLists = { { type = "EQUAL", optional = true, faces =  { } } }
 

@@ -21,6 +21,27 @@ local _eventNames = _constants.eventData.eventNames
 local _guiPlatformWaypointModelId = nil
 local _guiTrackWaypointModelId = nil
 
+local getAverageZ = function(edgeId)
+    if not(edgeUtils.isValidAndExistingId(edgeId)) then return nil end
+
+    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    if baseEdge == nil then return nil end
+
+    local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+    local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+    if baseNode0 == nil
+    or baseNode1 == nil
+    or baseNode0.position == nil
+    or baseNode1.position == nil
+    or type(baseNode0.position.z) ~= 'number'
+    or type(baseNode1.position.z) ~= 'number'
+    then
+        return nil
+    end
+
+    return (baseNode0.position.z + baseNode1.position.z) / 2
+end
+
 local _tryRenameStationGroup = function(conId)
     -- For some reason, adding a cargo station to a passengers station (or viceversa)
     -- sets the name of the older station to an empty string.
@@ -1965,34 +1986,29 @@ function data()
                                 local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf, conTransf[15] + _constants.splitterZShift)
                                 logger.print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
                                 if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then
-                                    local baseEdge = api.engine.getComponent(nearestEdgeId, api.type.ComponentType.BASE_EDGE)
-                                    if baseEdge ~= nil then
-                                        local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                                        local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                                        if baseNode0 ~= nil and baseNode1 ~= nil and baseNode0.position ~= nil and baseNode1.position ~= nil then
-                                            local averageZ = ((baseNode0.position.z or 0) + (baseNode1.position.z or 0)) / 2
-                                            logger.print('averageZ =', averageZ or 'NIL')
-                                            local nodeBetween = edgeUtils.getNodeBetweenByPosition(
-                                                nearestEdgeId,
-                                                -- LOLLO NOTE position and transf are always very similar
-                                                {
-                                                    x = conTransf[13],
-                                                    y = conTransf[14],
-                                                    z = averageZ,
-                                                },
-                                                logger.isExtendedLog()
-                                            )
-                                            logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
-                                            _actions.splitEdgeRemovingObject(
-                                                nearestEdgeId,
-                                                nodeBetween,
-                                                nil,
-                                                nil,
-                                                nil,
-                                                nil,
-                                                true
-                                            )
-                                        end
+                                    local averageZ = getAverageZ(nearestEdgeId)
+                                    logger.print('averageZ =', averageZ or 'NIL')
+                                    if type(averageZ) == 'number' then
+                                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(
+                                            nearestEdgeId,
+                                            -- LOLLO NOTE position and transf are always very similar
+                                            {
+                                                x = conTransf[13],
+                                                y = conTransf[14],
+                                                z = averageZ,
+                                            },
+                                            logger.isExtendedLog()
+                                        )
+                                        logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                        _actions.splitEdgeRemovingObject(
+                                            nearestEdgeId,
+                                            nodeBetween,
+                                            nil,
+                                            nil,
+                                            nil,
+                                            nil,
+                                            true
+                                        )
                                     end
                                 end
                             end
