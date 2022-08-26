@@ -8,7 +8,7 @@ return {
 			indices = {
 				normal = {
 					count = 864,
-					offset = 3124,
+					offset = 3988,
 				},
 				position = {
 					count = 864,
@@ -16,11 +16,11 @@ return {
 				},
 				tangent = {
 					count = 864,
-					offset = 3988,
+					offset = 2260,
 				},
 				uv0 = {
 					count = 864,
-					offset = 2260,
+					offset = 3124,
 				},
 			},
 			materials = {
@@ -32,7 +32,7 @@ return {
 		normal = {
 			count = 324,
 			numComp = 3,
-			offset = 424,
+			offset = 1144,
 		},
 		position = {
 			count = 792,
@@ -42,12 +42,12 @@ return {
 		tangent = {
 			count = 720,
 			numComp = 4,
-			offset = 748,
+			offset = 0,
 		},
 		uv0 = {
 			count = 424,
 			numComp = 2,
-			offset = 0,
+			offset = 720,
 		},
 	},
 }
