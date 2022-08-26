@@ -16,6 +16,8 @@ function data()
                 'Bridge Station',
                 'Cargo Station',
                 'Elevated Station',
+                'Elevator',
+                'Lift',
                 'Stairs',
                 'Train Depot',
                 'Train Station',
