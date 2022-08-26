@@ -52,7 +52,8 @@ local constants = {
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     streetEdgeType = 0, -- 0 = ROAD, 1 = RAIL
     maxNTerminals = 12,
-    minSplitDistance = 3,
+    minSplitDistance = 2,
+    minSplitDistanceAtEndOfLine = 3,
     maxWaypointDistance = 1020,
     searchRadius4NearbyStation2Join = 500,
     slopeHigh = 999,

@@ -812,14 +812,19 @@ local _actions = {
         -- logger.print('node1 =') logger.debugPrint(node1)
 
         if not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)) and not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node1.position)) then
-            logger.warn('splitEdge cannot find the nodes')
+            logger.err('splitEdge cannot find the nodes')
         end
+
         local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)
         logger.print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
         local distance0 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance0 or nodeBetween.refDistance1
         local distance1 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance1 or nodeBetween.refDistance0
         logger.print('distance0 =') logger.debugPrint(distance0)
         logger.print('distance1 =') logger.debugPrint(distance1)
+        local isNode0EndOfLine = isNodeBetweenOrientatedLikeMyEdge and #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node0})) == 1 or #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node1})) == 1
+        local isNode1EndOfLine = isNodeBetweenOrientatedLikeMyEdge and #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node1})) == 1 or #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node0})) == 1
+        logger.print('isNode0EndOfLine =') logger.debugPrint(isNode0EndOfLine)
+        logger.print('isNode1EndOfLine =') logger.debugPrint(isNode1EndOfLine)
         local tanSign = isNodeBetweenOrientatedLikeMyEdge and 1 or -1
 
         local context = api.type.Context:new()
@@ -830,9 +835,25 @@ local _actions = {
         context.player = api.engine.util.getPlayer() -- default is -1
 
         -- the split may occur at the end of an edge - in theory, but I could not make it happen in practise.
-        if distance0 == 0 or distance1 == 0 or (not(mustSplit) and (distance0 < _constants.minSplitDistance or distance1 < _constants.minSplitDistance)) then
+        local reasonForNotSplitting = 0
+        if distance0 == 0 then reasonForNotSplitting = 1
+        elseif distance1 == 0 then reasonForNotSplitting = 2
+        elseif not(mustSplit) then
+            if isNode0EndOfLine and distance0 < _constants.minSplitDistanceAtEndOfLine then
+                reasonForNotSplitting = 3
+            elseif isNode1EndOfLine and distance1 < _constants.minSplitDistanceAtEndOfLine then
+                reasonForNotSplitting = 4
+            elseif distance0 < _constants.minSplitDistance then
+                reasonForNotSplitting = 5
+            elseif distance1 < _constants.minSplitDistance then
+                reasonForNotSplitting = 6
+            end
+        end
+
+        if reasonForNotSplitting > 0 then
             -- we use this to avoid unnecessary splits, unless they must happen
-            logger.print('WARNING: nodeBetween is at the end of an edge; nodeBetween =') logger.debugPrint(nodeBetween)
+            logger.print('nodeBetween is at the end of an edge; nodeBetween =') logger.debugPrint(nodeBetween)
+            logger.print('reasonForNotSplitting =', reasonForNotSplitting)
             local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(wholeEdgeId, objectIdToRemove)
             if not(proposal) then return end
 
@@ -845,10 +866,12 @@ local _actions = {
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                         if not(stringUtils.isNullOrEmptyString(newArgName)) then
                             local splitNodeId = -1
-                            if distance0 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8one')
-                            elseif distance1 == 0 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8two')
-                            elseif distance0 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8three')
-                            elseif distance1 < _constants.minSplitDistance then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8four')
+                            if reasonForNotSplitting == 1 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8one')
+                            elseif reasonForNotSplitting == 2 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8two')
+                            elseif reasonForNotSplitting == 3 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8three')
+                            elseif reasonForNotSplitting == 4 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8four')
+                            elseif reasonForNotSplitting == 5 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8five')
+                            elseif reasonForNotSplitting == 6 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8six')
                             else
                                 logger.err('impossible condition, distance0 =') logger.errorDebugPrint(distance0)
                                 logger.err('distance1 =') logger.errorDebugPrint(distance1)
