@@ -821,8 +821,8 @@ local _actions = {
         local distance1 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance1 or nodeBetween.refDistance0
         logger.print('distance0 =') logger.debugPrint(distance0)
         logger.print('distance1 =') logger.debugPrint(distance1)
-        local isNode0EndOfLine = isNodeBetweenOrientatedLikeMyEdge and #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node0})) == 1 or #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node1})) == 1
-        local isNode1EndOfLine = isNodeBetweenOrientatedLikeMyEdge and #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node1})) == 1 or #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node0})) == 1
+        local isNode0EndOfLine = #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node0})) == 1
+        local isNode1EndOfLine = #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node1})) == 1
         logger.print('isNode0EndOfLine =') logger.debugPrint(isNode0EndOfLine)
         logger.print('isNode1EndOfLine =') logger.debugPrint(isNode1EndOfLine)
         local tanSign = isNodeBetweenOrientatedLikeMyEdge and 1 or -1
@@ -868,8 +868,8 @@ local _actions = {
                             local splitNodeId = -1
                             if reasonForNotSplitting == 1 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8one')
                             elseif reasonForNotSplitting == 2 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8two')
-                            elseif reasonForNotSplitting == 3 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8three')
-                            elseif reasonForNotSplitting == 4 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8four')
+                            elseif reasonForNotSplitting == 3 then splitNodeId = oldBaseEdge.node0 logger.print('8three')
+                            elseif reasonForNotSplitting == 4 then splitNodeId = oldBaseEdge.node1 logger.print('8four')
                             elseif reasonForNotSplitting == 5 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8five')
                             elseif reasonForNotSplitting == 6 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8six')
                             else
