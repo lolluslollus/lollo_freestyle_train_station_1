@@ -13,7 +13,7 @@ function data()
                             materials = {
                                 "lollo_freestyle_train_station/metal/metal_w_rivets.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/roofs/iron_glass_copper/iron_pillar_5m_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/roofs/iron_glass_copper/pillar_5m_lod0.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },
