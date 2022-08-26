@@ -509,7 +509,7 @@ local _actions = {
 
     rebuildOneTerminalTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
         local _significantFigures4LocateNode = 5 -- you may lower this down to 100 if tracks are not properly rebuilt.
-        -- cleanupStreetGraph in previous events (removeTerminal and bulldozeStation) might also play a role, it might.
+        -- cleanupStreetGraph in previous events (removeTerminal and bulldozeConstruction) might also play a role, it might.
         logger.print('rebuildOneTerminalTracks starting')
         -- logger.print('trackEdgeLists =') logger.debugPrint(trackEdgeLists)
         -- logger.print('platformEdgeLists =') logger.debugPrint(platformEdgeLists)
@@ -637,7 +637,7 @@ local _actions = {
         )
     end,
 
-    bulldozeStation = function(constructionId)
+    bulldozeConstruction = function(constructionId)
         if not(edgeUtils.isValidAndExistingId(constructionId)) then return end
 
         -- local oldCon = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
@@ -660,8 +660,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('LOLLO bulldozeStation success = ', success)
-                -- logger.print('LOLLO bulldozeStation result = ') logger.debugPrint(result)
+                logger.print('LOLLO bulldozeConstruction success = ', success)
+                -- logger.print('LOLLO bulldozeConstruction result = ') logger.debugPrint(result)
             end
         )
     end,
@@ -1923,7 +1923,7 @@ function data()
                             return
                         end
                         if type(args.removedTerminalEdgeLists) ~= 'table' or type(args.removedTerminalEdgeLists.trackEdgeLists) ~= 'table' then
-                            _actions.bulldozeStation(args.stationConstructionId)
+                            _actions.bulldozeConstruction(args.stationConstructionId)
                             logger.err('args.removedTerminalEdgeLists.trackEdgeLists not available')
                             return
                         end
@@ -1948,7 +1948,7 @@ function data()
                         _actions.buildSnappyStreetEdges(args.stationConstructionId)
                         _actions.buildSnappyTracks(args.stationConstructionId, 1, #con.params.terminals)
                     elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
-                        _actions.bulldozeStation(args.stationConstructionId)
+                        _actions.bulldozeConstruction(args.stationConstructionId)
                     elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
                         or not(edgeUtils.isValidAndExistingId(args.subwayId)) then
@@ -1956,6 +1956,48 @@ function data()
                             return
                         end
                         _actions.addSubway(args.join2StationConId, args.subwayId, _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED)
+                    elseif name == _eventNames.TRACK_SPLIT_REQUESTED then
+                        if args ~= nil and args.conId ~= nil then
+                            if edgeUtils.isValidAndExistingId(args.conId) then
+                                local conTransf = api.engine.getComponent(args.conId, api.type.ComponentType.CONSTRUCTION).transf
+                                conTransf = transfUtilsUG.new(conTransf:cols(0), conTransf:cols(1), conTransf:cols(2), conTransf:cols(3))
+                                logger.print('type(conTransf) =', type(conTransf)) logger.debugPrint(conTransf)
+                                local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(conTransf, conTransf[15] + _constants.splitterZShift)
+                                logger.print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
+                                if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then
+                                    local baseEdge = api.engine.getComponent(nearestEdgeId, api.type.ComponentType.BASE_EDGE)
+                                    if baseEdge ~= nil then
+                                        local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+                                        local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+                                        if baseNode0 ~= nil and baseNode1 ~= nil and baseNode0.position ~= nil and baseNode1.position ~= nil then
+                                            local averageZ = ((baseNode0.position.z or 0) + (baseNode1.position.z or 0)) / 2
+                                            logger.print('averageZ =', averageZ or 'NIL')
+                                            local nodeBetween = edgeUtils.getNodeBetweenByPosition(
+                                                nearestEdgeId,
+                                                -- LOLLO NOTE position and transf are always very similar
+                                                {
+                                                    x = conTransf[13],
+                                                    y = conTransf[14],
+                                                    z = averageZ,
+                                                },
+                                                logger.isExtendedLog()
+                                            )
+                                            logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                            _actions.splitEdgeRemovingObject(
+                                                nearestEdgeId,
+                                                nodeBetween,
+                                                nil,
+                                                nil,
+                                                nil,
+                                                nil,
+                                                true
+                                            )
+                                        end
+                                    end
+                                end
+                            end
+                            _actions.bulldozeConstruction(args.conId)
+                        end
                     end
                 end,
                 logger.xpErrorHandler
@@ -2073,7 +2115,7 @@ function data()
                                     end
                                 end
                             elseif id == 'constructionBuilder' then
-                                if not args.result or not args.result[1] then return end
+                                if not args or not args.result or not args.result[1] then return end
 
                                 -- logger.print('args =') logger.debugPrint(args)
                                 local conId = args.result[1]
@@ -2081,7 +2123,20 @@ function data()
                                 -- logger.print('construction built, construction id =') logger.debugPrint(conId)
                                 if not(con) then return end
 
-                                _guiActions.tryJoinSubway(conId, con)
+                                if name == 'builder.apply' and con.fileName == 'station/rail/lollo_freestyle_train_station/track_splitter.con' and con.transf ~= nil then
+                                    api.cmd.sendCommand(
+                                        api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.TRACK_SPLIT_REQUESTED,
+                                            {
+                                                conId = args.result[1]
+                                            }
+                                        )
+                                    )
+                                else
+                                    _guiActions.tryJoinSubway(conId, con)
+                                end
                                 -- _guiActions.tryHideHole(conId, con)
                             elseif id == 'streetTerminalBuilder' then
                                 -- waypoint, traffic light, my own waypoints built

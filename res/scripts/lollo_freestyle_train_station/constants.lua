@@ -24,6 +24,7 @@ local constants = {
             REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
             SUBWAY_JOIN_REQUESTED = 'subwayJoinRequested',
             TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
+            TRACK_SPLIT_REQUESTED = 'trackSplitRequested',
             TRACK_WAYPOINT_1_SPLIT_REQUESTED = 'trackWaypoint1SplitRequested',
             TRACK_WAYPOINT_2_SPLIT_REQUESTED = 'trackWaypoint2SplitRequested',
             WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
@@ -58,6 +59,8 @@ local constants = {
     searchRadius4NearbyStation2Join = 500,
     slopeHigh = 999,
     slopeLow = 2.5,
+
+    splitterZShift = -40,
 
     eras = {
         era_a = { prefix = 'era_a_', startYear = 1850 },
