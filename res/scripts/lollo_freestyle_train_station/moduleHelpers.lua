@@ -202,6 +202,7 @@ privateFuncs.edges = {
                 -- The only way around it is not to draw the platform edge.
                 -- This will make trouble when snapping parallel platform, which far outweighs the optical benefit
                 -- of underpasses.
+                -- It will also make for missing bits of bridges.
                 alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
                 edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, params.inverseMainTransf),
                 edgeType = pel.edgeType,
