@@ -1793,6 +1793,8 @@ function data()
                         -- logger.print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') logger.debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
                         local _setLeftCentreRightPlatforms = function(platformEdgeList, trackEdgeList, trackEdgeListMidIndex)
+                            -- LOLLO TODO instead of basing these numbers on the edges, base them on absolute distances.
+                            -- The result will be much neater, irrespective of how the user placed the edges.
                             eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions(
                                 platformEdgeList,
                                 args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
