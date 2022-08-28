@@ -203,6 +203,8 @@ privateFuncs.edges = {
                 -- This will make trouble when snapping parallel platform, which far outweighs the optical benefit
                 -- of underpasses.
                 -- It will also make for missing bits of bridges.
+                -- Unless we find the undocumented fallback - it looks like one. There is config/ground/texture/fallback.lua,
+                -- but id does nothing.
                 alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
                 edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, params.inverseMainTransf),
                 edgeType = pel.edgeType,
