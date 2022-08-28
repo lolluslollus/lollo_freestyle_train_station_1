@@ -277,4 +277,11 @@ local edgeLists2 = {
 
 local splits2 = getCentralEdgePositions(edgeLists2, 2)
 
+
+
+local vec1 = { 92.263687133789, 602.89776611328, 13.625541687012, }
+local vec2 = { 91.385019392729, 602.56420214167, 13.649062242507, }
+
+local res = edgeUtils.isXYZVeryClose(vec1, vec2, 3)
+
 local dummy2 = 123

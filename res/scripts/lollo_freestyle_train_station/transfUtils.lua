@@ -577,6 +577,34 @@ utils.getPosTanX2Reversed = function(posTanX2)
     }
 end
 
+-- "%." .. math.floor(significantFigures) .. "g"
+-- we make the array for performance reasons
+local _isVeryCloseFormatStrings = {
+    "%.1g",
+    "%.2g",
+    "%.3g",
+    "%.4g",
+    "%.5g",
+    "%.6g",
+    "%.7g",
+    "%.8g",
+    "%.9g",
+    "%.10g",
+}
+-- 1 + 10^(-significantFigures +1) -- 1.01 with 3 significant figures, 1.001 with 4, etc
+-- we make the array for performance reasons
+local _isVeryCloseTesters = {
+    2,
+    1.1,
+    1.01,
+    1.001,
+    1.0001,
+    1.00001,
+    1.000001,
+    1.0000001,
+    1.00000001,
+    1.000000001,
+}
 utils.isNumVeryClose = function(num1, num2, significantFigures)
     if type(num1) ~= 'number' or type(num2) ~= 'number' then return false end
 
@@ -585,7 +613,7 @@ utils.isNumVeryClose = function(num1, num2, significantFigures)
     elseif significantFigures < 1 or significantFigures > 10 then return false
     end
 
-    local _formatString = "%." .. math.floor(significantFigures) .. "g"
+    local _formatString = _isVeryCloseFormatStrings[significantFigures]
 
     -- wrong (less accurate):
     -- local roundedNum1 = math.ceil(num1 * roundingFactor)
@@ -596,7 +624,7 @@ utils.isNumVeryClose = function(num1, num2, significantFigures)
     -- return roundedNum1 == roundedNum2
     -- but what I really want are the first significant figures, never mind how big the number is
     return (_formatString):format(num1) == (_formatString):format(num2)
-        or (_formatString):format(num1 * 1.1) == (_formatString):format(num2 * 1.1)
+        or (_formatString):format(num1 * _isVeryCloseTesters[significantFigures]) == (_formatString):format(num2 * _isVeryCloseTesters[significantFigures])
 end
 
 utils.sgn = function(num)

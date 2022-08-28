@@ -461,32 +461,32 @@ local helpers = {
         local leadingIndex = 0
         local lengthUncovered = 0
         local previousNodeBetween = nil
-        local previousEdgeLength = 0
-        local previousPel = nil
+        local previousOldEdgeLength = 0
+        local previousOldEdge = nil
 
         local results = {}
-        for _, pel in pairs(edgeLists) do
-            local _edgeLength = (transfUtils.getVectorLength(pel.posTanX2[1][2]) + transfUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
-            local _nSplitsInEdge = math.floor((_edgeLength + lengthUncovered) / stepLength)
-            local _firstStepPercent = (stepLength - lengthUncovered) / _edgeLength
-            local _nextStepPercent = stepLength / _edgeLength
+        for _, oldEdge in pairs(edgeLists) do
+            local _oldEdgeLength = (transfUtils.getVectorLength(oldEdge.posTanX2[1][2]) + transfUtils.getVectorLength(oldEdge.posTanX2[2][2])) * 0.5
+            local _nSplitsInEdge = math.floor((_oldEdgeLength + lengthUncovered) / stepLength)
+            local _firstStepPercent = (stepLength - lengthUncovered) / _oldEdgeLength
+            local _nextStepPercent = stepLength / _oldEdgeLength
             if _nSplitsInEdge > 0 then leadingIndex = leadingIndex + 1 end
-            logger.print('edgeLength, _nSplitsInEdge, firstStepPercent, nextStepPercent, leadingIndex =', _edgeLength, _nSplitsInEdge, _firstStepPercent, _nextStepPercent, leadingIndex)
+            logger.print('edgeLength, _nSplitsInEdge, firstStepPercent, nextStepPercent, leadingIndex =', _oldEdgeLength, _nSplitsInEdge, _firstStepPercent, _nextStepPercent, leadingIndex)
             if _firstStepPercent < 0 then
-                logger.err('firstStep cannot be < 0; edgeLength, _nSplitsInEdge, lengthUncovered =', _edgeLength, _nSplitsInEdge, lengthUncovered)
+                logger.err('firstStep cannot be < 0; edgeLength, _nSplitsInEdge, lengthUncovered =', _oldEdgeLength, _nSplitsInEdge, lengthUncovered)
                 return {}
             end
 
-            local edgeResults = {}
+            local newEdgeResults = {}
             local lastCoveredLengthInEdge = -lengthUncovered
             for i = 1, _nSplitsInEdge do
                 -- logger.print('i == ', i)
                 -- logger.print('i / _nSplitsInEdge =', i / _nSplitsInEdge)
                 local nodeBetween = edgeUtils.getNodeBetween(
-                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][1]),
-                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][1]),
-                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][2]),
-                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][2]),
+                    transfUtils.oneTwoThree2XYZ(oldEdge.posTanX2[1][1]),
+                    transfUtils.oneTwoThree2XYZ(oldEdge.posTanX2[2][1]),
+                    transfUtils.oneTwoThree2XYZ(oldEdge.posTanX2[1][2]),
+                    transfUtils.oneTwoThree2XYZ(oldEdge.posTanX2[2][2]),
                     _firstStepPercent + (i-1) * _nextStepPercent
                 )
                 logger.print('nodeBetween =') -- logger.debugPrint(nodeBetween)
@@ -499,18 +499,18 @@ local helpers = {
                 logger.print('newEdgeLength =', newEdgeLength)
                 logger.print('lastCoveredLengthInEdge =', lastCoveredLengthInEdge)
                 if previousNodeBetween == nil then
-                    edgeResults[#edgeResults+1] = {
+                    newEdgeResults[#newEdgeResults+1] = {
                         posTanX2 = {
                             {
                                 {
-                                    pel.posTanX2[1][1][1],
-                                    pel.posTanX2[1][1][2],
-                                    pel.posTanX2[1][1][3],
+                                    oldEdge.posTanX2[1][1][1],
+                                    oldEdge.posTanX2[1][1][2],
+                                    oldEdge.posTanX2[1][1][3],
                                 },
                                 {
-                                    pel.posTanX2[1][2][1] * newEdgeLength / _edgeLength,
-                                    pel.posTanX2[1][2][2] * newEdgeLength / _edgeLength,
-                                    pel.posTanX2[1][2][3] * newEdgeLength / _edgeLength,
+                                    oldEdge.posTanX2[1][2][1] * newEdgeLength / _oldEdgeLength,
+                                    oldEdge.posTanX2[1][2][2] * newEdgeLength / _oldEdgeLength,
+                                    oldEdge.posTanX2[1][2][3] * newEdgeLength / _oldEdgeLength,
                                 }
                             },
                             {
@@ -528,7 +528,7 @@ local helpers = {
                         },
                     }
                 else
-                    edgeResults[#edgeResults+1] = {
+                    newEdgeResults[#newEdgeResults+1] = {
                         posTanX2 = {
                             {
                                 {
@@ -557,48 +557,55 @@ local helpers = {
                         },
                     }
                 end
-                edgeResults[#edgeResults].catenary = pel.catenary
-                edgeResults[#edgeResults].leadingIndex = pel.leadingIndex or leadingIndex
+                newEdgeResults[#newEdgeResults].catenary = oldEdge.catenary
+                newEdgeResults[#newEdgeResults].leadingIndex = oldEdge.leadingIndex or leadingIndex
                 if addTerrainHeight then
-                    edgeResults[#edgeResults].terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
-                        edgeResults[#edgeResults].posTanX2[1][1][1],
-                        edgeResults[#edgeResults].posTanX2[1][1][2]
+                    newEdgeResults[#newEdgeResults].terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+                        newEdgeResults[#newEdgeResults].posTanX2[1][1][1],
+                        newEdgeResults[#newEdgeResults].posTanX2[1][1][2]
                     ))
                     -- edgeResults[#edgeResults].terrainHeight2 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
                     --     edgeResults[#edgeResults].posTanX2[2][1][1],
                     --     edgeResults[#edgeResults].posTanX2[2][1][2]
                     -- ))
                 end
-                edgeResults[#edgeResults].trackType = pel.trackType
-                edgeResults[#edgeResults].trackTypeName = pel.trackTypeName
-                edgeResults[#edgeResults].type = pel.type
-                edgeResults[#edgeResults].typeIndex = pel.typeIndex
-                edgeResults[#edgeResults].width = pel.width or 0
-                edgeResults[#edgeResults].era = pel.era or _constants.eras.era_c.prefix
+                newEdgeResults[#newEdgeResults].trackType = oldEdge.trackType
+                newEdgeResults[#newEdgeResults].trackTypeName = oldEdge.trackTypeName
+                newEdgeResults[#newEdgeResults].type = oldEdge.type
+                newEdgeResults[#newEdgeResults].typeIndex = oldEdge.typeIndex
+                newEdgeResults[#newEdgeResults].width = oldEdge.width or 0
+                newEdgeResults[#newEdgeResults].era = oldEdge.era or _constants.eras.era_c.prefix
 
                 lastCoveredLengthInEdge = nodeBetween.refDistance0
                 previousNodeBetween = nodeBetween
             end
 
-            for _, value in pairs(edgeResults) do
+            for _, value in pairs(newEdgeResults) do
                 results[#results+1] = value
             end
 
             if _nSplitsInEdge < 1 then
-                lengthUncovered = lengthUncovered + _edgeLength
+                lengthUncovered = lengthUncovered + _oldEdgeLength
             else
-                lengthUncovered = (1 - _firstStepPercent - (_nSplitsInEdge-1) * _nextStepPercent) * _edgeLength
+                lengthUncovered = (1 - _firstStepPercent - (_nSplitsInEdge-1) * _nextStepPercent) * _oldEdgeLength
             end
             logger.print('lengthUncovered =', lengthUncovered)
 
-            previousEdgeLength = _edgeLength
-            previousPel = pel
+            previousOldEdgeLength = _oldEdgeLength
+            previousOldEdge = oldEdge
         end
 
-        if lengthUncovered > 0 and previousPel ~= nil and previousEdgeLength ~= 0 then -- LOLLO TODO see to the roundings!
+        -- now we see to the rounding errors: if we can, we force the last result to the original edge end...
+        local _lastOldEdgePosition = previousOldEdge.posTanX2[2][1]
+        if edgeUtils.isXYZVeryClose(_lastOldEdgePosition, results[#results].posTanX2[2][1], 3) then
+            logger.print('these position vectors are very close:') logger.debugPrint(_lastOldEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
+            results[#results].posTanX2[2][1] = _lastOldEdgePosition
+        -- ...otherwise, we make a new edge to reach to the original edge end
+        elseif lengthUncovered > 0 and previousOldEdge ~= nil and previousOldEdgeLength ~= 0 then
+            logger.print('these position vectors are not close enough:') logger.debugPrint(_lastOldEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
             results[#results+1] = {
-                catenary = previousPel.catenary,
-                leadingIndex = previousPel.leadingIndex or leadingIndex,
+                catenary = previousOldEdge.catenary,
+                leadingIndex = previousOldEdge.leadingIndex or leadingIndex,
                 posTanX2 = {
                     {
                         {
@@ -613,25 +620,23 @@ local helpers = {
                         }
                     },
                     {
+                        _lastOldEdgePosition,
                         {
-                            previousPel.posTanX2[2][1][1],
-                            previousPel.posTanX2[2][1][2],
-                            previousPel.posTanX2[2][1][3],
-                        },
-                        {
-                            previousPel.posTanX2[2][2][1] * lengthUncovered / previousEdgeLength,
-                            previousPel.posTanX2[2][2][2] * lengthUncovered / previousEdgeLength,
-                            previousPel.posTanX2[2][2][3] * lengthUncovered / previousEdgeLength,
+                            previousOldEdge.posTanX2[2][2][1] * lengthUncovered / previousOldEdgeLength,
+                            previousOldEdge.posTanX2[2][2][2] * lengthUncovered / previousOldEdgeLength,
+                            previousOldEdge.posTanX2[2][2][3] * lengthUncovered / previousOldEdgeLength,
                         }
                     },
                 },
-                trackType = previousPel.trackType,
-                trackTypeName = previousPel.trackTypeName,
-                type = previousPel.type,
-                typeIndex = previousPel.typeIndex,
-                width = previousPel.width or 0,
-                era = previousPel.era or _constants.eras.era_c.prefix,
+                trackType = previousOldEdge.trackType,
+                trackTypeName = previousOldEdge.trackTypeName,
+                type = previousOldEdge.type,
+                typeIndex = previousOldEdge.typeIndex,
+                width = previousOldEdge.width or 0,
+                era = previousOldEdge.era or _constants.eras.era_c.prefix,
             }
+        else
+            logger.err('there is a piece missing')
         end
         logger.print('getCentralEdgePositions results =') logger.debugPrint(results)
         return results
