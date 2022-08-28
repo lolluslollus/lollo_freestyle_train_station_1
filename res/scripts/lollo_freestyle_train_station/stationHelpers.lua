@@ -454,6 +454,178 @@ local helpers = {
         return results
     end,
 
+    getCentralEdgePositionsNEW = function(edgeLists, stepLength, addTerrainHeight)
+        logger.print('getCentralEdgePositions starting, stepLength =', stepLength, 'edgeLists =') logger.debugPrint(edgeLists)
+        if type(edgeLists) ~= 'table' then return {} end
+
+        local _pelCount = #edgeLists
+        local pelIndex = 0
+        local leadingIndex = 0
+        local lengthUncovered = 0
+        local previousNodeBetween = nil
+
+        local results = {}
+        for _, pel in pairs(edgeLists) do
+            pelIndex = pelIndex + 1
+            local _edgeLength = (transfUtils.getVectorLength(pel.posTanX2[1][2]) + transfUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
+            local _nModelsInEdge = math.floor((_edgeLength + lengthUncovered) / stepLength)
+            local _firstStepPercent = (stepLength - lengthUncovered) / _edgeLength
+            local _nextStepPercent = stepLength / _edgeLength
+            logger.print('edgeLength, nModelsInEdge, firstStepPercent, nextStepPercent =', _edgeLength, _nModelsInEdge, _firstStepPercent, _nextStepPercent)
+            if _firstStepPercent < 0 then
+                logger.err('firstStep cannot be < 0; edgeLength, nModelsInEdge, lengthUncovered =', _edgeLength, _nModelsInEdge, lengthUncovered)
+                return {}
+            end
+
+            local edgeResults = {}
+            local lastCoveredLengthInEdge = -lengthUncovered
+            for i = 1, _nModelsInEdge do
+                leadingIndex = leadingIndex + 1
+                -- logger.print('i == ', i)
+                -- logger.print('i / nModelsInEdge =', i / nModelsInEdge)
+                local nodeBetween = edgeUtils.getNodeBetween(
+                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][1]),
+                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][1]),
+                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][2]),
+                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][2]),
+                    _firstStepPercent + (i-1) * _nextStepPercent
+                )
+                -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                if nodeBetween == nil then
+                    logger.err('nodeBetween not found; pel =')
+                    logger.errorDebugPrint(pel)
+                    return {}
+                end
+                local newEdgeLength = nodeBetween.refDistance0 - lastCoveredLengthInEdge
+                logger.print('newEdgeLength =', newEdgeLength)
+                logger.print('lastCoveredLengthInEdge =', lastCoveredLengthInEdge)
+                if previousNodeBetween == nil then
+                    edgeResults[#edgeResults+1] = {
+                        posTanX2 = {
+                            {
+                                {
+                                    pel.posTanX2[1][1][1],
+                                    pel.posTanX2[1][1][2],
+                                    pel.posTanX2[1][1][3],
+                                },
+                                {
+                                    pel.posTanX2[1][2][1] * newEdgeLength / _edgeLength,
+                                    pel.posTanX2[1][2][2] * newEdgeLength / _edgeLength,
+                                    pel.posTanX2[1][2][3] * newEdgeLength / _edgeLength,
+                                }
+                            },
+                            {
+                                {
+                                    nodeBetween.position.x,
+                                    nodeBetween.position.y,
+                                    nodeBetween.position.z,
+                                },
+                                {
+                                    nodeBetween.tangent.x * newEdgeLength,
+                                    nodeBetween.tangent.y * newEdgeLength,
+                                    nodeBetween.tangent.z * newEdgeLength,
+                                }
+                            },
+                        },
+                    }
+                elseif pelIndex == _pelCount and i == _nModelsInEdge then
+                    edgeResults[#edgeResults+1] = {
+                        posTanX2 = {
+                            {
+                                {
+                                    previousNodeBetween.position.x,
+                                    previousNodeBetween.position.y,
+                                    previousNodeBetween.position.z,
+                                },
+                                {
+                                    previousNodeBetween.tangent.x * newEdgeLength,
+                                    previousNodeBetween.tangent.y * newEdgeLength,
+                                    previousNodeBetween.tangent.z * newEdgeLength,
+                                }
+                            },
+                            {
+                                {
+                                    pel.posTanX2[2][1][1],
+                                    pel.posTanX2[2][1][2],
+                                    pel.posTanX2[2][1][3],
+                                },
+                                {
+                                    pel.posTanX2[2][2][1] * newEdgeLength / _edgeLength,
+                                    pel.posTanX2[2][2][2] * newEdgeLength / _edgeLength,
+                                    pel.posTanX2[2][2][3] * newEdgeLength / _edgeLength,
+                                }
+                            },
+                        },
+                    }
+                else
+                    edgeResults[#edgeResults+1] = {
+                        posTanX2 = {
+                            {
+                                {
+                                    previousNodeBetween.position.x,
+                                    previousNodeBetween.position.y,
+                                    previousNodeBetween.position.z,
+                                },
+                                {
+                                    previousNodeBetween.tangent.x * newEdgeLength,
+                                    previousNodeBetween.tangent.y * newEdgeLength,
+                                    previousNodeBetween.tangent.z * newEdgeLength,
+                                }
+                            },
+                            {
+                                {
+                                    nodeBetween.position.x,
+                                    nodeBetween.position.y,
+                                    nodeBetween.position.z,
+                                },
+                                {
+                                    nodeBetween.tangent.x * newEdgeLength,
+                                    nodeBetween.tangent.y * newEdgeLength,
+                                    nodeBetween.tangent.z * newEdgeLength,
+                                }
+                            },
+                        },
+                    }
+                end
+                edgeResults[#edgeResults].catenary = pel.catenary
+                edgeResults[#edgeResults].leadingIndex = leadingIndex
+                if addTerrainHeight then
+                    edgeResults[#edgeResults].terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+                        edgeResults[#edgeResults].posTanX2[1][1][1],
+                        edgeResults[#edgeResults].posTanX2[1][1][2]
+                    ))
+                    -- edgeResults[#edgeResults].terrainHeight2 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+                    --     edgeResults[#edgeResults].posTanX2[2][1][1],
+                    --     edgeResults[#edgeResults].posTanX2[2][1][2]
+                    -- ))
+                end
+                edgeResults[#edgeResults].trackType = pel.trackType
+                edgeResults[#edgeResults].trackTypeName = pel.trackTypeName
+                edgeResults[#edgeResults].type = pel.type
+                edgeResults[#edgeResults].typeIndex = pel.typeIndex
+                edgeResults[#edgeResults].width = pel.width or 0
+                edgeResults[#edgeResults].era = pel.era or _constants.eras.era_c.prefix
+
+                lastCoveredLengthInEdge = nodeBetween.refDistance0
+                previousNodeBetween = nodeBetween
+            end
+
+            for _, value in pairs(edgeResults) do
+                results[#results+1] = value
+            end
+
+            if _nModelsInEdge < 1 then
+                lengthUncovered = lengthUncovered + _edgeLength
+            else
+                lengthUncovered = math.fmod(_edgeLength + lengthUncovered, _nModelsInEdge)
+            end
+            logger.print('lengthUncovered =', lengthUncovered)
+        end
+
+        logger.print('getCentralEdgePositions results =') logger.debugPrint(results)
+        return results
+    end,
+
     getShiftedEdgePositionsOLD = function(edgeLists, sideShift)
         local results = {
             {
@@ -1638,16 +1810,16 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
     -- end
 end
 
-helpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid = function(eventArgs)
+helpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid = function(centrePlatforms, midTrackEdge)
     local result = 1
     local trackPlatformDistance = transfUtils.getPositionsDistance(
-        eventArgs.centrePlatforms[1].posTanX2[1][1],
-        eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
+        centrePlatforms[1].posTanX2[1][1],
+        midTrackEdge.posTanX2[1][1]
     )
-    for i = 2, #eventArgs.centrePlatforms do
+    for i = 2, #centrePlatforms do
         local testDistance = transfUtils.getPositionsDistance(
-            eventArgs.centrePlatforms[i].posTanX2[1][1],
-            eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
+            centrePlatforms[i].posTanX2[1][1],
+            midTrackEdge.posTanX2[1][1]
         )
         if testDistance < trackPlatformDistance then
             trackPlatformDistance = testDistance

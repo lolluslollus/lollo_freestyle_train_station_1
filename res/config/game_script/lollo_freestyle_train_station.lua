@@ -1792,9 +1792,10 @@ function data()
                         -- logger.print('eventArgs.trackEdgeListMidIndex =') logger.debugPrint(eventArgs.trackEdgeListMidIndex)
                         -- logger.print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') logger.debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
-                        local _setLeftCentreRightPlatforms = function(platformEdgeList, trackEdgeList, trackEdgeListMidIndex)
+                        local _setLeftCentreRightPlatforms = function(platformEdgeList, midTrackEdge)
                             -- LOLLO TODO instead of basing these numbers on the edges, base them on absolute distances.
                             -- The result will be much neater, irrespective of how the user placed the edges.
+                            -- This is WIP.
                             eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions(
                                 platformEdgeList,
                                 args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
@@ -1802,30 +1803,24 @@ function data()
                             )
                             -- logger.print('aaa')
 
-                            local centrePlatformIndex_Nearest2_TrackEdgeListMid = stationHelpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(eventArgs)
-                            -- logger.print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') logger.debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
+                            local centrePlatformIndex_Nearest2_TrackEdgeListMid = stationHelpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(eventArgs.centrePlatforms, midTrackEdge)
+                            logger.print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') logger.debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
 
                             local platformWidth = eventArgs.centrePlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].width
                             eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
                             eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
-                            -- logger.print('alalalalal')
-                            local centreTracks = stationHelpers.getCentralEdgePositions(
-                                trackEdgeList,
-                                args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
-                                false
-                            )
                             -- logger.print('eee')
                             eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
                                 eventArgs.leftPlatforms,
                                 eventArgs.rightPlatforms,
                                 centrePlatformIndex_Nearest2_TrackEdgeListMid,
-                                trackEdgeList[trackEdgeListMidIndex]
+                                midTrackEdge
                             )
                             logger.print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
                             return platformWidth
                         end
-                        local platformWidth = _setLeftCentreRightPlatforms(eventArgs.platformEdgeList, eventArgs.trackEdgeList, eventArgs.trackEdgeListMidIndex)
+                        local platformWidth = _setLeftCentreRightPlatforms(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
                         -- reverse track and platform edges if the platform is on the right of the track.
                         -- this will make trains open their doors on the correct side.
                         -- Remember that "left" and "right" are just conventions here, there is no actual left and right.
