@@ -12,8 +12,6 @@ local function getCentralEdgePositions(edgeLists, stepLength, addTerrainHeight)
     logger.print('getCentralEdgePositions starting, stepLength =', stepLength, 'edgeLists =') --logger.debugPrint(edgeLists)
     if type(edgeLists) ~= 'table' then return {} end
 
-    local _pelCount = #edgeLists
-    local pelIndex = 0
     local leadingIndex = 0
     local lengthUncovered = 0
     local previousNodeBetween = nil
@@ -22,7 +20,6 @@ local function getCentralEdgePositions(edgeLists, stepLength, addTerrainHeight)
 
     local results = {}
     for _, pel in pairs(edgeLists) do
-        pelIndex = pelIndex + 1
         local _edgeLength = (transfUtils.getVectorLength(pel.posTanX2[1][2]) + transfUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
         local _nSplitsInEdge = math.floor((_edgeLength + lengthUncovered) / stepLength)
         local _firstStepPercent = (stepLength - lengthUncovered) / _edgeLength
