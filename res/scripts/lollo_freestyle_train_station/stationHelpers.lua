@@ -458,6 +458,7 @@ local helpers = {
         logger.print('getCentralEdgePositions starting, stepLength =', stepLength, 'edgeLists =') logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' then return {} end
 
+        local firstOldEdge = nil
         local leadingIndex = 0
         local lengthUncovered = 0
         local previousNodeBetween = nil
@@ -466,6 +467,7 @@ local helpers = {
 
         local results = {}
         for _, oldEdge in pairs(edgeLists) do
+            if firstOldEdge == nil then firstOldEdge = oldEdge end
             local _oldEdgeLength = (transfUtils.getVectorLength(oldEdge.posTanX2[1][2]) + transfUtils.getVectorLength(oldEdge.posTanX2[2][2])) * 0.5
             local _nSplitsInEdge = math.floor((_oldEdgeLength + lengthUncovered) / stepLength)
             local _firstStepPercent = (stepLength - lengthUncovered) / _oldEdgeLength
@@ -502,15 +504,11 @@ local helpers = {
                     newEdgeResults[#newEdgeResults+1] = {
                         posTanX2 = {
                             {
+                                firstOldEdge.posTanX2[1][1],
                                 {
-                                    oldEdge.posTanX2[1][1][1],
-                                    oldEdge.posTanX2[1][1][2],
-                                    oldEdge.posTanX2[1][1][3],
-                                },
-                                {
-                                    oldEdge.posTanX2[1][2][1] * newEdgeLength / _oldEdgeLength,
-                                    oldEdge.posTanX2[1][2][2] * newEdgeLength / _oldEdgeLength,
-                                    oldEdge.posTanX2[1][2][3] * newEdgeLength / _oldEdgeLength,
+                                    firstOldEdge.posTanX2[1][2][1] * newEdgeLength / lengthUncovered, -- LOLLO TODO these are not right yet
+                                    firstOldEdge.posTanX2[1][2][2] * newEdgeLength / lengthUncovered,
+                                    firstOldEdge.posTanX2[1][2][3] * newEdgeLength / lengthUncovered,
                                 }
                             },
                             {
@@ -594,7 +592,7 @@ local helpers = {
             previousOldEdgeLength = _oldEdgeLength
             previousOldEdge = oldEdge
         end
-
+-- LOLLO TODO there ca be small gaps at the end: fix it
         -- now we see to the rounding errors: if we can, we force the last result to the original edge end...
         local _lastOldEdgePosition = previousOldEdge.posTanX2[2][1]
         if edgeUtils.isXYZVeryClose(_lastOldEdgePosition, results[#results].posTanX2[2][1], 3) then
