@@ -1848,7 +1848,7 @@ function data()
                                     break
                                 end
                             end
-                            platformWidth = _setLeftCentreRightPlatforms(eventArgs.platformEdgeList, eventArgs.trackEdgeList, eventArgs.trackEdgeListMidIndex)
+                            platformWidth = _setLeftCentreRightPlatforms(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
                         end
 
                         eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions(
