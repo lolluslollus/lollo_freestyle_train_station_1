@@ -59,37 +59,37 @@ return {
 			end
 		end
 		local isUnderpass = function(t, i)
-			return params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil
+			return (i ~= 1 and params.modules[result.mangleId(t, i-1, _constants.idBases.underpassSlotId)] ~= nil or false)
 			or params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.underpassSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
 		end
 		local isOpenLift = function(t, i)
-			return params.modules[result.mangleId(t, i-1, _constants.idBases.openLiftSlotId)] ~= nil
+			return (i ~= 1 and params.modules[result.mangleId(t, i-1, _constants.idBases.openLiftSlotId)] ~= nil or false)
 			or params.modules[result.mangleId(t, i, _constants.idBases.openLiftSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.openLiftSlotId)] ~= nil
 		end
 		local isStairs = function(t, i)
-			return params.modules[result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
+			return (i ~= 1 and params.modules[result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpSlotId)] ~= nil or false)
 			or params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
-			or params.modules[result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
+			or (i ~= 1 and params.modules[result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil or false)
 			or params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
-			or params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
+			or (i ~= 1 and params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpLeftSlotId)] ~= nil or false)
 			or params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
-			or params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
+			or (i ~= 1 and params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)] ~= nil or false)
 			or params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
 		end
 		local isPlatformRoofOrWall = function(t, i)
-			-- return params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil
-			-- or params.modules[result.mangleId(t, i+1, _constants.idBases.platformWallSlotId)] ~= nil
 			return params.modules[result.mangleId(t, i, _constants.idBases.platformRoofSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i, _constants.idBases.platformWallSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.platformWallSlotId)] ~= nil
+			or (i ~= 1 and params.modules[result.mangleId(t, i-1, _constants.idBases.platformRoofSlotId)] ~= nil or false)
+			or (i ~= 1 and params.modules[result.mangleId(t, i-1, _constants.idBases.platformWallSlotId)] ~= nil or false)
 		end
 		local isUnderpass_indexed = {}
 		local isOpenLift_indexed = {}

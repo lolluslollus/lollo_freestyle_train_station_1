@@ -125,7 +125,7 @@ local privateFuncs = {
 privateFuncs.deco = {
     getStationSignFineIndexes = function(params, nTerminal)
         local results = {}
-        for ii = 3, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, constants.maxPassengerWaitingAreaEdgeLength * 2 do
+        for ii = 3, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, constants.maxPassengerWaitingAreaEdgeLength * 6 do
             results[ii] = true
         end
         return results
@@ -964,7 +964,10 @@ return {
                                     tag = tag,
                                 }
 
-                                if not(_barredNumberSignIIs[ii]) then -- prevent overlapping with station name signs
+                                if not(_barredNumberSignIIs[ii])
+                                and not(_barredNumberSignIIs[ii+1])
+                                and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
+                                then -- prevent overlapping with station name signs
                                     if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
                                         -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
                                         local yShift = -platformWidth * 0.5 + 0.20
@@ -1032,6 +1035,8 @@ return {
 
                         if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
                             if not(_barredNumberSignIIs[ii])
+                            and not(_barredNumberSignIIs[ii+1])
+                            and (ii == 1 or not(_barredNumberSignIIs[ii-1])) -- prevent overlapping with station name signs
                             and isFreeFromOpenStairsLeft[leadingIndex]
                             and isFreeFromOpenStairsRight[leadingIndex]
                             then -- prevent overlapping with station name signs or stairs
