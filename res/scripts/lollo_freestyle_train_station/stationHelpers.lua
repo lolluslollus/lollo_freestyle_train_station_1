@@ -775,25 +775,26 @@ local helpers = {
         return results
     end,
 
+    -- LOLLO TODO check this, I added the last connector
     getCrossConnectors = function(leftPlatforms, centrePlatforms, rightPlatforms, isTrackOnPlatformLeft)
         local results = {}
-        for i = 1, #centrePlatforms do
+        local addResult = function(i, oneOrTwo)
             local centrePosTanX2 = centrePlatforms[i].posTanX2
 
             if isTrackOnPlatformLeft then
                 local leftPosTanX2 = leftPlatforms[i].posTanX2
                 local newTanLeft = {
-                    centrePosTanX2[1][1][1] - leftPosTanX2[1][1][1],
-                    centrePosTanX2[1][1][2] - leftPosTanX2[1][1][2],
-                    centrePosTanX2[1][1][3] - leftPosTanX2[1][1][3],
+                    centrePosTanX2[oneOrTwo][1][1] - leftPosTanX2[oneOrTwo][1][1],
+                    centrePosTanX2[oneOrTwo][1][2] - leftPosTanX2[oneOrTwo][1][2],
+                    centrePosTanX2[oneOrTwo][1][3] - leftPosTanX2[oneOrTwo][1][3],
                 }
                 local newRecordLeft = {
                     {
-                        leftPosTanX2[1][1],
+                        leftPosTanX2[oneOrTwo][1],
                         newTanLeft
                     },
                     {
-                        centrePosTanX2[1][1],
+                        centrePosTanX2[oneOrTwo][1],
                         newTanLeft
                     }
                 }
@@ -801,73 +802,27 @@ local helpers = {
             else
                 local rightPosTanX2 = rightPlatforms[i].posTanX2
                 local newTanRight = {
-                    centrePosTanX2[1][1][1] - rightPosTanX2[1][1][1],
-                    centrePosTanX2[1][1][2] - rightPosTanX2[1][1][2],
-                    centrePosTanX2[1][1][3] - rightPosTanX2[1][1][3],
+                    centrePosTanX2[oneOrTwo][1][1] - rightPosTanX2[oneOrTwo][1][1],
+                    centrePosTanX2[oneOrTwo][1][2] - rightPosTanX2[oneOrTwo][1][2],
+                    centrePosTanX2[oneOrTwo][1][3] - rightPosTanX2[oneOrTwo][1][3],
                 }
                 local newRecordRight = {
                     {
-                        rightPosTanX2[1][1],
+                        rightPosTanX2[oneOrTwo][1],
                         newTanRight
                     },
                     {
-                        centrePosTanX2[1][1],
+                        centrePosTanX2[oneOrTwo][1],
                         newTanRight
                     },
                 }
                 results[#results+1] = { posTanX2 = newRecordRight }
             end
         end
-
-        return results
-    end,
-
-    getCrossConnectors_ONE_MORE_ITEM_BUT_USELESS_4_PRACTICAL_PURPOSES = function(leftPlatforms, centrePlatforms, rightPlatforms, isTrackOnPlatformLeft)
-        local results = {}
-
-        for i = 1, #centrePlatforms + 1 do -- there are N segments and N + 1 nodes, hence the extra complexity
-            local isAddingLast = i > #centrePlatforms
-            local centrePosTanX2 = isAddingLast and centrePlatforms[#centrePlatforms].posTanX2 or centrePlatforms[i].posTanX2
-            local posTanX2Index = isAddingLast and 2 or 1
-
-            if isTrackOnPlatformLeft then
-                local leftPosTanX2 = isAddingLast and leftPlatforms[#centrePlatforms].posTanX2 or leftPlatforms[i].posTanX2
-                local newTanLeft = {
-                    centrePosTanX2[posTanX2Index][1][1] - leftPosTanX2[posTanX2Index][1][1],
-                    centrePosTanX2[posTanX2Index][1][2] - leftPosTanX2[posTanX2Index][1][2],
-                    centrePosTanX2[posTanX2Index][1][3] - leftPosTanX2[posTanX2Index][1][3],
-                }
-                local newRecordLeft = {
-                    {
-                        leftPosTanX2[posTanX2Index][1],
-                        newTanLeft
-                    },
-                    {
-                        centrePosTanX2[posTanX2Index][1],
-                        newTanLeft
-                    }
-                }
-                results[#results+1] = { posTanX2 = newRecordLeft }
-            else
-                local rightPosTanX2 = isAddingLast and rightPlatforms[#centrePlatforms].posTanX2 or rightPlatforms[i].posTanX2
-                local newTanRight = {
-                    centrePosTanX2[posTanX2Index][1][1] - rightPosTanX2[posTanX2Index][1][1],
-                    centrePosTanX2[posTanX2Index][1][2] - rightPosTanX2[posTanX2Index][1][2],
-                    centrePosTanX2[posTanX2Index][1][3] - rightPosTanX2[posTanX2Index][1][3],
-                }
-                local newRecordRight = {
-                    {
-                        rightPosTanX2[posTanX2Index][1],
-                        newTanRight
-                    },
-                    {
-                        centrePosTanX2[posTanX2Index][1],
-                        newTanRight
-                    },
-                }
-                results[#results+1] = { posTanX2 = newRecordRight }
-            end
+        for i = 1, #centrePlatforms do
+            addResult(i, 1)
         end
+        addResult(#centrePlatforms, 2)
 
         return results
     end,
