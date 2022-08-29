@@ -1793,7 +1793,7 @@ function data()
                         local _setLeftCentreRightPlatforms = function(platformEdgeList, midTrackEdge)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
                             -- The result is much neater, irrespective of how the user placed the edges.
-                            -- There is a small accuracy price to pay detectind if we are on a bridge or a tunnel.
+                            -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel. LOLLO TODO fix it
                             -- There is also less data in centrePlatformsFine.
                             -- print('platformEdgeList =') debugPrint(platformEdgeList)
                             eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
