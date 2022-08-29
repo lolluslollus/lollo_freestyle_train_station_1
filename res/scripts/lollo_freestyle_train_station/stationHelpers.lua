@@ -299,7 +299,7 @@ local helpers = {
         return results
     end,
 
-    getCentralEdgePositions_AllBounds = function(edgeLists, maxEdgeLength, isAddTerrainHeight)
+    getCentralEdgePositions_AllBounds_UNUSED = function(edgeLists, maxEdgeLength, isAddTerrainHeight)
         -- logger.print('getCentralEdgePositions_AllBounds starting')
         if type(edgeLists) ~= 'table' then return {} end
 
@@ -766,7 +766,7 @@ local helpers = {
                 itemCounter = 0
                 results[#results+1] = newEdge
             end
-
+            -- important
             refEdge.leadingIndex = groupCounter
         end
 
