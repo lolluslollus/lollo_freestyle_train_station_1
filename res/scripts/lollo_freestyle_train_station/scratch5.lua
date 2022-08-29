@@ -52,7 +52,7 @@ utils.isNumVeryClose = function(num1, num2, significantFigures)
       return (_formatString):format(num1) == (_formatString):format(num2)
           or (_formatString):format(num1 * _isVeryCloseTesters[significantFigures]) == (_formatString):format(num2 * _isVeryCloseTesters[significantFigures])
       else
-          return (_formatString):format(num1 - num2) == 0
+          return (_formatString):format(num1 - num2) == 0 -- ???????
     end
   end
 
