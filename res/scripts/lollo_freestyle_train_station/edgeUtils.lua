@@ -214,6 +214,7 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
     if type(length) ~= 'number' or length <= 0 then return nil end
 
     if isExtendedLog then
+        print('getNodeBetween: ')
         print('length0 =', length0 or 'NIL')
         print('length1 =', length1 or 'NIL')
         print('length =', length or 'NIL')
@@ -259,7 +260,12 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
 
     local testX = aX + bX * length + cX * length * length + dX * length * length * length
     -- print(testX, 'should be', position1.x)
-    if not(helper.isNumVeryClose(testX, position1.x, 3)) then return nil end
+    if not(helper.isNumVeryClose(testX, position1.x, 3)) then
+        if isExtendedLog then
+            print('getNodeBetween WARNING: Xs are not close enough:', testX, position1.x)
+        end
+        return nil
+    end
 
     local aY = position0.y
     local bY = tangent0.y / length
@@ -268,7 +274,12 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
 
     local testY = aY + bY * length + cY * length * length + dY * length * length * length
     -- print(testY, 'should be', position1.y)
-    if not(helper.isNumVeryClose(testY, position1.y, 3)) then return nil end
+    if not(helper.isNumVeryClose(testY, position1.y, 3)) then
+        if isExtendedLog then
+            print('getNodeBetween WARNING: Ys are not close enough:', testY, position1.y)
+        end
+        return nil
+    end
 
     local aZ = position0.z
     local bZ = tangent0.z / length
@@ -277,7 +288,12 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
 
     local testZ = aZ + bZ * length + cZ * length * length + dZ * length * length * length
     -- print(testZ, 'should be', position1.z)
-    if not(helper.isNumVeryClose(testZ, position1.z, 3)) then return nil end
+    if not(helper.isNumVeryClose(testZ, position1.z, 3)) then
+        if isExtendedLog then
+            print('getNodeBetween WARNING: Zs are not close enough:', testZ, position1.z)
+        end
+        return nil
+    end
 
     local lMid = shift0To1 * length
     local result = {
