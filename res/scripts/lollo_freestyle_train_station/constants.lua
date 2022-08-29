@@ -48,8 +48,8 @@ local constants = {
     maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
     minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,
 
-    maxCargoWaitingAreaEdgeLength = 9, -- do not tamper with this
-    maxPassengerWaitingAreaEdgeLength = 9, -- do not tamper with this
+    maxCargoWaitingAreaEdgeLength = 10, -- do not tamper with this
+    maxPassengerWaitingAreaEdgeLength = 10, -- do not tamper with this -- LOLLO TODO I turned both from 9 to 10, see what happens
     fineSegmentLength = 1, -- do not tamper with this
 
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
