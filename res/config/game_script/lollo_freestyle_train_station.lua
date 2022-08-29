@@ -1796,11 +1796,13 @@ function data()
                             -- LOLLO TODO instead of basing these numbers on the edges, base them on absolute distances.
                             -- The result will be much neater, irrespective of how the user placed the edges.
                             -- This is WIP.
-                            eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions(
+                            -- print('platformEdgeList =') debugPrint(platformEdgeList)
+                            eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 platformEdgeList,
                                 args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
                                 true
                             )
+                            -- print('eventArgs.centrePlatforms =') debugPrint(eventArgs.centrePlatforms)
                             -- logger.print('aaa')
 
                             local centrePlatformIndex_Nearest2_TrackEdgeListMid = stationHelpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(eventArgs.centrePlatforms, midTrackEdge)
@@ -1851,7 +1853,7 @@ function data()
                             platformWidth = _setLeftCentreRightPlatforms(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
                         end
 
-                        eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions(
+                        eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions_AllBounds(
                             eventArgs.centrePlatforms,
                             1
                         )

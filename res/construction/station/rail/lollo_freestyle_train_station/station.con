@@ -636,6 +636,7 @@ function data()
 					-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
 					for ii = 2, #params.terminals[t].centrePlatformsFineRelative do
 						local cpf = params.terminals[t].centrePlatformsFineRelative[ii]
+						local cpl = params.terminals[t].centrePlatformsRelative[cpf.leadingIndex]
 						local cpfPrevious = params.terminals[t].centrePlatformsFineRelative[ii-1]
 						if cpf.leadingIndex ~= cpfPrevious.leadingIndex then
 							local i = cpf.leadingIndex
@@ -651,7 +652,7 @@ function data()
 							-- which is very slightly shifted from the connector. Not too bad.
 							local trackCrossingPosTanX2 = transfUtils.getPosTanX2Normalised(
 								transfUtils.getPosTanX2Reversed(crossConnectorPosTanX2), -- cross connectors go from the platform border to its centre, here we go toward the edge
-								cpf.width * 0.5 + 2.5 -- half platform width plus half track width is the centre of the track
+								cpl.width * 0.5 + 2.5 -- half platform width plus half track width is the centre of the track
 							)
 							local trackCrossingTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
 							trackCrossingTransf[13] = trackCrossingPosTanX2[2][1][1]

@@ -926,10 +926,10 @@ return {
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
+                local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
                 if leadingIndex > iMax then break end
                 if leadingIndex >= i1 then
-                    if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
-                        local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+                    if isTunnelOk or cpl.type ~= 2 then -- outside or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpl.width
 
@@ -1011,10 +1011,10 @@ return {
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
+                local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
                 if leadingIndex > iMax then break end
                 if leadingIndex >= i1 then
-                    if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
-                        local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+                    if isTunnelOk or cpl.type ~= 2 then -- outside or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpl.width
 
@@ -1466,14 +1466,33 @@ return {
             for _, cpf in pairs(params.terminals[nTerminal].centrePlatformsFineRelative) do
                 local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
                 local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, cpf.leadingIndex)
-                local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix)
+                local cpl = params.terminals[nTerminal].centrePlatformsRelative[cpf.leadingIndex]
+                local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpl.width, cpf.leadingIndex, eraPrefix)
                 result.models[#result.models+1] = {
                     id = myModelId,
                     slotId = slotId,
                     tag = tag,
                     transf = myTransf
                 }
+                -- result.models[#result.models+1] = {
+                --     id = 'lollo_freestyle_train_station/icon/blue.mdl',
+                --     slotId = slotId,
+                --     tag = tag,
+                --     transf = myTransf
+                -- }
             end
+            -- local isFirstDone = false
+            -- for _, cpl in pairs(params.terminals[nTerminal].centrePlatformsRelative) do
+            --     local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
+            --     myTransf[15] = myTransf[15] + 1
+            --     result.models[#result.models+1] = {
+            --         id = isFirstDone and 'lollo_freestyle_train_station/icon/red.mdl' or 'lollo_freestyle_train_station/icon/green.mdl',
+            --         slotId = slotId,
+            --         tag = tag,
+            --         transf = myTransf
+            --     }
+            --     isFirstDone = true
+            -- end
         end,
     },
     slopedAreas = {
