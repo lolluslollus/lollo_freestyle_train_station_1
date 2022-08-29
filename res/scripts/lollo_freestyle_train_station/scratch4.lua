@@ -9,6 +9,28 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local dummy = 123
 
 local getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight)
+    local _addExtraProps = function(source, target)
+        if isAddTerrainHeight then
+            target.terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+                target.posTanX2[1][1][1],
+                target.posTanX2[1][1][2]
+            ))
+            -- edgeResults[#edgeResults].terrainHeight2 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+            --     edgeResults[#edgeResults].posTanX2[2][1][1],
+            --     edgeResults[#edgeResults].posTanX2[2][1][2]
+            -- ))
+        end
+        -- if isAddExtraProps then
+            target.catenary = source.catenary -- this is not totally accurate since we ignore the inner bounds
+            target.era = source.era or _constants.eras.era_c.prefix -- idem
+            target.trackType = source.trackType -- idem
+            target.trackTypeName = source.trackTypeName -- idem
+            target.type = source.type -- idem
+            target.typeIndex = source.typeIndex -- idem
+            target.width = source.width or 0 -- idem
+        -- end
+    end
+
     logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'edgeLists =') logger.debugPrint(edgeLists)
     if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
         logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
@@ -122,23 +144,7 @@ local getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, 
                     }
                 end
 
-                if isAddTerrainHeight then
-                    newEdgeResults[#newEdgeResults].terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
-                        newEdgeResults[#newEdgeResults].posTanX2[1][1][1],
-                        newEdgeResults[#newEdgeResults].posTanX2[1][1][2]
-                    ))
-                    -- edgeResults[#edgeResults].terrainHeight2 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
-                    --     edgeResults[#edgeResults].posTanX2[2][1][1],
-                    --     edgeResults[#edgeResults].posTanX2[2][1][2]
-                    -- ))
-                end
-                newEdgeResults[#newEdgeResults].catenary = _refEdge.catenary -- this is not totally accurate since we ignore the inner bounds
-                newEdgeResults[#newEdgeResults].era = _refEdge.era or _constants.eras.era_c.prefix -- idem
-                newEdgeResults[#newEdgeResults].trackType = _refEdge.trackType -- idem
-                newEdgeResults[#newEdgeResults].trackTypeName = _refEdge.trackTypeName -- idem
-                newEdgeResults[#newEdgeResults].type = _refEdge.type -- idem
-                newEdgeResults[#newEdgeResults].typeIndex = _refEdge.typeIndex -- idem
-                newEdgeResults[#newEdgeResults].width = _refEdge.width or 0 -- idem
+                _addExtraProps(_refEdge, newEdgeResults[#newEdgeResults])
 
                 currentStepPercent = currentStepPercent + _nextStepPercent
                 lengthUncovered = lengthUncovered - stepLength
@@ -157,60 +163,80 @@ local getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, 
         end
     end
     -- now we see to the remaining bit, which may have rounding errors: if we can, we force the last result to the original edge end...
-    local _lastRefEdgePosition = previousRefEdge.posTanX2[2][1]
-    if edgeUtils.isXYZVeryClose(_lastRefEdgePosition, results[#results].posTanX2[2][1], 3) then
-        logger.print('these position vectors are very close:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
-        results[#results].posTanX2[2][1] = _lastRefEdgePosition
-    -- ...otherwise, we make a new edge to reach to the original edge end
-    elseif lengthUncovered > 0 and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
-        logger.print('these position vectors are not close enough:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
-        results[#results+1] = {
-            posTanX2 = {
+    if #results == 0 then -- if the step is longer than the segments, there will be no results
+        if firstRefEdge ~= nil and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
+            results = {
                 {
-                    {
-                        previousNodeBetween.position.x,
-                        previousNodeBetween.position.y,
-                        previousNodeBetween.position.z,
+                    posTanX2 = {
+                        {
+                            {
+                                firstRefEdge.posTanX2[1][1][1],
+                                firstRefEdge.posTanX2[1][1][2],
+                                firstRefEdge.posTanX2[1][1][3],
+                            },
+                            {
+                                firstRefEdge.posTanX2[1][2][1] * lengthUncovered / firstRefEdgeLength,
+                                firstRefEdge.posTanX2[1][2][2] * lengthUncovered / firstRefEdgeLength,
+                                firstRefEdge.posTanX2[1][2][3] * lengthUncovered / firstRefEdgeLength,
+                            }
+                        },
+                        {
+                            {
+                                previousRefEdge.posTanX2[2][1][1],
+                                previousRefEdge.posTanX2[2][1][2],
+                                previousRefEdge.posTanX2[2][1][3],
+                            },
+                            {
+                                previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength,
+                                previousRefEdge.posTanX2[2][2][2] * lengthUncovered / previousRefEdgeLength,
+                                previousRefEdge.posTanX2[2][2][3] * lengthUncovered / previousRefEdgeLength,
+                            }
+                        },
                     },
-                    {
-                        previousNodeBetween.tangent.x * lengthUncovered,
-                        previousNodeBetween.tangent.y * lengthUncovered,
-                        previousNodeBetween.tangent.z * lengthUncovered,
-                    }
-                },
-                {
-                    {
-                        previousRefEdge.posTanX2[2][1][1],
-                        previousRefEdge.posTanX2[2][1][2],
-                        previousRefEdge.posTanX2[2][1][3],
-                    },
-                    {
-                        previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength,
-                        previousRefEdge.posTanX2[2][2][2] * lengthUncovered / previousRefEdgeLength,
-                        previousRefEdge.posTanX2[2][2][3] * lengthUncovered / previousRefEdgeLength,
-                    }
-                },
-            },
-            catenary = previousRefEdge.catenary, -- this is not totally accurate since we ignore the inner bounds
-            era = previousRefEdge.era or _constants.eras.era_c.prefix, -- idem
-            trackType = previousRefEdge.trackType, -- idem
-            trackTypeName = previousRefEdge.trackTypeName, -- idem
-            type = previousRefEdge.type, -- idem
-            typeIndex = previousRefEdge.typeIndex, -- idem
-            width = previousRefEdge.width or 0, -- idem
-        }
-        if isAddTerrainHeight then
-            results[#results].terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
-                results[#results].posTanX2[1][1][1],
-                results[#results].posTanX2[1][1][2]
-            ))
-            -- results[#results].terrainHeight2 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
-            --     results[#results].posTanX2[2][1][1],
-            --     results[#results].posTanX2[2][1][2]
-            -- ))
+                }
+            }
+            _addExtraProps(firstRefEdge, results[1])
         end
     else
-        logger.err('there is a piece missing')
+        local _lastRefEdgePosition = previousRefEdge.posTanX2[2][1]
+        if edgeUtils.isXYZVeryClose(_lastRefEdgePosition, results[#results].posTanX2[2][1], 3) then
+            logger.print('these position vectors are very close:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
+            results[#results].posTanX2[2][1] = _lastRefEdgePosition
+        -- ...otherwise, we make a new edge to reach to the original edge end
+        elseif lengthUncovered > 0 and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
+            logger.print('these position vectors are not close enough:') --logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
+            results[#results+1] = {
+                posTanX2 = {
+                    {
+                        {
+                            previousNodeBetween.position.x,
+                            previousNodeBetween.position.y,
+                            previousNodeBetween.position.z,
+                        },
+                        {
+                            previousNodeBetween.tangent.x * lengthUncovered,
+                            previousNodeBetween.tangent.y * lengthUncovered,
+                            previousNodeBetween.tangent.z * lengthUncovered,
+                        }
+                    },
+                    {
+                        {
+                            previousRefEdge.posTanX2[2][1][1],
+                            previousRefEdge.posTanX2[2][1][2],
+                            previousRefEdge.posTanX2[2][1][3],
+                        },
+                        {
+                            previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength,
+                            previousRefEdge.posTanX2[2][2][2] * lengthUncovered / previousRefEdgeLength,
+                            previousRefEdge.posTanX2[2][2][3] * lengthUncovered / previousRefEdgeLength,
+                        }
+                    },
+                },
+            }
+            _addExtraProps(previousRefEdge, results[#results])
+        else
+            logger.err('there is a piece missing')
+        end
     end
     logger.print('getCentralEdgePositions_OnlyOuterBounds results =') logger.debugPrint(results)
     return results
@@ -300,7 +326,7 @@ local edgeLists2 = {
     },
   }
 
-local splits2 = getCentralEdgePositions_OnlyOuterBounds(edgeLists2, 2)
+-- local splits2 = getCentralEdgePositions_OnlyOuterBounds(edgeLists2, 2)
 
 local edgeLists3 = {
     {
@@ -660,7 +686,50 @@ local edgeLists3 = {
     },
   }
 
-local splits3 = getCentralEdgePositions_OnlyOuterBounds(edgeLists2, 9)
+-- local splits3 = getCentralEdgePositions_OnlyOuterBounds(edgeLists2, 9)
+
+local edgeLists4 = {
+    {
+      catenary = false,
+      era = "era_a_",
+      posTanX2 = {
+        {
+          { 14.894147872925, 746.41479492188, 20.958518981934, },
+          { 1.1838198900223, 14.957947731018, 0.1933785378933, },
+        },
+        {
+          { 16.077968597412, 761.37274169922, 21.15189743042, },
+          { 1.183819770813, 14.957947731018, 0.19337843358517, },
+        },
+      },
+      trackType = 6,
+      trackTypeName = "lollo_freestyle_train_station/era_a_passenger_platform_5m.lua",
+      type = 0,
+      typeIndex = -1,
+      width = 5,
+    },
+    {
+      catenary = false,
+      era = "era_a_",
+      posTanX2 = {
+        {
+          { 16.077968597412, 761.37274169922, 21.15189743042, },
+          { 1.183819770813, 14.957947731018, 0.19337843358517, },
+        },
+        {
+          { 17.261787414551, 776.33068847656, 21.345275878906, },
+          { 1.1838198900223, 14.957947731018, 0.19337847828865, },
+        },
+      },
+      trackType = 6,
+      trackTypeName = "lollo_freestyle_train_station/era_a_passenger_platform_5m.lua",
+      type = 0,
+      typeIndex = -1,
+      width = 5,
+    },
+  }
+local splits4 = getCentralEdgePositions_OnlyOuterBounds(edgeLists4, 40)
+
 
 local vec1 = { 92.263687133789, 602.89776611328, 13.625541687012, }
 local vec2 = { 91.385019392729, 602.56420214167, 13.649062242507, }

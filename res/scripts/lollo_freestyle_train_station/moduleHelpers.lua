@@ -1463,23 +1463,25 @@ return {
     
             local isCargoTerminal = params.terminals[nTerminal].isCargo
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local isFirstDone = false
             for _, cpf in pairs(params.terminals[nTerminal].centrePlatformsFineRelative) do
                 local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
                 local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, cpf.leadingIndex)
-                local cpl = params.terminals[nTerminal].centrePlatformsRelative[cpf.leadingIndex]
-                local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpl.width, cpf.leadingIndex, eraPrefix)
+                local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix)
                 result.models[#result.models+1] = {
                     id = myModelId,
                     slotId = slotId,
                     tag = tag,
                     transf = myTransf
                 }
-                -- result.models[#result.models+1] = {
-                --     id = 'lollo_freestyle_train_station/icon/blue.mdl',
-                --     slotId = slotId,
-                --     tag = tag,
-                --     transf = myTransf
-                -- }
+                if not(isFirstDone) then myTransf[15] = myTransf[15] + 1 end
+                result.models[#result.models+1] = {
+                    id = isFirstDone and 'lollo_freestyle_train_station/icon/green.mdl' or 'lollo_freestyle_train_station/icon/red.mdl',
+                    slotId = slotId,
+                    tag = tag,
+                    transf = myTransf
+                }
+                isFirstDone = true
             end
             -- local isFirstDone = false
             -- for _, cpl in pairs(params.terminals[nTerminal].centrePlatformsRelative) do

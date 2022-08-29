@@ -50,6 +50,8 @@ local constants = {
 
     maxCargoWaitingAreaEdgeLength = 9, -- do not tamper with this
     maxPassengerWaitingAreaEdgeLength = 9, -- do not tamper with this
+    fineSegmentLength = 1, -- do not tamper with this
+
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     streetEdgeType = 0, -- 0 = ROAD, 1 = RAIL
     maxNTerminals = 12,

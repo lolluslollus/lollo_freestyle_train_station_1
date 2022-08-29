@@ -1790,88 +1790,85 @@ function data()
                         -- logger.print('eventArgs.trackEdgeListMidIndex =') logger.debugPrint(eventArgs.trackEdgeListMidIndex)
                         -- logger.print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') logger.debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
-                        local _setLeftCentreRightPlatforms = function(platformEdgeList, midTrackEdge)
+                        eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
+                            eventArgs.platformEdgeList,
+                            eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
+                        )
+
+                        -- reverse track and platform edges if the platform is on the right of the track.
+                        -- this will make trains open their doors on the correct side.
+                        -- Remember that "left" and "right" are just conventions here, there is no actual left and right.
+                        local _reverseTracksAndPlatforms = function()
+                            if not(eventArgs.isTrackOnPlatformLeft) then
+                                local midPos1 = eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
+                                logger.print('LOLLO reversing platformEdgeList, platformEdgeList =')
+                                -- logger.debugPrint(eventArgs.platformEdgeList)
+                                eventArgs.platformEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.platformEdgeList)
+                                -- logger.print('LOLLO reversed platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
+                                -- logger.print('LOLLO reversing trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
+                                eventArgs.trackEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.trackEdgeList)
+                                -- logger.print('LOLLO reversed trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
+                                -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 2 -- dangerous
+                                -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 1 -- wrong
+                                -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex -- wrong
+                                -- logger.print('eventArgs.trackEdgeListMidIndex before =', eventArgs.trackEdgeListMidIndex)
+                                -- dumb but saf-ish
+                                local isFound = false
+                                for i = 1, #eventArgs.trackEdgeList do
+                                    if (
+                                        eventArgs.trackEdgeList[i].posTanX2[1][1][1] == midPos1[1]
+                                        and eventArgs.trackEdgeList[i].posTanX2[1][1][2] == midPos1[2]
+                                        and eventArgs.trackEdgeList[i].posTanX2[1][1][3] == midPos1[3]
+                                    ) then
+                                        eventArgs.trackEdgeListMidIndex = i
+                                        isFound = true
+                                        logger.print('FOUND, new value =', i)
+                                        break
+                                    end
+                                end
+                                if not(isFound) then logger.warn('_reverseTracksAndPlatforms could not find the point') end
+                                -- now we try again
+                                eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
+                                    eventArgs.platformEdgeList,
+                                    eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
+                                )
+                                if not(eventArgs.isTrackOnPlatformLeft) then logger.warn('_reverseTracksAndPlatforms could not reverse') end
+                            end
+                        end
+                        _reverseTracksAndPlatforms()
+
+                        local _setPlatformProps = function(platformEdgeList, midTrackEdge)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
                             -- The result is much neater, irrespective of how the user placed the edges.
                             -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel. LOLLO TODO fix it
                             -- There is also less data in centrePlatformsFine.
                             -- print('platformEdgeList =') debugPrint(platformEdgeList)
-                            eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
+                            logger.print('_setPlatformProps starting')
+                            eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 platformEdgeList,
+                                _constants.fineSegmentLength,
+                                false
+                            )
+
+                            eventArgs.centrePlatforms = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
+                                eventArgs.centrePlatformsFine,
                                 args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
                                 true
                             )
-                            -- print('eventArgs.centrePlatforms =') debugPrint(eventArgs.centrePlatforms)
-                            -- logger.print('aaa')
+                            logger.print('_setPlatformProps set eventArgs.centrePlatforms =') logger.debugPrint(eventArgs.centrePlatforms)
+                            logger.print('_setPlatformProps set eventArgs.centrePlatformsFine =') logger.debugPrint(eventArgs.centrePlatformsFine)
 
                             local centrePlatformIndex_Nearest2_TrackEdgeListMid = stationHelpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(eventArgs.centrePlatforms, midTrackEdge)
-                            logger.print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') logger.debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
+                            logger.print('_setPlatformProps found centrePlatformIndex_Nearest2_TrackEdgeListMid =') logger.debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
 
                             local platformWidth = eventArgs.centrePlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].width
                             eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
                             eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
-                            -- logger.print('eee')
-                            eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
-                                eventArgs.leftPlatforms,
-                                eventArgs.rightPlatforms,
-                                centrePlatformIndex_Nearest2_TrackEdgeListMid,
-                                midTrackEdge
-                            )
-                            logger.print('eventArgs.isTrackOnPlatformLeft =', eventArgs.isTrackOnPlatformLeft)
 
+                            logger.print('_setPlatformProps found platformWidth =', platformWidth)
                             return platformWidth
                         end
-                        local platformWidth = _setLeftCentreRightPlatforms(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
-                        -- reverse track and platform edges if the platform is on the right of the track.
-                        -- this will make trains open their doors on the correct side.
-                        -- Remember that "left" and "right" are just conventions here, there is no actual left and right.
-                        if not(eventArgs.isTrackOnPlatformLeft) then
-                            local midPos1 = eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
-                            -- logger.print('LOLLO reversing platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
-                            eventArgs.platformEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.platformEdgeList)
-                            -- logger.print('LOLLO reversed platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
-                            -- logger.print('LOLLO reversing trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
-                            eventArgs.trackEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.trackEdgeList)
-                            -- logger.print('LOLLO reversed trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
-                            -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 2 -- dangerous
-                            -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 1 -- wrong
-                            -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex -- wrong
-                            -- logger.print('eventArgs.trackEdgeListMidIndex before =', eventArgs.trackEdgeListMidIndex)
-                            -- dumber but safer
-                            for i = 1, #eventArgs.trackEdgeList do
-                                if (
-                                    eventArgs.trackEdgeList[i].posTanX2[1][1][1] == midPos1[1]
-                                    and eventArgs.trackEdgeList[i].posTanX2[1][1][2] == midPos1[2]
-                                    and eventArgs.trackEdgeList[i].posTanX2[1][1][3] == midPos1[3]
-                                ) then
-                                    eventArgs.trackEdgeListMidIndex = i
-                                    -- logger.print('FOUND, new value =', i)
-                                    break
-                                end
-                            end
-                            platformWidth = _setLeftCentreRightPlatforms(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
-                        end
-
-                        eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions_AllBounds(
-                            eventArgs.centrePlatforms,
-                            1
-                        )
-                        -- logger.print('centrePlatformsFine =') logger.debugPrint(centrePlatformsFine)
-
-                        -- logger.print('calculating slopedAreasFine, platformWidth =', platformWidth)
-                        -- eventArgs.slopedAreasFine = {}
-                        -- if eventArgs.isTrackOnPlatformLeft then
-                        --     -- I add 2 coz it is a little less than half the width of the 5m sloped area,
-                        --     eventArgs.slopedAreasFine[2.5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 0.75)
-                        --     eventArgs.slopedAreasFine[5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 2)
-                        --     eventArgs.slopedAreasFine[10] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 4.5)
-                        --     eventArgs.slopedAreasFine[20] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, platformWidth * 0.5 + 9.5)
-                        -- else
-                        --     eventArgs.slopedAreasFine[2.5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 0.75)
-                        --     eventArgs.slopedAreasFine[5] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 2)
-                        --     eventArgs.slopedAreasFine[10] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 4.5)
-                        --     eventArgs.slopedAreasFine[20] = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatformsFine, - platformWidth * 0.5 - 9.5)
-                        -- end
+                        local platformWidth = _setPlatformProps(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
                         eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
                         if args.isCargo then
