@@ -84,7 +84,11 @@ return {
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
 		end
 		local isPlatformRoofOrWall = function(t, i)
-			return params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil
+			-- return params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil
+			-- or params.modules[result.mangleId(t, i+1, _constants.idBases.platformWallSlotId)] ~= nil
+			return params.modules[result.mangleId(t, i, _constants.idBases.platformRoofSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i, _constants.idBases.platformWallSlotId)] ~= nil
+			or params.modules[result.mangleId(t, i+1, _constants.idBases.platformRoofSlotId)] ~= nil
 			or params.modules[result.mangleId(t, i+1, _constants.idBases.platformWallSlotId)] ~= nil
 		end
 		local isUnderpass_indexed = {}
@@ -130,14 +134,13 @@ return {
 
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, 2 do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[cpf.leadingIndex]
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
-            if cpl.type == 1 then -- belly to cover pedestrian paths (only on bridges)
+            if cpf.type == 1 then -- belly to cover pedestrian paths (only on bridges)
 				-- local yShift = 0
 				-- local yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				local yShift = 0
 				local myModelId = 'lollo_freestyle_train_station/bridge_station/belly_5m_2m.mdl'
-				if cpl.width >= 5 then
+				if cpf.width >= 5 then
 					-- yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				else
 					-- yShift = isTrackOnPlatformLeft and 1.37 or -1.37
@@ -152,11 +155,11 @@ return {
 					),
 					tag = tag
 				}
-			elseif cpl.type == 2 then -- lights (only in tunnels)
-				if (cpl.width >= 5 and eraPrefix == moduleHelpers.eras.era_c.prefix)
+			elseif cpf.type == 2 then -- lights (only in tunnels)
+				if (cpf.width >= 5 and eraPrefix == moduleHelpers.eras.era_c.prefix)
 				or not(isStairs_indexed[cpf.leadingIndex]) then
 					local yShift = 0
-					if cpl.width >= 5 then
+					if cpf.width >= 5 then
 						yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 					else
 						yShift = isTrackOnPlatformLeft and 1.37 or -1.37
@@ -180,22 +183,23 @@ return {
 			end
 		end
 		-- station name signs
-		-- LOLLO NOTE update deco.doPlatformRoof if you change this - dirty but faster
-		for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
-			local platformWidth = cpl.width
-			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, i)
-			if cpl.type == 2 then -- tunnel
-				if cpl.width >= 5 or not(isStairs_indexed[i]) then
+		for ii, _ in pairs(moduleHelpers.deco.getStationSignFineIndexes(params, nTerminal)) do
+		-- for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
+			-- local cpl = params.terminals[nTerminal].centrePlatformsRelative[ii]
+			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+			local platformWidth = cpf.width
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
+			if cpf.type == 2 then -- tunnel
+				if cpf.width >= 5 or not(isStairs_indexed[cpf.leadingIndex]) then
 					local yShift = 0
-					if cpl.width >= 5 then
+					if cpf.width >= 5 then
 						yShift = isTrackOnPlatformLeft and 0.22 or -0.22
 					else
 						yShift = isTrackOnPlatformLeft and 1.47 or -1.47
 					end
 
 					local myTransf = transfUtilsUG.mul(
-						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
+						moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
 						{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift, 0.5, 1 }
 					)
 					local stationSignModelId = 'lollo_freestyle_train_station/subway/roof_edge_w_station_name_5m_2m.mdl'
@@ -209,8 +213,10 @@ return {
 						tag = tag
 					}
 				end
-			elseif platformWidth > 4 or (not(isUnderpass_indexed[i]) and not(isOpenLift_indexed[i]) and not(isStairs_indexed[i])) then
-				local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
+			elseif platformWidth > 4
+			or (not(isUnderpass_indexed[cpf.leadingIndex]) and not(isOpenLift_indexed[cpf.leadingIndex]) and not(isStairs_indexed[cpf.leadingIndex]))
+			then
+				local transf = moduleHelpers.getTerminalDecoTransf(cpf.posTanX2)
 				-- sign near the track
 				-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
 				-- sign 1.5 m from the track
@@ -232,12 +238,13 @@ return {
 			end
 		end
 		-- platform number signs
-		for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
-			local platformWidth = cpl.width
-			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, i)
-			if cpl.type == 2 then -- tunnel
-				if cpl.width >= 5 or not(isStairs_indexed[i]) then
+		-- for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
+		for ii = 3 + _constants.maxPassengerWaitingAreaEdgeLength, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, _constants.maxPassengerWaitingAreaEdgeLength * 2 do
+			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+			local platformWidth = cpf.width
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
+			if cpf.type == 2 then -- tunnel
+				if cpf.width >= 5 or not(isStairs_indexed[cpf.leadingIndex]) then
 					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
 					local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.9 or -platformWidth * 0.2 - 0.9
 					local modelId = 'lollo_freestyle_train_station/subway/era_c_perron_number_hanging.mdl'
@@ -248,7 +255,7 @@ return {
 						id = modelId,
 						slotId = slotId,
 						transf = transfUtilsUG.mul(
-							moduleHelpers.getTerminalDecoTransf(cpl.posTanX2),
+							moduleHelpers.getTerminalDecoTransf(cpf.posTanX2),
 							{ -transfXZoom, 0, 0, 0,  0, -transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, 4.6, 1 }
 						),
 						tag = tag
@@ -257,7 +264,10 @@ return {
 					result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal) }
 				end
 			else
-				if not(isPlatformRoofOrWall(nTerminal, i)) and (platformWidth > 4 or (not(isUnderpass_indexed[i]) and not(isOpenLift_indexed[i]) and not(isStairs_indexed[i]))) then
+				if not(isPlatformRoofOrWall(nTerminal, cpf.leadingIndex))
+				and (platformWidth > 4 or (not(isUnderpass_indexed[cpf.leadingIndex])
+				and not(isOpenLift_indexed[cpf.leadingIndex])
+				and not(isStairs_indexed[cpf.leadingIndex]))) then
 					-- very close to the track
 					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
 					-- sign 1.5 m from the track and facing outwards
@@ -270,7 +280,7 @@ return {
 						id = modelId,
 						slotId = slotId,
 						transf = transfUtilsUG.mul(
-							moduleHelpers.getTerminalDecoTransf(cpl.posTanX2),
+							moduleHelpers.getTerminalDecoTransf(cpf.posTanX2),
 							{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, result.laneZs[nTerminal] + 0.0, 1 }
 						),
 						tag = tag

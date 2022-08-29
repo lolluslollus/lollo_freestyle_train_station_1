@@ -122,7 +122,15 @@ local privateFuncs = {
         return variant
     end,
 }
-
+privateFuncs.deco = {
+    getStationSignFineIndexes = function(params, nTerminal)
+        local results = {}
+        for ii = 3, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, constants.maxPassengerWaitingAreaEdgeLength * 2 do
+            results[ii] = true
+        end
+        return results
+    end,
+}
 privateFuncs.edges = {
     _addTrackEdges = function(result, tag2nodes, params, t)
         result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
@@ -899,6 +907,9 @@ return {
         return privateFuncs.getVariant(params, slotId)
     end,
     deco = {
+        getStationSignFineIndexes = function(params, nTerminal)
+            return privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
+        end,
         doPlatformRoof = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
             ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId, alternativeCeiling2_5ModelId, alternativeCeiling5ModelId, isTunnelOk)
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
@@ -907,11 +918,7 @@ return {
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
             local _pillarPeriod = 4 -- it would be math.ceil(4 / ceilingStep); easier if it is a submultiple of numberSignPeriod
-            local _barredNumberSignIs = {}
-            -- LOLLO NOTE this is copied from passengerTerminal, keep them both in sync - dirty but faster
-            for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-                _barredNumberSignIs[i] = true
-            end
+            local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
             local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
@@ -926,12 +933,12 @@ return {
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
-                local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+                -- local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
                 if leadingIndex > iMax then break end
                 if leadingIndex >= i1 then
-                    if isTunnelOk or cpl.type ~= 2 then -- outside or bridge
+                    if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                        local platformWidth = cpl.width
+                        local platformWidth = cpf.width
 
                         local modelId = (isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex])
                         and (platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId)
@@ -957,7 +964,7 @@ return {
                                     tag = tag,
                                 }
 
-                                if not(_barredNumberSignIs[leadingIndex]) then -- prevent overlapping with station name signs
+                                if not(_barredNumberSignIIs[ii]) then -- prevent overlapping with station name signs
                                     if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
                                         -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
                                         local yShift = -platformWidth * 0.5 + 0.20
@@ -991,11 +998,7 @@ return {
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
-            local _barredNumberSignIs = {}
-            -- LOLLO NOTE this is copied from passengerTerminal, keep them both in sync - dirty but faster
-            for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-                _barredNumberSignIs[i] = true
-            end
+            local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
             local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
@@ -1011,12 +1014,12 @@ return {
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
-                local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
+                -- local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
                 if leadingIndex > iMax then break end
                 if leadingIndex >= i1 then
-                    if isTunnelOk or cpl.type ~= 2 then -- outside or bridge
+                    if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                        local platformWidth = cpl.width
+                        local platformWidth = cpf.width
 
                         result.models[#result.models+1] = {
                             id = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId,
@@ -1028,7 +1031,7 @@ return {
                         }
 
                         if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
-                            if not(_barredNumberSignIs[leadingIndex])
+                            if not(_barredNumberSignIIs[ii])
                             and isFreeFromOpenStairsLeft[leadingIndex]
                             and isFreeFromOpenStairsRight[leadingIndex]
                             then -- prevent overlapping with station name signs or stairs
@@ -1463,7 +1466,7 @@ return {
     
             local isCargoTerminal = params.terminals[nTerminal].isCargo
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-            local isFirstDone = false
+            -- local isFirstDone = false
             for _, cpf in pairs(params.terminals[nTerminal].centrePlatformsFineRelative) do
                 local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
                 local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, cpf.leadingIndex)
@@ -1474,14 +1477,14 @@ return {
                     tag = tag,
                     transf = myTransf
                 }
-                if not(isFirstDone) then myTransf[15] = myTransf[15] + 1 end
-                result.models[#result.models+1] = {
-                    id = isFirstDone and 'lollo_freestyle_train_station/icon/green.mdl' or 'lollo_freestyle_train_station/icon/red.mdl',
-                    slotId = slotId,
-                    tag = tag,
-                    transf = myTransf
-                }
-                isFirstDone = true
+                -- if not(isFirstDone) then myTransf[15] = myTransf[15] + 1 end
+                -- result.models[#result.models+1] = {
+                --     id = isFirstDone and 'lollo_freestyle_train_station/icon/green.mdl' or 'lollo_freestyle_train_station/icon/red.mdl',
+                --     slotId = slotId,
+                --     tag = tag,
+                --     transf = myTransf
+                -- }
+                -- isFirstDone = true
             end
             -- local isFirstDone = false
             -- for _, cpl in pairs(params.terminals[nTerminal].centrePlatformsRelative) do
