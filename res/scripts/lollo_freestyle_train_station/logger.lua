@@ -21,14 +21,17 @@ return {
     end,
     debugPrint = function(whatever)
         if not(_isExtendedLogActive) then return end
+        if not(debugPrint) then print('no debugPrint available') return end
         debugPrint(whatever)
     end,
     warningDebugPrint = function(whatever)
         if not(_isWarningLogActive) then return end
+        if not(debugPrint) then print('no debugPrint available') return end
         debugPrint(whatever)
     end,
     errorDebugPrint = function(whatever)
         if not(_isErrorLogActive) then return end
+        if not(debugPrint) then print('no debugPrint available') return end
         debugPrint(whatever)
     end,
     profile = function(label, func)
