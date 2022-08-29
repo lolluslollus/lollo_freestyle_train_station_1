@@ -100,7 +100,7 @@ return {
 			isStairs_indexed[i] = isStairs(nTerminal, i)
 		end
 
-		local xShift = 1 -- 2
+		local xShift = 1
 		local transfXZoom = isTrackOnPlatformLeft and -1 or 1
 		local transfYZoom = isTrackOnPlatformLeft and -1 or 1
 
@@ -239,7 +239,7 @@ return {
 		end
 		-- platform number signs
 		-- for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-		for ii = 3 + _constants.maxPassengerWaitingAreaEdgeLength, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, _constants.maxPassengerWaitingAreaEdgeLength * 2 do
+		for ii = 3 + _constants.maxPassengerWaitingAreaEdgeLength, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, _constants.maxPassengerWaitingAreaEdgeLength * 6 do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
 			local platformWidth = cpf.width
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
@@ -302,27 +302,27 @@ return {
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.7 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.2 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 						tag = tag
 					}
 				elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.7 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.2 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 						tag = tag
 					}
 				else
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.6 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.1 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 						tag = tag
 					}
 					result.models[#result.models + 1] = {
 						id = 'lollo_freestyle_train_station/asset/partenze.mdl',
 						slotId = slotId,
-						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.9 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+						transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1.4 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 						tag = tag
 					}
 				end
@@ -348,7 +348,7 @@ return {
 				result.models[#result.models + 1] = {
 					id = myModelId,
 					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { 0, transfYZoom, 0, 0,  transfXZoom, 0, 0, 0,  0, 0, 1, 0,  1.3 + xShift, yShift, result.laneZs[nTerminal], 1 }),
+					transf = transfUtilsUG.mul(transf, { 0, transfYZoom, 0, 0,  transfXZoom, 0, 0, 0,  0, 0, 1, 0,  1.8 + xShift, yShift, result.laneZs[nTerminal], 1 }),
 					tag = tag
 				}
 			end
