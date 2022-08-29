@@ -8,7 +8,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local dummy = 123
 
-local function getCentralEdgePositions_OnlyOuterBounds(edgeLists, stepLength, addTerrainHeight)
+local getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight)
     logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'edgeLists =') logger.debugPrint(edgeLists)
     if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
         logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
@@ -72,7 +72,7 @@ local function getCentralEdgePositions_OnlyOuterBounds(edgeLists, stepLength, ad
                                     firstRefEdge.posTanX2[1][1][3],
                                 },
                                 {
-                                    firstRefEdge.posTanX2[1][2][1] * (lengthUncovered + _firstStep) / firstRefEdgeLength, -- LOLLO TODO these are not right yet
+                                    firstRefEdge.posTanX2[1][2][1] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
                                     firstRefEdge.posTanX2[1][2][2] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
                                     firstRefEdge.posTanX2[1][2][3] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
                                 }
@@ -121,8 +121,8 @@ local function getCentralEdgePositions_OnlyOuterBounds(edgeLists, stepLength, ad
                         },
                     }
                 end
-                newEdgeResults[#newEdgeResults].catenary = _refEdge.catenary
-                if addTerrainHeight then
+
+                if isAddTerrainHeight then
                     newEdgeResults[#newEdgeResults].terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
                         newEdgeResults[#newEdgeResults].posTanX2[1][1][1],
                         newEdgeResults[#newEdgeResults].posTanX2[1][1][2]
@@ -132,12 +132,13 @@ local function getCentralEdgePositions_OnlyOuterBounds(edgeLists, stepLength, ad
                     --     edgeResults[#edgeResults].posTanX2[2][1][2]
                     -- ))
                 end
-                newEdgeResults[#newEdgeResults].trackType = _refEdge.trackType
-                newEdgeResults[#newEdgeResults].trackTypeName = _refEdge.trackTypeName
-                newEdgeResults[#newEdgeResults].type = _refEdge.type
-                newEdgeResults[#newEdgeResults].typeIndex = _refEdge.typeIndex
-                newEdgeResults[#newEdgeResults].width = _refEdge.width or 0
-                newEdgeResults[#newEdgeResults].era = _refEdge.era or _constants.eras.era_c.prefix
+                newEdgeResults[#newEdgeResults].catenary = _refEdge.catenary -- this is not totally accurate since we ignore the inner bounds
+                newEdgeResults[#newEdgeResults].era = _refEdge.era or _constants.eras.era_c.prefix -- idem
+                newEdgeResults[#newEdgeResults].trackType = _refEdge.trackType -- idem
+                newEdgeResults[#newEdgeResults].trackTypeName = _refEdge.trackTypeName -- idem
+                newEdgeResults[#newEdgeResults].type = _refEdge.type -- idem
+                newEdgeResults[#newEdgeResults].typeIndex = _refEdge.typeIndex -- idem
+                newEdgeResults[#newEdgeResults].width = _refEdge.width or 0 -- idem
 
                 currentStepPercent = currentStepPercent + _nextStepPercent
                 lengthUncovered = lengthUncovered - stepLength
@@ -155,8 +156,7 @@ local function getCentralEdgePositions_OnlyOuterBounds(edgeLists, stepLength, ad
             previousRefEdgeLength = _refEdgeLength
         end
     end
--- LOLLO TODO there ca be small gaps at the end: fix it
-    -- now we see to the rounding errors: if we can, we force the last result to the original edge end...
+    -- now we see to the remaining bit, which may have rounding errors: if we can, we force the last result to the original edge end...
     local _lastRefEdgePosition = previousRefEdge.posTanX2[2][1]
     if edgeUtils.isXYZVeryClose(_lastRefEdgePosition, results[#results].posTanX2[2][1], 3) then
         logger.print('these position vectors are very close:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
@@ -165,7 +165,6 @@ local function getCentralEdgePositions_OnlyOuterBounds(edgeLists, stepLength, ad
     elseif lengthUncovered > 0 and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
         logger.print('these position vectors are not close enough:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
         results[#results+1] = {
-            catenary = previousRefEdge.catenary,
             posTanX2 = {
                 {
                     {
@@ -192,13 +191,24 @@ local function getCentralEdgePositions_OnlyOuterBounds(edgeLists, stepLength, ad
                     }
                 },
             },
-            trackType = previousRefEdge.trackType,
-            trackTypeName = previousRefEdge.trackTypeName,
-            type = previousRefEdge.type,
-            typeIndex = previousRefEdge.typeIndex,
-            width = previousRefEdge.width or 0,
-            era = previousRefEdge.era or _constants.eras.era_c.prefix,
+            catenary = previousRefEdge.catenary, -- this is not totally accurate since we ignore the inner bounds
+            era = previousRefEdge.era or _constants.eras.era_c.prefix, -- idem
+            trackType = previousRefEdge.trackType, -- idem
+            trackTypeName = previousRefEdge.trackTypeName, -- idem
+            type = previousRefEdge.type, -- idem
+            typeIndex = previousRefEdge.typeIndex, -- idem
+            width = previousRefEdge.width or 0, -- idem
         }
+        if isAddTerrainHeight then
+            results[#results].terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+                results[#results].posTanX2[1][1][1],
+                results[#results].posTanX2[1][1][2]
+            ))
+            -- results[#results].terrainHeight2 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
+            --     results[#results].posTanX2[2][1][1],
+            --     results[#results].posTanX2[2][1][2]
+            -- ))
+        end
     else
         logger.err('there is a piece missing')
     end

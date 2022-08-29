@@ -510,7 +510,7 @@ local helpers = {
                                         firstRefEdge.posTanX2[1][1][3],
                                     },
                                     {
-                                        firstRefEdge.posTanX2[1][2][1] * (lengthUncovered + _firstStep) / firstRefEdgeLength, -- LOLLO TODO these are not right yet
+                                        firstRefEdge.posTanX2[1][2][1] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
                                         firstRefEdge.posTanX2[1][2][2] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
                                         firstRefEdge.posTanX2[1][2][3] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
                                     }

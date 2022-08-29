@@ -10,7 +10,7 @@ function data()
         yearTo = 0,
         aiLock = true,
         visibility = true,
-        country = true, -- LOLLO UG TODO this does not help: the AI still makes buildings
+        country = true, -- UG TODO this does not help: the AI still makes buildings
         speed = 20.0,
         type = 'lollo_1m_path_concrete_country',
         name = _("1 Metre Concrete Path, No Buildings"),

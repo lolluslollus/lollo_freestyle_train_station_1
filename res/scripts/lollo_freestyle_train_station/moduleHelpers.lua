@@ -197,7 +197,7 @@ privateFuncs.edges = {
             local pel = params.terminals[t].platformEdgeLists[i]
 
             local newEdgeList = {
-                -- LOLLO NOTE never mind if I align the terrain or I change the track materials,
+                -- UG TODO LOLLO TODO never mind if I align the terrain or I change the track materials,
                 -- the game will always draw ballast in the underpasses - bridges are also affected.
                 -- The only way around it is not to draw the platform edge.
                 -- This will make trouble when snapping parallel platform, which far outweighs the optical benefit
@@ -310,7 +310,7 @@ privateFuncs.edges = {
                     slopeLow = constants.slopeLow,
                     type = 'EQUAL', -- GREATER, LESS
                 }
-                -- result.colliders[#result.colliders+1] = { -- this is test code LOLLO TODO use model colliders instead and leave this out
+                -- result.colliders[#result.colliders+1] = { -- this is test code, use model colliders instead and leave this out
                 --     type = 'BOX',
                 --     params = {
                 --         halfExtents = { math.abs(leftSegment[1][1][1] - rightSegment[2][1][1]) * 0.5, _halfTrackWidth, 3, },

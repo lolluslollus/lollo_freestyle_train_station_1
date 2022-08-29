@@ -1343,8 +1343,6 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
 end
 
 _actions.buildSnappyStreetEdges = function(stationConId)
-    -- stationHelpers._getStationStreetEndNodeIds
-    -- LOLLO TODO implement this
     logger.print('buildSnappyStreetEdges starting')
 
     local endEntities = stationHelpers.getStationStreetEndEntities(stationConId)
@@ -1793,9 +1791,10 @@ function data()
                         -- logger.print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') logger.debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
                         local _setLeftCentreRightPlatforms = function(platformEdgeList, midTrackEdge)
-                            -- LOLLO TODO instead of basing these numbers on the edges, base them on absolute distances.
-                            -- The result will be much neater, irrespective of how the user placed the edges.
-                            -- This is WIP.
+                            -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
+                            -- The result is much neater, irrespective of how the user placed the edges.
+                            -- There is a small accuracy price to pay detectind if we are on a bridge or a tunnel.
+                            -- There is also less data in centrePlatformsFine.
                             -- print('platformEdgeList =') debugPrint(platformEdgeList)
                             eventArgs.centrePlatforms = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 platformEdgeList,
@@ -2529,61 +2528,6 @@ function data()
                                         _handleValidWaypointBuilt()
                                     end
                                 end
-                            --[[ elseif id == 'trackBuilder' or id == 'streetTrackModifier' then
-                                -- I get here in 3 cases:
-                                -- 1) a new track is built (id = trackBuilder)
-                                -- 2) an existing track is changed to a different type (id = streetTrackModifier)
-                                -- 3) an existing track is changed with the upgrade tool (id = streetTrackModifier)
-
-                                -- the user has built or updated a piece of platform-track:
-                                -- if there is a track waypoint, remove it, ie rebuild the platform-track without
-                                -- otherwise, if the catenary is true, rebuild the platform-track without
-                                -- note that this can affect multiple edges at once.
-                                if not(args) or not(args.proposal) or not(args.proposal.proposal)
-                                or not(args.proposal.proposal.addedSegments) or not(args.proposal.proposal.addedSegments[1])
-                                or not(args.data) or not(args.data.entity2tn) then return end
-
-                                local _trackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
-
-                                local removeTrackWaypointsEventArgs = {}
-                                for _, addedSegment in pairs(args.proposal.proposal.addedSegments) do
-                                    if addedSegment and addedSegment.trackEdge
-                                    and trackUtils.isPlatform(addedSegment.trackEdge.trackType)
-                                    and addedSegment.comp.objects then
-                                        local edgeObjectsToRemoveIds = edgeUtils.getEdgeObjectsIdsWithModelId(addedSegment.comp.objects, _trackWaypointModelId)
-                                        if #edgeObjectsToRemoveIds > 0 then
-                                            for _, waypointId in pairs(edgeObjectsToRemoveIds) do
-                                                removeTrackWaypointsEventArgs[#removeTrackWaypointsEventArgs+1] = {
-                                                    edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(waypointId),
-                                                    waypointId = waypointId,
-                                                }
-                                            end
-                                        else
-                                            logger.print('WARNING upgrading, addedSegment =') -- logger.debugPrint(addedSegment)
-                                            -- logger.print('args.data.entity2tn =') logger.debugPrint(args.data.entity2tn)
-                                            -- LOLLO TODO when upgrading, the game adds a segment and two nodes, which won't work with the following.
-                                            -- Probably unimportant, but check it coz edgeUtils.getLastBuiltEdgeId errors out (gracefully)
-                                            -- when adding electrification or high speed.
-                                            removeTrackWaypointsEventArgs[#removeTrackWaypointsEventArgs+1] = {
-                                                edgeId = edgeUtils.getLastBuiltEdgeId(args.data.entity2tn, addedSegment),
-                                                waypointId = nil,
-                                            }
-                                        end
-                                    -- else
-                                        -- logger.print('addedSegment =') logger.debugPrint(addedSegment)
-                                    end
-                                end
-                                for i = 1, #removeTrackWaypointsEventArgs do
-                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                        string.sub(debug.getinfo(1, 'S').source, 1),
-                                        _eventId,
-                                        _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                        {
-                                            edgeId = removeTrackWaypointsEventArgs[i].edgeId,
-                                            waypointId = removeTrackWaypointsEventArgs[i].waypointId,
-                                        }
-                                    ))
-                                end ]]
                             end
                         elseif name == 'select' then
                             -- LOLLO TODO MAYBE same with stations. Maybe one day.
