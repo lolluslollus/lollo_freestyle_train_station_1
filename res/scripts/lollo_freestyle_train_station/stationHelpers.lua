@@ -9,38 +9,6 @@ local transfUtilsUG = require('transf')
 
 
 local helpers = {
-    getNearbyFreestyleStationsListOLD = function(transf, searchRadius)
-        if type(transf) ~= 'table' then return {} end
-
-        local squareCentrePosition = transfUtils.getVec123Transformed({0, 0, 0}, transf)
-        local cons = game.interface.getEntities(
-            {pos = squareCentrePosition, radius = searchRadius},
-            {type = "CONSTRUCTION", includeData = true, fileName = _constants.stationConFileName}
-        )
-        -- #cons returns 0 coz it's not a list
-        local results = {}
-        for _, con in pairs(cons) do
-            for _, staId in pairs(con.stations) do
-                local staGroupId = api.engine.system.stationGroupSystem.getStationGroup(staId)
-                if edgeUtils.isValidAndExistingId(staGroupId) then
-                    local staGroupName = api.engine.getComponent(staGroupId, api.type.ComponentType.NAME)
-                    logger.print('staGroupName =') logger.debugPrint(staGroupName)
-                    if staGroupName ~= nil and not(stringUtils.isNullOrEmptyString(staGroupName.name)) then
-                        results[#results+1] = {
-                            id = con.id,
-                            name = staGroupName.name,
-                            position = arrayUtils.cloneDeepOmittingFields(con.position)
-                        }
-                        break
-                    end
-                end
-            end
-        end
-        -- logger.print('# nearby freestyle stations = ', #results)
-        -- logger.print('nearby freestyle stations = ') logger.debugPrint(results)
-        return results
-    end,
-
     getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnlyPassengers)
         if type(transf) ~= 'table' then return {} end
         if tonumber(searchRadius) == nil then searchRadius = _constants.searchRadius4NearbyStation2Join end
@@ -220,27 +188,6 @@ local helpers = {
         return results
     end,
 
-    getAllEdgeObjectsWithModelIdOLD = function(refModelId, searchRadius)
-        -- too slow
-        if not(searchRadius) then searchRadius = 99999 end
-        local results = {}
-        local nearbyEdgeIds = edgeUtils.getNearbyObjectIds(_constants.idTransf, searchRadius, api.type.ComponentType.BASE_EDGE)
-        -- logger.print('nearbyEdgeIds =')
-        -- logger.debugPrint(nearbyEdgeIds)
-        for _, edgeId in pairs(nearbyEdgeIds) do
-            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge ~= nil and baseEdge.objects ~= nil then
-                local edgeObjectIds = edgeUtils.getEdgeObjectsIdsWithModelId(baseEdge.objects, refModelId)
-                for _, edgeObjectId in pairs(edgeObjectIds) do
-                    arrayUtils.addUnique(results, edgeObjectId)
-                end
-            end
-        end
-
-        -- logger.print('getAllEdgeObjectsWithModelId is about to return') logger.debugPrint(results)
-        return results
-    end,
-
     getAllEdgeObjectsWithModelId = function(refModelId)
         if not(edgeUtils.isValidId(refModelId)) then return {} end
 
@@ -299,7 +246,7 @@ local helpers = {
         return results
     end,
 
-    getCentralEdgePositions_AllBounds_UNUSED = function(edgeLists, maxEdgeLength, isAddTerrainHeight)
+    getCentralEdgePositions_AllBounds_UNUSED_BUT_KEEP_IT = function(edgeLists, maxEdgeLength, isAddTerrainHeight)
         -- logger.print('getCentralEdgePositions_AllBounds starting')
         if type(edgeLists) ~= 'table' then return {} end
 
