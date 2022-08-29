@@ -529,7 +529,7 @@ local _actions = {
     end,
 
     rebuildOneTerminalTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
-        local _significantFigures4LocateNode = 5 -- you may lower this down to 100 if tracks are not properly rebuilt.
+        local _significantFigures4LocateNode = 5 -- you may lower this if tracks are not properly rebuilt.
         -- cleanupStreetGraph in previous events (removeTerminal and bulldozeConstruction) might also play a role, it might.
         logger.print('rebuildOneTerminalTracks starting')
         -- logger.print('trackEdgeLists =') logger.debugPrint(trackEdgeLists)
