@@ -236,6 +236,7 @@ function data()
 				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
 				-- 	logger.print('retransformed first edge =') logger.debugPrint(retransformedFirstEdge)
 				-- end
+				-- LOLLO TODO review the cpl.type checks across this file
 				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal:
 				-- everything except the platforms and the terminal deco will vary along with it.
 				result.laneZs[t] = _laneZ
