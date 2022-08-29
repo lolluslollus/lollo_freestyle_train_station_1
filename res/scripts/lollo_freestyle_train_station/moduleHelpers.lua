@@ -287,7 +287,6 @@ privateFuncs.edges = {
                     type = 'TRACK'
                 }
             elseif pel.type == 0 then
-                -- LOLLO TODO add terrainALignmentList, collider, maybe a groundFace
                 local _halfTrackWidth = pel.width * 0.5
                 local leftSegment = transfUtils.getParallelSideways(_edges, -_halfTrackWidth)
                 local rightSegment = transfUtils.getParallelSideways(_edges, _halfTrackWidth)
@@ -638,78 +637,6 @@ privateFuncs.slopedAreas = {
     
         return waitingAreaScaleFactor, xScaleFactor
     end,
-    _doTerrain4SlopedAreaOLD = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey, isGroundLevel)
-        -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
-        local terrainCoordinates = {}
-    
-        local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-        local iN = nTrackEdge + 1
-        local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
-        if not(safs) then return end
-        for ii = 1, #safs do
-            local leadingIndex = safs[ii].leadingIndex
-            if leadingIndex > iN then break end
-            local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-            if cpl.type == 0 then -- only on ground
-                if leadingIndex >= i1 then
-                    local saf = safs[ii]
-                    local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
-                    local pos1Inner = cpf.posTanX2[1][1]
-                    local pos2Inner = cpf.posTanX2[2][1]
-                    local pos2Outer = saf.posTanX2[2][1]
-                    local pos1Outer = saf.posTanX2[1][1]
-                    terrainCoordinates[#terrainCoordinates+1] = {
-                        pos1Inner,
-                        pos2Inner,
-                        transfUtils.getExtrapolatedPosX2Continuation(pos2Inner, pos2Outer, areaWidth * 0.5),
-                        transfUtils.getExtrapolatedPosX2Continuation(pos1Inner, pos1Outer, areaWidth * 0.5),
-                    }
-                end
-            end
-        end
-        -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
-    
-        local faces = {}
-        for tc = 1, #terrainCoordinates do
-            local face = { }
-            for i = 1, 4 do
-                face[i] = {
-                    terrainCoordinates[tc][i][1],
-                    terrainCoordinates[tc][i][2],
-                    isGroundLevel
-                        and terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] + constants.platformSideBitsZ
-                        or terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + constants.platformSideBitsZ,
-                    1
-                }
-            end
-            faces[#faces+1] = face
-            if groundFacesFillKey ~= nil then
-                result.groundFaces[#result.groundFaces + 1] = {
-                    face = face, -- Z is ignored here
-                    loop = true,
-                    modes = {
-                        {
-                            type = 'FILL',
-                            key = groundFacesFillKey,
-                        },
-                        {
-                            type = 'STROKE_OUTER',
-                            key = groundFacesFillKey
-                        }
-                    }
-                }
-            end
-        end
-        if #faces > 1 then
-            result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
-                faces = faces, -- Z is accounted here
-                optional = true,
-                slopeHigh = constants.slopeHigh,
-                slopeLow = constants.slopeLow,
-                type = 'EQUAL', -- GREATER, LESS
-            }
-        end
-    end,
     _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
         -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
         local terrainCoordinates = {}
@@ -723,10 +650,9 @@ privateFuncs.slopedAreas = {
             local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
             local leadingIndex = cpf.leadingIndex
             if leadingIndex > iN then break end
-            local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-            if cpl.type == 0 then -- only on ground
+            if cpf.type == 0 then -- only on ground
                 if leadingIndex >= i1 then
-                    local platformWidth = cpl.width
+                    local platformWidth = cpf.width
                     local outerAreaEdgePosTanX2 = transfUtils.getParallelSidewaysWithRotZ(
                         cpf.posTanX2,
                         (isTrackOnPlatformLeft and (-areaWidth -platformWidth * 0.5) or (areaWidth + platformWidth * 0.5))
