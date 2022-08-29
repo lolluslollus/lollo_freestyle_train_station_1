@@ -236,7 +236,6 @@ function data()
 				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
 				-- 	logger.print('retransformed first edge =') logger.debugPrint(retransformedFirstEdge)
 				-- end
-				-- LOLLO TODO review the cpl.type checks across this file
 				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal:
 				-- everything except the platforms and the terminal deco will vary along with it.
 				result.laneZs[t] = _laneZ
@@ -387,8 +386,9 @@ function data()
 				local function _addStreetAccess()
 					for i = 2, #params.terminals[t].centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local cplPrevious = params.terminals[t].centrePlatformsRelative[i-1]
-						if cpl.type ~= 2 and cplPrevious.type ~= 2 then -- no tunnels
+						-- local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {}
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						if cpl.type ~= 2 and cplP1.type ~= 2 then -- no tunnels
 							-- local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
 							-- local isNextUnderpass = i < #params.terminals[t].centrePlatformsRelative
 							-- 	and params.modules[result.mangleId(t, i+1, _constants.idBases.underpassSlotId)] ~= nil
@@ -420,7 +420,7 @@ function data()
 									end
 								end
 							end
-							if cpl.type == 0 then -- ground
+							if cpl.type == 0 and cplP1.type == 0 then -- ground
 								if not(_getOccupiedInfo4FlatAreas(t, i))
 								or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsOrRampSlotId then
 									local yShift = cpl.width + _getOccupiedInfo4SlopedAreas(t, i).yShift
@@ -571,7 +571,7 @@ function data()
 										end
 									end
 								end
-							elseif cpl.type == 1 then -- bridge
+							elseif cpl.type == 1 and cplP1.type == 1 then -- bridge
 								if not(isCargoTerminal) then
 									if not(_getOccupiedInfo4FlatAreas(t, i))
 									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.sideLiftSlotId then
@@ -755,8 +755,9 @@ function data()
 					local maxI = #params.terminals[t].centrePlatformsRelative - 1
 					for i = 2, maxI do -- skip the outermost edges to avoid collisions, the game is very picky here.
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local isInTunnel = cpl.type == 2
-						local isOnBridge = cpl.type == 1
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						-- local isInTunnel = cpl.type == 2 and cplP1.type == 2
+						local isOnBridge = cpl.type == 1 and cplP1.type == 1
 						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
 						local isStairsUp = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
 						local isStairsUpDown = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
@@ -965,13 +966,14 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatformsRelative - 1, 1 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
 						local era = moduleHelpers.getEraPrefix(params, t, i)
 						local mySpacing = {3, -0.1, 1, 1}
 						local myTransf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
 								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 							)
-						if cpl.type == 2 then -- tunnels
+						if cpl.type == 2 and cplP1.type == 2 then -- tunnels
 							-- LOLLO TODO MAYBE place one automatically when... When? When adding a subway?
 							local idM1_TunnelStairsUp = result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpSlotId)
 							local idP1_TunnelStairsUp = result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpSlotId)
@@ -1016,7 +1018,7 @@ function data()
 										type = _constants.underpassModuleType,
 									})
 								end
-								if cpl.type == 0 then -- ground
+								if cpl.type == 0 and cplP1.type == 0 then -- ground
 									if not(params.modules[id_Underpass]) then
 										table.insert(result.slots, {
 											-- height = 0,

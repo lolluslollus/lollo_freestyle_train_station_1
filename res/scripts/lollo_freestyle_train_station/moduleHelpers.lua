@@ -1137,8 +1137,11 @@ return {
     lifts = {
         tryGetLiftHeight = function(params, nTerminal, nTrackEdge, slotId)
             local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            local bridgeHeight = cpl.type == 1 and params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1 or 0
-    
+            local cplP1 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge+1] or {}
+            local bridgeHeight = (cpl.type == 1 and cplP1.type == 1)
+            and (params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1)
+            or 0
+
             local buildingHeight = 0
             if bridgeHeight < privateConstants.lifts.bridgeHeights[1] then
                 buildingHeight = 0

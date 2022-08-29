@@ -33,6 +33,7 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local cplP1 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge+1] or {}
 			slotTransf = transfUtilsUG.mul(
 				moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
@@ -52,7 +53,7 @@ function data()
 				tag = tag
 			}
 
-			if cpl.type ~= 1 then -- skip it on bridges, otherwise it will make the underlying ground transparent. Interesting but unwanted.
+			if cpl.type ~= 1 and cplP1.type ~= 1 then -- skip it on bridges, otherwise it will make the underlying ground transparent. Interesting but unwanted.
 				local groundFace = { -- the ground faces ignore z, the alignment lists don't
 					{-4.5, -0.75, 0, 1},
 					{-4.5, 0.75, 0, 1},
