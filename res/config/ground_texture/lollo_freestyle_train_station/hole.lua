@@ -1,5 +1,6 @@
 -- local tu = require "texutil"
 -- LOLLO TODO tried these to see how they handle the hole. they all suck the same.
+-- Using a larger picture does not help, either.
 -- function data()
 -- return {
 -- 	-- texture = tu.makeTextureLinearNearest("res/textures/terrain/material/mat255.tga", true, false,false),
@@ -18,7 +19,7 @@
 -- }
 -- end
 
--- original with changed priority
+-- original
 local tu = require "texutil"
 
 function data()
@@ -28,7 +29,7 @@ return {
 	materialIndexMap = {
 		[255] = "",
 	},
-	priority = 999999999999999999
+	priority = 5000
 }
 end
 
