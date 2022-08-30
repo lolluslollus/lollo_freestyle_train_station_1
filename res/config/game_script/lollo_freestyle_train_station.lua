@@ -1817,11 +1817,10 @@ function data()
                         local _reverseRightSideTracksAndPlatforms = function()
                             if not(eventArgs.isTrackOnPlatformLeft) then
                                 local midPos1 = eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
-                                logger.print('reversing platformEdgeList, platformEdgeList =')
-                                -- logger.debugPrint(eventArgs.platformEdgeList)
+                                logger.print('reversing platformEdgeList, platformEdgeList =') --logger.debugPrint(eventArgs.platformEdgeList)
                                 eventArgs.platformEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.platformEdgeList)
                                 -- logger.print('reversed platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
-                                -- logger.print('reversing trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
+                                logger.print('reversing trackEdgeList, trackEdgeList =') --logger.debugPrint(eventArgs.trackEdgeList)
                                 eventArgs.trackEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.trackEdgeList)
                                 -- logger.print('reversed trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
                                 -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 2 -- dangerous

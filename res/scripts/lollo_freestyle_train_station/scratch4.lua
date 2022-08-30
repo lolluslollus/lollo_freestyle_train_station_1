@@ -8,239 +8,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local dummy = 123
 
-local getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight)
-    local _addExtraProps = function(source, target)
-        if isAddTerrainHeight then
-            target.terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
-                target.posTanX2[1][1][1],
-                target.posTanX2[1][1][2]
-            ))
-            -- edgeResults[#edgeResults].terrainHeight2 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
-            --     edgeResults[#edgeResults].posTanX2[2][1][1],
-            --     edgeResults[#edgeResults].posTanX2[2][1][2]
-            -- ))
-        end
-        -- if isAddExtraProps then
-            target.catenary = source.catenary -- this is not totally accurate since we ignore the inner bounds
-            target.era = source.era or _constants.eras.era_c.prefix -- idem
-            target.trackType = source.trackType -- idem
-            target.trackTypeName = source.trackTypeName -- idem
-            target.type = source.type -- idem
-            target.typeIndex = source.typeIndex -- idem
-            target.width = source.width or 0 -- idem
-        -- end
-    end
-
-    logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'edgeLists =') logger.debugPrint(edgeLists)
-    if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
-        logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
-        return {}
-    end
-
-    local firstRefEdge = nil
-    local firstRefEdgeLength = 0
-    local lengthUncovered = 0
-    local previousNodeBetween = nil
-    local previousRefEdge = nil
-    local previousRefEdgeLength = 0
-
-    local results = {}
-    for _, _refEdge in pairs(edgeLists) do
-        -- These should be identical but they are not quite so, so we average
-        local _refEdgeLength = (transfUtils.getVectorLength(_refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(_refEdge.posTanX2[2][2])) * 0.5
-        if firstRefEdge == nil and _refEdgeLength > 0 then
-            firstRefEdge = _refEdge
-            firstRefEdgeLength = _refEdgeLength
-        end
-
-        if firstRefEdge ~= nil then
-            -- local _nSplitsInEdge = math.floor((_oldEdgeLength + lengthUncovered) / stepLength)
-            local _firstStep = stepLength - lengthUncovered
-            local _firstStepPercent = _firstStep / _refEdgeLength
-            local _nextStepPercent = stepLength / _refEdgeLength
-            logger.print('_refEdgeLength, firstStepPercent, nextStepPercent =', _refEdgeLength, _firstStepPercent, _nextStepPercent)
-            if _firstStepPercent < 0 then
-                logger.err('firstStep cannot be < 0; _refEdgeLength, lengthUncovered =', _refEdgeLength, lengthUncovered)
-                return {}
-            end
-
-            local currentStepPercent = _firstStepPercent
-            local newEdgeResults = {}
-
-            while currentStepPercent <= 1 do
-                local nodeBetween = edgeUtils.getNodeBetween(
-                    transfUtils.oneTwoThree2XYZ(_refEdge.posTanX2[1][1]),
-                    transfUtils.oneTwoThree2XYZ(_refEdge.posTanX2[2][1]),
-                    transfUtils.oneTwoThree2XYZ(_refEdge.posTanX2[1][2]),
-                    transfUtils.oneTwoThree2XYZ(_refEdge.posTanX2[2][2]),
-                    currentStepPercent,
-                    logger.isExtendedLog()
-                )
-                logger.print('nodeBetween =') --logger.debugPrint(nodeBetween)
-                if nodeBetween == nil then
-                    logger.err('nodeBetween not found; oldEdge =') -- logger.errorDebugPrint(oldEdge)
-                    return {}
-                end
-                -- local newEdgeLength = nodeBetween.refDistance0 - lastCoveredLengthInEdge
-                -- logger.print('nodeBetween.refDistance0 - lastCoveredLengthInEdge =', nodeBetween.refDistance0 - lastCoveredLengthInEdge)
-                -- logger.print('lastCoveredLengthInEdge =', lastCoveredLengthInEdge)
-                if previousNodeBetween == nil then
-                    newEdgeResults[#newEdgeResults+1] = {
-                        posTanX2 = {
-                            {
-                                {
-                                    firstRefEdge.posTanX2[1][1][1],
-                                    firstRefEdge.posTanX2[1][1][2],
-                                    firstRefEdge.posTanX2[1][1][3],
-                                },
-                                {
-                                    firstRefEdge.posTanX2[1][2][1] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
-                                    firstRefEdge.posTanX2[1][2][2] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
-                                    firstRefEdge.posTanX2[1][2][3] * (lengthUncovered + _firstStep) / firstRefEdgeLength,
-                                }
-                            },
-                            {
-                                {
-                                    nodeBetween.position.x,
-                                    nodeBetween.position.y,
-                                    nodeBetween.position.z,
-                                },
-                                {
-                                    nodeBetween.tangent.x * stepLength,
-                                    nodeBetween.tangent.y * stepLength,
-                                    nodeBetween.tangent.z * stepLength,
-                                }
-                            },
-                        },
-                    }
-                else
-                    newEdgeResults[#newEdgeResults+1] = {
-                        posTanX2 = {
-                            {
-                                {
-                                    previousNodeBetween.position.x,
-                                    previousNodeBetween.position.y,
-                                    previousNodeBetween.position.z,
-                                },
-                                {
-                                    previousNodeBetween.tangent.x * stepLength,
-                                    previousNodeBetween.tangent.y * stepLength,
-                                    previousNodeBetween.tangent.z * stepLength,
-                                }
-                            },
-                            {
-                                {
-                                    nodeBetween.position.x,
-                                    nodeBetween.position.y,
-                                    nodeBetween.position.z,
-                                },
-                                {
-                                    nodeBetween.tangent.x * stepLength,
-                                    nodeBetween.tangent.y * stepLength,
-                                    nodeBetween.tangent.z * stepLength,
-                                }
-                            },
-                        },
-                    }
-                end
-
-                _addExtraProps(_refEdge, newEdgeResults[#newEdgeResults])
-
-                currentStepPercent = currentStepPercent + _nextStepPercent
-                lengthUncovered = lengthUncovered - stepLength
-                previousNodeBetween = nodeBetween
-            end
-
-            for _, value in pairs(newEdgeResults) do
-                results[#results+1] = value
-            end
-            lengthUncovered = lengthUncovered + _refEdgeLength
-
-            logger.print('currentStepPercent =', currentStepPercent, 'lengthUncovered =', lengthUncovered)
-
-            previousRefEdge = _refEdge
-            previousRefEdgeLength = _refEdgeLength
-        end
-    end
-    -- now we see to the remaining bit, which may have rounding errors: if we can, we force the last result to the original edge end...
-    if #results == 0 then -- if the step is longer than the segments, there will be no results
-        if firstRefEdge ~= nil and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
-            results = {
-                {
-                    posTanX2 = {
-                        {
-                            {
-                                firstRefEdge.posTanX2[1][1][1],
-                                firstRefEdge.posTanX2[1][1][2],
-                                firstRefEdge.posTanX2[1][1][3],
-                            },
-                            {
-                                firstRefEdge.posTanX2[1][2][1] * lengthUncovered / firstRefEdgeLength,
-                                firstRefEdge.posTanX2[1][2][2] * lengthUncovered / firstRefEdgeLength,
-                                firstRefEdge.posTanX2[1][2][3] * lengthUncovered / firstRefEdgeLength,
-                            }
-                        },
-                        {
-                            {
-                                previousRefEdge.posTanX2[2][1][1],
-                                previousRefEdge.posTanX2[2][1][2],
-                                previousRefEdge.posTanX2[2][1][3],
-                            },
-                            {
-                                previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength,
-                                previousRefEdge.posTanX2[2][2][2] * lengthUncovered / previousRefEdgeLength,
-                                previousRefEdge.posTanX2[2][2][3] * lengthUncovered / previousRefEdgeLength,
-                            }
-                        },
-                    },
-                }
-            }
-            _addExtraProps(firstRefEdge, results[1])
-        end
-    else
-        local _lastRefEdgePosition = previousRefEdge.posTanX2[2][1]
-        if edgeUtils.isXYZVeryClose(_lastRefEdgePosition, results[#results].posTanX2[2][1], 3) then
-            logger.print('these position vectors are very close:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
-            results[#results].posTanX2[2][1] = _lastRefEdgePosition
-        -- ...otherwise, we make a new edge to reach to the original edge end
-        elseif lengthUncovered > 0 and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
-            logger.print('these position vectors are not close enough:') --logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
-            results[#results+1] = {
-                posTanX2 = {
-                    {
-                        {
-                            previousNodeBetween.position.x,
-                            previousNodeBetween.position.y,
-                            previousNodeBetween.position.z,
-                        },
-                        {
-                            previousNodeBetween.tangent.x * lengthUncovered,
-                            previousNodeBetween.tangent.y * lengthUncovered,
-                            previousNodeBetween.tangent.z * lengthUncovered,
-                        }
-                    },
-                    {
-                        {
-                            previousRefEdge.posTanX2[2][1][1],
-                            previousRefEdge.posTanX2[2][1][2],
-                            previousRefEdge.posTanX2[2][1][3],
-                        },
-                        {
-                            previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength,
-                            previousRefEdge.posTanX2[2][2][2] * lengthUncovered / previousRefEdgeLength,
-                            previousRefEdge.posTanX2[2][2][3] * lengthUncovered / previousRefEdgeLength,
-                        }
-                    },
-                },
-            }
-            _addExtraProps(previousRefEdge, results[#results])
-        else
-            logger.err('there is a piece missing')
-        end
-    end
-    logger.print('getCentralEdgePositions_OnlyOuterBounds results =') logger.debugPrint(results)
-    return results
-end
+local stationHelpers = require('lollo_freestyle_train_station.stationHelpers')
 
 local edgeLists1 = {
     {
@@ -266,7 +34,7 @@ local edgeLists1 = {
         },
     },
 }
--- local splits1 = getCentralEdgePositions(edgeLists1, 7)
+-- local splits1 = stationHelpers.getCentralEdgePositions(edgeLists1, 7)
 
 
 local edgeLists2 = {
@@ -326,7 +94,7 @@ local edgeLists2 = {
     },
   }
 
--- local splits2 = getCentralEdgePositions_OnlyOuterBounds(edgeLists2, 2)
+-- local splits2 = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(edgeLists2, 2)
 
 local edgeLists3 = {
     {
@@ -686,7 +454,7 @@ local edgeLists3 = {
     },
   }
 
--- local splits3 = getCentralEdgePositions_OnlyOuterBounds(edgeLists2, 9)
+-- local splits3 = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(edgeLists2, 9)
 
 local edgeLists4 = {
     {
@@ -728,12 +496,221 @@ local edgeLists4 = {
       width = 5,
     },
   }
-local splits4 = getCentralEdgePositions_OnlyOuterBounds(edgeLists4, 40)
+-- local splits4 = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(edgeLists4, 40)
+
+local fineEdgeLists = {
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -182.4990991044, 2378.6369230797, 110.24574080924, },
+        { -0.17062727808156, -0.98530095145316, -0.0082684363679345, },
+      },
+      {
+        { -182.66972549193, 2377.6516271449, 110.23752959459, },
+        { -0.17062739358231, -0.98530188334269, -0.0081542161274083, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -182.66972549193, 2377.6516271449, 110.23752959459, },
+        { -0.17062739358231, -0.98530188334269, -0.0081542161274083, },
+      },
+      {
+        { -182.84035182743, 2376.6663312063, 110.22943221169, },
+        { -0.17062749254949, -0.9853027984002, -0.008040786716472, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -182.84035182743, 2376.6663312063, 110.22943221169, },
+        { -0.17062749254949, -0.9853027984002, -0.008040786716472, },
+      },
+      {
+        { -183.01097809766, 2375.6810352618, 110.22144786934, },
+        { -0.17062757502897, -0.98530369689082, -0.0079281481459904, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -183.01097809766, 2375.6810352618, 110.22144786934, },
+        { -0.17062757502897, -0.98530369689082, -0.0079281481459904, },
+      },
+      {
+        { -183.18160428935, 2374.6957393092, 110.21357577636, },
+        { -0.17062764106633, -0.98530457907785, -0.0078163004266021, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -183.18160428935, 2374.6957393092, 110.21357577636, },
+        { -0.17062764106633, -0.98530457907785, -0.0078163004266021, },
+      },
+      {
+        { -183.35223038926, 2373.7104433465, 110.20581514155, },
+        { -0.1706276907068, -0.98530544522276, -0.0077052435687226, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -183.35223038926, 2373.7104433465, 110.20581514155, },
+        { -0.1706276907068, -0.98530544522276, -0.0077052435687226, },
+      },
+      {
+        { -183.52285638413, 2372.7251473715, 110.19816517371, },
+        { -0.17062772399531, -0.98530629558513, -0.0075949775825474, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -183.52285638413, 2372.7251473715, 110.19816517371, },
+        { -0.17062772399531, -0.98530629558513, -0.0075949775825474, },
+      },
+      {
+        { -183.6934822607, 2371.7398513823, 110.19062508166, },
+        { -0.17062774097648, -0.98530713042275, -0.0074855024780553, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -183.6934822607, 2371.7398513823, 110.19062508166, },
+        { -0.17062774097648, -0.98530713042275, -0.0074855024780553, },
+      },
+      {
+        { -183.86410800572, 2370.7545553765, 110.18319407419, },
+        { -0.17062774169459, -0.98530794999152, -0.0073768182650113, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -183.86410800572, 2370.7545553765, 110.18319407419, },
+        { -0.17062774169459, -0.98530794999152, -0.0073768182650113, },
+      },
+      {
+        { -184.03473360593, 2369.7692593523, 110.17587136011, },
+        { -0.17062772619361, -0.98530875454551, -0.0072689249529699, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -184.03473360593, 2369.7692593523, 110.17587136011, },
+        { -0.17062772619361, -0.98530875454551, -0.0072689249529699, },
+      },
+      {
+        { -184.20535904808, 2368.7839633074, 110.16865614823, },
+        { -0.17062769451721, -0.98530954433695, -0.0071618225512779, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -184.20535904808, 2368.7839633074, 110.16865614823, },
+        { -0.13863704815099, -0.80057582169404, -0.0058190667153991, },
+      },
+      {
+        { -184.34399414063, 2367.9833984375, 110.16287231445, },
+        { -0.13863503362107, -0.80056487775794, -0.0057487512370337, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+}
+local groups1 = stationHelpers.calcCentralEdgePositions_GroupByMultiple(fineEdgeLists, 10)
 
 
-local vec1 = { 92.263687133789, 602.89776611328, 13.625541687012, }
-local vec2 = { 91.385019392729, 602.56420214167, 13.649062242507, }
-
-local res = edgeUtils.isXYZVeryClose(vec1, vec2, 3)
 
 local dummy2 = 123

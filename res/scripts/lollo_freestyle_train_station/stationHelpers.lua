@@ -471,7 +471,7 @@ local helpers = {
                         currentStepPercent,
                         logger.isExtendedLog()
                     )
-                    logger.print('nodeBetween =') --logger.debugPrint(nodeBetween)
+                    -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                     if nodeBetween == nil then
                         logger.err('nodeBetween not found; oldEdge =') -- logger.errorDebugPrint(oldEdge)
                         return {}
@@ -686,7 +686,9 @@ local helpers = {
                         newEdge.posTanX2[1][1][2]
                     ))
                 end
-            elseif (itemCounter == multiple or refEdgeCounter == refEdgeCounterMax) then
+            end
+            -- an item could be the first and the last at the same time
+            if (itemCounter == multiple or refEdgeCounter == refEdgeCounterMax) then
                 if itemCounter ~= multiple then
                     newEdge.posTanX2[1][2][1] = newEdge.posTanX2[1][2][1] * itemCounter / multiple
                     newEdge.posTanX2[1][2][2] = newEdge.posTanX2[1][2][2] * itemCounter / multiple
