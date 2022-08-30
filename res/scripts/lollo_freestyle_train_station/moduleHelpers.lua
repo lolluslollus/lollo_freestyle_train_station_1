@@ -1354,7 +1354,8 @@ return {
             -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
             -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
             -- The former is a bit glitchy, the latter is prettier.
-            local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, nTrackEdge, era)
+            local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, nTrackEdge, era,
+            previousLeadingIndex, currentLeadingIndex, nextLeadingIndex)
                 local myModelId = ''
                 if isCargo then
                     if width < 10 then
@@ -1366,6 +1367,8 @@ return {
                     end
                 else
                     local isUnderpass = params.modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.underpassSlotId)] ~= nil
+                    and previousLeadingIndex == currentLeadingIndex
+                    and currentLeadingIndex == nextLeadingIndex
                     if isUnderpass then
                         if width < 5 then
                             myModelId = isTrackOnPlatformLeft
@@ -1401,10 +1404,14 @@ return {
             local isCargoTerminal = params.terminals[nTerminal].isCargo
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             -- local isFirstDone = false
-            for _, cpf in pairs(params.terminals[nTerminal].centrePlatformsFineRelative) do
+            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
+                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+                local cpfM1 = params.terminals[nTerminal].centrePlatformsFineRelative[ii-1] or {}
+                local cpfP1 = params.terminals[nTerminal].centrePlatformsFineRelative[ii+1] or {}
                 local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
                 local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, cpf.leadingIndex)
-                local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix)
+                local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix,
+                cpfM1.leadingIndex, cpf.leadingIndex, cpfP1.leadingIndex)
                 result.models[#result.models+1] = {
                     id = myModelId,
                     slotId = slotId,
