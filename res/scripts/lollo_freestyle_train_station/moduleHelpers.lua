@@ -206,7 +206,9 @@ privateFuncs.edges = {
 
             local newEdgeList = {
                 -- UG TODO LOLLO TODO never mind if I align the terrain or I change the track materials,
-                -- the game will always draw ballast in the underpasses - bridges are also affected.
+                -- the game will always draw ballast in the underpasses - bridges are less affected.
+                -- The cause is, when you snap a platform-track along a track, the terrain gets levelled
+                -- and painted.
                 -- The only way around it is not to draw the platform edge.
                 -- This will make trouble when snapping parallel platform, which far outweighs the optical benefit
                 -- of underpasses.
