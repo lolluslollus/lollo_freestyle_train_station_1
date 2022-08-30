@@ -209,6 +209,13 @@ privateFuncs.edges = {
                 -- the game will always draw ballast in the underpasses - bridges are less affected.
                 -- The cause is, when you snap a platform-track along a track, the terrain gets levelled
                 -- and painted. It wins over terrainAlignments and over groundTextures with very high prios.
+                -- The only thing that works is a material with 
+                -- polygon_offset = {
+                --     factor = -999,
+                --     forceDepthWrite = true,
+                --     units = -999,
+                -- },
+                -- but then it shines through everything else.
                 -- You can see it with a platform that snaps to a track and then stretches away from it:
                 -- In the free piece, you will see the underpasses properly; however, as soon as you lay any track 
                 -- alongside, the terrain will come up. If the track does not snap, the underpass will look fine instead.
