@@ -219,12 +219,25 @@ privateFuncs.edges = {
                 -- You can see it with a platform that snaps to a track and then stretches away from it:
                 -- In the free piece, you will see the underpasses properly; however, as soon as you lay any track 
                 -- alongside, the terrain will come up. If the track does not snap, the underpass will look fine instead.
-                -- The only way around it is not to draw the platform edge.
-                -- This will make trouble when snapping parallel platform, which far outweighs the optical benefit
+                -- The easy way around it is not to draw the platform edge;
+                -- this will make trouble when snapping parallel platform, which far outweighs the optical benefit
                 -- of underpasses.
                 -- It will also make for missing bits of bridges.
+
+                -- You can also lay an invisible track (after making it available)
+                -- and snap some other track along it: the ballastMaterial of the latter will win and extend under the invisible track,
+                -- never mind how many ypu have.
+                -- The game will create a foundation (lots of little parallelepipeds),
+                -- paint it with the winning ballast material
+                -- and extend it to all snapped tracks.
                 -- Unless we find the undocumented fallback - it looks like one. There is config/ground/texture/fallback.lua,
                 -- but id does nothing.
+
+                -- The winner does not seem affected by height.
+                -- Neither by the material priority.
+                -- It seems to have a degree of randomness, but the sucky part is: there is a winner and it takes all.
+                -- So, even if I set a transparent ballastMaterial and I managa to make it will,
+                -- also the normal tracks will receive a transparent ballast - not that I could manage so far.
                 alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
                 edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, params.inverseMainTransf),
                 edgeType = pel.edgeType,
