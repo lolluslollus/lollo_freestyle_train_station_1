@@ -1708,85 +1708,101 @@ function data()
                         logger.print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') logger.debugPrint(trackEdgeIdsBetweenNodeIds)
                         eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
                         -- logger.print('track bulldoze requested, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
-                        local totalLength = 0
-                        local trackLengths = {}
-                        for i = 1, #eventArgs.trackEdgeList do
-                            local tel = eventArgs.trackEdgeList[i]
-                            -- these should be identical, but they are not really so, so we average them
-                            local length = (transfUtils.getVectorLength(tel.posTanX2[1][2]) + transfUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
-                            trackLengths[i] = length
-                            totalLength = totalLength + length
-                        end
-                        local lengthSoFar = 0
-                        local halfTotalLength = totalLength * 0.5
-                        local iAcrossMidLength = -1
-                        local iCloseEnoughToMidLength = -1
-                        for i = 1, #trackLengths do
-                            local length = trackLengths[i]
-                            if lengthSoFar <= halfTotalLength and lengthSoFar + length >= halfTotalLength then
-                                iAcrossMidLength = i
-                                if lengthSoFar / halfTotalLength > _constants.minPercentageDeviation4Midpoint and lengthSoFar / halfTotalLength < _constants.maxPercentageDeviation4Midpoint then
-                                    iCloseEnoughToMidLength = i
-                                else
-                                    if (lengthSoFar + length) / halfTotalLength > _constants.minPercentageDeviation4Midpoint and (lengthSoFar + length) / halfTotalLength < _constants.maxPercentageDeviation4Midpoint then
-                                        iCloseEnoughToMidLength = i + 1
+
+                        local _getTrackMidIndex_orSplitPoint = function()
+                            logger.print('_getTrackMidIndex_orSplitPoint starting')
+                            local totalLength = 0
+                            local trackLengths = {}
+                            for i = 1, #eventArgs.trackEdgeList do
+                                local tel = eventArgs.trackEdgeList[i]
+                                -- these should be identical, but they are not really so, so we average them
+                                local length = (transfUtils.getVectorLength(tel.posTanX2[1][2]) + transfUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
+                                trackLengths[i] = length
+                                totalLength = totalLength + length
+                            end
+                            local lengthSoFar = 0
+                            local halfTotalLength = totalLength * 0.5
+                            local iAcrossMidLength = -1
+                            local iCloseEnoughToMidLength = -1
+                            for i = 1, #trackLengths do
+                                local length = trackLengths[i]
+                                if lengthSoFar <= halfTotalLength and lengthSoFar + length >= halfTotalLength then
+                                    iAcrossMidLength = i
+                                    if lengthSoFar / halfTotalLength > _constants.minPercentageDeviation4Midpoint and lengthSoFar / halfTotalLength < _constants.maxPercentageDeviation4Midpoint then
+                                        iCloseEnoughToMidLength = i
+                                    else
+                                        if (lengthSoFar + length) / halfTotalLength > _constants.minPercentageDeviation4Midpoint and (lengthSoFar + length) / halfTotalLength < _constants.maxPercentageDeviation4Midpoint then
+                                            iCloseEnoughToMidLength = i + 1
+                                        end
                                     end
+                                    -- maybe I got a node already, which is close enough to the centre; 
+                                    -- good or bad, there won't be more luck going forward: leave
+                                    break
                                 end
-                                break
+                                lengthSoFar = lengthSoFar + length
                             end
-                            lengthSoFar = lengthSoFar + length
+
+                            if iCloseEnoughToMidLength > 0 then
+                                return iCloseEnoughToMidLength, _, _
+                            else
+                                logger.print('no track edge is close enough to the middle (halfway between the ends), going to add a split. iAcrossMidLength =', iAcrossMidLength)
+                                if iAcrossMidLength < 1 then
+                                    logger.warn('trouble finding trackEdgeListMidIndex')
+                                    print('totalLength =') debugPrint(totalLength)
+                                    print('trackLengths =') debugPrint(trackLengths)
+                                    print('halfTotalLength =') debugPrint(halfTotalLength)
+                                    print('lengthSoFar =') debugPrint(lengthSoFar)
+                                end
+                                local midEdgeId = trackEdgeIdsBetweenNodeIds[iAcrossMidLength]
+                                if not(edgeUtils.isValidAndExistingId(midEdgeId)) then return -1, _, _ end
+
+                                logger.print('midEdgeId =') logger.debugPrint(midEdgeId)
+                                local position0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][1])
+                                local position1 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[2][1])
+                                local tangent0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][2])
+                                local tangent1 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[2][2])
+                                logger.print('position0 =') logger.debugPrint(position0)
+                                logger.print('position1 =') logger.debugPrint(position1)
+                                logger.print('tangent0 =') logger.debugPrint(tangent0)
+                                logger.print('tangent1 =') logger.debugPrint(tangent1)
+                                logger.print('(halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength] =') logger.debugPrint((halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength])
+
+                                local nodeBetween = edgeUtils.getNodeBetween(
+                                    position0, position1, tangent0, tangent1,
+                                    (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
+                                )
+                                logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                -- LOLLO NOTE it seems fixed, but keep checking it:
+                                -- this can screw up the directions. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
+                                -- in these cases, split produces something like:
+                                -- node0 = 26197,
+                                -- node0pos = { 972.18054199219, 596.27990722656, 12.010199546814, },
+                                -- node0tangent = { 35.427974700928, 26.778322219849, -2.9104161262512, },
+                                -- node1 = 26348,
+                                -- node1pos = { 1007.6336669922, 623.07720947266, 9.3951835632324, },
+                                -- node1tangent = { -35.457813262939, -26.800853729248, 2.2689030170441, },
+                                return -1, midEdgeId, nodeBetween
+                            end
                         end
-                        if iCloseEnoughToMidLength < 1 then
-                            logger.print('no track edge is close enough to the middle (halfway between the ends), going to add a split. iAcrossMidLength =', iAcrossMidLength)
-                            if iAcrossMidLength < 1 then
-                                logger.warn('trouble finding trackEdgeListMidIndex')
-                                print('totalLength =') debugPrint(totalLength)
-                                print('trackLengths =') debugPrint(trackLengths)
-                                print('halfTotalLength =') debugPrint(halfTotalLength)
-                                print('lengthSoFar =') debugPrint(lengthSoFar)
+                        local trackEdgeListMidIndex, midEdgeId, nodeBetween = _getTrackMidIndex_orSplitPoint()
+                        if trackEdgeListMidIndex < 1 then
+                            if midEdgeId ~= nil and nodeBetween ~= nil then
+                                logger.print('about to split the centre of the track')
+                                _actions.splitEdgeRemovingObject(
+                                    midEdgeId,
+                                    nodeBetween,
+                                    nil,
+                                    _eventNames.TRACK_BULLDOZE_REQUESTED,
+                                    arrayUtils.cloneDeepOmittingFields(args),
+                                    nil,
+                                    true
+                                )
                             end
-                            local edgeId = trackEdgeIdsBetweenNodeIds[iAcrossMidLength]
-                            if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
-
-                            logger.print('edgeId =') logger.debugPrint(edgeId)
-                            local position0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][1])
-                            local position1 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[2][1])
-                            local tangent0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][2])
-                            local tangent1 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[2][2])
-                            logger.print('position0 =') logger.debugPrint(position0)
-                            logger.print('position1 =') logger.debugPrint(position1)
-                            logger.print('tangent0 =') logger.debugPrint(tangent0)
-                            logger.print('tangent1 =') logger.debugPrint(tangent1)
-                            logger.print('(halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength] =') logger.debugPrint((halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength])
-
-                            local nodeBetween = edgeUtils.getNodeBetween(
-                                position0, position1, tangent0, tangent1,
-                                (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
-                            )
-                            logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
-                            -- LOLLO NOTE it seems fixed, but keep checking it:
-                            -- this can screw up the directions. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
-                            -- in these cases, split produces something like:
-                            -- node0 = 26197,
-                            -- node0pos = { 972.18054199219, 596.27990722656, 12.010199546814, },
-                            -- node0tangent = { 35.427974700928, 26.778322219849, -2.9104161262512, },
-                            -- node1 = 26348,
-                            -- node1pos = { 1007.6336669922, 623.07720947266, 9.3951835632324, },
-                            -- node1tangent = { -35.457813262939, -26.800853729248, 2.2689030170441, },
-                            _actions.splitEdgeRemovingObject(
-                                edgeId,
-                                nodeBetween,
-                                nil,
-                                _eventNames.TRACK_BULLDOZE_REQUESTED,
-                                arrayUtils.cloneDeepOmittingFields(args),
-                                nil,
-                                true
-                            )
                             return
                         end
 
                         -- this will be the vehicle node, where the trains stop with their belly
-                        eventArgs.trackEdgeListMidIndex = iCloseEnoughToMidLength
+                        eventArgs.trackEdgeListMidIndex = trackEdgeListMidIndex
                         -- logger.print('eventArgs.trackEdgeListMidIndex =') logger.debugPrint(eventArgs.trackEdgeListMidIndex)
                         -- logger.print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') logger.debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
@@ -1798,16 +1814,16 @@ function data()
                         -- reverse track and platform edges if the platform is on the right of the track.
                         -- this will make trains open their doors on the correct side.
                         -- Remember that "left" and "right" are just conventions here, there is no actual left and right.
-                        local _reverseTracksAndPlatforms = function()
+                        local _reverseRightSideTracksAndPlatforms = function()
                             if not(eventArgs.isTrackOnPlatformLeft) then
                                 local midPos1 = eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
-                                logger.print('LOLLO reversing platformEdgeList, platformEdgeList =')
+                                logger.print('reversing platformEdgeList, platformEdgeList =')
                                 -- logger.debugPrint(eventArgs.platformEdgeList)
                                 eventArgs.platformEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.platformEdgeList)
-                                -- logger.print('LOLLO reversed platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
-                                -- logger.print('LOLLO reversing trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
+                                -- logger.print('reversed platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
+                                -- logger.print('reversing trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
                                 eventArgs.trackEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.trackEdgeList)
-                                -- logger.print('LOLLO reversed trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
+                                -- logger.print('reversed trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
                                 -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 2 -- dangerous
                                 -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 1 -- wrong
                                 -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex -- wrong
@@ -1835,7 +1851,7 @@ function data()
                                 if not(eventArgs.isTrackOnPlatformLeft) then logger.warn('_reverseTracksAndPlatforms could not reverse') end
                             end
                         end
-                        _reverseTracksAndPlatforms()
+                        _reverseRightSideTracksAndPlatforms()
 
                         local _setPlatformProps = function(platformEdgeList, midTrackEdge)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
