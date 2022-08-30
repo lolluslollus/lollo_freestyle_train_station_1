@@ -39,12 +39,12 @@ return {
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
 		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal)
 
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
-			slotId = slotId,
-			transf = slotTransf,
-			tag = tag
-		}
+		-- result.models[#result.models + 1] = {
+		-- 	id = _constants.terminalModelFileName,
+		-- 	slotId = slotId,
+		-- 	transf = slotTransf,
+		-- 	tag = tag
+		-- }
 
 		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft

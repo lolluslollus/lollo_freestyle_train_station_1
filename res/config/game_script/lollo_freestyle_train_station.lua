@@ -1614,9 +1614,9 @@ function data()
                         or not(edgeUtils.isValidAndExistingId(args.splitTrackNode1Id))
                         or not(edgeUtils.isValidAndExistingId(args.splitTrackNode2Id))
                         then
-                            if args == nil then print('args is NIL')
+                            if args == nil then logger.warn('TRACK_BULLDOZE_REQUESTED got args == NIL')
                             else
-                                logger.warn('some data is missing or invalid. args.splitTrackNode1Id =') logger.warningDebugPrint(args.splitTrackNode1Id)
+                                logger.warn('TRACK_BULLDOZE_REQUESTED got some missing or invalid data; args.splitTrackNode1Id =') logger.warningDebugPrint(args.splitTrackNode1Id)
                                 logger.warn('args.splitTrackNode2Id =') logger.warningDebugPrint(args.splitTrackNode2Id)
                             end
                             return
