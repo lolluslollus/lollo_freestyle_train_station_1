@@ -3,7 +3,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 1, 1, 1, },
+                albedoScale = { 0.5, 0.5, 0.5, },
             },
             alpha_scale = {
                 alphaScale = 0.5,
