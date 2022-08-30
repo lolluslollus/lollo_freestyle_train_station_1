@@ -191,23 +191,6 @@ local _actions = {
                 logger.print('addSubway callback, success =', success)
                 -- logger.debugPrint(result)
                 if success then
-                    -- upgrade to restore snap -- fails with pr.second LOLLO TODO resnap the road edges the same way you resnap tracks
---[[
-                    logger.print('stationConstructionId =', stationConstructionId)
-                    logger.print('result.resultEntities[1] =', result.resultEntities[1])
-                    xpcall(
-                        function()
-                            game.interface.upgradeConstruction(
-                                result.resultEntities[1],
-                                oldCon.fileName,
-                                newParams
-                            )
-                        end,
-                        function(error)
-                            logger.warn(error)
-                        end
-                    )
-]]
                     if successEventName ~= nil then
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1855,7 +1838,7 @@ function data()
                         local _setPlatformProps = function(platformEdgeList, midTrackEdge)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
                             -- The result is much neater, irrespective of how the user placed the edges.
-                            -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel. LOLLO TODO fix it
+                            -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel, as large as _constants.fineSegmentLength
                             -- There is also less data in centrePlatformsFine.
                             -- print('platformEdgeList =') debugPrint(platformEdgeList)
                             logger.print('_setPlatformProps starting')

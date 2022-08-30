@@ -68,7 +68,7 @@ function data()
 			logger.print('station.con updateFn starting')
 			-- logger.print('updateFn starting, params =') logger.debugPrint(params)
 			-- logger.print('station.con updateFn starting, params.modules =') logger.debugPrint(params.modules)
-			-- LOLLO TODO sometimes, there are too many modules of type trackSpeed or trackElectrification
+			-- LOLLO TODO sometimes, there used to be too many modules of type trackSpeed or trackElectrification
 			-- It seems fixed, but keep checking it.
 			if not params.modules then params.modules = {} end
 

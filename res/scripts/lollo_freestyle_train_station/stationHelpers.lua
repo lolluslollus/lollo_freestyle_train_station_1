@@ -777,7 +777,6 @@ local helpers = {
         return results
     end,
 
-    -- LOLLO TODO check this, I added the last connector
     getCrossConnectors = function(leftPlatforms, centrePlatforms, rightPlatforms, isTrackOnPlatformLeft)
         local results = {}
         local addResult = function(i, oneOrTwo)
@@ -1876,17 +1875,13 @@ end
 
 helpers.getIsTrackOnPlatformLeft = function(platformEdgeList, midTrackEdge)
     logger.print('getIsTrackOnPlatformLeft starting')
-    -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
-    -- The result is much neater, irrespective of how the user placed the edges.
-    -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel. LOLLO TODO fix it
-    -- There is also less data in centrePlatformsFine.
-    -- print('platformEdgeList =') debugPrint(platformEdgeList)
+    -- logger.print('platformEdgeList =') logger.debugPrint(platformEdgeList)
     local centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
         platformEdgeList,
         40,
         false
     )
-    -- print('test centrePlatforms =') debugPrint(centrePlatforms)
+    -- logger.print('test centrePlatforms =') logger.debugPrint(centrePlatforms)
 
     local centrePlatformIndex_Nearest2_TrackEdgeListMid = helpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(centrePlatforms, midTrackEdge)
     logger.print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') logger.debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
