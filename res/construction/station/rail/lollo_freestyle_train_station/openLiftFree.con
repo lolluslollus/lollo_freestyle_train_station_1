@@ -84,8 +84,6 @@ function data()
                         loop = true,
                         modes = {
                             {
-                                -- key = 'lollo_freestyle_train_station/hole.lua',
-                                -- key = 'hole.lua',
                                 key = _groundFacesFillKey,
                                 type = 'FILL',
                             },
