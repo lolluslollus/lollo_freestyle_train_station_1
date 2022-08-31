@@ -1162,7 +1162,13 @@ local _guiActions = {
         return true
     end,
     tryJoinSubway = function(conId, con)
-        if con == nil or type(con.fileName) ~= 'string' or not(_constants.subwayConFileNames[con.fileName]) or con.transf == nil then return false end
+        if con == nil
+        or type(con.fileName) ~= 'string'
+        or not(_constants.subwayConFileNames[con.fileName])
+        or con.transf == nil
+        then
+            return false
+        end
 
         logger.print('tryJoinSubway starting, conId =', conId or 'NIL')
         local subwayTransf_c = con.transf
@@ -2164,7 +2170,6 @@ function data()
                                         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                                         if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
                                             -- logger.print('args = ') logger.debugPrint(args)
-                                            -- LOLLO TODO this should be more efficient now, test it
                                             local nTerminalToRemove
                                             local nRemainingTerminals = 0
                                             for t, _ in pairs(con.params.terminals) do
@@ -2201,14 +2206,17 @@ function data()
                                 -- logger.print('construction built, construction id =') logger.debugPrint(conId)
                                 if not(con) then return end
 
-                                if name == 'builder.apply' and con.fileName == 'station/rail/lollo_freestyle_train_station/track_splitter.con' and con.transf ~= nil then
+                                if type(con.fileName) == 'string'
+                                and con.fileName == 'station/rail/lollo_freestyle_train_station/track_splitter.con'
+                                and con.transf ~= nil
+                                then
                                     api.cmd.sendCommand(
                                         api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),
                                             _eventId,
                                             _eventNames.TRACK_SPLIT_REQUESTED,
                                             {
-                                                conId = args.result[1]
+                                                conId = conId
                                             }
                                         )
                                     )
