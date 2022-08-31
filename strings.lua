@@ -42,7 +42,7 @@ function data()
 				- If you want different buildings, use assets. There are mods with those.
 				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily.
 				- Use the track constructions "Smart track splitter" to do precision work.
-				- Upgrading tracks does all tracks at once.
+				- Upgrading tracks does all tracks at once. If you remove a terminal, its tracks will be rebuilt with no memory of your upgrades, so check out for non-electrified tracks.
 				- If you have too many track types, use the categories in the menu to make life easier.
 
 				[h1]Note:[/h1]

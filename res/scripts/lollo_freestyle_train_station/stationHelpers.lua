@@ -988,34 +988,76 @@ local helpers = {
             }
         }
 
+        local _tolerance = 0.001
         if type(platformEdgeLists) == 'table' and #platformEdgeLists > 0 then
-            result.platforms.node1 = edgeUtils.getNearbyObjectIds(
-                transfUtils.position2Transf(platformEdgeLists[1].posTanX2[1][1]), 0.001, api.type.ComponentType.BASE_NODE
-            )[1] -- LOLLO TODO what if it finds two nodes? How do I make sure it will take the best one? Same applies to the brothers below.
-            result.platforms.node2 = edgeUtils.getNearbyObjectIds(
-                transfUtils.position2Transf(platformEdgeLists[#platformEdgeLists].posTanX2[2][1]), 0.001, api.type.ComponentType.BASE_NODE
-            )[1]
+            local position1 = platformEdgeLists[1].posTanX2[1][1]
+            local platformNode1Ids = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(position1),
+                _tolerance,
+                api.type.ComponentType.BASE_NODE,
+                position1[3] - _tolerance,
+                position1[3] + _tolerance
+            ) -- LOLLO TODO what if it finds two nodes? How do I make sure it will take the best one? Same applies to the brothers below.
+            result.platforms.node1 = platformNode1Ids[1]
+            if #platformNode1Ids > 1 then
+                logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got', #platformNode1Ids, 'nodes at') logger.warningDebugPrint(position1)
+            end
+
+            local position2 = platformEdgeLists[#platformEdgeLists].posTanX2[2][1]
+            local platformNode2Ids = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(position2),
+                _tolerance,
+                api.type.ComponentType.BASE_NODE,
+                position2[3] - _tolerance,
+                position2[3] + _tolerance
+            )
+            result.platforms.node2 = platformNode2Ids[1]
+            if #platformNode2Ids > 1 then
+                logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got', #platformNode2Ids, 'nodes at') logger.warningDebugPrint(position2)
+            end
         end
         if type(trackEdgeLists) == 'table' and #trackEdgeLists > 0 then
-            result.tracks.node1 = edgeUtils.getNearbyObjectIds(
-                transfUtils.position2Transf(trackEdgeLists[1].posTanX2[1][1]), 0.001, api.type.ComponentType.BASE_NODE
-            )[1]
-            result.tracks.node2 = edgeUtils.getNearbyObjectIds(
-                transfUtils.position2Transf(trackEdgeLists[#trackEdgeLists].posTanX2[2][1]), 0.001, api.type.ComponentType.BASE_NODE
-            )[1]
+            local position1 = trackEdgeLists[1].posTanX2[1][1]
+            local trackNode1Ids = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(position1),
+                _tolerance,
+                api.type.ComponentType.BASE_NODE,
+                position1[3] - _tolerance,
+                position1[3] + _tolerance
+            )
+            result.tracks.node1 = trackNode1Ids[1]
+            if #trackNode1Ids > 1 then
+                logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got', #trackNode1Ids, 'nodes at') logger.warningDebugPrint(position1)
+            end
+
+            local position2 = trackEdgeLists[#trackEdgeLists].posTanX2[2][1]
+            local trackNode2Ids = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(position2),
+                _tolerance,
+                api.type.ComponentType.BASE_NODE,
+                position2[3] - _tolerance,
+                position2[3] + _tolerance
+            )
+            result.tracks.node2 = trackNode2Ids[1]
+            if #trackNode2Ids > 1 then
+                logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got', #trackNode2Ids, 'nodes at') logger.warningDebugPrint(position2)
+            end
         end
-        -- logger.print('getNeighbourNodeIdsOfBulldozedTerminal about to return') logger.debugPrint(result)
+        logger.print('getNeighbourNodeIdsOfBulldozedTerminal about to return') logger.debugPrint(result)
         return result
     end,
 }
 
-local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePosition, frozenNodeIds)
-    if not(edgeUtils.isValidAndExistingId(stationNodeId)) or stationNodePosition == nil then return nil end
+local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionXYZ, frozenNodeIds)
+    if not(edgeUtils.isValidAndExistingId(stationNodeId)) or stationNodePositionXYZ == nil then return nil end
 
+    local _tolerance = 0.001
     local nearbyNodeIds = edgeUtils.getNearbyObjectIds(
-        transfUtils.position2Transf(stationNodePosition),
-        0.001,
-        api.type.ComponentType.BASE_NODE
+        transfUtils.position2Transf(stationNodePositionXYZ),
+        _tolerance,
+        api.type.ComponentType.BASE_NODE,
+        stationNodePositionXYZ.z - _tolerance,
+        stationNodePositionXYZ.z + _tolerance
     )
     -- logger.print('_getDisjointNeighbourNodeId found') logger.debugPrint(nearbyNodeIds)
     for _, nearbyNodeId in pairs(nearbyNodeIds) do
@@ -1121,11 +1163,18 @@ local _getStationEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNode
         return {}
     end
 
+    local _tolerance = 0.001
     local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
     local _getNodeId = function(nodePosition, otherEdgeNodePosition)
         -- logger.print('nodePosition =') logger.debugPrint(nodePosition)
         -- logger.print('otherEdgeNodePosition =') logger.debugPrint(otherEdgeNodePosition)
-        local nearbyNodeIds = edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(nodePosition), 0.001, api.type.ComponentType.BASE_NODE)
+        local nearbyNodeIds = edgeUtils.getNearbyObjectIds(
+            transfUtils.position2Transf(nodePosition),
+            _tolerance,
+            api.type.ComponentType.BASE_NODE,
+            nodePosition[3] - _tolerance,
+            nodePosition[3] + _tolerance
+        )
         -- logger.print('nodeFunds =') logger.debugPrint(nearbyNodeIds)
         for _, nodeId in pairs(nearbyNodeIds) do
             if _map[nodeId] ~= nil and not(arrayUtils.arrayHasValue(frozenNodes, nodeId)) then
