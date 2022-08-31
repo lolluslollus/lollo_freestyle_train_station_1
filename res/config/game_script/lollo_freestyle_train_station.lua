@@ -460,6 +460,7 @@ local _actions = {
         newParams.modules = newModules
 
         -- write this away before removing it
+        -- LOLLO TODO add the modules for electric track and high-speed track
         local removedTerminalEdgeLists = {
             platformEdgeLists = newParams.terminals[nTerminalToRemove].platformEdgeLists,
             trackEdgeLists = newParams.terminals[nTerminalToRemove].trackEdgeLists,
