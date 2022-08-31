@@ -1859,7 +1859,9 @@ function data()
                             -- print('platformEdgeList_notOrientated =') debugPrint(platformEdgeList_notOrientated)
                             logger.print('_setPlatformProps starting')
                             local isTrackNWOfPlatform = stationHelpers.getIsTrackNorthOfPlatform(platformEdgeList_notOrientated, midTrackEdge)
-                            -- this is for compatibility with older versions
+                            -- this name is for compatibility with older versions. Otherwise, I would choose a different name,
+                            -- since we have two "isTrackOnPlatformLeft" with different meanings.
+                            -- This comes with version 1.81, which adds the orientation
                             if isTrackNWOfPlatform then
                                 eventArgs.isTrackOnPlatformLeft = isTrackOnPlatformLeft
                             else
