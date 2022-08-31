@@ -252,9 +252,9 @@ local helpers = {
 
         local leadingIndex = 0
         local results = {}
-        for _, pel in pairs(edgeLists) do
+        for _, refEdge in pairs(edgeLists) do
             leadingIndex = leadingIndex + 1
-            local edgeLength = (transfUtils.getVectorLength(pel.posTanX2[1][2]) + transfUtils.getVectorLength(pel.posTanX2[2][2])) * 0.5
+            local edgeLength = (transfUtils.getVectorLength(refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(refEdge.posTanX2[2][2])) * 0.5
             -- logger.print('edgeLength =') logger.debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
             -- logger.print('nModelsInEdge =') logger.debugPrint(nModelsInEdge)
@@ -266,16 +266,16 @@ local helpers = {
                 -- logger.print('i == ', i)
                 -- logger.print('i / nModelsInEdge =', i / nModelsInEdge)
                 local nodeBetween = edgeUtils.getNodeBetween(
-                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][1]),
-                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][1]),
-                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[1][2]),
-                    transfUtils.oneTwoThree2XYZ(pel.posTanX2[2][2]),
+                    transfUtils.oneTwoThree2XYZ(refEdge.posTanX2[1][1]),
+                    transfUtils.oneTwoThree2XYZ(refEdge.posTanX2[2][1]),
+                    transfUtils.oneTwoThree2XYZ(refEdge.posTanX2[1][2]),
+                    transfUtils.oneTwoThree2XYZ(refEdge.posTanX2[2][2]),
                     i / nModelsInEdge
                 )
                 -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                 if nodeBetween == nil then
                     logger.err('nodeBetween not found; pel =')
-                    logger.errorDebugPrint(pel)
+                    logger.errorDebugPrint(refEdge)
                     return {}
                 end
                 local newEdgeLength = nodeBetween.refDistance0 - lengthCovered
@@ -286,14 +286,14 @@ local helpers = {
                         posTanX2 = {
                             {
                                 {
-                                    pel.posTanX2[1][1][1],
-                                    pel.posTanX2[1][1][2],
-                                    pel.posTanX2[1][1][3],
+                                    refEdge.posTanX2[1][1][1],
+                                    refEdge.posTanX2[1][1][2],
+                                    refEdge.posTanX2[1][1][3],
                                 },
                                 {
-                                    pel.posTanX2[1][2][1] * newEdgeLength / edgeLength,
-                                    pel.posTanX2[1][2][2] * newEdgeLength / edgeLength,
-                                    pel.posTanX2[1][2][3] * newEdgeLength / edgeLength,
+                                    refEdge.posTanX2[1][2][1] * newEdgeLength / edgeLength,
+                                    refEdge.posTanX2[1][2][2] * newEdgeLength / edgeLength,
+                                    refEdge.posTanX2[1][2][3] * newEdgeLength / edgeLength,
                                 }
                             },
                             {
@@ -327,14 +327,14 @@ local helpers = {
                             },
                             {
                                 {
-                                    pel.posTanX2[2][1][1],
-                                    pel.posTanX2[2][1][2],
-                                    pel.posTanX2[2][1][3],
+                                    refEdge.posTanX2[2][1][1],
+                                    refEdge.posTanX2[2][1][2],
+                                    refEdge.posTanX2[2][1][3],
                                 },
                                 {
-                                    pel.posTanX2[2][2][1] * newEdgeLength / edgeLength,
-                                    pel.posTanX2[2][2][2] * newEdgeLength / edgeLength,
-                                    pel.posTanX2[2][2][3] * newEdgeLength / edgeLength,
+                                    refEdge.posTanX2[2][2][1] * newEdgeLength / edgeLength,
+                                    refEdge.posTanX2[2][2][2] * newEdgeLength / edgeLength,
+                                    refEdge.posTanX2[2][2][3] * newEdgeLength / edgeLength,
                                 }
                             },
                         },
@@ -426,7 +426,7 @@ local helpers = {
             -- end
         end
 
-        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'edgeLists =') logger.debugPrint(edgeLists)
+        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'edgeLists =') --logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
             logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
             return {}
@@ -593,14 +593,14 @@ local helpers = {
                 _addExtraProps(firstRefEdge, results[1])
             end
         else
-            local _lastRefEdgePosition = previousRefEdge.posTanX2[2][1]
+            local _lastRefEdgePosition = arrayUtils.cloneDeepOmittingFields(previousRefEdge.posTanX2[2][1])
             -- if edgeUtils.isXYZVeryClose(_lastRefEdgePosition, results[#results].posTanX2[2][1], 5) then
             if edgeUtils.isXYZCloserThan(_lastRefEdgePosition, results[#results].posTanX2[2][1], stepLength * 0.01) then
                 logger.print('these position vectors are very close:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
                 results[#results].posTanX2[2][1] = _lastRefEdgePosition
             -- ...otherwise, we make a new edge to reach to the original edge end
             elseif lengthUncovered > 0 and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
-                logger.print('these position vectors are not close enough:') --logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
+                logger.print('these position vectors are not close enough:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
                 results[#results+1] = {
                     posTanX2 = {
                         {
@@ -634,12 +634,12 @@ local helpers = {
                 logger.err('there is a piece missing')
             end
         end
-        logger.print('getCentralEdgePositions_OnlyOuterBounds results =') logger.debugPrint(results)
+        logger.print('getCentralEdgePositions_OnlyOuterBounds results =') --logger.debugPrint(results)
         return results
     end,
 
     calcCentralEdgePositions_GroupByMultiple = function(edgeLists, multiple, isAddTerrainHeight)
-        logger.print('getCentralEdgePositions_GroupByMultiple starting, multiple =', multiple, 'edgeLists =') logger.debugPrint(edgeLists)
+        logger.print('getCentralEdgePositions_GroupByMultiple starting, multiple =', multiple, 'edgeLists =') --logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(multiple) ~= 'number' or math.floor(multiple) < 2 then
             logger.err('getCentralEdgePositions_GroupByMultiple got wrong parameters, leaving')
             return {}
@@ -1832,25 +1832,26 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
     -- end
 end
 
-helpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid = function(centrePlatforms, midTrackEdge)
+local _getPosTanX2ListIndex_Nearest2_Point = function(posTanX2List, position)
     local result = 1
-    local trackPlatformDistance = transfUtils.getPositionsDistance(
+
+    local distance = transfUtils.getPositionsDistance(
         transfUtils.getPositionsMiddle(
-            centrePlatforms[1].posTanX2[1][1],
-            centrePlatforms[1].posTanX2[2][1]
+            posTanX2List[1].posTanX2[1][1],
+            posTanX2List[1].posTanX2[2][1]
         ),
-        midTrackEdge.posTanX2[1][1]
+        position
     )
-    for i = 2, #centrePlatforms do
+    for i = 2, #posTanX2List do
         local testDistance = transfUtils.getPositionsDistance(
             transfUtils.getPositionsMiddle(
-                centrePlatforms[i].posTanX2[1][1],
-                centrePlatforms[i].posTanX2[2][1]
+                posTanX2List[i].posTanX2[1][1],
+                posTanX2List[i].posTanX2[2][1]
             ),
-            midTrackEdge.posTanX2[1][1]
+            position
         )
-        if testDistance < trackPlatformDistance then
-            trackPlatformDistance = testDistance
+        if testDistance < distance then
+            distance = testDistance
             result = i
         end
     end
@@ -1858,50 +1859,82 @@ helpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid = function(centrePlatfo
     return result
 end
 
-local _getIsTrackOnPlatformLeft = function(leftPlatforms, rightPlatforms,
-centrePlatformIndex_Nearest2_TrackEdgeListMid, midTrackEdge)
-    local distanceLeft = transfUtils.getPositionsDistance(
-        midTrackEdge.posTanX2[1][1],
-        leftPlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].posTanX2[1][1]
-    )
-    local distanceRight = transfUtils.getPositionsDistance(
-        midTrackEdge.posTanX2[1][1],
-        rightPlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].posTanX2[1][1]
-    )
-
-    if distanceLeft < distanceRight then return true end
-    return false
-end
-
 helpers.getIsTrackOnPlatformLeft = function(platformEdgeList, midTrackEdge)
     logger.print('getIsTrackOnPlatformLeft starting')
     -- logger.print('platformEdgeList =') logger.debugPrint(platformEdgeList)
-    local centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
+    -- platform and track may have different lengths, so I check the central track segment,
+    -- which is where the train bellies will stop.
+
+    -- not the centre but the first of the two (nodes in the edge) is going to be my vehicleNode
+    local _midTrackPoint = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
+    local _centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
         platformEdgeList,
         40,
         false
     )
     -- logger.print('test centrePlatforms =') logger.debugPrint(centrePlatforms)
 
-    local centrePlatformIndex_Nearest2_TrackEdgeListMid = helpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(centrePlatforms, midTrackEdge)
-    logger.print('centrePlatformIndex_Nearest2_TrackEdgeListMid =') logger.debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
+    local _centrePlatformIndex_Nearest2_TrackMid = _getPosTanX2ListIndex_Nearest2_Point(_centrePlatforms, _midTrackPoint)
+    logger.print('_centrePlatformIndex_Nearest2_TrackMid =') logger.debugPrint(_centrePlatformIndex_Nearest2_TrackMid)
 
-    local platformWidth = centrePlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].width
-    local leftPlatforms = helpers.getShiftedEdgePositions(centrePlatforms, - platformWidth * 0.45)
-    local rightPlatforms = helpers.getShiftedEdgePositions(centrePlatforms, platformWidth * 0.45)
+    local _platformWidth = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid].width
+    local _leftPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, - _platformWidth * 0.5)
+    local _rightPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, _platformWidth * 0.5)
     -- logger.print('eee')
-    local result = _getIsTrackOnPlatformLeft(
-        leftPlatforms,
-        rightPlatforms,
-        centrePlatformIndex_Nearest2_TrackEdgeListMid,
-        midTrackEdge
+
+    local _midLeftPlatformPoint = transfUtils.getPositionsMiddle(
+        _leftPlatforms[_centrePlatformIndex_Nearest2_TrackMid].posTanX2[1][1],
+        _leftPlatforms[_centrePlatformIndex_Nearest2_TrackMid].posTanX2[2][1]
+    )
+    local _midRightPlatformPoint = transfUtils.getPositionsMiddle(
+        _rightPlatforms[_centrePlatformIndex_Nearest2_TrackMid].posTanX2[1][1],
+        _rightPlatforms[_centrePlatformIndex_Nearest2_TrackMid].posTanX2[2][1]
+    )
+
+    local result = transfUtils.getPositionsDistance(
+        _midTrackPoint,
+        _midLeftPlatformPoint
+    ) < transfUtils.getPositionsDistance(
+        _midTrackPoint,
+        _midRightPlatformPoint
     )
     logger.print('getIsTrackOnPlatformLeft is returning', result)
+    -- print('### getIsTrackOnPlatformLeft is returning', result)
 
     return result
 end
 
-helpers.getPosTanX2ListReversed = function(posTanX2List)
+helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
+    logger.print('getIsTrackNorthOfPlatform starting')
+    -- logger.print('platformEdgeList =') logger.debugPrint(platformEdgeList)
+    -- platform and track may have different lengths, so I check the central track segment,
+    -- which is where the train bellies will stop.
+
+    -- not the centre but the first of the two (nodes in the edge) is going to be my vehicleNode
+    local _midTrackPoint = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
+    local _centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
+        platformEdgeList,
+        40,
+        false
+    )
+    -- logger.print('test centrePlatforms =') logger.debugPrint(centrePlatforms)
+
+    local _centrePlatformIndex_Nearest2_TrackMid = _getPosTanX2ListIndex_Nearest2_Point(_centrePlatforms, _midTrackPoint)
+    logger.print('_centrePlatformIndex_Nearest2_TrackMid =') logger.debugPrint(_centrePlatformIndex_Nearest2_TrackMid)
+
+    local _midPlatformItem = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid]
+    local _midPlatformPoint = transfUtils.getPositionsMiddle(_midPlatformItem.posTanX2[1][1], _midPlatformItem.posTanX2[2][1])
+
+    local result = (_midTrackPoint[2] == _midPlatformPoint[2])
+    and (_midTrackPoint[1] < _midPlatformPoint[1])
+    or (_midTrackPoint[2] > _midPlatformPoint[2])
+    logger.print('getIsTrackNorthOfPlatform is returning', result)
+    -- print('### getIsTrackNorthOfPlatform is returning', result)
+
+    return result
+end
+
+helpers.reversePosTanX2ListInPlace = function(posTanX2List)
     if type(posTanX2List) ~= 'table' then return posTanX2List end
 
     local result = {}

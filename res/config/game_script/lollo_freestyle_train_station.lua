@@ -1784,6 +1784,10 @@ function data()
                                     nil,
                                     true
                                 )
+                            else
+                                logger.err('cannot find the centre of the track and cannot split it')
+                                logger.err('midEdgeId =', midEdgeId or 'NIL')
+                                logger.err('nodeBetween =') logger.errorDebugPrint(nodeBetween)
                             end
                             return
                         end
@@ -1793,28 +1797,32 @@ function data()
                         -- logger.print('eventArgs.trackEdgeListMidIndex =') logger.debugPrint(eventArgs.trackEdgeListMidIndex)
                         -- logger.print('eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex] =') logger.debugPrint(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
-                        eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
-                            eventArgs.platformEdgeList,
-                            eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
-                        )
-
                         -- reverse track and platform edges if the platform is on the right of the track.
                         -- this will make trains open their doors on the correct side.
                         -- Remember that "left" and "right" are just conventions here, there is no actual left and right.
-                        local _reverseRightSideTracksAndPlatforms = function()
-                            if not(eventArgs.isTrackOnPlatformLeft) then
-                                local midPos1 = eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1]
+                        local _reverseScrambledTracksAndPlatforms = function()
+                            local isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
+                                eventArgs.platformEdgeList,
+                                eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
+                            )
+                            if isTrackOnPlatformLeft then
+                                return true
+                            else
+                                -- not the centre but the first of the two (nodes in the edge) is going to be my vehicleNode
+                                local midPos1 = arrayUtils.cloneDeepOmittingFields(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1])
+                                logger.print('_reverseScrambledTracksAndPlatforms started, eventArgs.trackEdgeListMidIndex before =', eventArgs.trackEdgeListMidIndex)
                                 logger.print('reversing platformEdgeList, platformEdgeList =') --logger.debugPrint(eventArgs.platformEdgeList)
-                                eventArgs.platformEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.platformEdgeList)
+                                eventArgs.platformEdgeList = stationHelpers.reversePosTanX2ListInPlace(eventArgs.platformEdgeList)
                                 -- logger.print('reversed platformEdgeList, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
                                 logger.print('reversing trackEdgeList, trackEdgeList =') --logger.debugPrint(eventArgs.trackEdgeList)
-                                eventArgs.trackEdgeList = stationHelpers.getPosTanX2ListReversed(eventArgs.trackEdgeList)
+                                eventArgs.trackEdgeList = stationHelpers.reversePosTanX2ListInPlace(eventArgs.trackEdgeList)
                                 -- logger.print('reversed trackEdgeList, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
-                                -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 2 -- dangerous
-                                -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 1 -- wrong
-                                -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex -- wrong
-                                -- logger.print('eventArgs.trackEdgeListMidIndex before =', eventArgs.trackEdgeListMidIndex)
-                                -- dumb but saf-ish
+
+                                -- this seems logical, but it's wrong
+                                -- eventArgs.trackEdgeListMidIndex = #eventArgs.trackEdgeList - eventArgs.trackEdgeListMidIndex + 1
+                                -- logger.print('eventArgs.trackEdgeListMidIndex is now ', eventArgs.trackEdgeListMidIndex)
+
+                                -- this is dumb but safe
                                 local isFound = false
                                 for i = 1, #eventArgs.trackEdgeList do
                                     if (
@@ -1824,30 +1832,46 @@ function data()
                                     ) then
                                         eventArgs.trackEdgeListMidIndex = i
                                         isFound = true
-                                        logger.print('FOUND, new value =', i)
+                                        logger.print('trackEdgeListMidIndex found, new value =', i)
                                         break
                                     end
                                 end
-                                if not(isFound) then logger.warn('_reverseTracksAndPlatforms could not find the point') end
+                                if not(isFound) then logger.warn('_reverseScrambledTracksAndPlatforms could not find the point') end
+                                logger.print('eventArgs.trackEdgeListMidIndex is corrected to ', eventArgs.trackEdgeListMidIndex)
+
                                 -- now we try again
-                                eventArgs.isTrackOnPlatformLeft = stationHelpers.getIsTrackOnPlatformLeft(
+                                local result = stationHelpers.getIsTrackOnPlatformLeft(
                                     eventArgs.platformEdgeList,
                                     eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
                                 )
-                                if not(eventArgs.isTrackOnPlatformLeft) then logger.warn('_reverseTracksAndPlatforms could not reverse') end
+                                if not(result) then logger.warn('_reverseScrambledTracksAndPlatforms could not reverse') end
+
+                                return result
                             end
                         end
-                        _reverseRightSideTracksAndPlatforms()
+                        local isTrackOnPlatformLeft = _reverseScrambledTracksAndPlatforms()
 
-                        local _setPlatformProps = function(platformEdgeList, midTrackEdge)
+                        local _setPlatformProps = function(platformEdgeList_notOrientated, midTrackEdge)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
                             -- The result is much neater, irrespective of how the user placed the edges.
                             -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel, as large as _constants.fineSegmentLength
                             -- There is also less data in centrePlatformsFine.
-                            -- print('platformEdgeList =') debugPrint(platformEdgeList)
+                            -- print('platformEdgeList_notOrientated =') debugPrint(platformEdgeList_notOrientated)
                             logger.print('_setPlatformProps starting')
+                            local isTrackNWOfPlatform = stationHelpers.getIsTrackNorthOfPlatform(platformEdgeList_notOrientated, midTrackEdge)
+                            -- this is for compatibility with older versions
+                            if isTrackNWOfPlatform then
+                                eventArgs.isTrackOnPlatformLeft = isTrackOnPlatformLeft
+                            else
+                                eventArgs.isTrackOnPlatformLeft = not(isTrackOnPlatformLeft)
+                            end
+
+                            local platformEdgeList_orientated = isTrackNWOfPlatform
+                            and arrayUtils.cloneDeepOmittingFields(platformEdgeList_notOrientated)
+                            or stationHelpers.reversePosTanX2ListInPlace(arrayUtils.cloneDeepOmittingFields(platformEdgeList_notOrientated))
+
                             eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
-                                platformEdgeList,
+                                platformEdgeList_orientated,
                                 _constants.fineSegmentLength,
                                 false
                             )
@@ -1860,54 +1884,61 @@ function data()
                             logger.print('_setPlatformProps set eventArgs.centrePlatforms =') logger.debugPrint(eventArgs.centrePlatforms)
                             logger.print('_setPlatformProps set eventArgs.centrePlatformsFine =') logger.debugPrint(eventArgs.centrePlatformsFine)
 
-                            local centrePlatformIndex_Nearest2_TrackEdgeListMid = stationHelpers.getCentrePlatformIndex_Nearest2_TrackEdgeListMid(eventArgs.centrePlatforms, midTrackEdge)
-                            logger.print('_setPlatformProps found centrePlatformIndex_Nearest2_TrackEdgeListMid =') logger.debugPrint(centrePlatformIndex_Nearest2_TrackEdgeListMid)
+                            local midCentrePlatformItem = eventArgs.centrePlatforms[math.ceil(#eventArgs.centrePlatforms / 2)]
+                            logger.print('_setPlatformProps found midCentrePlatformItem =') logger.debugPrint(midCentrePlatformItem)
 
-                            local platformWidth = eventArgs.centrePlatforms[centrePlatformIndex_Nearest2_TrackEdgeListMid].width
+                            local platformWidth = midCentrePlatformItem.width
                             eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
                             eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
 
                             logger.print('_setPlatformProps found platformWidth =', platformWidth)
-                            return platformWidth
-                        end
-                        local platformWidth = _setPlatformProps(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
-                        eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
-                        if args.isCargo then
-                            -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.
-                            -- For now, I forbid using platforms of different widths in a station, if any of them is > 5.
-                            -- This way, we don't disturb the passenger station, which hasn't got this problem coz it always has the same lanes.
-                            -- We don't want to disturb it coz 2.5 m platforms have problems with bridges and tunnels, in the game.
-                            if platformWidth <= 5 then
-                                eventArgs.cargoWaitingAreas = {
-                                    eventArgs.centrePlatforms
-                                }
-                                -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
-                            elseif platformWidth <= 10 then
-                                eventArgs.cargoWaitingAreas = {
-                                    stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
-                                    stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
-                                }
-                                -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[2], eventArgs.isTrackOnPlatformLeft)
-                            elseif platformWidth <= 15 then
-                                eventArgs.cargoWaitingAreas = {
-                                    stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
-                                    eventArgs.centrePlatforms,
-                                    stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 5)
-                                }
-                                -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[3], eventArgs.isTrackOnPlatformLeft)
+                            -- add cross connectors
+                            eventArgs.crossConnectors = stationHelpers.getCrossConnectors(
+                                eventArgs.leftPlatforms,
+                                eventArgs.centrePlatforms,
+                                eventArgs.rightPlatforms,
+                                eventArgs.isTrackOnPlatformLeft
+                            )
+
+                            -- add cargo waiting areas
+                            if args.isCargo then
+                                -- LOLLO TODO MAYBE there may be platforms of different widths: set the waiting areas individually.
+                                -- For now, I forbid using platforms of different widths in a station, if any of them is > 5.
+                                -- This way, we don't disturb the passenger station, which hasn't got this problem coz it always has the same lanes.
+                                -- We don't want to disturb it coz 2.5 m platforms have problems with bridges and tunnels, in the game.
+                                if platformWidth <= 5 then
+                                    eventArgs.cargoWaitingAreas = {
+                                        eventArgs.centrePlatforms
+                                    }
+                                    -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.leftPlatforms, eventArgs.centrePlatforms, eventArgs.rightPlatforms, eventArgs.isTrackOnPlatformLeft)
+                                elseif platformWidth <= 10 then
+                                    eventArgs.cargoWaitingAreas = {
+                                        stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
+                                        stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5)
+                                    }
+                                    -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[2], eventArgs.isTrackOnPlatformLeft)
+                                elseif platformWidth <= 15 then
+                                    eventArgs.cargoWaitingAreas = {
+                                        stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 5),
+                                        eventArgs.centrePlatforms,
+                                        stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 5)
+                                    }
+                                    -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[3], eventArgs.isTrackOnPlatformLeft)
+                                else
+                                    eventArgs.cargoWaitingAreas = {
+                                        stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 7.5),
+                                        stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
+                                        stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5),
+                                        stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 7.5)
+                                    }
+                                    -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[4], eventArgs.isTrackOnPlatformLeft)
+                                end
                             else
-                                eventArgs.cargoWaitingAreas = {
-                                    stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 7.5),
-                                    stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - 2.5),
-                                    stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 2.5),
-                                    stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, 7.5)
-                                }
-                                -- eventArgs.crossConnectors = stationHelpers.getCrossConnectors(eventArgs.cargoWaitingAreas[1], eventArgs.centrePlatforms, eventArgs.cargoWaitingAreas[4], eventArgs.isTrackOnPlatformLeft)
+                                eventArgs.cargoWaitingAreas = {}
                             end
-                        else
-                            eventArgs.cargoWaitingAreas = {}
                         end
+                        _setPlatformProps(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
                         _actions.removeTracks(
                             platformEdgeIdsBetweenNodeIds,
