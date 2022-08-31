@@ -1670,6 +1670,10 @@ function data()
                             local edgeId = platformEdgeIdsBetweenNodeIds[1]
                             if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
 
+                            logger.print('args.splitPlatformNode1Id =') logger.debugPrint(args.splitPlatformNode1Id)
+                            logger.print('args.splitPlatformNode2Id =') logger.debugPrint(args.splitPlatformNode2Id)
+                            logger.print('edgeId =') logger.debugPrint(edgeId)
+
                             local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, 0.5)
                             _actions.splitEdgeRemovingObject(
                                 edgeId,
@@ -2496,7 +2500,8 @@ function data()
                                     end
                                     -- LOLLO NOTE as I added an edge object, I have NOT split the edge
                                     if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiPlatformWaypointModelId then
-                                        local waypointData = _validateWaypointBuilt(_guiPlatformWaypointModelId,
+                                        local waypointData = _validateWaypointBuilt(
+                                            _guiPlatformWaypointModelId,
                                             args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
                                             args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
                                             true
@@ -2512,7 +2517,8 @@ function data()
                                         -- they look mighty ugly. Maybe someone knows how to fix their looks? ask UG TODO
 
                                     elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiTrackWaypointModelId then
-                                        local waypointData = _validateWaypointBuilt(_guiTrackWaypointModelId,
+                                        local waypointData = _validateWaypointBuilt(
+                                            _guiTrackWaypointModelId,
                                             args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
                                             args.proposal.proposal.edgeObjectsToAdd[1].segmentEntity,
                                             false
