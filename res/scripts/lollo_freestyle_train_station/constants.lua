@@ -1,6 +1,6 @@
 local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
 
-local _maxPercentageDeviation4Midpoint = 1.1
+local _maxPercentageDeviation4Midpoint = 1.05
 
 local constants = {
     cargoPlatformTracksCategory = 'cargo-platform-tracks',
