@@ -636,13 +636,19 @@ local _isSameSgnNumVeryClose = function (num1, num2, significantFigures)
     -- return math.floor(roundedNum1 / roundingFactor) == math.floor(roundedNum2 / roundingFactor)
     -- but what I really want are the first significant figures, never mind how big the number is
 
-    -- local result = _getVeryCloseResult1(num1, num2, significantFigures)
-    -- or _getVeryCloseResult1(num1 * _isVeryCloseTesters[significantFigures], num2 * _isVeryCloseTesters[significantFigures], significantFigures)
+    -- LOLLO TODO decide for one when done testing
+    local result1 = _getVeryCloseResult1(num1, num2, significantFigures)
+    or _getVeryCloseResult1(num1 * _isVeryCloseTesters[significantFigures], num2 * _isVeryCloseTesters[significantFigures], significantFigures)
 
-    local result = _getVeryCloseResult2(num1, num2, significantFigures)
+    local result2 = _getVeryCloseResult2(num1, num2, significantFigures)
     or _getVeryCloseResult2(num1 * _isVeryCloseTesters[significantFigures], num2 * _isVeryCloseTesters[significantFigures], significantFigures)
 
-    return result
+    if result1 ~= result2 then
+        print('############ _isSameSgnNumVeryClose cannot decide between num1 =', num1, 'num2 =', num2, 'significantFigures =', significantFigures)
+        print('result1 =', result1 or 'NIL', 'result2 =', result2 or 'NIL')
+    end
+
+    return result2
 end
 utils.isNumVeryClose = function(num1, num2, significantFigures)
     if type(num1) ~= 'number' or type(num2) ~= 'number' then return false end

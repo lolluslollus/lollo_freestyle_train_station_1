@@ -1269,7 +1269,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     -- However, this bit in between is replaced once to snap to terminal 1 and replaced again to snap to terminal 2.
     -- The second time it has a new id, so I can only snap it if I reread the station end entities, in a tidy queue.
 
-    logger.print('buildSnappyPlatforms starting')
+    logger.print('buildSnappyPlatforms starting for terminal =', t or 'NIL')
     if type(t) ~= 'number' or type(tMax) ~= 'number' then logger.warn('buildSnappyPlatforms received wrong t or tMax') logger.warningDebugPrint(t) logger.warningDebugPrint(tMax) return end
     if t > tMax then logger.print('tMax reached, leaving') return end
 
@@ -1314,13 +1314,16 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
-                    logger.print('buildSnappyPlatforms callback, success =', success)
+                    logger.print('buildSnappyPlatforms callback for terminal', t or 'NIL', ', success =', success)
+                    -- move on to the next platform
                     _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
                 end
             )
         end
     else
         isAnyPlatformFailed = true
+        logger.warn('could not build snappy platforms for terminal', t or 'NIL')
+        -- move on to the next terminal
         _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
     end
 end
@@ -1434,7 +1437,7 @@ end
 
 _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     -- see the comments in buildSnappyPlatforms
-    logger.print('buildSnappyTracks starting')
+    logger.print('buildSnappyTracks starting for terminal =', t or 'NIL')
     if type(t) ~= 'number' or type(tMax) ~= 'number' then
         logger.warn('buildSnappyTracks received wrong t or tMax')
         logger.warningDebugPrint(t)
@@ -1480,13 +1483,16 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
-                    logger.print('buildSnappyTracks callback, success =', success)
+                    logger.print('buildSnappyTracks callback for terminal', t or 'NIL', ', success =', success)
+                    -- move on to the next terminal
                     _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
                 end
             )
         end
     else
         isAnyTrackFailed = true
+        logger.warn('could not build snappy tracks for terminal', t or 'NIL')
+        -- move on to the next terminal
         _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
     end
 
@@ -1809,7 +1815,7 @@ function data()
                                 return true
                             else
                                 -- not the centre but the first of the two (nodes in the edge) is going to be my vehicleNode
-                                local midPos1 = arrayUtils.cloneDeepOmittingFields(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1])
+                                local _midPos1 = arrayUtils.cloneDeepOmittingFields(eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex].posTanX2[1][1])
                                 logger.print('_reverseScrambledTracksAndPlatforms started, eventArgs.trackEdgeListMidIndex before =', eventArgs.trackEdgeListMidIndex)
                                 logger.print('reversing platformEdgeList, platformEdgeList =') --logger.debugPrint(eventArgs.platformEdgeList)
                                 eventArgs.platformEdgeList = stationHelpers.reversePosTanX2ListInPlace(eventArgs.platformEdgeList)
@@ -1826,9 +1832,9 @@ function data()
                                 local isFound = false
                                 for i = 1, #eventArgs.trackEdgeList do
                                     if (
-                                        eventArgs.trackEdgeList[i].posTanX2[1][1][1] == midPos1[1]
-                                        and eventArgs.trackEdgeList[i].posTanX2[1][1][2] == midPos1[2]
-                                        and eventArgs.trackEdgeList[i].posTanX2[1][1][3] == midPos1[3]
+                                        eventArgs.trackEdgeList[i].posTanX2[1][1][1] == _midPos1[1]
+                                        and eventArgs.trackEdgeList[i].posTanX2[1][1][2] == _midPos1[2]
+                                        and eventArgs.trackEdgeList[i].posTanX2[1][1][3] == _midPos1[3]
                                     ) then
                                         eventArgs.trackEdgeListMidIndex = i
                                         isFound = true
