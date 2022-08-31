@@ -42,7 +42,7 @@ function data()
 				- If you want different buildings, use assets. There are mods with those.
 				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily.
 				- Use the track constructions "Smart track splitter" to do precision work.
-				- Upgrading tracks does all tracks at once. If you remove a terminal, its tracks will be rebuilt with no memory of your upgrades, so check out for non-electrified tracks.
+				- Upgrading tracks does all tracks at once.
 				- If you have too many track types, use the categories in the menu to make life easier.
 
 				[h1]Note:[/h1]
@@ -55,6 +55,8 @@ function data()
 				- The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
 				- Some modules can only be placed after some others, eg stairs exits after stairs, but the menu does not refresh automatically. After placing the first set of stairs, you need to close and reopen the menu for stairs exits to appear.
 				- Some track and signal mods are incompatible.
+				- If you remove a terminal, its tracks will be rebuilt automatically, but with no memory of your upgrades, so check out for non-electrified tracks.
+				- Minor version 1.81 (31st August 2022) introduced important layout changes. Previously built terminals will keep working but might have some glitches. To benefit from the changes, remove them, wait for them to reappear and build them anew.
 			]],
 			["NAME"] = "Freestyle train station",
 
