@@ -436,18 +436,9 @@ local _actions = {
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
 
-        local newParams = {
-            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.inverseMainTransf, nil, true),
-            mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
-            modules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true),
-            seed = oldCon.params.seed + 1,
-            subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
-            -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
-            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true),
-        }
-
+        local oldModules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true)
         local newModules = {}
-        for slotId, modu in pairs(newParams.modules) do
+        for slotId, modu in pairs(oldModules) do
             local nTerminal, nTrackEdge, baseId = slotHelpers.demangleId(slotId)
             if nTerminal < nTerminalToRemove then
                 newModules[slotId] = modu
@@ -457,11 +448,26 @@ local _actions = {
                 newModules[newSlotId] = modu
             end
         end
-        newParams.modules = newModules
+
+        local newParams = {
+            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.inverseMainTransf, nil, true),
+            mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
+            modules = newModules,
+            seed = oldCon.params.seed + 1,
+            subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
+            -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
+            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true),
+        }
 
         -- write this away before removing it
-        -- LOLLO TODO add the modules for electric track and high-speed track
-        local removedTerminalEdgeLists = {
+        -- LOLLO TODO check the new behaviour with forced electrification values
+        local electricModuleValue = oldModules[slotHelpers.mangleId(nTerminalToRemove, 0, _constants.idBases.trackElectrificationSlotId)]
+        local isForceTrackElectrification = electricModuleValue ~= nil
+        and (electricModuleValue.name == _constants.trackElectrificationYesModuleFileName or electricModuleValue.name == _constants.trackElectrificationNoModuleFileName)
+        local forcedElectrificationValue = isForceTrackElectrification and electricModuleValue.name == _constants.trackElectrificationYesModuleFileName
+        local removedTerminalEdgeProps = {
+            isForceTrackElectrification = isForceTrackElectrification,
+            forcedElectrificationValue = forcedElectrificationValue,
             platformEdgeLists = newParams.terminals[nTerminalToRemove].platformEdgeLists,
             trackEdgeLists = newParams.terminals[nTerminalToRemove].trackEdgeLists,
         }
@@ -496,7 +502,7 @@ local _actions = {
                 if success and successEventName ~= nil then
                     local eventArgs = {
                         nRemainingTerminals = nRemainingTerminals,
-                        removedTerminalEdgeLists = removedTerminalEdgeLists,
+                        removedTerminalEdgeProps = removedTerminalEdgeProps,
                         stationConstructionId = result.resultEntities[1]
                     }
                     logger.print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
@@ -512,7 +518,15 @@ local _actions = {
         )
     end,
 
-    rebuildOneTerminalTracks = function(trackEdgeLists, platformEdgeLists, neighbourNodeIds, stationConstructionId, successEventName)
+    rebuildOneTerminalTracks = function(
+        isForceTrackElectrification,
+        forcedElectrificationValue,
+        trackEdgeLists,
+        platformEdgeLists,
+        neighbourNodeIds,
+        stationConstructionId,
+        successEventName
+    )
         local _significantFigures4LocateNode = 5 -- you may lower this if tracks are not properly rebuilt.
         -- cleanupStreetGraph in previous events (removeTerminal and bulldozeConstruction) might also play a role, it might.
         logger.print('rebuildOneTerminalTracks starting')
@@ -598,7 +612,11 @@ local _actions = {
                 -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
                 newSegment.type = _constants.railEdgeType
                 newSegment.trackEdge.trackType = trackEdgeList.trackType
-                newSegment.trackEdge.catenary = trackEdgeList.catenary
+                if isForceTrackElectrification then
+                    newSegment.trackEdge.catenary = forcedElectrificationValue
+                else
+                    newSegment.trackEdge.catenary = trackEdgeList.catenary
+                end
 
                 proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
             end
@@ -1980,15 +1998,17 @@ function data()
                             logger.err('args.stationConstructionId not valid')
                             return
                         end
-                        if type(args.removedTerminalEdgeLists) ~= 'table' or type(args.removedTerminalEdgeLists.trackEdgeLists) ~= 'table' then
+                        if type(args.removedTerminalEdgeProps) ~= 'table' or type(args.removedTerminalEdgeProps.trackEdgeLists) ~= 'table' then
                             _actions.bulldozeConstruction(args.stationConstructionId)
-                            logger.err('args.removedTerminalEdgeLists.trackEdgeLists not available')
+                            logger.err('args.removedTerminalEdgeProps.trackEdgeLists not available')
                             return
                         end
                         _actions.rebuildOneTerminalTracks(
-                            args.removedTerminalEdgeLists.trackEdgeLists,
-                            args.removedTerminalEdgeLists.platformEdgeLists,
-                            stationHelpers.getNeighbourNodeIdsOfBulldozedTerminal(args.removedTerminalEdgeLists.platformEdgeLists, args.removedTerminalEdgeLists.trackEdgeLists),
+                            args.removedTerminalEdgeProps.isForceTrackElectrification,
+                            args.removedTerminalEdgeProps.forcedElectrificationValue,
+                            args.removedTerminalEdgeProps.trackEdgeLists,
+                            args.removedTerminalEdgeProps.platformEdgeLists,
+                            stationHelpers.getNeighbourNodeIdsOfBulldozedTerminal(args.removedTerminalEdgeProps.platformEdgeLists, args.removedTerminalEdgeProps.trackEdgeLists),
                             args.stationConstructionId,
                             args.nRemainingTerminals > 0 and _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED or _eventNames.BULLDOZE_STATION_REQUESTED
                         )
@@ -2138,57 +2158,36 @@ function data()
                             guiHelpers.hideAllWarnings()
                             -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
                             if id == 'bulldozer' then
-                                for _, constructionId in pairs(args.proposal.toRemove) do
-                                    logger.print('about to bulldoze construction', constructionId)
-                                    if edgeUtils.isValidAndExistingId(constructionId) then
-                                        local con = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+                                for _, conId in pairs(args.proposal.toRemove) do
+                                    logger.print('about to bulldoze construction', conId or 'NIL')
+                                    if edgeUtils.isValidAndExistingId(conId) then
+                                        local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                                         if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
                                             -- logger.print('args = ') logger.debugPrint(args)
-                                            -- bulldozed a station module AND there are more left
-                                            -- logger.print('bulldozing a component of a freestyle station, con.params.modules =') logger.debugPrint(con.params.modules)
-                                            local remainingTerminalIds = {}
-                                            for slotId, _ in pairs(con.params.modules) do
-                                                local nTerminal, _, baseId = slotHelpers.demangleId(slotId)
-                                                if baseId == _constants.idBases.terminalSlotId then
-                                                    arrayUtils.addUnique(remainingTerminalIds, nTerminal)
+                                            -- LOLLO TODO this should be more efficient now, test it
+                                            local nTerminalToRemove
+                                            local nRemainingTerminals = 0
+                                            for t, _ in pairs(con.params.terminals) do
+                                                local slotId = slotHelpers.mangleId(t, 0, _constants.idBases.terminalSlotId)
+                                                if con.params.modules[slotId] == nil then
+                                                    nTerminalToRemove = t
+                                                else
+                                                    nRemainingTerminals = nRemainingTerminals + 1
                                                 end
                                             end
                                             -- a terminal was bulldozed
-                                            if #remainingTerminalIds < #con.params.terminals then
-                                                -- if #remainingTerminalIds > 0 then
-                                                    local nTerminalToRemove = -1
-                                                    for t = 1, #con.params.terminals do
-                                                        if not(arrayUtils.arrayHasValue(remainingTerminalIds, t)) then
-                                                            nTerminalToRemove = t
-                                                            break
-                                                        end
-                                                    end
-                                                    logger.print('nTerminalToRemove =', nTerminalToRemove)
-                                                    if nTerminalToRemove > 0 then
-                                                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                            string.sub(debug.getinfo(1, 'S').source, 1),
-                                                            _eventId,
-                                                            _eventNames.REMOVE_TERMINAL_REQUESTED,
-                                                            {
-                                                                stationConstructionId = constructionId,
-                                                                nRemainingTerminals = #remainingTerminalIds,
-                                                                nTerminalToRemove = nTerminalToRemove
-                                                            }
-                                                        ))
-                                                    else
-                                                        logger.err('cannot find id of deleted terminal')
-                                                    end
-                                                -- else
-                                                --     -- last terminal removed: pull down the station
-                                                --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                --         string.sub(debug.getinfo(1, 'S').source, 1),
-                                                --         _eventId,
-                                                --         _eventNames.BULLDOZE_STATION_REQUESTED,
-                                                --         {
-                                                --             constructionId = constructionId,
-                                                --         }
-                                                --     ))
-                                                -- end
+                                            if type(nTerminalToRemove) == 'number' and nTerminalToRemove > 0 then
+                                                logger.print('nTerminalToRemove =', nTerminalToRemove or 'NIL')
+                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                    string.sub(debug.getinfo(1, 'S').source, 1),
+                                                    _eventId,
+                                                    _eventNames.REMOVE_TERMINAL_REQUESTED,
+                                                    {
+                                                        stationConstructionId = conId,
+                                                        nRemainingTerminals = nRemainingTerminals,
+                                                        nTerminalToRemove = nTerminalToRemove
+                                                    }
+                                                ))
                                             end
                                         end
                                     end

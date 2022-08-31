@@ -1851,7 +1851,7 @@ function data()
 					end
 				end
 				modules[change.slotId] = change.module
-			else
+			else -- removing
 				-- bar removal of modules for upgrading tracks...
 				local nTerminal, _, baseId = slotHelpers.demangleId(change.slotId)
 				if baseId == _constants.idBases.trackElectrificationSlotId or baseId == _constants.idBases.trackSpeedSlotId then
