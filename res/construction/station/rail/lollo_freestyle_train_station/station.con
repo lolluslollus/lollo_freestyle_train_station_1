@@ -1627,12 +1627,12 @@ function data()
 					end
 				end
 				_linkNearbyPassengerPlatforms(
-					6,
+					7.0,
 					result.terminateConstructionHookInfo.crossConnectorPositions,
 					_constants.passengerLaneModelId
 				)
 				_linkNearbyPassengerPlatforms(
-					8,
+					8.0,
 					result.terminateConstructionHookInfo.trackCrossingPositions,
 					_constants.passengerLaneModelId,
 					_constants.trackCrossingRaise
