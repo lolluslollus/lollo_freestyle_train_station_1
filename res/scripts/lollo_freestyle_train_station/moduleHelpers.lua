@@ -891,7 +891,8 @@ return {
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
 
-                        local modelId = (isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex])
+                        local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
+                        local modelId = isFreeFromOpenStairs
                         and (platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId)
                         or (platformWidth < 5 and alternativeCeiling2_5ModelId or alternativeCeiling5ModelId)
                         if modelId ~= nil then
@@ -904,7 +905,7 @@ return {
                                 tag = tag
                             }
 
-                            if math.fmod(ii, _pillarPeriod) == 0 then
+                            if isFreeFromOpenStairs and math.fmod(ii, _pillarPeriod) == 0 then
                                 local myTransf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
