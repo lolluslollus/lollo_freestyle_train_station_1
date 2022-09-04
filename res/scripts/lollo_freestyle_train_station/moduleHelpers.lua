@@ -871,11 +871,11 @@ return {
             local _pillarPeriod = 4 -- it would be math.ceil(4 / ceilingStep); easier if it is a submultiple of numberSignPeriod
             local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
-            local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-            local iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+            local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+            local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
-            for i = i1, iMax, 1 do
+            for i = _i1, _iMax, 1 do
                 isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)])
                 and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
                 isFreeFromOpenStairsRight[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)])
@@ -885,8 +885,8 @@ return {
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 -- local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-                if leadingIndex > iMax then break end
-                if leadingIndex >= i1 then
+                if leadingIndex > _iMax then break end
+                if leadingIndex >= _i1 then
                     if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
@@ -955,11 +955,11 @@ return {
 
             local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
-            local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-            local iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+            local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+            local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
-            for i = i1, iMax, 1 do
+            for i = _i1, _iMax, 1 do
                 isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)])
                 -- and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
                 isFreeFromOpenStairsRight[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)])
@@ -970,8 +970,8 @@ return {
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 -- local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-                if leadingIndex > iMax then break end
-                if leadingIndex >= i1 then
+                if leadingIndex > _iMax then break end
+                if leadingIndex >= _i1 then
                     if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
