@@ -674,6 +674,8 @@ function data()
 								})
 							end
 						else -- ground and bridges
+							-- LOLLO TODO what happens if I call mangleId with a zero or negative nTrackEdge (ie the second parameter)?
+							-- Check it across the app
 							local id_Underpass = result.mangleId(t, i, _constants.idBases.underpassSlotId)
 							local idM1_Underpass = result.mangleId(t, i-1, _constants.idBases.underpassSlotId)
 							local idP1_Underpass = result.mangleId(t, i+1, _constants.idBases.underpassSlotId)
