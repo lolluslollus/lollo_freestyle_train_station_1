@@ -16,7 +16,8 @@ local privateConstants = {
         -- LOLLO NOTE setting this to 2 gets a negligible performance boost and uglier joints,
         -- particularly on slopes and bends
         ceilingStep = 1,
-        numberSignPeriod = 32,
+        numberSignPeriod = constants.maxPassengerWaitingAreaEdgeLength * 4,
+        pillarPeriod = 4, -- this should be a submultiple of numberSignPeriod
     },
     lifts = {
         -- bridgeHeights = { 5, 10, 15, 20, 25, 30, 35, 40 } -- too little, stations get buried
@@ -868,7 +869,6 @@ return {
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
-            local _pillarPeriod = 4 -- it would be math.ceil(4 / ceilingStep); easier if it is a submultiple of numberSignPeriod
             local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
@@ -876,10 +876,10 @@ return {
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
             for i = _i1, _iMax, 1 do
-                isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)])
+                isFreeFromOpenStairsLeft[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)]))
                 and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
-                isFreeFromOpenStairsRight[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)])
-                and not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)])
+                isFreeFromOpenStairsRight[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)]))
+                and (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
@@ -905,7 +905,7 @@ return {
                                 tag = tag
                             }
 
-                            if isFreeFromOpenStairs and math.fmod(ii, _pillarPeriod) == 0 then
+                            if isFreeFromOpenStairs and math.fmod(ii, privateConstants.deco.pillarPeriod) == 0 then
                                 local myTransf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
@@ -960,10 +960,8 @@ return {
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
             for i = _i1, _iMax, 1 do
-                isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)])
-                -- and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
-                isFreeFromOpenStairsRight[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)])
-                -- and not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)])
+                isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
+                isFreeFromOpenStairsRight[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)]))
             end
 
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
