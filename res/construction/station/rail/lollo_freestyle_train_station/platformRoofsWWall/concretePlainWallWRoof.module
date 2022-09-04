@@ -42,15 +42,15 @@ function data()
 
 		getModelsFn = function(params)
 			local results = {}
-			for y = -2, 2 do
+			for x = -2, 2 do
 				results[#results+1] = {
 					id = _constants.platformWallConcretePlainWRoof2_5MModelFileName,
-					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
 			results[#results+1] = {
 				id = _constants.platformWallConcretePlainPillar2_5MModelFileName,
-				transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
+				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results
 		end
