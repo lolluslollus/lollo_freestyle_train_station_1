@@ -886,11 +886,11 @@ return {
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
-                    if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
+                    if isTunnelOk or cpf.type ~= 2 then -- ground or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
-                        local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
-                        local modelId = isFreeFromOpenStairs
+                        local isFreeFromOpenStairsAndTunnels = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex] and cpf.type ~= 2
+                        local modelId = isFreeFromOpenStairsAndTunnels
                         and (platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId)
                         or (platformWidth < 5 and alternativeCeiling2_5ModelId or alternativeCeiling5ModelId)
                         if modelId ~= nil then
@@ -903,7 +903,7 @@ return {
                                 tag = tag
                             }
 
-                            if isFreeFromOpenStairs and math.fmod(ii, privateConstants.deco.pillarPeriod) == 0 then
+                            if isFreeFromOpenStairsAndTunnels and math.fmod(ii, privateConstants.deco.pillarPeriod) == 0 then
                                 local myTransf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
@@ -967,7 +967,7 @@ return {
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
-                    if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
+                    if isTunnelOk or cpf.type ~= 2 then -- ground or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
 
