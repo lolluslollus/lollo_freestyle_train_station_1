@@ -876,10 +876,12 @@ return {
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
             for i = _i1, _iMax, 1 do
-                isFreeFromOpenStairsLeft[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)]))
-                and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
-                isFreeFromOpenStairsRight[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)]))
-                and (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
+                isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
+                isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
+                -- isFreeFromOpenStairsLeft[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)]))
+                -- and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
+                -- isFreeFromOpenStairsRight[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)]))
+                -- and (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
