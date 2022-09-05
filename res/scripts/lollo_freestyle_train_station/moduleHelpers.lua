@@ -884,13 +884,11 @@ return {
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
-                -- local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
                     if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
-
                         local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
                         local modelId = isFreeFromOpenStairs
                         and (platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId)
@@ -915,11 +913,11 @@ return {
                                     transf = myTransf,
                                     tag = tag,
                                 }
-
+                                -- prevent overlapping with station name signs
                                 if not(_barredNumberSignIIs[ii])
                                 and not(_barredNumberSignIIs[ii+1])
                                 and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
-                                then -- prevent overlapping with station name signs
+                                then
                                     if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
                                         -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
                                         local yShift = -platformWidth * 0.5 + 0.20
@@ -967,7 +965,6 @@ return {
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
-                -- local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
                     if isTunnelOk or cpf.type ~= 2 then -- outside or bridge
@@ -984,12 +981,13 @@ return {
                         }
 
                         if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
+                            -- prevent overlapping with station name signs or stairs
                             if not(_barredNumberSignIIs[ii])
                             and not(_barredNumberSignIIs[ii+1])
                             and (ii == 1 or not(_barredNumberSignIIs[ii-1])) -- prevent overlapping with station name signs
                             and isFreeFromOpenStairsLeft[leadingIndex]
                             and isFreeFromOpenStairsRight[leadingIndex]
-                            then -- prevent overlapping with station name signs or stairs
+                            then
                                 local myTransf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
