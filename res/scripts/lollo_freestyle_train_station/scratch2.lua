@@ -1,6 +1,9 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
 local tab1 = {1, 2, 3, 4, 5}
+local item = tab1[nil]
+local isItemNil = not(item)
+
 local index = 0
 for _, value in pairs(tab1) do
     index = index + 1
