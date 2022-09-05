@@ -878,10 +878,6 @@ return {
             for i = _i1, _iMax, 1 do
                 isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
                 isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
-                -- isFreeFromOpenStairsLeft[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpLeftSlotId)]))
-                -- and not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
-                -- isFreeFromOpenStairsRight[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)]))
-                -- and (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
@@ -961,7 +957,7 @@ return {
             local isFreeFromOpenStairsRight = {}
             for i = _i1, _iMax, 1 do
                 isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
-                isFreeFromOpenStairsRight[i] = (i < 1 or not(params.modules[result.mangleId(nTerminal, i, constants.idBases.openStairsUpRightSlotId)]))
+                isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
 
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
@@ -972,7 +968,7 @@ return {
                     if isTunnelOk or cpf.type ~= 2 then -- ground or bridge
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
-
+                        local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
                         result.models[#result.models+1] = {
                             id = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId,
                             transf = transfUtilsUG.mul(
@@ -982,13 +978,11 @@ return {
                             tag = tag
                         }
 
-                        if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
-                            -- prevent overlapping with station name signs or stairs
+                        if isFreeFromOpenStairs and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
+                            -- prevent overlapping with station name signs
                             if not(_barredNumberSignIIs[ii])
                             and not(_barredNumberSignIIs[ii+1])
-                            and (ii == 1 or not(_barredNumberSignIIs[ii-1])) -- prevent overlapping with station name signs
-                            and isFreeFromOpenStairsLeft[leadingIndex]
-                            and isFreeFromOpenStairsRight[leadingIndex]
+                            and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
                             then
                                 local myTransf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
