@@ -245,25 +245,33 @@ function data()
 
 				local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
 
-				local _decoSpacing = {-0.1, 2, -1.1, 2}
-				-- local _decoSpacing = {-0.1, 2, 1, 1}
-				local function _addPlatformRoofs()
+				local function _addPlatformDeco()
 					if isCargoTerminal then return end
-					local iMax = #params.terminals[t].centrePlatformsRelative
+
+					local _decoSpacing = {-0.1, 2, -1.1, 2}
+					-- local _decoSpacing = {-0.1, 2, 1, 1}
+					local _iMax = #params.terminals[t].centrePlatformsRelative
 					local iss = {}
-					for i = 2, iMax, 3 do iss[#iss+1] = i end
+					for i = 2, _iMax, 3 do iss[#iss+1] = i end
 					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(iMax) then iss[#iss+1] = iMax end
+					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
+						table.insert(result.slots, {
+							-- height = 0,
+							id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
+							spacing = _decoSpacing,
+							transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
+							type = _constants.wallModuleType,
+						})
+
 						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {}
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
 						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
-							local myId = result.mangleId(t, i, _constants.idBases.platformRoofSlotId)
 							table.insert(result.slots, {
 								-- height = 0,
-								id = myId,
+								id = result.mangleId(t, i, _constants.idBases.platformRoofSlotId),
 								spacing = _decoSpacing,
 								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 								type = _constants.platformRoofModuleType,
@@ -271,46 +279,21 @@ function data()
 						end
 					end
 				end
-				_addPlatformRoofs()
-
-				local function _addPlatformWalls()
-					if isCargoTerminal then return end
-					local iMax = #params.terminals[t].centrePlatformsRelative
-					local iss = {}
-					for i = 2, iMax, 3 do iss[#iss+1] = i end
-					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(iMax) then iss[#iss+1] = iMax end
-
-					for _, i in pairs(iss) do
-						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local myId = result.mangleId(t, i, _constants.idBases.platformWallSlotId)
-						table.insert(result.slots, {
-							-- height = 0,
-							id = myId,
-							spacing = _decoSpacing,
-							transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-							type = _constants.wallModuleType,
-						})
-					end
-				end
-				_addPlatformWalls()
+				_addPlatformDeco()
 
 				local function _addOutsideExtensions()
-					local iMax = #params.terminals[t].centrePlatformsRelative
+					local _iMax = #params.terminals[t].centrePlatformsRelative
 					local iss = {}
-					for i = 2, iMax, 3 do iss[#iss+1] = i end
+					for i = 2, _iMax, 3 do iss[#iss+1] = i end
 					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(iMax) then iss[#iss+1] = iMax end
+					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {}
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
-						if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) -- no thin extensions in tunnels unless we are at the entrance
-						and not(isCargoTerminal)
-						-- and params.terminals[t].slopedAreasFineRelative[2.5] -- thin sloped areas were added later and they are burnt into the initial data
-						then
-							-- so they cannot be added willy nilly
+						-- no thin extensions in tunnels unless we are at the entrance
+						if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) and not(isCargoTerminal) then
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x2_5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 2.5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x2_5SlotId)
@@ -330,7 +313,8 @@ function data()
 								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess)
 							end
 						end
-						if cpl.type == 0 or (cpl.type == 2 and cplM1.type == 0) or (cpl.type == 2 and cplP1.type == 0) then -- thick extensions only on ground or at tunnel entrances
+						-- thick extensions only on ground or at tunnel entrances, never on bridges
+						if cpl.type == 0 or (cpl.type == 2 and cplM1.type == 0) or (cpl.type == 2 and cplP1.type == 0) then
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
@@ -364,7 +348,6 @@ function data()
 								})
 								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess)
 							end
-
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, i, 20)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
@@ -785,7 +768,6 @@ function data()
 								}
 
 								if result.terminateConstructionHookInfo.trackCrossingPositions[t] == nil then result.terminateConstructionHookInfo.trackCrossingPositions[t] = {} end
-								local cpl = params.terminals[t].centrePlatformsRelative[cpf.leadingIndex]
 								table.insert(
 									result.terminateConstructionHookInfo.trackCrossingPositions[t],
 									{
