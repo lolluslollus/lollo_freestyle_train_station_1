@@ -245,7 +245,7 @@ function data()
 
 				local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
 
-				local function _addPlatformDeco()
+				local function _addPlatformRoofsAndWalls()
 					if isCargoTerminal then return end
 
 					local _decoSpacing = {-0.1, 2, -1.1, 2}
@@ -279,7 +279,7 @@ function data()
 						end
 					end
 				end
-				_addPlatformDeco()
+				_addPlatformRoofsAndWalls()
 
 				local function _addOutsideExtensions()
 					local _iMax = #params.terminals[t].centrePlatformsRelative
