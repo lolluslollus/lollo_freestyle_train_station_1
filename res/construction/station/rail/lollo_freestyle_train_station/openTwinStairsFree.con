@@ -8,7 +8,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo openStairsFree.con ERROR: ', err)
+        print('lollo openTwinStairsFree.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs
