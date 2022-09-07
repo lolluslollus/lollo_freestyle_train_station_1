@@ -1308,7 +1308,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
-    local isAdjoiningConstruction = endEntities4T.platforms.disjointNeighbourEdgeIds.is1AdjoiningConstruction or endEntities4T.platforms.disjointNeighbourEdgeIds.is2AdjoiningConstruction
+    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.platforms.disjointNeighbourEdgeIds.isNode1AdjoiningAConstruction or endEntities4T.platforms.disjointNeighbourEdgeIds.isNode2AdjoiningAConstruction
     for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
@@ -1354,6 +1354,8 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
 end
 
 _actions.buildSnappyStreetEdges = function(stationConId)
+    -- rebuild the street edges connected to the station.
+    -- If some are frozen in a construction, force-upgrade the station instead.
     logger.print('buildSnappyStreetEdges starting')
 
     local endEntities = stationHelpers.getStationStreetEndEntities(stationConId)
@@ -1365,12 +1367,12 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     end
     local nNewEntities = 0
     local isSuccess = true
-    local isAdjoiningConstruction = false
+    local isAnyNodeAdjoiningAConstruction = false
 
     for _, endEntity in pairs(endEntities) do
         if not(isSuccess) then break end
 
-        isAdjoiningConstruction = isAdjoiningConstruction or endEntity.disjointNeighbourEdgeIds.isAdjoiningConstruction
+        isAnyNodeAdjoiningAConstruction = isAnyNodeAdjoiningAConstruction or endEntity.disjointNeighbourEdgeIds.isNodeAdjoiningAConstruction
         for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds.edgeIds) do
             if not(edgeUtils.isValidAndExistingId(edgeId)) then
                 logger.warn('invalid edgeId in buildSnappyStreetEdges')
@@ -1433,7 +1435,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     end
 
     logger.print('proposal =') logger.debugPrint(proposal)
-    logger.print('isAdjoiningConstruction =') logger.debugPrint(isAdjoiningConstruction)
+    logger.print('isAnyNodeAdjoiningAConstruction =') logger.debugPrint(isAnyNodeAdjoiningAConstruction)
     -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
     if isSuccess then
         local context = api.type.Context:new()
@@ -1451,7 +1453,9 @@ _actions.buildSnappyStreetEdges = function(stationConId)
                 api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
                 function(result, success)
                     logger.print('buildSnappyStreetEdges callback, success =', success)
-                    if isAdjoiningConstruction then
+                    -- cannot rebuild some of the edges coz they are be locked in a construction:
+                    -- rebuild the station instead
+                    if isAnyNodeAdjoiningAConstruction then
                         _actions.upgradeStationConstruction(stationConId)
                     end
                 end
@@ -1481,7 +1485,7 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
-    local isAdjoiningConstruction = endEntities4T.tracks.disjointNeighbourEdgeIds.is1AdjoiningConstruction or endEntities4T.tracks.disjointNeighbourEdgeIds.is2AdjoiningConstruction
+    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.tracks.disjointNeighbourEdgeIds.isNode1AdjoiningAConstruction or endEntities4T.tracks.disjointNeighbourEdgeIds.isNode2AdjoiningAConstruction
     for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
