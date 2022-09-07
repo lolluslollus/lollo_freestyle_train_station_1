@@ -1766,7 +1766,7 @@ function data()
 			-- end
 
 			-- Replace pedestrian edges with snappy pedestrian edges.
-			-- Otherwise, whenever a change is made to the station, existing connections will break seamlessly
+			-- Otherwise, whenever a change is made to the station, existing connections will break on the sly
 			-- (you can only see this with AltGr + L)
 			if modules ~= nil then
 				local slotIdToBeLeftAlone = nil -- do not replace the module if the user is placing it
