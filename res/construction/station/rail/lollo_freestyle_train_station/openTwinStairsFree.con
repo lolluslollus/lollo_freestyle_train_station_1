@@ -298,7 +298,7 @@ function data()
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
                             snapNodes = (_stairsBase == 1 or _stairsBase == 3) and { 1 } or { },
-                            tag2nodes = {},
+                            -- tag2nodes = {},
                             type = 'STREET'
                         }
                     )
@@ -416,7 +416,7 @@ function data()
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
                             snapNodes = (_isSnapTop or bridgeChunkLength ~= 0) and { 1 } or { },
-                            tag2nodes = {},
+                            -- tag2nodes = {},
                             type = 'STREET'
                         }
                     )
@@ -451,7 +451,7 @@ function data()
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
                             snapNodes = (_isSnapTop or bridgeChunkLength ~= 2) and { 1 } or { },
-                            tag2nodes = {},
+                            -- tag2nodes = {},
                             type = 'STREET'
                         }
                     )
