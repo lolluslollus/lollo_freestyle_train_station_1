@@ -329,9 +329,11 @@ function data()
 			["FlatSlopedTerrain"] = "Terrain Incline",
 			["Model"] = "Platform",
 			["NoRailing0"] = "0 - No Railing",
-			["OpenLiftFreeDesc"] = "Lift matching the freestyle stations, collision free; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
+			["OpenTwinStairsFreeName"] = "Twin Stairs",
+			["OpenTwinStairsFreeDesc"] = "Twin stairs matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
+			["OpenLiftFreeDesc"] = "Lift matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
 			["OpenLiftFreeName"] = "Lift",
-			["OpenStairsFreeDesc"] = "Stairs matching the freestyle stations, collision free; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
+			["OpenStairsFreeDesc"] = "Stairs matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
 			["PedestrianBridges"] = "Pedestrian Bridges",
@@ -347,6 +349,8 @@ function data()
 			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
 			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Help yourself with AltGr + L.",
+			["TopPlatformNorthLength"] = "Top Platform One",
+			["TopPlatformSouthLength"] = "Top Platform Two",
 
 			-- track splitter
 			["SmartTrackSplitterName"] = "Smart track splitter",

@@ -1,0 +1,492 @@
+function data()
+    local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local logger = require('lollo_freestyle_train_station.logger')
+    local _modulesutilUG = require('modulesutil')
+    local _openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
+    local _transfUtils = require('lollo_freestyle_train_station.transfUtils')
+    local _transfUtilsUG = require('transf')
+
+    local function _myErrorHandler(err)
+        print('lollo openStairsFree.con ERROR: ', err)
+    end
+
+    local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs
+    local _paramReaders = _openLiftOpenStairsHelpers.paramReaders.twinStairs
+
+	return {
+        type = 'ASSET_DEFAULT',
+		description = {
+			name = _('OpenTwinStairsFreeName'),
+			description = _('OpenTwinStairsFreeDesc'),
+            icon = 'ui/construction/station/rail/lollo_freestyle_train_station/openTwinStairsFree.tga',
+		},
+		availability = {
+			yearFrom = 0,
+			yearTo = 0,
+		},
+        categories = { 'stairs' },
+		order = 999,
+		autoRemovable = false,
+        -- buildMode = 'MULTI',
+		skipCollision = false, -- true,
+		params = {
+            {
+                key = 'stairs_height',
+                name = _('OpenStairsFreeHeight'),
+                values = _paramValues.stairs_height,
+                uiType = 'BUTTON',
+                defaultIndex = 1,
+            },
+            {
+                key = 'era_prefix',
+                name = _('Era'),
+                values = _paramValues.era_prefix,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'bridge_chunk_length_north', -- do not rename this param or chenga its values
+                name = _('TopPlatformNorthLength'),
+                tooltip = _('TopPlatformLengthTooltip'),
+                values = _paramValues.bridge_chunk_length_north,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'bridge_chunk_length_south', -- do not rename this param or chenga its values
+                name = _('TopPlatformSouthLength'),
+                tooltip = _('TopPlatformLengthTooltip'),
+                values = _paramValues.bridge_chunk_length_south,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            -- {
+            --     key = 'bridge_chunk_z_angle',
+            --     name = _('BridgeZAngle'),
+            --     values = _paramValues.bridge_chunk_z_angle,
+            --     uiType = 'SLIDER',
+            --     defaultIndex = _paramValues.bridge_chunk_z_angle_DefaultIndex,
+            -- },
+            -- {
+            --     key = 'bridge_chunk_y_angle',
+            --     name = _('BridgeYAngle'),
+            --     values = _paramValues.bridge_chunk_y_angle,
+            --     uiType = 'SLIDER',
+            --     defaultIndex = _paramValues.bridge_chunk_y_angle_DefaultIndex,
+            -- },
+            {
+                key = 'stairs_base', -- do not rename this param or chenga its values
+                name = _('StairsBase'),
+                tooltip = _('StairsBaseTooltip'),
+                values = _paramValues.stairs_base,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'terrain_alignment_type',
+                name = _('TerrainAlignmentType'),
+                values = _paramValues.terrain_alignment_type,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'flat_sloped_terrain',
+                name = _('FlatSlopedTerrain'),
+                values = _paramValues.flat_sloped_terrain,
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+        },
+		updateFn = function(params)
+            local _height = _paramReaders.getHeight(params)
+            local _bridgeChunkLengthNorth = _paramReaders.getBridgeChunkLengthNorth(params)
+            local _bridgeChunkLengthSouth = _paramReaders.getBridgeChunkLengthSouth(params)
+            local _stairsBase = _paramReaders.getStairsBase(params)
+            local _era_prefix = _paramReaders.getEraPrefix(params)
+            local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
+
+            local _yHalfSize = 1
+
+            local baseLanesModelId = ''
+            if _stairsBase == -1 then -- no base
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_'.. _height ..'m.mdl'
+            elseif _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_'.. _height ..'m.mdl'
+            else -- model
+                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_'.. _height ..'m.mdl'
+            end
+
+            local flatFaces = {}
+            if _height == 2 then
+                flatFaces = { {
+                    {4, -_yHalfSize, 0}, {4, _yHalfSize, 0}, {-4, _yHalfSize, 0}, {-4, -_yHalfSize, 0}
+                } }
+            elseif _height == 4 then
+                flatFaces = { {
+                    {6, -_yHalfSize, 0}, {6, _yHalfSize, 0}, {-6, _yHalfSize, 0}, {-6, -_yHalfSize, 0}
+                } }
+            elseif _height == 6 then
+                flatFaces = { {
+                    {8.5, -_yHalfSize, 0}, {8.5, _yHalfSize, 0}, {-8.5, _yHalfSize, 0}, {-8.5, -_yHalfSize, 0}
+                } }
+            elseif _height == 8 then
+                flatFaces = { {
+                    {10.5, -_yHalfSize, 0}, {10.5, _yHalfSize, 0}, {-10.5, _yHalfSize, 0}, {-10.5, -_yHalfSize, 0}
+                } }
+            elseif _height == 10 then
+                flatFaces = { {
+                    {12.5, -_yHalfSize, 0}, {12.5, _yHalfSize, 0}, {-12.5, _yHalfSize, 0}, {-12.5, -_yHalfSize, 0}
+                } }
+            end
+            local slopedFaces = {}
+            if _height == 2 then
+                slopedFaces = {
+                    {
+                        {-2, -_yHalfSize, 1}, {-2, _yHalfSize, 1}, {-4, _yHalfSize, -0.5}, {-4, -_yHalfSize, -0.5},
+                    },
+                    {
+                        {4, -_yHalfSize, -0.5}, {4, _yHalfSize, -0.5}, {2, _yHalfSize, 1}, {2, -_yHalfSize, 1},
+                    },
+                    {
+                        {2, -_yHalfSize, 1}, {2, _yHalfSize, 1}, {-2, _yHalfSize, 1}, {-2, -_yHalfSize, 1},
+                    },
+                }
+            elseif _height == 4 then
+                slopedFaces = {
+                    {
+                        {-2, -_yHalfSize, 3}, {-2, _yHalfSize, 3}, {-6, _yHalfSize, -0.5}, {-6, -_yHalfSize, -0.5},
+                    },
+                    {
+                        {6, -_yHalfSize, -0.5}, {6, _yHalfSize, -0.5}, {2, _yHalfSize, 3}, {2, -_yHalfSize, 3},
+                    },
+                    {
+                        {2, -_yHalfSize, 3}, {2, _yHalfSize, 3}, {-2, _yHalfSize, 3}, {-2, -_yHalfSize, 3},
+                    },
+                }
+            elseif _height == 6 then
+                slopedFaces = {
+                    {
+                        {-2, -_yHalfSize, 5}, {-2, _yHalfSize, 5}, {-8.5, _yHalfSize, -0.5}, {-8.5, -_yHalfSize, -0.5},
+                    },
+                    {
+                        {8.5, -_yHalfSize, -0.5}, {8.5, _yHalfSize, -0.5}, {2, _yHalfSize, 5}, {2, -_yHalfSize, 5},
+                    },
+                    {
+                        {2, -_yHalfSize, 5}, {2, _yHalfSize, 5}, {-2, _yHalfSize, 5}, {-2, -_yHalfSize, 5},
+                    },
+                }
+            elseif _height == 8 then
+                slopedFaces = {
+                    {
+                        {-2, -_yHalfSize, 7}, {-2, _yHalfSize, 7}, {-10.5, _yHalfSize, -0.5}, {-10.5, -_yHalfSize, -0.5},
+                    },
+                    {
+                        {10.5, -_yHalfSize, -0.5}, {10.5, _yHalfSize, -0.5},  {2, _yHalfSize, 7}, {2, -_yHalfSize, 7},
+                    },
+                    {
+                        {2, -_yHalfSize, 7}, {2, _yHalfSize, 7}, {-2, _yHalfSize, 7}, {-2, -_yHalfSize, 7},
+                    },
+                }
+            elseif _height == 10 then
+                slopedFaces = {
+                    {
+                        {-2, -_yHalfSize, 9}, {-2, _yHalfSize, 9}, {-12.5, _yHalfSize, -0.5}, {-12.5, -_yHalfSize, -0.5},
+                    },
+                    {
+                        {12.5, -_yHalfSize, -0.5}, {12.5, _yHalfSize, -0.5}, {2, _yHalfSize, 9}, {2, -_yHalfSize, 9},
+                    },
+                    {
+                        {2, -_yHalfSize, 9}, {2, _yHalfSize, 9}, {-2, _yHalfSize, 9}, {-2, -_yHalfSize, 9},
+                    },
+                }
+            end
+
+            local _leftTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.80, 0, 0, 1}
+            local _rightTransf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0.80, 0, 0, 1}
+            local result = {
+                colliders = {
+                    {
+                        params = {
+                            halfExtents = { 1.6, 0.1, 1, },
+                        },
+                        transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _height - 0.5, 1, },
+                        type = 'BOX',
+                    }
+                },
+                cost = 0,
+                edgeLists = {},
+                groundFaces = {},
+                models = {
+                    {
+                        id = baseLanesModelId,
+                        transf = _leftTransf,
+                    },
+                    {
+                        id = baseLanesModelId,
+                        transf = _rightTransf,
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
+                        transf = _leftTransf,
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
+                        transf = _rightTransf,
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/passenger_lane.mdl',
+                        transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/passenger_lane.mdl',
+                        transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
+                    },
+                    -- {
+                    --     id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
+                    --     transf = _constants.idTransf,
+                    -- },
+                },
+                terrainAlignmentLists = {
+                    {
+                        type = _paramReaders.getTerrainAlignmentType(params),
+                        optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                        slopeLow = 9.6,
+                        slopeHigh = 9.9,
+                        faces = params.flat_sloped_terrain == 0 and flatFaces or slopedFaces,
+                    },
+                },
+            }
+
+            -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
+
+            local _addBase = function(isLeft, leftOrRightTransf)
+                if _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
+                    local _baseLen = 1
+                    local edgeX0 = 0
+                    if _height == 2 then
+                        edgeX0 = -3.7
+                    elseif _height == 4 then
+                        edgeX0 = -5.7
+                    elseif _height == 6 then
+                        edgeX0 = -8.2
+                    elseif _height == 8 then
+                        edgeX0 = -10.2
+                    elseif _height == 10 then
+                        edgeX0 = -12.2
+                    end
+                    local _edges = {
+                        { { edgeX0, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 0 pos, tan
+                        { { edgeX0 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
+                    }
+                    local _edgesAfterTransf = _transfUtils.getPosTanX2Transformed(_edges, leftOrRightTransf)
+                    -- logger.print('edgesBeforeTransf =') logger.debugPrint(edgesBeforeTransf)
+                    -- logger.print('edgesAfterTransf =') logger.debugPrint(edgesAfterTransf)
+                    table.insert(
+                        result.edgeLists,
+                        {
+                            alignTerrain = (_stairsBase == 0 or _stairsBase == 1) and true or false, -- only align on ground and in tunnels
+                            edges = _edgesAfterTransf,
+                            edgeType = (_stairsBase == 2 or _stairsBase == 3) and 'BRIDGE' or nil,
+                            edgeTypeName = (_stairsBase == 2 or _stairsBase == 3) and _autoBridgePathsRefData.bridgeTypeName_withRailing or nil,
+                            freeNodes = { 1 },
+                            params = {
+                                tramTrackType  = 'NO',
+                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                            },
+                            snapNodes = (_stairsBase == 1 or _stairsBase == 3) and { 1 } or { },
+                            tag2nodes = {},
+                            type = 'STREET'
+                        }
+                    )
+
+                    -- adjust the terrain so it does not cover the bridge
+                    if (_stairsBase == 2 or _stairsBase == 3) then
+                        local facesBeforeTransf =  {{
+                            { edgeX0 -_baseLen, -_yHalfSize, 0, 1 }, { edgeX0 -_baseLen, _yHalfSize, 0, 1 },
+                            { edgeX0, _yHalfSize, 0, 1 }, { edgeX0, -_yHalfSize, 0, 1 },
+                        }}
+                        local _facesAfterTransf = {{}}
+                        for i = 1, 4, 1 do
+                            _facesAfterTransf[1][i] = _transfUtils.getVec123Transformed(facesBeforeTransf[1][i], leftOrRightTransf)
+                        end
+                        table.insert(
+                            result.terrainAlignmentLists,
+                            {
+                                type = 'LESS',
+                                optional = true,
+                                slopeLow = 9.6,
+                                slopeHigh = 9.9,
+                                faces =  _facesAfterTransf
+                            }
+                        )
+                    end
+                elseif _stairsBase == 99 then -- model
+                    local modelId = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. 'open_stairs_base_' .. _height .. 'm.mdl'
+                    table.insert(
+                        result.models,
+                        {
+                            id = modelId,
+                            transf = leftOrRightTransf,
+                        }
+                    )
+
+                    local facesBeforeTransf = {}
+                    local _zed = -0.7
+                    if _height == 2 then
+                        facesBeforeTransf = { {
+                            {-4, -_yHalfSize, _zed}, {-4, _yHalfSize, _zed}, {-5.5, _yHalfSize, _zed}, {-5.5, -_yHalfSize, _zed}
+                        } }
+                    elseif _height == 4 then
+                        facesBeforeTransf = { {
+                            {-6, -_yHalfSize, _zed}, {-6, _yHalfSize, _zed}, {-7.5, _yHalfSize, _zed}, {-7.5, -_yHalfSize, _zed}
+                        } }
+                    elseif _height == 6 then
+                        facesBeforeTransf = { {
+                            {-8.5, -_yHalfSize, _zed}, {-8.5, _yHalfSize, _zed}, {-10, _yHalfSize, _zed}, {-10, -_yHalfSize, _zed}
+                        } }
+                    elseif _height == 8 then
+                        facesBeforeTransf = { {
+                            {-10.5, -_yHalfSize, _zed}, {-10.5, _yHalfSize, _zed}, {-12, _yHalfSize, _zed}, {-12, -_yHalfSize, _zed}
+                        } }
+                    elseif _height == 10 then
+                        facesBeforeTransf = { {
+                            {-12.5, -_yHalfSize, _zed}, {-12.5, _yHalfSize, _zed}, {-14, _yHalfSize, _zed}, {-14, -_yHalfSize, _zed}
+                        } }
+                    end
+
+                    local _facesAfterTransf = {{}}
+                    for i = 1, 4, 1 do
+                        _facesAfterTransf[1][i] = _transfUtils.getVec123Transformed(facesBeforeTransf[1][i], leftOrRightTransf)
+                    end
+
+                    table.insert(
+                        result.terrainAlignmentLists,
+                        {
+                            type = 'EQUAL',
+                            optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                            slopeLow = 9.6,
+                            slopeHigh = 9.9,
+                            faces = _facesAfterTransf,
+                        }
+                    )
+                end
+            end
+
+            local _addTop = function(isNorth, leftOrRightTransf, bridgeChunkLength)
+                result.models[#result.models+1] = {
+                    id = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. 'open_stairs_' .. _height ..'m.mdl',
+                    transf = leftOrRightTransf,
+                }
+
+                local _topLanesModelId = bridgeChunkLength == -1
+                    and 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_'.. _height ..'m.mdl'
+                    or 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_'.. _height ..'m.mdl'
+                if isNorth then
+                    result.models[#result.models+1] = {
+                        id = _topLanesModelId,
+                        transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0.2, 0, 1},
+                    }
+                else
+                    result.models[#result.models+1] = {
+                        id = _topLanesModelId,
+                        transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -0.2, 0, 1},
+                    }
+                end
+
+                local _bridgeStartY = isNorth and 0.25 or -0.25
+                local _bridgeEndY = isNorth and 1.25 or -1.25 -- it must be long enough so it won't try to snap to its twin, making config impossible
+                local _zShift = 0
+                local _edges = {
+                    { { 0, _bridgeStartY, _height }, { 0, _bridgeEndY - _bridgeStartY, _zShift } },  -- node 0 pos, tan
+                    { { 0, _bridgeEndY, _height + _zShift}, { 0, _bridgeEndY, _zShift } },  -- node 1 pos, tan
+                }
+                if bridgeChunkLength == 0 or bridgeChunkLength == 1 then -- edge or snappy edge
+                    table.insert(
+                        result.edgeLists,
+                        {
+                            alignTerrain = true, -- only align on ground
+                            edges = _edges,
+                            freeNodes = { 1 },
+                            params = {
+                                tramTrackType  = 'NO',
+                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                            },
+                            snapNodes = bridgeChunkLength == 0 and { } or { 1 },
+                            tag2nodes = {},
+                            type = 'STREET'
+                        }
+                    )
+                    -- adjust the terrain so it touches the road
+                    local _zed = _height
+                    local _faces = {{
+                        { -_yHalfSize, 0, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
+                        { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, 0, _zed},
+                    }}
+                    logger.print('bridge faces =') logger.debugPrint(_faces)
+                    table.insert(
+                        result.terrainAlignmentLists,
+                        {
+                            type = 'EQUAL',
+                            optional = true,
+                            slopeLow = 0.6,
+                            slopeHigh = 0.9,
+                            faces =  _faces
+                        }
+                    )
+                elseif bridgeChunkLength == 2 or bridgeChunkLength == 3 then -- bridge or snappy bridge
+                    table.insert(
+                        result.edgeLists,
+                        {
+                            alignTerrain = false, -- only align on ground and in tunnels
+                            edges = _edges,
+                            edgeType = 'BRIDGE',
+                            edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
+                            freeNodes = { 1 },
+                            params = {
+                                tramTrackType  = 'NO',
+                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                            },
+                            snapNodes = bridgeChunkLength == 2 and { } or { 1 },
+                            tag2nodes = {},
+                            type = 'STREET'
+                        }
+                    )
+                    -- adjust the terrain so it does not cover the bridge
+                    local _zed = _height - 1
+                    local _faces = {{
+                        { -_yHalfSize, _bridgeStartY, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
+                        { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, _bridgeStartY, _zed},
+                    }}
+                    logger.print('bridge faces =') logger.debugPrint(_faces)
+                    table.insert(
+                        result.terrainAlignmentLists,
+                        {
+                            type = 'LESS',
+                            optional = true,
+                            slopeLow = 9.6,
+                            slopeHigh = 9.9,
+                            faces =  _faces
+                        }
+                    )
+                end
+            end
+
+            xpcall(
+                function()
+                    _addBase(true, _leftTransf)
+                    _addBase(false, _rightTransf)
+                    _addTop(true, _leftTransf, _bridgeChunkLengthNorth)
+                    _addTop(false, _rightTransf, _bridgeChunkLengthSouth)
+                end,
+                _myErrorHandler
+            )
+
+			return result
+		end,
+
+        upgradeFn = function(params)
+            return {}
+        end,
+	}
+end

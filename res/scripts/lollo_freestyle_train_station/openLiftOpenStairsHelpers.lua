@@ -33,6 +33,10 @@ local _paramHelpers = {
         stairsBases = {-1, 99, 0, 1, 2, 3,},
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
     },
+    twinStairs = {
+        bridgeChunkLengthsNorth = {-1, 0, 1, 2, 3},
+        bridgeChunkLengthsSouth = {-1, 0, 1, 2, 3},
+    },
 }
 
 local public = {
@@ -82,6 +86,26 @@ local public = {
                 return _paramHelpers.stairs.stairsBases[params.stairs_base + 1] or -1
             end,
         },
+        twinStairs = {
+            getHeight = function(params)
+                return _paramHelpers.stairs.heights[params.stairs_height + 1] or 8
+            end,
+            getEraPrefix = function(params)
+                return _paramHelpers.stairs.eraPrefixes[params.era_prefix + 1] or _paramHelpers.stairs.eraPrefixes[1]
+            end,
+            getBridgeChunkLengthNorth = function(params)
+                return _paramHelpers.twinStairs.bridgeChunkLengthsNorth[params.bridge_chunk_length_north + 1] or -1
+            end,
+            getBridgeChunkLengthSouth = function(params)
+                return _paramHelpers.twinStairs.bridgeChunkLengthsSouth[params.bridge_chunk_length_south + 1] or -1
+            end,
+            getTerrainAlignmentType = function(params)
+                return _paramHelpers.stairs.terrainAlignmentTypes[params.terrain_alignment_type + 1] or _paramHelpers.stairs.terrainAlignmentTypes[1]
+            end,
+            getStairsBase = function(params)
+                return _paramHelpers.stairs.stairsBases[params.stairs_base + 1] or -1
+            end,
+        },
     },
     paramValues = {
         lift = {
@@ -98,6 +122,15 @@ local public = {
             bridge_chunk_z_angle_DefaultIndex = math.floor(_paramHelpers.stairs.maxBridgeChunkZAngleDeg / _paramHelpers.stairs.bridgeChunkZAngleStep),
             bridge_chunk_y_angle = _paramHelpers.getSliderValues(_paramHelpers.stairs.maxBridgeChunkYAngleDeg, _paramHelpers.stairs.bridgeChunkYAngleStep),
             bridge_chunk_y_angle_DefaultIndex = math.floor(_paramHelpers.stairs.maxBridgeChunkYAngleDeg / _paramHelpers.stairs.bridgeChunkYAngleStep),
+            era_prefix = {'A', 'B', 'C'},
+            flat_sloped_terrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
+            stairs_base = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'),},
+            stairs_height = _arrayUtils.map(_paramHelpers.stairs.heights, function(int) return tostring(int) .. 'm' end),
+            terrain_alignment_type = {'EQUAL', 'LESS', 'GREATER'},
+        },
+        twinStairs = {
+            bridge_chunk_length_north = {'0', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_length_south = {'0', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
             era_prefix = {'A', 'B', 'C'},
             flat_sloped_terrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
             stairs_base = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'),},
@@ -148,5 +181,7 @@ local public = {
         },
     },
 }
+
+public.autoSnapHelper.twinStairs = public.autoSnapHelper.stairs
 
 return public
