@@ -81,7 +81,8 @@ end
 
 local utils = {}
 utils.getData4CementOBSOLETE = function(isSides)
-    local _pillarLength = 1
+    local _pillarLength = 999 --1
+	local _pillarWidth = 0.5
 
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_cement/'
@@ -136,9 +137,12 @@ utils.getData4CementOBSOLETE = function(isSides)
         }
 
     local config = {
-        pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
-        pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
-        pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
+        -- pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
+        -- pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
+        -- pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
+		pillarBase = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
+        pillarRepeat = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
+        pillarTop = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
         railingBegin = railing,
         railingRepeat = railing,
         railingEnd = railing,
@@ -158,7 +162,7 @@ utils.getData4CementOBSOLETE = function(isSides)
 
         if params.pillarLength ~= _pillarLength then
             params.pillarLength = _pillarLength
-            params.pillarWidth = 0.5
+            params.pillarWidth = _pillarWidth
 
             for _, railingInterval in pairs(params.railingIntervals) do
                 -- railingInterval.hasPillar = { -1, -1, }
@@ -236,7 +240,8 @@ utils.getData4CementOBSOLETE = function(isSides)
 end
 
 utils.getData4Basic = function(eraPrefix, isSides)
-    local _pillarLength = 1
+    local _pillarLength = 999 -- 1
+	local _pillarWidth = 0.5
 
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_basic/' .. eraPrefix
@@ -291,9 +296,12 @@ utils.getData4Basic = function(eraPrefix, isSides)
         }
 
     local config = {
-        pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
-        pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
-        pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
+        -- pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
+        -- pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
+        -- pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
+		pillarBase = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
+        pillarRepeat = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
+        pillarTop = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
         railingBegin = railing,
         railingRepeat = railing,
         railingEnd = railing,
@@ -313,7 +321,7 @@ utils.getData4Basic = function(eraPrefix, isSides)
 
         if params.pillarLength ~= _pillarLength then
             params.pillarLength = _pillarLength
-            params.pillarWidth = 0.5
+            params.pillarWidth = _pillarWidth
 
             for _, railingInterval in pairs(params.railingIntervals) do
                 -- railingInterval.hasPillar = { -1, -1, }
