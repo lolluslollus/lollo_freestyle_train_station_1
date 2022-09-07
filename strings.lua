@@ -343,14 +343,15 @@ function data()
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["Stairs"] = "Stairs, Lifts, Underground Entrances for the Freestyle Train Station",
             ["StairsBase"] = "Expand Base",
-			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Help yourself with AltGr + L.",
+			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",
 			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
-			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Help yourself with AltGr + L.",
+			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
 			["TopPlatformNorthLength"] = "Top Platform One",
 			["TopPlatformSouthLength"] = "Top Platform Two",
+			["TopPlatformNorthLengthTooltip"] = "It might be easier to select \"Auto Bridge\" when building or changing properties and change it to \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
 
 			-- track splitter
 			["SmartTrackSplitterName"] = "Smart track splitter",

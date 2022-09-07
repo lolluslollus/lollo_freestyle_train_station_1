@@ -48,7 +48,7 @@ function data()
             {
                 key = 'bridge_chunk_length_north', -- do not rename this param or chenga its values
                 name = _('TopPlatformNorthLength'),
-                tooltip = _('TopPlatformLengthTooltip'),
+                tooltip = _('TopPlatformNorthLengthTooltip'),
                 values = _paramValues.bridge_chunk_length_north,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
@@ -56,7 +56,7 @@ function data()
             {
                 key = 'bridge_chunk_length_south', -- do not rename this param or chenga its values
                 name = _('TopPlatformSouthLength'),
-                tooltip = _('TopPlatformLengthTooltip'),
+                tooltip = _('TopPlatformNorthLengthTooltip'),
                 values = _paramValues.bridge_chunk_length_south,
                 uiType = 'BUTTON',
                 defaultIndex = 0,
@@ -102,6 +102,9 @@ function data()
             local _height = _paramReaders.getHeight(params)
             local _bridgeChunkLengthNorth = _paramReaders.getBridgeChunkLengthNorth(params)
             local _bridgeChunkLengthSouth = _paramReaders.getBridgeChunkLengthSouth(params)
+            -- When you connect two bridges and fiddle around, one will snap and the other not.
+            -- This forces both to snap
+            local _isSnapTop = (_bridgeChunkLengthNorth == 1 or _bridgeChunkLengthNorth == 3 or _bridgeChunkLengthSouth == 1 or _bridgeChunkLengthSouth == 3)
             local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
@@ -401,7 +404,7 @@ function data()
                     { { 0, _bridgeStartY, _height }, { 0, _bridgeEndY - _bridgeStartY, _zShift } },  -- node 0 pos, tan
                     { { 0, _bridgeEndY, _height + _zShift}, { 0, _bridgeEndY, _zShift } },  -- node 1 pos, tan
                 }
-                if bridgeChunkLength == 0 or bridgeChunkLength == 1 then -- edge or snappy edge
+                --[[ if bridgeChunkLength == 0 or bridgeChunkLength == 1 then -- edge or snappy edge
                     table.insert(
                         result.edgeLists,
                         {
@@ -412,7 +415,7 @@ function data()
                                 tramTrackType  = 'NO',
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
-                            snapNodes = bridgeChunkLength == 0 and { } or { 1 },
+                            snapNodes = (_isSnapTop or bridgeChunkLength ~= 0) and { 1 } or { },
                             tag2nodes = {},
                             type = 'STREET'
                         }
@@ -434,7 +437,7 @@ function data()
                             faces =  _faces
                         }
                     )
-                elseif bridgeChunkLength == 2 or bridgeChunkLength == 3 then -- bridge or snappy bridge
+                else ]]if bridgeChunkLength == 2 or bridgeChunkLength == 3 then -- bridge or snappy bridge
                     table.insert(
                         result.edgeLists,
                         {
@@ -447,7 +450,7 @@ function data()
                                 tramTrackType  = 'NO',
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
-                            snapNodes = bridgeChunkLength == 2 and { } or { 1 },
+                            snapNodes = (_isSnapTop or bridgeChunkLength ~= 2) and { 1 } or { },
                             tag2nodes = {},
                             type = 'STREET'
                         }

@@ -34,8 +34,8 @@ local _paramHelpers = {
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
     },
     twinStairs = {
-        bridgeChunkLengthsNorth = {-1, 0, 1, 2, 3},
-        bridgeChunkLengthsSouth = {-1, 0, 1, 2, 3},
+        bridgeChunkLengthsNorth = {-1, --[[ 0, 1, ]] 2, 3},
+        bridgeChunkLengthsSouth = {-1, --[[ 0, 1, ]] 2, 3},
     },
 }
 
@@ -129,8 +129,8 @@ local public = {
             terrain_alignment_type = {'EQUAL', 'LESS', 'GREATER'},
         },
         twinStairs = {
-            bridge_chunk_length_north = {'0', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
-            bridge_chunk_length_south = {'0', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_length_north = {'0', --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_length_south = {'0', --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
             era_prefix = {'A', 'B', 'C'},
             flat_sloped_terrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
             stairs_base = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'),},
