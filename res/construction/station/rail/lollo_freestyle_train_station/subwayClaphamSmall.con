@@ -23,7 +23,6 @@ function data()
         updateFn = function(params)
             -- logger.print('subway.con.updateFn starting')
             -- logger.debugPrint(params)
-
             local result = {
                 colliders = { },
                 cost = 0,

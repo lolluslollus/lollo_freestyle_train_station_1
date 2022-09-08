@@ -60,9 +60,12 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
-                local modelId = eraPrefix == _constants.eras.era_c.prefix
-                    and 'lollo_freestyle_train_station/subway/holloway_signs_era_c.mdl'
-                    or 'lollo_freestyle_train_station/subway/holloway_signs_era_a.mdl'
+				local modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_c.mdl'
+				if eraPrefix == _constants.eras.era_a.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_a.mdl'
+				elseif eraPrefix == _constants.eras.era_b.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_b.mdl'
+				end
                 result.models[#result.models + 1] = {
 					id = modelId,
 					slotId = slotId,
@@ -77,9 +80,12 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
-                local modelId = eraPrefix == _constants.eras.era_c.prefix
-                    and 'lollo_freestyle_train_station/subway/holloway_signs_era_c.mdl'
-                    or 'lollo_freestyle_train_station/subway/holloway_signs_era_a.mdl'
+				local modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_c.mdl'
+				if eraPrefix == _constants.eras.era_a.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_a.mdl'
+				elseif eraPrefix == _constants.eras.era_b.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_b.mdl'
+				end
                 result.models[#result.models + 1] = {
 					id = modelId,
 					slotId = slotId,
@@ -94,9 +100,12 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
-                local modelId = eraPrefix == _constants.eras.era_c.prefix
-                    and 'lollo_freestyle_train_station/subway/clapham_signs_era_c.mdl'
-                    or 'lollo_freestyle_train_station/subway/clapham_signs_era_a.mdl'
+				local modelId = 'lollo_freestyle_train_station/subway/clapham_signs_era_c.mdl'
+				if eraPrefix == _constants.eras.era_a.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/clapham_signs_era_a.mdl'
+				elseif eraPrefix == _constants.eras.era_b.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/clapham_signs_era_b.mdl'
+				end
                 result.models[#result.models + 1] = {
 					id = modelId,
 					slotId = slotId,
@@ -111,9 +120,12 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
-                local modelId = eraPrefix == _constants.eras.era_c.prefix
-                    and 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_c.mdl'
-                    or 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_a.mdl'
+				local modelId = 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_c.mdl'
+				if eraPrefix == _constants.eras.era_a.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_a.mdl'
+				elseif eraPrefix == _constants.eras.era_b.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_b.mdl'
+				end
                 result.models[#result.models + 1] = {
 					id = modelId,
 					slotId = slotId,
@@ -128,9 +140,12 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
-                local modelId = eraPrefix == _constants.eras.era_c.prefix
-                    and 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_c.mdl'
-                    or 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_a.mdl'
+				local modelId = 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_c.mdl'
+				if eraPrefix == _constants.eras.era_a.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_a.mdl'
+				elseif eraPrefix == _constants.eras.era_b.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/clapham_medium_signs_era_b.mdl'
+				end
                 result.models[#result.models + 1] = {
 					id = modelId,
 					slotId = slotId,

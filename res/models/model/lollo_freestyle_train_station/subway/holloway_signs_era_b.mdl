@@ -1,0 +1,52 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    materials = { 'lollo_freestyle_train_station/asset/era_b_trainstation_assets_dark.mtl', },
+                                    mesh = 'lollo_freestyle_train_station/asset/era_b_single_station_name_lod0.msh',
+                                    transf = _constants.idTransf
+                                }
+                            },
+                            transf = {0, -0.902, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  -3.45, 0, 3.4, 1}
+                        }
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 250
+            },
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = 'CENTER',
+                        alphaMode = 'CUTOUT',
+                        childId = 'RootNode',
+                        color = {1, 1, 1},
+                        fitting = 'SCALE',
+                        nLines = 2,
+                        -- renderMode = "EMISSIVE",
+                        size = {2.25, 0.45},
+                        transf = { 0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 0,  -3.48, 1.12, 3.18, 1},
+                        type = 'STATION_NAME',
+                        verticalAlignment = 'CENTER'
+                    }
+                }
+            }
+        },
+        version = 1
+    }
+end
