@@ -901,7 +901,7 @@ return {
                                 tag = tag
                             }
 
-                            if isFreeFromOpenStairsAndTunnels and math.fmod(ii, privateConstants.deco.pillarPeriod) == 0 then
+                            if cpf.type ~= 2 and isFreeFromOpenStairsAndTunnels and math.fmod(ii, privateConstants.deco.pillarPeriod) == 0 then
                                 local myTransf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
@@ -978,7 +978,7 @@ return {
                             tag = tag
                         }
 
-                        if isFreeFromOpenStairs and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
+                        if cpf.type ~= 2 and isFreeFromOpenStairs and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
                             -- prevent overlapping with station name signs
                             if not(_barredNumberSignIIs[ii])
                             and not(_barredNumberSignIIs[ii+1])
