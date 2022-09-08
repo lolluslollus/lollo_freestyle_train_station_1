@@ -19,7 +19,7 @@ function data()
                 node = {
                     children = {
                         {
-                            materials = { "station/rail/cargo/cargo_assets_1.mtl", },
+                            materials = { 'lollo_freestyle_train_station/asset/cargo_assets_1.mtl', },
                             -- mesh = "station/rail/asset/cargo_name_board/name_board_lod0.msh",
                             mesh = 'lollo_freestyle_train_station/asset/cargo_name_board_lod0.msh',
                             name = "name_board",

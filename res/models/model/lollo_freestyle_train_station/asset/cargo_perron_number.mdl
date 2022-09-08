@@ -19,7 +19,7 @@ function data()
 			node = {
 				children = {
 					{
-						materials = { "station/rail/cargo/cargo_assets_1.mtl", },
+						materials = { 'lollo_freestyle_train_station/asset/cargo_assets_1.mtl' },
 						mesh = "lollo_freestyle_train_station/asset/cargo_perron_number.msh",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},

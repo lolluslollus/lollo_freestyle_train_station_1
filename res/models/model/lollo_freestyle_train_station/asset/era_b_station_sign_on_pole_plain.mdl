@@ -1,0 +1,63 @@
+function data()
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                "lollo_freestyle_train_station/asset/era_b_station_signs.mtl",
+                                "lollo_freestyle_train_station/asset/era_b_station_detail_1_dark.mtl",
+                            },
+                            mesh = "lollo_freestyle_train_station/asset/era_b_station_sign_on_pole_plain_lod0.msh",
+                            name = "name_board",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 250,
+            },
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = "CENTER",
+                        alpha = 1,
+                        alphaMode = "CUTOUT",
+                        childId = "RootNode",
+                        color = { 255, 225, 225, },
+                        fitting = "SCALE",
+                        nLines = 2,
+                        size = { 2.6, 0.7 },
+                        transf = { 1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -1.3, -0.1, 2.48, 1, },
+                        type = "STATION_NAME",
+                        verticalAlignment = "CENTER",
+                    },
+                    {
+                        alignment = "CENTER",
+                        alpha = 1,
+                        alphaMode = "CUTOUT",
+                        childId = "RootNode",
+                        color = { 255, 225, 225, },
+                        fitting = "SCALE",
+                        nLines = 2,
+                        size = { 2.6, 0.7 },
+                        transf = { -1, 0, 0, 0,  0, 0, 1, 0,  0, 1, 0, 0,  1.3, 0.1, 2.48, 1, },
+                        type = "STATION_NAME",
+                        verticalAlignment = "CENTER",
+                    },
+                },
+            },
+        },
+        version = 1,
+    }
+    end
+    

@@ -22,7 +22,7 @@ function data()
 						children = {
 							{
 								materials = { 
-									'station/rail/cargo/cargo_assets_1.mtl',
+									'lollo_freestyle_train_station/asset/cargo_assets_1.mtl',
 									'lollo_freestyle_train_station/emissive/sodium-medium.mtl',
 								},
 								mesh = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_lod0.msh',
@@ -45,7 +45,7 @@ function data()
 				children = {
 					{
 						materials = { 
-							'station/rail/cargo/cargo_assets_1.mtl',
+							'lollo_freestyle_train_station/asset/cargo_assets_1.mtl',
 							'lollo_freestyle_train_station/emissive/sodium-medium.mtl',
 						},
 						mesh = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_lod1.msh',

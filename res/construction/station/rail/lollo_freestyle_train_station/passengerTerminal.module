@@ -227,7 +227,8 @@ return {
 				if eraPrefix == moduleHelpers.eras.era_a.prefix then
 					modelId = 'lollo_freestyle_train_station/asset/era_a_station_sign_on_pole.mdl'
 				elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
-					modelId = 'lollo_freestyle_train_station/asset/era_b_station_sign_on_pole.mdl'
+					-- modelId = 'lollo_freestyle_train_station/asset/era_b_station_sign_on_pole.mdl'
+					modelId = 'lollo_freestyle_train_station/asset/era_b_station_sign_on_pole_plain.mdl'
 				end
 				result.models[#result.models + 1] = {
 					id = modelId,
@@ -239,7 +240,7 @@ return {
 		end
 		-- platform number signs
 		-- for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-		for ii = 3 + _constants.maxPassengerWaitingAreaEdgeLength, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, _constants.maxPassengerWaitingAreaEdgeLength * 6 do
+		for ii = 3 + math.floor(_constants.maxPassengerWaitingAreaEdgeLength / 2), #params.terminals[nTerminal].centrePlatformsFineRelative - 2, _constants.maxPassengerWaitingAreaEdgeLength * 6 do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
 			local platformWidth = cpf.width
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
@@ -274,7 +275,8 @@ return {
 					local yShift = isTrackOnPlatformLeft and (platformWidth * 0.5 - 0.75) or (-platformWidth * 0.5 + 0.75)
 					local modelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
 					if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl'
-					elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/asset/era_b_perron_number.mdl'
+					-- elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/asset/era_b_perron_number.mdl'
+				elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
 					end
 					result.models[#result.models + 1] = {
 						id = modelId,

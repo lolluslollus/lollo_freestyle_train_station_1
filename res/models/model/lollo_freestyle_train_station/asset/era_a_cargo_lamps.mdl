@@ -39,7 +39,6 @@ function data()
 				children = {
 					{
 						materials = {
-							-- 'station/rail/cargo/cargo_assets_1.mtl',
 							"lollo_freestyle_train_station/metal/rough_iron.mtl",
 							"lollo_freestyle_train_station/emissive/tungsten_low.mtl",
 						},
