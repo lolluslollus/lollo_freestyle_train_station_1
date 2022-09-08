@@ -1308,7 +1308,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
-    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.platforms.disjointNeighbourEdgeIds.isNode1AdjoiningAConstruction or endEntities4T.platforms.disjointNeighbourEdgeIds.isNode2AdjoiningAConstruction
+    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.platforms.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction or endEntities4T.platforms.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction
     for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
@@ -1372,8 +1372,8 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     for _, endEntity in pairs(endEntities) do
         if not(isSuccess) then break end
 
-        isAnyNodeAdjoiningAConstruction = isAnyNodeAdjoiningAConstruction or endEntity.disjointNeighbourEdgeIds.isNodeAdjoiningAConstruction
-        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds.edgeIds) do
+        isAnyNodeAdjoiningAConstruction = isAnyNodeAdjoiningAConstruction or endEntity.isNodeAdjoiningAConstruction
+        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
             if not(edgeUtils.isValidAndExistingId(edgeId)) then
                 logger.warn('invalid edgeId in buildSnappyStreetEdges')
                 isSuccess = false
@@ -1485,7 +1485,7 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
-    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.tracks.disjointNeighbourEdgeIds.isNode1AdjoiningAConstruction or endEntities4T.tracks.disjointNeighbourEdgeIds.isNode2AdjoiningAConstruction
+    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.tracks.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction or endEntities4T.tracks.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction
     for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
