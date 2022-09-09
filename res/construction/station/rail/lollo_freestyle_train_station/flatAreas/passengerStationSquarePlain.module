@@ -35,14 +35,6 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local platformLiftId = slotHelpers.mangleId(nTerminal, nTrackEdge, _constants.idBases.platformLiftSlotId)
-		local sideLiftId = slotHelpers.mangleId(nTerminal, nTrackEdge, _constants.idBases.sideLiftSlotId)
-		local buildingHeight = (params.modules[platformLiftId] ~= nil or params.modules[sideLiftId] ~= nil)
-			and moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
-			or 0
-		if not(buildingHeight) then return end
-		logger.print('buildingHeight =', buildingHeight)
-
 		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 		local modelId = nil
 		if eraPrefix == moduleHelpers.eras.era_a.prefix then
@@ -57,12 +49,12 @@ return {
 			slotId = slotId,
 			transf = transfUtilsUG.mul(
 				slotTransf,
-				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, -buildingHeight, 1 }
+				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
 			),
 			tag = tag
 		}
 
-		moduleHelpers.lifts.doTerrain4SideLifts(buildingHeight, slotTransf, result,
+		moduleHelpers.lifts.doTerrain4SideLifts(0, slotTransf, result,
 		_constants.era_c_groundFacesFillKey, _constants.era_c_groundFacesStrokeOuterKey)
 	end,
 

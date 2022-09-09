@@ -71,7 +71,7 @@ return {
 			spacing = {-1, 4, 4, 4},
 			transf = transfUtilsUG.mul(
 				slotTransf,
-				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -3.4, 0, 1 }
+				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -3.4, -buildingHeight, 1 }
 			),
 			type = _constants.passengerStationSquareModuleType,
 		})
@@ -81,7 +81,7 @@ return {
 			spacing = {-1, 4, 4, 4},
 			transf = transfUtilsUG.mul(
 				slotTransf,
-				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 2.9, 0, 1 }
+				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 2.9, -buildingHeight, 1 }
 			),
 			type = _constants.passengerStationSquareModuleType,
 		})
