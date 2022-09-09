@@ -45,9 +45,13 @@ return {
 		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 
 		local modelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_24x8.mdl'
-		elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_24x8.mdl'
-		else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_24x8.mdl'
+		-- if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_24x8.mdl'
+		-- elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_24x8.mdl'
+		-- else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_24x8.mdl'
+		-- end
+		if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_30x8.mdl'
+		elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_30x8.mdl'
+		else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_30x8.mdl'
 		end
 		result.models[#result.models + 1] = {
 			id = modelId,
@@ -111,7 +115,8 @@ return {
 	getModelsFn = function(params)
 		return {
 			{
-				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_24x8.mdl',
+				-- id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_24x8.mdl',
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_30x8.mdl',
 				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
 			},
 		}

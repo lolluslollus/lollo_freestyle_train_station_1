@@ -21,7 +21,7 @@ function data()
                                 'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
                                 'lollo_freestyle_train_station/square_cobbles.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_platform_area_8x5m.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/passenger_platform_area_10x5m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },

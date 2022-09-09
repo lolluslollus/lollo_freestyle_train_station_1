@@ -9,8 +9,8 @@ local transfUtilsUG = require "transf"
 function data()
 	return {
 		availability = {
-			yearFrom = 0,
-			yearTo = 0
+			yearFrom = -1,
+			yearTo = -1,
 		},
 		category = {
 			categories = { "passenger-road-access", },
@@ -19,8 +19,8 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("FlatPassengerArea8x10Name"),
-			description = _("FlatPassengerArea8x10Desc"),
+			name = _("FlatPassengerArea10x10Name"),
+			description = _("FlatPassengerArea10x10Desc"),
 			icon = "ui/lollo_freestyle_train_station/flatPassengerArea8x10.tga"
 		},
 		metadata = { },

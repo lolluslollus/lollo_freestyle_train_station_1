@@ -25,8 +25,8 @@ function data()
                                 "lollo_freestyle_train_station/bricks_old.mtl",
                                 "lollo_freestyle_train_station/era_a_cargo_doors.mtl",
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_cargo_station_8x10m_lod0.msh',
-                            name = 'era_a_station_8x10_lod0',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_cargo_station_10x10m_lod0.msh',
+                            name = 'era_a_station_10x10_lod0',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },

@@ -1,0 +1,217 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 1044,
+					offset = 33804,
+				},
+				position = {
+					count = 1044,
+					offset = 36936,
+				},
+				tangent = {
+					count = 1044,
+					offset = 34848,
+				},
+				uv0 = {
+					count = 1044,
+					offset = 35892,
+				},
+			},
+			materials = {
+				"station/train/passenger/walls.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 3348,
+					offset = 37980,
+				},
+				position = {
+					count = 3348,
+					offset = 48024,
+				},
+				tangent = {
+					count = 3348,
+					offset = 41328,
+				},
+				uv0 = {
+					count = 3348,
+					offset = 44676,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/facades.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 360,
+					offset = 51372,
+				},
+				position = {
+					count = 360,
+					offset = 52452,
+				},
+				tangent = {
+					count = 360,
+					offset = 51732,
+				},
+				uv0 = {
+					count = 360,
+					offset = 52092,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/floor.002.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 14208,
+					offset = 52812,
+				},
+				position = {
+					count = 14208,
+					offset = 95436,
+				},
+				tangent = {
+					count = 14208,
+					offset = 67020,
+				},
+				uv0 = {
+					count = 14208,
+					offset = 81228,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/stucco.001.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 720,
+					offset = 109644,
+				},
+				position = {
+					count = 720,
+					offset = 111804,
+				},
+				tangent = {
+					count = 720,
+					offset = 110364,
+				},
+				uv0 = {
+					count = 720,
+					offset = 111084,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/flatSides/roof.001.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 144,
+					offset = 112524,
+				},
+				position = {
+					count = 144,
+					offset = 112956,
+				},
+				tangent = {
+					count = 144,
+					offset = 112668,
+				},
+				uv0 = {
+					count = 144,
+					offset = 112812,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/flatSides/windows.001.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 288,
+					offset = 113100,
+				},
+				position = {
+					count = 288,
+					offset = 113964,
+				},
+				tangent = {
+					count = 288,
+					offset = 113388,
+				},
+				uv0 = {
+					count = 288,
+					offset = 113676,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/flatSides/shutter.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 114252,
+				},
+				position = {
+					count = 24,
+					offset = 114324,
+				},
+				tangent = {
+					count = 24,
+					offset = 114276,
+				},
+				uv0 = {
+					count = 24,
+					offset = 114300,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/flatSides/tiles.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 3732,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 12432,
+			numComp = 3,
+			offset = 21372,
+		},
+		tangent = {
+			count = 5408,
+			numComp = 4,
+			offset = 3732,
+		},
+		uv0 = {
+			count = 12232,
+			numComp = 2,
+			offset = 9140,
+		},
+	},
+}
+end

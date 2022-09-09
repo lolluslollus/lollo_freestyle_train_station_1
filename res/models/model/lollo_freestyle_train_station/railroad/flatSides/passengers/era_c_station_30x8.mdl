@@ -38,8 +38,8 @@ function data()
                                 'lollo_freestyle_train_station/windows_new.mtl',
                                 'lollo_freestyle_train_station/era_b_doors_barely_transparent.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_station_24x5x8_lod0.msh',
-                            name = 'era_c_station_24x8_lod0',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_station_30x5x8_lod0.msh',
+                            name = 'era_c_station_30x8_lod0',
                             transf = _constants.idTransf
                         },
                         {
@@ -138,8 +138,8 @@ function data()
                                 'lollo_freestyle_train_station/windows_new.mtl',
                                 'lollo_freestyle_train_station/era_b_doors_barely_transparent.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_station_24x5x8_lod0.msh',
-                            name = 'era_c_station_24x8_lod1',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_station_30x5x8_lod0.msh',
+                            name = 'era_c_station_30x8_lod1',
                             transf = _constants.idTransf
                         },
                         {
@@ -200,8 +200,8 @@ function data()
                                 'lollo_freestyle_train_station/windows_new.mtl',
                                 'lollo_freestyle_train_station/era_b_doors_barely_transparent.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_passenger_station_24x5x8_lod1.msh',
-                            name = 'era_c_station_24x8_lod2',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_a_passenger_station_30x5x8_lod1.msh',
+                            name = 'era_c_station_30x8_lod2',
                             transf = _constants.idTransf
                         },
                     },
