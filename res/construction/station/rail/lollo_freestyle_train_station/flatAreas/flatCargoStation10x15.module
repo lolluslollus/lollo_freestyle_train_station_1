@@ -43,9 +43,9 @@ function data()
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_8x15.mdl'
+			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_10x15.mdl'
 			if eraPrefix == moduleHelpers.eras.era_a.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_8x15.mdl'
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_10x15.mdl'
 			end
 
 			result.models[#result.models + 1] = {
@@ -100,7 +100,7 @@ function data()
 		getModelsFn = function(params)
 			return {
 				{
-					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_8x15.mdl',
+					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_10x15.mdl',
 					transf = _constants.idTransf,
 				},
 			}
