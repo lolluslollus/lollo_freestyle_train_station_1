@@ -33,20 +33,21 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
+		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 		local buildingTransf = transfUtilsUG.mul(
-			slotTransf,
+			zAdjustedTransf,
 			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
 		)
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+        local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
-		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
+		local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
 
 		local stationModelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then
+		if eraPrefix == moduleHelpers.eras.era_a.prefix then
 			stationModelId = 'lollo_freestyle_train_station/lift/era_a_side_lifts_9_5_5.mdl'
-		elseif era == moduleHelpers.eras.era_b.prefix then
+		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
 			stationModelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_9_5_5.mdl'
 		else
 			stationModelId = 'lollo_freestyle_train_station/lift/side_lifts_9_5_5.mdl'
@@ -57,9 +58,10 @@ return {
 			transf = buildingTransf,
 			tag = tag
 		}
+		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 		-- add some deco
-		if era ~= moduleHelpers.eras.era_a.prefix then
+		if eraPrefix ~= moduleHelpers.eras.era_a.prefix then
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 				slotId = slotId,
@@ -86,7 +88,7 @@ return {
 			spacing = {-1, 4, 4, 4},
 			transf = transfUtilsUG.mul(
 				buildingTransf,
-				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, - 5, 1 }
+				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -5, 1 }
 			),
 			type = _constants.passengerStationSquareModuleType,
 		})
@@ -97,7 +99,7 @@ return {
 			{6.0, 6.2, -5.0, 1},
 			{6.0, -6.2, -5.0, 1},
 		}
-		modulesutil.TransformFaces(slotTransf, groundFace)
+		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 		table.insert(
 			result.groundFaces,
 			{

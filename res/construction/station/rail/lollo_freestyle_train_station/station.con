@@ -496,18 +496,18 @@ function data()
 											type = _constants.flatPassengerStation0MModuleType,
 										})
 										if params.modules[myId] ~= nil then
-											local lane2AreaTransf = transfUtils.get1MLaneTransf(
-												{
-													myPosTanX2[1][1][1],
-													myPosTanX2[1][1][2],
-													myPosTanX2[1][1][3] + _laneZ,
-												},
-												transfUtils.transf2Position(myTransf)
-											)
-											result.models[#result.models+1] = {
-												id = _constants.passengerLaneModelId,
-												transf = lane2AreaTransf
-											}
+											-- local lane2AreaTransf = transfUtils.get1MLaneTransf(
+											-- 	{
+											-- 		myPosTanX2[1][1][1],
+											-- 		myPosTanX2[1][1][2],
+											-- 		myPosTanX2[1][1][3] + _laneZ,
+											-- 	},
+											-- 	transfUtils.transf2Position(myTransf)
+											-- )
+											-- result.models[#result.models+1] = {
+											-- 	id = _constants.passengerLaneModelId,
+											-- 	transf = lane2AreaTransf
+											-- }
 											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation0MSlotId)
 										end
 									end
@@ -528,18 +528,18 @@ function data()
 											type = _constants.flatPassengerStation5MModuleType,
 										})
 										if params.modules[myId] ~= nil then
-											local lane2AreaTransf = transfUtils.get1MLaneTransf(
-												{
-													myPosTanX2[1][1][1],
-													myPosTanX2[1][1][2],
-													myPosTanX2[1][1][3] + _laneZ,
-												},
-												transfUtils.transf2Position(myTransf)
-											)
-											result.models[#result.models+1] = {
-												id = _constants.passengerLaneModelId,
-												transf = lane2AreaTransf
-											}
+											-- local lane2AreaTransf = transfUtils.get1MLaneTransf(
+											-- 	{
+											-- 		myPosTanX2[1][1][1],
+											-- 		myPosTanX2[1][1][2],
+											-- 		myPosTanX2[1][1][3] + _laneZ,
+											-- 	},
+											-- 	transfUtils.transf2Position(myTransf)
+											-- )
+											-- result.models[#result.models+1] = {
+											-- 	id = _constants.passengerLaneModelId,
+											-- 	transf = lane2AreaTransf
+											-- }
 											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation5MSlotId)
 										end
 									end

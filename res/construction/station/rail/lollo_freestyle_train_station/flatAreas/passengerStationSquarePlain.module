@@ -3,6 +3,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
 
@@ -34,15 +35,19 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
+		local platformLiftId = slotHelpers.mangleId(nTerminal, nTrackEdge, _constants.idBases.platformLiftSlotId)
+		local sideLiftId = slotHelpers.mangleId(nTerminal, nTrackEdge, _constants.idBases.sideLiftSlotId)
+		local buildingHeight = (params.modules[platformLiftId] ~= nil or params.modules[sideLiftId] ~= nil)
+			and moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
+			or 0
 		if not(buildingHeight) then return end
 		logger.print('buildingHeight =', buildingHeight)
 
-		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 		local modelId = nil
-		if era == moduleHelpers.eras.era_a.prefix then
+		if eraPrefix == moduleHelpers.eras.era_a.prefix then
 			modelId = 'lollo_freestyle_train_station/lift/era_a_station_square_plain.mdl'
-		elseif era == moduleHelpers.eras.era_b.prefix then
+		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
 			modelId = 'lollo_freestyle_train_station/lift/era_b_station_square_plain.mdl'
 		else
 			modelId = 'lollo_freestyle_train_station/lift/station_square_plain.mdl'

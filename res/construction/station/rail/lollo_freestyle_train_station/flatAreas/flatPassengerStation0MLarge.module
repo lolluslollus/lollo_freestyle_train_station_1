@@ -34,23 +34,20 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
+		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 		local buildingTransf = transfUtilsUG.mul(
-			slotTransf,
+			zAdjustedTransf,
 			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
 		)
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+        local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
-		local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
+		local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
 
 		local modelId = nil
-		-- if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_24x8.mdl'
-		-- elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_24x8.mdl'
-		-- else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_24x8.mdl'
-		-- end
-		if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_30x8.mdl'
-		elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_30x8.mdl'
+		if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_30x8.mdl'
+		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_30x8.mdl'
 		else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_30x8.mdl'
 		end
 		result.models[#result.models + 1] = {
@@ -59,6 +56,7 @@ return {
 			transf = buildingTransf,
 			tag = tag
 		}
+		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_24x8.mdl',
 			slotId = slotId,
@@ -84,7 +82,7 @@ return {
 			{8.5, 12.2, -_constants.stairsAndRampHeight, 1},
 			{8.5, -12.2, -_constants.stairsAndRampHeight, 1},
 		}
-		modulesutil.TransformFaces(slotTransf, groundFace)
+		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 		table.insert(
 			result.groundFaces,
 			{
