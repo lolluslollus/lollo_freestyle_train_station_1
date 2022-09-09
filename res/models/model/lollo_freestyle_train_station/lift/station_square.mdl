@@ -265,9 +265,8 @@ function data()
                         fitting = 'SCALE',
                         nLines = 1,
                         -- renderMode = "EMISSIVE",
-                        size = {5.2, 0.6},
-                        -- transf = {1, 0, 0, 0, 0, 0, 1, 0, 0, -1, 0, 0, -2.6, -3.833, 3.63, 1},
-                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0, -1.8, -3.833, 3.70, 1},
+                        size = {6, 0.6},
+                        transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0, -2.2, -3.833, 3.66, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }

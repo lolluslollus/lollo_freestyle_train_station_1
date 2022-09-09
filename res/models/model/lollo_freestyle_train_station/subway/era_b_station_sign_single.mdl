@@ -41,7 +41,7 @@ function data()
                         fitting = "SCALE",
                         nLines = 2,
                         size = { 2.6, 0.7 },
-                        transf = { 1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -1.3, 1.58, 5.5, 1, },
+                        transf = { 1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -1.3, 1.58, 5.47, 1, },
                         type = "STATION_NAME",
                         verticalAlignment = "CENTER",
                     },
