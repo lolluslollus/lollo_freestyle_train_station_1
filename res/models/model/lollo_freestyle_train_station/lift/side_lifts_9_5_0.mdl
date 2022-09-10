@@ -104,8 +104,8 @@ function data()
                         fitting = 'SCALE',
                         nLines = 2,
                         -- renderMode = "EMISSIVE",
-                        size = {6, 0.7},
-                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -3.0, -4.26, 3.33, 1},
+                        size = {5.5, 0.7},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -2.75, -4.26, 3.33, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }
