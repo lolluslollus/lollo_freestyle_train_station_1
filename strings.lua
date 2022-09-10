@@ -40,7 +40,7 @@ function data()
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweaks mod.
 				- If you want different buildings, use assets. There are mods with those.
-				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily.
+				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily. Still, the game does not handle them gracefully and AltGr + L will help you snap them to your network.
 				- Use the track constructions "Smart track splitter" to do precision work.
 				- Upgrading tracks does all tracks at once.
 				- If you have too many track types, use the categories in the menu to make life easier.
@@ -54,7 +54,7 @@ function data()
 				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
 				- The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
 				- Some modules can only be placed after some others, eg stairs exits after stairs, but the menu does not refresh automatically. After placing the first set of stairs, you need to close and reopen the menu for stairs exits to appear.
-				- Some track and signal mods are incompatible.
+				- Some track and signal mods are incompatible. As a general rule, avoid mods that overwrite stock game tracks or make them unavailable. Chances are they are bad anyway.
 				- Minor version 1.81 (31st August 2022) introduced important layout changes. Previously built terminals will keep working but might have some glitches. To benefit from the changes, remove them, wait for them to reappear and build them anew.
 			]],
 			["NAME"] = "Freestyle train station",
