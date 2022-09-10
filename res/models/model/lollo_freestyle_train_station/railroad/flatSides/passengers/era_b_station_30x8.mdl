@@ -3,14 +3,14 @@ function data()
     local _clockTransf = {1.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1.5, 0,  0, -7.1, 8.20, 1}
     return {
         boundingInfo = {
-            bbMax = {15, 0.3, 9.0},
+            bbMax = {15, 0.3, 10.6},
             bbMin = {-15, -7.3, -1.5} -- a bit lower to protect the floor from tunnels
         },
         collider = {
             params = {
-                halfExtents = {15, 3.8, 6.0} -- a bit taller to protect the floor from tunnels
+                halfExtents = {15, 3.8, 6.8} -- a bit taller to protect the floor from tunnels
             },
-            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -3.5, 3.0, 1 }, -- a bit lower to protect the floor from tunnels
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -3.5, 3.8, 1 }, -- a bit lower to protect the floor from tunnels
             type = 'BOX'
         },
         lods = {
