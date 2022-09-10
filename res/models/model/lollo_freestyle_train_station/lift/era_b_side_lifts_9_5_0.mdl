@@ -3,12 +3,12 @@ function data()
     local buildingTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
     return {
         boundingInfo = {
-            bbMax = {4.4, 0.3, 5.0}, -- this would be the building without vents or tunnel awereness
-            bbMin = {-4.4, -4.2, -1.5} -- a bit lower to protect the floor from tunnels
+            bbMax = {4.3, 0.3, 5.0}, -- this would be the building without vents or tunnel awereness
+            bbMin = {-4.3, -4.2, -1.5} -- a bit lower to protect the floor from tunnels
         },
         collider = {
             params = {
-                halfExtents = {4.4, 2.25, 4.5} -- a bit taller to protect the floor from tunnels
+                halfExtents = {4.3, 2.25, 4.5} -- a bit taller to protect the floor from tunnels
             },
             transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.95, 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
             type = 'BOX'
@@ -44,7 +44,7 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/wall_marble_1.mtl',
                                 'lollo_freestyle_train_station/wall_marble_2.mtl',
-                                'lollo_freestyle_train_station/era_b_doors.mtl',
+                                -- 'lollo_freestyle_train_station/era_b_doors.mtl',
                                 'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_b_station_9x5x6.msh',
@@ -58,7 +58,7 @@ function data()
                                     transf = _constants.idTransf
                                 }
                             },
-                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.22, 3.63, 1}
+                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.22, 4.05, 1}
                         }
                     },
                     name = 'RootNode',
@@ -76,7 +76,7 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/wall_marble_1.mtl',
                                 'lollo_freestyle_train_station/wall_marble_2.mtl',
-                                'lollo_freestyle_train_station/era_b_doors.mtl',
+                                -- 'lollo_freestyle_train_station/era_b_doors.mtl',
                                 'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_b_station_9x5x6.msh',
@@ -102,7 +102,7 @@ function data()
                         nLines = 2,
                         -- renderMode = "EMISSIVE",
                         size = {5.5, 0.7},
-                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -2.75, -4.25, 3.33, 1},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -2.75, -4.25, 3.75, 1},
                         type = 'STATION_NAME',
                         verticalAlignment = 'CENTER'
                     }

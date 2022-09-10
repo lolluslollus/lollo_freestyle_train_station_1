@@ -1,0 +1,171 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 960,
+					offset = 6140,
+				},
+				position = {
+					count = 960,
+					offset = 5180,
+				},
+				tangent = {
+					count = 960,
+					offset = 4220,
+				},
+				uv0 = {
+					count = 960,
+					offset = 7100,
+				},
+			},
+			materials = {
+				"station/road/streetstation/iron_w_rivets.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 144,
+					offset = 8348,
+				},
+				position = {
+					count = 144,
+					offset = 8204,
+				},
+				tangent = {
+					count = 144,
+					offset = 8060,
+				},
+				uv0 = {
+					count = 144,
+					offset = 8492,
+				},
+			},
+			materials = {
+				"station/train/passenger/floor.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 8828,
+				},
+				position = {
+					count = 96,
+					offset = 8732,
+				},
+				tangent = {
+					count = 96,
+					offset = 8636,
+				},
+				uv0 = {
+					count = 96,
+					offset = 8924,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/doors.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 360,
+					offset = 9740,
+				},
+				position = {
+					count = 360,
+					offset = 9380,
+				},
+				tangent = {
+					count = 360,
+					offset = 9020,
+				},
+				uv0 = {
+					count = 360,
+					offset = 10100,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/roof.002.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 192,
+					offset = 10844,
+				},
+				position = {
+					count = 192,
+					offset = 10652,
+				},
+				tangent = {
+					count = 192,
+					offset = 10460,
+				},
+				uv0 = {
+					count = 192,
+					offset = 11036,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/roof_deco.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 11420,
+				},
+				position = {
+					count = 96,
+					offset = 11324,
+				},
+				tangent = {
+					count = 96,
+					offset = 11228,
+				},
+				uv0 = {
+					count = 96,
+					offset = 11516,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/windows.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 708,
+			numComp = 3,
+			offset = 2632,
+		},
+		position = {
+			count = 1320,
+			numComp = 3,
+			offset = 1312,
+		},
+		tangent = {
+			count = 1312,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 880,
+			numComp = 2,
+			offset = 3340,
+		},
+	},
+}
+end
