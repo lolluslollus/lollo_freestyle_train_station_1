@@ -369,6 +369,7 @@ utils.getParallelSideways = function(posTanX2, sideShift)
     return result
 end
 
+-- LOLLO TODO the output tans are not accurate
 utils.getParallelSidewaysWithRotZ = function(posTanX2, sideShiftOnXYPlane)
     -- the result will be parallel to the original at its ends but stretched or compressed due to the shift.
     local _rot90Transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, }

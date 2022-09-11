@@ -735,7 +735,7 @@ local helpers = {
                 -- catenary = edgeLists[i].catenary,
                 leadingIndex = edgeLists[i].leadingIndex,
                 posTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift),
-                -- this is different and it cannot be easily put in use since the results are burnt into the station params.
+                -- this is different!
                 -- posTanX2 = transfUtils.getParallelSidewaysWithRotZ(edgeLists[i].posTanX2, sideShift),
                 -- trackType = edgeLists[i].trackType,
                 -- trackTypeName = edgeLists[i].trackTypeName,
