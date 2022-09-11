@@ -1384,7 +1384,7 @@ return {
                 if leadingIndex > iiN then break end
                 if leadingIndex >= ii1 then
                     local platformWidth = cpf.width
-                    local centreAreaPosTanX2 = transfUtils.getParallelSidewaysWithRotZ(
+                    local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
                         cpf.posTanX2,
                         (isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
                     )
@@ -1397,7 +1397,9 @@ return {
                     -- local xScaleFactor = 2 * (transfUtils.getPositionsDistance(centreAreaPosTanX2[1][1], centreAreaPosTanX2[2][1])) -- / constants.fineSegmentLength -- redundant coz it's always 1
                     -- print('xScaleFactor *2 =', xScaleFactor)
                     local xScaleFactor = (centreAreaPosTanX2[1][1][1] - centreAreaPosTanX2[2][1][1]) ^ 2 + (centreAreaPosTanX2[1][1][2] - centreAreaPosTanX2[2][1][2]) ^ 2
-                    -- print('xScaleFactor ^2 =', xScaleFactor)
+                    print('xScaleFactor ^2 =', xScaleFactor)
+                    local xScaleFactor = xRatio * yRatio
+                    print('xScaleFactor w ratios =', xScaleFactor)
                     xScaleFactor = math.max(xScaleFactor, 1)
                     -- print('xScaleFactor 1 or more =', xScaleFactor)
                     result.models[#result.models+1] = {
