@@ -45,7 +45,7 @@ function data()
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
                                 -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x6.msh',
                             transf = buildingTransf
@@ -77,7 +77,7 @@ function data()
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
                                 -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_c_station_9x5x6.msh',
                             transf = buildingTransf

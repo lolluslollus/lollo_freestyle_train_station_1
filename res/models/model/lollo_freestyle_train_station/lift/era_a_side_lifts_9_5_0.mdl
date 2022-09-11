@@ -43,7 +43,7 @@ function data()
                             -- building
                             materials = {
                                 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
-                                'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
                                 'lollo_freestyle_train_station/metal/rough_copper.mtl',
                                 'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
                             },
@@ -75,7 +75,7 @@ function data()
                             -- building
                             materials = {
                                 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
-                                'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
                                 'lollo_freestyle_train_station/metal/rough_copper.mtl',
                                 'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
                             },

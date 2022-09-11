@@ -41,7 +41,7 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/wall_stucco_1.mtl',
                                 'lollo_freestyle_train_station/wall_stucco_2_2_sides.mtl',
-                                'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
                                 'lollo_freestyle_train_station/wall_stucco_1.mtl',
                                 'lollo_freestyle_train_station/roof_tiles_schist.mtl',
                                 'lollo_freestyle_train_station/era_a_station_tiles_2.mtl',
@@ -76,7 +76,7 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/wall_stucco_1.mtl',
                                 'lollo_freestyle_train_station/wall_stucco_2.mtl',
-                                'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
                                 'lollo_freestyle_train_station/wall_stucco_1.mtl',
                                 'lollo_freestyle_train_station/roof_tiles_schist.mtl',
                             },

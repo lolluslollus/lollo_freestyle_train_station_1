@@ -41,10 +41,10 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/wall_bricks_2_sides.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
                                 'lollo_freestyle_train_station/wall_stucco_2.mtl',
                                 'lollo_freestyle_train_station/roof_tiles_concrete.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_b_passenger_station_10x5x6_lod0.msh',
                             name = 'era_c_station_10x6_lod0',
@@ -76,7 +76,7 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/wall_grey.mtl',
                                 'lollo_freestyle_train_station/wall_bricks.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
                                 'lollo_freestyle_train_station/wall_stucco_2.mtl',
                                 'lollo_freestyle_train_station/roof_tiles_concrete.mtl',
                             },
