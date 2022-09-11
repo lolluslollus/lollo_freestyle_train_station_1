@@ -76,11 +76,11 @@ return {
 			type = _constants.passengerStationSquareModuleType,
 		})
 
-		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-1, -6.2, -_constants.stairsAndRampHeight, 1},
-			{-1, 6.2, -_constants.stairsAndRampHeight, 1},
-			{8.5, 6.2, -_constants.stairsAndRampHeight, 1},
-			{8.5, -6.2, -_constants.stairsAndRampHeight, 1},
+		local groundFace = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
+			{-1, -6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+			{-1, 6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+			{8.5, 6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+			{8.5, -6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 		table.insert(
