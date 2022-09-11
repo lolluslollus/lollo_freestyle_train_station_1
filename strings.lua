@@ -54,7 +54,7 @@ function data()
 				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
 				- The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
 				- Some modules can only be placed after some others, eg stairs exits after stairs, but the menu does not refresh automatically. After placing the first set of stairs, you need to close and reopen the menu for stairs exits to appear.
-				- Some track and signal mods are incompatible. As a general rule, avoid mods that overwrite stock game tracks or make them unavailable. Chances are they are bad anyway.
+				- Some track and signal mods are incompatible. As a general rule, avoid mods that overwrite or disable stock game tracks. Chances are they are bad anyway.
 				- Minor version 1.81 (31st August 2022) introduced important layout changes. Previously built terminals will keep working but might have some glitches. To benefit from the changes, remove them, wait for them to reappear and build them anew.
 			]],
 			["NAME"] = "Freestyle train station",
