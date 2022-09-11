@@ -1468,7 +1468,7 @@ return {
             local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.85
             local yShiftOutside = isTrackOnPlatformLeft and -baseYShift or baseYShift
     
-            local yShiftOutside4StreetAccess = slopedAreaWidth * 2 - 1.2 -- - 1.8
+            local yShiftOutside4StreetAccess = slopedAreaWidth * 2 -- - 1.2 -- - 1.8
     
             return yShiftOutside, yShiftOutside4StreetAccess
         end,
