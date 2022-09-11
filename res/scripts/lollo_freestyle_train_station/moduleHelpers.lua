@@ -405,9 +405,8 @@ privateFuncs.flatAreas = {
     end,
     getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
         local variant = privateFuncs.getVariant(params, slotId)
-        local deltaZ = variant * 0.1
+        local deltaZ = variant * 0.1 + constants.platformSideBitsZ
         if deltaZ < -1 then deltaZ = -1 elseif deltaZ > 1 then deltaZ = 1 end
-        deltaZ = deltaZ + constants.platformSideBitsZ
 
         return transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, deltaZ, 1 })
     end,
