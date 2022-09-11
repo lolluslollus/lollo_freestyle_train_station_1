@@ -24,7 +24,7 @@ local privateConstants = {
         bridgeHeights = { 2.5, 7.5, 12.5, 17.5, 22.5, 27.5, 32.5, 37.5, 42.5 }
         -- bridgeHeights = { 6.5, 11.5, 16.5, 21.5, 26.5, 31.5, 36.5, 41.5 }
     },
-    slopedAreas = {
+    slopedAreasOLD = {
         -- hunchLengthRatioToClaimBend = 0.01, -- must be positive
         hunchToClaimBend = 0.2, -- must be positive
         innerDegrees = {
@@ -531,7 +531,7 @@ privateFuncs.slopedAreas = {
             tag = tag
         }
     end,
-    _getSlopedAreaInnerDegree = function(params, nTerminal, nTrackEdge)
+    _getSlopedAreaInnerDegreeOLD = function(params, nTerminal, nTrackEdge)
         local centrePlatforms = params.terminals[nTerminal].centrePlatformsRelative
     
         local x1 = 0
@@ -563,7 +563,7 @@ privateFuncs.slopedAreas = {
             yM = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
         else
             logger.warn('cannot get inner degree')
-            return privateConstants.slopedAreas.innerDegrees.neutral
+            return privateConstants.slopedAreasOLD.innerDegrees.neutral
         end
     
         local segmentHunch = transfUtils.getDistanceBetweenPointAndStraight(
@@ -579,7 +579,7 @@ privateFuncs.slopedAreas = {
         -- )
         -- print('segmentLength =', segmentLength)
         -- if segmentHunch / segmentLength < privateConstants.slopedAreas.hunchLengthRatioToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
-        if segmentHunch < privateConstants.slopedAreas.hunchToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
+        if segmentHunch < privateConstants.slopedAreasOLD.hunchToClaimBend then return privateConstants.slopedAreasOLD.innerDegrees.neutral end
     
         -- a + bx = y
         -- => a + b * x1 = y1
@@ -600,7 +600,7 @@ privateFuncs.slopedAreas = {
         -- print('terminal', nTerminal, 'innerSign =', innerSign)
         return innerSign
     end,
-    _getSlopedAreaTweakFactors = function(innerDegree, areaWidth)
+    _getSlopedAreaTweakFactorsOLD = function(innerDegree, areaWidth)
         local waitingAreaScaleFactor = areaWidth * 0.8
     
         -- LOLLO NOTE sloped areas are parallelepipeds that extend the parallelepipeds that make up the platform sideways.
@@ -1472,62 +1472,13 @@ return {
     
             return yShiftOutside, yShiftOutside4StreetAccess
         end,
-        addAllOLD = function(result, tag, params, nTerminal, nTrackEdge, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey)
-            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            local innerDegree = privateFuncs.slopedAreas._getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
-        --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-            local waitingAreaScaleFactor, xScaleFactor = privateFuncs.slopedAreas._getSlopedAreaTweakFactors(innerDegree, areaWidth)
-            -- local waitingAreaShift = params.terminals[nTerminal].isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
-            local waitingAreaIndex = 0
-        
-            local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-            local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
-        
-            local safs = params.terminals[nTerminal].slopedAreasFineRelative[areaWidth]
-            if not(safs) then return end
-            -- print('safs =') debugPrint(safs)
-            for ii = 1, #safs do
-                if safs[ii].leadingIndex > iiN then break end
-                if safs[ii].leadingIndex >= ii1 then
-                    local saf = safs[ii]
-                    local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(saf.posTanX2) --, angleYFactor)
-                    result.models[#result.models+1] = {
-                        id = modelId,
-                        transf = transfUtilsUG.mul(
-                            myTransf,
-                            { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformSideBitsZ, 1 }
-                        ),
-                        tag = tag
-                    }
-        
-                    if waitingAreaModelId ~= nil
-                    and safs[ii - 2]
-                    and safs[ii - 2].leadingIndex >= ii1
-                    and safs[ii + 2]
-                    and safs[ii + 2].leadingIndex <= iiN then
-                        if math.fmod(waitingAreaIndex, 5) == 0 then
-                            result.models[#result.models+1] = {
-                                id = waitingAreaModelId,
-                                transf = transfUtilsUG.mul(
-                                    myTransf,
-                                    { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
-                                ),
-                                tag = slotUtils.mangleModelTag(nTerminal, true),
-                            }
-                        end
-                        waitingAreaIndex = waitingAreaIndex + 1
-                    end
-                end
-            end
-        
-            privateFuncs.slopedAreas._doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
-        end,
         addAll = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey, isCargo)
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            local innerDegree = privateFuncs.slopedAreas._getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
+            -- local innerDegree = privateFuncs.slopedAreas._getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
         --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-            local waitingAreaScaleFactor, xScaleFactor = privateFuncs.slopedAreas._getSlopedAreaTweakFactors(innerDegree, areaWidth)
+            -- local waitingAreaScaleFactor, xScaleFactor = privateFuncs.slopedAreas._getSlopedAreaTweakFactors(innerDegree, areaWidth)
             -- local waitingAreaShift = params.terminals[nTerminal].isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
+            local waitingAreaScaleFactor = areaWidth * 0.8
             local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
@@ -1540,13 +1491,23 @@ return {
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > iiN then break end
                 if leadingIndex >= ii1 then
-                    local cpl = params.terminals[nTerminal].centrePlatformsRelative[leadingIndex]
-                    local platformWidth = cpl.width
+                    local platformWidth = cpf.width
                     local centreAreaPosTanX2 = transfUtils.getParallelSidewaysWithRotZ(
                         cpf.posTanX2,
                         (isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
                     )
                     local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(centreAreaPosTanX2)
+
+                    -- this is expensive and not enough
+                    -- local xScaleFactor = (transfUtils.getPositionsDistance(centreAreaPosTanX2[1][1], centreAreaPosTanX2[2][1])) -- / constants.fineSegmentLength -- redundant coz it's always 1
+                    -- print('xScaleFactor =', xScaleFactor)
+                    -- this is very crude
+                    -- local xScaleFactor = 2 * (transfUtils.getPositionsDistance(centreAreaPosTanX2[1][1], centreAreaPosTanX2[2][1])) -- / constants.fineSegmentLength -- redundant coz it's always 1
+                    -- print('xScaleFactor *2 =', xScaleFactor)
+                    local xScaleFactor = (centreAreaPosTanX2[1][1][1] - centreAreaPosTanX2[2][1][1]) ^ 2 + (centreAreaPosTanX2[1][1][2] - centreAreaPosTanX2[2][1][2]) ^ 2
+                    -- print('xScaleFactor ^2 =', xScaleFactor)
+                    xScaleFactor = math.max(xScaleFactor, 1)
+                    -- print('xScaleFactor 1 or more =', xScaleFactor)
                     result.models[#result.models+1] = {
                         id = modelId,
                         transf = transfUtilsUG.mul(
@@ -1576,7 +1537,7 @@ return {
                     end
                 end
             end
-        
+
             privateFuncs.slopedAreas._doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
             if waitingAreaModelId ~= nil then
                 local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
