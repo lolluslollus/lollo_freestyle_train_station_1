@@ -345,8 +345,8 @@ utils.getPositionsMiddle = function(pos0, pos1)
     end
 end
 
+-- the result will be identical to the original but shifted sideways
 utils.getParallelSideways = function(posTanX2, sideShift)
-    -- the result will be identical to the original but shifted sideways
     local result = {
         {
             {},
@@ -369,9 +369,8 @@ utils.getParallelSideways = function(posTanX2, sideShift)
     return result
 end
 
--- LOLLO TODO the output tans are not accurate, try now
+-- the result will be parallel to the original at its ends but stretched or compressed due to the shift.
 utils.getParallelSidewaysWithRotZ = function(posTanX2, sideShiftOnXYPlane)
-    -- the result will be parallel to the original at its ends but stretched or compressed due to the shift.
     local _rot90Transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, }
 
     local oldPos1 = posTanX2[1][1]
