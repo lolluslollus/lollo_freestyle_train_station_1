@@ -86,8 +86,8 @@ function data()
 					{
 						{1, -6, _constants.platformSideBitsZ, 1},
 						{1, 6, _constants.platformSideBitsZ, 1},
-						{6, 6, -_constants.stairsAndRampHeight, 1},
-						{6, -6, -_constants.stairsAndRampHeight, 1},
+						{6, 6, -_constants.stairsAndRampHeight -0.25, 1},
+						{6, -6, -_constants.stairsAndRampHeight -0.25, 1},
 					}
 				},
 				optional = true,
@@ -98,7 +98,6 @@ function data()
 			for _, face in pairs(terrainAlignmentList.faces) do
 				modulesutil.TransformFaces(zAdjustedTransf, face)
 			end
-			-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 		end,
 

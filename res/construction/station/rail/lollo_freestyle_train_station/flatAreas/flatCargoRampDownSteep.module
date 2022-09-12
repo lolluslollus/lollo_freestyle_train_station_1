@@ -49,33 +49,22 @@ function data()
 
 			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-			local groundFace = {
-				{-1, -2, 0, 1},
-				{-1, 2, 0, 1},
-				{2.25, 2, 0, 1},
-				{2.25, -2, 0, 1},
+			local groundFace = { -- groundFaces ignore z, terrainAlignmentLists don't
+				{-1, -2, _constants.platformSideBitsZ, 1},
+				{-1, 2, _constants.platformSideBitsZ, 1},
+				{2.75, 2, -_constants.stairsAndRampHeight -0.2, 1},
+				{2.75, -2, -_constants.stairsAndRampHeight -0.2, 1},
 			}
 			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
 
 			local terrainAlignmentList = {
-				faces = {
-					{
-						{-1, -2, _constants.platformSideBitsZ, 1},
-						{-1, 2, _constants.platformSideBitsZ, 1},
-						{2.25, 2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-						{2.25, -2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-					}
-				},
+				faces = { groundFace },
 				optional = true,
 				slopeHigh = _constants.slopeHigh,
 				slopeLow = _constants.slopeLow,
 				type = 'EQUAL',
 			}
-			for _, face in pairs(terrainAlignmentList.faces) do
-				modulesutil.TransformFaces(zAdjustedTransf, face)
-			end
-			-- result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = moduleHelpers.getTerrainAlignmentList(terrainFaces, 0)
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 		end,
 
