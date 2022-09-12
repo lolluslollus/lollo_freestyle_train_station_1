@@ -12,7 +12,7 @@ function data()
                 Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
 
                 Now click your station to open the configuration menu and add some connections.
-                - Adjacent platforms are connected together automatically. If you added extensions, extra platforms or space between, you will have to connect them with stairs or underpasses. You can also work by hand: make two exits, then link them with a suitable street type and maybe <shift> (to dodge the auto snapping). Avoid this with tunnels and bridges, keep it simple.
+                - Adjacent platforms are connected together automatically. If they are too far apart, connect them with exits, stairs or underpasses. You can also connect two bridge exits with a suitable path, if you are prepared to fight a bit with the game. <AltGr> + <L> is your friend.
                 - Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
                 - Every bridge level requires a lift, or an underpass near a ground platform lift or stairs.
@@ -70,23 +70,25 @@ function data()
 			["FlatCargoRampFlatName"] = "Cargo exit",
 			["FlatCargoRampFlatDesc"] = "Cargo exit, 2 m. Adjust its height with <m> and <n>.",
 			["FlatPassengerStairsDownSmoothName"] = "Smooth passenger stairs down",
-			["FlatPassengerStairsDownSmoothDesc"] = "Smooth passenger stairs leading outside and down, 2 m. Adjust their height with <m> and <n>.",
+			["FlatPassengerStairsDownSmoothDesc"] = "Smooth passenger stairs leading outside and down, 2 m. Adjust their height with <m> and <n>. It connects automatically to nearby platforms.",
 			["FlatPassengerStairsDownSteepName"] = "Steep passenger stairs down",
-			["FlatPassengerStairsDownSteepDesc"] = "Steep passenger stairs leading outside and down, 2 m. Adjust their height with <m> and <n>.",
+			["FlatPassengerStairsDownSteepDesc"] = "Steep passenger stairs leading outside and down, 2 m. Adjust their height with <m> and <n>. It connects automatically to nearby platforms.",
 			["FlatPassengerStairsEdgeName"] = "Entrance to platform with auto bridge",
 			["FlatPassengerStairsEdgeDesc"] = "Connects platforms to the road network. Adjust its height with <m> and <n>. Link it to \"stairs\" assets, bridges or paths as required. It will become snappy at the next config update.",
 			["FlatPassengerStairsSnappyEdgeName"] = "Entrance to platform with snappy auto bridge",
 			["FlatPassengerStairsSnappyEdgeDesc"] = "Connects platforms to the road network. Adjust its height with <m> and <n>. Link it to \"stairs\" assets, bridges or paths as required.",
 			["FlatPassengerStairsFlatName"] = "Flat passenger exit",
-			["FlatPassengerStairsFlatDesc"] = "Flat passenger exit, 2 m. Adjust its height with <m> and <n>.",
+			["FlatPassengerStairsFlatDesc"] = "Flat passenger exit, 2 m. Adjust its height with <m> and <n>. It connects automatically to nearby platforms.",
 			["FlatCargoRampUpSmoothName"] = "Smooth cargo ramp up",
 			["FlatCargoRampUpSmoothDesc"] = "Smooth cargo ramp leading outside and up, 2 m. Adjust its height with <m> and <n>.",
 			["FlatCargoRampUpSteepName"] = "Steep cargo ramp up",
 			["FlatCargoRampUpSteepDesc"] = "Steep cargo ramp leading outside and up, 2 m. Adjust its height with <m> and <n>.",
 			["FlatPassengerStairsUpSmoothName"] = "Smooth passenger stairs up",
-			["FlatPassengerStairsUpSmoothDesc"] = "Smooth passenger stairs leading outside and up, 2 m. Adjust their height with <m> and <n>.",
+			["FlatPassengerStairsUpSmoothDesc"] = "Smooth passenger stairs leading outside and up, 2 m. Adjust their height with <m> and <n>. It connects automatically to nearby platforms.",
 			["FlatPassengerStairsUpSteepName"] = "Steep passenger stairs up",
-			["FlatPassengerStairsUpSteepDesc"] = "Steep passenger stairs leading outside and up, 2 m. Adjust their height with <m> and <n>.",
+			["FlatPassengerStairsUpSteepDesc"] = "Steep passenger stairs leading outside and up, 2 m. Adjust their height with <m> and <n>. It connects automatically to nearby platforms.",
+			["FlushPassengerExitName"] = "Flush passenger exit",
+			["FlushPassengerExitDesc"] = "Flush passenger exit. Adjust its height with <m> and <n>. It connects automatically to nearby platforms.",
 			["FlatCargoArea5x5Name"] = "5x5 flat side area with ramp, cargo",
 			["FlatCargoArea5x5Desc"] = "Flat side area with ramp leading outside, 5x5 m, cargo style. Good for plopping assets on. Adjust its height with <m> and <n>.",
 			["FlatCargoArea10x5Name"] = "10x5 flat side area with ramp, cargo",

@@ -103,6 +103,7 @@ local constants = {
     flatPassengerArea8x10ModuleType = 'freestyleTrainStationFlatPassengerArea8x10',
     flatPassengerStation0MModuleType = 'freestyleTrainStationFlatPassengerStation0M',
     flatPassengerStation5MModuleType = 'freestyleTrainStationFlatPassengerStation5M',
+    flushExitModuleType = 'freestyleTrainStationFlushExit',
     passengerSideLiftModuleType = 'freestyleTrainStationPassengerSideLift',
     passengerPlatformLiftModuleType = 'freestyleTrainStationPassengerPlatformLift',
     passengerStationSquareModuleType = 'freestyleTrainStationPassengerStationSquare',
@@ -360,6 +361,7 @@ local constants = {
         openStairsExitCentreSlotId = 90000000,
         openLiftExitForwardSlotId = 91000000,
         openLiftExitBackwardSlotId = 92000000,
+        flushExitSlotId = 93000000,
     },
     idTransf = {
         1, 0, 0, 0,

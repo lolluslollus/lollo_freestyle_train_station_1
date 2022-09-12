@@ -211,7 +211,7 @@ function data()
 			end
 
 			result.terminateConstructionHookInfo = {
-				crossConnectorPositions = {},
+				autoStitchablePositions = {},
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
 				liftBottomPositions = {},
@@ -376,14 +376,14 @@ function data()
 						if cpl.type ~= 2 and cplP1.type ~= 2 then -- no tunnels
 							local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
 							if not(isCargoTerminal) then
-								if not(_getOccupiedInfo4FlatAreas(t, i))
-								or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerEdgeSlotId then
-									local yShift = cpl.width + _getOccupiedInfo4SlopedAreas(t, i).yShift
-									local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
-									local myTransf = transfUtilsUG.mul(
+								local yShift = cpl.width + _getOccupiedInfo4SlopedAreas(t, i).yShift
+								local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
+								local myTransf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 										{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
 									)
+								if not(_getOccupiedInfo4FlatAreas(t, i))
+								or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerEdgeSlotId then
 									local myId = result.mangleId(t, i, _constants.idBases.flatPassengerEdgeSlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -394,6 +394,22 @@ function data()
 									})
 									if params.modules[myId] ~= nil then
 										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatPassengerEdgeSlotId)
+									end
+								end
+								if cpl.type == 0 and cplP1.type == 0 then -- ground
+									if not(_getOccupiedInfo4FlatAreas(t, i))
+									or _getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flushExitSlotId then
+										local myId = result.mangleId(t, i, _constants.idBases.flushExitSlotId)
+										table.insert(result.slots, {
+											-- height = 0,
+											id = myId,
+											spacing = {0.5, 1.5, -0.1, 1},
+											transf = myTransf,
+											type = _constants.flushExitModuleType,
+										})
+										if params.modules[myId] ~= nil then
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flushExitSlotId)
+										end
 									end
 								end
 							end
@@ -800,16 +816,19 @@ function data()
 							id = _constants.passengerLaneModelId,
 							transf = crossConnectorTransf
 						}
-						if result.terminateConstructionHookInfo.crossConnectorPositions[t] == nil then result.terminateConstructionHookInfo.crossConnectorPositions[t] = {} end
-						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						table.insert(
-							result.terminateConstructionHookInfo.crossConnectorPositions[t],
-							{
-								t = t,
-								lanePosTanX2 = cpl.posTanX2,
-								pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], _laneZ)
-							}
-						)
+						-- if there are flat areas, they will add their own; sloped areas alone won't.
+						if not(_getOccupiedInfo4FlatAreas(t, i)) and not(_getOccupiedInfo4SlopedAreas(t, i).id) then
+							if result.terminateConstructionHookInfo.autoStitchablePositions[t] == nil then result.terminateConstructionHookInfo.autoStitchablePositions[t] = {} end
+							local cpl = params.terminals[t].centrePlatformsRelative[i]
+							table.insert(
+								result.terminateConstructionHookInfo.autoStitchablePositions[t],
+								{
+									t = t,
+									lanePosTanX2 = cpl.posTanX2,
+									pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], _laneZ)
+								}
+							)
+						end
 					end
 				end
 				_addLanesAcross()
@@ -1568,30 +1587,26 @@ function data()
 					-- link platforms across terminals, on the ground, if they are close enough
 					local maxT = #params.terminals
 					for t = 1, maxT do
-						if not(params.terminals[t].isCargo) then
-							local positionsInT = positions[t]
-							if positionsInT ~= nil then
-								for tt = t + 1, maxT do
-									if not(params.terminals[tt].isCargo) then
-										local positionsInTT = positions[tt]
-										if positionsInTT ~= nil then
-											for i = 1, #positionsInT do
-												for ii = 1, #positionsInTT do
-													if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
-														local tr = transfUtils.get1MLaneTransf(
-															positionsInT[i].pos,
-															positionsInTT[ii].pos
-														)
-														if raiseHowMuch and raiseHowMuch > 0 then
-															tr[15] = tr[15] + _constants.trackCrossingRaise
-															logger.print('tr[15] = ', tr[15])
-														end
-														result.models[#result.models+1] = {
-															id = modelId,
-															transf = tr
-														}
-													end
+						local positionsInT = positions[t]
+						if positionsInT ~= nil then
+							for tt = t + 1, maxT do
+								local positionsInTT = positions[tt]
+								if positionsInTT ~= nil then
+									for i = 1, #positionsInT do
+										for ii = 1, #positionsInTT do
+											if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
+												local tr = transfUtils.get1MLaneTransf(
+													positionsInT[i].pos,
+													positionsInTT[ii].pos
+												)
+												if raiseHowMuch and raiseHowMuch > 0 then
+													tr[15] = tr[15] + _constants.trackCrossingRaise
+													logger.print('tr[15] = ', tr[15])
 												end
+												result.models[#result.models+1] = {
+													id = modelId,
+													transf = tr
+												}
 											end
 										end
 									end
@@ -1602,7 +1617,7 @@ function data()
 				end
 				_linkNearbyPassengerPlatforms(
 					7.1, -- must be between (two half platform widths) * sqrt(2) and (two narrow half platform widths + track width)
-					result.terminateConstructionHookInfo.crossConnectorPositions,
+					result.terminateConstructionHookInfo.autoStitchablePositions,
 					_constants.passengerLaneModelId
 				)
 				_linkNearbyPassengerPlatforms(
@@ -1625,24 +1640,20 @@ function data()
 					end
 					local maxT = #params.terminals
 					for t = 1, maxT do
-						if not(params.terminals[t].isCargo) then
-							local positionsInT = _getCentrePositionsAtTerminalEnds(t)
-							for tt = t + 1, maxT do
-								if not(params.terminals[tt].isCargo) then
-									local positionsInTT = _getCentrePositionsAtTerminalEnds(tt)
-									for i = 1, #positionsInT do
-										for ii = 1, #positionsInTT do
-											if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i], positionsInTT[ii]) < maxLinkLength then
-												local tr = transfUtils.get1MLaneTransf(
-													positionsInT[i],
-													positionsInTT[ii]
-												)
-												result.models[#result.models+1] = {
-													id = modelId,
-													transf = tr
-												}
-											end
-										end
+						local positionsInT = _getCentrePositionsAtTerminalEnds(t)
+						for tt = t + 1, maxT do
+							local positionsInTT = _getCentrePositionsAtTerminalEnds(tt)
+							for i = 1, #positionsInT do
+								for ii = 1, #positionsInTT do
+									if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i], positionsInTT[ii]) < maxLinkLength then
+										local tr = transfUtils.get1MLaneTransf(
+											positionsInT[i],
+											positionsInTT[ii]
+										)
+										result.models[#result.models+1] = {
+											id = modelId,
+											transf = tr
+										}
 									end
 								end
 							end

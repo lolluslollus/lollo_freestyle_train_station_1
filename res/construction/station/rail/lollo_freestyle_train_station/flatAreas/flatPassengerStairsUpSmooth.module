@@ -25,7 +25,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 14,
+			value = 15,
 		},
 		type = _constants.flatPassengerStairsModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -51,7 +51,20 @@ function data()
 				tag = tag
 			}
 
+			moduleHelpers.flatAreas.addExitPole(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+
+			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
+				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}
+			end
+			table.insert(
+				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal],
+				{
+					t = nTerminal,
+					lanePosTanX2 = cpl.posTanX2,
+					pos = transfUtils.transf2Position(transfUtilsUG.mul(zAdjustedTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2.5, 0, _constants.stairsAndRampHeight, 1}))
+				}
+			)
 
 			local groundFace = {
 				{-1, -2, 0, 1},
