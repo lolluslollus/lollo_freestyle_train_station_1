@@ -1408,7 +1408,7 @@ return {
                     )
                     local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(centreAreaPosTanX2)
 
-                    local xScaleFactor = math.max(xRatio * yRatio, 1) -- this is a bit much but it's cheap
+                    local xScaleFactor = math.max(xRatio * yRatio, 1.05) -- this is a bit crude but it's cheap
                     logger.print('xScaleFactor w ratios =', xScaleFactor)
                     result.models[#result.models+1] = {
                         id = modelId,
