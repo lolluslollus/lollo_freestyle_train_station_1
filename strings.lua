@@ -41,7 +41,7 @@ function data()
 				- Extra ground textures are in my terrain tweaks mod.
 				- If you want different buildings, use assets. There are mods with those.
 				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily. Still, the game does not handle them gracefully and AltGr + L will help you snap them to your network. Cycling between snappy and non-snappy roads or bridges will help, too.
-				- Use the track constructions "Smart track splitter" to do precision work.
+				- Use the track constructions "Track splitter" to do precision work.
 				- Upgrading tracks does all tracks at once.
 				- If you have too many track types, use the categories in the menu to make life easier.
 				- After a while, the area surrounding your station will have developped and might throw collision errors whenever you try to config the station. Patiently look for the culpable street, building or asset and remove it. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
@@ -319,7 +319,7 @@ function data()
 			["WaypointsCrossStation"] = "You cannot cross an existing station",
 			["WaypointDistanceWindowTitle"] = "Air Distance",
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
-			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with the splitter if you need to get close.",
+			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with the track splitter if you need to get close. The platform heads will connect automatically if they are closer than 7 metres",
 			["WaypointsTooFar"] = "Too far from its twin",
 
 			-- free open stairs and free lifts
@@ -360,8 +360,8 @@ function data()
 			["TopPlatformNorthLengthTooltip"] = "It might be easier to select \"Auto Bridge\" when building or changing properties and change it to \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
 
 			-- track splitter
-			["SmartTrackSplitterName"] = "Smart track splitter",
-			["SmartTrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use AltGr + L to see its effect.",
+			["TrackSplitterName"] = "Track splitter",
+			["TrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use AltGr + L to see its effect.",
 		},
 	}
 end

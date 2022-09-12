@@ -4,8 +4,8 @@ function data()
     return {
         type = 'TRACK_CONSTRUCTION',
         description = {
-            name = _('SmartTrackSplitterName'),
-            description = _('SmartTrackSplitterDesc')
+            name = _('TrackSplitterName'),
+            description = _('TrackSplitterDesc')
         },
         availability = {
             yearFrom = 0,
