@@ -1589,7 +1589,7 @@ function data()
 					end
 				end
 				_linkNearbyPassengerPlatforms(
-					7.0,
+					7.1, -- must be between (two half platform widths) * sqrt(2) and (two narrow half platform widths + track width)
 					result.terminateConstructionHookInfo.crossConnectorPositions,
 					_constants.passengerLaneModelId
 				)
