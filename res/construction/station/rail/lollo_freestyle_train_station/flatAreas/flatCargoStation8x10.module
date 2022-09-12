@@ -4,7 +4,7 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require "transf"
-
+-- LOLLO OBSOLETE, only here for compatibility with old releases
 
 function data()
 	return {

@@ -1,4 +1,5 @@
 function data()
+    -- LOLLO OBSOLETE, only here for compatibility with old releases
     local _constants = require('lollo_freestyle_train_station.constants') -- LOLLO NOTE this is critical: 0.5 or 0.6 will crash coz it will be at the same height as the platform-track
     return {
         boundingInfo = {
