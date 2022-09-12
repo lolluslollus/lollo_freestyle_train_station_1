@@ -88,7 +88,7 @@ function data()
 			["FlatPassengerStairsUpSteepName"] = "Exit with steep passenger stairs up",
 			["FlatPassengerStairsUpSteepDesc"] = "Steep passenger stairs leading outside and up, 2 m. Adjust their height with <m> and <n>. It connects automatically to nearby platforms or exits.",
 			["FlushPassengerExitInnerName"] = "Flush passenger exit along the platform",
-			["FlushPassengerExitInnerDesc"] = "Flush passenger exit that ignores extensions. Adjust its height with <m> and <n>. It connects automatically to nearby platforms or exits.",
+			["FlushPassengerExitInnerDesc"] = "Flush passenger exit that ignores extensions, to make connections across overlapping extensions. Adjust its height with <m> and <n>. It connects automatically to nearby platforms or exits.",
 			["FlushPassengerExitOuterName"] = "Flush passenger exit",
 			["FlushPassengerExitOuterDesc"] = "Flush passenger exit along the platform or the extension border, whichever is farther. Adjust its height with <m> and <n>. It connects automatically to nearby platforms or exits.",
 			["FlatCargoArea5x5Name"] = "5x5 flat side area with ramp, cargo",
