@@ -266,8 +266,8 @@ function data()
 							type = _constants.wallModuleType,
 						})
 
-						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {}
-						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {type = cpl.type}
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
 							table.insert(result.slots, {
 								-- height = 0,
@@ -290,8 +290,8 @@ function data()
 
 					for _, i in pairs(iss) do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {}
-						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {type = cpl.type}
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						-- no thin extensions in tunnels unless we are at the entrance
 						if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) and not(isCargoTerminal) then
 							if not(_getOccupiedInfo4SlopedAreas(t, i).id) or _getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x2_5SlotId then
@@ -371,8 +371,8 @@ function data()
 				local function _addStreetAccess()
 					for i = 2, #params.terminals[t].centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						-- local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {}
-						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						-- local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {type = cpl.type}
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						if cpl.type ~= 2 and cplP1.type ~= 2 then -- no tunnels
 							local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
 							if not(isCargoTerminal) then
@@ -621,7 +621,7 @@ function data()
 					local _iMax = #params.terminals[t].centrePlatformsRelative - 1
 					for i = 2, _iMax, 1 do
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						local era = moduleHelpers.getEraPrefix(params, t, i)
 						local myTransf = transfUtilsUG.mul(
 								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
@@ -815,7 +815,7 @@ function data()
 					local _iMax = #params.terminals[t].centrePlatformsRelative - 1
 					for i = 2, _iMax do -- skip the outermost edges to avoid collisions, the game is very picky here.
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
-						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {}
+						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						-- local isInTunnel = cpl.type == 2 and cplP1.type == 2
 						local isOnBridge = cpl.type == 1 and cplP1.type == 1
 						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
