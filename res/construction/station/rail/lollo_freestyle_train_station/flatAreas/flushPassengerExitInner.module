@@ -19,13 +19,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("FlushPassengerExitName"),
-			description = _("FlushPassengerExitDesc"),
-			icon = "ui/lollo_freestyle_train_station/flushPassengerExit.tga"
+			name = _("FlushPassengerExitInnerName"),
+			description = _("FlushPassengerExitInnerDesc"),
+			icon = "ui/lollo_freestyle_train_station/flushPassengerExitInner.tga"
 		},
 		metadata = { },
 		order = {
-			value = 11,
+			value = 12,
 		},
 		type = _constants.flushExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -35,13 +35,19 @@ function data()
 			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
-
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
+			local yShift = cpl.width
+			local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
+			local myTransf = transfUtilsUG.mul(
+				moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
+				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
+			)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, myTransf)
 
 			moduleHelpers.flatAreas.addExitPole(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}
 			end
