@@ -1560,26 +1560,28 @@ function data()
 					-- link platforms across terminals, on the ground, if they are close enough
 					local maxT = #params.terminals
 					for t = 1, maxT do
-						local positionsInT = positions[t]
-						if positionsInT ~= nil then
-							for tt = t + 1, maxT do
-								local positionsInTT = positions[tt]
-								if positionsInTT ~= nil then
-									for i = 1, #positionsInT do
-										for ii = 1, #positionsInTT do
-											if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
-												local tr = transfUtils.get1MLaneTransf(
-													positionsInT[i].pos,
-													positionsInTT[ii].pos
-												)
-												if raiseHowMuch and raiseHowMuch > 0 then
-													tr[15] = tr[15] + _constants.trackCrossingRaise
-													logger.print('tr[15] = ', tr[15])
+						if params.terminals[t].isCargo then
+							local positionsInT = positions[t]
+							if positionsInT ~= nil then
+								for tt = t + 1, maxT do
+									local positionsInTT = positions[tt]
+									if positionsInTT ~= nil then
+										for i = 1, #positionsInT do
+											for ii = 1, #positionsInTT do
+												if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
+													local tr = transfUtils.get1MLaneTransf(
+														positionsInT[i].pos,
+														positionsInTT[ii].pos
+													)
+													if raiseHowMuch and raiseHowMuch > 0 then
+														tr[15] = tr[15] + _constants.trackCrossingRaise
+														logger.print('tr[15] = ', tr[15])
+													end
+													result.models[#result.models+1] = {
+														id = modelId,
+														transf = tr
+													}
 												end
-												result.models[#result.models+1] = {
-													id = modelId,
-													transf = tr
-												}
 											end
 										end
 									end
