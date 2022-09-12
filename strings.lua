@@ -12,14 +12,14 @@ function data()
                 Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
 
                 Now click your station to open the configuration menu and add some connections.
-                - Adjacent platforms are connected together automatically. If you added extra platforms or space between, you will have to connect them by hand instead: use a suitable street type and <shift>. Avoid this with tunnels and bridges, keep it simple.
+                - Adjacent platforms are connected together automatically. If you added extensions, extra platforms or space between, you will have to connect them with stairs or underpasses. You can also work by hand: make two exits, then link them with a suitable street type and maybe <shift> (to dodge the auto snapping). Avoid this with tunnels and bridges, keep it simple.
                 - Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
                 - Every set of adjacent bridge platforms requires a lift or an underpass.
                 - Every bridge level requires a lift, or an underpass near a ground platform lift or stairs.
                 - Every set of adjacent underground platforms requires stairs.
                 - Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
 
-                You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, connect the platform ends by hand with a suitable street type and <shift>.
+                You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, the heads will connect automatically if they are 7 metres apart or less.
                 You cannot share one stretch of platform among multiple terminals.
 
 				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
@@ -34,8 +34,8 @@ function data()
 				- Platforms only carry passengers or cargo if they are part of a terminal.
 				- 2.5 m platforms do not agree with bridges and tunnels. My 'no railing' bridges help, tunnels can't be helped.
                 - This mod adds extra bridges to help with elevated stations.
-                - Very thin paths help with certain setups: those are in my street fine tuning mod.
-				- This mod adds extra pedestrian paths and bridges. Some of those paths turn into bridges after placing them. They can be tricky to place, the street fine tuning 'chunks' and 'splitter' constructions come to the rescue.
+                - This mod adds extra pedestrian paths and bridges. Some of those paths turn into bridges after placing them. They can be tricky to place, the street fine tuning 'chunks' and 'splitter' constructions come to the rescue.
+				- Very thin paths help with certain setups: those are in my street fine tuning mod.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
 				- Extra ground textures are in my terrain tweaks mod.
@@ -49,6 +49,7 @@ function data()
 				[h1]Note:[/h1]
 				- Underground stations are now in the assets.
 				- Minor version 1.81 (31st August 2022) introduced important layout changes. Previously built terminals will keep working but might have some glitches. To benefit from the changes, remove them, wait for them to reappear and build them anew.
+				- Platforms do not connect automatically to adjacent roads, you must add an exit or a station.
 
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
@@ -316,7 +317,7 @@ function data()
 			["WaypointsCrossStation"] = "You cannot cross an existing station",
 			["WaypointDistanceWindowTitle"] = "Air Distance",
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
-			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot",
+			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with the splitter if you need to get close.",
 			["WaypointsTooFar"] = "Too far from its twin",
 
 			-- free open stairs and free lifts
