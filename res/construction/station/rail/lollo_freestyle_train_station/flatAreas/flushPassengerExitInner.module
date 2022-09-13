@@ -67,6 +67,10 @@ function data()
 					id = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl',
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1},
 				},
+				{
+					id = 'lollo_freestyle_train_station/icon/arrow_blue.mdl',
+					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
+				},
 			}
 		end
 	}
