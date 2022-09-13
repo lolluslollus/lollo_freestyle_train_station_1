@@ -351,7 +351,7 @@ function data()
 			["SimpleConnection"] = "Simple",
 			["SnappyEdgeWithBridge"] = "Snappy Bridge",
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
-			["Stairs"] = "Stairs, Lifts, Underground Entrances for the Freestyle Train Station",
+			["Stairs"] = "Stairs, lifts, underground entrances, ground assets for the Freestyle Train Station",
             ["StairsBase"] = "Expand Base",
 			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
 			["TerrainAlignmentType"] = "Terrain Alignment",
@@ -366,6 +366,17 @@ function data()
 			-- track splitter
 			["TrackSplitterName"] = "Track splitter",
 			["TrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use AltGr + L to see its effect.",
+
+			-- platform as asset
+			["PlatformAsAssetName"] = "Platform as asset",
+			["PlatformAsAssetDesc"] = "Platform as asset. Adjust it with the Construction Mover.",
+			["PlatformAsAsset_CargoOrPassengers"] = "Cargo or passengers",
+			["PlatformAsAsset_Cargo"] = "Cargo",
+			["PlatformAsAsset_Passengers"] = "Passengers",
+			["PlatformAsAsset_X10m"] = "X size, coarse, m",
+			["PlatformAsAsset_X1m"] = "X size, fine, m",
+			["PlatformAsAsset_Y10m"] = "Y size, coarse, m",
+			["PlatformAsAsset_Y1m"] = "Y size, fine, m",
 		},
 	}
 end

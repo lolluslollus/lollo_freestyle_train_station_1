@@ -1,0 +1,187 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+
+local _paramConstants = {
+    lollo_platform_as_asset_x_10m = {
+        max = 100,
+        min = 0,
+        step = 10,
+    },
+    lollo_platform_as_asset_y_10m = {
+        max = 100,
+        min = 0,
+        step = 10,
+    },
+    lollo_platform_as_asset_x_1m = {
+        max = 9,
+        min = 1,
+        step = 1,
+    },
+    lollo_platform_as_asset_y_1m = {
+        max = 9,
+        min = 1,
+        step = 1,
+    },
+}
+
+local _paramHelpers = {
+    MinusN2PlusN = {
+        getSliderValues = function(paramKey)
+            local max, step = _paramConstants[paramKey].max, _paramConstants[paramKey].step
+            local results = {}
+            for i = -max, max, step do
+                results[#results+1] = tostring(i)
+            end
+            return results
+        end,
+        getSliderMiddleValue = function(paramKey)
+            local max, step = _paramConstants[paramKey].max, _paramConstants[paramKey].step
+            return math.floor(max / step)
+        end,
+        getValueFromSliderParamValue = function(paramKey, paramValue)
+            local max, step = _paramConstants[paramKey].max, _paramConstants[paramKey].step
+            return -max + step * paramValue
+        end,
+    },
+    Nought2PlusN = {
+        getSliderValues = function(paramKey)
+            local max, min, step = _paramConstants[paramKey].max, _paramConstants[paramKey].min, _paramConstants[paramKey].step
+            local results = {}
+            for i = min, max, step do
+                results[#results+1] = tostring(i)
+            end
+            return results
+        end,
+        getSliderMiddleValue = function(paramKey)
+            local max, min, step = _paramConstants[paramKey].max, _paramConstants[paramKey].min, _paramConstants[paramKey].step
+            return math.floor((max - min) / step / 2)
+        end,
+        getValueFromSliderParamValue = function(paramKey, paramValue)
+            local min, step = _paramConstants[paramKey].min, _paramConstants[paramKey].step
+            return min + step * paramValue
+        end,
+    },
+
+}
+
+function data()
+    return {
+        -- type = 'STREET_CONSTRUCTION',
+        type = 'ASSET_DEFAULT',
+        description = {
+            name = _('PlatformAsAssetName'),
+            description = _('PlatformAsAssetDesc')
+        },
+        availability = {
+            yearFrom = 0,
+            yearTo = 0
+        },
+        categories = { 'stairs' },
+        order = 1104,
+        autoRemovable = false,
+        -- buildMode = 'MULTI',
+		skipCollision = true,
+        params = {
+            {
+                key = 'lollo_platform_as_asset_era_prefix',
+                name = _('Era'),
+                values = {'A', 'B', 'C'},
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'lollo_platform_as_asset_is_cargo',
+                name = _('PlatformAsAsset_CargoOrPassengers'),
+                values = {_('PlatformAsAsset_Cargo'), _('PlatformAsAsset_Passengers'),},
+                uiType = 'BUTTON',
+                defaultIndex = 0,
+            },
+            {
+                key = 'lollo_platform_as_asset_x_10m',
+                name = _('PlatformAsAsset_X10m'),
+                values = _paramHelpers.Nought2PlusN.getSliderValues('lollo_platform_as_asset_x_10m'),
+                uiType = 'SLIDER',
+                defaultIndex = _paramHelpers.Nought2PlusN.getSliderMiddleValue('lollo_platform_as_asset_x_10m'),
+            },
+            {
+                key = 'lollo_platform_as_asset_x_1m',
+                name = _('PlatformAsAsset_X1m'),
+                values = _paramHelpers.Nought2PlusN.getSliderValues('lollo_platform_as_asset_x_1m'),
+                uiType = 'SLIDER',
+                -- defaultIndex = 0,
+            },
+            {
+                key = 'lollo_platform_as_asset_y_10m',
+                name = _('PlatformAsAsset_Y10m'),
+                values = _paramHelpers.Nought2PlusN.getSliderValues('lollo_platform_as_asset_y_10m'),
+                uiType = 'SLIDER',
+                defaultIndex = _paramHelpers.Nought2PlusN.getSliderMiddleValue('lollo_platform_as_asset_y_10m'),
+            },
+            {
+                key = 'lollo_platform_as_asset_y_1m',
+                name = _('PlatformAsAsset_Y1m'),
+                values = _paramHelpers.Nought2PlusN.getSliderValues('lollo_platform_as_asset_y_1m'),
+                uiType = 'SLIDER',
+                -- defaultIndex = 0,
+            },
+        },
+        updateFn = function(params)
+            local result = {
+                colliders = {},
+                cost = 0,
+                models = {},
+            }
+
+            local _xHalfSize = (
+                _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_x_10m', params.lollo_platform_as_asset_x_10m) +
+                _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_x_1m', params.lollo_platform_as_asset_x_1m)
+            ) / 2
+            local _yHalfSize = (
+                _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_y_10m', params.lollo_platform_as_asset_y_10m) +
+                _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_y_1m', params.lollo_platform_as_asset_y_1m)
+            ) / 2
+            local _zMax = 0
+
+            local _era_prefix = ({_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix})[(params.lollo_platform_as_asset_era_prefix or 0) + 1]
+            local _isCargo = (params.lollo_platform_as_asset_is_cargo or 0) == 0
+            local _modelId = 'lollo_freestyle_train_station/railroad/assets/' .. (_isCargo and 'cargo' or 'passengers') .. '/'.. _era_prefix ..'cube_1x1.mdl'
+            -- print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax)
+            for x = -_xHalfSize, _xHalfSize, 1 do
+                for y = -_yHalfSize, _yHalfSize, 1 do
+                    result.models[#result.models+1] = {
+                        id = _modelId,
+                        transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  x, y, 0, 1}
+                    }
+                end
+            end
+
+            local _flatFaces = { {
+                {-_xHalfSize, -_yHalfSize, -0.1}, {-_xHalfSize, _yHalfSize, -0.1}, {_xHalfSize, _yHalfSize, _zMax -0.1}, {_xHalfSize, -_yHalfSize, _zMax -0.1}
+            } }
+            result.groundFaces = { -- the ground faces ignore z, the alignment lists don't
+                {
+                    face = _flatFaces[1],
+                    loop = true,
+                    modes = {
+                        {
+                            key = 'none.lua',
+                            type = 'FILL',
+                        },
+                    }
+                }
+            }
+            result.terrainAlignmentLists = {
+                {
+                    type = 'EQUAL',
+                    optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                    slopeLow = 9.6,
+                    slopeHigh = 9.9,
+                    faces = _flatFaces,
+                },
+            }
+            return result
+        end,
+        upgradeFn = function(_)
+            return {}
+        end
+    }
+end
