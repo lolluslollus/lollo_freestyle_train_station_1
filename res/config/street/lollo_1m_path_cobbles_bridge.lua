@@ -15,7 +15,7 @@ function data()
         type = 'lollo_1m_path_cobbles_bridge',
         name = _("1 Metre Cobbled Bridge"),
         desc = _("1 metre cobbled bridge with a speed limit of %2%. It matches the freestyle station and the \"stairs\" asset, era A. Build one and it will turn into a bridge automatically."),
-        categories = { 'paths-on-forced-bridge' },
+        categories = { 'paths-on-forced-bridge' }, -- either this or paths, not both or the game script might get confused.
         order = 1,
         busAndTramRight = true,
         -- slopeBuildSteps = 1,
