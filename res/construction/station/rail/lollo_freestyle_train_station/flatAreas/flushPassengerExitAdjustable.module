@@ -19,9 +19,9 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("FlushPassengerExitInnerName"),
-			description = _("FlushPassengerExitInnerDesc"),
-			icon = "ui/lollo_freestyle_train_station/flushPassengerExitInner.tga"
+			name = _("FlushPassengerExitAdjustableName"),
+			description = _("FlushPassengerExitAdjustableDesc"),
+			icon = "ui/lollo_freestyle_train_station/flushPassengerExitAdjustable.tga"
 		},
 		metadata = { },
 		order = {
@@ -39,14 +39,18 @@ function data()
 			local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
 			local yShift = cpl.width
 			local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
-			local myTransf = transfUtilsUG.mul(
+			local myTransfAlongPlatform = transfUtilsUG.mul(
 				moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
 			)
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, myTransf)
+			local step0To1 = moduleHelpers.flatAreas.getMNAdjustedValue_0To1_Cycling(params, slotId, 4)
+			local xAdjustedTransf = slotTransf
+			for n = 13, 15, 1 do
+				xAdjustedTransf[n] = slotTransf[n] + (myTransfAlongPlatform[n] - slotTransf[n]) * step0To1
+			end
 
-			moduleHelpers.flatAreas.addExitPole(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addExitPole(result, xAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addLaneToStreet(result, xAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}
@@ -56,7 +60,7 @@ function data()
 				{
 					t = nTerminal,
 					lanePosTanX2 = cpl.posTanX2,
-					pos = transfUtils.transf2Position(zAdjustedTransf),
+					pos = transfUtils.transf2Position(xAdjustedTransf),
 				}
 			)
 		end,
@@ -69,7 +73,11 @@ function data()
 				},
 				{
 					id = 'lollo_freestyle_train_station/icon/arrow_blue.mdl',
-					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
+					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1},
+				},
+				{
+					id = 'lollo_freestyle_train_station/icon/arrow_blue.mdl',
+					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1, 0, 0, 1},
 				},
 			}
 		end

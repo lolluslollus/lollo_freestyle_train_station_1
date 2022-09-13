@@ -87,6 +87,8 @@ function data()
 			["FlatPassengerStairsUpSmoothDesc"] = "Smooth passenger stairs leading outside and up, 2 m. Adjust their height with <m> and <n>. It connects automatically to nearby platforms or exits.",
 			["FlatPassengerStairsUpSteepName"] = "Exit with steep passenger stairs up",
 			["FlatPassengerStairsUpSteepDesc"] = "Steep passenger stairs leading outside and up, 2 m. Adjust their height with <m> and <n>. It connects automatically to nearby platforms or exits.",
+			["FlushPassengerExitAdjustableName"] = "Flush passenger exit with adjustable distance",
+			["FlushPassengerExitAdjustableDesc"] = "Flush passenger exit, to make flexible connections across extensions. Adjust it between platform edge and extension edge with <m> and <n>. It connects automatically to nearby platforms or exits.",
 			["FlushPassengerExitInnerName"] = "Flush passenger exit along the platform",
 			["FlushPassengerExitInnerDesc"] = "Flush passenger exit that ignores extensions, to make connections across overlapping extensions. Adjust its height with <m> and <n>. It connects automatically to nearby platforms or exits.",
 			["FlushPassengerExitOuterName"] = "Flush passenger exit",

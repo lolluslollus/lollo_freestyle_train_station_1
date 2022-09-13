@@ -957,7 +957,11 @@ return {
         getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
             return privateFuncs.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
         end,
-    
+        getMNAdjustedValue_0To1_Cycling = function(params, slotId, nSteps)
+            local _nSteps = math.ceil(nSteps)
+            local variant = privateFuncs.getVariant(params, slotId) -- an integer starting at 0
+            return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
+        end,
         addLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
             return privateFuncs.flatAreas.addLaneToStreet(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
         end,

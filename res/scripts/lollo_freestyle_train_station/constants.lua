@@ -1,4 +1,4 @@
-local arrayUtils = require('lollo_freestyle_train_station/arrayUtils')
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 
 local _maxPercentageDeviation4Midpoint = 1.05
 
