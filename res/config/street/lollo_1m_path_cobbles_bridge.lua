@@ -37,6 +37,14 @@ function data()
                 size = { 2.0, 2.0 }
             },
         },
+        catenary = {
+            pole = { name = "lollo_freestyle_train_station/empty.mdl" },
+            poleCrossbar = { name = "lollo_freestyle_train_station/empty.mdl" },
+            poleDoubleCrossbar = { name = "lollo_freestyle_train_station/empty.mdl" },
+            isolatorStraight = "lollo_freestyle_train_station/empty.mdl";
+            isolatorCurve =  "lollo_freestyle_train_station/empty.mdl";
+            junction = "lollo_freestyle_train_station/empty.mdl";
+        },
         assets = {},
         cost = 1.0
     }
