@@ -46,7 +46,7 @@ function data()
 			for y = -2, 2 do
 				results[#results+1] = {
 					id = _constants.era_c_slopedPassengerArea1x2_5ModelFileName,
-					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+					transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end
 			return results

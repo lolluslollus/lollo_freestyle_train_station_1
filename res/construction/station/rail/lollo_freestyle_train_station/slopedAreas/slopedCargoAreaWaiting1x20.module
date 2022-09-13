@@ -48,7 +48,7 @@ function data()
 			for y = -10, 10 do
 				results[#results+1] = {
 					id = _constants.era_c_slopedCargoArea1x20ModelFileName,
-					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
+					transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end
 			return results
