@@ -630,7 +630,7 @@ utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix, isWithEdge)
 				},
 				static = false,
 				visibleFrom = 0,
-				visibleTo = 200,
+				visibleTo = 250,
 			},
 			{
 				node = {
@@ -639,8 +639,8 @@ utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix, isWithEdge)
 					transf = { _xFactorLod1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
 				},
 				static = false,
-				visibleFrom = 200,
-				visibleTo = 600,
+				visibleFrom = 250,
+				visibleTo = 1000,
 			},
 		},
 		metadata = {
@@ -701,7 +701,7 @@ utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 				},
 				static = false,
 				visibleFrom = 0,
-				visibleTo = 200,
+				visibleTo = 250,
 			},
 			{
 				node = {
@@ -715,8 +715,8 @@ utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.25, 0, 1, },
 				},
 				static = false,
-				visibleFrom = 200,
-				visibleTo = 1100,
+				visibleFrom = 250,
+				visibleTo = 1000,
 			},
 		},
 		metadata = { },
@@ -764,7 +764,7 @@ utils.getModel4Basic_rep_rep = function(eraPrefix)
 				},
 				static = false,
 				visibleFrom = 0,
-				visibleTo = 200,
+				visibleTo = 250,
 			},
 			{
 				node = {
@@ -778,8 +778,8 @@ utils.getModel4Basic_rep_rep = function(eraPrefix)
 					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 				},
 				static = false,
-				visibleFrom = 200,
-				visibleTo = 1100,
+				visibleFrom = 250,
+				visibleTo = 1000,
 			},
 		},
 		metadata = { },

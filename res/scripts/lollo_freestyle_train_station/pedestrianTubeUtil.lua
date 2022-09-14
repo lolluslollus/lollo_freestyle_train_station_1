@@ -264,7 +264,7 @@ local utils = {
 					},
 					static = false,
 					visibleFrom = 0,
-					visibleTo = 200,
+					visibleTo = 250,
 				},
 				{
 					node = {
@@ -273,8 +273,8 @@ local utils = {
 						transf = { _xFactorLod1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
 					},
 					static = false,
-					visibleFrom = 200,
-					visibleTo = 600,
+					visibleFrom = 250,
+					visibleTo = 1000,
 				},
 			},
 			metadata = {
