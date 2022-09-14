@@ -24,7 +24,13 @@ function data()
 			description = _("SubwayDesc"),
 			icon = "ui/lollo_freestyle_train_station/subway.tga"
 		},
-		metadata = { },
+		metadata = {
+			-- no moreCapacity here, we do it differently
+			-- moreCapacity = {
+			-- 	cargo = 0,
+			-- 	passenger = 20
+			-- },
+		},
 		order = {
 			value = 55,
 		},
@@ -51,7 +57,7 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
-
+				result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 10
 				moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			elseif subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayHollowayMedium.con' then
 				result.models[#result.models + 1] = {
@@ -72,6 +78,7 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
+				result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 30
 				moduleHelpers.subways.doTerrain4HollowayMedium(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			elseif subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayHollowayLarge.con' then
 				result.models[#result.models + 1] = {
@@ -92,6 +99,7 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
+				result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 40
 				moduleHelpers.subways.doTerrain4HollowayLarge(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			elseif subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayClaphamLarge.con' then
 				result.models[#result.models + 1] = {
@@ -112,6 +120,7 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
+				result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 40
 				moduleHelpers.subways.doTerrain4ClaphamLarge(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			elseif subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayClaphamMedium.con' then
 				result.models[#result.models + 1] = {
@@ -132,6 +141,7 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
+				result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 30
 				moduleHelpers.subways.doTerrain4ClaphamMedium(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			elseif subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayClaphamSmall.con' then
 				result.models[#result.models + 1] = {
@@ -152,6 +162,7 @@ function data()
 					transf = slotTransf,
 					tag = tag
 				}
+				result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 20
 				moduleHelpers.subways.doTerrain4ClaphamSmall(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			end
 			-- print('subway.module.updateFn ending')

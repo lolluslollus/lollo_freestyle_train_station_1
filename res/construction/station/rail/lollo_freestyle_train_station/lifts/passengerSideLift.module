@@ -24,7 +24,12 @@ return {
 		description = _("PassengerSideLiftDesc"),
 		icon = "ui/lollo_freestyle_train_station/passengerSideLift.tga"
 	},
-	metadata = { },
+	metadata = {
+		moreCapacity = {
+			cargo = 0,
+			passenger = 20
+		},
+	},
 	order = {
 		value = 41,
 	},

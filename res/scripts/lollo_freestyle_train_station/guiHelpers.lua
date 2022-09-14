@@ -16,6 +16,7 @@ local _texts = {
     join = _('Join'),
     noJoin = _('NoJoin'),
     stationPickerWindowTitle = _('StationPickerWindowTitle'),
+    wait4Join = _('Wait4Join'),
     warningWindowTitle = _('WarningWindowTitle'),
     waypointDistanceWindowTitle = _('WaypointDistanceWindowTitle'),
 }
@@ -126,6 +127,10 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
         layout:addItem(button)
     end
 
+    local function addWait4JoinNotice()
+        layout:addItem(api.gui.comp.TextView.new(_texts.wait4Join))
+    end
+
     local function addGoBackToWrongObjectButton()
         if not(edgeUtils.isValidAndExistingId(eventArgs.platformWaypoint1Id)) then return end
 
@@ -150,8 +155,10 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             layout:addItem(button)
         end
     end
+
     addJoinButtons()
     addNoJoinButton()
+    addWait4JoinNotice()
     addGoBackToWrongObjectButton()
 
     -- window:setHighlighted(true)

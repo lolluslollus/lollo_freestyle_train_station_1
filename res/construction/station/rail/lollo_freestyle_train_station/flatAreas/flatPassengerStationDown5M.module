@@ -24,7 +24,12 @@ return {
 		description = _("FlatPassengerStationDown5MDesc"),
 		icon = "ui/lollo_freestyle_train_station/flatPassengerStationDown5M.tga"
 	},
-	metadata = { },
+	metadata = {
+		moreCapacity = {
+			cargo = 0,
+			passenger = 20
+		},
+	},
 	order = {
 		value = 33,
 	},

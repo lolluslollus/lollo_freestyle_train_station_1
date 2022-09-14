@@ -212,6 +212,7 @@ function data()
 
 			result.terminateConstructionHookInfo = {
 				autoStitchablePositions = {},
+				extraCapacityFromSubwayEntrances = 0,
 				isAnyCargoTerminal = false,
 				isAnyPassengerTerminal = false,
 				liftBottomPositions = {},
@@ -1742,6 +1743,7 @@ function data()
 					-- and the game automatically assigns cargo and pax stations their id.
 					-- This way, if you add cargo terminals to a pax station, the latter will keep its id.
 					local extraCargoCapacity, extraPassengersCapacity = moduleHelpers.extraStationCapacity.getStationPoolCapacities(params.modules, result)
+					extraPassengersCapacity = extraPassengersCapacity + result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances
 					if result.terminateConstructionHookInfo.isAnyPassengerTerminal then
 						result.stations[#result.stations+1] = {
 							pool = { moreCapacity = extraPassengersCapacity },
