@@ -131,6 +131,19 @@ return {
 		local cpfM1 = nil
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, 2 do
 			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+-- -- LOLLO test code BEGIN
+-- 			local modelId = 'lollo_freestyle_train_station/icon/red.mdl'
+-- 			if ii == 1 then modelId = 'lollo_freestyle_train_station/icon/green.mdl' end
+-- 			result.models[#result.models + 1] = {
+-- 				id = modelId,
+-- 				slotId = slotId,
+-- 				transf = transfUtilsUG.mul(
+-- 					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+-- 					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+-- 				),
+-- 				tag = tag
+-- 			}
+-- -- LOLLO test code END
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, cpf.leadingIndex)
             if cpf.type == 1 then -- belly to cover pedestrian paths (only on bridges)
 				-- local yShift = 0
