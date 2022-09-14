@@ -74,3 +74,11 @@ local aP11, bP11, cP11 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve3
 local aP12, bP12, cP12 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve3, -2)
 
 local dummy2 = 123
+
+local func2 = function()
+    return 1, 2
+end
+
+local res1, res2 = logger.profile('my label', func2)
+
+local dummy3 = 123
