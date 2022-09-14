@@ -44,6 +44,16 @@ function data()
 			local subwayConFileName = params and params.subways and params.subways[slotId] and params.subways[slotId].subwayConFileName
 			logger.print('subwayConFileName =', subwayConFileName or 'NIL')
 
+			-- test code BEGIN
+			-- result.models[#result.models+1] = {
+			-- 	id = 'lollo_freestyle_train_station/icon/blue_w_message.mdl',
+			-- 	slotId = slotId,
+			-- 	transf = slotTransf,
+			-- 	tag = tag
+			-- }
+			-- result.labelText[#result.models - 1] = { tostring(slotId), tostring(slotId) }
+			-- test code END
+
             local eraPrefix = moduleHelpers.getEraPrefix(params, 1, 1)
 			if not(subwayConFileName) or subwayConFileName == '' or subwayConFileName == 'station/rail/lollo_freestyle_train_station/subway.con' then
 				local modelId = nil

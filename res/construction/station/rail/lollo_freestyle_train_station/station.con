@@ -153,6 +153,11 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
+					-- [_constants.subwayModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	skipCollisionCheck = true,
+					-- },
 					[_constants.wallModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
@@ -1672,8 +1677,11 @@ function data()
 
 					local _linkSubways = function()
 						if not(params.subways) then return end
+-- local timeMsec0 = os.clock() * 1000
 
 						local _linkSubways2 = function(positions)
+							local _distanceRatio4LinkingSubways2Subways = 1.3
+							local links_slotId = {}
 							for slotId, subway in pairs(params.subways) do
 								if subway == nil then
 									logger.err('subway[' .. (slotId or 'NIL') .. '] not found')
@@ -1701,12 +1709,11 @@ function data()
 									-- logger.print('terminal t = ', minDistanceT, 'about to link to subway')
 									if minDistanceT ~= nil and minDistanceI ~= nil then
 										-- logger.print('allPositionsUnderground[minDistanceT][minDistanceI] =') logger.debugPrint(allPositionsUnderground[minDistanceT][minDistanceI])
-										result.models[#result.models+1] = {
-											id = _constants.passengerLaneModelId,
-											transf = transfUtils.get1MLaneTransf(
-												positions[minDistanceT][minDistanceI].pos2Link,
-												subwayPos2Link
-											)
+										links_slotId[slotId] = {
+											t = minDistanceT,
+											i = minDistanceI,
+											distance = minDistance,
+											subwayPos2Link = subwayPos2Link
 										}
 										isThisSubwayConnected = true
 									end
@@ -1720,9 +1727,112 @@ function data()
 									end
 								end
 							end
+							-- print('links_slotId =') debugPrint(links_slotId)
+							local links_T_I = {}
+							for slotId, link in pairs(links_slotId) do
+								if not(links_T_I[link.t]) then links_T_I[link.t] = {} end
+								if not(links_T_I[link.t][link.i]) then links_T_I[link.t][link.i] = {} end
+								table.insert(
+									links_T_I[link.t][link.i],
+									{
+										distance2Platform = link.distance,
+										endPos2Link = positions[link.t][link.i].pos2Link,
+										slotId = slotId,
+										subwayPos2Link = link.subwayPos2Link
+									}
+								)
+							end
+							-- print('links_T_I =') debugPrint(links_T_I)
+							local links_slotId_WDistances2Twins = {}
+							for t, links_I in pairs(links_T_I) do
+								for i, links2SamePos in pairs(links_I) do
+									for k = 1, #links2SamePos do
+										local minDistance2Twin = nil
+										local refLink = links2SamePos[k]
+										refLink.distances2Twins = {}
+										for kk = 1, #links2SamePos do
+											local checkLink = links2SamePos[kk]
+											local distance2Twin = nil
+											if kk > k then
+												distance2Twin = transfUtils.getPositionsDistance(checkLink.subwayPos2Link, refLink.subwayPos2Link) or 9999
+											elseif kk < k then
+												distance2Twin = checkLink.distances2Twins[refLink.slotId]
+											end
+											if distance2Twin then
+												refLink.distances2Twins[checkLink.slotId] = distance2Twin
+												if minDistance2Twin == nil or distance2Twin < minDistance2Twin then
+													minDistance2Twin = distance2Twin
+												end
+											end
+										end
+										links_slotId_WDistances2Twins[refLink.slotId] = refLink
+									end
+								end
+							end
+							-- print('links_slotId_WDistances2Twins ONE =') debugPrint(links_slotId_WDistances2Twins)
+							-- shorten each refLink if it is farther away then its neighbours and the diversion is not too heavy
+							for refSlotId, refLink in pairs(links_slotId_WDistances2Twins) do
+								if refLink and refLink.distance2Platform ~= 0 and refLink.distance2Platform ~= nil then
+									local minDistance2Twin = nil
+									local twin2LinkSlotId = nil
+									for checkSlotId, distance2Twin in pairs(refLink.distances2Twins) do
+										if checkSlotId ~= refSlotId and distance2Twin ~= nil then
+											local checkLink = links_slotId_WDistances2Twins[checkSlotId]
+											if checkLink ~= nil and checkLink.distance2Platform ~= nil then
+												-- search for a neighbour that is closer to the platform...
+												if checkLink.distance2Platform < refLink.distance2Platform
+												-- ...and is not too far out of the way...
+												and (checkLink.distance2Platform + distance2Twin) / refLink.distance2Platform < _distanceRatio4LinkingSubways2Subways
+												then
+													if minDistance2Twin == nil or minDistance2Twin > distance2Twin then
+														-- print('possibly shortening', refSlotId, 'to attach to', checkSlotId, 'instead of platform')
+														minDistance2Twin = distance2Twin
+														twin2LinkSlotId = checkSlotId
+													else
+														-- print('not shortening', refSlotId, 'to attach to', checkSlotId, ', minDistance2PlatformAcrossNeighbour =', minDistance2Twin, 'checkLink.distance2Platform + distance2Twin =', checkLink.distance2Platform + distance2Twin)
+													end
+												else
+													-- print('definitely not shortening', refSlotId, 'to attach to', checkSlotId, ', minDistance2PlatformAcrossNeighbour =', minDistance2Twin, 'checkLink.distance2Platform + distance2Twin =', checkLink.distance2Platform + distance2Twin)
+												end
+											else
+												logger.warn('checkLink == nil or checkLink.distance2Platform == nil')
+											end
+										elseif distance2Twin == nil then
+											logger.warn('distance2Twin is NIL')
+										end
+									end
+									if twin2LinkSlotId ~= nil then
+										-- print('finally shortening', refSlotId, 'to attach to', twin2LinkSlotId, 'instead of platform')
+										refLink.endPos2Link = links_slotId_WDistances2Twins[twin2LinkSlotId].subwayPos2Link
+									end
+								else
+									logger.warn('refLink or refLink.distance2Platform are not available')
+								end
+							end
+							-- print('links_slotId_WDistances2Twins SHORTENED =') debugPrint(links_slotId_WDistances2Twins)
+							for slotId, link in pairs(links_slotId_WDistances2Twins) do
+								result.models[#result.models+1] = {
+									id = _constants.passengerLaneModelId,
+									transf = transfUtils.get1MLaneTransf(
+										link.endPos2Link,
+										link.subwayPos2Link
+									)
+								}
+							end
+							-- earlier code, which makes a link to every subway entrance
+							-- for slotId, link in pairs(links_slotId) do
+							-- 	result.models[#result.models+1] = {
+							-- 		id = _constants.passengerLaneModelId,
+							-- 		transf = transfUtils.get1MLaneTransf(
+							-- 			positions[link.t][link.i].pos2Link,
+							-- 			link.subwayPos2Link
+							-- 		)
+							-- 	}
+							-- end
 						end
 						_linkSubways2(_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom())
-						-- _linkSubways2(_getAllPositions_UndergroundTop_GroundBottom())
+-- local timeMsec1 = os.clock() * 1000
+-- print('_linkSubways2 took ' .. (timeMsec1 - timeMsec0) .. ' mSec') -- about 5 ms with a large station
 					end
 					_linkSubways()
 					logger.print('subways linked')
