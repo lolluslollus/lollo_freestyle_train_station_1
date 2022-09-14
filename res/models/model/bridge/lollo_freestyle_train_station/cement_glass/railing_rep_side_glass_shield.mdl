@@ -33,7 +33,7 @@ return {
 			},
 			static = false,
 			visibleFrom = 0,
-			visibleTo = 868.19885253906,
+			visibleTo = 1000,
 		},
 	},
 	metadata = { },

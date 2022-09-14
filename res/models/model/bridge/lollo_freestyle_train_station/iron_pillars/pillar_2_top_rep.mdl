@@ -31,7 +31,7 @@ return {
 			},
 			static = false,
 			visibleFrom = 0,
-			visibleTo = 900,
+			visibleTo = 1000,
 		},
 	},
 	metadata = { },
