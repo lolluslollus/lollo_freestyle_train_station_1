@@ -27,7 +27,7 @@ return {
 	metadata = {
 		moreCapacity = {
 			cargo = 0,
-			passenger = 20
+			passenger = 40
 		},
 	},
 	order = {

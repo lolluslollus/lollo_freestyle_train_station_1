@@ -4,7 +4,7 @@ local constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
 local modulesutil = require 'modulesutil'
 local openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
-local slotUtils = require('lollo_freestyle_train_station.slotHelpers')
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -40,11 +40,11 @@ local privateFuncs = {
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
         local result = cpl.era or constants.eras.era_c.prefix
         if params.modules then
-            if params.modules[slotUtils.mangleId(nTerminal, 0, constants.idBases.platformEraASlotId)] then
+            if params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraASlotId)] then
                 result = constants.eras.era_a.prefix
-            elseif params.modules[slotUtils.mangleId(nTerminal, 0, constants.idBases.platformEraBSlotId)] then
+            elseif params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraBSlotId)] then
                 result = constants.eras.era_b.prefix
-            elseif params.modules[slotUtils.mangleId(nTerminal, 0, constants.idBases.platformEraCSlotId)] then
+            elseif params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraCSlotId)] then
                 result = constants.eras.era_c.prefix
             end
         end
@@ -138,7 +138,7 @@ privateFuncs.edges = {
     
         logger.print('_addTrackEdges starting for terminal =', t)
         local forceCatenary = 0
-        local trackElectrificationModuleKey = slotUtils.mangleId(t, 0, constants.idBases.trackElectrificationSlotId)
+        local trackElectrificationModuleKey = slotHelpers.mangleId(t, 0, constants.idBases.trackElectrificationSlotId)
         if params.modules[trackElectrificationModuleKey] ~= nil then
             if params.modules[trackElectrificationModuleKey].name == constants.trackElectrificationYesModuleFileName then
                 forceCatenary = 2
@@ -148,7 +148,7 @@ privateFuncs.edges = {
         end
         logger.print('forceCatenary =', forceCatenary)
         local forceFast = 0
-        local trackSpeedModuleKey = slotUtils.mangleId(t, 0, constants.idBases.trackSpeedSlotId)
+        local trackSpeedModuleKey = slotHelpers.mangleId(t, 0, constants.idBases.trackSpeedSlotId)
         if params.modules[trackSpeedModuleKey] ~= nil then
             if params.modules[trackSpeedModuleKey].name == constants.trackSpeedFastModuleFileName then
                 forceFast = 2
@@ -1435,7 +1435,7 @@ return {
                                     myTransf,
                                     { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
                                 ),
-                                tag = slotUtils.mangleModelTag(nTerminal, true),
+                                tag = slotHelpers.mangleModelTag(nTerminal, isCargo),
                             }
                             nWaitingAreas = nWaitingAreas + 1
                         end

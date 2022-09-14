@@ -63,10 +63,10 @@ return {
 		}
 		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_24x8.mdl',
+			id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_30x8.mdl',
 			slotId = slotId,
 			transf = buildingTransf,
-			tag = slotHelpers.mangleModelTag(nTerminal, true),
+			tag = slotHelpers.mangleModelTag(nTerminal, false),
 		}
 
 		-- print('buildingTransf =') debugPrint(buildingTransf)

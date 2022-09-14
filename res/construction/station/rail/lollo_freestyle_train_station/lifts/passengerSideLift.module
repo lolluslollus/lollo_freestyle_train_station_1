@@ -1,9 +1,10 @@
 local _constants = require('lollo_freestyle_train_station.constants')
--- local constructionutil = require "constructionutil"
+-- local constructionutil = require 'constructionutil'
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-local modulesutil = require "modulesutil"
+local modulesutil = require 'modulesutil'
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
-local transfUtilsUG = require "transf"
+local transfUtilsUG = require 'transf'
 
 
 function data()
@@ -14,20 +15,20 @@ return {
 		yearTo = 0
 	},
 	category = {
-		categories = { "passenger-road-access", },
+		categories = { 'passenger-road-access', },
 	},
 	cost = {
 		price = 0,
 	},
 	description = {
-		name = _("PassengerSideLiftName"),
-		description = _("PassengerSideLiftDesc"),
-		icon = "ui/lollo_freestyle_train_station/passengerSideLift.tga"
+		name = _('PassengerSideLiftName'),
+		description = _('PassengerSideLiftDesc'),
+		icon = 'ui/lollo_freestyle_train_station/passengerSideLift.tga'
 	},
 	metadata = {
 		moreCapacity = {
 			cargo = 0,
-			passenger = 20
+			passenger = 40
 		},
 	},
 	order = {
@@ -56,6 +57,13 @@ return {
 			slotId = slotId,
 			transf = buildingTransf,
 			tag = tag
+		}
+
+		result.models[#result.models + 1] = {
+			id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_side_lift.mdl',
+			slotId = slotId,
+			transf = buildingTransf,
+			tag = slotHelpers.mangleModelTag(nTerminal, false),
 		}
 
 		if result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] == nil then result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] = {} end
