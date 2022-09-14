@@ -227,7 +227,7 @@ function data()
 			result.laneZs = {}
 
 			local topBottomTwinIndex = 1
-
+-- local timeMsec0 = os.clock() * 1000
 			for t = 1, #params.terminals do
 				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
 				-- if #result.edgeLists > 0 then
@@ -1104,7 +1104,8 @@ function data()
 				end
 				_addTerminalSlot()
 			end -- loop over terminals
-
+-- local timeMsec1 = os.clock() * 1000
+-- print('loop over terminals took ' .. (timeMsec1 - timeMsec0) .. ' mSec') -- about 35 ms with a large station
 			local _addSubwaySlots = function()
 				-- logger.print('_addSubwaySlots starting, params.subways =') logger.debugPrint(params.subways)
 				if not(params.subways) then return end
@@ -1140,589 +1141,594 @@ function data()
 				logger.print('terminateConstructionHook starting')
 		-- xpcall(
 		-- 	function()
-				local _getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom = function()
-					local results = {}
-					for t = 1, #params.terminals do
-						results[t] = {}
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
-						arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
+-- local timeMsec0 = os.clock() * 1000
+				local _makeCrossPlatformLinks = function()
+					local _getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom = function()
+						local results = {}
+						for t = 1, #params.terminals do
+							results[t] = {}
+							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
+							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] or {})
+							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
+							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.liftBottomPositions[t] or {})
+						end
+						return results
 					end
-					return results
-				end
 
-				-- local _getAllPositions_UndergroundTop_GroundBottom = function()
-				-- 	local results = {}
-				-- 	for t = 1, #params.terminals do
-				-- 		results[t] = {}
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
-				-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
-				-- 	end
-				-- 	return results
-				-- end
+					-- local _getAllPositions_UndergroundTop_GroundBottom = function()
+					-- 	local results = {}
+					-- 	for t = 1, #params.terminals do
+					-- 		results[t] = {}
+					-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
+					-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
+					-- 	end
+					-- 	return results
+					-- end
 
-				local _isNorth = function(posTanX2, pos, distance)
-					-- distance is only for debugging purposes
-					-- We imagine walking along a platform from end to end, and checking connections heading left and right.
-					-- We approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short.
-					-- The direction ought to be irrelevant coz the calc is based on absolute positions
-					-- LOLLO NOTE
-					-- Suppose I have two curvy tracks, or 2 tracks that cross, maybe at different heights.
-					-- Imagine two pos2Links in the left part of the cross and two in the right.
-					-- Terminal 1 goes from NW to SE, terminal 2 goes from SW to NE.
-					-- The SE point is south of any segments in terminal 2.
-					-- The SW point is south of any segments in terminal 1.
-					-- Imagine I have two curvx tracks, parallel. They go from SW to N and SE.
-					-- Terminal 1 is above, terminal 2 is below.
-					-- Take the T1 SE segment: the T2 SE position is south, the T2 SW position too.
-					-- Take the T2 SE segment: the T1 SE position is north, the T1 SW position is north.
-					-- /A - \B -- a terminal with two points to be linked
-					-- /C - \D -- a parallel terminal just below
-					-- It can happen that D is south of A and A is south of D
-					-- As you see, this function needs calculating for each reference segment and point
-					-- of a pair of bits to join.
-					-- a + b * x = y
-					-- b = dY / dX
-					-- a = y - dY / dX * x
-					local x0, x1 = posTanX2[1][1][1], posTanX2[2][1][1]
-					local y0, y1 = posTanX2[1][1][2], posTanX2[2][1][2]
-					local dX = x1 - x0
-					local dY = y1 - y0
-					local _isOutputLog = false
-					if _isOutputLog then
-						print('_isNorth received posTanX2 =') debugPrint(posTanX2)
-						print(', pos =') debugPrint(pos)
-						print(', dX =', dX, 'dY =', dY)
-						print(', distance =', distance or 'NIL')
-					end
-					if dX == 0 then
-						local isNorthResult = pos[1] < x0
+					local _isNorth = function(posTanX2, pos, distance)
+						-- distance is only for debugging purposes
+						-- We imagine walking along a platform from end to end, and checking connections heading left and right.
+						-- We approximate posTanX2 (ie the bit of platform I am studying) with a segment; I can coz it's short.
+						-- The direction ought to be irrelevant coz the calc is based on absolute positions
+						-- LOLLO NOTE
+						-- Suppose I have two curvy tracks, or 2 tracks that cross, maybe at different heights.
+						-- Imagine two pos2Links in the left part of the cross and two in the right.
+						-- Terminal 1 goes from NW to SE, terminal 2 goes from SW to NE.
+						-- The SE point is south of any segments in terminal 2.
+						-- The SW point is south of any segments in terminal 1.
+						-- Imagine I have two curvx tracks, parallel. They go from SW to N and SE.
+						-- Terminal 1 is above, terminal 2 is below.
+						-- Take the T1 SE segment: the T2 SE position is south, the T2 SW position too.
+						-- Take the T2 SE segment: the T1 SE position is north, the T1 SW position is north.
+						-- /A - \B -- a terminal with two points to be linked
+						-- /C - \D -- a parallel terminal just below
+						-- It can happen that D is south of A and A is south of D
+						-- As you see, this function needs calculating for each reference segment and point
+						-- of a pair of bits to join.
+						-- a + b * x = y
+						-- b = dY / dX
+						-- a = y - dY / dX * x
+						local x0, x1 = posTanX2[1][1][1], posTanX2[2][1][1]
+						local y0, y1 = posTanX2[1][1][2], posTanX2[2][1][2]
+						local dX = x1 - x0
+						local dY = y1 - y0
+						local _isOutputLog = false
 						if _isOutputLog then
-							print('_isNorth has calculated result = ', isNorthResult)
+							print('_isNorth received posTanX2 =') debugPrint(posTanX2)
+							print(', pos =') debugPrint(pos)
+							print(', dX =', dX, 'dY =', dY)
+							print(', distance =', distance or 'NIL')
+						end
+						if dX == 0 then
+							local isNorthResult = pos[1] < x0
+							if _isOutputLog then
+								print('_isNorth has calculated result = ', isNorthResult)
+							end
+							return isNorthResult
+						end
+						local b = dY / dX
+						local a = y0 - b * x0
+						local isNorthResult = a + b * pos[1] < pos[2]
+						if _isOutputLog then
+							print('_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult)
+							print('a + b * x0 =', a + b * x0, 'y0 =', y0, 'a + b * x1 =', a + b * x1, 'y1 =', y1, 'a + b * pos[1] =', a + b * pos[1], 'pos[2] =', pos[2])
 						end
 						return isNorthResult
 					end
-					local b = dY / dX
-					local a = y0 - b * x0
-					local isNorthResult = a + b * pos[1] < pos[2]
-					if _isOutputLog then
-						print('_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult)
-						print('a + b * x0 =', a + b * x0, 'y0 =', y0, 'a + b * x1 =', a + b * x1, 'y1 =', y1, 'a + b * pos[1] =', a + b * pos[1], 'pos[2] =', pos[2])
+					local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
+						local newSegment = {}
+						if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
+						or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
+							newSegment.t1 = oldSegment.t1
+							newSegment.t2 = oldSegment.t2
+							newSegment.t1Index = oldSegment.t1Index
+							newSegment.t2Index = oldSegment.t2Index
+							newSegment.distance = oldSegment.distance
+							newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
+							newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
+							newSegment.pos2Link1 = oldSegment.pos2Link1
+							newSegment.pos2Link2 = oldSegment.pos2Link2
+							newSegment.eraOfT1 = oldSegment.eraOfT1
+							newSegment.eraOfT2 = oldSegment.eraOfT2
+							-- excluded for performance
+							-- newSegment.bottomTwinIndexT1 = oldSegment.bottomTwinIndexT1
+							-- newSegment.bottomTwinIndexT2 = oldSegment.bottomTwinIndexT2
+							-- newSegment.topTwinIndexT1 = oldSegment.topTwinIndexT1
+							-- newSegment.topTwinIndexT2 = oldSegment.topTwinIndexT2
+						else
+							newSegment.t1 = oldSegment.t2
+							newSegment.t2 = oldSegment.t1
+							newSegment.t1Index = oldSegment.t2Index
+							newSegment.t2Index = oldSegment.t1Index
+							newSegment.distance = oldSegment.distance
+							newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
+							newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
+							newSegment.pos2Link1 = oldSegment.pos2Link2
+							newSegment.pos2Link2 = oldSegment.pos2Link1
+							newSegment.eraOfT1 = oldSegment.eraOfT2
+							newSegment.eraOfT2 = oldSegment.eraOfT1
+							-- excluded for performance
+							-- newSegment.bottomTwinIndexT1 = oldSegment.bottomTwinIndexT2
+							-- newSegment.bottomTwinIndexT2 = oldSegment.bottomTwinIndexT1
+							-- newSegment.topTwinIndexT1 = oldSegment.topTwinIndexT2
+							-- newSegment.topTwinIndexT2 = oldSegment.topTwinIndexT1
+						end
+						return newSegment
 					end
-					return isNorthResult
-				end
-				local _getSegmentWithT1AndT2Sorted = function (oldSegment, isMakeT1LessThanT2)
-					local newSegment = {}
-					if ((oldSegment.t1 < oldSegment.t2 and isMakeT1LessThanT2)
-					or (oldSegment.t1 > oldSegment.t2 and not(isMakeT1LessThanT2))) then
-						newSegment.t1 = oldSegment.t1
-						newSegment.t2 = oldSegment.t2
-						newSegment.t1Index = oldSegment.t1Index
-						newSegment.t2Index = oldSegment.t2Index
-						newSegment.distance = oldSegment.distance
-						newSegment.isNorthOfT1 = oldSegment.isNorthOfT1
-						newSegment.isNorthOfT2 = oldSegment.isNorthOfT2
-						newSegment.pos2Link1 = oldSegment.pos2Link1
-						newSegment.pos2Link2 = oldSegment.pos2Link2
-						newSegment.eraOfT1 = oldSegment.eraOfT1
-						newSegment.eraOfT2 = oldSegment.eraOfT2
-						-- excluded for performance
-						-- newSegment.bottomTwinIndexT1 = oldSegment.bottomTwinIndexT1
-						-- newSegment.bottomTwinIndexT2 = oldSegment.bottomTwinIndexT2
-						-- newSegment.topTwinIndexT1 = oldSegment.topTwinIndexT1
-						-- newSegment.topTwinIndexT2 = oldSegment.topTwinIndexT2
-					else
-						newSegment.t1 = oldSegment.t2
-						newSegment.t2 = oldSegment.t1
-						newSegment.t1Index = oldSegment.t2Index
-						newSegment.t2Index = oldSegment.t1Index
-						newSegment.distance = oldSegment.distance
-						newSegment.isNorthOfT1 = oldSegment.isNorthOfT2
-						newSegment.isNorthOfT2 = oldSegment.isNorthOfT1
-						newSegment.pos2Link1 = oldSegment.pos2Link2
-						newSegment.pos2Link2 = oldSegment.pos2Link1
-						newSegment.eraOfT1 = oldSegment.eraOfT2
-						newSegment.eraOfT2 = oldSegment.eraOfT1
-						-- excluded for performance
-						-- newSegment.bottomTwinIndexT1 = oldSegment.bottomTwinIndexT2
-						-- newSegment.bottomTwinIndexT2 = oldSegment.bottomTwinIndexT1
-						-- newSegment.topTwinIndexT1 = oldSegment.topTwinIndexT2
-						-- newSegment.topTwinIndexT2 = oldSegment.topTwinIndexT1
+					local _get_T_I_IndexedTable = function(inTable, isMakeT1LessThanT2)
+						local outTable = {}
+						for _, segment in pairs(inTable) do
+							local newSegment = _getSegmentWithT1AndT2Sorted(segment, isMakeT1LessThanT2)
+							local t1, t1Index = newSegment.t1, newSegment.t1Index
+							if outTable[t1] == nil then outTable[t1] = {} end
+							if outTable[t1][t1Index] == nil then outTable[t1][t1Index] = {} end
+							table.insert(outTable[t1][t1Index], newSegment)
+						end
+						return outTable
 					end
-					return newSegment
-				end
-				local _get_T_I_IndexedTable = function(inTable, isMakeT1LessThanT2)
-					local outTable = {}
-					for _, segment in pairs(inTable) do
-						local newSegment = _getSegmentWithT1AndT2Sorted(segment, isMakeT1LessThanT2)
-						local t1, t1Index = newSegment.t1, newSegment.t1Index
-						if outTable[t1] == nil then outTable[t1] = {} end
-						if outTable[t1][t1Index] == nil then outTable[t1][t1Index] = {} end
-						table.insert(outTable[t1][t1Index], newSegment)
-					end
-					return outTable
-				end
-				local _pruneSegments = function(segments, outTable)
-					-- segments are arranged with t1 = always the lowest terminal of each link, or always the highest
-					-- In the following, I:
-					-- remove redundant links (eg if there are two or more links heading left or right from any point,
-					-- I only keep the shortest)
-					for _, isNorthOfT1 in pairs({true, false}) do
-						local newSegment = {distance = 9999}
-						local isNewSegmentThere = false
-						for _, segment in pairs(segments) do
-							if segment.isNorthOfT1 == isNorthOfT1
-							and segment.distance < newSegment.distance
-							then
-								newSegment = segment
-								isNewSegmentThere = true
+					local _pruneSegments = function(segments, outTable)
+						-- segments are arranged with t1 = always the lowest terminal of each link, or always the highest
+						-- In the following, I:
+						-- remove redundant links (eg if there are two or more links heading left or right from any point,
+						-- I only keep the shortest)
+						for _, isNorthOfT1 in pairs({true, false}) do
+							local newSegment = {distance = 9999}
+							local isNewSegmentThere = false
+							for _, segment in pairs(segments) do
+								if segment.isNorthOfT1 == isNorthOfT1
+								and segment.distance < newSegment.distance
+								then
+									newSegment = segment
+									isNewSegmentThere = true
+								end
+							end
+							if isNewSegmentThere then
+								-- newSegment = _getSegmentWithT1AndT2Sorted(newSegment, isMakeT1LessThanT2)
+								table.insert(outTable, newSegment)
+								-- if isOutputLog then print('# isNorthOfT1 =', isNorthOfT1, ', inserted segment ') debugPrint(newSegment) end
 							end
 						end
-						if isNewSegmentThere then
-							-- newSegment = _getSegmentWithT1AndT2Sorted(newSegment, isMakeT1LessThanT2)
-							table.insert(outTable, newSegment)
-							-- if isOutputLog then print('# isNorthOfT1 =', isNorthOfT1, ', inserted segment ') debugPrint(newSegment) end
-						end
 					end
-				end
 
-				local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
-					-- for each combination of terminals, return the shortest paths.
-					-- sort the results so that the first index is always < the second index
-					if not(not(isOutputLog)) then print('#### _getSegmentsBetweenPos2Links_AcrossTerminals starting ' .. tostring(isOutputLog)) end
+					local _getSegmentsBetweenPos2Links_AcrossTerminals = function(positionsA, positionsB, isOutputLog)
+						-- for each combination of terminals, return the shortest paths.
+						-- sort the results so that the first index is always < the second index
+						if not(not(isOutputLog)) then print('#### _getSegmentsBetweenPos2Links_AcrossTerminals starting ' .. tostring(isOutputLog)) end
 
-					local _maxT = #params.terminals
-					local _getMinDistanceSegments = function()
-						-- for each terminal, then for each connected point, 
-						-- get the connecting segments.
-						-- For all connections touching t i, only keep the shortest to any given tt (never mind ii),
-						-- since _isNorth is only reliable locally, and it can produce extra segments (see note above)
-						local minDistanceSegments_T_I_TT = {}
-						local minDistanceSegments_T_TT_II = {}
-						for t = 1, _maxT do
-							local positionsInT = positionsA[t] or {}
-							for i = 1, #positionsInT do
-								-- for tt = 1, _maxT do
-								-- if t ~= tt then
-									for tt = t+1, _maxT do
-										local minDistanceSegment = nil
-										local positionsInTT = positionsB[tt] or {}
-										for ii = 1, #positionsInTT do
-											local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
-											local isNorthOfT1 = _isNorth(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link, distance)
-											local isNorthOfT2 = _isNorth(positionsInTT[ii].lanePosTanX2, positionsInT[i].pos2Link, distance)
-											local newSegment = {
-												t1 = t,
-												t2 = tt,
-												t1Index = i,
-												t2Index = ii,
-												distance = distance,
-												isNorthOfT1 = isNorthOfT1, -- these two isNorthOfTN may have the same value, see the note above
-												isNorthOfT2 = isNorthOfT2,
-												pos2Link1 = positionsInT[i].pos2Link,
-												pos2Link2 = positionsInTT[ii].pos2Link,
-												eraOfT1 = positionsInT[i].era,
-												eraOfT2 = positionsInTT[ii].era,
-												bottomTwinIndexT1 = positionsInT[i].bottomTwinIndex,
-												bottomTwinIndexT2 = positionsInTT[ii].bottomTwinIndex,
-												topTwinIndexT1 = positionsInT[i].topTwinIndex,
-												topTwinIndexT2 = positionsInTT[ii].topTwinIndex,
-											}
-											if minDistanceSegment == nil or minDistanceSegment.distance > distance then
-												minDistanceSegment = newSegment
-											end
-										end
-										if minDistanceSegment ~= nil then
-											-- some segments may still be redundant:
-											-- for example, t i <-> tt ii and t i-other <-> tt ii
-											-- Now we get rid of them
-											if minDistanceSegments_T_TT_II[t] == nil then minDistanceSegments_T_TT_II[t] = {} end
-											if minDistanceSegments_T_TT_II[t][tt] == nil then minDistanceSegments_T_TT_II[t][tt] = {} end
-
-											local cachedSegment = minDistanceSegments_T_TT_II[t][tt][minDistanceSegment.t2Index]
-											if cachedSegment == nil or cachedSegment.distance > minDistanceSegment.distance then
-												minDistanceSegments_T_TT_II[t][tt][minDistanceSegment.t2Index] = minDistanceSegment
-
-												if minDistanceSegments_T_I_TT[t] == nil then minDistanceSegments_T_I_TT[t] = {} end
-												if minDistanceSegments_T_I_TT[t][i] == nil then minDistanceSegments_T_I_TT[t][i] = {} end
-												minDistanceSegments_T_I_TT[t][i][tt] = minDistanceSegment
-											end
-										end
-									end
-								-- end
-							end
-						end
-						if isOutputLog then print('minDistanceSegments_T_I_TT =') debugPrint(minDistanceSegments_T_I_TT) end
-						-- if isOutputLog then print('minDistance_T_TT_II_segments =') debugPrint(minDistance_T_TT_II_segments) end
-
-						-- For each terminal, then for each connected point,
-						-- get the shortest segment on the left and the shortest segment on the right.
-						local minDistanceSegments_T_TT = {}
-						for t = 1, _maxT do
-							if minDistanceSegments_T_I_TT[t] ~= nil then
+						local _maxT = #params.terminals
+						local _getMinDistanceSegments = function()
+							-- for each terminal, then for each connected point, 
+							-- get the connecting segments.
+							-- For all connections touching t i, only keep the shortest to any given tt (never mind ii),
+							-- since _isNorth is only reliable locally, and it can produce extra segments (see note above)
+							local minDistanceSegments_T_I_TT = {}
+							local minDistanceSegments_T_TT_II = {}
+							for t = 1, _maxT do
 								local positionsInT = positionsA[t] or {}
 								for i = 1, #positionsInT do
-									if minDistanceSegments_T_I_TT[t][i] ~= nil then
-										local minDistance_T_I_SegmentLeft = nil
-										local minDistance_T_I_SegmentRight = nil
-										for tt = 1, _maxT do
-											if t ~= tt and minDistanceSegments_T_I_TT[t][i][tt] ~= nil then
-												local newSegment = minDistanceSegments_T_I_TT[t][i][tt]
-												if newSegment.isNorthOfT1 then
-													if minDistance_T_I_SegmentLeft == nil or minDistance_T_I_SegmentLeft.distance > newSegment.distance then
-														minDistance_T_I_SegmentLeft = newSegment
-													end
-												else
-													if minDistance_T_I_SegmentRight == nil or minDistance_T_I_SegmentRight.distance > newSegment.distance then
-														minDistance_T_I_SegmentRight = newSegment
-													end
+									-- for tt = 1, _maxT do
+									-- if t ~= tt then
+										for tt = t+1, _maxT do
+											local minDistanceSegment = nil
+											local positionsInTT = positionsB[tt] or {}
+											for ii = 1, #positionsInTT do
+												local distance = transfUtils.getPositionsDistance(positionsInT[i].pos2Link, positionsInTT[ii].pos2Link)
+												local isNorthOfT1 = _isNorth(positionsInT[i].lanePosTanX2, positionsInTT[ii].pos2Link, distance)
+												local isNorthOfT2 = _isNorth(positionsInTT[ii].lanePosTanX2, positionsInT[i].pos2Link, distance)
+												local newSegment = {
+													t1 = t,
+													t2 = tt,
+													t1Index = i,
+													t2Index = ii,
+													distance = distance,
+													isNorthOfT1 = isNorthOfT1, -- these two isNorthOfTN may have the same value, see the note above
+													isNorthOfT2 = isNorthOfT2,
+													pos2Link1 = positionsInT[i].pos2Link,
+													pos2Link2 = positionsInTT[ii].pos2Link,
+													eraOfT1 = positionsInT[i].era,
+													eraOfT2 = positionsInTT[ii].era,
+													bottomTwinIndexT1 = positionsInT[i].bottomTwinIndex,
+													bottomTwinIndexT2 = positionsInTT[ii].bottomTwinIndex,
+													topTwinIndexT1 = positionsInT[i].topTwinIndex,
+													topTwinIndexT2 = positionsInTT[ii].topTwinIndex,
+												}
+												if minDistanceSegment == nil or minDistanceSegment.distance > distance then
+													minDistanceSegment = newSegment
+												end
+											end
+											if minDistanceSegment ~= nil then
+												-- some segments may still be redundant:
+												-- for example, t i <-> tt ii and t i-other <-> tt ii
+												-- Now we get rid of them
+												if minDistanceSegments_T_TT_II[t] == nil then minDistanceSegments_T_TT_II[t] = {} end
+												if minDistanceSegments_T_TT_II[t][tt] == nil then minDistanceSegments_T_TT_II[t][tt] = {} end
+
+												local cachedSegment = minDistanceSegments_T_TT_II[t][tt][minDistanceSegment.t2Index]
+												if cachedSegment == nil or cachedSegment.distance > minDistanceSegment.distance then
+													minDistanceSegments_T_TT_II[t][tt][minDistanceSegment.t2Index] = minDistanceSegment
+
+													if minDistanceSegments_T_I_TT[t] == nil then minDistanceSegments_T_I_TT[t] = {} end
+													if minDistanceSegments_T_I_TT[t][i] == nil then minDistanceSegments_T_I_TT[t][i] = {} end
+													minDistanceSegments_T_I_TT[t][i][tt] = minDistanceSegment
 												end
 											end
 										end
-										for _, newSegment in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
-											if newSegment ~= nil then
-												if minDistanceSegments_T_TT[newSegment.t1] == nil then minDistanceSegments_T_TT[newSegment.t1] = {} end
-												if minDistanceSegments_T_TT[newSegment.t1][newSegment.t2] == nil then minDistanceSegments_T_TT[newSegment.t1][newSegment.t2] = {} end
-												table.insert(minDistanceSegments_T_TT[newSegment.t1][newSegment.t2], newSegment)
-											end
-										end
-									end
+									-- end
 								end
 							end
-						end
+							if isOutputLog then print('minDistanceSegments_T_I_TT =') debugPrint(minDistanceSegments_T_I_TT) end
+							-- if isOutputLog then print('minDistance_T_TT_II_segments =') debugPrint(minDistance_T_TT_II_segments) end
 
-						-- there is still a special sort of redundant links: those between tunnel stairs tops and bottoms.
-						-- now we take care of them
-						for t = 1, _maxT do
-							if minDistanceSegments_T_TT[t] ~= nil then
-								for tt = 1, _maxT do
-									if minDistanceSegments_T_TT[t][tt] ~= nil then
-										for _, segmentA in pairs(minDistanceSegments_T_TT[t][tt]) do
-											if segmentA ~= nil and segmentA.bottomTwinIndexT1 ~= nil and segmentA.bottomTwinIndexT2 ~= nil then
-												for _, segmentB in pairs(minDistanceSegments_T_TT[t][tt]) do
-													if segmentB.topTwinIndexT1 == segmentA.bottomTwinIndexT1
-													and segmentB.topTwinIndexT2 == segmentA.bottomTwinIndexT2
-													then
-														segmentA.isNeedDeleting = true
-														break
-													end
-												end
-											end
-										end
-									end
-								end
-							end
-						end
-
-						local minDistanceSegments = {}
-						for t = 1, _maxT do
-							if minDistanceSegments_T_TT[t] ~= nil then
-								for tt = 1, _maxT do
-									if minDistanceSegments_T_TT[t][tt] ~= nil then
-										for _, segmentA in pairs(minDistanceSegments_T_TT[t][tt]) do
-											if segmentA ~= nil and not(segmentA.isNeedDeleting) then
-												table.insert(minDistanceSegments, segmentA)
-											end
-										end
-									end
-								end
-							end
-						end
-
-						return minDistanceSegments
-					end
-					local minDistanceSegments = _getMinDistanceSegments()
-					if isOutputLog then print('minDistanceSegments =') debugPrint(minDistanceSegments) end
-
-					-- Now we put all segments together, avoiding duplicates or redundant links.
-					-- First with the small terminal first...
-					local minDistanceSegments_T_I_SmallTFirst = _get_T_I_IndexedTable(minDistanceSegments, true)
-					if isOutputLog then print('minDistanceSegments_T_I_SmallTFirst =') debugPrint(minDistanceSegments_T_I_SmallTFirst) end
-
-					local prunedSegments_SmallTFirst = {}
-                    for t = 1, _maxT do
-						for _, segmentsTouchingPointI in pairs(minDistanceSegments_T_I_SmallTFirst[t] or {}) do
-							_pruneSegments(segmentsTouchingPointI, prunedSegments_SmallTFirst)
-						end
-					end
-					if isOutputLog then print('prunedSegments_SmallTFirst =') debugPrint(prunedSegments_SmallTFirst) end
-
-					-- ...and now we repeat with the large terminals first
-					local minDistanceSegments_T_I_LargeTFirst = _get_T_I_IndexedTable(prunedSegments_SmallTFirst, false)
-					if isOutputLog then print('minDistanceSegments_T_I_LargeTFirst =') debugPrint(minDistanceSegments_T_I_LargeTFirst) end
-
-					local prunedSegments_LargeTFirst = {}
-                    for t = 1, _maxT do
-						for _, segmentsTouchingPointI in pairs(minDistanceSegments_T_I_LargeTFirst[t] or {}) do
-							_pruneSegments(segmentsTouchingPointI, prunedSegments_LargeTFirst)
-						end
-					end
-					if isOutputLog then print('prunedSegments_LargeTFirst =') debugPrint(prunedSegments_LargeTFirst) end
-
-					return prunedSegments_LargeTFirst
-				end
-
-				local _linkUnderpassesAndStairs = function()
-					-- link all underpasses along each platform, except on bridges
-					-- repeat with stairs 2 subway
-					-- not necessary, it can look ugly => we turn it off for now
-					-- local _linkAlong = function(positions)
-					-- 	for t = 1, #params.terminals do
-					-- 		local positionsInTerminal = positions[t]
-					-- 		if positionsInTerminal ~= nil and #positionsInTerminal > 1 then
-					-- 			local previousPosition = positionsInTerminal[1]
-					-- 			for i = 2, #positionsInTerminal do
-					-- 				local currentPosition = positionsInTerminal[i]
-					-- 				result.models[#result.models+1] = {
-					-- 					id = _constants.passengerLaneModelId,
-					-- 					transf = transfUtils.get1MLaneTransf(
-					-- 						previousPosition.pos2Link,
-					-- 						currentPosition.pos2Link
-					-- 					)
-					-- 				}
-					-- 				previousPosition = currentPosition
-					-- 			end
-					-- 		end
-					-- 	end
-					-- end
-					-- _linkAlong(result.terminateConstructionHookInfo.tunnelStairsTopPositions)
-					-- _linkAlong(result.terminateConstructionHookInfo.underpassPositionsOnGround)
-
-					-- link the underpasses and the stairs 2 subway across terminals, underground
-					-- I link each terminal to 1 other terminal only, the closest with an underpass.
-					-- There can be multiple links if they are short enough
-					-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
-					-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
-					local _linkedTerminals = {}
-					local function _linkAcross(segments, maxDistance, getModelId, linkedTerminals, maxSlope)
-						local maxT = #params.terminals
-						for _, segment in pairs(segments) do
-							if not(maxDistance) or segment.distance <= maxDistance then
-								if not(maxSlope) or math.abs((segment.pos2Link1[3] - segment.pos2Link2[3]) / segment.distance) <= maxSlope then
-									-- LOLLO NOTE this estimator could be improved to check indirect connections,
-									-- but I like it simple
-									local t, tt = segment.t1, segment.t2
-									if not(linkedTerminals) or not(linkedTerminals[t]) or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
-										if getModelId then
-											result.models[#result.models+1] = {
-												id = getModelId(segment.distance, segment.eraOfT1, segment.eraOfT2),
-												transf = transfUtils.get1MModelTransf(
-													segment.pos2Link1,
-													segment.pos2Link2
-												)
-											}
-										else
-											result.models[#result.models+1] = {
-												id = _constants.passengerLaneModelId,
-												transf = transfUtils.get1MLaneTransf(
-													segment.pos2Link1,
-													segment.pos2Link2
-												)
-											}
-										end
-										if _linkedTerminals[t] == nil then _linkedTerminals[t] = {} end
-										if _linkedTerminals[tt] == nil then _linkedTerminals[tt] = {} end
-										arrayUtils.addUnique(_linkedTerminals[t], tt)
-										arrayUtils.addUnique(_linkedTerminals[tt], t)
-									end
-								end
-							end
-						end
-					end
-
-					local shortSegmentsOpenStairsOrLifts = _getSegmentsBetweenPos2Links_AcrossTerminals(
-						result.terminateConstructionHookInfo.openStairsOrLiftsPositions,
-						result.terminateConstructionHookInfo.openStairsOrLiftsPositions,
-						false
-					)
-
-					local shortSegmentsInBridgeBelly = _getSegmentsBetweenPos2Links_AcrossTerminals(
-						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						false
-					)
-
-					local shortSegmentsStairsOrLifts2Bridges = _getSegmentsBetweenPos2Links_AcrossTerminals(
-						result.terminateConstructionHookInfo.openStairsOrLiftsPositions,
-						result.terminateConstructionHookInfo.underpassPositionsOnBridge,
-						false
-					)
-
-					-- local shortSegmentsTunnelTops2LiftBottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
-					-- 	-- result.terminateConstructionHookInfo.tunnelStairsTopPositions,
-					-- 	_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom()
-                    --     result.terminateConstructionHookInfo.liftBottomPositions,
-					-- 	false
-					-- )
-
-					local shortSegmentsInTheEarth = _getSegmentsBetweenPos2Links_AcrossTerminals(
-						_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom(),
-						_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom(),
-						-- 'shortSegmentsInTheEarth'
-						false
-					)
-
-					logger.print('shortSegmentsOpenStairsOrLifts =') logger.debugPrint(shortSegmentsOpenStairsOrLifts)
-					_linkAcross(shortSegmentsOpenStairsOrLifts, 99.0, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
-
-					logger.print('shortSegmentsInBridgeBelly =') logger.debugPrint(shortSegmentsInBridgeBelly)
-					-- bridge underpasses can connect to other lifts on other terminals, even if they are far away and there is an S bend:
-					-- we try to avoid this with maxDistance
-					_linkAcross(shortSegmentsInBridgeBelly, 40.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
-
-					logger.print('shortSegmentsStairsOrLifts2Bridges =') logger.debugPrint(shortSegmentsStairsOrLifts2Bridges)
-					_linkAcross(shortSegmentsStairsOrLifts2Bridges, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
-
-					-- logger.print('shortSegmentsTunnelTops2LiftBottoms =') logger.debugPrint(shortSegmentsTunnelTops2LiftBottoms)
-					-- _linkAcross(shortSegmentsTunnelTops2LiftBottoms)
-
-					logger.print('shortSegmentsInTheEarth =') logger.debugPrint(shortSegmentsInTheEarth)
-					_linkAcross(shortSegmentsInTheEarth)
-				end
-				_linkUnderpassesAndStairs()
-				logger.print('passengers and stairs linked')
-
-				local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, raiseHowMuch)
-					-- link platforms across terminals, on the ground, if they are close enough
-					local maxT = #params.terminals
-					for t = 1, maxT do
-						local positionsInT = positions[t]
-						if positionsInT ~= nil then
-							for tt = t + 1, maxT do
-								local positionsInTT = positions[tt]
-								if positionsInTT ~= nil then
+							-- For each terminal, then for each connected point,
+							-- get the shortest segment on the left and the shortest segment on the right.
+							local minDistanceSegments_T_TT = {}
+							for t = 1, _maxT do
+								if minDistanceSegments_T_I_TT[t] ~= nil then
+									local positionsInT = positionsA[t] or {}
 									for i = 1, #positionsInT do
-										for ii = 1, #positionsInTT do
-											if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
-												local tr = transfUtils.get1MLaneTransf(
-													positionsInT[i].pos,
-													positionsInTT[ii].pos
-												)
-												if raiseHowMuch and raiseHowMuch > 0 then
-													tr[15] = tr[15] + _constants.trackCrossingRaise
-													logger.print('tr[15] = ', tr[15])
+										if minDistanceSegments_T_I_TT[t][i] ~= nil then
+											local minDistance_T_I_SegmentLeft = nil
+											local minDistance_T_I_SegmentRight = nil
+											for tt = 1, _maxT do
+												if t ~= tt and minDistanceSegments_T_I_TT[t][i][tt] ~= nil then
+													local newSegment = minDistanceSegments_T_I_TT[t][i][tt]
+													if newSegment.isNorthOfT1 then
+														if minDistance_T_I_SegmentLeft == nil or minDistance_T_I_SegmentLeft.distance > newSegment.distance then
+															minDistance_T_I_SegmentLeft = newSegment
+														end
+													else
+														if minDistance_T_I_SegmentRight == nil or minDistance_T_I_SegmentRight.distance > newSegment.distance then
+															minDistance_T_I_SegmentRight = newSegment
+														end
+													end
 												end
+											end
+											for _, newSegment in pairs({minDistance_T_I_SegmentLeft, minDistance_T_I_SegmentRight}) do
+												if newSegment ~= nil then
+													if minDistanceSegments_T_TT[newSegment.t1] == nil then minDistanceSegments_T_TT[newSegment.t1] = {} end
+													if minDistanceSegments_T_TT[newSegment.t1][newSegment.t2] == nil then minDistanceSegments_T_TT[newSegment.t1][newSegment.t2] = {} end
+													table.insert(minDistanceSegments_T_TT[newSegment.t1][newSegment.t2], newSegment)
+												end
+											end
+										end
+									end
+								end
+							end
+
+							-- there is still a special sort of redundant links: those between tunnel stairs tops and bottoms.
+							-- now we take care of them
+							for t = 1, _maxT do
+								if minDistanceSegments_T_TT[t] ~= nil then
+									for tt = 1, _maxT do
+										if minDistanceSegments_T_TT[t][tt] ~= nil then
+											for _, segmentA in pairs(minDistanceSegments_T_TT[t][tt]) do
+												if segmentA ~= nil and segmentA.bottomTwinIndexT1 ~= nil and segmentA.bottomTwinIndexT2 ~= nil then
+													for _, segmentB in pairs(minDistanceSegments_T_TT[t][tt]) do
+														if segmentB.topTwinIndexT1 == segmentA.bottomTwinIndexT1
+														and segmentB.topTwinIndexT2 == segmentA.bottomTwinIndexT2
+														then
+															segmentA.isNeedDeleting = true
+															break
+														end
+													end
+												end
+											end
+										end
+									end
+								end
+							end
+
+							local minDistanceSegments = {}
+							for t = 1, _maxT do
+								if minDistanceSegments_T_TT[t] ~= nil then
+									for tt = 1, _maxT do
+										if minDistanceSegments_T_TT[t][tt] ~= nil then
+											for _, segmentA in pairs(minDistanceSegments_T_TT[t][tt]) do
+												if segmentA ~= nil and not(segmentA.isNeedDeleting) then
+													table.insert(minDistanceSegments, segmentA)
+												end
+											end
+										end
+									end
+								end
+							end
+
+							return minDistanceSegments
+						end
+						local minDistanceSegments = _getMinDistanceSegments()
+						if isOutputLog then print('minDistanceSegments =') debugPrint(minDistanceSegments) end
+
+						-- Now we put all segments together, avoiding duplicates or redundant links.
+						-- First with the small terminal first...
+						local minDistanceSegments_T_I_SmallTFirst = _get_T_I_IndexedTable(minDistanceSegments, true)
+						if isOutputLog then print('minDistanceSegments_T_I_SmallTFirst =') debugPrint(minDistanceSegments_T_I_SmallTFirst) end
+
+						local prunedSegments_SmallTFirst = {}
+						for t = 1, _maxT do
+							for _, segmentsTouchingPointI in pairs(minDistanceSegments_T_I_SmallTFirst[t] or {}) do
+								_pruneSegments(segmentsTouchingPointI, prunedSegments_SmallTFirst)
+							end
+						end
+						if isOutputLog then print('prunedSegments_SmallTFirst =') debugPrint(prunedSegments_SmallTFirst) end
+
+						-- ...and now we repeat with the large terminals first
+						local minDistanceSegments_T_I_LargeTFirst = _get_T_I_IndexedTable(prunedSegments_SmallTFirst, false)
+						if isOutputLog then print('minDistanceSegments_T_I_LargeTFirst =') debugPrint(minDistanceSegments_T_I_LargeTFirst) end
+
+						local prunedSegments_LargeTFirst = {}
+						for t = 1, _maxT do
+							for _, segmentsTouchingPointI in pairs(minDistanceSegments_T_I_LargeTFirst[t] or {}) do
+								_pruneSegments(segmentsTouchingPointI, prunedSegments_LargeTFirst)
+							end
+						end
+						if isOutputLog then print('prunedSegments_LargeTFirst =') debugPrint(prunedSegments_LargeTFirst) end
+
+						return prunedSegments_LargeTFirst
+					end
+
+					local _linkUnderpassesAndStairs = function()
+						-- link all underpasses along each platform, except on bridges
+						-- repeat with stairs 2 subway
+						-- not necessary, it can look ugly => we turn it off for now
+						-- local _linkAlong = function(positions)
+						-- 	for t = 1, #params.terminals do
+						-- 		local positionsInTerminal = positions[t]
+						-- 		if positionsInTerminal ~= nil and #positionsInTerminal > 1 then
+						-- 			local previousPosition = positionsInTerminal[1]
+						-- 			for i = 2, #positionsInTerminal do
+						-- 				local currentPosition = positionsInTerminal[i]
+						-- 				result.models[#result.models+1] = {
+						-- 					id = _constants.passengerLaneModelId,
+						-- 					transf = transfUtils.get1MLaneTransf(
+						-- 						previousPosition.pos2Link,
+						-- 						currentPosition.pos2Link
+						-- 					)
+						-- 				}
+						-- 				previousPosition = currentPosition
+						-- 			end
+						-- 		end
+						-- 	end
+						-- end
+						-- _linkAlong(result.terminateConstructionHookInfo.tunnelStairsTopPositions)
+						-- _linkAlong(result.terminateConstructionHookInfo.underpassPositionsOnGround)
+
+						-- link the underpasses and the stairs 2 subway across terminals, underground
+						-- I link each terminal to 1 other terminal only, the closest with an underpass.
+						-- There can be multiple links if they are short enough
+						-- On bridges, I only link platform lifts (no side lifts) and underpasses that are close enough.
+						-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
+						local _linkedTerminals = {}
+						local function _linkAcross(segments, maxDistance, getModelId, linkedTerminals, maxSlope)
+							local maxT = #params.terminals
+							for _, segment in pairs(segments) do
+								if not(maxDistance) or segment.distance <= maxDistance then
+									if not(maxSlope) or math.abs((segment.pos2Link1[3] - segment.pos2Link2[3]) / segment.distance) <= maxSlope then
+										-- LOLLO NOTE this estimator could be improved to check indirect connections,
+										-- but I like it simple
+										local t, tt = segment.t1, segment.t2
+										if not(linkedTerminals) or not(linkedTerminals[t]) or not(arrayUtils.arrayHasValue(linkedTerminals[t], tt)) then
+											if getModelId then
 												result.models[#result.models+1] = {
-													id = modelId,
-													transf = tr
+													id = getModelId(segment.distance, segment.eraOfT1, segment.eraOfT2),
+													transf = transfUtils.get1MModelTransf(
+														segment.pos2Link1,
+														segment.pos2Link2
+													)
+												}
+											else
+												result.models[#result.models+1] = {
+													id = _constants.passengerLaneModelId,
+													transf = transfUtils.get1MLaneTransf(
+														segment.pos2Link1,
+														segment.pos2Link2
+													)
 												}
 											end
+											if _linkedTerminals[t] == nil then _linkedTerminals[t] = {} end
+											if _linkedTerminals[tt] == nil then _linkedTerminals[tt] = {} end
+											arrayUtils.addUnique(_linkedTerminals[t], tt)
+											arrayUtils.addUnique(_linkedTerminals[tt], t)
 										end
 									end
 								end
 							end
 						end
-					end
-				end
-				_linkNearbyPassengerPlatforms(
-					7.1, -- must be between (two half platform widths) * sqrt(2) and (two narrow half platform widths + track width)
-					result.terminateConstructionHookInfo.autoStitchablePositions,
-					_constants.passengerLaneModelId
-				)
-				_linkNearbyPassengerPlatforms(
-					8.0,
-					result.terminateConstructionHookInfo.trackCrossingPositions,
-					_constants.passengerLaneModelId,
-					_constants.trackCrossingRaise
-				)
-				local _linkHead2HeadPassengerPlatforms = function(maxLinkLength, modelId)
-					-- link platforms across terminals, on the ground, if they are close enough
-					local _getCentrePositionsAtTerminalEnds = function(t)
-						local maxII = #params.terminals[t].centrePlatformsFineRelative
-						local results = {
-							arrayUtils.cloneDeepOmittingFields(params.terminals[t].centrePlatformsFineRelative[1].posTanX2[1][1]),
-							arrayUtils.cloneDeepOmittingFields(params.terminals[t].centrePlatformsFineRelative[maxII].posTanX2[2][1]),
-						}
-						results[1][3] = results[1][3] + result.laneZs[t] -- _constants.platformHeight
-						results[2][3] = results[2][3] + result.laneZs[t]
-						return results
-					end
-					local maxT = #params.terminals
-					for t = 1, maxT do
-						local positionsInT = _getCentrePositionsAtTerminalEnds(t)
-						for tt = t + 1, maxT do
-							local positionsInTT = _getCentrePositionsAtTerminalEnds(tt)
-							for i = 1, #positionsInT do
-								for ii = 1, #positionsInTT do
-									if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i], positionsInTT[ii]) < maxLinkLength then
-										local tr = transfUtils.get1MLaneTransf(
-											positionsInT[i],
-											positionsInTT[ii]
-										)
-										result.models[#result.models+1] = {
-											id = modelId,
-											transf = tr
-										}
-									end
-								end
-							end
-						end
-					end
-				end
-				_linkHead2HeadPassengerPlatforms(
-					7.4, -- must be lower than (two narrow half platform widths + track width)
-					_constants.passengerLaneModelId
-				)
-				logger.print('passenger platforms linked')
 
-				local _linkSubways = function()
-					if not(params.subways) then return end
+						local shortSegmentsOpenStairsOrLifts = _getSegmentsBetweenPos2Links_AcrossTerminals(
+							result.terminateConstructionHookInfo.openStairsOrLiftsPositions,
+							result.terminateConstructionHookInfo.openStairsOrLiftsPositions,
+							false
+						)
 
-					local _linkSubways2 = function(positions)
-						for slotId, subway in pairs(params.subways) do
-							if subway == nil then
-								logger.err('subway[' .. (slotId or 'NIL') .. '] not found')
-							elseif subway.transf == nil then
-								logger.err('subway[' .. (slotId or 'NIL') .. '] has no transf')
-							elseif params.modules[slotId] ~= nil then
-								local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(params.inverseMainTransf, subway.transf2Link))
-								local isThisSubwayConnected = false
-								-- connect each subway to the nearest terminal
-								local minDistance = nil
-								local minDistanceI = nil
-								local minDistanceT = nil
-								for t = 1, #params.terminals do
-									if positions[t] ~= nil then
-										for i = 1, #positions[t] do
-											local distance = transfUtils.getPositionsDistance(subwayPos2Link, positions[t][i].pos2Link)
-											if minDistance == nil or minDistance > distance then
-												minDistance = distance
-												minDistanceI = i
-												minDistanceT = t
+						local shortSegmentsInBridgeBelly = _getSegmentsBetweenPos2Links_AcrossTerminals(
+							result.terminateConstructionHookInfo.underpassPositionsOnBridge,
+							result.terminateConstructionHookInfo.underpassPositionsOnBridge,
+							false
+						)
+
+						local shortSegmentsStairsOrLifts2Bridges = _getSegmentsBetweenPos2Links_AcrossTerminals(
+							result.terminateConstructionHookInfo.openStairsOrLiftsPositions,
+							result.terminateConstructionHookInfo.underpassPositionsOnBridge,
+							false
+						)
+
+						-- local shortSegmentsTunnelTops2LiftBottoms = _getSegmentsBetweenPos2Links_AcrossTerminals(
+						-- 	-- result.terminateConstructionHookInfo.tunnelStairsTopPositions,
+						-- 	_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom()
+						--     result.terminateConstructionHookInfo.liftBottomPositions,
+						-- 	false
+						-- )
+
+						local shortSegmentsInTheEarth = _getSegmentsBetweenPos2Links_AcrossTerminals(
+							_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom(),
+							_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom(),
+							-- 'shortSegmentsInTheEarth'
+							false
+						)
+
+						logger.print('shortSegmentsOpenStairsOrLifts =') logger.debugPrint(shortSegmentsOpenStairsOrLifts)
+						_linkAcross(shortSegmentsOpenStairsOrLifts, 99.0, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
+
+						logger.print('shortSegmentsInBridgeBelly =') logger.debugPrint(shortSegmentsInBridgeBelly)
+						-- bridge underpasses can connect to other lifts on other terminals, even if they are far away and there is an S bend:
+						-- we try to avoid this with maxDistance
+						_linkAcross(shortSegmentsInBridgeBelly, 40.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
+
+						logger.print('shortSegmentsStairsOrLifts2Bridges =') logger.debugPrint(shortSegmentsStairsOrLifts2Bridges)
+						_linkAcross(shortSegmentsStairsOrLifts2Bridges, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
+
+						-- logger.print('shortSegmentsTunnelTops2LiftBottoms =') logger.debugPrint(shortSegmentsTunnelTops2LiftBottoms)
+						-- _linkAcross(shortSegmentsTunnelTops2LiftBottoms)
+
+						logger.print('shortSegmentsInTheEarth =') logger.debugPrint(shortSegmentsInTheEarth)
+						_linkAcross(shortSegmentsInTheEarth)
+					end
+					_linkUnderpassesAndStairs()
+					logger.print('passengers and stairs linked')
+
+					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, raiseHowMuch)
+						-- link platforms across terminals, on the ground, if they are close enough
+						local maxT = #params.terminals
+						for t = 1, maxT do
+							local positionsInT = positions[t]
+							if positionsInT ~= nil then
+								for tt = t + 1, maxT do
+									local positionsInTT = positions[tt]
+									if positionsInTT ~= nil then
+										for i = 1, #positionsInT do
+											for ii = 1, #positionsInTT do
+												if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
+													local tr = transfUtils.get1MLaneTransf(
+														positionsInT[i].pos,
+														positionsInTT[ii].pos
+													)
+													if raiseHowMuch and raiseHowMuch > 0 then
+														tr[15] = tr[15] + _constants.trackCrossingRaise
+														logger.print('tr[15] = ', tr[15])
+													end
+													result.models[#result.models+1] = {
+														id = modelId,
+														transf = tr
+													}
+												end
 											end
 										end
 									end
 								end
-								-- logger.print('terminal t = ', minDistanceT, 'about to link to subway')
-								if minDistanceT ~= nil and minDistanceI ~= nil then
-									-- logger.print('allPositionsUnderground[minDistanceT][minDistanceI] =') logger.debugPrint(allPositionsUnderground[minDistanceT][minDistanceI])
-									result.models[#result.models+1] = {
-										id = _constants.passengerLaneModelId,
-										transf = transfUtils.get1MLaneTransf(
-											positions[minDistanceT][minDistanceI].pos2Link,
-											subwayPos2Link
-										)
-									}
-									isThisSubwayConnected = true
-								end
-								if not(isThisSubwayConnected) then
-									result.models[#result.models+1] = {
-										id = _constants.redMessageModelFileName,
-										-- transf = _constants.idTransf
-										transf = transfUtilsUG.mul(params.inverseMainTransf, subway.transf),
-									}
-									result.labelText[#result.models - 1] = { _('SubwayCannotConnect'), _('SubwayCannotConnect') }
+							end
+						end
+					end
+					_linkNearbyPassengerPlatforms(
+						7.1, -- must be between (two half platform widths) * sqrt(2) and (two narrow half platform widths + track width)
+						result.terminateConstructionHookInfo.autoStitchablePositions,
+						_constants.passengerLaneModelId
+					)
+					_linkNearbyPassengerPlatforms(
+						8.0,
+						result.terminateConstructionHookInfo.trackCrossingPositions,
+						_constants.passengerLaneModelId,
+						_constants.trackCrossingRaise
+					)
+					local _linkHead2HeadPassengerPlatforms = function(maxLinkLength, modelId)
+						-- link platforms across terminals, on the ground, if they are close enough
+						local _getCentrePositionsAtTerminalEnds = function(t)
+							local maxII = #params.terminals[t].centrePlatformsFineRelative
+							local results = {
+								arrayUtils.cloneDeepOmittingFields(params.terminals[t].centrePlatformsFineRelative[1].posTanX2[1][1]),
+								arrayUtils.cloneDeepOmittingFields(params.terminals[t].centrePlatformsFineRelative[maxII].posTanX2[2][1]),
+							}
+							results[1][3] = results[1][3] + result.laneZs[t] -- _constants.platformHeight
+							results[2][3] = results[2][3] + result.laneZs[t]
+							return results
+						end
+						local maxT = #params.terminals
+						for t = 1, maxT do
+							local positionsInT = _getCentrePositionsAtTerminalEnds(t)
+							for tt = t + 1, maxT do
+								local positionsInTT = _getCentrePositionsAtTerminalEnds(tt)
+								for i = 1, #positionsInT do
+									for ii = 1, #positionsInTT do
+										if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i], positionsInTT[ii]) < maxLinkLength then
+											local tr = transfUtils.get1MLaneTransf(
+												positionsInT[i],
+												positionsInTT[ii]
+											)
+											result.models[#result.models+1] = {
+												id = modelId,
+												transf = tr
+											}
+										end
+									end
 								end
 							end
 						end
 					end
-					_linkSubways2(_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom())
-					-- _linkSubways2(_getAllPositions_UndergroundTop_GroundBottom())
-				end
-				_linkSubways()
-				logger.print('subways linked')
+					_linkHead2HeadPassengerPlatforms(
+						7.4, -- must be lower than (two narrow half platform widths + track width)
+						_constants.passengerLaneModelId
+					)
+					logger.print('passenger platforms linked')
 
+					local _linkSubways = function()
+						if not(params.subways) then return end
+
+						local _linkSubways2 = function(positions)
+							for slotId, subway in pairs(params.subways) do
+								if subway == nil then
+									logger.err('subway[' .. (slotId or 'NIL') .. '] not found')
+								elseif subway.transf == nil then
+									logger.err('subway[' .. (slotId or 'NIL') .. '] has no transf')
+								elseif params.modules[slotId] ~= nil then
+									local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(params.inverseMainTransf, subway.transf2Link))
+									local isThisSubwayConnected = false
+									-- connect each subway to the nearest terminal
+									local minDistance = nil
+									local minDistanceI = nil
+									local minDistanceT = nil
+									for t = 1, #params.terminals do
+										if positions[t] ~= nil then
+											for i = 1, #positions[t] do
+												local distance = transfUtils.getPositionsDistance(subwayPos2Link, positions[t][i].pos2Link)
+												if minDistance == nil or minDistance > distance then
+													minDistance = distance
+													minDistanceI = i
+													minDistanceT = t
+												end
+											end
+										end
+									end
+									-- logger.print('terminal t = ', minDistanceT, 'about to link to subway')
+									if minDistanceT ~= nil and minDistanceI ~= nil then
+										-- logger.print('allPositionsUnderground[minDistanceT][minDistanceI] =') logger.debugPrint(allPositionsUnderground[minDistanceT][minDistanceI])
+										result.models[#result.models+1] = {
+											id = _constants.passengerLaneModelId,
+											transf = transfUtils.get1MLaneTransf(
+												positions[minDistanceT][minDistanceI].pos2Link,
+												subwayPos2Link
+											)
+										}
+										isThisSubwayConnected = true
+									end
+									if not(isThisSubwayConnected) then
+										result.models[#result.models+1] = {
+											id = _constants.redMessageModelFileName,
+											-- transf = _constants.idTransf
+											transf = transfUtilsUG.mul(params.inverseMainTransf, subway.transf),
+										}
+										result.labelText[#result.models - 1] = { _('SubwayCannotConnect'), _('SubwayCannotConnect') }
+									end
+								end
+							end
+						end
+						_linkSubways2(_getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom())
+						-- _linkSubways2(_getAllPositions_UndergroundTop_GroundBottom())
+					end
+					_linkSubways()
+					logger.print('subways linked')
+				end
+				_makeCrossPlatformLinks()
+-- local timeMsec1 = os.clock() * 1000
+-- print('_makeCrossPlatformLinks took ' .. (timeMsec1 - timeMsec0) .. ' mSec') -- about 35 ms with a large station
 		-- 	end,
 		-- 	logger.xpErrorHandler
 		-- )
@@ -1782,6 +1788,8 @@ function data()
 					end
 				end
 				_groupTerminals()
+-- local timeMsec2 = os.clock() * 1000
+-- print('_groupTerminals took ' .. (timeMsec2 - timeMsec1) .. ' mSec') -- about 35 ms with a large station
 				logger.print('terminals grouped')
 
 				-- it should output something like (this example has one terminal made of two adjacent bits)
