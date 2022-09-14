@@ -1,4 +1,5 @@
-local _constants = require('lollo_freestyle_train_station.constants')
+local constants = require('lollo_freestyle_train_station.constants')
+local logger = require('lollo_freestyle_train_station.logger')
 
 local _paramConstants = {
     lollo_platform_as_asset_x_10m = {
@@ -12,12 +13,12 @@ local _paramConstants = {
         step = 10,
     },
     lollo_platform_as_asset_x_1m = {
-        max = 9,
+        max = 10,
         min = 1,
         step = 1,
     },
     lollo_platform_as_asset_y_1m = {
-        max = 9,
+        max = 10,
         min = 1,
         step = 1,
     },
@@ -86,14 +87,14 @@ function data()
                 name = _('Era'),
                 values = {'A', 'B', 'C'},
                 uiType = 'BUTTON',
-                defaultIndex = 0,
+                -- defaultIndex = 0,
             },
             {
                 key = 'lollo_platform_as_asset_is_cargo',
                 name = _('PlatformAsAsset_CargoOrPassengers'),
                 values = {_('PlatformAsAsset_Cargo'), _('PlatformAsAsset_Passengers'),},
                 uiType = 'BUTTON',
-                defaultIndex = 0,
+                -- defaultIndex = 0,
             },
             {
                 key = 'lollo_platform_as_asset_x_10m',
@@ -141,10 +142,10 @@ function data()
             ) / 2
             local _zMax = 0
 
-            local _era_prefix = ({_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix})[(params.lollo_platform_as_asset_era_prefix or 0) + 1]
+            local _era_prefix = ({constants.eras.era_a.prefix, constants.eras.era_b.prefix, constants.eras.era_c.prefix})[(params.lollo_platform_as_asset_era_prefix or 0) + 1]
             local _isCargo = (params.lollo_platform_as_asset_is_cargo or 0) == 0
             local _modelId = 'lollo_freestyle_train_station/railroad/assets/' .. (_isCargo and 'cargo' or 'passengers') .. '/'.. _era_prefix ..'cube_1x1.mdl'
-            -- print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax)
+            logger.print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax)
             for x = -_xHalfSize, _xHalfSize, 1 do
                 for y = -_yHalfSize, _yHalfSize, 1 do
                     result.models[#result.models+1] = {
