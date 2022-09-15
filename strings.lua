@@ -122,7 +122,7 @@ function data()
 			["FlatPassengerStationMidName"] = "Ornate passenger station",
 			["FlatPassengerStationMidDesc"] = "Ornate passenger station. Adjust its height with <m> and <n>.",
 			["FlatPassengerStationLargeName"] = "Ornate passenger station",
-			["FlatPassengerStationLargeDesc"] = "Ornate passenger station. Adjust its height with <m> and <n>.",
+			["FlatPassengerStationLargeDesc"] = "Ornate passenger station with underpass inside. Adjust its height with <m> and <n>.",
 			["LookUndergroundName"] = "Look Underground",
 			["LookUndergroundDesc"] = "Hover or build this to look underground, remove it when done.",
 			["OpenLiftName"] = "Lift up for ground platform",
