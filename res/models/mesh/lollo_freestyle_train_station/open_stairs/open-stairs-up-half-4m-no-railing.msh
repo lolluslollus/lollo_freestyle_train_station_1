@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 336,
+					offset = 5612,
+				},
+				position = {
+					count = 336,
+					offset = 5276,
+				},
+				tangent = {
+					count = 336,
+					offset = 5948,
+				},
+				uv0 = {
+					count = 336,
+					offset = 4940,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 984,
+					offset = 8252,
+				},
+				position = {
+					count = 984,
+					offset = 7268,
+				},
+				tangent = {
+					count = 984,
+					offset = 9236,
+				},
+				uv0 = {
+					count = 984,
+					offset = 6284,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/era_c_station_tiles_2.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 192,
+					offset = 10604,
+				},
+				position = {
+					count = 192,
+					offset = 10412,
+				},
+				tangent = {
+					count = 192,
+					offset = 10796,
+				},
+				uv0 = {
+					count = 192,
+					offset = 10220,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_stairs/concrete_top.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 264,
+					offset = 11516,
+				},
+				position = {
+					count = 264,
+					offset = 11252,
+				},
+				tangent = {
+					count = 264,
+					offset = 11780,
+				},
+				uv0 = {
+					count = 264,
+					offset = 10988,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_stairs/concrete_top_high_prio.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 636,
+			numComp = 3,
+			offset = 3264,
+		},
+		position = {
+			count = 1656,
+			numComp = 3,
+			offset = 1608,
+		},
+		tangent = {
+			count = 1040,
+			numComp = 4,
+			offset = 3900,
+		},
+		uv0 = {
+			count = 1608,
+			numComp = 2,
+			offset = 0,
+		},
+	},
+}
+end

@@ -28,6 +28,27 @@ function data()
                 visibleFrom = 0,
                 visibleTo = 250,
             },
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                                'lollo_freestyle_train_station/station_concrete_1.mtl',
+                                'lollo_freestyle_train_station/station_concrete_1.mtl',
+                                'lollo_freestyle_train_station/station_concrete_1_z.mtl'
+                            },
+                            mesh = 'lollo_freestyle_train_station/open_stairs/open-stairs-up-half-10m-no-railing.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 250,
+                visibleTo = 1000,
+            },
         },
         metadata = { },
         version = 1
