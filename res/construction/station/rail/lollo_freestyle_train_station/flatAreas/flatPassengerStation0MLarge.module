@@ -69,6 +69,24 @@ return {
 			tag = slotHelpers.mangleModelTag(nTerminal, false),
 		}
 
+		if result.terminateConstructionHookInfo.underpassPositionsOnGround[nTerminal] == nil then
+			result.terminateConstructionHookInfo.underpassPositionsOnGround[nTerminal] = {}
+		end
+		table.insert(
+			result.terminateConstructionHookInfo.underpassPositionsOnGround[nTerminal],
+			{
+				t = nTerminal,
+				lanePosTanX2 = cpl.posTanX2,
+				pos2Link = transfUtils.transf2Position(
+					transfUtilsUG.mul(
+						buildingTransf,
+						-- { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  9, -3.5, _constants.subwayPos2LinkZ - _constants.stairsAndRampHeight, 1 }
+						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  9, -3.5, _constants.subwayPos2LinkZ, 1 }
+					)
+				)
+			}
+		)
+
 		-- print('buildingTransf =') debugPrint(buildingTransf)
 		table.insert(result.slots, {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
@@ -82,10 +100,10 @@ return {
 		})
 
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
-			{-1, -12.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-			{-1, 12.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-			{8.5, 12.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-			{8.5, -12.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+			{-1, -15.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+			{-1, 15.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+			{8.5, 15.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+			{8.5, -15.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 		table.insert(

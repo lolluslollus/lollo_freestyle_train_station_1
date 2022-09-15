@@ -257,17 +257,54 @@ function data()
                         nodes = {
                             {
                                 {0, -2.0, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
+                                {0, -1.5, 0},
+                                2.4
+                            },
+                            {
+                                {0, -3.5, -_constants.stairsAndRampHeight},
+                                {0, -1.5, 0},
+                                2.4
+                            },
+                            {
+                                {0, -3.5, -_constants.stairsAndRampHeight},
+                                {0, -4.0, 0},
                                 2.4
                             },
                             {
                                 {0, -7.5, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
+                                {0, -4.0, 0},
                                 2.4
                             }
                         },
                         speedLimit = 20,
                         transportModes = {'PERSON'}
+                    },
+                    { -- down into the earth
+                        linkable = false,
+                        nodes = {
+                            {
+                                { 0, -3.5, -_constants.stairsAndRampHeight },
+                                { 6, 0, 0 },
+                                1,
+                            },
+                            {
+                                { 6, -3.5, -_constants.stairsAndRampHeight },
+                                { 6, 0, 0 },
+                                1,
+                            },
+                            {
+                                { 6, -3.5, -_constants.stairsAndRampHeight },
+                                { 3, 0, _constants.subwayPos2LinkZ + _constants.stairsAndRampHeight },
+                                1,
+                            },
+                            {
+                                { 9, -3.5, _constants.subwayPos2LinkZ },
+                                { 3, 0, _constants.subwayPos2LinkZ + _constants.stairsAndRampHeight },
+                                1,
+                            },
+                        },
+                        transportModes = { 'PERSON', },
+                        speedLimit = 20,
                     },
                 },
                 runways = {},

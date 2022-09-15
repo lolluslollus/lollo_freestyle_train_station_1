@@ -24,42 +24,42 @@ function data()
                         nodes = {
                             {
                                 {-13.0, -1.0, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
-                                1.0
-                            },
-                            {
-                                {-13.0, -6.5, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
-                                1.0
-                            },
-                            {
-                                {-10.5, -1.0, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
-                                1.0
-                            },
-                            {
-                                {-10.5, -6.5, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
-                                1.0
-                            },
-                            {
-                                {-8.0, -1.0, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
-                                1.0
-                            },
-                            {
-                                {-8.0, -6.5, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
+                                {7.5, 0, 0},
                                 1.0
                             },
                             {
                                 {-5.5, -1.0, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
+                                {7.5, 0, 0},
                                 1.0
                             },
                             {
-                                {-5.5, -6.5, -_constants.stairsAndRampHeight},
-                                {0, -5.5, 0},
+                                {-13.0, -2.8, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {-5.5, -2.8, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {-13.0, -4.6, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {-5.5, -4.6, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {-13.0, -6.4, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {-5.5, -6.4, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
                                 1.0
                             },
                         },
@@ -101,43 +101,43 @@ function data()
                         linkable = false,
                         nodes = {
                             {
-                                {5.5, -6.5, -_constants.stairsAndRampHeight},
-                                {0, 5.5, 0},
+                                {5.5, -6.4, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {13, -6.4, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {5.5, -4.6, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {13, -4.6, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {5.5, -2.8, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
+                                1.0
+                            },
+                            {
+                                {13, -2.8, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
                                 1.0
                             },
                             {
                                 {5.5, -1.0, -_constants.stairsAndRampHeight},
-                                {0, 5.5, 0},
+                                {7.5, 0, 0},
                                 1.0
                             },
                             {
-                                {8.0, -6.5, -_constants.stairsAndRampHeight},
-                                {0, 5.5, 0},
-                                1.0
-                            },
-                            {
-                                {8.0, -1.0, -_constants.stairsAndRampHeight},
-                                {0, 5.5, 0},
-                                1.0
-                            },
-                            {
-                                {10.5, -6.5, -_constants.stairsAndRampHeight},
-                                {0, 5.5, 0},
-                                1.0
-                            },
-                            {
-                                {10.5, -1.0, -_constants.stairsAndRampHeight},
-                                {0, 5.5, 0},
-                                1.0
-                            },
-                            {
-                                {13.0, -6.5, -_constants.stairsAndRampHeight},
-                                {0, 5.5, 0},
-                                1.0
-                            },
-                            {
-                                {13.0, -1.0, -_constants.stairsAndRampHeight},
-                                {0, 5.5, 0},
+                                {13, -1.0, -_constants.stairsAndRampHeight},
+                                {7.5, 0, 0},
                                 1.0
                             },
                         },
