@@ -344,7 +344,7 @@ function data()
 			["OpenTwinStairsFreeDesc"] = "Twin stairs matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
 			["OpenLiftFreeDesc"] = "Lift matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
 			["OpenLiftFreeName"] = "Lift",
-			["OpenStairsFreeDesc"] = "Stairs matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
+			["OpenStairsFreeDesc"] = "Stairs matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover. It can also carry cargo.",
 			["OpenStairsFreeHeight"] = "Height",
 			["OpenStairsFreeName"] = "Stairs",
 			["PedestrianBridges"] = "Pedestrian Bridges",
