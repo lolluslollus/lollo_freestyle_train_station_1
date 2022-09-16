@@ -43,7 +43,12 @@ function data()
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_30x28.mdl'
+			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_30x28.mdl'
+			if eraPrefix == moduleHelpers.eras.era_b.prefix then
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_30x28.mdl'
+			elseif eraPrefix == moduleHelpers.eras.era_a.prefix then
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_30x28.mdl'
+			end
 
 			result.models[#result.models + 1] = {
 				id = myModelId,

@@ -24,7 +24,7 @@ function data()
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_borders.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_roof.mtl",
 										-- "station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_details.mtl",
-										"lollo_freestyle_train_station/railroad/flatSides/era_a_mb_cargo_s1_details.mtl",
+										"lollo_freestyle_train_station/railroad/flatSides/era_c_mb_cargo_s1_details.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_brick_bright.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_brick_dark.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_concrete.mtl",
@@ -43,8 +43,8 @@ function data()
 								},
 								{
 									materials = {
-										'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
-										'lollo_freestyle_train_station/square_cobbles.mtl',
+										"lollo_freestyle_train_station/station_concrete_3.mtl",
+										"lollo_freestyle_train_station/station_concrete_1.mtl",
 									},
 									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
 									transf = _adjTransf,
@@ -71,7 +71,7 @@ function data()
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_borders.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_roof.mtl",
 										-- "station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_details.mtl",
-										"lollo_freestyle_train_station/railroad/flatSides/era_a_mb_cargo_s1_details.mtl",
+										"lollo_freestyle_train_station/railroad/flatSides/era_c_mb_cargo_s1_details.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_brick_bright.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_brick_dark.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_concrete.mtl",
@@ -90,8 +90,8 @@ function data()
 								},
 								{
 									materials = {
-										'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
-										'lollo_freestyle_train_station/square_cobbles.mtl',
+										"lollo_freestyle_train_station/station_concrete_3.mtl",
+										"lollo_freestyle_train_station/station_concrete_1.mtl",
 									},
 									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
 									transf = _adjTransf,
@@ -118,7 +118,7 @@ function data()
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_borders.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_roof.mtl",
 										-- "station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_details.mtl",
-										"lollo_freestyle_train_station/railroad/flatSides/era_a_mb_cargo_s1_details.mtl",
+										"lollo_freestyle_train_station/railroad/flatSides/era_c_mb_cargo_s1_details.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_brick_bright.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_brick_dark.mtl",
 										"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_concrete.mtl",
@@ -130,8 +130,8 @@ function data()
 								},
 								{
 									materials = {
-										'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
-										'lollo_freestyle_train_station/square_cobbles.mtl',
+										"lollo_freestyle_train_station/station_concrete_3.mtl",
+										"lollo_freestyle_train_station/station_concrete_1.mtl",
 									},
 									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
 									transf = _adjTransf,
