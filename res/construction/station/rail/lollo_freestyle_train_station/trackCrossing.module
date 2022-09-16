@@ -13,7 +13,8 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "passenger-road-access", "passenger-up-and-down", },
+			-- categories = { "passenger-road-access", "passenger-up-and-down", },
+			categories = { "passenger-road-access", },
 		},
 		cost = {
 			price = 0,

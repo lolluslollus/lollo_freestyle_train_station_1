@@ -12,6 +12,12 @@ local transfUtilsUG = require 'transf'
 
 
 local privateConstants = {
+    cargoSupports = {
+        -- setting this to 2 gets a negligible performance boost and uglier joints,
+        -- particularly on slopes and bends
+        bracketStep = 1,
+        pillarPeriod = 5,
+    },
     deco = {
         -- LOLLO NOTE setting this to 2 gets a negligible performance boost and uglier joints,
         -- particularly on slopes and bends
@@ -750,6 +756,69 @@ return {
     getVariant = function(params, slotId)
         return privateFuncs.getVariant(params, slotId)
     end,
+    cargoSupports = {
+        doCargoSupport = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+            bracket5ModelId, bracket10ModelId, bracket20ModelId,
+            legs5ModelId, legs10ModelId, legs20ModelId)
+            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local transfXZoom = isTrackOnPlatformLeft and -1 or 1
+            local transfYZoom = isTrackOnPlatformLeft and -1 or 1
+            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
+
+            local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+            local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.cargoSupports.bracketStep do
+                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+                local leadingIndex = cpf.leadingIndex
+                if leadingIndex > _iMax then break end
+                if leadingIndex >= _i1 then
+                    if cpf.type == 0 then -- ground
+                        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
+                        local platformWidth = cpf.width
+                        local bracketModelId = bracket5ModelId
+                        if platformWidth > 10 then bracketModelId = bracket20ModelId
+                        elseif platformWidth > 5 then bracketModelId = bracket10ModelId
+                        end
+                        result.models[#result.models+1] = {
+                            id = bracketModelId,
+                            transf = transfUtilsUG.mul(
+                                privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+                                { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                            ),
+                            tag = tag
+                        }
+
+                        if math.fmod(ii, privateConstants.cargoSupports.pillarPeriod) == 0 then
+                            local legsModelId = legs5ModelId
+                            local waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_support_5m.mdl'
+                            if platformWidth > 10 then
+                                legsModelId = legs20ModelId
+                                waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_support_20m.mdl'
+                            elseif platformWidth > 5 then
+                                legsModelId = legs10ModelId
+                                waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_support_10m.mdl'
+                            end
+
+                            local myTransf = transfUtilsUG.mul(
+                                privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
+                                { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                            )
+                            result.models[#result.models+1] = {
+                                id = legsModelId,
+                                transf = myTransf,
+                                tag = tag,
+                            }
+                            result.models[#result.models+1] = {
+                                id = waitingAreaModelId,
+                                transf = myTransf,
+                                tag = slotHelpers.mangleModelTag(nTerminal, true),
+                            }
+                        end
+                    end
+                end
+            end
+        end,
+    },
     deco = {
         getStationSignFineIndexes = function(params, nTerminal)
             return privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
