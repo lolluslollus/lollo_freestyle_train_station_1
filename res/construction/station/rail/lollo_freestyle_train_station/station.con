@@ -790,7 +790,9 @@ function data()
 								transfUtils.getPosTanX2Reversed(crossConnectorPosTanX2), -- cross connectors go from the platform border to its centre, here we go toward the edge
 								cpl.width * 0.5 + 2.5 -- half platform width plus half track width is the centre of the track
 							)
-							local trackCrossingTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
+							local trackCrossingTransf = isTrackOnPlatformLeft
+								and moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
+								or moduleHelpers.getPlatformObjectTransf_WithYRotation(transfUtils.getPosTanX2Reversed(cpf.posTanX2))
 							trackCrossingTransf[13] = trackCrossingPosTanX2[2][1][1]
 							trackCrossingTransf[14] = trackCrossingPosTanX2[2][1][2]
 							trackCrossingTransf[15] = trackCrossingPosTanX2[2][1][3]

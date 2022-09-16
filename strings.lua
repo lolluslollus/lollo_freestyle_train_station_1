@@ -200,7 +200,7 @@ function data()
 			["SubwayName"] = "Underground entrance",
 			["SubwayDesc"] = "Plop these near a freestyle station and join them with the popup. Make sure your station has underpasses and / or subway stairs.",
 			["TrackCrossingName"] = "Track crossing",
-			["TrackCrossingDesc"] = "Track crossing. It can connect pedestrian traffic to the road network.",
+			["TrackCrossingDesc"] = "Track crossing. It connects to one platform and it can connect to the road network.",
 			["TunnelStairsUpName"] = "Subway stairs up",
 			["TunnelStairsUpDesc"] = "Connects underground passenger platforms to the subway entrances and the other terminals above.",
 			["TunnelStairsUpDownName"] = "Subway stairs up and down",
