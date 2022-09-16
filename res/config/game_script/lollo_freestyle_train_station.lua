@@ -1127,7 +1127,7 @@ local _actions = {
             function()
                 -- UG TODO there is no such thing in the new api,
                 -- nor an upgrade event, both would be useful
-
+                -- collectgarbage() -- LOLLO TODO this might work, check it
                 local upgradedConId = game.interface.upgradeConstruction(
                     oldConId,
                     oldCon.fileName,

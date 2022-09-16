@@ -122,6 +122,7 @@ local _actions = {
                             logger.print('oldConId =') logger.debugPrint(oldConId)
                             logger.print('result.resultEntities[1] =') logger.debugPrint(result.resultEntities[1])
                             logger.print('oldConstruction.fileName =') logger.debugPrint(oldConstruction.fileName)
+                            -- collectgarbage() -- LOLLO TODO this might work, check it
                             local upgradedConId = game.interface.upgradeConstruction(
                                 result.resultEntities[1],
                                 oldConstruction.fileName,
