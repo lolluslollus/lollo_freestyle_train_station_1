@@ -33,15 +33,28 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			moduleHelpers.cargoShelves.doCargoShelf(
-				result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-				'lollo_freestyle_train_station/cargo_shelves/iron/brackets_5m.mdl',
-				'lollo_freestyle_train_station/cargo_shelves/iron/brackets_10m.mdl',
-				'lollo_freestyle_train_station/cargo_shelves/iron/brackets_20m.mdl',
-				'lollo_freestyle_train_station/cargo_shelves/iron/legs_5m.mdl',
-				'lollo_freestyle_train_station/cargo_shelves/iron/legs_10m.mdl',
-				'lollo_freestyle_train_station/cargo_shelves/iron/legs_20m.mdl'
-			)
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			if eraPrefix == moduleHelpers.eras.era_a.prefix then
+				moduleHelpers.cargoShelves.doCargoShelf(
+					result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+					'lollo_freestyle_train_station/cargo_shelves/dark_iron/brackets_5m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/dark_iron/brackets_10m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/dark_iron/brackets_20m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/dark_iron/legs_5m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/dark_iron/legs_10m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/dark_iron/legs_20m.mdl'
+				)
+			else
+				moduleHelpers.cargoShelves.doCargoShelf(
+					result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+					'lollo_freestyle_train_station/cargo_shelves/iron/brackets_5m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/iron/brackets_10m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/iron/brackets_20m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/iron/legs_5m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/iron/legs_10m.mdl',
+					'lollo_freestyle_train_station/cargo_shelves/iron/legs_20m.mdl'
+				)
+			end
 		end,
 
 		getModelsFn = function(params)
