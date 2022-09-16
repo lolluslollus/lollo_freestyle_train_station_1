@@ -787,8 +787,8 @@ return {
                             ),
                             tag = tag
                         }
-
-                        if math.fmod(ii, privateConstants.cargoShelves.pillarPeriod) == 0 then
+                        -- we shift it by 2 so it does not cover light and speakers
+                        if math.fmod(ii + 2, privateConstants.cargoShelves.pillarPeriod) == 0 then
                             local legsModelId = legs5ModelId
                             local waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_shelf_5m.mdl'
                             if platformWidth > 10 then
