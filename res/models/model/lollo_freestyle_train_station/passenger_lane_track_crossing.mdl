@@ -52,7 +52,7 @@ function data()
                                 1.5,
                             },
                         },
-                        transportModes = { 'PERSON', },
+                        transportModes = { 'CARGO', 'PERSON', },
                         speedLimit = 20,
                     },
                 },

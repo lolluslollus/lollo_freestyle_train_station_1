@@ -50,7 +50,7 @@ function data()
 			end
 
 			moduleHelpers.flatAreas.addExitPole(result, xAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addLaneToStreet(result, xAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addPassengerLaneToStreet(result, xAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}

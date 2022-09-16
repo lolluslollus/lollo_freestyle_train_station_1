@@ -51,7 +51,7 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addCargoLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local groundFace = { -- groundFaces ignore z, terrainAlignmentLists don't
 				{-1, -2, _constants.platformSideBitsZ, 1},

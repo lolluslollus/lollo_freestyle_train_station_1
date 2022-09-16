@@ -288,11 +288,37 @@ privateFuncs.edges = {
     end,
 }
 privateFuncs.flatAreas = {
-    addLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+    addCargoLaneToStreet = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+
+        local position123 = nil
+        if cpl.width <= 5 then
+            position123 = params.terminals[nTerminal].cargoWaitingAreasRelative[1][nTrackEdge].posTanX2[1][1]
+        elseif cpl.width <= 10 then
+            position123 = params.terminals[nTerminal].cargoWaitingAreasRelative[2][nTrackEdge].posTanX2[1][1]
+        elseif cpl.width <= 15 then
+            position123 = params.terminals[nTerminal].cargoWaitingAreasRelative[3][nTrackEdge].posTanX2[1][1]
+        else
+            position123 = params.terminals[nTerminal].cargoWaitingAreasRelative[4][nTrackEdge].posTanX2[1][1]
+        end
+        local _lane2AreaTransf = transfUtils.get1MLaneTransf(
+            transfUtils.getPositionRaisedBy(position123, result.laneZs[nTerminal]),
+            transfUtils.transf2Position(slotTransf)
+        )
+
+        result.models[#result.models+1] = {
+            id = constants.passengerLaneModelId,
+            slotId = slotId,
+            transf = _lane2AreaTransf,
+            tag = tag
+        }
+
+    end,
+    addPassengerLaneToStreet = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
         local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
         local lane2AreaTransf = transfUtils.get1MLaneTransf(
             transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
-            transfUtils.transf2Position(slotAdjustedTransf)
+            transfUtils.transf2Position(slotTransf)
         )
         result.models[#result.models+1] = {
             id = constants.passengerLaneModelId,
@@ -1031,8 +1057,11 @@ return {
             local variant = privateFuncs.getVariant(params, slotId) -- an integer starting at 0
             return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
         end,
-        addLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            return privateFuncs.flatAreas.addLaneToStreet(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        addCargoLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            return privateFuncs.flatAreas.addCargoLaneToStreet(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        end,
+        addPassengerLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            return privateFuncs.flatAreas.addPassengerLaneToStreet(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
         end,
 
         exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
@@ -1059,7 +1088,7 @@ return {
 			}
 
 			-- this connects the platform to its outer edge (ie border)
-			privateFuncs.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			privateFuncs.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
 			table.insert(

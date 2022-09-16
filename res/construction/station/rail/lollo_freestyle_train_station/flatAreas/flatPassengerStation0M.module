@@ -63,7 +63,7 @@ return {
 			transf = buildingTransf,
 			tag = tag
 		}
-		moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+		moduleHelpers.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 		table.insert(result.slots, {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),

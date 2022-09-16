@@ -48,7 +48,7 @@ function data()
 			}
 
 			moduleHelpers.flatAreas.addExitPole(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}

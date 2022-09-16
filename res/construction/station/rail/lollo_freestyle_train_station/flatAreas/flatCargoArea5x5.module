@@ -60,7 +60,7 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addCargoLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local groundFace = {
 				{-3, -3.5, 0, 1},
