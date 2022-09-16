@@ -19,18 +19,18 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("FlatCargoStation10x15Name"),
-			description = _("FlatCargoStation10x15Desc"),
-			icon = "ui/lollo_freestyle_train_station/flatCargoStation8x15.tga"
+			name = _("FlatCargoStation30x28Name"),
+			description = _("FlatCargoStation30x28Desc"),
+			icon = "ui/lollo_freestyle_train_station/flatCargoStation30x28.tga"
 		},
 		metadata = {
 			moreCapacity = {
-				cargo = 30,
+				cargo = 180,
 				passenger = 0
 			}
 		},
 		order = {
-			value = 33,
+			value = 35,
 		},
 		type = _constants.flatCargoArea8x10ModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -43,10 +43,7 @@ function data()
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_10x15.mdl'
-			if eraPrefix == moduleHelpers.eras.era_a.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_10x15.mdl'
-			end
+			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_30x28.mdl'
 
 			result.models[#result.models + 1] = {
 				id = myModelId,
@@ -58,10 +55,10 @@ function data()
 			moduleHelpers.flatAreas.addLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local groundFace = {
-				{-5.5, -6, -_constants.stairsAndRampHeight, 1},
-				{-5.5, 6, -_constants.stairsAndRampHeight, 1},
-				{8.5, 6, -_constants.stairsAndRampHeight, 1},
-				{8.5, -6, -_constants.stairsAndRampHeight, 1},
+				{-5.5, -15.5, _constants.platformSideBitsZ, 1},
+				{-5.5, 15.5, _constants.platformSideBitsZ, 1},
+				{23.5, 15.5, _constants.platformSideBitsZ, 1},
+				{23.5, -15.5, _constants.platformSideBitsZ, 1},
 			}
 			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
@@ -83,16 +80,28 @@ function data()
 				spacing = {1, 1, 2, 2},
 				transf = transfUtilsUG.mul(
 					zAdjustedTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, 0, -_constants.stairsAndRampHeight, 1 }
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.5, 7.5, 0, 1 }
 				),
 				type = _constants.cargoStationSquareModuleType,
 			})
+			if nTrackEdge > 1 then
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge - 1, _constants.idBases.cargoStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {1, 1, 2, 2},
+					transf = transfUtilsUG.mul(
+						zAdjustedTransf,
+						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.5, -7.5, 0, 1 }
+					),
+					type = _constants.cargoStationSquareModuleType,
+				})
+			end
 		end,
 
 		getModelsFn = function(params)
 			return {
 				{
-					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_10x15.mdl',
+					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_30x28.mdl',
 					transf = _constants.idTransf,
 				},
 			}

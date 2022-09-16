@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 4272,
+					offset = 25988,
+				},
+				position = {
+					count = 4272,
+					offset = 13172,
+				},
+				tangent = {
+					count = 4272,
+					offset = 21716,
+				},
+				uv0 = {
+					count = 4272,
+					offset = 17444,
+				},
+			},
+			materials = {
+				"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_overlay.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 1044,
+			numComp = 3,
+			offset = 12128,
+		},
+		position = {
+			count = 4344,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 4576,
+			numComp = 4,
+			offset = 7552,
+		},
+		uv0 = {
+			count = 3208,
+			numComp = 2,
+			offset = 4344,
+		},
+	},
+}
+end

@@ -1,0 +1,171 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 3864,
+					offset = 109268,
+				},
+				position = {
+					count = 3864,
+					offset = 97676,
+				},
+				tangent = {
+					count = 3864,
+					offset = 105404,
+				},
+				uv0 = {
+					count = 3864,
+					offset = 101540,
+				},
+			},
+			materials = {
+				"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_borders.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 264,
+					offset = 113924,
+				},
+				position = {
+					count = 264,
+					offset = 113132,
+				},
+				tangent = {
+					count = 264,
+					offset = 113660,
+				},
+				uv0 = {
+					count = 264,
+					offset = 113396,
+				},
+			},
+			materials = {
+				"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_roof.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 20736,
+					offset = 176396,
+				},
+				position = {
+					count = 20736,
+					offset = 114188,
+				},
+				tangent = {
+					count = 20736,
+					offset = 155660,
+				},
+				uv0 = {
+					count = 20736,
+					offset = 134924,
+				},
+			},
+			materials = {
+				"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_details.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 9312,
+					offset = 225068,
+				},
+				position = {
+					count = 9312,
+					offset = 197132,
+				},
+				tangent = {
+					count = 9312,
+					offset = 215756,
+				},
+				uv0 = {
+					count = 9312,
+					offset = 206444,
+				},
+			},
+			materials = {
+				"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_brick_bright.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 12024,
+					offset = 270452,
+				},
+				position = {
+					count = 12024,
+					offset = 234380,
+				},
+				tangent = {
+					count = 12024,
+					offset = 258428,
+				},
+				uv0 = {
+					count = 12024,
+					offset = 246404,
+				},
+			},
+			materials = {
+				"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_brick_dark.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 6756,
+					offset = 302744,
+				},
+				position = {
+					count = 6756,
+					offset = 282476,
+				},
+				tangent = {
+					count = 6756,
+					offset = 295988,
+				},
+				uv0 = {
+					count = 6756,
+					offset = 289232,
+				},
+			},
+			materials = {
+				"station/water/era_a/main_building_s1_cargo/era_a_mb_cargo_s1_concrete.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 6684,
+			numComp = 3,
+			offset = 90992,
+		},
+		position = {
+			count = 34800,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 32784,
+			numComp = 4,
+			offset = 58208,
+		},
+		uv0 = {
+			count = 23408,
+			numComp = 2,
+			offset = 34800,
+		},
+	},
+}
+end
