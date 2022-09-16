@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
@@ -223,6 +224,7 @@ function data()
 				liftBottomPositions = {},
 				openStairsOrLiftsPositions = {},
 				trackCrossingPositions = {},
+				trackCrossingOppositePositions = {},
 				tunnelStairsTopPositions = {},
 				tunnelStairsBottomPositions = {},
 				underpassPositionsOnGround = {},
@@ -774,7 +776,9 @@ function data()
 					if isCargoTerminal then return end
 					-- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 					-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
-					for ii = 2, #params.terminals[t].centrePlatformsFineRelative do
+					local _iMax = #params.terminals[t].centrePlatformsFineRelative
+					local _iMin = 2
+					for ii = _iMin, _iMax do
 						local cpf = params.terminals[t].centrePlatformsFineRelative[ii]
 						local cpl = params.terminals[t].centrePlatformsRelative[cpf.leadingIndex]
 						local cpfPrevious = params.terminals[t].centrePlatformsFineRelative[ii-1]
@@ -804,6 +808,14 @@ function data()
 								spacing = {1.5, -0.5, 1, 1}, -- avoid module collisions with terminal slots
 								transf = trackCrossingTransf,
 								type = _constants.trackCrossingModuleType,
+							})
+
+							if result.terminateConstructionHookInfo.trackCrossingOppositePositions[t] == nil then
+								result.terminateConstructionHookInfo.trackCrossingOppositePositions[t] = {}
+							end
+							table.insert(result.terminateConstructionHookInfo.trackCrossingOppositePositions[t], {
+								t = t,
+								pos = transfUtils.getPositionRaisedBy(cpl.posTanX2[1][1], _laneZ)
 							})
 						end
 					end
@@ -1593,7 +1605,7 @@ function data()
 					_linkUnderpassesAndStairs()
 					logger.print('passengers and stairs linked')
 
-					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId)
+					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, isCheck4Duplicates)
 						-- link platforms across terminals, on the ground, if they are close enough
 						local maxT = #params.terminals
 						for t = 1, maxT do
@@ -1604,15 +1616,19 @@ function data()
 									if positionsInTT ~= nil then
 										for i = 1, #positionsInT do
 											for ii = 1, #positionsInTT do
-												if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
-													local tr = transfUtils.get1MLaneTransf(
-														positionsInT[i].pos,
-														positionsInTT[ii].pos
-													)
-													result.models[#result.models+1] = {
-														id = modelId,
-														transf = tr
-													}
+												if not(isCheck4Duplicates) or positionsInT[i].isProperLink or positionsInTT[ii].isProperLink then
+													if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
+														if not(edgeUtils.isXYZSame(transfUtils.oneTwoThree2XYZ(positionsInT[i].pos), transfUtils.oneTwoThree2XYZ(positionsInTT[ii].pos))) then
+															local tr = transfUtils.get1MLaneTransf(
+																positionsInT[i].pos,
+																positionsInTT[ii].pos
+															)
+															result.models[#result.models+1] = {
+																id = modelId,
+																transf = tr
+															}
+														end
+													end
 												end
 											end
 										end
@@ -1627,10 +1643,16 @@ function data()
 						_constants.passengerLaneModelId
 					)
 					_linkNearbyPassengerPlatforms(
-						-- 14.2, -- two platform widths with the worst possible shifting
-						8.0,
+						-- 8.0,
+						6.0, -- a bit more than the biggest possible gap between parallel crossing positions
 						result.terminateConstructionHookInfo.trackCrossingPositions,
 						_constants.passengerLaneModelId
+					)
+					_linkNearbyPassengerPlatforms(
+						6.0, -- a bit more than the biggest possible gap between parallel crossing positions
+						result.terminateConstructionHookInfo.trackCrossingOppositePositions,
+						_constants.passengerLaneModelId,
+						true
 					)
 					local _linkHead2HeadPassengerPlatforms = function(maxLinkLength, modelId)
 						-- link platforms across terminals, on the ground, if they are close enough

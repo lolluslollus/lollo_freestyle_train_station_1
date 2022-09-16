@@ -66,14 +66,6 @@ function data()
 					pos = trackCrossingPos
 				}
 			)
-			-- table.insert(
-			-- 	result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal],
-			-- 	{
-			-- 		t = nTerminal,
-			-- 		-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
-			-- 		pos = transfUtils.getPositionRaisedBy(crossConnectorPos, result.laneZs[nTerminal])
-			-- 	}
-			-- )
 		end,
 
 		getModelsFn = function(params)

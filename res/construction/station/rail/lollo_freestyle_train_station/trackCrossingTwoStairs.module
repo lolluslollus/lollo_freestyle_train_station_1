@@ -54,7 +54,7 @@ function data()
 			end
 			local crossConnectorPos = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1]
 			result.models[#result.models+1] = {
-				id = _constants.passengerLaneLinkableModelId,
+				id = _constants.passengerLaneModelId,
 				transf = transfUtils.get1MLaneTransf(
 					trackCrossingPos,
 					transfUtils.getPositionRaisedBy(crossConnectorPos, result.laneZs[nTerminal])
@@ -67,30 +67,23 @@ function data()
 				trackCrossingPos[3] + result.laneZs[nTerminal] - _constants.trackCrossingZ,
 			}
 			result.models[#result.models+1] = {
-				id = _constants.passengerLaneLinkableModelId,
+				id = _constants.passengerLaneModelId,
 				transf = transfUtils.get1MLaneTransf(
 					trackCrossingPos,
 					oppositeCrossConnectorPos
 				)
 			}
 
-			if result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal] == nil then
-				result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal] = {}
+			if result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal] == nil then
+				result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal] = {}
 			end
 			table.insert(
-				result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal],
+				result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal],
 				{
 					t = nTerminal,
 					-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
-					pos = oppositeCrossConnectorPos
-				}
-			)
-			table.insert(
-				result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal],
-				{
-					t = nTerminal,
-					-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
-					pos = transfUtils.getPositionRaisedBy(crossConnectorPos, result.laneZs[nTerminal])
+					pos = oppositeCrossConnectorPos,
+					isProperLink = true, -- this is to avoid duplicate edges
 				}
 			)
 		end,
