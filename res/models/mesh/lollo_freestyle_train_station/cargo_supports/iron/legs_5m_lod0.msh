@@ -7,20 +7,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 864,
-					offset = 3948,
+					count = 1320,
+					offset = 5952,
 				},
 				position = {
-					count = 864,
-					offset = 4812,
+					count = 1320,
+					offset = 7272,
 				},
 				tangent = {
-					count = 864,
-					offset = 2220,
+					count = 1320,
+					offset = 3312,
 				},
 				uv0 = {
-					count = 864,
-					offset = 3084,
+					count = 1320,
+					offset = 4632,
 				},
 			},
 			materials = {
@@ -30,24 +30,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 300,
+			count = 456,
 			numComp = 3,
-			offset = 1128,
+			offset = 1536,
 		},
 		position = {
-			count = 792,
+			count = 1320,
 			numComp = 3,
-			offset = 1428,
+			offset = 1992,
 		},
 		tangent = {
-			count = 704,
+			count = 1120,
 			numComp = 4,
 			offset = 0,
 		},
 		uv0 = {
-			count = 424,
+			count = 416,
 			numComp = 2,
-			offset = 704,
+			offset = 1120,
 		},
 	},
 }
