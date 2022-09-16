@@ -46,8 +46,25 @@ return {
 		-- 	tag = tag
 		-- }
 
-		-- start from 3 to avoid deco peeping out of the platform
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+		if logger.isExtendedLog() then
+			if isTrackOnPlatformLeft then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/icon/green.mdl',
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+			else
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/icon/red.mdl',
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+			end
+		end
+		-- start from 3 to avoid deco peeping out of the platform
 		for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
 			local era = moduleHelpers.getEraPrefix(params, nTerminal, i)

@@ -1,0 +1,98 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 432,
+					offset = 2464,
+				},
+				position = {
+					count = 432,
+					offset = 1600,
+				},
+				tangent = {
+					count = 432,
+					offset = 2032,
+				},
+				uv0 = {
+					count = 432,
+					offset = 2896,
+				},
+			},
+			materials = {
+				"station/train/passenger/edge.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 432,
+					offset = 4192,
+				},
+				position = {
+					count = 432,
+					offset = 3328,
+				},
+				tangent = {
+					count = 432,
+					offset = 3760,
+				},
+				uv0 = {
+					count = 432,
+					offset = 4624,
+				},
+			},
+			materials = {
+				"station/train/passenger/edge_high_priority.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 240,
+					offset = 5536,
+				},
+				position = {
+					count = 240,
+					offset = 5056,
+				},
+				tangent = {
+					count = 240,
+					offset = 5296,
+				},
+				uv0 = {
+					count = 240,
+					offset = 5776,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/platform/edge_low_priority.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 204,
+			numComp = 3,
+			offset = 860,
+		},
+		position = {
+			count = 684,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 176,
+			numComp = 4,
+			offset = 684,
+		},
+		uv0 = {
+			count = 536,
+			numComp = 2,
+			offset = 1064,
+		},
+	},
+}
+end

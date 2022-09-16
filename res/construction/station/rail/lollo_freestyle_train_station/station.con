@@ -771,7 +771,7 @@ function data()
 				_addUpDownSlots()
 
 				local function _addTrackCrossings()
-					if isCargoTerminal then return end
+					-- if isCargoTerminal then return end
 					-- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 					-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
 					for ii = 2, #params.terminals[t].centrePlatformsFineRelative do
@@ -805,34 +805,6 @@ function data()
 								transf = trackCrossingTransf,
 								type = _constants.trackCrossingModuleType,
 							})
-
-							-- add connecting lanes to existing modules
-							-- they connect to passenger lanes and can be connected to roads nearby.
-							-- they do not connect to cargo lanes, but the catchment area extends
-							-- when nearby roads are connected, so it's good enough.
-							if params.modules[trackCrossingId] ~= nil then
-								local trackCrossingPos = transfUtils.getPositionRaisedBy(
-									transfUtils.transf2Position(trackCrossingTransf),
-									_constants.trackCrossingZ
-								)
-								result.models[#result.models+1] = {
-									id = _constants.passengerLaneLinkableRaisedModelId,
-									transf = transfUtils.get1MLaneTransf(
-										trackCrossingPos,
-										transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[1][1], _laneZ)
-									)
-								}
-
-								if result.terminateConstructionHookInfo.trackCrossingPositions[t] == nil then result.terminateConstructionHookInfo.trackCrossingPositions[t] = {} end
-								table.insert(
-									result.terminateConstructionHookInfo.trackCrossingPositions[t],
-									{
-										t = t,
-										lanePosTanX2 = cpl.posTanX2,
-										pos = trackCrossingPos
-									}
-								)
-							end
 						end
 					end
 				end
@@ -1621,7 +1593,7 @@ function data()
 					_linkUnderpassesAndStairs()
 					logger.print('passengers and stairs linked')
 
-					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, raiseHowMuch)
+					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId)
 						-- link platforms across terminals, on the ground, if they are close enough
 						local maxT = #params.terminals
 						for t = 1, maxT do
@@ -1637,10 +1609,6 @@ function data()
 														positionsInT[i].pos,
 														positionsInTT[ii].pos
 													)
-													if raiseHowMuch and raiseHowMuch > 0 then
-														tr[15] = tr[15] + _constants.trackCrossingRaise
-														logger.print('tr[15] = ', tr[15])
-													end
 													result.models[#result.models+1] = {
 														id = modelId,
 														transf = tr
@@ -1661,8 +1629,7 @@ function data()
 					_linkNearbyPassengerPlatforms(
 						8.0,
 						result.terminateConstructionHookInfo.trackCrossingPositions,
-						_constants.passengerLaneModelId,
-						_constants.trackCrossingRaise
+						_constants.passengerLaneModelId
 					)
 					local _linkHead2HeadPassengerPlatforms = function(maxLinkLength, modelId)
 						-- link platforms across terminals, on the ground, if they are close enough

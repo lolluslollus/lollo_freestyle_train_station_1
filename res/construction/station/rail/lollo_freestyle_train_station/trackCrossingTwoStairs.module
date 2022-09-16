@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
+local logger = require('lollo_freestyle_train_station.logger')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 -- local modulesutil = require "modulesutil"
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -19,13 +20,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("TrackCrossingName"),
-			description = _("TrackCrossingDesc"),
-			icon = "ui/lollo_freestyle_train_station/trackCrossing.tga"
+			name = _("TrackCrossingTwoStairsName"),
+			description = _("TrackCrossingTwoStairsDesc"),
+			icon = "ui/lollo_freestyle_train_station/trackCrossingTwoStairs.tga"
 		},
 		metadata = { },
 		order = {
-			value = 60,
+			value = 61,
 		},
 		type = _constants.trackCrossingModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -34,9 +35,9 @@ function data()
 
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 			local modelId = nil
-			if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_a_trackCrossing.mdl'
-			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_b_trackCrossing.mdl'
-			else modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_c_trackCrossing.mdl'
+			if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_a_trackCrossingTwoStairs.mdl'
+			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_b_trackCrossingTwoStairs.mdl'
+			else modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_c_trackCrossingTwoStairs.mdl'
 			end
 			result.models[#result.models + 1] = {
 				id = modelId,
@@ -47,6 +48,10 @@ function data()
 
 			-- add link to platform
 			local trackCrossingPos = transfUtils.getPositionRaisedBy(transfUtils.transf2Position(slotTransf), _constants.trackCrossingZ)
+			if not(trackCrossingPos) then
+				logger.warn('trackCrossingPos is NIL')
+				return
+			end
 			local crossConnectorPos = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1]
 			result.models[#result.models+1] = {
 				id = _constants.passengerLaneLinkableModelId,
@@ -55,6 +60,20 @@ function data()
 					transfUtils.getPositionRaisedBy(crossConnectorPos, result.laneZs[nTerminal])
 				)
 			}
+			-- add link toward opposite platform
+			local oppositeCrossConnectorPos = {
+				trackCrossingPos[1] - crossConnectorPos[1] + trackCrossingPos[1],
+				trackCrossingPos[2] - crossConnectorPos[2] + trackCrossingPos[2],
+				trackCrossingPos[3] + result.laneZs[nTerminal] - _constants.trackCrossingZ,
+			}
+			result.models[#result.models+1] = {
+				id = _constants.passengerLaneLinkableModelId,
+				transf = transfUtils.get1MLaneTransf(
+					trackCrossingPos,
+					oppositeCrossConnectorPos
+				)
+			}
+
 			if result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal] == nil then
 				result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal] = {}
 			end
@@ -63,17 +82,17 @@ function data()
 				{
 					t = nTerminal,
 					-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
-					pos = trackCrossingPos
+					pos = oppositeCrossConnectorPos
 				}
 			)
-			-- table.insert(
-			-- 	result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal],
-			-- 	{
-			-- 		t = nTerminal,
-			-- 		-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
-			-- 		pos = transfUtils.getPositionRaisedBy(crossConnectorPos, result.laneZs[nTerminal])
-			-- 	}
-			-- )
+			table.insert(
+				result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal],
+				{
+					t = nTerminal,
+					-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
+					pos = transfUtils.getPositionRaisedBy(crossConnectorPos, result.laneZs[nTerminal])
+				}
+			)
 		end,
 
 		getModelsFn = function(params)
