@@ -63,6 +63,8 @@ function data()
 
 			["CargoStationSquarePlainName"] = "Plain station square",
 			["CargoStationSquarePlainDesc"] = "Plain square between cargo stations and the road. Repaint its ground with <shift> and a paint tool.",
+			["CargoShelfIronName"] = "Cargo shelf",
+			["CargoShelfIronDesc"] = "A shelf to store extra cargo",
 			["FlatCargoRampDownSmoothName"] = "Smooth cargo ramp down",
 			["FlatCargoRampDownSmoothDesc"] = "Smooth cargo ramp leading outside and down, 2 m. Adjust its height with <m> and <n>.",
 			["FlatCargoRampDownSteepName"] = "Steep cargo ramp down",
@@ -290,6 +292,7 @@ function data()
 			["cargo-platform-extensions"] = "Cargo extensions",
 			["cargo-platform-tracks"] = "Cargo platforms to be laid as tracks",
 			["cargo-road-access"] = "Cargo -> road",
+			["cargo-shelves"] = "Cargo shelves",
 			["deco"] = "Deco",
             ["passenger-platform-extensions"] = "Passenger extensions",
 			["passenger-platform-tracks"] = "Passenger platforms to be laid as tracks",

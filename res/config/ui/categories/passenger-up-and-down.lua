@@ -1,6 +1,6 @@
 function data()
 	return {
 		name = _("passenger-up-and-down"),
-		order = 96,
+		order = 30,
 	}
 end

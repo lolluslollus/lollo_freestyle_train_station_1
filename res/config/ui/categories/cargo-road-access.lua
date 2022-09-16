@@ -1,6 +1,6 @@
 function data()
 	return {
 		name = _("cargo-road-access"),
-		order = 90,
+		order = 12,
 	}
 end

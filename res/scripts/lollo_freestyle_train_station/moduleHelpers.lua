@@ -12,7 +12,7 @@ local transfUtilsUG = require 'transf'
 
 
 local privateConstants = {
-    cargoSupports = {
+    cargoShelves = {
         -- setting this to 2 gets a negligible performance boost and uglier joints,
         -- particularly on slopes and bends
         bracketStep = 1,
@@ -756,8 +756,8 @@ return {
     getVariant = function(params, slotId)
         return privateFuncs.getVariant(params, slotId)
     end,
-    cargoSupports = {
-        doCargoSupport = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+    cargoShelves = {
+        doCargoShelf = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
             bracket5ModelId, bracket10ModelId, bracket20ModelId,
             legs5ModelId, legs10ModelId, legs20ModelId)
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
@@ -767,7 +767,7 @@ return {
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
-            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.cargoSupports.bracketStep do
+            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.cargoShelves.bracketStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
@@ -788,15 +788,15 @@ return {
                             tag = tag
                         }
 
-                        if math.fmod(ii, privateConstants.cargoSupports.pillarPeriod) == 0 then
+                        if math.fmod(ii, privateConstants.cargoShelves.pillarPeriod) == 0 then
                             local legsModelId = legs5ModelId
-                            local waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_support_5m.mdl'
+                            local waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_shelf_5m.mdl'
                             if platformWidth > 10 then
                                 legsModelId = legs20ModelId
-                                waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_support_20m.mdl'
+                                waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_shelf_20m.mdl'
                             elseif platformWidth > 5 then
                                 legsModelId = legs10ModelId
-                                waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_support_10m.mdl'
+                                waitingAreaModelId = 'lollo_freestyle_train_station/cargo_waiting_area_on_shelf_10m.mdl'
                             end
 
                             local myTransf = transfUtilsUG.mul(

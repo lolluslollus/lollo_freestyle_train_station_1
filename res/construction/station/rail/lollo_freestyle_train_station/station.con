@@ -287,7 +287,7 @@ function data()
 				end
 				_addPlatformRoofsAndWalls()
 
-				local function _addCargoSupports()
+				local function _addCargoShelves()
 					if not(isCargoTerminal) then return end
 
 					local _decoSpacing = {-0.1, 2, -1.1, 2}
@@ -301,18 +301,18 @@ function data()
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {type = cpl.type}
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
-						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no cargo supports in tunnels unless we are at the entrance
+						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no cargo shelves in tunnels unless we are at the entrance
 							table.insert(result.slots, {
 								-- height = 0,
-								id = result.mangleId(t, i, _constants.idBases.cargoSupportSlotId),
+								id = result.mangleId(t, i, _constants.idBases.cargoShelfSlotId),
 								spacing = _decoSpacing,
 								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-								type = _constants.cargoSupportModuleType,
+								type = _constants.cargoShelfModuleType,
 							})
 						end
 					end
 				end
-				_addCargoSupports()
+				_addCargoShelves()
 
 				local function _addOutsideExtensions()
 					local _iMax = #params.terminals[t].centrePlatformsRelative
@@ -771,7 +771,7 @@ function data()
 				_addUpDownSlots()
 
 				local function _addTrackCrossings()
-					-- if isCargoTerminal then return end
+					if isCargoTerminal then return end
 					-- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 					-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
 					for ii = 2, #params.terminals[t].centrePlatformsFineRelative do

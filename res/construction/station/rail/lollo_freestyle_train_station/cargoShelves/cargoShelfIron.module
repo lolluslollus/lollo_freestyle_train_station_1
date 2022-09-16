@@ -14,33 +14,33 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "cargo-support", },
+			categories = { "cargo-shelves", },
 		},
 		cost = {
 			price = 0,
 		},
 		description = {
-			name = _("CargoSupportIronName"),
-			description = _("CargoSupportIronDesc"),
-			icon = "ui/lollo_freestyle_train_station/cargoSupportIron.tga"
+			name = _("CargoShelfIronName"),
+			description = _("CargoShelfIronDesc"),
+			icon = "ui/lollo_freestyle_train_station/cargoShelfIron.tga"
 		},
 		metadata = { },
 		order = {
 			value = 11,
 		},
-		type = _constants.cargoSupportModuleType,
+		type = _constants.cargoShelfModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			moduleHelpers.cargoSupports.doCargoSupport(
+			moduleHelpers.cargoShelves.doCargoShelf(
 				result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-				'lollo_freestyle_train_station/cargo_supports/iron/brackets_5m.mdl',
-				'lollo_freestyle_train_station/cargo_supports/iron/brackets_10m.mdl',
-				'lollo_freestyle_train_station/cargo_supports/iron/brackets_20m.mdl',
-				'lollo_freestyle_train_station/cargo_supports/iron/legs_5m.mdl',
-				'lollo_freestyle_train_station/cargo_supports/iron/legs_10m.mdl',
-				'lollo_freestyle_train_station/cargo_supports/iron/legs_20m.mdl'
+				'lollo_freestyle_train_station/cargo_shelves/iron/brackets_5m.mdl',
+				'lollo_freestyle_train_station/cargo_shelves/iron/brackets_10m.mdl',
+				'lollo_freestyle_train_station/cargo_shelves/iron/brackets_20m.mdl',
+				'lollo_freestyle_train_station/cargo_shelves/iron/legs_5m.mdl',
+				'lollo_freestyle_train_station/cargo_shelves/iron/legs_10m.mdl',
+				'lollo_freestyle_train_station/cargo_shelves/iron/legs_20m.mdl'
 			)
 		end,
 
@@ -48,12 +48,12 @@ function data()
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = _constants.platformRoofIronCeiling2_5MModelFileName,
+					id = 'lollo_freestyle_train_station/cargo_shelves/iron/brackets_5m.mdl',
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
 			results[#results+1] = {
-				id = _constants.platformRoofIronPillar2_5MModelFileName,
+				id = 'lollo_freestyle_train_station/cargo_shelves/iron/legs_5m.mdl',
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results

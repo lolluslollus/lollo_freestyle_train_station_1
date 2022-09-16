@@ -133,7 +133,7 @@ local constants = {
     openStairsUpLeftModuleType = 'freestyleTrainStationOpenStairsUpLeft',
     openStairsUpRightModuleType = 'freestyleTrainStationOpenStairsUpRight',
     openStairsExitModuleType = 'freestyleTrainStationOpenStairsExit',
-    cargoSupportModuleType = 'freestyleTrainStationCargoSupport',
+    cargoShelfModuleType = 'freestyleTrainStationCargoShelf',
 
     era_a_flatCargoRampDownSmoothModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_ramp_down_smooth.mdl',
     era_a_flatCargoRampDownSteepModelFileName = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_ramp_down_steep.mdl',
@@ -363,7 +363,7 @@ local constants = {
         openLiftExitForwardSlotId = 91000000,
         openLiftExitBackwardSlotId = 92000000,
         flushExitSlotId = 93000000,
-        cargoSupportSlotId = 94000000,
+        cargoShelfSlotId = 94000000,
     },
     idTransf = {
         1, 0, 0, 0,

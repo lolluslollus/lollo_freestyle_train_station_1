@@ -1,6 +1,6 @@
 function data()
 	return {
 		name = _("deco"),
-		order = 98,
+		order = 50,
 	}
 end
