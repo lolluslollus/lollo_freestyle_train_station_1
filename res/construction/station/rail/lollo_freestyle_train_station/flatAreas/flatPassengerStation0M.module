@@ -51,7 +51,8 @@ return {
 
 		local stationModelId = nil
 		if eraPrefix == moduleHelpers.eras.era_a.prefix then
-			stationModelId = 'lollo_freestyle_train_station/lift/era_a_side_lifts_9_5_0.mdl'
+			-- stationModelId = 'lollo_freestyle_train_station/lift/era_a_side_lifts_9_5_0.mdl'
+			stationModelId = 'lollo_freestyle_train_station/lift/era_a_side_lifts_10_5_0.mdl'
 		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
 			stationModelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_9_5_0.mdl'
 		else

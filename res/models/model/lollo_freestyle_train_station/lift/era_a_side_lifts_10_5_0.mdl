@@ -1,0 +1,186 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local buildingTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+    return {
+        boundingInfo = {
+            bbMax = {4.3, 0.3, 5.0}, -- this would be the building without vents or tunnel awereness
+            bbMin = {-4.3, -4.2, -1.5} -- a bit lower to protect the floor from tunnels
+        },
+        collider = {
+            params = {
+                halfExtents = {4.3, 2.25, 4.5} -- a bit taller to protect the floor from tunnels
+            },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -1.95, 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
+            type = 'BOX'
+        },
+        lods = {
+            {
+                node = {
+                    children = {
+                        -- {
+                        --     -- ticket machine left
+                        --     materials = {'station/road/streetstation/streetstation_1.mtl'},
+                        --     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
+                        --     transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3, -1.95, -_constants.stairsAndRampHeight + 0.3, 1}
+                        -- },
+                        -- {
+                        --     -- ticket machine right
+                        --     materials = {'station/road/streetstation/streetstation_1.mtl'},
+                        --     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
+                        --     transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3, -1.95, -_constants.stairsAndRampHeight + 0.3, 1}
+                        -- },
+                        -- {
+                        --     materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
+                        --     mesh = "lollo_freestyle_train_station/asset/arrivi.msh",
+                        --     transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.45, -3.2, -_constants.stairsAndRampHeight, 1 }
+                        -- },
+                        -- {
+                        --     materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
+                        --     mesh = "lollo_freestyle_train_station/asset/partenze.msh",
+                        --     transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.45, -3.2, -_constants.stairsAndRampHeight, 1 }
+                        -- },
+                        {
+                            -- building
+                            materials = {
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+                                'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
+                                'lollo_freestyle_train_station/metal/rough_copper.mtl',
+                                'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_station_10x5x7.msh',
+                            transf = buildingTransf
+                        },
+                        {
+                            children = {
+                                {
+                                    materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
+                                    mesh = 'lollo_freestyle_train_station/asset/era_a_single_station_name_lod0.msh',
+                                    transf = _constants.idTransf
+                                }
+                            },
+                            -- transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.12, 4.93, 1}
+                            transf = {2, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -4.22, 4.93, 1}
+                        }
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 200
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            -- building
+                            materials = {
+                                'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
+                                'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
+                                'lollo_freestyle_train_station/metal/rough_copper.mtl',
+                                'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/lift/era_a_station_10x5x7.msh',
+                            transf = buildingTransf
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = _constants.idTransf
+                },
+                static = false,
+                visibleFrom = 200,
+                visibleTo = 3500
+            },
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = 'CENTER',
+                        alphaMode = "CUTOUT",
+                        childId = 'RootNode',
+                        color = { 0, 0, 0, },
+                        fitting = 'SCALE',
+                        nLines = 2,
+                        -- renderMode = "EMISSIVE",
+                        size = {2.25, 0.45},
+                        transf = {1, 0, 0, 0,  0, 0, 1, 0,  0, -1, 0, 0,  -1.08, -4.27, 4.72, 1},
+                        type = 'STATION_NAME',
+                        verticalAlignment = 'CENTER'
+                    }
+                }
+            },
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        -- down the stairs
+                        linkable = false,
+                        nodes = {
+                            {
+                                {0, 0, 0},
+                                {0, -1, 0},
+                                2.4
+                            },
+                            {
+                                {0, -2.0, -_constants.stairsAndRampHeight},
+                                {0, -1, 0},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- out to the front
+                        linkable = true,
+                        nodes = {
+                            {
+                                {0, -2.0, -_constants.stairsAndRampHeight},
+                                {0, -1, 0},
+                                2.4
+                            },
+                            {
+                                {0, -4, -_constants.stairsAndRampHeight},
+                                {0, -1, 0},
+                                2.4
+                            }
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                    {
+                        -- sideways, to connect extra elements
+                        linkable = true,
+                        nodes = {
+                            {
+                                {-4.5, -2.0, -_constants.stairsAndRampHeight},
+                                {1, 0, 0},
+                                2.4
+                            },
+                            {
+                                {0, -2.0, -_constants.stairsAndRampHeight},
+                                {1, 0, 0},
+                                2.4
+                            },
+                            {
+                                {0, -2.0, -_constants.stairsAndRampHeight},
+                                {1, 0, 0},
+                                2.4
+                            },
+                            {
+                                {4.5, -2.0, -_constants.stairsAndRampHeight},
+                                {1, 0, 0},
+                                2.4
+                            },
+                        },
+                        speedLimit = 20,
+                        transportModes = {'PERSON'}
+                    },
+                },
+                runways = {},
+                terminals = {}
+            }
+        },
+        version = 1
+    }
+end

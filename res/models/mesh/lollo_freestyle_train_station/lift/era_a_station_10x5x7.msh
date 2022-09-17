@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 456,
+					offset = 11228,
+				},
+				position = {
+					count = 456,
+					offset = 10316,
+				},
+				tangent = {
+					count = 456,
+					offset = 9860,
+				},
+				uv0 = {
+					count = 456,
+					offset = 10772,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/roof.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 648,
+					offset = 13628,
+				},
+				position = {
+					count = 648,
+					offset = 12332,
+				},
+				tangent = {
+					count = 648,
+					offset = 11684,
+				},
+				uv0 = {
+					count = 648,
+					offset = 12980,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/floor.001.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 3768,
+					offset = 25580,
+				},
+				position = {
+					count = 3768,
+					offset = 18044,
+				},
+				tangent = {
+					count = 3768,
+					offset = 14276,
+				},
+				uv0 = {
+					count = 3768,
+					offset = 21812,
+				},
+			},
+			materials = {
+				"station/train/passenger/iron.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 384,
+					offset = 30500,
+				},
+				position = {
+					count = 384,
+					offset = 29732,
+				},
+				tangent = {
+					count = 384,
+					offset = 29348,
+				},
+				uv0 = {
+					count = 384,
+					offset = 30116,
+				},
+			},
+			materials = {
+				"iron_deco_2.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 1020,
+			numComp = 3,
+			offset = 8840,
+		},
+		position = {
+			count = 3816,
+			numComp = 3,
+			offset = 2080,
+		},
+		tangent = {
+			count = 2080,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 2944,
+			numComp = 2,
+			offset = 5896,
+		},
+	},
+}
+end
