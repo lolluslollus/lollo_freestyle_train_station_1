@@ -1616,9 +1616,9 @@ function data()
 									if positionsInTT ~= nil then
 										for i = 1, #positionsInT do
 											for ii = 1, #positionsInTT do
-												if not(isCheck4Duplicates) or positionsInT[i].isProperLink or positionsInTT[ii].isProperLink then
-													if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
-														if not(edgeUtils.isXYZSame(transfUtils.oneTwoThree2XYZ(positionsInT[i].pos), transfUtils.oneTwoThree2XYZ(positionsInTT[ii].pos))) then
+												if positionsInT[i].pos[1] ~= positionsInTT[ii].pos[1] or positionsInT[i].pos[2] ~= positionsInTT[ii].pos[2] or positionsInT[i].pos[3] ~= positionsInTT[ii].pos[3] then
+													if not(isCheck4Duplicates) or positionsInT[i].isProperLink or positionsInTT[ii].isProperLink then
+														if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos) < maxLinkLength then
 															local tr = transfUtils.get1MLaneTransf(
 																positionsInT[i].pos,
 																positionsInTT[ii].pos
