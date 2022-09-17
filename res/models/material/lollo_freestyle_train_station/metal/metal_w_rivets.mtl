@@ -3,7 +3,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 0.8, 0.8, 0.8, },
+                albedoScale = { 0.6, 0.6, 0.6, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
@@ -30,7 +30,7 @@ function data()
                 wrapT = "REPEAT",
             },
             normal_scale = {
-                normalScale = 1,
+                normalScale = 1.5,
             },
             polygon_offset = {
                 factor = 0,

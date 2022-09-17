@@ -30,7 +30,7 @@ function data()
                 wrapT = "REPEAT",
             },
             normal_scale = {
-                normalScale = 1,
+                normalScale = 1.5,
             },
             polygon_offset = {
                 factor = 0,
