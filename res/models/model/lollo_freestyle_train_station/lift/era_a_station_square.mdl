@@ -34,6 +34,7 @@ function data()
                                 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
                                 'lollo_freestyle_train_station/metal/rough_copper.mtl',
                                 'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
+                                'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl'
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
                             transf = _groundRoofTransf
@@ -156,6 +157,7 @@ function data()
                                 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
                                 'lollo_freestyle_train_station/metal/rough_copper.mtl',
                                 'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
+                                'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl'
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
                             transf = _groundRoofTransf
@@ -250,6 +252,7 @@ function data()
                                 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_001.mtl',
                                 'lollo_freestyle_train_station/metal/rough_copper.mtl',
                                 'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
+                                'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl'
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_station_square_roof.msh',
                             transf = _groundRoofTransf
