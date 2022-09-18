@@ -18,7 +18,6 @@ function data()
                 wrapT = "REPEAT",
             },
             map_metal_gloss_ao = {
-                -- fileName = "lollo_freestyle_train_station/metal_roof_deco_round/metal_roof_deco_metal_gloss_ao.tga",
                 -- fileName = "lollo_freestyle_train_station/metal_roof_deco_round/metal_roof_deco_metal_gloss_ao_bc3.dds",
                 fileName = "lollo_freestyle_train_station/metal_roof_deco_round/metal_roof_deco_and_ceiling_vintage_metal_gloss_ao_bc3.dds",
                 type = "TWOD",
@@ -26,7 +25,6 @@ function data()
                 wrapT = "REPEAT",
             },
             map_normal = {
-                -- fileName = "lollo_freestyle_train_station/metal_roof_deco_round/metal_roof_deco_normal.tga",
                 -- fileName = "lollo_freestyle_train_station/metal_roof_deco_round/metal_roof_deco_normal_bc5.dds",
                 fileName = "lollo_freestyle_train_station/metal_roof_deco_round/metal_roof_deco_and_ceiling_vintage_normal_bc5.dds",
                 redGreen = true,
