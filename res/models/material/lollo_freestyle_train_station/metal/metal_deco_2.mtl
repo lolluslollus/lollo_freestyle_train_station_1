@@ -39,6 +39,10 @@ return {
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
 		},
+		normal_scale = {
+			normalScale = 1,
+		},
+
 		polygon_offset = {
 			factor = 0,
 			units = 0,

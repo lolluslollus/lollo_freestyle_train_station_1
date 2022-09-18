@@ -31,14 +31,12 @@ function data()
             },
             map_op_1 = {
                 fileName = "models/industry/overlay_textures/big_05.tga",
-                -- fileName = "lollo_freestyle_train_station/metal_ceiling_vintage_002_albedo.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
             map_op_2 = {
                 fileName = "models/industry/overlay_textures/big_04.tga",
-                -- fileName = "lollo_freestyle_train_station/metal_ceiling_vintage_002_albedo.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
@@ -70,4 +68,3 @@ function data()
         type = "PHYSICAL_NRML_MAP_OP",
     }
     end
-    

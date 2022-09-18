@@ -20,8 +20,6 @@ function data()
                 -- fileName = "lollo_freestyle_train_station/iron_deco_albedo.tga",
                 fileName = "lollo_freestyle_train_station/iron_deco_albedo.dds",
                 type = "TWOD",
-                -- wrapS = "CLAMP_TO_EDGE",
-                -- wrapT = "CLAMP_TO_EDGE",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
