@@ -1,30 +1,52 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, }, 
+		{ 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 1152,
-					offset = 5000,
+					count = 768,
+					offset = 3472,
 				},
 				position = {
-					count = 1152,
-					offset = 2696,
+					count = 768,
+					offset = 2704,
 				},
 				tangent = {
-					count = 1152,
-					offset = 3848,
+					count = 768,
+					offset = 4240,
 				},
 				uv0 = {
-					count = 1152,
-					offset = 6152,
+					count = 768,
+					offset = 5008,
 				},
 			},
 			materials = {
 				"station/road/streetstation/iron_w_rivets.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 384,
+					offset = 6160,
+				},
+				position = {
+					count = 384,
+					offset = 5776,
+				},
+				tangent = {
+					count = 384,
+					offset = 6544,
+				},
+				uv0 = {
+					count = 384,
+					offset = 6928,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lift/iron_pillars.mtl", 
 			},
 		}, 
 	},
@@ -32,7 +54,7 @@ return {
 		normal = {
 			count = 624,
 			numComp = 3,
-			offset = 2016,
+			offset = 1152,
 		},
 		position = {
 			count = 1152,
@@ -42,10 +64,10 @@ return {
 		tangent = {
 			count = 864,
 			numComp = 4,
-			offset = 1152,
+			offset = 1776,
 		},
 		uv0 = {
-			count = 56,
+			count = 64,
 			numComp = 2,
 			offset = 2640,
 		},

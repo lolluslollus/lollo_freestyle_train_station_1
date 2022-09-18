@@ -8,6 +8,7 @@ return function(height, eraPrefix)
             doors = 'lollo_freestyle_train_station/era_a_doors.mtl',
             hole = 'lollo_freestyle_train_station/hole.mtl',
             iron = 'lollo_freestyle_train_station/metal/metal_w_rivets.mtl',
+            iron_pillar = 'lollo_freestyle_train_station/metal/metal_w_large_rivets.mtl',
             roof = 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
             roofDeco = 'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl',
             stationSign = "station/rail/era_a/era_a_trainstation_assets.mtl",
@@ -83,8 +84,11 @@ return function(height, eraPrefix)
 
             if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
                 results[#results + 1] = {
-                    materials = {
+                    materials = h == 5 and {
+                        _materials.iron_pillar,
+                    } or {
                         _materials.iron,
+                        _materials.iron_pillar,
                     },
                     mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_a_platform_lift_9x5x5_top_level.msh' or 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
                     transf = wallTransf
@@ -151,8 +155,7 @@ return function(height, eraPrefix)
         collider = {
             params = {
                 -- halfExtents = {4.4, 2.3, 2.0 + height * 0.5} -- this would be the building without vents or tunnel awereness
-                -- halfExtents = {4.4, 2.3, 5.0 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
-                halfExtents = {4.4, 1.4, 5.0 + height * 0.5} -- reduce collisions along the Y axis, so adjacent lifts on thin platforms won't cause irreparable collisions
+                halfExtents = {4.4, 2.3, 5.0 + height * 0.5} -- a bit taller to protect the floor from tunnels and the vents from bridges
             },
             -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 2.0 - height * 0.5, 1 }, -- this would be the building without vents
             transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.5 - height * 0.5, 1 }, -- a bit lower to protect the floor from tunnels and the vents from bridges
@@ -199,7 +202,7 @@ return function(height, eraPrefix)
                         },
                         -- pillars
                         _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {
@@ -246,7 +249,7 @@ return function(height, eraPrefix)
                         },
                         -- pillars
                         _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {
@@ -293,7 +296,7 @@ return function(height, eraPrefix)
                         },
                         -- pillars
                         _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {

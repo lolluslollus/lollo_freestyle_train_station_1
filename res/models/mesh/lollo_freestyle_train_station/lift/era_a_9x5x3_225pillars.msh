@@ -8,7 +8,7 @@ return {
 			indices = {
 				normal = {
 					count = 384,
-					offset = 1320,
+					offset = 936,
 				},
 				position = {
 					count = 384,
@@ -16,7 +16,7 @@ return {
 				},
 				tangent = {
 					count = 384,
-					offset = 936,
+					offset = 1320,
 				},
 				uv0 = {
 					count = 384,
@@ -32,7 +32,7 @@ return {
 		normal = {
 			count = 72,
 			numComp = 3,
-			offset = 448,
+			offset = 384,
 		},
 		position = {
 			count = 384,
@@ -42,7 +42,7 @@ return {
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 384,
+			offset = 456,
 		},
 		uv0 = {
 			count = 32,

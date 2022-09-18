@@ -12,15 +12,15 @@ return {
 				},
 				position = {
 					count = 384,
-					offset = 2508,
+					offset = 1356,
 				},
 				tangent = {
 					count = 384,
-					offset = 1356,
+					offset = 2124,
 				},
 				uv0 = {
 					count = 384,
-					offset = 2124,
+					offset = 2508,
 				},
 			},
 			materials = {
@@ -34,19 +34,19 @@ return {
 				},
 				position = {
 					count = 96,
-					offset = 3180,
+					offset = 2892,
 				},
 				tangent = {
 					count = 96,
-					offset = 2892,
+					offset = 3084,
 				},
 				uv0 = {
 					count = 96,
-					offset = 3084,
+					offset = 3180,
 				},
 			},
 			materials = {
-				"station/train/passenger/wall.mtl", 
+				"station/train/passenger/wall.001.mtl", 
 			},
 		}, {
 			indices = {
@@ -56,15 +56,15 @@ return {
 				},
 				position = {
 					count = 144,
-					offset = 3708,
+					offset = 3276,
 				},
 				tangent = {
 					count = 144,
-					offset = 3276,
+					offset = 3564,
 				},
 				uv0 = {
 					count = 144,
-					offset = 3564,
+					offset = 3708,
 				},
 			},
 			materials = {
@@ -76,22 +76,22 @@ return {
 		normal = {
 			count = 216,
 			numComp = 3,
-			offset = 160,
+			offset = 564,
 		},
 		position = {
 			count = 564,
 			numComp = 3,
-			offset = 792,
+			offset = 0,
 		},
 		tangent = {
 			count = 160,
 			numComp = 4,
-			offset = 0,
+			offset = 780,
 		},
 		uv0 = {
 			count = 416,
 			numComp = 2,
-			offset = 376,
+			offset = 940,
 		},
 	},
 }

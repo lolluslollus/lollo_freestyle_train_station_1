@@ -1,14 +1,15 @@
 function data()
-    local height = 10
+    local height = 15
     local _constants = require('lollo_freestyle_train_station.constants')
     local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-    local era = _moduleHelpers.eras.era_b.prefix
+    local _eraPrefix = _moduleHelpers.eras.era_a.prefix
 
     local _allMaterials = {
         era_a = {
             doors = 'lollo_freestyle_train_station/era_a_doors.mtl',
             hole = 'lollo_freestyle_train_station/hole.mtl',
             iron = 'lollo_freestyle_train_station/metal/metal_w_rivets.mtl',
+            iron_pillar = 'lollo_freestyle_train_station/metal/metal_w_large_rivets.mtl',
             roof = 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
             roofDeco = 'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl',
             stationSign = "station/rail/era_a/era_a_trainstation_assets.mtl",
@@ -16,7 +17,8 @@ function data()
         },
         era_b = {
             hole = 'lollo_freestyle_train_station/hole.mtl',
-            shaft = 'lollo_freestyle_train_station/shaft.mtl',
+            -- shaft = 'lollo_freestyle_train_station/shaft.mtl',
+            shaft = 'lollo_freestyle_train_station/era_b_lift_doors.mtl',
             stationSign = "lollo_freestyle_train_station/asset/era_b_station_signs.mtl",
             tiles = 'lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl',
             wallGrey = 'lollo_freestyle_train_station/wall_marble_2.mtl',
@@ -36,9 +38,9 @@ function data()
         }
     }
     local _materials = nil
-    if era == _moduleHelpers.eras.era_a.prefix then
+    if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
         _materials = _allMaterials.era_a
-    elseif era == _moduleHelpers.eras.era_b.prefix then
+    elseif _eraPrefix == _moduleHelpers.eras.era_b.prefix then
         _materials = _allMaterials.era_b
     else
         _materials = _allMaterials.era_c
@@ -56,18 +58,18 @@ function data()
         },
     }
     local _meshes = nil
-    if era == _moduleHelpers.eras.era_a.prefix then
+    if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
         _meshes = _allMeshes.era_a
-    elseif era == _moduleHelpers.eras.era_b.prefix then
+    elseif _eraPrefix == _moduleHelpers.eras.era_b.prefix then
         _meshes = _allMeshes.era_b
     else
         _meshes = _allMeshes.era_c
     end
 
     local _labelColour = nil
-    if era == _moduleHelpers.eras.era_a.prefix then
+    if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
         _labelColour = { 0, 0, 0, }
-    elseif era == _moduleHelpers.eras.era_b.prefix then
+    elseif _eraPrefix == _moduleHelpers.eras.era_b.prefix then
         _labelColour = { 255, 255, 255, }
     else
         _labelColour = { 255, 255, 255, }
@@ -81,10 +83,13 @@ function data()
             zShift4Wall = zShift4Wall - 5
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 1.45, zShift4Wall, 1}
 
-            if era == _moduleHelpers.eras.era_a.prefix then
+            if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
                 results[#results + 1] = {
-                    materials = {
+                    materials = h == 5 and {
+                        _materials.iron_pillar,
+                    } or {
                         _materials.iron,
+                        _materials.iron_pillar,
                     },
                     mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_a_platform_lift_9x5x5_top_level.msh' or 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
                     transf = wallTransf
@@ -108,7 +113,7 @@ function data()
                 zShift4Shaft = zShift4Shaft - 5
                 local zedZoom4Shaft = h == 5 and 0.93 or 1
                 local shaftTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, zedZoom4Shaft, 0, 0, -0.3, zShift4Shaft, 1}
-                if era == _moduleHelpers.eras.era_a.prefix then
+                if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
                     results[#results + 1] = {
                         materials = {
                             _materials.iron,
@@ -162,7 +167,7 @@ function data()
                 node = {
                     children = {
                         {
-                            children = era == _moduleHelpers.eras.era_b.prefix and {
+                            children = _eraPrefix == _moduleHelpers.eras.era_b.prefix and {
                                 {
                                     -- ticket machine right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
@@ -175,7 +180,7 @@ function data()
                                     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
                                     transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.27, 1.6, -height, 1}
                                 },
-                            } or era == _moduleHelpers.eras.era_c.prefix and {
+                            } or _eraPrefix == _moduleHelpers.eras.era_c.prefix and {
                                 {
                                     -- ticket machine right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
@@ -197,8 +202,8 @@ function data()
                             transf = idTransf
                         },
                         -- pillars
-                        era == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                        _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {
@@ -207,7 +212,7 @@ function data()
                             transf = pillarsTransf
                         },
                         -- shaft top
-                        era == _moduleHelpers.eras.era_a.prefix and {
+                        _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
                             materials = {
                                 _materials.hole,
                                 _materials.tiles,
@@ -244,8 +249,8 @@ function data()
                             transf = idTransf
                         },
                         -- pillars
-                        era == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                        _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {
@@ -254,7 +259,7 @@ function data()
                             transf = pillarsTransf
                         },
                         -- shaft top
-                        era == _moduleHelpers.eras.era_a.prefix and {
+                        _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
                             materials = {
                                 _materials.hole,
                                 _materials.tiles,
@@ -291,8 +296,8 @@ function data()
                             transf = idTransf
                         },
                         -- pillars
-                        era == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                        _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {

@@ -12,6 +12,7 @@ return function(height, eraPrefix)
             stationSign = "station/rail/era_a/era_a_trainstation_assets.mtl",
             tiles = 'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
             iron = 'lollo_freestyle_train_station/metal/metal_w_rivets.mtl',
+            iron_pillar = 'lollo_freestyle_train_station/metal/metal_w_large_rivets.mtl',
             doors = 'lollo_freestyle_train_station/era_a_doors.mtl',
             roof = 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
             roofDeco = 'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl',
@@ -83,8 +84,11 @@ return function(height, eraPrefix)
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, zShift4Wall, 1}
             if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
                 results[#results + 1] = {
-                    materials = {
+                    materials = h == 5 and {
+                        _materials.iron_pillar,
+                    } or {
                         _materials.iron,
+                        _materials.iron_pillar,
                     },
                     mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_a_side_lift_9x5x5_top_level.msh' or 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
                     transf = wallTransf
@@ -251,7 +255,7 @@ return function(height, eraPrefix)
                         },
                         -- pillars
                         _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {
@@ -267,6 +271,7 @@ return function(height, eraPrefix)
                                 _materials.doors,
                                 _materials.roof,
                                 _materials.roofDeco,
+                                _materials.iron_pillar,
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
@@ -328,7 +333,7 @@ return function(height, eraPrefix)
                         },
                         -- pillars
                         _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {
@@ -344,6 +349,7 @@ return function(height, eraPrefix)
                                 _materials.doors,
                                 _materials.roof,
                                 _materials.roofDeco,
+                                _materials.iron_pillar,
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
@@ -377,7 +383,7 @@ return function(height, eraPrefix)
                         },
                         -- pillars
                         _eraPrefix == _moduleHelpers.eras.era_a.prefix and {
-                            materials = { _materials.iron },
+                            materials = { _materials.iron_pillar },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         } or {
@@ -393,6 +399,7 @@ return function(height, eraPrefix)
                                 _materials.doors,
                                 _materials.roof,
                                 _materials.roofDeco,
+                                _materials.iron_pillar,
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
