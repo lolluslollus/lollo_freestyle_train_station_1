@@ -4,7 +4,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 1, 1.1, 1, },
+                albedoScale = { 0.7, 0.85, 0.75, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
@@ -18,7 +18,7 @@ function data()
                 wrapT = "REPEAT",
             },
             map_metal_gloss_ao = {
-                fileName = "lollo_freestyle_train_station/metal_ceiling_vintage_001_metal_gloss_ao.dds",
+                fileName = "lollo_freestyle_train_station/metal_ceiling_vintage_002_metal_gloss_ao.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
