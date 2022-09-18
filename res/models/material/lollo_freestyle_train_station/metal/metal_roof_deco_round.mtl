@@ -3,14 +3,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 0.9, 1.0, 0.9, },
-            },
-            alpha_scale = {
-                alphaScale = 1,
-            },
-            alpha_test = {
-                alphaThreshold = 0.5,
-                cutout = true,
+                albedoScale = { 0.8, 0.9, 0.5, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
@@ -41,8 +34,34 @@ function data()
                 -- wrapS = "REPEAT",
                 -- wrapT = "REPEAT",
             },
+            map_op_1 = {
+                -- fileName = "models/industry/overlay_textures/big_05.tga",
+                fileName = "lollo_freestyle_train_station/metal_ceiling_vintage_002_albedo.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_2 = {
+                fileName = "models/industry/overlay_textures/big_04.tga",
+                -- fileName = "lollo_freestyle_train_station/metal_ceiling_vintage_002_albedo.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
             normal_scale = {
                 normalScale = 1,
+            },
+            operation_1 = {
+                mode = "NORMAL",
+                op = "OVERLAY",
+                opacity = 0.7,
+                scale = { 0.5, 0.5, },
+            },
+            operation_2 = {
+                mode = "NORMAL",
+                op = "OVERLAY",
+                opacity = 0.15,
+                scale = { 0.25, 0.25, },
             },
             polygon_offset = {
                 factor = 0,
@@ -54,7 +73,7 @@ function data()
                 twoSided = false,
             },
         },
-        type = "PHYS_TRANSPARENT_NRML_MAP",
+        type = "PHYSICAL_NRML_MAP_OP",
     }
     end
     

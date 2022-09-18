@@ -3,7 +3,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 0.7, 0.7, 0.7, },
+                albedoScale = { 1.0, 1.0, 1.0, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
@@ -17,20 +17,46 @@ function data()
                 wrapT = "REPEAT",
             },
             map_metal_gloss_ao = {
-                fileName = "lollo_freestyle_train_station/asset/metal_w_large_rivets_metal_gloss_ao.tga",
+                fileName = "lollo_freestyle_train_station/metal_w_large_rivets/metal_w_large_rivets_metal_gloss_ao.tga",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
             map_normal = {
-                fileName = "lollo_freestyle_train_station/asset/metal_w_large_rivets_normal.tga",
+                fileName = "lollo_freestyle_train_station/metal_w_large_rivets/metal_w_large_rivets_normal.tga",
                 redGreen = true,
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
+            map_op_1 = {
+                fileName = "models/industry/overlay_textures/big_05.tga",
+                -- fileName = "lollo_freestyle_train_station/metal_ceiling_vintage_002_albedo.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_2 = {
+                fileName = "models/industry/overlay_textures/big_04.tga",
+                -- fileName = "lollo_freestyle_train_station/metal_ceiling_vintage_002_albedo.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
             normal_scale = {
-                normalScale = 1.5,
+                normalScale = 2.0,
+            },
+            operation_1 = {
+                mode = "NORMAL",
+                op = "OVERLAY",
+                opacity = 0.7,
+                scale = { 0.5, 0.5, },
+            },
+            operation_2 = {
+                mode = "NORMAL",
+                op = "OVERLAY",
+                opacity = 0.15,
+                scale = { 0.25, 0.25, },
             },
             polygon_offset = {
                 factor = 0,
@@ -41,7 +67,7 @@ function data()
                 twoSided = false,
             },
         },
-        type = "PHYSICAL_NRML_MAP",
+        type = "PHYSICAL_NRML_MAP_OP",
     }
     end
     
