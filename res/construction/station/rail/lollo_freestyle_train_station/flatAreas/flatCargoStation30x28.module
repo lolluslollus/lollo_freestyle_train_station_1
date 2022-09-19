@@ -24,6 +24,8 @@ function data()
 			icon = "ui/lollo_freestyle_train_station/flatCargoStation30x28.tga"
 		},
 		metadata = {
+			isOccupyM1 = true,
+			isOccupyP1 = true,
 			moreCapacity = {
 				cargo = 180,
 				passenger = 0
