@@ -42,12 +42,13 @@ return {
 		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
 		-- in base_config.lua
 		-- Set it into the models so the game knows what module they belong to.
-		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
 		if not(buildingHeight) then return end
-		local buildingModelId = moduleHelpers.lifts.tryGetSideLiftModelId(params, nTerminal, nTrackEdge, era, buildingHeight)
+		local buildingModelId = moduleHelpers.lifts.tryGetSideLiftModelId(params, nTerminal, nTrackEdge, eraPrefix, buildingHeight)
 		if not(buildingModelId) then return end
 
+		-- add building
 		local buildingTransf = transfUtilsUG.mul(
 			slotTransf,
 			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
@@ -58,26 +59,54 @@ return {
 			transf = buildingTransf,
 			tag = tag
 		}
-
+		-- add waiting area
 		result.models[#result.models + 1] = {
 			id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_side_lift.mdl',
 			slotId = slotId,
 			transf = buildingTransf,
 			tag = slotHelpers.mangleModelTag(nTerminal, false),
 		}
-
-		if result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] == nil then result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] = {} end
+		-- add lane to centre platform
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+		local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
+		result.models[#result.models+1] = {
+			id = _constants.passengerLaneModelId,
+			transf = transfUtils.get1MLaneTransf(
+				transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
+				transfUtils.transf2Position(slotTransf)
+			)
+		}
+
+		-- add underpass bottom pos 2 link
+		local underpassBottomTransf = transfUtilsUG.mul(
+			slotTransf,
+			{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.underpassZ, 1 }
+		)
+		if result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] == nil then result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] = {} end
+		table.insert(
+			result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal],
+			{
+				t = nTerminal,
+				era = eraPrefix,
+				lanePosTanX2 = cpl.posTanX2,
+				pos2Link = transfUtils.transf2Position(underpassBottomTransf)
+			}
+		)
+
+		-- add lift bottom pos 2 link
+		if result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] == nil then result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] = {} end
 		table.insert(
 			result.terminateConstructionHookInfo.liftBottomPositions[nTerminal],
 			{
 				t = nTerminal,
 				lanePosTanX2 = cpl.posTanX2,
 				pos2Link = transfUtils.transf2Position(
-						transfUtilsUG.mul(buildingTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.0, -buildingHeight + _constants.underpassZ, 1 })
-					)
+					transfUtilsUG.mul(buildingTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.0, -buildingHeight + _constants.underpassZ, 1 })
+				)
 			}
 		)
+
+		-- add station square slots
 		table.insert(result.slots, {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 			shape = 1,
@@ -100,8 +129,8 @@ return {
 		})
 
 		-- add some deco
-		local _clockY = era == moduleHelpers.eras.era_a.prefix and -3.95 or -4.3
-		local clockModelId = era == moduleHelpers.eras.era_c.prefix
+		local _clockY = eraPrefix == moduleHelpers.eras.era_a.prefix and -3.95 or -4.3
+		local clockModelId = eraPrefix == moduleHelpers.eras.era_c.prefix
 			and 'station/rail/asset/era_c_big_clock.mdl'
 			or 'station/rail/asset/era_a_big_clock.mdl'
 		if buildingHeight == 10 then
@@ -126,7 +155,7 @@ return {
 			}
 		end
 
-		if era == moduleHelpers.eras.era_c.prefix then
+		if eraPrefix == moduleHelpers.eras.era_c.prefix then
 			local _tableY = 0.8
 			if buildingHeight == 10 then
 				result.models[#result.models + 1] = {
@@ -151,7 +180,7 @@ return {
 			end
 		end
 
-		if era ~= moduleHelpers.eras.era_a.prefix and buildingHeight > 0 then
+		if eraPrefix ~= moduleHelpers.eras.era_a.prefix and buildingHeight > 0 then
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 				slotId = slotId,

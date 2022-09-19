@@ -10,7 +10,7 @@ local transfUtilsUG = require "transf"
 function data()
 	return {
 		availability = {
-			yearFrom = moduleHelpers.eras.era_c.startYear,
+			yearFrom = moduleHelpers.eras.era_a.startYear,
 			yearTo = 0
 		},
 		category = {
@@ -20,13 +20,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("WallMetalGlassWRoofName"),
-			description = _("WallMetalGlassWRoofDesc"),
-			icon = "ui/lollo_freestyle_train_station/wallMetalGlassWRoof.tga"
+			name = _("WallTiledWRoofName"),
+			description = _("WallTiledWRoofDesc"),
+			icon = "ui/lollo_freestyle_train_station/wallTiledWRoof.tga"
 		},
 		metadata = { },
 		order = {
-			value = 26,
+			value = 21,
 		},
 		type = _constants.platformRoofModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -34,9 +34,9 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.deco.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-			_constants.platformWallMetalGlassWRoof2_5MModelFileName, _constants.platformWallMetalGlassWRoof5MModelFileName,
-			_constants.platformWallMetalGlassPillar2_5MModelFileName, _constants.platformWallMetalGlassPillar5MModelFileName,
-			_constants.platformWallMetalGlass2_5MModelFileName, _constants.platformWallMetalGlass5MModelFileName,
+			'lollo_freestyle_train_station/platformWalls/tiled/platformWallWRoof_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/tiled/platformWallWRoof_5m.mdl',
+			_constants.platformWallTiledPillar2_5MModelFileName, _constants.platformWallTiledPillar5MModelFileName,
+			_constants.platformWallTiled2_5MModelFileName, _constants.platformWallTiled5MModelFileName,
 			true)
 		end,
 
@@ -44,12 +44,12 @@ function data()
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = _constants.platformWallMetalGlassWRoof2_5MModelFileName,
+					id = 'lollo_freestyle_train_station/platformWalls/tiled/platformWallWRoof_2_5m.mdl',
 					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
 			results[#results+1] = {
-				id = _constants.platformWallMetalGlassPillar2_5MModelFileName,
+				id = _constants.platformWallTiledPillar2_5MModelFileName,
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results

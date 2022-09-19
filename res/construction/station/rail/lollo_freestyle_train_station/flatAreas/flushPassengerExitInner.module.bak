@@ -38,9 +38,9 @@ function data()
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
 			local yShift = cpl.width
-			local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
+			local platformBorderPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 			local myTransfAlongPlatform = transfUtilsUG.mul(
-				moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
+				moduleHelpers.getPlatformObjectTransf_AlwaysVertical(platformBorderPosTanX2),
 				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
 			)
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, myTransfAlongPlatform)

@@ -130,6 +130,10 @@ local privateFuncs = {
     end,
 }
 privateFuncs.deco = {
+    getMNAdjustedValue_0Or1_Cycling = function(params, slotId)
+        local variant = privateFuncs.getVariant(params, slotId) -- an integer starting at 0
+        return math.abs(math.fmod(variant, 2))
+    end,
     getStationSignFineIndexes = function(params, nTerminal)
         local results = {}
         for ii = 3, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, constants.maxPassengerWaitingAreaEdgeLength * 6 do
@@ -930,16 +934,21 @@ return {
             end
         end,
         doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-            ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId, isTunnelOk)
+            wall2_5ModelId, wall5ModelId, pillar2_5ModelId, pillar5ModelId, isTunnelOk)
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
+            local _wallTransfFunc = privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) == 0
+                and privateFuncs.getPlatformObjectTransf_WithYRotation
+                or privateFuncs.getPlatformObjectTransf_AlwaysVertical
+
             local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
             for i = _i1, _iMax, 1 do
@@ -947,57 +956,88 @@ return {
                 isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
 
+            -- flat areas and deco are shifted by this amount, and it makes sense this way, so we must account for it
+            local _deco2FlatAreaShiftInt = math.floor(constants.maxPassengerWaitingAreaEdgeLength / 2)
+            local isFreeFromFlatAreas = {}
+            for i = _i1, _iMax + 1, 1 do -- look ahead one more bit because of the shift
+                isFreeFromFlatAreas[i] = not(result.getOccupiedInfo4FlatAreas(nTerminal, i))
+            end
+            -- print('*** isFreeFromFlatAreas =') debugPrint(isFreeFromFlatAreas)
+
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
-                    if isTunnelOk or cpf.type ~= 2 then -- ground or bridge
-                        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                        local platformWidth = cpf.width
-                        local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
-                        result.models[#result.models+1] = {
-                            id = platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId,
-                            transf = transfUtilsUG.mul(
-                                privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-                                { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
-                            ),
-                            tag = tag
-                        }
+                    if isTunnelOk or cpf.type ~= 2 then -- ground or bridge, tunnel only if allowed
+                        local cpfAheadByDeco2FlatAreaShift = params.terminals[nTerminal].centrePlatformsFineRelative[ii + _deco2FlatAreaShiftInt]
+                        -- no stations in this fine segment
+                        if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
+                            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
+                            local platformWidth = cpf.width
+                            local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
 
-                        if cpf.type ~= 2 and isFreeFromOpenStairs and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
-                            -- prevent overlapping with station name signs
-                            if not(_barredNumberSignIIs[ii])
-                            and not(_barredNumberSignIIs[ii+1])
-                            and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
-                            then
-                                local myTransf = transfUtilsUG.mul(
-                                    privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
-                                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                            local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, leadingIndex).width
+                            local basePosTanX2, xScaleFactor, yShiftFromSlopedArea, zShift = cpf.posTanX2, 1, (isTrackOnPlatformLeft and (-slopedAreaWidth) or slopedAreaWidth), 0
+                            if slopedAreaWidth ~= 0 then
+                                local xRatio, yRatio = 1, 1
+                                basePosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
+                                    cpf.posTanX2,
+                                    (isTrackOnPlatformLeft and -slopedAreaWidth or slopedAreaWidth)
                                 )
-                                result.models[#result.models+1] = {
-                                    id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
-                                    transf = myTransf,
-                                    tag = tag,
-                                }
+                                xScaleFactor = math.max(xRatio * yRatio, 1.01) -- this is a bit crude but it's cheap
+                                yShiftFromSlopedArea = 0
+                                zShift = constants.platformSideBitsZ
+                            end
+                            result.models[#result.models+1] = {
+                                id = (platformWidth + slopedAreaWidth) < 5 and wall2_5ModelId or wall5ModelId,
+                                transf = transfUtilsUG.mul(
+                                    _wallTransfFunc(basePosTanX2),
+                                    { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShiftFromSlopedArea, constants.platformRoofZ + zShift, 1 }
+                                ),
+                                tag = tag
+                            }
 
-                                -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
-                                local yShift = -platformWidth * 0.5 + 0.20
-                                local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                                if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                                elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                            if cpf.type ~= 2
+                            -- and slopedAreaWidth == 0
+                            and isFreeFromOpenStairs
+                            and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0
+                            -- no platform numbers if there is a roof
+                            and not(params.modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.platformRoofSlotId)])
+                            then
+                                -- prevent overlapping with station name signs
+                                if not(_barredNumberSignIIs[ii])
+                                and not(_barredNumberSignIIs[ii+1])
+                                and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
+                                then
+                                    local myTransf = transfUtilsUG.mul(
+                                        privateFuncs.getPlatformObjectTransf_AlwaysVertical(basePosTanX2),
+                                        { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShiftFromSlopedArea, constants.platformRoofZ + zShift, 1 }
+                                    )
+                                    result.models[#result.models+1] = {
+                                        id = (platformWidth + slopedAreaWidth) < 5 and pillar2_5ModelId or pillar5ModelId,
+                                        transf = myTransf,
+                                        tag = tag,
+                                    }
+
+                                    -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
+                                    local yShift = -platformWidth * 0.5 + 0.20 + yShiftFromSlopedArea
+                                    local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                                    if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                                    elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                                    end
+                                    result.models[#result.models + 1] = {
+                                        id = perronNumberModelId,
+                                        slotId = slotId,
+                                        transf = transfUtilsUG.mul(
+                                            myTransf,
+                                            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                                        ),
+                                        tag = tag
+                                    }
+                                    -- the model index must be in base 0 !
+                                    result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
                                 end
-                                result.models[#result.models + 1] = {
-                                    id = perronNumberModelId,
-                                    slotId = slotId,
-                                    transf = transfUtilsUG.mul(
-                                        myTransf,
-                                        { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
-                                    ),
-                                    tag = tag
-                                }
-                                -- the model index must be in base 0 !
-                                result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
                             end
                         end
                     end
@@ -1486,10 +1526,6 @@ return {
         end,
         addAll = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey, isCargo)
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            -- local innerDegree = privateFuncs.slopedAreas._getSlopedAreaInnerDegree(params, nTerminal, nTrackEdge)
-        --     print('innerDegree =', innerDegree, '(inner == 1, outer == -1)')
-            -- local waitingAreaScaleFactor, xScaleFactor = privateFuncs.slopedAreas._getSlopedAreaTweakFactors(innerDegree, areaWidth)
-            -- local waitingAreaShift = params.terminals[nTerminal].isTrackOnPlatformLeft and -areaWidth * 0.4 or areaWidth * 0.4
             local waitingAreaScaleFactor = areaWidth * 0.8
             local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
