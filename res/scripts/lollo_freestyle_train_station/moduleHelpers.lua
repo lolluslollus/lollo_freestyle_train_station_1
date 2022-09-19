@@ -985,7 +985,9 @@ return {
                                     cpf.posTanX2,
                                     (isTrackOnPlatformLeft and -slopedAreaWidth or slopedAreaWidth)
                                 )
-                                xScaleFactor = math.max(xRatio * yRatio, 1.01) -- this is a bit crude but it's cheap
+                                -- LOLLO TODO see if you can do this differently: walls are not sloped areas.
+                                -- For example, remove the math.max:
+                                -- xScaleFactor = math.max(xRatio * yRatio, 1.01) -- this is a bit crude but it's cheap
                                 yShiftFromSlopedArea = 0
                                 zShift = constants.platformSideBitsZ
                             end
