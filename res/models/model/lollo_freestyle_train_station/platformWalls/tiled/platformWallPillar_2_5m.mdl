@@ -11,7 +11,7 @@ function data()
                         -- {
                         --     -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
                         --     materials = {
-                        --         'lollo_freestyle_train_station/metal/metal_deco_2.mtl',
+                        --         'lollo_freestyle_train_station/metal/metal_deco_curls.mtl',
                         --         'lollo_freestyle_train_station/metal/metal_w_rivets.mtl',
                         --     },
                         --     mesh = 'lollo_freestyle_train_station/platformWalls/tiled/deco_pillar_2_5m_lod0.msh',

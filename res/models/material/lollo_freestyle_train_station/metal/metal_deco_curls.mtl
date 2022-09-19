@@ -2,6 +2,9 @@ function data()
 return {
 	order = 0,
 	params = {
+		albedo_scale = {
+			albedoScale = { 1, 1, 1, },
+		},
 		alpha_scale = {
 			alphaScale = 1,
 		},
@@ -14,15 +17,15 @@ return {
 			fadeOutStartDist = 10000,
 		},
 		map_albedo_opacity = {
-			fileName = 'lollo_freestyle_train_station/iron_deco_2_albedo.tga',
-			-- fileName = 'lollo_freestyle_train_station/iron_deco_2_albedo.dds',
+			fileName = 'lollo_freestyle_train_station/metal_deco_curls/iron_deco_albedo.tga',
+			-- fileName = 'lollo_freestyle_train_station/metal_deco_curls/iron_deco_albedo.dds',
 			type = "TWOD",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
 		},
 		map_metal_gloss_ao = {
-			fileName = "lollo_freestyle_train_station/iron_deco_2_metal_gloss_ao.tga",
-			-- fileName = "lollo_freestyle_train_station/iron_deco_2_metal_gloss_ao.dds",
+			fileName = "lollo_freestyle_train_station/metal_deco_curls/iron_deco_metal_gloss_ao.tga",
+			-- fileName = "lollo_freestyle_train_station/metal_deco_curls/iron_deco_metal_gloss_ao.dds",
 			type = "TWOD",
 			-- wrapS = "CLAMP_TO_EDGE",
 			-- wrapT = "CLAMP_TO_EDGE",
@@ -30,12 +33,10 @@ return {
 			wrapT = "REPEAT",
 		},
 		map_normal = {
-			fileName = "lollo_freestyle_train_station/iron_deco_2_normal.tga",
-			-- fileName = "lollo_freestyle_train_station/iron_deco_2_normal.dds",
+			fileName = "lollo_freestyle_train_station/metal_deco_curls/iron_deco_normal.tga",
+			-- fileName = "lollo_freestyle_train_station/metal_deco_curls/iron_deco_normal.dds",
 			redGreen = true,
 			type = "TWOD",
-			-- wrapS = "CLAMP_TO_EDGE",
-			-- wrapT = "CLAMP_TO_EDGE",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
 		},
@@ -45,6 +46,7 @@ return {
 
 		polygon_offset = {
 			factor = 0,
+			forceDepthWrite = false,
 			units = 0,
 		},
 		two_sided = {

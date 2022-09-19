@@ -14,7 +14,6 @@ return function(height, eraPrefix)
             iron_pillar = 'lollo_freestyle_train_station/metal/metal_w_large_rivets.mtl',
             doors = 'lollo_freestyle_train_station/era_a_doors.mtl',
             roof = 'lollo_freestyle_train_station/metal/metal_ceiling_vintage_002.mtl',
-            -- roofDeco = 'lollo_freestyle_train_station/metal/metal_deco_002_repeat.mtl',
             roofDeco = 'lollo_freestyle_train_station/metal/metal_roof_deco_round.mtl',
             wallGrey = 'lollo_freestyle_train_station/wall_grey_3.mtl',
         },
