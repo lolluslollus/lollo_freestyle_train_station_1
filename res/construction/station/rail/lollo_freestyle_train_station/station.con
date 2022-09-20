@@ -149,16 +149,16 @@ function data()
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
 					-- },
-					[_constants.platformRoofModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
 					-- [_constants.subwayModuleType] = {
 					-- 	maxModules = -1,
 					-- 	message = nil, --'LOLLO slotConfig message',
 					-- 	skipCollisionCheck = true,
 					-- },
+					[_constants.platformRoofModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
 					[_constants.wallModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
@@ -304,7 +304,7 @@ function data()
 									-- 0, 3} and 3, 0} shift this along the track so it avoids flat areas,
 									-- which have the same thing reversed.
 									-- This way, sloped areas and flat areas can be easily combined.
-									spacing = isTrackOnPlatformLeft and {2, 0, 0, 3} or {0, 2, 3, 0},
+									spacing = isTrackOnPlatformLeft and {1.5, 0, 0, 3} or {0, 1.5, 3, 0},
 									transf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
@@ -558,8 +558,8 @@ function data()
 				local function _addPlatformRoofsAndWalls()
 					if isCargoTerminal then return end
 
-					local _roofSpacing = {-0.1, 2, -1.1, 2}
-					local _wallSpacing = {0.1, -2, -1.1, 2}
+					local _roofSpacing = isTrackOnPlatformLeft and {-1.1, 2, -0.1, 0.9} or {2, -1.1, 0.9, -0.1}
+					local _wallSpacing = isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
 					local _iMax = #params.terminals[t].centrePlatformsRelative
 					local iss = {}
 					for i = 2, _iMax, 3 do iss[#iss+1] = i end
@@ -573,7 +573,6 @@ function data()
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
 						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
 							table.insert(result.slots, {
-								height = -2,
 								id = result.mangleId(t, i, _constants.idBases.platformRoofSlotId),
 								spacing = _roofSpacing,
 								transf = myTransf,
@@ -588,16 +587,20 @@ function data()
 							or not(result.getOccupiedInfo4FlatAreas(t, i+2)) -- check 1 bit ahead because of the shift between flat areas and deco
 						)
 						then
+							local wallTransf = myTransf
 							local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(t, i).width
-							local wallTransf = arrayUtils.cloneOmittingFields(myTransf)
 							if slopedAreaWidth ~= 0 then
+								local platformWidth = params.terminals[t].centrePlatformsRelative[i].width
+								local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5) -- -0.85
+								local yShiftAreaBorder = isTrackOnPlatformLeft and -baseYShift4AreaBorder or baseYShift4AreaBorder
+								-- I need the transf here, merely shifting looks cheap but it's wrong
 								wallTransf = transfUtilsUG.mul(
-									wallTransf,
-									{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -slopedAreaWidth, 0, 1}
+									myTransf,
+									-- we raise it a bit to avoid collisions, this transf is not critical anyway
+									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftAreaBorder, 1, 1 }
 								)
 							end
 							table.insert(result.slots, {
-								height = 2,
 								id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
 								spacing = _wallSpacing,
 								transf = wallTransf,
