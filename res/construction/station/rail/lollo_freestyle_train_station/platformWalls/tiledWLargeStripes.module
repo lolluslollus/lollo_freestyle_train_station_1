@@ -10,7 +10,7 @@ local transfUtilsUG = require "transf"
 function data()
 	return {
 		availability = {
-			yearFrom = 0,
+			yearFrom = moduleHelpers.eras.era_c.startYear,
 			yearTo = 0
 		},
 		category = {
@@ -20,13 +20,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("WallBricksName"),
-			description = _("WallBricksDesc"),
-			icon = "ui/lollo_freestyle_train_station/wallBricks.tga"
+			name = _("WallTiledWLargeStripesName"),
+			description = _("WallTiledWLargeStripesDesc"),
+			icon = "ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga"
 		},
 		metadata = { },
 		order = {
-			value = 34,
+			value = 36,
 		},
 		type = _constants.wallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -34,8 +34,8 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-			'lollo_freestyle_train_station/platformWalls/bricks/platformWall_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/bricks/platformWall_5m.mdl',
-			'lollo_freestyle_train_station/platformWalls/bricks/platformWallPillar_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/bricks/platformWallPillar_5m.mdl',
+			'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_5m.mdl',
+			'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/pillar_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/pillar_5m.mdl',
 			true)
 		end,
 
@@ -43,12 +43,12 @@ function data()
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = 'lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_2_5m.mdl',
+					id = 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_2_5m.mdl',
 					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
 			results[#results+1] = {
-				id = 'lollo_freestyle_train_station/platformWalls/tiled/platformWallPillar_2_5m.mdl',
+				id = 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/pillar_2_5m.mdl',
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results

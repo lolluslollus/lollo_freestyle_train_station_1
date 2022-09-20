@@ -10,7 +10,7 @@ local transfUtilsUG = require "transf"
 function data()
 	return {
 		availability = {
-			yearFrom = moduleHelpers.eras.era_a.startYear,
+			yearFrom = 0,
 			yearTo = 0
 		},
 		category = {

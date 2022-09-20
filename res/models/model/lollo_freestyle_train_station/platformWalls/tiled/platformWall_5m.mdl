@@ -11,7 +11,7 @@ function data()
                         {
                             -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
                             materials = {
-                                'lollo_freestyle_train_station/tube_tiles.mtl',
+                                'lollo_freestyle_train_station/tube_tiles_creamy.mtl',
                                 'lollo_freestyle_train_station/tube_deco.mtl',
                                 'lollo_freestyle_train_station/station_concrete_1.mtl',
                             },

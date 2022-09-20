@@ -11,7 +11,7 @@ function data()
                 fadeOutStartDist = 10000,
             },
             map_albedo = {
-                fileName = "lollo_freestyle_train_station/tube_tiles_albedo_bc1.dds",
+                fileName = "lollo_freestyle_train_station/tube_tiles_creamy_albedo_bc1.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
