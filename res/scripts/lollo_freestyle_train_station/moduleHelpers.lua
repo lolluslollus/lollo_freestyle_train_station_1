@@ -985,14 +985,12 @@ return {
                                     cpf.posTanX2,
                                     (isTrackOnPlatformLeft and -slopedAreaWidth or slopedAreaWidth)
                                 )
-                                -- LOLLO TODO see if you can do this differently: walls are not sloped areas.
-                                -- For example, remove the math.max:
-                                -- xScaleFactor = math.max(xRatio * yRatio, 1.01) -- this is a bit crude but it's cheap
+                                xScaleFactor = math.max(xRatio * yRatio, 1.01) -- this is a bit crude but it's cheap
                                 yShiftFromSlopedArea = 0
                                 zShift = constants.platformSideBitsZ
                             end
                             result.models[#result.models+1] = {
-                                id = (platformWidth + slopedAreaWidth) < 5 and wall2_5ModelId or wall5ModelId,
+                                id = platformWidth < 5 and wall2_5ModelId or wall5ModelId,
                                 transf = transfUtilsUG.mul(
                                     _wallTransfFunc(basePosTanX2),
                                     { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShiftFromSlopedArea, constants.platformRoofZ + zShift, 1 }
@@ -1017,13 +1015,14 @@ return {
                                         { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShiftFromSlopedArea, constants.platformRoofZ + zShift, 1 }
                                     )
                                     result.models[#result.models+1] = {
-                                        id = (platformWidth + slopedAreaWidth) < 5 and pillar2_5ModelId or pillar5ModelId,
+                                        id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
                                         transf = myTransf,
                                         tag = tag,
                                     }
 
                                     -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
-                                    local yShift = -platformWidth * 0.5 + 0.20 + yShiftFromSlopedArea
+                                    -- local yShift = -platformWidth * 0.5 + 0.20 + yShiftFromSlopedArea
+                                    local yShift = -platformWidth * 0.5 + yShiftFromSlopedArea
                                     local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
                                     if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
                                     elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
