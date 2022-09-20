@@ -986,6 +986,10 @@ return {
                                     (isTrackOnPlatformLeft and -slopedAreaWidth or slopedAreaWidth)
                                 )
                                 xScaleFactor = math.max(xRatio * yRatio, 1.01) -- this is a bit crude but it's cheap
+                                -- xScaleFactor = xRatio * yRatio * 1.01
+                                -- xScaleFactor = math.max(xRatio, yRatio) * 1.02
+                                -- print('xRatio, yRatio =', xRatio, yRatio)
+                                -- xScaleFactor = xRatio * 1.05
                                 yShiftFromSlopedArea = 0
                                 zShift = constants.platformSideBitsZ
                             end
@@ -1010,9 +1014,10 @@ return {
                                 and not(_barredNumberSignIIs[ii+1])
                                 and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
                                 then
+                                    local yShift4Pillar = isTrackOnPlatformLeft and (yShiftFromSlopedArea + 0.1) or (yShiftFromSlopedArea - 0.1)
                                     local myTransf = transfUtilsUG.mul(
                                         privateFuncs.getPlatformObjectTransf_AlwaysVertical(basePosTanX2),
-                                        { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShiftFromSlopedArea, constants.platformRoofZ + zShift, 1 }
+                                        { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift4Pillar, constants.platformRoofZ + zShift, 1 }
                                     )
                                     result.models[#result.models+1] = {
                                         id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
@@ -1020,9 +1025,7 @@ return {
                                         tag = tag,
                                     }
 
-                                    -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
-                                    -- local yShift = -platformWidth * 0.5 + 0.20 + yShiftFromSlopedArea
-                                    local yShift = -platformWidth * 0.5 + yShiftFromSlopedArea
+                                    local yShift4PerronNumber = -platformWidth * 0.5 + 0.20 + yShiftFromSlopedArea
                                     local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
                                     if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
                                     elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
@@ -1032,7 +1035,7 @@ return {
                                         slotId = slotId,
                                         transf = transfUtilsUG.mul(
                                             myTransf,
-                                            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                                            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift4PerronNumber, 4.83 + zShift, 1 }
                                         ),
                                         tag = tag
                                     }
