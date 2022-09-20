@@ -1,0 +1,77 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 40.173400878906, 2.5, 5.0574998855591, },
+		bbMin = { -0.17340087890625, -2.5, 0.79999977350235, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 20.173400878906, 2.5, 2.1287500858307, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								materials = { "station/rail/era_c/era_c_trainstation_roof_wood.mtl", "station/rail/era_c/era_c_trainstation_borders_1.mtl", "station/rail/era_c/era_c_trainstation_roof_white.mtl", },
+								mesh = "station/rail/era_c/perron_5_roof/perron_5_roof_lod0.msh",
+								name = "perron_5_roof",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+							},
+							{
+								materials = { "station/rail/era_c/era_c_trainstation_borders_2.mtl", "station/rail/era_c/era_c_trainstation_borders_1.mtl", "station/rail/era_c/era_c_trainstation_special.mtl", },
+								mesh = "station/rail/era_c/perron_5_roof/perron_5_roof_feets_lod0.msh",
+								name = "perron_5_roof_feets",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+							},
+						},
+						name = "perron_5_roof_grp",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 100,
+		},
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								materials = { "station/rail/era_c/era_c_trainstation_roof_wood.mtl", "station/rail/era_c/era_c_trainstation_borders_1.mtl", "station/rail/era_c/era_c_trainstation_roof_white.mtl", },
+								mesh = "station/rail/era_c/perron_5_roof/perron_5_roof_lod1.msh",
+								name = "perron_5_roof",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+							},
+							{
+								materials = { "station/rail/era_c/era_c_trainstation_borders_2.mtl", "station/rail/era_c/era_c_trainstation_borders_1.mtl", "station/rail/era_c/era_c_trainstation_special.mtl", },
+								mesh = "station/rail/era_c/perron_5_roof/perron_5_roof_feets_lod1.msh",
+								name = "perron_5_roof_feets",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+							},
+						},
+						name = "perron_5_roof_grp",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 100,
+			visibleTo = 3500,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

@@ -35,7 +35,7 @@ function data()
 
 			moduleHelpers.deco.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
 			'lollo_freestyle_train_station/platformWalls/tiled/platformWallWRoof_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/tiled/platformWallWRoof_5m.mdl',
-			_constants.platformWallTiledPillar2_5MModelFileName, _constants.platformWallTiledPillar5MModelFileName,
+			'lollo_freestyle_train_station/platformWalls/tiled/platformWallPillar_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/tiled/platformWallPillar_5m.mdl',
 			_constants.platformWallTiled2_5MModelFileName, _constants.platformWallTiled5MModelFileName,
 			true)
 		end,
@@ -49,7 +49,7 @@ function data()
 				}
 			end
 			results[#results+1] = {
-				id = _constants.platformWallTiledPillar2_5MModelFileName,
+				id = 'lollo_freestyle_train_station/platformWalls/tiled/platformWallPillar_2_5m.mdl',
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results

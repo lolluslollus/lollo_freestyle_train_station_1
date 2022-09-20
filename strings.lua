@@ -212,6 +212,8 @@ function data()
 			["UnderpassDesc"] = "When on the ground, it connects passenger platforms to subway entrances, lifts to bridges and other ground underpasses. When on a bridge instead, it connects to lifts to bridges, other bridge underpasses, platform stairs and lifts that are close enough.",
 			["UnderpassStairsName"] = "Underpass",
 			["UnderpassStairsDesc"] = "When on the ground, it connects passenger platforms to subway entrances, lifts to bridges and other ground underpasses. When on a bridge instead, it connects to lifts to bridges, other bridge underpasses, platform stairs and lifts that are close enough.",
+			["WallBricksName"] = "Brick platform wall",
+			["WallBricksDesc"] = "Brick wall for passenger platforms, also suitable for tunnels. Adjust slantness with <m> and <n>.",
 			["WallConcretePlainName"] = "Concrete platform wall, plain",
 			["WallConcretePlainDesc"] = "Concrete wall for passenger platforms, also suitable for tunnels. Adjust slantness with <m> and <n>.",
 			["WallConcretePlainWRoofName"] = "Concrete platform wall and roof, plain",
