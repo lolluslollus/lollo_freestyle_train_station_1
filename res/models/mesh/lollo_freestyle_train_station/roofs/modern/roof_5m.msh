@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 1016,
+				},
+				position = {
+					count = 24,
+					offset = 1040,
+				},
+				tangent = {
+					count = 24,
+					offset = 992,
+				},
+				uv0 = {
+					count = 24,
+					offset = 1064,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/wood.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 240,
+					offset = 1328,
+				},
+				position = {
+					count = 240,
+					offset = 1568,
+				},
+				tangent = {
+					count = 240,
+					offset = 1088,
+				},
+				uv0 = {
+					count = 240,
+					offset = 1808,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/border.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 2072,
+				},
+				position = {
+					count = 24,
+					offset = 2096,
+				},
+				tangent = {
+					count = 24,
+					offset = 2048,
+				},
+				uv0 = {
+					count = 24,
+					offset = 2120,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/top.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 192,
+					offset = 2336,
+				},
+				position = {
+					count = 192,
+					offset = 2528,
+				},
+				tangent = {
+					count = 192,
+					offset = 2144,
+				},
+				uv0 = {
+					count = 192,
+					offset = 2720,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/roofs/modern/edge.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 108,
+			numComp = 3,
+			offset = 112,
+		},
+		position = {
+			count = 324,
+			numComp = 3,
+			offset = 220,
+		},
+		tangent = {
+			count = 112,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 448,
+			numComp = 2,
+			offset = 544,
+		},
+	},
+}
+end

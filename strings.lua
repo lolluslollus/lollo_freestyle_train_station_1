@@ -169,6 +169,8 @@ function data()
 			["platformRoofIronGlassCopperDesc"] = "Iron and glass roof for passenger platforms",
 			["PlatformRoofMetalGlassName"] = "Glass platform roof",
 			["PlatformRoofMetalGlassDesc"] = "Glass roof for passenger platforms",
+			["PlatformRoofModernName"] = "Modern platform roof",
+			["PlatformRoofModernDesc"] = "Modern roof for passenger platforms",
 			["SlopedCargoArea1x5Name"] = "5 m platform extension, cargo style",
 			["SlopedCargoArea1x5Desc"] = "Platform extension, 5 m, cargo style. It holds extra cargo for all tracks. Good for plopping assets on.",
 			["SlopedCargoArea1x10Name"] = "10 m platform extension, cargo style",
