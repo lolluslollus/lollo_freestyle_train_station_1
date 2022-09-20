@@ -9,8 +9,11 @@ function data()
                     children = {
                         {
                             materials = {
-                                'lollo_freestyle_train_station/wall_grey.mtl',
+                                -- 'lollo_freestyle_train_station/wall_grey.mtl',
+                                'lollo_freestyle_train_station/station_concrete_1.mtl',
+                                -- 'lollo_freestyle_train_station/station_concrete_2.mtl',
                                 'lollo_freestyle_train_station/wall_white.mtl',
+                                -- 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
                                 'lollo_freestyle_train_station/era_c_doors.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/underpass/era_c_underpass_building_7m.msh',
