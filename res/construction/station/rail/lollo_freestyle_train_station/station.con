@@ -378,9 +378,9 @@ function data()
 							local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
 							local yShift = cpl.width + result.getOccupiedInfo4SlopedAreas(t, i).yShift
 							local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
-							local myTransf = transfUtilsUG.mul(
+							local myTransf = transfUtils.getTransfZShiftedBy(
 								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+								_laneZ
 							)
 							if not(isCargoTerminal) then
 								if not(result.getOccupiedInfo4FlatAreas(t, i))
@@ -571,6 +571,8 @@ function data()
 						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {type = cpl.type}
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
+						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
+						myTransf = transfUtils.getTransfZShiftedBy(myTransf, 3)
 						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
 							table.insert(result.slots, {
 								id = result.mangleId(t, i, _constants.idBases.platformRoofSlotId),
@@ -585,6 +587,7 @@ function data()
 							or not(result.getOccupiedInfo4FlatAreas(t, i))
 							or not(result.getOccupiedInfo4FlatAreas(t, i+1))
 							or not(result.getOccupiedInfo4FlatAreas(t, i+2)) -- check 1 bit ahead because of the shift between flat areas and deco
+							-- or (isTrackOnPlatformLeft and not(result.getOccupiedInfo4FlatAreas(t, i+2)) or not(result.getOccupiedInfo4FlatAreas(t, i-2))) -- check 1 bit ahead because of the shift between flat areas and deco
 						)
 						then
 							local wallTransf = myTransf
@@ -594,11 +597,7 @@ function data()
 								local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5) -- -0.85
 								local yShiftAreaBorder = isTrackOnPlatformLeft and -baseYShift4AreaBorder or baseYShift4AreaBorder
 								-- I need the transf here, merely shifting looks cheap but it's wrong
-								wallTransf = transfUtilsUG.mul(
-									myTransf,
-									-- we raise it a bit to avoid collisions, this transf is not critical anyway
-									{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShiftAreaBorder, 1, 1 }
-								)
+								wallTransf = transfUtils.getTransfYShiftedBy(myTransf, yShiftAreaBorder)
 							end
 							table.insert(result.slots, {
 								id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
@@ -621,10 +620,10 @@ function data()
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						local era = moduleHelpers.getEraPrefix(params, t, i)
-						local myTransf = transfUtilsUG.mul(
-								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
-								{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-							)
+						local myTransf = transfUtils.getTransfZShiftedBy(
+							moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
+							_laneZ
+						)
 						if cpl.type == 2 and cplP1.type == 2 then -- tunnels
 							local idM1_TunnelStairsUp = result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpSlotId)
 							local idP1_TunnelStairsUp = result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpSlotId)
@@ -773,9 +772,9 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 						local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
-						local crossConnectorTransf = transfUtilsUG.mul(
+						local crossConnectorTransf = transfUtils.getTransfZShiftedBy(
 							transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
-							{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1}
+							_laneZ
 						)
 						result.models[#result.models+1] = {
 							id = _constants.passengerLaneModelId,
@@ -842,19 +841,19 @@ function data()
                             if isOpenStairsUpLeft then
                                 result.models[#result.models+1] = {
                                     id = _constants.passengerLaneOpenStairsUpTopNextModelId,
-                                    transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+									transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
                                 }
                             end
                             if isOpenStairsUpRight then
                                 result.models[#result.models+1] = {
                                     id = _constants.passengerLaneOpenStairsUpTopPrevModelId,
-                                    transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+									transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
                                 }
                             end
                         else
                             result.models[#result.models+1] = {
                                 id = myModelId,
-                                transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+								transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
                             }
                         end
 						if isStairsUp then
@@ -977,7 +976,7 @@ function data()
 								result.models[#result.models+1] = {
 									id = _constants.cargoWaitingAreaModelId,
 									tag = slotHelpers.mangleModelTag(t, true),
-									transf = transfUtilsUG.mul(centreLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+									transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
 								}
 							end
 						end
@@ -990,7 +989,7 @@ function data()
 								result.models[#result.models+1] = {
 									id = _constants.passengerWaitingAreaModelId,
 									tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtilsUG.mul(leftLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+									transf = transfUtils.getTransfZShiftedBy(leftLaneTransf, _laneZ)
 								}
 							end
 						else
@@ -1005,7 +1004,7 @@ function data()
 									tag = slotHelpers.mangleModelTag(t, false),
 									-- if you touch this, you screw things
 									-- transf = transfUtilsUG.mul(rightLaneTransf, {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
-									transf = transfUtilsUG.mul(rightLaneTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+									transf = transfUtils.getTransfZShiftedBy(rightLaneTransf, _laneZ)
 								}
 							end
 						end
@@ -1019,9 +1018,9 @@ function data()
 					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf)
 					-- local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 2)
 					local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 0.1) -- does not need to be perfectly centred
-					local myTransf = transfUtilsUG.mul(
+					local myTransf = transfUtils.getTransfZShiftedBy(
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(nearlyCentredPosTanX2),
-						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+						_laneZ
 					)
 					table.insert(result.slots, {
 						-- height = 0,
