@@ -20,9 +20,9 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("PlatformRoofModernName"),
-			description = _("PlatformRoofModernDesc"),
-			icon = "ui/lollo_freestyle_train_station/platformRoofModern.tga"
+			name = _("PlatformRoofConcreteModernName"),
+			description = _("PlatformRoofConcreteModernDesc"),
+			icon = "ui/lollo_freestyle_train_station/platformRoofConcreteModern.tga"
 		},
 		metadata = { },
 		order = {
@@ -34,20 +34,20 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.deco.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-			'lollo_freestyle_train_station/roofs/modern/roof_2_5m.mdl', 'lollo_freestyle_train_station/roofs/modern/roof_5m.mdl',
-			'lollo_freestyle_train_station/roofs/modern/pillar_2_5m.mdl', 'lollo_freestyle_train_station/roofs/modern/pillar_5m.mdl')
+			'lollo_freestyle_train_station/roofs/concrete_modern/roof_2_5m.mdl', 'lollo_freestyle_train_station/roofs/concrete_modern/roof_5m.mdl',
+			'lollo_freestyle_train_station/roofs/concrete_modern/pillar_2_5m.mdl', 'lollo_freestyle_train_station/roofs/concrete_modern/pillar_5m.mdl')
 		end,
 
 		getModelsFn = function(params)
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = 'lollo_freestyle_train_station/roofs/modern/roof_2_5m.mdl',
+					id = 'lollo_freestyle_train_station/roofs/concrete_modern/roof_2_5m.mdl',
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
 			results[#results+1] = {
-				id = 'lollo_freestyle_train_station/roofs/modern/pillar_2_5m.mdl',
+				id = 'lollo_freestyle_train_station/roofs/concrete_modern/pillar_2_5m.mdl',
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results

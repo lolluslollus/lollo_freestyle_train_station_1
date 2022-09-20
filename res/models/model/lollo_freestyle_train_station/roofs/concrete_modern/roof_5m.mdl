@@ -16,7 +16,7 @@ function data()
 										"station/rail/era_c/era_c_trainstation_roof_white.mtl",
 										"lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl"
 									},
-									mesh = "lollo_freestyle_train_station/roofs/modern/roof_2_5m.msh",
+									mesh = "lollo_freestyle_train_station/roofs/concrete_modern/roof_5m.msh",
 									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 								},
 							},
