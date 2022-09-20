@@ -28,6 +28,30 @@ function data()
 				},
 				static = false,
 				visibleFrom = 0,
+				visibleTo = 200,
+			},
+			{
+				node = {
+					children = {
+						{
+							children = {
+								{
+									materials = {
+										"station/rail/era_c/era_c_trainstation_borders_1.mtl",
+										"station/rail/era_c/era_c_trainstation_roof_white.mtl",
+									},
+									mesh = "lollo_freestyle_train_station/roofs/concrete_modern/roof_2_5m_lod1.msh",
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+								},
+							},
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 200,
 				visibleTo = 1000,
 			},
 		},
