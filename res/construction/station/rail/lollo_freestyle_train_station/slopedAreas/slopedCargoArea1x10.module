@@ -19,7 +19,12 @@ function data()
 			description = _("SlopedCargoArea1x10Desc"),
 			icon = "ui/lollo_freestyle_train_station/cargo_area_1x10.tga"
 		},
-		metadata = { },
+		metadata = {
+			moreCapacity = {
+				cargo = 32,
+				passenger = 0
+			},
+		},
 		order = {
 			value = 23,
 		},
