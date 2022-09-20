@@ -65,7 +65,7 @@ return {
 				t = nTerminal,
 				lanePosTanX2 = cpl.posTanX2,
 				pos2Link = transfUtils.transf2Position(
-					transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0.0, -buildingHeight + _constants.underpassZ, 1 })
+					transfUtils.getTransfZShiftedBy(slotTransf, -buildingHeight + _constants.underpassZ)
 				)
 			}
 		)

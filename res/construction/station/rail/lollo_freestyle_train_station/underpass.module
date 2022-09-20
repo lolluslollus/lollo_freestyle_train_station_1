@@ -51,10 +51,10 @@ function data()
 			end
 			result.models[#result.models+1] = {
 				id = underpassFloorModelId,
-				transf = transfUtilsUG.mul(
+				transf = transfUtils.getTransfZShiftedBy(
 					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal] - 0.02, 1 }
-				),
+					result.laneZs[nTerminal] - 0.02
+				)
 			}
 		end,
 

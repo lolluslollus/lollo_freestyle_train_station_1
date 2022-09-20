@@ -34,9 +34,9 @@ function data()
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local cplP1 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge+1] or {}
-			slotTransf = transfUtilsUG.mul(
+			slotTransf = transfUtils.getTransfZShiftedBy(
 				moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-				{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
+				result.laneZs[nTerminal]
 			)
 
 			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)

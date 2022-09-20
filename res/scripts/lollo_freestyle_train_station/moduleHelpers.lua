@@ -336,7 +336,7 @@ privateFuncs.flatAreas = {
         local deltaZ = variant * 0.1 + constants.platformSideBitsZ
         if deltaZ < -1 then deltaZ = -1 elseif deltaZ > 1 then deltaZ = 1 end
 
-        return transfUtilsUG.mul(slotTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, deltaZ, 1 })
+        return transfUtils.getTransfZShiftedBy(slotTransf, deltaZ)
     end,
 }
 privateFuncs.openStairs = {

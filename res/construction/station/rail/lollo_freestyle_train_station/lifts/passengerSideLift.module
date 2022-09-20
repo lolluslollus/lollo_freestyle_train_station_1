@@ -78,10 +78,7 @@ return {
 		}
 
 		-- add underpass bottom pos 2 link
-		local underpassBottomTransf = transfUtilsUG.mul(
-			slotTransf,
-			{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _constants.underpassZ, 1 }
-		)
+		local underpassBottomTransf = transfUtils.getTransfZShiftedBy(slotTransf, _constants.underpassZ)
 		if result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] == nil then result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] = {} end
 		table.insert(
 			result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal],
