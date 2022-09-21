@@ -1,10 +1,10 @@
 function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-    local _eraPrefix = _moduleHelpers.eras.era_c.prefix
+    local _eraPrefix = _moduleHelpers.eras.era_a.prefix
     local _height = 5
 
-    local topTransf = {1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0.707 - 0.8, 1}
+    local topTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.707 - 0.8, 1}
 
     local _allMaterials = {
         era_a = {
@@ -85,21 +85,19 @@ function data()
         for h = -5, -_height, -5 do
             zShift4Wall = zShift4Wall - 5
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, zShift4Wall, 1}
-            if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
-                results[#results + 1] = {
-                    materials = h == -5 and {
-                        _materials.iron_pillar,
-                    } or {
-                        _materials.iron,
-                        _materials.iron_pillar,
-                    },
-                    mesh = h == -5
-                        and 'lollo_freestyle_train_station/lift/era_a_side_lift_9x5x5_top_level.msh'
-                        or 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
-                    transf = wallTransf
-                }
-            else
-                if h ~= -5 then
+            if h ~= -5 then
+                if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
+                    results[#results + 1] = {
+                        materials = h == -5 and {
+                            _materials.iron_pillar,
+                        } or {
+                            _materials.iron,
+                            _materials.iron_pillar,
+                        },
+                        mesh = 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
+                        transf = wallTransf
+                    }
+                else
                     results[#results + 1] = {
                         --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
                         materials = {
@@ -338,9 +336,12 @@ function data()
                                 _materials.wallGrey,
                                 _materials.wallWhite,
                                 _materials.tiles,
+                                _materials.shaft,
                                 _materials.doors,
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/era_bc_side_lift_top_downward_9x5x5_lod2.msh',
+                            mesh = _eraPrefix == _moduleHelpers.eras.era_b.prefix
+                                and 'lollo_freestyle_train_station/lift/era_b_side_lift_top_downward_9x5x5_lod0.msh'
+                                or 'lollo_freestyle_train_station/lift/era_c_side_lift_top_downward_9x5x5_lod0.msh',
                             transf = topTransf
                         },
                     },
