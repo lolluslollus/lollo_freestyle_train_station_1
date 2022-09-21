@@ -82,19 +82,19 @@ return function(height, eraPrefix)
         for h = 5, height, 5 do
             zShift4Wall = zShift4Wall - 5
             local wallTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, zShift4Wall, 1}
-            if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
-                results[#results + 1] = {
-                    materials = h == 5 and {
-                        _materials.iron_pillar,
-                    } or {
-                        _materials.iron,
-                        _materials.iron_pillar,
-                    },
-                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_a_side_lift_9x5x5_top_level.msh' or 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
-                    transf = wallTransf
-                }
-            else
-                if h ~= 5 then
+            if h ~= 5 then
+                if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
+                    results[#results + 1] = {
+                        materials = h == 5 and {
+                            _materials.iron_pillar,
+                        } or {
+                            _materials.iron,
+                            _materials.iron_pillar,
+                        },
+                        mesh = 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
+                        transf = wallTransf
+                    }
+                else
                     results[#results + 1] = {
                         --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
                         materials = {
