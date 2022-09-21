@@ -10,7 +10,7 @@ function data()
             },
             alpha_test = {
                 alphaThreshold = 0.75,
-                cutout = true,
+                cutout = true, -- avoid x-raying trains
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
