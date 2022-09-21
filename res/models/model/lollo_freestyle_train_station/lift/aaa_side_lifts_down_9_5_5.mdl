@@ -99,7 +99,7 @@ function data()
                     transf = wallTransf
                 }
             else
-                if h ~= -5 then -- no more 'lollo_freestyle_train_station/lift/era_b_side_lift_9x5x5_top_level_side_deco.msh'
+                if h ~= -5 then
                     results[#results + 1] = {
                         --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
                         materials = {
