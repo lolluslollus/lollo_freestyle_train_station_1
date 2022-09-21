@@ -32,6 +32,7 @@ return {
 		},
 		map_normal = {
 			fileName = "lollo_freestyle_train_station/doors_brass_glass_normal.tga",
+			-- fileName = "lollo_freestyle_train_station/doors_brass_glass_normal_bc5.dds",
 			redGreen = true,
 			type = "TWOD",
 			wrapS = "REPEAT",

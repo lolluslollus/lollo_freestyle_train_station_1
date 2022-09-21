@@ -19,7 +19,6 @@ function data()
                 wrapT = "REPEAT",
             },
             map_metal_gloss_ao = {
-                -- fileName = "lollo_freestyle_train_station/era_a_shutter_metal_gloss_ao.tga",
                 fileName = "lollo_freestyle_train_station/era_a_shutter_metal_gloss_ao.dds",
                 type = "TWOD",
                 -- wrapS = "CLAMP_TO_EDGE",
