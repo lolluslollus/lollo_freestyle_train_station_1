@@ -124,10 +124,10 @@ return {
 		end
 
 		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-6.5, -4.2, -buildingHeight, 1},
-			{-6.5, 3.8, -buildingHeight, 1},
-			{6.5, 3.8, -buildingHeight, 1},
-			{6.5, -4.2, -buildingHeight, 1},
+			{-5.2, -4.2, -buildingHeight, 1},
+			{-5.2, 3.8, -buildingHeight, 1},
+			{5.2, 3.8, -buildingHeight, 1},
+			{5.2, -4.2, -buildingHeight, 1},
 		}
 		modulesutil.TransformFaces(slotTransf, groundFace)
 		table.insert(

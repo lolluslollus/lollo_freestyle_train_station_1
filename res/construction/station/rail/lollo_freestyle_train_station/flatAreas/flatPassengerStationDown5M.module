@@ -99,24 +99,24 @@ return {
 		})
 
 		local groundFace1 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
-			{-1, -6.2, 0 + _constants.platformSideBitsZ, 1},
-			{-1, 6.2, 0 + _constants.platformSideBitsZ, 1},
-			{2, 6.2, 0 + _constants.platformSideBitsZ, 1},
-			{2, -6.2, 0 + _constants.platformSideBitsZ, 1},
+			{-1, -5.2, 0 + _constants.platformSideBitsZ, 1},
+			{-1, 5.2, 0 + _constants.platformSideBitsZ, 1},
+			{2, 5.2, 0 + _constants.platformSideBitsZ, 1},
+			{2, -5.2, 0 + _constants.platformSideBitsZ, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace1)
 		local groundFace2 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
-			{2, -6.2, 0 + _constants.platformSideBitsZ, 1},
-			{2, 6.2, 0 + _constants.platformSideBitsZ, 1},
-			{3, 6.2, 5 + _constants.platformSideBitsZ, 1},
-			{3, -6.2, 5 + _constants.platformSideBitsZ, 1},
+			{2, -5.2, 0 + _constants.platformSideBitsZ, 1},
+			{2, 5.2, 0 + _constants.platformSideBitsZ, 1},
+			{3, 5.2, 5 + _constants.platformSideBitsZ, 1},
+			{3, -5.2, 5 + _constants.platformSideBitsZ, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace2)
 		local groundFace3 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
-			{3, -6.2, 5 + _constants.platformSideBitsZ, 1},
-			{3, 6.2, 5 + _constants.platformSideBitsZ, 1},
-			{8, 6.2, 5 + _constants.platformSideBitsZ, 1},
-			{8, -6.2, 5 + _constants.platformSideBitsZ, 1},
+			{3, -5.2, 5 + _constants.platformSideBitsZ, 1},
+			{3, 5.2, 5 + _constants.platformSideBitsZ, 1},
+			{8, 5.2, 5 + _constants.platformSideBitsZ, 1},
+			{8, -5.2, 5 + _constants.platformSideBitsZ, 1},
 		}
 		modulesutil.TransformFaces(zAdjustedTransf, groundFace3)
 		table.insert(
