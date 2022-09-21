@@ -99,7 +99,7 @@ return function(height, eraPrefix)
                         _materials.wallGreyDeco,
                         _materials.wallWhite,
                     },
-                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/platform_lift_9x5x5_top_level.msh' or 'lollo_freestyle_train_station/lift/lift9x5x5level_deco.msh',
+                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_b_platform_lift_9x5x5_top_level.msh' or 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_deco.msh',
                     transf = wallTransf
                 }
             end
@@ -206,7 +206,7 @@ return function(height, eraPrefix)
                             transf = pillarsTransf
                         } or {
                             materials = { _materials.wallGrey },
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_b_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         },
                         -- shaft top
@@ -253,7 +253,7 @@ return function(height, eraPrefix)
                             transf = pillarsTransf
                         } or {
                             materials = { _materials.wallGrey },
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_b_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         },
                         -- shaft top
@@ -300,7 +300,7 @@ return function(height, eraPrefix)
                             transf = pillarsTransf
                         } or {
                             materials = { _materials.wallGrey },
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_b_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         },
                     },

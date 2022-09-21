@@ -107,8 +107,8 @@ return function(height, eraPrefix)
                         _materials.wallWhite,
                     },
                     mesh = h == -5
-                        and 'lollo_freestyle_train_station/lift/side_lift_9x5x5_top_level_side_deco.msh'
-                        or 'lollo_freestyle_train_station/lift/lift9x5x5level_side_deco.msh',
+                        and 'lollo_freestyle_train_station/lift/era_b_side_lift_9x5x5_top_level_side_deco.msh'
+                        or 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_side_deco.msh',
                     transf = wallTransf
                 }
             end
@@ -247,7 +247,7 @@ return function(height, eraPrefix)
                                 _materials.wallGrey,
                                 _materials.tiles,
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars_w_floor.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_b_9x5x3_225pillars_w_floor.msh',
                             transf = pillarsTransf
                         },
                         -- top
@@ -317,7 +317,7 @@ return function(height, eraPrefix)
                                 _materials.wallGrey,
                                 _materials.tiles,
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars_w_floor.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_b_9x5x3_225pillars_w_floor.msh',
                             transf = pillarsTransf
                         },
                         -- top
@@ -369,7 +369,7 @@ return function(height, eraPrefix)
                             transf = pillarsTransf
                         } or {
                             materials = { _materials.wallGrey },
-                            mesh = 'lollo_freestyle_train_station/lift/lollo9x5x3_225pillars.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_b_9x5x3_225pillars.msh',
                             transf = pillarsTransf
                         },
                         -- top
