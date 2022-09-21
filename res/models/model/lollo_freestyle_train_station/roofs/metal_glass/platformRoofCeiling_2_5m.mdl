@@ -11,7 +11,8 @@ function data()
                         {
                             -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
                             materials = {
-                                "lollo_freestyle_train_station/glass_transparent_rough.mtl",
+                                -- "lollo_freestyle_train_station/glass_transparent_rough.mtl",
+                                'lollo_freestyle_train_station/glass_half_transparent_rough.mtl',
                                 "lollo_freestyle_train_station/metal/rough_alu.mtl",
                             },
                             mesh = 'lollo_freestyle_train_station/roofs/metal_glass/roof_2_5m_lod0.msh',

@@ -10,7 +10,7 @@ function data()
             },
             alpha_test = {
                 alphaThreshold = 0.75,
-                cutout = true,
+                cutout = true, -- avoid x-raying trains
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
@@ -54,7 +54,7 @@ function data()
             operation_1 = {
                 mode = "WORLD_XY",
                 op = "OVERLAY",
-                opacity = 0.64999997615814,
+                opacity = 0.65,
                 scale = { 0.8, 0.8, },
             },
             operation_2 = {
