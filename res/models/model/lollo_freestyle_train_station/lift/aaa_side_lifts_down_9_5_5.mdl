@@ -141,7 +141,7 @@ function data()
     local _wallsBelowThePlatformLod0 = _getWallsAbovePlatform(0)
     local _wallsBelowThePlatformLod1 = _getWallsAbovePlatform(1)
 
-    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  0, 0, 3.2 - _height, 1}
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 3.2 - _height, 1}
     local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 

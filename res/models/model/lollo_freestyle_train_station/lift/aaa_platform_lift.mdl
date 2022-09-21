@@ -138,7 +138,7 @@ function data()
 
     local zedShift4groundRoof = -height + 2.9 -- - height * .6 + 2.60
     local zedShift4groundPillar = -height + 3.2
-    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  0, 1.45, zedShift4groundPillar, 1}
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 1.45, zedShift4groundPillar, 1}
     local shaftTopTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -0.3, 0.15, 1}
 
     local idTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}

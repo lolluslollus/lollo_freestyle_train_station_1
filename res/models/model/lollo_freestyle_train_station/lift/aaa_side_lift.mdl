@@ -1,8 +1,8 @@
 function data()
-    local height = 5
+    local height = 15
     local _constants = require('lollo_freestyle_train_station.constants')
     local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-    local _eraPrefix = _moduleHelpers.eras.era_c.prefix
+    local _eraPrefix = _moduleHelpers.eras.era_a.prefix
 
     local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -2, 4.5, 1}
     local ventTwoTransf = {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5, -2, 4.5, 1}
@@ -147,7 +147,7 @@ function data()
     local _wallsBelowThePlatformLod0 = _getWallsBelowPlatform(0)
     local _wallsBelowThePlatformLod1 = _getWallsBelowPlatform(1)
 
-    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  0, 0, 3.2 - height, 1}
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 3.2 - height, 1}
     local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 

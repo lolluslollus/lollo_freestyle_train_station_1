@@ -146,7 +146,7 @@ return function(height, eraPrefix)
     local _wallsBelowThePlatformLod0 = _getWallsBelowPlatform(0)
     local _wallsBelowThePlatformLod1 = _getWallsBelowPlatform(1)
 
-    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, -1, 0,  0, 0, 3.2 - height, 1}
+    local pillarsTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 3.2 - height, 1}
     local idTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
     local stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
