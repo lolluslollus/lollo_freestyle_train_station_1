@@ -25,6 +25,7 @@ function data()
                                 -- "lollo_freestyle_train_station/roof_tiles_4.mtl",
                                 -- "lollo_freestyle_train_station/roof_tiles_old.mtl",
                                 "lollo_freestyle_train_station/roof_tiles_schist.mtl",
+                                -- "lollo_freestyle_train_station/roof_tiles_old_industrial.mtl",
                             },
                             mesh = "lollo_freestyle_train_station/railroad/flatSides/era_b_cargo_station_10x15_lod0.msh",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
