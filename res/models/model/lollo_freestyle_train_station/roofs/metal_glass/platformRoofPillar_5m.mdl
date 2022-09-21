@@ -22,6 +22,25 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
+                visibleTo = 80,
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
+                            materials = {
+                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/roofs/metal_glass/pillar_5m_lod1.msh',
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 80,
                 visibleTo = 200,
             },
         },
