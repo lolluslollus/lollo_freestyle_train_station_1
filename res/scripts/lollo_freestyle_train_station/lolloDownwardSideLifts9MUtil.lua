@@ -131,7 +131,7 @@ return function(height, eraPrefix)
                 else
                     results[#results + 1] = {
                         materials = {_materials.shaft},
-                        mesh = 'lollo_freestyle_train_station/lift/inner_shaft_round_lod0.msh',
+                        mesh = 'lollo_freestyle_train_station/lift/inner_shaft_round_ground_floor_lod0.msh',
                         transf = shaftTransf
                     }
                 end
