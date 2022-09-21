@@ -99,18 +99,18 @@ return function(height, eraPrefix)
                     transf = wallTransf
                 }
             else
-                results[#results + 1] = {
-                    --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
-                    materials = {
-                        _materials.wallGrey,
-                        _materials.wallGreyDeco,
-                        _materials.wallWhite,
-                    },
-                    mesh = h == -5
-                        and 'lollo_freestyle_train_station/lift/era_b_side_lift_9x5x5_top_level_side_deco.msh'
-                        or 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_side_deco.msh',
-                    transf = wallTransf
-                }
+                if h ~= -5 then -- no more 'lollo_freestyle_train_station/lift/era_b_side_lift_9x5x5_top_level_side_deco.msh'
+                    results[#results + 1] = {
+                        --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
+                        materials = {
+                            _materials.wallGrey,
+                            _materials.wallGreyDeco,
+                            _materials.wallWhite,
+                        },
+                        mesh = 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_side_deco.msh',
+                        transf = wallTransf
+                    }
+                end
             end
         end
 
@@ -271,7 +271,7 @@ return function(height, eraPrefix)
                                 _materials.shaft,
                                 _materials.doors,
                             },
-                            mesh = _eraPrefix == _moduleHelpers.eras.era_b.prefix
+                            mesh = _eraPrefix == _moduleHelpers.eras.era_b.prefix -- these meshes are identical for now
                                 and 'lollo_freestyle_train_station/lift/era_b_side_lift_top_downward_9x5x5_lod0.msh'
                                 or 'lollo_freestyle_train_station/lift/era_c_side_lift_top_downward_9x5x5_lod0.msh',
                             transf = topTransf
