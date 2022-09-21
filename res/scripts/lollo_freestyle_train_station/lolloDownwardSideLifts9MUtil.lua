@@ -336,9 +336,12 @@ return function(height, eraPrefix)
                                 _materials.wallGrey,
                                 _materials.wallWhite,
                                 _materials.tiles,
+                                _materials.shaft,
                                 _materials.doors,
                             },
-                            mesh = 'lollo_freestyle_train_station/lift/era_bc_side_lift_top_downward_9x5x5_lod2.msh',
+                            mesh = _eraPrefix == _moduleHelpers.eras.era_b.prefix
+                                and 'lollo_freestyle_train_station/lift/era_b_side_lift_top_downward_9x5x5_lod0.msh'
+                                or 'lollo_freestyle_train_station/lift/era_c_side_lift_top_downward_9x5x5_lod0.msh',
                             transf = topTransf
                         },
                     },
@@ -384,7 +387,6 @@ return function(height, eraPrefix)
                             materials = {
                                 _materials.wallGrey,
                                 _materials.wallWhite,
-                                _materials.tiles,
                                 _materials.doors,
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_bc_side_lift_top_downward_9x5x5_lod2.msh',

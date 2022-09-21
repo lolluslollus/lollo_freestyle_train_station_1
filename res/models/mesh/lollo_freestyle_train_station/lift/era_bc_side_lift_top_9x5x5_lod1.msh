@@ -2,7 +2,7 @@ function data()
 return {
 	matConfigs = {
 		{
-			0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 
 		}, 
 	},
 	subMeshes = {
@@ -10,19 +10,19 @@ return {
 			indices = {
 				normal = {
 					count = 528,
-					offset = 7124,
+					offset = 6000,
 				},
 				position = {
 					count = 528,
-					offset = 6596,
+					offset = 7056,
 				},
 				tangent = {
 					count = 528,
-					offset = 5540,
+					offset = 6528,
 				},
 				uv0 = {
 					count = 528,
-					offset = 6068,
+					offset = 5472,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 8084,
+					offset = 7728,
 				},
 				position = {
 					count = 144,
-					offset = 7940,
+					offset = 8016,
 				},
 				tangent = {
 					count = 144,
-					offset = 7652,
+					offset = 7872,
 				},
 				uv0 = {
 					count = 144,
-					offset = 7796,
+					offset = 7584,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 432,
-					offset = 9524,
+					offset = 8592,
 				},
 				position = {
 					count = 432,
-					offset = 9092,
+					offset = 9456,
 				},
 				tangent = {
 					count = 432,
-					offset = 8228,
+					offset = 9024,
 				},
 				uv0 = {
 					count = 432,
-					offset = 8660,
+					offset = 8160,
 				},
 			},
 			materials = {
@@ -78,43 +78,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 24,
-					offset = 10028,
-				},
-				position = {
-					count = 24,
-					offset = 10004,
-				},
-				tangent = {
-					count = 24,
-					offset = 9956,
-				},
-				uv0 = {
-					count = 24,
-					offset = 9980,
-				},
-			},
-			materials = {
-				"station/train/passenger/floor.mtl", 
-			},
-		},
-		{
-			indices = {
-				normal = {
 					count = 384,
-					offset = 11204,
+					offset = 10272,
 				},
 				position = {
 					count = 384,
-					offset = 10820,
+					offset = 11040,
 				},
 				tangent = {
 					count = 384,
-					offset = 10052,
+					offset = 10656,
 				},
 				uv0 = {
 					count = 384,
-					offset = 10436,
+					offset = 9888,
 				},
 			},
 			materials = {
@@ -124,24 +101,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 948,
+			count = 960,
 			numComp = 3,
-			offset = 4592,
+			offset = 1960,
 		},
 		position = {
 			count = 1176,
 			numComp = 3,
-			offset = 3416,
+			offset = 4296,
 		},
 		tangent = {
-			count = 1472,
+			count = 1376,
 			numComp = 4,
-			offset = 0,
+			offset = 2920,
 		},
 		uv0 = {
-			count = 1944,
+			count = 1960,
 			numComp = 2,
-			offset = 1472,
+			offset = 0,
 		},
 	},
 }

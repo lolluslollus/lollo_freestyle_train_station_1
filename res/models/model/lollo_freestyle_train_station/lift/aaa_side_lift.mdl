@@ -1,8 +1,8 @@
 function data()
-    local height = 15
+    local height = 5
     local _constants = require('lollo_freestyle_train_station.constants')
     local _moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-    local _eraPrefix = _moduleHelpers.eras.era_a.prefix
+    local _eraPrefix = _moduleHelpers.eras.era_c.prefix
 
     local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -2, 4.5, 1}
     local ventTwoTransf = {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5, -2, 4.5, 1}
@@ -369,11 +369,10 @@ function data()
                                 _materials.wallGrey,
                                 _materials.wallGreyDeco,
                                 _materials.wallWhite,
-                                _materials.tiles,
                                 _materials.shaft,
                             },
                             --materials = { "asset/roof/asset_roof_decor1.mtl", },
-                            mesh = 'lollo_freestyle_train_station/lift/era_b_side_lift_top_9x5x5_lod1.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_bc_side_lift_top_9x5x5_lod1.msh',
                             transf = topTransf
                         },
                     },
@@ -419,11 +418,10 @@ function data()
                                 _materials.wallGrey,
                                 _materials.wallGreyDeco,
                                 _materials.wallWhite,
-                                _materials.tiles,
                                 _materials.shaft,
                             },
                             --materials = { "asset/roof/asset_roof_decor1.mtl", },
-                            mesh = 'lollo_freestyle_train_station/lift/era_b_side_lift_top_9x5x5_lod1.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_bc_side_lift_top_9x5x5_lod1.msh',
                             transf = topTransf
                         },
                     },
