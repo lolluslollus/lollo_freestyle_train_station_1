@@ -175,54 +175,54 @@ return function(height, eraPrefix)
                                     -- ticket machine upstairs right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
-                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 5.25, -1.5, 0, 1}
+                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 6.60, -1.5, 0, 1}
                                 },
                                 {
                                     -- ticket machine upstairs left
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
-                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -5.25, -2.7, 0, 1}
+                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.60, -2.7, 0, 1}
                                 },
                                 {
                                     -- ticket machine downstairs right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
                                     name = 'tickets_era_c_1',
-                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 5.97, 0.2, -_height, 1}
+                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 6.95, 0.2, -_height, 1}
                                 },
                                 {
                                     -- ticket machine downstairs left
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_a_2/tickets_era_a_2_lod0.msh',
                                     name = 'tickets_era_c_1',
-                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -5.97, 0.2, -_height, 1}
+                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.95, 0.2, -_height, 1}
                                 },
                             } or _eraPrefix == _moduleHelpers.eras.era_c.prefix and {
                                 {
                                     -- ticket machine upstairs right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
-                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 5.25, -1.5, 0, 1}
+                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 6.60, -1.5, 0, 1}
                                 },
                                 {
                                     -- ticket machine upstairs left
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
-                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -5.25, -2.7, 0, 1}
+                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.60, -2.7, 0, 1}
                                 },
                                 {
                                     -- ticket machine downstairs right
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                                     name = 'tickets_era_c_1',
-                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 5.97, 0.2, -_height, 1}
+                                    transf = {0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 6.95, 0.2, -_height, 1}
                                 },
                                 {
                                     -- ticket machine downstairs left
                                     materials = {'station/road/streetstation/streetstation_1.mtl'},
                                     mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
                                     name = 'tickets_era_c_1',
-                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -5.97, 0.2, -_height, 1}
+                                    transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.95, 0.2, -_height, 1}
                                 },
                             } or nil,
                             transf = stationMainTransf
@@ -338,12 +338,9 @@ return function(height, eraPrefix)
                                 _materials.wallGrey,
                                 _materials.wallWhite,
                                 _materials.tiles,
-                                _materials.shaft,
                                 _materials.doors,
                             },
-                            mesh = _eraPrefix == _moduleHelpers.eras.era_b.prefix
-                                and 'lollo_freestyle_train_station/lift/era_b_side_lift_top_downward_9x5x5_lod0.msh'
-                                or 'lollo_freestyle_train_station/lift/era_c_side_lift_top_downward_9x5x5_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_bc_side_lift_top_downward_9x5x5_lod2.msh',
                             transf = topTransf
                         },
                     },
@@ -390,12 +387,9 @@ return function(height, eraPrefix)
                                 _materials.wallGrey,
                                 _materials.wallWhite,
                                 _materials.tiles,
-                                _materials.shaft,
                                 _materials.doors,
                             },
-                            mesh = _eraPrefix == _moduleHelpers.eras.era_b.prefix
-                                and 'lollo_freestyle_train_station/lift/era_b_side_lift_top_downward_9x5x5_lod0.msh'
-                                or 'lollo_freestyle_train_station/lift/era_c_side_lift_top_downward_9x5x5_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/lift/era_bc_side_lift_top_downward_9x5x5_lod2.msh',
                             transf = topTransf
                         },
                     },

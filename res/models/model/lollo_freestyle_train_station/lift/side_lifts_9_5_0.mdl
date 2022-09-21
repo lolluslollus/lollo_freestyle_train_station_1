@@ -21,23 +21,23 @@ function data()
                             -- ticket machine left
                             materials = {'station/road/streetstation/streetstation_1.mtl'},
                             mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
-                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3, -1.9, -_constants.stairsAndRampHeight + 0.2, 1}
+                            transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.83, -1.9, -_constants.stairsAndRampHeight + 0.2, 1}
                         },
                         {
                             -- ticket machine right
                             materials = {'station/road/streetstation/streetstation_1.mtl'},
                             mesh = 'station/road/streetstation/asset/tickets_era_c_1/tickets_era_c_1_lod0.msh',
-                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3, -1.9, -_constants.stairsAndRampHeight + 0.2, 1}
+                            transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.83, -1.9, -_constants.stairsAndRampHeight + 0.2, 1}
                         },
                         {
                             materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/arrivi.msh",
-                            transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  3.45, -3.2, -_constants.stairsAndRampHeight, 1 }
+                            transf = { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  4.28, -3.2, -_constants.stairsAndRampHeight, 1 }
                         },
                         {
                             materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
                             mesh = "lollo_freestyle_train_station/asset/partenze.msh",
-                            transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -3.45, -3.2, -_constants.stairsAndRampHeight, 1 }
+                            transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -4.28, -3.2, -_constants.stairsAndRampHeight, 1 }
                         },
                         {
                             -- building

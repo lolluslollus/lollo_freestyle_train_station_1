@@ -32,7 +32,7 @@ return {
 		},
 	},
 	order = {
-		value = 41,
+		value = 42,
 	},
 	type = _constants.passengerSideLiftModuleType,
 	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
