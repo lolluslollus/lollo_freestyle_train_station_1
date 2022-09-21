@@ -17,7 +17,7 @@ function data()
                 fadeOutStartDist = 10000,
             },
             map_albedo_opacity = {
-                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_albedo.tga",
+                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_002_albedo.tga",
                 fileName = "lollo_freestyle_train_station/metal_glass_diamonds_002_albedo_bc3_no_premul_alpha.dds",
                 type = "TWOD",
                 -- wrapS = "CLAMP_TO_EDGE",
@@ -26,7 +26,6 @@ function data()
                 wrapT = "REPEAT",
             },
             map_metal_gloss_ao = {
-                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_metal_gloss_ao.tga",
                 fileName = "lollo_freestyle_train_station/metal_glass_diamonds_002_metal_gloss_ao_bc3.dds",
                 type = "TWOD",
                 -- wrapS = "CLAMP_TO_EDGE",
