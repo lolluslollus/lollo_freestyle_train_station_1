@@ -5,7 +5,7 @@ return function(height, eraPrefix)
 
     local ventOneTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 5, -2, 4.5, 1}
     local ventTwoTransf = {-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -5, -2, 4.5, 1}
-    local topTransf = {1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0.707 - 0.8, 1}
+    local topTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0.707 - 0.8, 1}
 
     local _allMaterials = {
         era_a = {
@@ -94,16 +94,18 @@ return function(height, eraPrefix)
                     transf = wallTransf
                 }
             else
-                results[#results + 1] = {
-                    --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
-                    materials = {
-                        _materials.wallGrey,
-                        _materials.wallGreyDeco,
-                        _materials.wallWhite,
-                    },
-                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_b_side_lift_9x5x5_top_level.msh' or 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_deco.msh',
-                    transf = wallTransf
-                }
+                if h ~= 5 then
+                    results[#results + 1] = {
+                        --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
+                        materials = {
+                            _materials.wallGrey,
+                            _materials.wallGreyDeco,
+                            _materials.wallWhite,
+                        },
+                        mesh = 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_deco.msh',
+                        transf = wallTransf
+                    }
+                end
             end
         end
 
