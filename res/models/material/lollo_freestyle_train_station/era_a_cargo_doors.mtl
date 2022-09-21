@@ -18,7 +18,6 @@ function data()
             },
             -- map_albedo_opacity = {
             map_albedo = {
-                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_albedo.tga",
                 fileName = "lollo_freestyle_train_station/era_a_cargo_doors_albedo.dds",
                 type = "TWOD",
                 -- wrapS = "CLAMP_TO_EDGE",
@@ -27,7 +26,6 @@ function data()
                 wrapT = "REPEAT",
             },
             map_metal_gloss_ao = {
-                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_metal_gloss_ao.tga",
                 fileName = "lollo_freestyle_train_station/era_a_cargo_doors_metal_gloss_ao.dds",
                 type = "TWOD",
                 -- wrapS = "CLAMP_TO_EDGE",
@@ -36,7 +34,6 @@ function data()
                 wrapT = "REPEAT",
             },
             map_normal = {
-                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_normal.tga",
                 fileName = "lollo_freestyle_train_station/era_a_cargo_doors_normal.dds",
                 redGreen = true,
                 type = "TWOD",

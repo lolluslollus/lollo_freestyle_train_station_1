@@ -3,15 +3,16 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 0.5, 0.5, 0.5, },
+                albedoScale = { 0.7, 0.7, 0.7, },
             },
-            alpha_scale = {
-                alphaScale = 0.5,
-            },
-            alpha_test = {
-                alphaThreshold = 0.75,
-                cutout = true,
-            },
+            -- these alpha things only make trouble
+            -- alpha_scale = {
+            --     alphaScale = 0.5,
+            -- },
+            -- alpha_test = {
+            --     alphaThreshold = 0.75,
+            --     cutout = true,
+            -- },
             fade_out_range = {
                 fadeOutEndDist = 20000,
                 fadeOutStartDist = 10000,
@@ -34,9 +35,8 @@ function data()
                 wrapT = "REPEAT",
             },
             map_normal = {
-                -- fileName = "lollo_freestyle_train_station/metal_glass_diamonds_001_normal.tga",
-                fileName = "lollo_freestyle_train_station/metal_glass_diamonds_002_normal_bc5.dds",
-                redGreen = true,
+                fileName = "lollo_freestyle_train_station/metal_glass_diamonds_002_normal.tga",
+                redGreen = false,
                 type = "TWOD",
                 -- wrapS = "CLAMP_TO_EDGE",
                 -- wrapT = "CLAMP_TO_EDGE",
@@ -56,12 +56,12 @@ function data()
                 wrapT = "REPEAT",
             },
             normal_scale = {
-                normalScale = 1,
+                normalScale = 0.5,
             },
             operation_1 = {
                 mode = "WORLD_XY",
                 op = "OVERLAY",
-                opacity = 0.64999997615814,
+                opacity = 0.65,
                 scale = { 0.8, 0.8, },
             },
             operation_2 = {
