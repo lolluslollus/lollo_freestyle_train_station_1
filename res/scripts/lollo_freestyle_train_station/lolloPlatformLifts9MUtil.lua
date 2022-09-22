@@ -30,7 +30,8 @@ return function(height, eraPrefix)
             stationSign = 'station/rail/era_c/era_c_trainstation_assets.mtl',
             tiles = 'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
             wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
-            wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
+            -- wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
+            wallGreyDeco = 'lollo_freestyle_train_station/facade_modern_ribbed.mtl',
             wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
             wallWhiteDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
         }
@@ -92,14 +93,31 @@ return function(height, eraPrefix)
                     mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_a_platform_lift_9x5x5_top.msh' or 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
                     transf = wallTransf
                 }
-            else
+            elseif _eraPrefix == _moduleHelpers.eras.era_b.prefix then
+                local mesh = 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_deco.msh'
+                if h == 5 then mesh = 'lollo_freestyle_train_station/lift/era_b_platform_lift_9x5x5_top.msh'
+                elseif h == height then mesh = 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level.msh'
+                end
                 results[#results + 1] = {
                     materials = {
                         _materials.wallGrey,
                         _materials.wallGreyDeco,
                         _materials.wallWhite,
                     },
-                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_b_platform_lift_9x5x5_top.msh' or 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level.msh',
+                    mesh = mesh,
+                    transf = wallTransf
+                }
+            else
+                local mesh = 'lollo_freestyle_train_station/lift/era_c_lift9x5x5level.msh'
+                if h == 5 then mesh = 'lollo_freestyle_train_station/lift/era_c_platform_lift_9x5x5_top.msh'
+                end
+                results[#results + 1] = {
+                    materials = {
+                        _materials.wallGrey,
+                        _materials.wallGreyDeco,
+                        _materials.wallWhite,
+                    },
+                    mesh = mesh,
                     transf = wallTransf
                 }
             end

@@ -32,7 +32,8 @@ return function(height, eraPrefix)
             stationSign = 'station/rail/era_c/era_c_trainstation_assets.mtl',
             tiles = 'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
             wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
-            wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
+            -- wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
+            wallGreyDeco = 'lollo_freestyle_train_station/facade_modern_ribbed.mtl',
             wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
             wallWhiteDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
         }
@@ -94,6 +95,18 @@ return function(height, eraPrefix)
                         mesh = 'lollo_freestyle_train_station/lift/era_a_lift_9x5x5_level.msh',
                         transf = wallTransf
                     }
+                elseif _eraPrefix == _moduleHelpers.eras.era_b.prefix then
+                    local mesh = h == height and 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level.msh' or 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_deco.msh'
+                    results[#results + 1] = {
+                        --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
+                        materials = {
+                            _materials.wallGrey,
+                            _materials.wallGreyDeco,
+                            _materials.wallWhite,
+                        },
+                        mesh = mesh,
+                        transf = wallTransf
+                    }
                 else
                     results[#results + 1] = {
                         --materials = {'industry/oil_refinery/era_a/wall_2.mtl'},
@@ -102,7 +115,7 @@ return function(height, eraPrefix)
                             _materials.wallGreyDeco,
                             _materials.wallWhite,
                         },
-                        mesh = 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level.msh',
+                        mesh = 'lollo_freestyle_train_station/lift/era_c_lift9x5x5level.msh',
                         transf = wallTransf
                     }
                 end
@@ -285,7 +298,7 @@ return function(height, eraPrefix)
                             },
                             mesh = 'lollo_freestyle_train_station/lift/era_a_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
-                        } or {
+                        } or (_eraPrefix == _moduleHelpers.eras.era_b.prefix and {
                             materials = {
                                 _materials.wallGrey,
                                 _materials.wallGreyDeco,
@@ -296,7 +309,18 @@ return function(height, eraPrefix)
                             --materials = { "asset/roof/asset_roof_decor1.mtl", },
                             mesh = 'lollo_freestyle_train_station/lift/era_b_side_lift_top_9x5x5_lod0.msh',
                             transf = topTransf
-                        },
+                        } or {
+                            materials = {
+                                _materials.wallGrey,
+                                _materials.wallGreyDeco,
+                                _materials.wallWhite,
+                                _materials.tiles,
+                                _materials.shaft,
+                            },
+                            --materials = { "asset/roof/asset_roof_decor1.mtl", },
+                            mesh = 'lollo_freestyle_train_station/lift/era_c_side_lift_top_9x5x5_lod0.msh',
+                            transf = topTransf
+                        }),
                         {
                             children = {
                                 {
