@@ -99,7 +99,7 @@ return function(height, eraPrefix)
                         _materials.wallGreyDeco,
                         _materials.wallWhite,
                     },
-                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_b_platform_lift_9x5x5_top.msh' or 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level_deco.msh',
+                    mesh = h == 5 and 'lollo_freestyle_train_station/lift/era_b_platform_lift_9x5x5_top.msh' or 'lollo_freestyle_train_station/lift/era_b_lift9x5x5level.msh',
                     transf = wallTransf
                 }
             end
