@@ -165,7 +165,7 @@ return {
 					slotId = slotId,
 					transf = transfUtilsUG.mul(
 						buildingTransf,
-						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 5.2 - buildingHeight, 1 }
+						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 6.2 - buildingHeight, 1 }
 					),
 					tag = tag
 				}
@@ -175,7 +175,7 @@ return {
 					slotId = slotId,
 					transf = transfUtilsUG.mul(
 						buildingTransf,
-						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 4.5 - buildingHeight, 1 }
+						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 5.5 - buildingHeight, 1 }
 					),
 					tag = tag
 				}
