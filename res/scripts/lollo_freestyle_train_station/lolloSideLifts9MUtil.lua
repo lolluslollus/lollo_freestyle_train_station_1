@@ -27,6 +27,7 @@ return function(height, eraPrefix)
             wallWhite = 'lollo_freestyle_train_station/wall_marble_1.mtl',
         },
         era_c = {
+            roof = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
             shaft = 'lollo_freestyle_train_station/shaft.mtl',
             stationSign = 'station/rail/era_c/era_c_trainstation_assets.mtl',
             tiles = 'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
@@ -316,6 +317,7 @@ return function(height, eraPrefix)
                                 _materials.wallWhite,
                                 _materials.tiles,
                                 _materials.shaft,
+                                _materials.roof,
                             },
                             --materials = { "asset/roof/asset_roof_decor1.mtl", },
                             mesh = 'lollo_freestyle_train_station/lift/era_c_side_lift_top_9x5x5_lod0.msh',
