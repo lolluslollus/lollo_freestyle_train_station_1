@@ -218,18 +218,6 @@ return function(height, eraPrefix)
                                     name = 'tickets_era_c_1',
                                     transf = {0, -1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, -6.95, 0.2, -height, 1}
                                 },
-                                height > 5 and {
-                                    -- roof vent 1
-                                    materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                    mesh = 'asset/roof/lod_0_ventilation_end_curved.msh',
-                                    transf = ventOneTransf
-                                } or nil,
-                                height > 5 and {
-                                    -- roof vent 2
-                                    materials = {'asset/roof/asset_roof_decor1.mtl'},
-                                    mesh = 'asset/roof/lod_0_ventilation_end_curved.msh',
-                                    transf = ventTwoTransf
-                                } or nil,
                             } or _eraPrefix == _moduleHelpers.eras.era_c.prefix and {
                                 {
                                     -- ticket machine upstairs right
@@ -344,7 +332,7 @@ return function(height, eraPrefix)
             {
                 node = {
                     children = {
-                        _eraPrefix ~= _moduleHelpers.eras.era_a.prefix and {
+                        _eraPrefix ~= _moduleHelpers.eras.era_c.prefix and {
                             children = {
                                 {
                                     -- roof vent 1
