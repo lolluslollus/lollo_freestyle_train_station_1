@@ -10,22 +10,19 @@ return {
 			fadeOutStartDist = 10000,
 		},
 		map_albedo = {
-			fileName = "lollo_freestyle_train_station/lollo_era_c_trainstation_wall_grey_no_stripes_albedo_bc1a.dds",
-			-- fileName = 'models/station/rail/era_c/era_c_trainstation_wall_grey_albedo.dds',
+			fileName = "lollo_freestyle_train_station/era_c_station_wall/era_c_trainstation_wall_grey_no_stripes_albedo_bc1.dds",
 			type = "TWOD",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
 		},
 		map_metal_gloss_ao = {
-			fileName = "lollo_freestyle_train_station/lollo_era_c_trainstation_wall_grey_no_stripes_metal_gloss_ao_bc3.dds",
-			-- fileName = 'models/station/rail/era_c/era_c_trainstation_wall_grey_metal_gloss_ao.dds',
+			fileName = "lollo_freestyle_train_station/era_c_station_wall/era_c_trainstation_wall_grey_no_stripes_metal_gloss_ao_bc1.dds",
 			type = "TWOD",
 			wrapS = "REPEAT",
 			wrapT = "REPEAT",
 		},
 		map_normal = {
-			-- fileName = "lollo_era_c_trainstation_wall_grey_no_stripes_normal_bc5.dds",
-			fileName = "models/station/rail/era_c/era_c_trainstation_wall_grey_normal.dds",
+			fileName = "lollo_freestyle_train_station/era_c_station_wall/era_c_trainstation_wall_grey_no_stripes_normal_bc5u.dds",
 			redGreen = true,
 			type = "TWOD",
 			wrapS = "REPEAT",
@@ -49,15 +46,15 @@ return {
 		operation_1 = {
 			mode = "NORMAL",
 			op = "NO_OP",
+			-- op = "MULTIPLICATION",
 			opacity = 0.5,
 			scale = { 1, 1, },
 		},
 		operation_2 = {
 			mode = "NORMAL",
 			op = "MULTIPLICATION",
-			-- opacity = 0.30000001192093,
 			opacity = 0.3,
-			scale = { 0.050000000, 0.050000000745058, },
+			scale = { 0.05, 0.05, },
 			-- scale = { 0.23, 0.23, },
 		},
 		polygon_offset = {
@@ -67,9 +64,7 @@ return {
 		},
 		two_sided = {
 			flipNormal = false,
-			-- flipNormal = false,
 			twoSided = false,
-			-- twoSided = true,
 		},
 	},
 	type = "PHYSICAL_NRML_MAP_OP",
