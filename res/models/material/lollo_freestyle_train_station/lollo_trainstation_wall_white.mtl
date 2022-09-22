@@ -50,6 +50,7 @@ return {
 		operation_1 = {
 			-- mode = "TEXCOORD",
 			mode = "WORLD_XY",
+			-- mode = "NORMAL",
 			-- op = "NO_OP",
 			op = "MULTIPLICATION",
 			opacity = 0.1,
@@ -57,11 +58,12 @@ return {
 		},
 		operation_2 = {
 			-- mode = "TEXCOORD",
-			mode = "WORLD_XY",
+			-- mode = "WORLD_XY",
+			mode = "NORMAL",
 			op = "MULTIPLICATION",
 			-- op = 'NO_OP',
-			opacity = 0.2,
-			scale = { 0.25, 0.25, },
+			opacity = 1.0,
+			scale = { 0.015, 0.015, },
 		},
 		polygon_offset = {
 			factor = 0,

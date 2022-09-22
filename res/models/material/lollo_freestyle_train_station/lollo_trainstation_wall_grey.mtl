@@ -76,6 +76,8 @@ return {
 			normalScale = 1,
 		},
 		operation_1 = {
+			-- mode = "TEXCOORD",
+			-- mode = "WORLD_XY",
 			mode = "NORMAL",
 			op = "NO_OP",
 			-- op = "MULTIPLICATION",
@@ -83,11 +85,13 @@ return {
 			scale = { 1, 1, },
 		},
 		operation_2 = {
+			-- mode = "TEXCOORD",
+			-- mode = "WORLD_XY",
 			mode = "NORMAL",
 			op = "MULTIPLICATION",
+			-- op = 'NO_OP',
 			opacity = 0.4,
 			scale = { 0.015, 0.015, },
-			-- scale = { 0.23, 0.23, },
 		},
 		polygon_offset = {
 			factor = 0,

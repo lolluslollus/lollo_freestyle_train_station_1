@@ -6,11 +6,11 @@ return {
 			albedoScale = { 1, 1, 1, },
 		},
 		alpha_scale = {
-			alphaScale = 1.0,
+			alphaScale = 1.5,
 		},
 		alpha_test = {
 			alphaThreshold = 0.5,
-			cutout = true,
+			cutout = false,
 		},
 		fade_out_range = {
 			fadeOutEndDist = 20000,
