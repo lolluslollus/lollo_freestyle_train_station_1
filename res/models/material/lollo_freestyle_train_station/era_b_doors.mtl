@@ -6,7 +6,7 @@ return {
 			albedoScale = { 1, 1, 1, },
 		},
 		alpha_scale = {
-			alphaScale = 1.5,
+			alphaScale = 2.0,
 		},
 		alpha_test = {
 			alphaThreshold = 0.5,
