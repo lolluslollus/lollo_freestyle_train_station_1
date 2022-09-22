@@ -64,9 +64,7 @@ return {
 		},
 		two_sided = {
 			flipNormal = false,
-			-- flipNormal = false,
 			twoSided = false,
-			-- twoSided = true,
 		},
 	},
 	type = "PHYSICAL_NRML_MAP_OP",

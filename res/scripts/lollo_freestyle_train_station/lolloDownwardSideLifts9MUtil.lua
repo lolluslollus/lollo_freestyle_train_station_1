@@ -26,7 +26,6 @@ return function(height, eraPrefix)
             wallGrey = 'lollo_freestyle_train_station/wall_marble_2.mtl',
             wallGreyDeco = 'lollo_freestyle_train_station/wall_marble_2.mtl',
             wallWhite = 'lollo_freestyle_train_station/wall_marble_1.mtl',
-            wallWhiteDeco = 'lollo_freestyle_train_station/wall_marble_1.mtl',
         },
         era_c = {
             doors = 'lollo_freestyle_train_station/era_c_doors.mtl',
@@ -37,7 +36,6 @@ return function(height, eraPrefix)
             wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
             -- wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
             wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
-            wallWhiteDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
         }
     }
     local _materials = nil

@@ -53,8 +53,8 @@ return {
 		operation_2 = {
 			mode = "NORMAL",
 			op = "MULTIPLICATION",
-			opacity = 0.3,
-			scale = { 0.05, 0.05, },
+			opacity = 0.4,
+			scale = { 0.015, 0.015, },
 			-- scale = { 0.23, 0.23, },
 		},
 		polygon_offset = {

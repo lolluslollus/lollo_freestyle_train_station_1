@@ -22,19 +22,20 @@ return function(height, eraPrefix)
             wallGrey = 'lollo_freestyle_train_station/wall_marble_2.mtl',
             wallGreyDeco = 'lollo_freestyle_train_station/wall_marble_2.mtl',
             wallWhite = 'lollo_freestyle_train_station/wall_marble_1.mtl',
-            wallWhiteDeco = 'lollo_freestyle_train_station/wall_marble_1.mtl',
         },
         era_c = {
             hole = 'lollo_freestyle_train_station/hole.mtl',
             shaft = 'lollo_freestyle_train_station/shaft.mtl',
             stationSign = 'station/rail/era_c/era_c_trainstation_assets.mtl',
             tiles = 'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
-            wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
-            -- wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
-            wallGreyDeco = 'lollo_freestyle_train_station/facade_modern_ribbed.mtl',
-            wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
-            wallWhiteDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
-        }
+             -- wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
+             wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
+             -- wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
+             wallGreyDeco = 'lollo_freestyle_train_station/facade_modern_ribbed.mtl',
+             wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
+             -- wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_horiz_stripes.mtl',
+             -- wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+         }
     }
     local _materials = nil
     if _eraPrefix == _moduleHelpers.eras.era_a.prefix then
