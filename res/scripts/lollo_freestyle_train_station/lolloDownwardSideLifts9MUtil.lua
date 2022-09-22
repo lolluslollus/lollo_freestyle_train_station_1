@@ -32,8 +32,8 @@ return function(height, eraPrefix)
             shaft = 'lollo_freestyle_train_station/shaft.mtl',
             stationSign = 'station/rail/era_c/era_c_trainstation_assets.mtl',
             tiles = 'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
-            wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
-            wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_horiz_stripes.mtl',
+            wallGrey = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey.mtl',
+            wallGreyDeco = 'lollo_freestyle_train_station/lollo_trainstation_wall_grey_no_stripes.mtl',
             -- wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white_no_stripes.mtl',
             wallWhite = 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
         }
