@@ -8,8 +8,8 @@ function data()
 	t.categories  = { _constants.passengerPlatformTracksCategory }
 	t.icon = "ui/lollo_freestyle_train_station/era_b_passenger_platform_5m.tga"
 
-	t.yearFrom = -1
-	t.yearTo = -1
+	t.yearFrom = _constants.eras.era_b.startYear
+	t.yearTo = 0
 
 	-- sets the width of the terrain enbankment, all out (ie including ballastCutOff).
 	t.shapeWidth = 4.0 -- 5.2 -- was 4.0

@@ -59,17 +59,31 @@ function data()
             -- This works because this code always fires after base_mod.lua .
             -- As of version 1.75, platforms never expire.
             -- To keep the track construction menu tidy, we introduce a new category for non-platform tracks.
+            local platformFileNames = {}
             local trackFileNames = api.res.trackTypeRep.getAll()
-
             for trackTypeIndex, trackFileName in pairs(trackFileNames) do
                 local track = api.res.trackTypeRep.get(trackTypeIndex)
                 if _trackHelpers.isPlatform2(track) then
-                    local availability = _trackHelpers.getTrackAvailability(trackFileName)
-                    track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
-                    -- track.yearTo = availability.yearTo -- idem
-                    track.yearTo = 0 -- as of version 1.75, platforms never expire
+                    platformFileNames[#platformFileNames+1] = trackFileName
+                    -- local availability = _trackHelpers.getTrackAvailability(trackFileName)
+                    -- track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
+                    -- -- track.yearTo = availability.yearTo -- idem
+                    -- track.yearTo = 0 -- as of version 1.75, platforms never expire
                 else
                     _trackHelpers.addCategory(track, _constants.trainTracksCategory)
+                end
+            end
+
+            -- This is another way to do the same, to make life easier for some other mods
+            local moduleNames = api.res.moduleRep.getAll()
+            for moduleIndex, moduleName in pairs(moduleNames) do
+                if _stringUtils.stringStartsWith(moduleName, 'trainstation_') then
+                    for _, platformFileName in pairs(platformFileNames) do
+                        if _stringUtils.stringContains(moduleName, platformFileName) then
+                            api.res.moduleRep.setVisible(moduleIndex, false)
+                            break
+                        end
+                    end
                 end
             end
         end

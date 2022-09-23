@@ -8,8 +8,8 @@ function data()
 	t.categories  = { _constants.cargoPlatformTracksCategory }
 	t.icon = "ui/lollo_freestyle_train_station/era_a_cargo_platform_5m.tga"
 
-	t.yearFrom = -1
-	t.yearTo = -1
+	t.yearFrom = 0
+	t.yearTo = 0
 
 	-- sets the width of the terrain enbankment, all out (ie including ballastCutOff).
 	-- It can override trackDistance! LOLLO NOTE UG says, trackDistance is not accounted at all.
