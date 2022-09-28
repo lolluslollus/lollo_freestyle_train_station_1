@@ -1,6 +1,6 @@
 function data()
 return {
-	name = _("Tiles hexagon"),
+	name = _("TilesHexagonClean"),
 	
 	detailColorTexture = "terrain/hexagon_tiles_albedo.dds",
 	detailMetalGlossAoHTexture = "terrain/hexagon_tiles_metal_gloss_ao_h.dds",

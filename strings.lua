@@ -385,6 +385,8 @@ function data()
 			["PlatformAsAsset_X1m"] = "X size, fine, m",
 			["PlatformAsAsset_Y10m"] = "Y size, coarse, m",
 			["PlatformAsAsset_Y1m"] = "Y size, fine, m",
+
+			["TilesHexagonClean"] = "Tiles hexagon, clean",
 		},
 	}
 end
