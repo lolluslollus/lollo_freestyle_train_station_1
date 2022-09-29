@@ -107,6 +107,8 @@ function data()
 			["FlatCargoStation10x15Desc"] = "10x15 cargo station. Adjust its height with <m> and <n>.",
 			["FlatCargoStationLower10x10Name"] = "10x10 lower cargo station",
 			["FlatCargoStationLower10x10Desc"] = "10x10 lower cargo station. Adjust its height with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
+			["FlatCargoStation20x20Name"] = "20x20 cargo station",
+			["FlatCargoStation20x20Desc"] = "20x20 cargo station. Adjust its height with <m> and <n>.",
 			["FlatCargoStation30x28Name"] = "30x28 cargo station",
 			["FlatCargoStation30x28Desc"] = "30x28 cargo station. Adjust its height with <m> and <n>.",
 			["FlatPassengerArea5x5Name"] = "5x5 flat side area with stairs, passenger",

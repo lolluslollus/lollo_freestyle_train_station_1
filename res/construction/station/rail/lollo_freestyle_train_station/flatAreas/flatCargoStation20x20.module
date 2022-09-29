@@ -27,7 +27,7 @@ function data()
 			isOccupyM1 = true,
 			isOccupyP1 = true,
 			moreCapacity = {
-				cargo = 180,
+				cargo = 80,
 				passenger = 0
 			}
 		},
