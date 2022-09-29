@@ -42,51 +42,8 @@ return {
 			transf = slotTransf,
 			tag = tag
 		}
-
-		local fillKey = _constants.era_c_groundFacesFillKey
-		if eraPrefix == moduleHelpers.eras.era_a.prefix then
-			fillKey = _constants.era_a_groundFacesFillKey
-		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
-			fillKey = _constants.era_b_groundFacesFillKey
-		end
-		local strokeOuterKey = _constants.era_c_groundFacesStrokeOuterKey
-		if eraPrefix == moduleHelpers.eras.era_a.prefix then
-			fillKey = _constants.era_a_groundFacesStrokeOuterKey
-		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
-			fillKey = _constants.era_b_groundFacesStrokeOuterKey
-		end
-		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{0.0, -6, 0, 1},
-			{0.0, 6, 0, 1},
-			{5.0, 4, 0, 1},
-			{5.0, -4, 0, 1},
-		}
-		modulesutil.TransformFaces(slotTransf, groundFace)
-		table.insert(
-			result.groundFaces,
-			{
-				face = groundFace,
-				modes = {
-					{
-						type = 'FILL',
-						key = fillKey
-					},
-					{
-						type = 'STROKE_OUTER',
-						key = strokeOuterKey
-					}
-				}
-			}
-		)
-
-		local terrainAlignmentList = {
-			faces = { groundFace },
-			optional = true,
-			slopeHigh = _constants.slopeHigh,
-			slopeLow = _constants.slopeLow,
-			type = 'LESS',
-		}
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+		moduleHelpers.lifts.doTerrain4SideLifts(0, slotTransf, result,
+		_constants.era_c_groundFacesFillKey, _constants.era_c_groundFacesStrokeOuterKey)
 	end,
 
 	getModelsFn = function(params)

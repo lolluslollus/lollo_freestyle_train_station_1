@@ -62,10 +62,10 @@ function data()
 			moduleHelpers.flatAreas.addCargoLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local groundFace = {
-				{-5.5, -15.5, _constants.platformSideBitsZ, 1},
-				{-5.5, 15.5, _constants.platformSideBitsZ, 1},
-				{23.5, 15.5, _constants.platformSideBitsZ, 1},
-				{23.5, -15.5, _constants.platformSideBitsZ, 1},
+				{-5.5, -10.5, _constants.platformSideBitsZ, 1},
+				{-5.5, 10.5, _constants.platformSideBitsZ, 1},
+				{18.5, 10.5, _constants.platformSideBitsZ, 1},
+				{18.5, -10.5, _constants.platformSideBitsZ, 1},
 			}
 			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
@@ -87,22 +87,10 @@ function data()
 				spacing = {1, 1, 2, 2},
 				transf = transfUtilsUG.mul(
 					zAdjustedTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.5, 7.5, 0, 1 }
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  17, 0, 0, 1 }
 				),
 				type = _constants.cargoStationSquareModuleType,
 			})
-			if nTrackEdge > 1 then
-				table.insert(result.slots, {
-					id = result.mangleId(nTerminal, nTrackEdge - 1, _constants.idBases.cargoStationSquareOuterSlotId),
-					shape = 1,
-					spacing = {1, 1, 2, 2},
-					transf = transfUtilsUG.mul(
-						zAdjustedTransf,
-						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.5, -7.5, 0, 1 }
-					),
-					type = _constants.cargoStationSquareModuleType,
-				})
-			end
 		end,
 
 		getModelsFn = function(params)
