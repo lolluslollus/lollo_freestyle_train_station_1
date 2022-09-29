@@ -24,12 +24,12 @@ function data()
                         nodes = {
                             {
                                 { 0, 0, _constants.openStairsUpZ - 2, },
-                                { 0.25, 0, 0, },
+                                { 0.25, 0, 2, },
                                 1.0,
                             },
                             {
                                 { 0.25, 0, _constants.openStairsUpZ, },
-                                { 0.25, 0, 0, },
+                                { 0.25, 0, 2, },
                                 1.0,
                             },
                             {
@@ -54,12 +54,12 @@ function data()
                             },
                             {
                                 { 0.75, 0, _constants.openStairsUpZ, },
-                                { 0.25, 0, 0, },
+                                { 0.25, 0, -2, },
                                 1.0,
                             },
                             {
                                 { 1, 0, _constants.openStairsUpZ - 2, },
-                                { 0.25, 0, 0, },
+                                { 0.25, 0, -2, },
                                 1.0,
                             },
                         },

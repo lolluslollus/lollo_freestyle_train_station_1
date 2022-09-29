@@ -820,19 +820,22 @@ function data()
 						local isNextOpenStairsUpRight = i > 2
 							and params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
 							or false
-						local isUnderpass = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)] ~= nil
+						local underpassModule = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)]
+						local isAnyUnderpass = underpassModule ~= nil
+						local isUnderpassBuilding = isAnyUnderpass and underpassModule.name == 'station/rail/lollo_freestyle_train_station/underpass.module'
 
 						-- local myModelId = _constants.passengerLaneLinkableModelId
 						local myModelId = _constants.passengerLaneModelId
-							if isPlatformLift then myModelId = _constants.passengerLaneLiftModelId
-							elseif isUnderpass then myModelId = _constants.passengerLaneUnderpassModelId
-							elseif isOpenLift then myModelId = _constants.passengerLaneOpenLiftModelId
-							elseif isStairsUp then myModelId = _constants.passengerLaneTunnelStairsUpModelId
-							elseif isStairsUpDown then myModelId = _constants.passengerLaneTunnelStairsUpDownModelId
+							if isPlatformLift then myModelId = 'lollo_freestyle_train_station/passenger_lane_lift.mdl'
+							elseif isUnderpassBuilding then myModelId = 'lollo_freestyle_train_station/passenger_lane_underpass_building.mdl'
+							elseif isAnyUnderpass then myModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl'
+							elseif isOpenLift then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_lift.mdl'
+							elseif isStairsUp then myModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up.mdl'
+							elseif isStairsUpDown then myModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up_down.mdl'
 							-- elseif isOpenStairsUpLeft then myModelId = _constants.passengerLaneOpenStairsUpTopModelId
 							-- elseif isOpenStairsUpRight then myModelId = _constants.passengerLaneOpenStairsUpTopModelId
-							elseif isNextOpenStairsUpLeft then myModelId = _constants.passengerLaneOpenStairsUpBottomNextModelId
-							elseif isNextOpenStairsUpRight then myModelId = _constants.passengerLaneOpenStairsUpBottomPrevModelId
+							elseif isNextOpenStairsUpLeft then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_next.mdl'
+							elseif isNextOpenStairsUpRight then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_prev.mdl'
 							end
 						local centreLaneTransf = (isOpenStairsUpLeft or isOpenStairsUpRight)
 							and transfUtils.get1MModelTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
@@ -840,13 +843,13 @@ function data()
                         if (isOpenStairsUpLeft or isOpenStairsUpRight) then
                             if isOpenStairsUpLeft then
                                 result.models[#result.models+1] = {
-                                    id = _constants.passengerLaneOpenStairsUpTopNextModelId,
+                                    id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_next.mdl',
 									transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
                                 }
                             end
                             if isOpenStairsUpRight then
                                 result.models[#result.models+1] = {
-                                    id = _constants.passengerLaneOpenStairsUpTopPrevModelId,
+                                    id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_prev.mdl',
 									transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
                                 }
                             end
@@ -909,7 +912,7 @@ function data()
 								}
 							)
 							topBottomTwinIndex = topBottomTwinIndex + 1
-						elseif (isUnderpass and isOnBridge) or isPlatformLift then
+						elseif (isAnyUnderpass and isOnBridge) or isPlatformLift then
 							if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
 								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
 							end
@@ -927,7 +930,7 @@ function data()
 									)
 								}
 							)
-						elseif isUnderpass then
+						elseif isAnyUnderpass then
 							if result.terminateConstructionHookInfo.underpassPositionsOnGround[t] == nil then
 								result.terminateConstructionHookInfo.underpassPositionsOnGround[t] = {}
 							end
