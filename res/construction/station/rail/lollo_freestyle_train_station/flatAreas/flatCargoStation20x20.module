@@ -19,9 +19,9 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("FlatCargoStation30x28Name"),
-			description = _("FlatCargoStation30x28Desc"),
-			icon = "ui/lollo_freestyle_train_station/flatCargoStation30x28.tga"
+			name = _("FlatCargoStation20x20Name"),
+			description = _("FlatCargoStation20x20Desc"),
+			icon = "ui/lollo_freestyle_train_station/flatCargoStation20x20.tga"
 		},
 		metadata = {
 			isOccupyM1 = true,
@@ -32,27 +32,24 @@ function data()
 			}
 		},
 		order = {
-			value = 36,
+			value = 35,
 		},
 		type = _constants.flatCargoArea8x10ModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			local zAdjustedTransf = transfUtils.getTransfXShiftedBy(
-				moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf),
-				5
-			)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_30x28.mdl'
+			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_20x20.mdl'
 			if eraPrefix == moduleHelpers.eras.era_b.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_30x28.mdl'
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_20x20.mdl'
 			elseif eraPrefix == moduleHelpers.eras.era_a.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_30x28.mdl'
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_20x20.mdl'
 			end
 
 			result.models[#result.models + 1] = {
@@ -111,7 +108,7 @@ function data()
 		getModelsFn = function(params)
 			return {
 				{
-					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_30x28.mdl',
+					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_20x20.mdl',
 					transf = _constants.idTransf,
 				},
 			}

@@ -1,0 +1,194 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 18288,
+					offset = 135724,
+				},
+				position = {
+					count = 18288,
+					offset = 172300,
+				},
+				tangent = {
+					count = 18288,
+					offset = 117436,
+				},
+				uv0 = {
+					count = 18288,
+					offset = 154012,
+				},
+			},
+			materials = {
+				"wall.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 4524,
+					offset = 195112,
+				},
+				position = {
+					count = 4524,
+					offset = 204160,
+				},
+				tangent = {
+					count = 4524,
+					offset = 190588,
+				},
+				uv0 = {
+					count = 4524,
+					offset = 199636,
+				},
+			},
+			materials = {
+				"roof.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 208780,
+				},
+				position = {
+					count = 96,
+					offset = 208972,
+				},
+				tangent = {
+					count = 96,
+					offset = 208684,
+				},
+				uv0 = {
+					count = 96,
+					offset = 208876,
+				},
+			},
+			materials = {
+				"pavement.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 28860,
+					offset = 237928,
+				},
+				position = {
+					count = 28860,
+					offset = 295648,
+				},
+				tangent = {
+					count = 28860,
+					offset = 209068,
+				},
+				uv0 = {
+					count = 28860,
+					offset = 266788,
+				},
+			},
+			materials = {
+				"windows.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 4488,
+					offset = 328996,
+				},
+				position = {
+					count = 4488,
+					offset = 337972,
+				},
+				tangent = {
+					count = 4488,
+					offset = 324508,
+				},
+				uv0 = {
+					count = 4488,
+					offset = 333484,
+				},
+			},
+			materials = {
+				"roofEdge.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 15456,
+					offset = 357916,
+				},
+				position = {
+					count = 15456,
+					offset = 388828,
+				},
+				tangent = {
+					count = 15456,
+					offset = 342460,
+				},
+				uv0 = {
+					count = 15456,
+					offset = 373372,
+				},
+			},
+			materials = {
+				"borders.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 264,
+					offset = 404548,
+				},
+				position = {
+					count = 264,
+					offset = 405076,
+				},
+				tangent = {
+					count = 264,
+					offset = 404284,
+				},
+				uv0 = {
+					count = 264,
+					offset = 404812,
+				},
+			},
+			materials = {
+				"pavementEdge.001.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 11628,
+			numComp = 3,
+			offset = 47680,
+		},
+		position = {
+			count = 42288,
+			numComp = 3,
+			offset = 75148,
+		},
+		tangent = {
+			count = 47680,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 15840,
+			numComp = 2,
+			offset = 59308,
+		},
+	},
+}
+end

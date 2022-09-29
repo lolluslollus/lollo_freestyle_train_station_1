@@ -1,0 +1,153 @@
+function data()
+	local _constants = require('lollo_freestyle_train_station.constants')
+	local _adjTransf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  10.2, 0, 0, 1}
+	return {
+		boundingInfo = {
+			bbMax = { 15, 28.0, 13.5, },
+			bbMin = { -15, 0, -2.5, },
+		},
+		collider = {
+			params = {
+				halfExtents = { 15, 14.0, 8.0, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 14, 5.5, 1, },
+			type = 'BOX',
+		},
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'station/rail/cargo/cargo_station_wall_1.mtl',
+                                'station/rail/cargo/cargo_station_roof_2.mtl',
+                                'lollo_freestyle_train_station/station_concrete_3.mtl', -- pavement
+                                'station/rail/cargo/cargo_station_windows_and_doors_1.mtl',
+                                'station/rail/cargo/cargo_station_borders_1.mtl',
+                                'station/rail/cargo/cargo_station_borders_2.mtl',
+                                'lollo_freestyle_train_station/square_cobbles_large.mtl', -- pavement edge
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_20x20/station_20x20_lod0.msh',
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 200.0,
+            },
+             {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'station/rail/cargo/cargo_station_wall_1.mtl',
+                                'station/rail/cargo/cargo_station_roof_2.mtl',
+                                'lollo_freestyle_train_station/station_concrete_3.mtl', -- pavement
+                                'station/rail/cargo/cargo_station_windows_and_doors_1.mtl',
+                                'station/rail/cargo/cargo_station_borders_1.mtl',
+                                'station/rail/cargo/cargo_station_borders_2.mtl',
+                                'lollo_freestyle_train_station/square_cobbles_large.mtl', -- pavement edge
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_20x20/station_20x20_lod1.msh',
+                            name = 'station_3',
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 200.0,
+                visibleTo = 3500.0,
+            },
+        },
+            metadata = {
+			-- particleSystem = {
+			-- 	emitters = {
+			-- 		{
+			-- 			child = 2,
+			-- 			color = { 0.60392153263092, 0.60392153263092, 0.60392153263092, },
+			-- 			frequency = 50,
+			-- 			initialAlpha = 0.5,
+			-- 			lifeTime = 10,
+			-- 			position = { -7.6500101089478, -8.2999906539917, 11.600002288818, },
+			-- 			size01 = { 0.30000001192093, 3, },
+			-- 			velocity = { 0, 0, 1, },
+			-- 			velocityDampingFactor = 2.5,
+			-- 		},
+			-- 	},
+			-- },
+			transportNetworkProvider = {
+				laneLists = {
+					{
+						linkable = false,
+						nodes = {
+							{
+								{ 0, 0, 0 },
+								{ 5, 0, 0 },
+								2.0,
+							},
+							{
+								{ 5, 0, 0 },
+								{ 5, 0, 0 },
+								2.0,
+							},
+						},
+						transportModes = { 'CARGO', 'PERSON', },
+						speedLimit = 20,
+					},
+					{
+						linkable = false,
+						nodes = {
+							{
+								{ 5, 0, 0 },
+								{ 2.5, 0, 0 },
+								2.0,
+							},
+							{
+								{ 7.5, 0, 0 },
+								{ 2.5, 0, 0 },
+								2.0,
+							},
+						},
+						transportModes = { 'CARGO', 'PERSON', },
+						speedLimit = 20,
+					},
+					{
+						linkable = true,
+						nodes = {
+							{
+								{ 7.5, 0, 0 },
+								{ 15, 7.5, 0 },
+								2.0,
+							},
+							{
+								{ 22.5, 7.5, 0 },
+								{ 15, 7.5, 0 },
+								2.0,
+							},
+							{
+								{ 7.5, 0, 0 },
+								{ 15, -7.5, 0 },
+								2.0,
+							},
+							{
+								{ 22.5, -7.5, 0 },
+								{ 15, -7.5, 0 },
+								2.0,
+							},
+						},
+						transportModes = { 'CARGO', 'PERSON', },
+						speedLimit = 20,
+					},
+				},
+				runways = { },
+				terminals = { },
+			},
+		},
+		version = 1,
+	}
+end
