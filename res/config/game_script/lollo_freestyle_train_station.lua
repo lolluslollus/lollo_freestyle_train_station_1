@@ -1127,7 +1127,10 @@ local _actions = {
             function()
                 -- UG TODO there is no such thing in the new api,
                 -- nor an upgrade event, both would be useful
-                -- collectgarbage() -- LOLLO TODO this might work, check it
+                collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                logger.print('collectgarbage done')
+                logger.print('oldConId =') logger.debugPrint(oldConId)
+                logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
                 local upgradedConId = game.interface.upgradeConstruction(
                     oldConId,
                     oldCon.fileName,

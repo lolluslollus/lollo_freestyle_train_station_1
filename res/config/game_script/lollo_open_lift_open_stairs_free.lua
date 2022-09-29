@@ -121,8 +121,12 @@ local _actions = {
                             -- nor an upgrade event, both would be useful
                             logger.print('oldConId =') logger.debugPrint(oldConId)
                             logger.print('result.resultEntities[1] =') logger.debugPrint(result.resultEntities[1])
+                            logger.print('result.resultProposalData.errorState =') logger.debugPrint(result.resultProposalData.errorState)
                             logger.print('oldConstruction.fileName =') logger.debugPrint(oldConstruction.fileName)
-                            -- collectgarbage() -- LOLLO TODO this might work, check it
+                            collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                            logger.print('collectgarbage done')
+                            logger.print('result.resultEntities[1] =') logger.debugPrint(result.resultEntities[1])
+                            logger.print('oldConstruction.fileName =') logger.debugPrint(oldConstruction.fileName)
                             local upgradedConId = game.interface.upgradeConstruction(
                                 result.resultEntities[1],
                                 oldConstruction.fileName,
