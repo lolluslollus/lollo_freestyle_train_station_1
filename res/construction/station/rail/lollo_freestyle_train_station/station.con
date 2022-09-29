@@ -668,7 +668,7 @@ function data()
 										type = _constants.underpassModuleType,
 									})
 								end
-								if cpl.type == 0 and cplP1.type == 0 then -- ground
+								-- if cpl.type == 0 and cplP1.type == 0 then -- ground
 									if not(params.modules[id_Underpass]) then
 										table.insert(result.slots, {
 											-- height = 0,
@@ -710,7 +710,7 @@ function data()
 											end
 										end
 									end
-								end
+								-- end
 							end
 						end
 					end
