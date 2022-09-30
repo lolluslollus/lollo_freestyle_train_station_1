@@ -76,12 +76,12 @@ function data()
 					{
 						{-5, -6, _constants.platformSideBitsZ, 1},
 						{-5, 6, _constants.platformSideBitsZ, 1},
-						{0, 6, -_constants.stairsAndRampHeight, 1},
-						{0, -6, -_constants.stairsAndRampHeight, 1},
+						{-1, 6, -_constants.stairsAndRampHeight, 1},
+						{-1, -6, -_constants.stairsAndRampHeight, 1},
 					},
 					{
-						{0, -6, -_constants.stairsAndRampHeight, 1},
-						{0, 6, -_constants.stairsAndRampHeight, 1},
+						{-1, -6, -_constants.stairsAndRampHeight, 1},
+						{-1, 6, -_constants.stairsAndRampHeight, 1},
 						{8.5, 6, -_constants.stairsAndRampHeight, 1},
 						{8.5, -6, -_constants.stairsAndRampHeight, 1},
 					}
