@@ -25,55 +25,48 @@ function data()
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    -- lamp left
-                                    materials = {
-                                        "asset/lamp_old.mtl",
-                                        "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
-                                    transf = _lampLeftTransf
-                                },
-                                {
-                                    -- lamp right
-                                    materials = {
-                                        "asset/lamp_old.mtl",
-                                        "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
-                                    transf = _lampRightTransf
-                                },
-                                {
-                                    -- street pillar 2
-                                    materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                                    mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.5, _streetPillarY, 0, 1}
-                                },
-                                {
-                                    -- street pillar 3
-                                    materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                                    mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.83333, _streetPillarY, 0, 1}
-                                },
-                                {
-                                    -- street pillar 4
-                                    materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                                    mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.83333, _streetPillarY, 0, 1}
-                                },
-                                {
-                                    -- street pillar 5
-                                    materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
-                                    mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, _streetPillarY, 0, 1}
-                                },
+                            -- lamp left
+                            materials = {
+                                "asset/lamp_old.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
                             },
-                            -- transf = _constants.idTransf
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
+                            transf = _lampLeftTransf
+                        },
+                        {
+                            -- lamp right
+                            materials = {
+                                "asset/lamp_old.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
+                            transf = _lampRightTransf
+                        },
+                        {
+                            -- street pillar 2
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2.5, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 3
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -0.83333, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 4
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0.83333, _streetPillarY, 0, 1}
+                        },
+                        {
+                            -- street pillar 5
+                            materials = { "lollo_freestyle_train_station/wall_marble_1.mtl", },
+                            mesh = "lollo_freestyle_train_station/asset/paracarro.msh",
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2.5, _streetPillarY, 0, 1}
                         },
                     },
-                    name = 'RootNode',
-                    -- transf = _constants.idTransf
                 },
                 static = false,
                 visibleFrom = 0,
@@ -83,31 +76,24 @@ function data()
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    -- lamp left
-                                    materials = {
-                                        "asset/lamp_old.mtl",
-                                        "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_1.msh',
-                                    transf = _lampLeftTransf
-                                },
-                                {
-                                    -- lamp right
-                                    materials = {
-                                        "asset/lamp_old.mtl",
-                                        "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_1.msh',
-                                    transf = _lampRightTransf
-                                },
+                            -- lamp left
+                            materials = {
+                                "asset/lamp_old.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
                             },
-                            -- transf = _constants.idTransf
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_1.msh',
+                            transf = _lampLeftTransf
+                        },
+                        {
+                            -- lamp right
+                            materials = {
+                                "asset/lamp_old.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_1.msh',
+                            transf = _lampRightTransf
                         },
                     },
-                    name = 'RootNode',
-                    -- transf = _constants.idTransf
                 },
                 static = false,
                 visibleFrom = 100,
@@ -124,22 +110,22 @@ function data()
                             {
                                 {0, 0.7, 0},
                                 {0, -1, 0},
-                                2.4000000953674
+                                2.4
                             },
                             {
                                 {0, -1.79, 0},
                                 {0, -1, 0},
-                                2.4000000953674
+                                2.4
                             },
                             {
                                 {0, -1.79, 0},
                                 {0, -1, 0},
-                                2.4000000953674
+                                2.4
                             },
                             {
                                 {0, -4.29, 0},
                                 {0, -1, 0},
-                                2.4000000953674
+                                2.4
                             },
                         },
                         speedLimit = 20,
@@ -152,12 +138,12 @@ function data()
                             {
                                 {0, -1.79, 0},
                                 {-4.5, -3, 0},
-                                2.4000000953674
+                                2.4
                             },
                             {
                                 {-4.5, -4.29, 0},
                                 {-4.5, -3, 0},
-                                2.4000000953674
+                                2.4
                             }
                         },
                         speedLimit = 20,
@@ -170,12 +156,12 @@ function data()
                             {
                                 {0, -1.79, 0},
                                 {4.5, -3, 0},
-                                2.4000000953674
+                                2.4
                             },
                             {
                                 {4.5, -4.29, 0},
                                 {4.5, -3, 0},
-                                2.4000000953674
+                                2.4
                             }
                         },
                         speedLimit = 20,
@@ -188,13 +174,13 @@ function data()
                     --         {
                     --             {0, -1.79, 0},
                     --             {-1, 0, 0},
-                    --             2.4000000953674
+                    --             2.4
                     --         },
                     --         {
                     --             -- {-6, -0.5, 0},
                     --             {-4.5, -1.79, 0},
                     --             {-1, 0, 0},
-                    --             2.4000000953674
+                    --             2.4
                     --         }
                     --     },
                     --     speedLimit = 20,
@@ -207,13 +193,13 @@ function data()
                     --         {
                     --             {0, -1.79, 0},
                     --             {1, 0, 0},
-                    --             2.4000000953674
+                    --             2.4
                     --         },
                     --         {
                     --             -- {6, -0.5, 0},
                     --             {4.5, -1.79, 0},
                     --             {1, 0, 0},
-                    --             2.4000000953674
+                    --             2.4
                     --         }
                     --     },
                     --     speedLimit = 20,

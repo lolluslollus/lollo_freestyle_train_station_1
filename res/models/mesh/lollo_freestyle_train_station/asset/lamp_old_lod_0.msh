@@ -16,11 +16,11 @@ return {
 				},
 				tangent = {
 					count = 1656,
-					offset = 7368,
+					offset = 9024,
 				},
 				uv0 = {
 					count = 1656,
-					offset = 9024,
+					offset = 7368,
 				},
 			},
 			materials = {
@@ -38,11 +38,11 @@ return {
 				},
 				tangent = {
 					count = 144,
-					offset = 10968,
+					offset = 11112,
 				},
 				uv0 = {
 					count = 144,
-					offset = 11112,
+					offset = 10968,
 				},
 			},
 			materials = {
@@ -64,12 +64,12 @@ return {
 		tangent = {
 			count = 1392,
 			numComp = 4,
-			offset = 1800,
+			offset = 2664,
 		},
 		uv0 = {
 			count = 864,
 			numComp = 2,
-			offset = 3192,
+			offset = 1800,
 		},
 	},
 }
