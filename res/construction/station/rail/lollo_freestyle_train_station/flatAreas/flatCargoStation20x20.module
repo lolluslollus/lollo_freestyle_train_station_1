@@ -61,11 +61,11 @@ function data()
 
 			moduleHelpers.flatAreas.addCargoLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-			local groundFace = {
-				{-5.5, -11, _constants.platformSideBitsZ, 1},
-				{-5.5, 11, _constants.platformSideBitsZ, 1},
-				{18.5, 11, _constants.platformSideBitsZ, 1},
-				{18.5, -11, _constants.platformSideBitsZ, 1},
+			local groundFace = { -- this model requires some z shift
+				{-5.5, -11, _constants.platformSideBitsZ -0.8, 1},
+				{-5.5, 11, _constants.platformSideBitsZ -0.8, 1},
+				{18.5, 11, _constants.platformSideBitsZ -0.8, 1},
+				{18.5, -11, _constants.platformSideBitsZ -0.8, 1},
 			}
 			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
@@ -86,8 +86,8 @@ function data()
 				shape = 1,
 				spacing = {1, 1, 2, 2},
 				transf = transfUtilsUG.mul(
-					zAdjustedTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  17.2, 2.5, _constants.platformSideBitsZ, 1 }
+					zAdjustedTransf, -- this model requires some z shift
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  17.2, 2.5, _constants.platformSideBitsZ -0.8, 1 }
 				),
 				type = _constants.cargoStationSquareModuleType,
 			})

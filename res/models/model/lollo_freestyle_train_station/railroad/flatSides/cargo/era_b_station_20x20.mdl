@@ -121,12 +121,12 @@ function data()
 						nodes = {
 							{
 								{ 7.5, 0, 0 },
-								{ 9.7, 2.5, 0 },
+								{ 9.7, 2.5, _constants.platformSideBitsZ -0.8 },
 								2.0,
 							},
-							{
-								{ 17.2, 2.5, _constants.platformSideBitsZ },
-								{ 9.7, 2.5, 0 },
+							{ -- this model requires shifting z by 0.8
+								{ 17.2, 2.5, _constants.platformSideBitsZ -0.8},
+								{ 9.7, 2.5, _constants.platformSideBitsZ -0.8 },
 								2.0,
 							},
 						},
