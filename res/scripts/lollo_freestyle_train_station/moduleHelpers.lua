@@ -1093,6 +1093,40 @@ return {
         end,
     },
     flatAreas = {
+        doTerrain4StationSquare = function(height, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
+            local groundFace = { -- the ground faces ignore z, the alignment lists don't
+                {0, -5.5, height, 1},
+                {0, 5.5, height, 1},
+                {6.0, 5.5, height, 1},
+                {6.0, -5.5, height, 1},
+            }
+            modulesutil.TransformFaces(slotTransf, groundFace)
+            table.insert(
+                result.groundFaces,
+                {
+                    face = groundFace,
+                    modes = {
+                        {
+                            type = 'FILL',
+                            key = groundFacesFillKey
+                        },
+                        {
+                            type = 'STROKE_OUTER',
+                            key = groundFacesStrokeOuterKey
+                        }
+                    }
+                }
+            )
+
+            local terrainAlignmentList = {
+                faces = { groundFace },
+                optional = true,
+                slopeHigh = constants.slopeHigh,
+                slopeLow = constants.slopeLow,
+                type = 'EQUAL',
+            }
+            result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+        end,
         getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
             return privateFuncs.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
         end,

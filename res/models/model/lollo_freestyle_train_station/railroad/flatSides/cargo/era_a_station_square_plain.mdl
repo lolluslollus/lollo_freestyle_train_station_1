@@ -24,31 +24,31 @@ function data()
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    -- lamp left
-                                    materials = {
-                                        "asset/lamp_old.mtl",
-                                        "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
-                                    transf = _lampLeftTransf
-                                },
-                                {
-                                    -- lamp right
-                                    materials = {
-                                        "asset/lamp_old.mtl",
-                                        "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
-                                    transf = _lampRightTransf
-                                },
+                            -- lamp left
+                            materials = {
+                                "asset/lamp_old.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
                             },
-                            name = 'station_square_1_main_grp',
-                            transf = _constants.idTransf
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
+                            transf = _lampLeftTransf
+                        },
+                        {
+                            -- lamp right
+                            materials = {
+                                "asset/lamp_old.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_old_lod_0.msh',
+                            transf = _lampRightTransf
+                        },
+                        {
+                            -- stripes
+                            materials = {
+                                'lollo_freestyle_train_station/square_cobbles.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_stripes_lod0.msh',
                         },
                     },
-                    name = 'RootNode',
                 },
                 static = false,
                 visibleFrom = 0,
@@ -58,31 +58,31 @@ function data()
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    -- lamp left
-                                    materials = {
-                                        "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
-                                    transf = _lampLeftTransf
-                                },
-                                {
-                                    -- lamp right
-                                    materials = {
-                                        "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
-                                    transf = _lampRightTransf
-                                },
+                            -- lamp left
+                            materials = {
+                                "asset/lamp_new.mtl",
+                                "lollo_freestyle_train_station/emissive/neon_low.mtl",
                             },
-                            name = 'station_square_1_main_grp',
-                            transf = _constants.idTransf
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
+                            transf = _lampLeftTransf
+                        },
+                        {
+                            -- lamp right
+                            materials = {
+                                "asset/lamp_new.mtl",
+                                "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
+                            transf = _lampRightTransf
+                        },
+                        {
+                            -- stripes
+                            materials = {
+                                'lollo_freestyle_train_station/square_cobbles.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_stripes_lod0.msh',
                         },
                     },
-                    name = 'RootNode',
                 },
                 static = false,
                 visibleFrom = 100,
@@ -90,12 +90,20 @@ function data()
             },
             {
                 node = {
-                    name = 'RootNode',
+                    children = {
+                        {
+                            -- stripes
+                            materials = {
+                                'lollo_freestyle_train_station/square_cobbles.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_stripes_lod0.msh',
+                        },
+                    },
                 },
                 static = false,
                 visibleFrom = 400,
-                visibleTo = 3500
-            }
+                visibleTo = 1000
+            },
         },
         metadata = {
             transportNetworkProvider = {

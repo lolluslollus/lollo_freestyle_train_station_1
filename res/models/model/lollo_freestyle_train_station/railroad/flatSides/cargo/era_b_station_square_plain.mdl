@@ -1,7 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local _lampLeftTransf = {0.71, 0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  4, 4, 0, 1}
 local _lampRightTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  4, -4, 0, 1}
--- local _lampRightTransf = {0.71, 0.71, 0, 0,  -0.71, 0.71, 0, 0,  0, 0, 1, 0,  4.0, -4, 0, 1}
 
 function data()
     return {
@@ -25,35 +24,35 @@ function data()
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    -- lamp left
-                                    materials = {
-                                        "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                        "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                        "lollo_freestyle_train_station/metal/rough_alu.mtl",
-                                        "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
-                                    transf = _lampLeftTransf
-                                },
-                                {
-                                    -- lamp right
-                                    materials = {
-                                        "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                        "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                                        "lollo_freestyle_train_station/metal/rough_alu.mtl",
-                                        "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
-                                    transf = _lampRightTransf
-                                },
+                            -- lamp left
+                            materials = {
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
                             },
-                            name = 'station_square_1_main_grp',
-                            transf = _constants.idTransf
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            transf = _lampLeftTransf
+                        },
+                        {
+                            -- lamp right
+                            materials = {
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_copper.mtl",
+                                "lollo_freestyle_train_station/metal/rough_alu.mtl",
+                                "lollo_freestyle_train_station/emissive/tungsten_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_mid_lod_0.msh',
+                            transf = _lampRightTransf
+                        },
+                        {
+                            -- stripes
+                            materials = {
+                                'lollo_freestyle_train_station/station_concrete_1.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_stripes_lod0.msh',
                         },
                     },
-                    name = 'RootNode',
                 },
                 static = false,
                 visibleFrom = 0,
@@ -63,31 +62,31 @@ function data()
                 node = {
                     children = {
                         {
-                            children = {
-                                {
-                                    -- lamp left
-                                    materials = {
-                                        "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
-                                    transf = _lampLeftTransf
-                                },
-                                {
-                                    -- lamp right
-                                    materials = {
-                                        "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
-                                    transf = _lampRightTransf
-                                },
+                            -- lamp left
+                            materials = {
+                                "asset/lamp_new.mtl",
+                                "lollo_freestyle_train_station/emissive/neon_low.mtl",
                             },
-                            name = 'station_square_1_main_grp',
-                            transf = _constants.idTransf
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
+                            transf = _lampLeftTransf
+                        },
+                        {
+                            -- lamp right
+                            materials = {
+                                "asset/lamp_new.mtl",
+                                "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                            },
+                            mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
+                            transf = _lampRightTransf
+                        },
+                        {
+                            -- stripes
+                            materials = {
+                                'lollo_freestyle_train_station/station_concrete_1.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_stripes_lod0.msh',
                         },
                     },
-                    name = 'RootNode',
                 },
                 static = false,
                 visibleFrom = 100,
@@ -95,12 +94,20 @@ function data()
             },
             {
                 node = {
-                    name = 'RootNode',
+                    children = {
+                        {
+                            -- stripes
+                            materials = {
+                                'lollo_freestyle_train_station/station_concrete_1.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_stripes_lod0.msh',
+                        },
+                    },
                 },
                 static = false,
                 visibleFrom = 400,
-                visibleTo = 3500
-            }
+                visibleTo = 1000
+            },
         },
         metadata = {
             transportNetworkProvider = {

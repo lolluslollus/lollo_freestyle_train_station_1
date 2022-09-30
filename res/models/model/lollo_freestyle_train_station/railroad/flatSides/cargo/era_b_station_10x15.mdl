@@ -101,7 +101,7 @@ function data()
                                 2.0,
                             },
                             {
-                                { 7.5, 0, -_constants.stairsAndRampHeight },
+                                { 7.5, 0, -_constants.stairsAndRampHeight +_constants.platformSideBitsZ},
                                 { 2.5, 0, 0 },
                                 2.0,
                             },

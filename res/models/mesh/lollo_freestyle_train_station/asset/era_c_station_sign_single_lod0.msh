@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 2376,
+					offset = 25616,
+				},
+				position = {
+					count = 2376,
+					offset = 27992,
+				},
+				tangent = {
+					count = 2376,
+					offset = 23240,
+				},
+				uv0 = {
+					count = 2376,
+					offset = 30368,
+				},
+			},
+			materials = {
+				"station/train/passenger/pillar.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 3552,
+					offset = 36296,
+				},
+				position = {
+					count = 3552,
+					offset = 39848,
+				},
+				tangent = {
+					count = 3552,
+					offset = 32744,
+				},
+				uv0 = {
+					count = 3552,
+					offset = 43400,
+				},
+			},
+			materials = {
+				"station/train/passenger/alu.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 2592,
+					offset = 49544,
+				},
+				position = {
+					count = 2592,
+					offset = 52136,
+				},
+				tangent = {
+					count = 2592,
+					offset = 46952,
+				},
+				uv0 = {
+					count = 2592,
+					offset = 54728,
+				},
+			},
+			materials = {
+				"station/road/railroad/track/iron.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 192,
+					offset = 57512,
+				},
+				position = {
+					count = 192,
+					offset = 57704,
+				},
+				tangent = {
+					count = 192,
+					offset = 57320,
+				},
+				uv0 = {
+					count = 192,
+					offset = 57896,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/asset/neon.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 5076,
+			numComp = 3,
+			offset = 9264,
+		},
+		position = {
+			count = 5052,
+			numComp = 3,
+			offset = 14340,
+		},
+		tangent = {
+			count = 9264,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 3848,
+			numComp = 2,
+			offset = 19392,
+		},
+	},
+}
+end

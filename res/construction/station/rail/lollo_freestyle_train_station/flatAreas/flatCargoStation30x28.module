@@ -90,7 +90,7 @@ function data()
 				spacing = {1, 1, 2, 2},
 				transf = transfUtilsUG.mul(
 					zAdjustedTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.5, 7.5, 0, 1 }
+					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.8, 7.5, _constants.platformSideBitsZ, 1 }
 				),
 				type = _constants.cargoStationSquareModuleType,
 			})
@@ -101,7 +101,7 @@ function data()
 					spacing = {1, 1, 2, 2},
 					transf = transfUtilsUG.mul(
 						zAdjustedTransf,
-						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.5, -7.5, 0, 1 }
+						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.8, -7.5, _constants.platformSideBitsZ, 1 }
 					),
 					type = _constants.cargoStationSquareModuleType,
 				})

@@ -57,7 +57,7 @@ return {
 			transf = slotTransf,
 			tag = tag
 		}
-		moduleHelpers.lifts.doTerrain4SideLifts(0, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
+		moduleHelpers.flatAreas.doTerrain4StationSquare(0, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
 	end,
 
 	getModelsFn = function(params)

@@ -1,12 +1,12 @@
 local _groundRoofTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 1.0, -2.5, 1}
-local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -6.75, -4, 0, 1}
-local _lampRightTransf = {-0.71, -0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  6.75, -4, 0, 1}
+local _lampLeftTransf = {0.71, -0.71, 0, 0,  0.71, 0.71, 0, 0,  0, 0, 1, 0,  -4.05, -4, 0, 1}
+local _lampRightTransf = {-0.71, -0.71, 0, 0,  0.71, -0.71, 0, 0,  0, 0, 1, 0,  4.05, -4, 0, 1}
 local _streetPillarY = -3.8
 local _poleTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1.1, 0, 0, -3.6, 0, 1}
 local _clockTransf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.6, 4.55, 1}
-local _stationMainTransf = {0.6, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
 
 function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
     return {
         boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
@@ -33,8 +33,8 @@ function data()
                                 {
                                     -- lamp left
                                     materials = {
-                                        "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                                        'asset/lamp_new.mtl',
+                                        'lollo_freestyle_train_station/emissive/neon_low.mtl',
                                     },
                                     mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_0.msh',
                                     transf = _lampLeftTransf
@@ -42,8 +42,8 @@ function data()
                                 {
                                     -- lamp right
                                     materials = {
-                                        "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                                        'asset/lamp_new.mtl',
+                                        'lollo_freestyle_train_station/emissive/neon_low.mtl',
                                     },
                                     mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_0.msh',
                                     transf = _lampRightTransf
@@ -58,28 +58,28 @@ function data()
                                     -- street pillar 2
                                     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                                     mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -4.25, _streetPillarY, 0, 1}
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -3.0, _streetPillarY, 0, 1}
                                 },
                                 {
                                     -- street pillar 3
                                     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                                     mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -2, _streetPillarY, 0, 1}
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -1.5, _streetPillarY, 0, 1}
                                 },
                                 {
                                     -- street pillar 4
                                     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                                     mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, _streetPillarY, 0, 1}
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.5, _streetPillarY, 0, 1}
                                 },
                                 {
                                     -- street pillar 5
                                     materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
                                     mesh = 'station/rail/asset/era_c_street_pillar/era_a_street_pillar_lod0.msh',
-                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 4.25, _streetPillarY, 0, 1}
+                                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3.0, _streetPillarY, 0, 1}
                                 },
                             },
-                            transf = _stationMainTransf
+                            -- transf = _constants.idTransf
                         },
                         {
                             children = {
@@ -133,12 +133,15 @@ function data()
                         {
                             children = {
                                 children = {
-                                    materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
-                                    mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_lod0.msh',
+                                    materials = {
+                                        'station/rail/era_c/era_c_trainstation_assets.mtl',
+                                        'lollo_freestyle_train_station/metal/rough_iron.mtl',
+                                    },
+                                    mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_w_pole_ring_lod0.msh',
                                     -- transf = _constants.idTransf
                                 }
                             },
-                            transf = {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.8, 3.85, 1}
+                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.8, 3.85, 1}
                         }
                     },
                     -- transf = _constants.idTransf
@@ -168,8 +171,8 @@ function data()
                                 {
                                     -- lamp left
                                     materials = {
-                                        "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                                        'asset/lamp_new.mtl',
+                                        'lollo_freestyle_train_station/emissive/neon_low.mtl',
                                     },
                                     mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
                                     transf = _lampLeftTransf
@@ -177,8 +180,8 @@ function data()
                                 {
                                     -- lamp right
                                     materials = {
-                                        "asset/lamp_new.mtl",
-                                        "lollo_freestyle_train_station/emissive/neon_low.mtl",
+                                        'asset/lamp_new.mtl',
+                                        'lollo_freestyle_train_station/emissive/neon_low.mtl',
                                     },
                                     mesh = 'lollo_freestyle_train_station/asset/lamp_new_lod_1.msh',
                                     transf = _lampRightTransf
@@ -190,7 +193,12 @@ function data()
                                     transf = _poleTransf
                                 }
                             },
-                            transf = _stationMainTransf
+                            -- transf = _constants.idTransf
+                        },
+                        {
+                            materials = {'station/rail/era_c/era_c_trainstation_assets.mtl'},
+                            mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_lod0.msh',
+                            transf = {2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -3.8, 3.85, 1}
                         },
                     },
                     -- transf = _constants.idTransf
@@ -205,11 +213,11 @@ function data()
                 labels = {
                     {
                         alignment = 'CENTER',
-                        alphaMode = "CUTOUT",
+                        alphaMode = 'CUTOUT',
                         childId = 'RootNode',
                         fitting = 'SCALE',
                         nLines = 1,
-                        -- renderMode = "EMISSIVE",
+                        -- renderMode = 'EMISSIVE',
                         size = {6, 0.6},
                         transf = {0.7, 0, 0, 0,  0, 0, 0.7, 0,  0, -1, 0, 0, -2.2, -3.833, 3.66, 1},
                         type = 'STATION_NAME',
