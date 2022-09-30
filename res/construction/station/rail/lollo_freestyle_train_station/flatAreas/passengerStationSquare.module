@@ -36,12 +36,20 @@ return {
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
 		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+		local groundFacesFillKey = nil
+		local groundFacesStrokeOuterKey = nil
 		local modelId = nil
 		if eraPrefix == moduleHelpers.eras.era_a.prefix then
+			groundFacesFillKey = _constants.era_a_groundFacesFillKey
+			groundFacesStrokeOuterKey = _constants.era_a_groundFacesStrokeOuterKey
 			modelId = 'lollo_freestyle_train_station/lift/era_a_station_square.mdl'
 		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
+			groundFacesFillKey = _constants.era_b_groundFacesFillKey
+			groundFacesStrokeOuterKey = _constants.era_b_groundFacesStrokeOuterKey
 			modelId = 'lollo_freestyle_train_station/lift/era_b_station_square.mdl'
 		else
+			groundFacesFillKey = _constants.era_c_groundFacesFillKey
+			groundFacesStrokeOuterKey = _constants.era_c_groundFacesStrokeOuterKey
 			modelId = 'lollo_freestyle_train_station/lift/station_square.mdl'
 		end
 		result.models[#result.models + 1] = {
@@ -54,8 +62,7 @@ return {
 			tag = tag
 		}
 
-		moduleHelpers.lifts.doTerrain4SideLifts(0, slotTransf, result,
-		_constants.era_c_groundFacesFillKey, _constants.era_c_groundFacesStrokeOuterKey)
+		moduleHelpers.lifts.doTerrain4SideLifts(0, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
 	end,
 
 	getModelsFn = function(params)
