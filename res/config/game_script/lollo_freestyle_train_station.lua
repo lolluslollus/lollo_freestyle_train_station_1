@@ -490,8 +490,8 @@ local _actions = {
         local context = api.type.Context:new()
         context.checkTerrainAlignment = true -- true gives smoother z, default is false
         -- context.cleanupStreetGraph = true -- default is false
-        context.gatherBuildings = false -- default is false
-        context.gatherFields = true -- default is true
+        -- context.gatherBuildings = false -- default is false
+        -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer()
 
         api.cmd.sendCommand(
