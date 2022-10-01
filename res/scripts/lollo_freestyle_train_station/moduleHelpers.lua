@@ -118,20 +118,21 @@ local privateFuncs = {
         return transfUtilsUG.mul(transfZ, transfY)
         -- return transfUtilsUG.mul(transfY, transfZ) -- NO!
     end,
+    -- returns an integer starting at 0, it can be positive or negative
     getVariant = function(params, slotId)
         local variant = 0
         if type(params) == 'table'
         and type(params.modules) == 'table'
         and type(params.modules[slotId]) == 'table'
         and type(params.modules[slotId].variant) == 'number' then
-            variant = params.modules[slotId].variant
+            variant = params.modules[slotId].variant or 0
         end
         return variant
     end,
 }
 privateFuncs.deco = {
     getMNAdjustedValue_0Or1_Cycling = function(params, slotId)
-        local variant = privateFuncs.getVariant(params, slotId) -- an integer starting at 0
+        local variant = privateFuncs.getVariant(params, slotId)
         return math.abs(math.fmod(variant, 2))
     end,
     getStationSignFineIndexes = function(params, nTerminal)
@@ -331,10 +332,11 @@ privateFuncs.flatAreas = {
             tag = tag
         }
     end,
-    getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
+    getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf)
+        local _maxVariantAbsP1 = 13
         local variant = privateFuncs.getVariant(params, slotId)
-        local deltaZ = variant * 0.1 + constants.platformSideBitsZ
-        if deltaZ < -1 then deltaZ = -1 elseif deltaZ > 1 then deltaZ = 1 end
+        local deltaZ = math.fmod(variant, _maxVariantAbsP1) * 0.1 + constants.platformSideBitsZ
+        -- if deltaZ < -1.2 then deltaZ = -1.2 elseif deltaZ > 1.2 then deltaZ = 1.2 end
 
         return transfUtils.getTransfZShiftedBy(slotTransf, deltaZ)
     end,
@@ -783,9 +785,6 @@ return {
     getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
         return privateFuncs.getPlatformObjectTransf_WithYRotation(posTanX2)
     end,
-    getVariant = function(params, slotId)
-        return privateFuncs.getVariant(params, slotId)
-    end,
     cargoShelves = {
         doCargoShelf = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
             bracket5ModelId, bracket10ModelId, bracket20ModelId,
@@ -1127,12 +1126,12 @@ return {
             }
             result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
         end,
-        getMNAdjustedTransf_Limited = function(params, slotId, slotTransf)
-            return privateFuncs.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+        getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf)
+            return privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
         end,
         getMNAdjustedValue_0To1_Cycling = function(params, slotId, nSteps)
             local _nSteps = math.ceil(nSteps)
-            local variant = privateFuncs.getVariant(params, slotId) -- an integer starting at 0
+            local variant = privateFuncs.getVariant(params, slotId)
             return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
         end,
         addCargoLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
@@ -1150,7 +1149,7 @@ return {
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
-			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)

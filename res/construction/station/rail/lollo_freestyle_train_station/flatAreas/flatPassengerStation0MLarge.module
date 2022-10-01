@@ -41,7 +41,7 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Limited(params, slotId, slotTransf)
+		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
 		local buildingTransf = transfUtilsUG.mul(
 			zAdjustedTransf,
 			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }

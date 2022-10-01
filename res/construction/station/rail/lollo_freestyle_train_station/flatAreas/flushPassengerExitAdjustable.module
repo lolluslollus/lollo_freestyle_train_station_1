@@ -39,14 +39,14 @@ function data()
 			local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
 			local yShift = cpl.width
 			local platformBorderPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
-			local myTransfAlongPlatform = transfUtils.getTransfZShiftedBy(
+			local myTransfAlongPlatformBorder = transfUtils.getTransfZShiftedBy(
 				moduleHelpers.getPlatformObjectTransf_AlwaysVertical(platformBorderPosTanX2),
 				result.laneZs[nTerminal]
 			)
 			local step0To1 = moduleHelpers.flatAreas.getMNAdjustedValue_0To1_Cycling(params, slotId, 4)
 			local xAdjustedTransf = slotTransf
 			for n = 13, 15, 1 do
-				xAdjustedTransf[n] = slotTransf[n] + (myTransfAlongPlatform[n] - slotTransf[n]) * step0To1
+				xAdjustedTransf[n] = slotTransf[n] + (myTransfAlongPlatformBorder[n] - slotTransf[n]) * step0To1
 			end
 
 			moduleHelpers.flatAreas.addExitPole(result, xAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
