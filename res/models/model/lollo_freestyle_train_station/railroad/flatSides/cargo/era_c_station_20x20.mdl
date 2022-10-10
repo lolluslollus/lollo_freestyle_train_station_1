@@ -3,14 +3,14 @@ function data()
 	local _adjTransf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  10.2, 0, 0, 1}
 	return {
 		boundingInfo = {
-			bbMax = { 15, 28.0, 13.5, },
-			bbMin = { -15, 0, -2.5, },
+			bbMax = { 17.2, 10.0, 10.8, },
+			bbMin = { 1.9, -10.0, -1.5, },
 		},
 		collider = {
 			params = {
-				halfExtents = { 15, 14.0, 8.0, },
+				halfExtents = { 7.65, 10.0, 6.15, },
 			},
-			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 14, 5.5, 1, },
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 9.55, 0, 4.65, 1, },
 			type = 'BOX',
 		},
         lods = {
