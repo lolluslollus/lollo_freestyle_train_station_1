@@ -1,18 +1,38 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local guiHelpers = require('lollo_open_lifts_open_stairs_free.guiHelpers')
 local logger = require('lollo_freestyle_train_station.logger')
+local moduleHelpers = require('lollo_open_lifts_open_stairs_free.moduleHelpers')
 local openStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
-local streetUtils = require('lollo_freestyle_train_station.streetUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
+local transfUtilsUG = require('transf')
 
 
 local _eventId = '__lolloOpenLiftOpenStairsFree__'
 local _eventProperties = {
+    conBuilt = {eventName = 'conBuilt'},
+    conParamsUpdated = {eventName = 'conParamsUpdated'},
     openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree.con', eventName = 'openLiftBuilt' },
     openStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openStairsFree.con', eventName = 'openStairsBuilt' },
+    openTwinStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con', eventName = 'openTwinStairsBuilt' },
 }
 
-local function _isBuildingConstructionWithFileName(args, fileName)
+-- only accessible in the UI thread
+local _guiData = {
+    conOpenLiftParamsMetadataSorted = {},
+    conOpenStairsParamsMetadataSorted = {},
+    conOpenTwinStairsParamsMetadataSorted = {},
+    isExperimentalParamsMenu = false,
+}
+
+-- LOLLO NOTE this whole script is to change construction parameters from my own menu,
+-- so a parameter change that causes a minor error will be carried out anyway.
+-- It works, but two snapping stairs will break their link if one has a parameter altered
+-- (even an insignificant one such as the era style),
+-- and they won't snap again.
+-- LOLLO TODO see if this improves with new game builds
+
+--[[ local function _isBuildingConstructionWithFileName(args, fileName)
     local toAdd =
         type(args) == 'table' and type(args.proposal) == 'userdata' and type(args.proposal.toAdd) == 'userdata' and
         args.proposal.toAdd
@@ -34,10 +54,62 @@ end
 
 local function _isBuildingOpenStairs(args)
     return _isBuildingConstructionWithFileName(args, _eventProperties.openStairsBuilt.conName)
-end
+end ]]
+
+local _utils = {
+    getIsProposalOK = function(proposal, context)
+        logger.print('getIsProposalOK starting')
+        if not(proposal) then logger.err('getIsProposalOK got no proposal') return false end
+        -- if not(context) then logger.err('getIsProposalOK got no context') return false end
+
+        local isErrorsOtherThanCollision = false
+        local isWarnings = false
+        xpcall(
+            function()
+                -- this tries to build the construction, it calls con.updateFn()
+                -- UG TODO this should never crash, but it crashes in the construction thread, and it is uncatchable here.
+                local proposalData = api.engine.util.proposal.makeProposalData(proposal, context)
+                -- logger.print('getIsProposalOK proposalData =') logger.debugPrint(proposalData)
+
+                if proposalData.errorState ~= nil then
+                    if proposalData.errorState.critical == true then
+                        logger.print('proposalData.errorState.critical is true')
+                        logger.print('proposalData.errorState =') logger.debugPrint(proposalData.errorState)
+                        isErrorsOtherThanCollision = true
+                    else
+                        for _, message in pairs(proposalData.errorState.messages or {}) do
+                            logger.print('looping over messages, message found =', message)
+                            if message ~= 'Collision' then
+                                isErrorsOtherThanCollision = true
+                                logger.print('found message', message or 'NIL')
+                                break
+                            end
+                        end
+                        for _, warning in pairs(proposalData.errorState.warnings or {}) do
+                            logger.print('looping over warnings, warning found =', warning)
+                            if warning ~= 'Main connection will be interrupted' then
+                                isWarnings = true
+                                logger.print('found warning', warning or 'NIL')
+                                break
+                            end
+                        end
+                    end
+                end
+            end,
+            function(error)
+                isErrorsOtherThanCollision = true
+                logger.warn('getIsProposalOK caught an exception')
+                logger.xpWarningHandler(error)
+            end
+        )
+        logger.print('getIsProposalOK isErrorsOtherThanCollision =', isErrorsOtherThanCollision)
+        logger.print('getIsProposalOK isWarnings =', isWarnings)
+        return not(isErrorsOtherThanCollision) -- and not(isWarnings)
+    end,
+}
 
 local _actions = {
-    replaceConWithSnappyCopy = function(oldConId)
+    replaceConWithSnappyCopyUNUSED = function(oldConId)
         -- We don't use this anymore, check out the NOTE below.
 
         -- Rebuild the station with the same but snappy, to prevent pointless internal conflicts
@@ -117,8 +189,7 @@ local _actions = {
                         and result.resultEntities[1] ~= nil
                         and result.resultEntities[1] > 0
                         then
-                            -- UG TODO there is no such thing in the new api,
-                            -- nor an upgrade event, both would be useful
+                            -- UG TODO there is no such thing in the new api, nor an upgrade event, both would be useful
                             logger.print('oldConId =') logger.debugPrint(oldConId)
                             logger.print('result.resultEntities[1] =') logger.debugPrint(result.resultEntities[1])
                             logger.print('result.resultProposalData.errorState =') logger.debugPrint(result.resultProposalData.errorState)
@@ -144,10 +215,190 @@ local _actions = {
             end
         end)
     end,
+    updateConstruction = function(oldConId, paramKey, newParamValueIndexBase0)
+        logger.print('updateConstruction starting, conId =', oldConId or 'NIL')
+
+        if not(edgeUtils.isValidAndExistingId(oldConId)) then
+            logger.warn('updateConstruction received an invalid conId')
+            return
+        end
+        local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
+        if oldCon == nil then
+            logger.warn('updateConstruction cannot get the con')
+            return
+        end
+
+        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+        newCon.fileName = oldCon.fileName
+        local newParams = arrayUtils.cloneDeepOmittingFields(oldCon.params, nil, true)
+        newParams[paramKey] = newParamValueIndexBase0
+
+        newParams.seed = newParams.seed + 1
+        -- clone your own variable, it's safer than cloning newCon.params, which is userdata
+        local conParamsBak = arrayUtils.cloneDeepOmittingFields(newParams)
+        newCon.params = newParams
+        logger.print('oldCon.params =') logger.debugPrint(oldCon.params)
+        logger.print('newCon.params =') logger.debugPrint(newCon.params)
+        newCon.playerEntity = api.engine.util.getPlayer()
+        newCon.transf = oldCon.transf
+        local conTransf_lua = transfUtilsUG.new(newCon.transf:cols(0), newCon.transf:cols(1), newCon.transf:cols(2), newCon.transf:cols(3))
+
+        local proposal = api.type.SimpleProposal.new()
+        proposal.constructionsToAdd[1] = newCon
+        proposal.constructionsToRemove = { oldConId }
+        -- proposal.old2new = { oldConId, 1 } -- this is wrong and makes trouble like
+        -- C:\GitLab-Runner\builds\1BJoMpBZ\0\ug\urban_games\train_fever\src\Game\UrbanSim\StockListUpdateHelper.cpp:166: __cdecl StockListUpdateHelper::~StockListUpdateHelper(void) noexcept(false): Assertion `0 <= pr.second && pr.second < (int)m_data->addedEntities->size()' failed.
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer()
+        -- Sometimes, the game fails in the following; UG does not handle the failure graacefully and the game crashes with "an error just occurred" and no useful info.
+        if not(_utils.getIsProposalOK(proposal, context)) then
+            logger.warn('updateConstruction made a dangerous proposal')
+            -- LOLLO TODO give feedback
+            return
+        end
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                logger.print('updateConstruction callback, success =', success)
+                -- logger.debugPrint(result)
+                if not(success) then
+                    logger.warn('updateConstruction callback failed')
+                    logger.warn('updateConstruction proposal =') logger.warningDebugPrint(proposal)
+                    logger.warn('updateConstruction result =') logger.warningDebugPrint(result)
+                    -- LOLLO TODO give feedback
+                else
+                    local newConId = result.resultEntities[1]
+                    logger.print('updateConstruction succeeded, stationConId = ', newConId)
+                    xpcall(
+                        function ()
+                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                _eventId,
+                                _eventProperties.conBuilt.eventName,
+                                {
+                                    conId = newConId,
+                                    conParams = conParamsBak,
+                                    conTransf = conTransf_lua,
+                                }
+                            ))
+                        end,
+                        function(error)
+                            logger.xpErrorHandler(error)
+                        end
+                    )
+                end
+            end
+        )
+    end,
+}
+
+local _handlers = {
+    guiHandleParamValueChanged = function(conId, paramsMetadata, paramKey, newParamValueIndexBase0)
+        logger.print('guiHandleParamValueChanged firing')
+        logger.print('conId =') logger.debugPrint(conId)
+        logger.print('paramsMetadata =') logger.debugPrint(paramsMetadata)
+        logger.print('paramKey =') logger.debugPrint(paramKey)
+        logger.print('newParamValueIndexBase0 =') logger.debugPrint(newParamValueIndexBase0)
+        if not(edgeUtils.isValidAndExistingId(conId)) then
+            logger.warn('guiHandleParamValueChanged got no con or no valid con')
+        end
+
+        xpcall(
+            function ()
+                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                    string.sub(debug.getinfo(1, 'S').source, 1),
+                    _eventId,
+                    _eventProperties.conParamsUpdated.eventName,
+                    {
+                        conId = conId,
+                        paramKey = paramKey,
+                        newParamValueIndexBase0 = newParamValueIndexBase0,
+                    }
+                ))
+            end,
+            logger.xpErrorHandler
+        )
+    end,
 }
 
 function data()
     return {
+        guiHandleEvent = function(id, name, args)
+            if not(_guiData.isExperimentalParamsMenu) then return end
+            -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') -- logger.debugPrint(args)
+            -- LOLLO NOTE param can have different types, even boolean, depending on the event id and name
+            if (name == 'select' and id == 'mainView') then
+                -- select happens after idAdded, which looks like:
+                -- id =	temp.view.entity_28693	name =	idAdded
+                -- id =	temp.view.entity_26372	name =	idAdded
+                xpcall(
+                    function()
+                        logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+                        local conId = args
+                        if not(edgeUtils.isValidAndExistingId(conId)) then return end
+
+                        local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                        if con == nil or not(arrayUtils.arrayHasValue({_eventProperties.openLiftBuilt.conName, _eventProperties.openStairsBuilt.conName, _eventProperties.openTwinStairsBuilt.conName}, con.fileName)) then return end
+
+                        logger.print('selected open stairs or lift, it has conId =', conId, 'and con.fileName =', con.fileName)
+                        if con.fileName == _eventProperties.openLiftBuilt.conName then
+                            if not(_guiData.conOpenLiftParamsMetadataSorted) then
+                                logger.print('_guiData.conOpenLiftParamsMetadataSorted is not available')
+                                return
+                            end
+
+                            guiHelpers.addConConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenLiftParamsMetadataSorted, con.params)
+                        elseif con.fileName == _eventProperties.openStairsBuilt.conName then
+                            if not(_guiData.conOpenStairsParamsMetadataSorted) then
+                                logger.print('_guiData.conOpenStairsParamsMetadataSorted is not available')
+                                return
+                            end
+
+                            guiHelpers.addConConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenStairsParamsMetadataSorted, con.params)
+                        elseif con.fileName == _eventProperties.openTwinStairsBuilt.conName then
+                            if not(_guiData.conOpenTwinStairsParamsMetadataSorted) then
+                                logger.print('_guiData.conOpenTwinStairsParamsMetadataSorted is not available')
+                                return
+                            end
+
+                            guiHelpers.addConConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenTwinStairsParamsMetadataSorted, con.params)
+                        end
+                    end,
+                    logger.xpErrorHandler
+                )
+            end
+        end,
+        guiInit = function()
+            -- logger.print('guiInit starting')
+            _guiData.conOpenLiftParamsMetadataSorted = moduleHelpers.getOpenLiftParamsMetadata()
+            _guiData.conOpenStairsParamsMetadataSorted = moduleHelpers.getOpenStairsParamsMetadata()
+            _guiData.conOpenTwinStairsParamsMetadataSorted = moduleHelpers.getOpenTwinStairsParamsMetadata()
+            -- logger.print('guiInit ending')
+        end,
+        handleEvent = function(src, id, name, args)
+            if (id ~= _eventId) then return end
+            logger.print('handleEvent starting, src =', src, ', id =', id, ', name =', name, ', args =') logger.debugPrint(args)
+            if type(args) ~= 'table' then return end
+
+            xpcall(
+                function()
+                    if name == _eventProperties.conParamsUpdated.eventName then
+                        _actions.updateConstruction(args.conId, args.paramKey, args.newParamValueIndexBase0)
+                    elseif name == _eventProperties.conBuilt.eventName then
+                        -- do nothing for now
+                    end
+                end,
+                function(error)
+                    logger.xpErrorHandler(error)
+                end
+            )
+        end,
 --[[
         guiInit = function()
             openStairsHelpers.eraA.bridgeTypeId_withRailing = api.res.bridgeTypeRep.find(openStairsHelpers.eraA.bridgeTypeName_withRailing)

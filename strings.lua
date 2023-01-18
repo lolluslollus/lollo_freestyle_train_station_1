@@ -308,8 +308,10 @@ function data()
 			["train-tracks"] = "Train tracks",
 			["waypoints-for-freestyle-station"] = "Waypoints For Freestyle Stations",
 
+			-- messages
 			["BuildMoreWaypoints"] = "Plop two track markers and two platform markers to build a freestyle station",
 			["BuildSnappyTracksFailed"] = "Fix the station connections to the adjacent tracks, the game cannot do it for you this time",
+			["ConConfigWindowTitle"] = "Configuration",
 			["DifferentPlatformWidths"] = "Avoid different track widths with cargo stations",
 			["GoBack"] = "Go back",
 			["GoThere"] = "Go there",
