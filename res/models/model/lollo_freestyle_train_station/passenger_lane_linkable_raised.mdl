@@ -1,0 +1,47 @@
+-- LOLLO NOTE this model is obsolete, it needs to stay here for compatibility with older versions.
+local _constants = require('lollo_freestyle_train_station.constants')
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    name = 'RootNode',
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100,
+            },
+        },
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        linkable = true, -- false, --true,
+                        nodes = {
+                            {
+                                { 0, 0, _constants.trackCrossingRaise },
+                                { 1, 0, 0 },
+                                1.5,
+                            },
+                            {
+                                { 1, 0, 0 },
+                                { 1, 0, 0 },
+                                1.5,
+                            },
+                        },
+                        transportModes = { 'CARGO', 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = { },
+            },
+        },
+        version = 1
+    }
+end
