@@ -915,8 +915,8 @@ local _actions = {
             return
         end
 
-        local oldTan0Length = transfUtils.getVectorLength(oldBaseEdge.tangent0)
-        local oldTan1Length = transfUtils.getVectorLength(oldBaseEdge.tangent1)
+        local oldTan0Length = isNodeBetweenOrientatedLikeMyEdge and transfUtils.getVectorLength(oldBaseEdge.tangent0) or transfUtils.getVectorLength(oldBaseEdge.tangent1)
+        local oldTan1Length = isNodeBetweenOrientatedLikeMyEdge and transfUtils.getVectorLength(oldBaseEdge.tangent1) or transfUtils.getVectorLength(oldBaseEdge.tangent0)
         -- logger.print('oldTan0Length =') logger.debugPrint(oldTan0Length)
         -- logger.print('oldTan1Length =') logger.debugPrint(oldTan1Length)
 
