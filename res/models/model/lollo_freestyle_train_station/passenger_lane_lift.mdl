@@ -43,7 +43,7 @@ function data()
                                 2.4,
                             },
                         },
-                        transportModes = { 'PERSON', },
+                        transportModes = { 'CARGO', 'PERSON', },
                         speedLimit = 20,
                     },
                     {
@@ -60,7 +60,7 @@ function data()
                                 2.4,
                             },
                         },
-                        transportModes = { 'PERSON', },
+                        transportModes = { 'CARGO', 'PERSON', },
                         speedLimit = 20,
                     },
                 },
