@@ -718,7 +718,7 @@ function data()
 				_addUpDownSlots()
 
 				local function _addTrackCrossings()
-					if isCargoTerminal then return end
+					-- if isCargoTerminal then return end
 					-- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 					-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
 					local _iMax = #params.terminals[t].centrePlatformsFineRelative
