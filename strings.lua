@@ -61,6 +61,10 @@ function data()
 			]],
 			["NAME"] = "Freestyle train station",
 
+			["AxialFlushCargoExitName"] = "Flush cargo exit, platform end",
+			["AxialFlushCargoExitDesc"] = "Flush cargo exit at the platform end. It can connect to nearby similar exits, roads, stairs and lift assets.",
+			["AxialFlushPassengerExitName"] = "Flush passenger exit, platform end",
+			["AxialFlushPassengerExitDesc"] = "Flush passenger exit at the platform end. It can connect to nearby similar exits, roads, stairs and lift assets",
 			["CargoStationSquarePlainName"] = "Plain station square",
 			["CargoStationSquarePlainDesc"] = "Plain square between cargo stations and the road. Repaint its ground with <shift> and a paint tool.",
 			["CargoShelfIronName"] = "Cargo shelf",

@@ -1223,18 +1223,21 @@ return {
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 		end,
 
-        addExitPole = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            local isCargoTerminal = params.terminals[nTerminal].isCargo
             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
 			local perronModelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
-			if eraPrefix == constants.eras.era_b.prefix then
-				perronModelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
-			elseif eraPrefix == constants.eras.era_a.prefix then
-				perronModelId = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl'
-			end
+            if (isCargoTerminal) then
+                perronModelId = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl'
+            elseif eraPrefix == constants.eras.era_b.prefix then
+                perronModelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
+            elseif eraPrefix == constants.eras.era_a.prefix then
+                perronModelId = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl'
+            end
 			result.models[#result.models + 1] = {
 				id = perronModelId,
 				slotId = slotId,
-				transf = transfUtilsUG.mul(slotAdjustedTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.5, 0.5, 0, 1}),
+				transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.5, 0.5, 0, 1}),
 				tag = tag
 			}
 			-- the model index must be in base 0 !

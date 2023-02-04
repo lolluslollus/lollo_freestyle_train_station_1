@@ -59,7 +59,7 @@ function data()
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal],
 				{
 					t = nTerminal,
-					lanePosTanX2 = cpl.posTanX2,
+					-- lanePosTanX2 = cpl.posTanX2,
 					pos = transfUtils.transf2Position(xAdjustedTransf),
 				}
 			)

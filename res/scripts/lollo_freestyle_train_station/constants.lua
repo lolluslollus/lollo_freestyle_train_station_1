@@ -52,6 +52,8 @@ local constants = {
     maxPassengerWaitingAreaEdgeLength = 10, -- do not tamper with this unless prepared to overhaul underpass models and some more
     fineSegmentLength = 1, -- do not tamper with this
 
+    minLinkLength = 0.005, -- minimum length for auto links, shorter will crash with Assertion `edge.conns[0] != edge.conns[1]' failed
+
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     streetEdgeType = 0, -- 0 = ROAD, 1 = RAIL
     maxNTerminals = 12,
@@ -91,6 +93,8 @@ local constants = {
     },
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
 
+    axialFlushCargoExitModuleType = 'freestyleTrainStationAxialFlushCargoExit',
+    axialFlushPassengerExitModuleType = 'freestyleTrainStationAxialFlushPassengerExit',
     cargoStationSquareModuleType = 'freestyleTrainStationCargoStationSquare',
     flatCargoRampModuleType = 'freestyleTrainStationFlatCargoRamp',
     flatPassengerStairsModuleType = 'freestyleTrainStationFlatPassengerStairs',
@@ -329,6 +333,7 @@ local constants = {
         openLiftExitBackwardSlotId = 92000000,
         flushExitSlotId = 93000000,
         cargoShelfSlotId = 94000000,
+        axialFlushExitSlotId = 95000000,
     },
     idTransf = {
         1, 0, 0, 0,
