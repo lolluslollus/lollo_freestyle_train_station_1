@@ -35,6 +35,7 @@ function data()
 
 			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
 			'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_5m.mdl',
+			'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl',
 			'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/pillar_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/pillar_5m.mdl',
 			true)
 		end,

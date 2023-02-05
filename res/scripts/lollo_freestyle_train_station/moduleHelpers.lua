@@ -933,7 +933,7 @@ return {
             end
         end,
         doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-            wall2_5ModelId, wall5ModelId, pillar2_5ModelId, pillar5ModelId, isTunnelOk)
+            wall2_5ModelId, wall5ModelId, wall_low_2_5ModelId, wall_low_5ModelId, pillar2_5ModelId, pillar5ModelId, isTunnelOk)
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
@@ -992,8 +992,11 @@ return {
                                 yShiftFromSlopedArea = 0
                                 zShift = constants.platformSideBitsZ
                             end
+                            local modelId = cpf.type == 2 
+                                and (platformWidth < 5 and wall2_5ModelId or wall5ModelId)
+                                or (platformWidth < 5 and wall_low_2_5ModelId or wall_low_5ModelId)
                             result.models[#result.models+1] = {
-                                id = platformWidth < 5 and wall2_5ModelId or wall5ModelId,
+                                id = modelId,
                                 transf = transfUtilsUG.mul(
                                     _wallTransfFunc(basePosTanX2),
                                     { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShiftFromSlopedArea, constants.platformRoofZ + zShift, 1 }
