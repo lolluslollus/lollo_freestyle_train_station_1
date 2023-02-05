@@ -332,10 +332,10 @@ privateFuncs.flatAreas = {
             tag = tag
         }
     end,
-    getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf)
+    getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf, isFlush)
         local _maxVariantAbsP1 = 13
         local variant = privateFuncs.getVariant(params, slotId)
-        local deltaZ = math.fmod(variant, _maxVariantAbsP1) * 0.1 + constants.platformSideBitsZ
+        local deltaZ = math.fmod(variant, _maxVariantAbsP1) * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
         -- if deltaZ < -1.2 then deltaZ = -1.2 elseif deltaZ > 1.2 then deltaZ = 1.2 end
 
         return transfUtils.getTransfZShiftedBy(slotTransf, deltaZ)
@@ -1094,6 +1094,81 @@ return {
             return extraCargoCapacity, extraPassengersCapacity
         end,
     },
+    axialAreas = {
+        exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
+            local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, true)
+
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+
+			local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
+
+			result.models[#result.models + 1] = {
+				id = myModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
+
+			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
+			table.insert(
+				result.edgeLists,
+				{
+					alignTerrain = false, -- only align on ground and in tunnels
+					edges = transfUtils.getPosTanX2Transformed(
+						{
+							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+							{ { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+						},
+						zAdjustedTransf
+					),
+					-- better make it a bridge to avoid ugly autolinks between nearby modules
+					edgeType = 'BRIDGE',
+					edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
+					freeNodes = { 1 },
+					params = {
+						hasBus = true,
+						tramTrackType  = 'NO',
+						type = _autoBridgePathsRefData.streetTypeName_noBridge,
+					},
+					snapNodes = isSnap and { 1 } or {},
+					tag2nodes = {},
+					type = 'STREET'
+				}
+			)
+
+			local groundFace = {
+				{-1, -2, 0, 1},
+				{-1, 2, 0, 1},
+				{1.0, 2, 0, 1},
+				{1.0, -2, 0, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+
+			local terrainAlignmentList = {
+				faces = {
+					{
+						{-1, -2, 0, 1},
+						{-1, 2, 0, 1},
+						{1.0, 2, 0, 1},
+						{1.0, -2, 0, 1},
+					}
+				},
+				optional = true,
+				slopeHigh = constants.slopeHigh,
+				slopeLow = constants.slopeLow,
+				type = 'LESS',
+			}
+			for _, face in pairs(terrainAlignmentList.faces) do
+				modulesutil.TransformFaces(zAdjustedTransf, face)
+			end
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+        end,
+    },
     flatAreas = {
         doTerrain4StationSquare = function(height, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
             local groundFace = { -- the ground faces ignore z, the alignment lists don't
@@ -1129,8 +1204,8 @@ return {
             }
             result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
         end,
-        getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf)
-            return privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
+        getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf, isFlush)
+            return privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, isFlush)
         end,
         getMNAdjustedValue_0To1_Cycling = function(params, slotId, nSteps)
             local _nSteps = math.ceil(nSteps)
@@ -1152,7 +1227,7 @@ return {
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
-			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
+			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, false)
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)

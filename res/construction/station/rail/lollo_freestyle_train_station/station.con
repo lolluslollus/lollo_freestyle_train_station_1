@@ -607,6 +607,22 @@ function data()
 							transf = myTransf,
 							type = isCargoTerminal and _constants.axialFlushCargoExitModuleType or _constants.axialFlushPassengerExitModuleType,
 						})
+
+						if not(isCargoTerminal) then
+							local myEdgeId = result.mangleId(
+								t,
+								i,
+								_constants.idBases.axialPassengerEdgeSlotId
+								-- isCargoTerminal and _constants.idBases.axialFlushCargoExitSlotId or _constants.idBases.axialFlushExitSlotId
+							)
+							table.insert(result.slots, {
+								-- height = 0,
+								id = myEdgeId,
+								spacing = {1, 1, 1, 1},
+								transf = myTransf,
+								type = _constants.axialPassengerEdgeModuleType,
+							})
+						end
 					end
 				end
 				_addAxialExits()
@@ -1981,7 +1997,8 @@ function data()
 			if modules ~= nil then
 				local slotIdToBeLeftAlone = nil -- do not replace the module if the user is placing it
 				if change ~= nil and change.added and change.module then
-					if change.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
+					if change.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/axialPassengerStairsEdge.module'
+					or change.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
 					or change.module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m.module'
 					then
 						slotIdToBeLeftAlone = change.slotId
@@ -1990,7 +2007,10 @@ function data()
 
 				for slotId, module in pairs(modules) do
 					if module then
-						if module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
+						if module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/axialPassengerStairsEdge.module'
+						and (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
+							module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/axialPassengerStairsSnappyEdge.module'
+						elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
 						and (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
 							module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
 						elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m.module'
