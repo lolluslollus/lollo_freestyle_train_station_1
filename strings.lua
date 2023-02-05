@@ -354,6 +354,7 @@ function data()
 			["ErrorReplacingConWithSnappyCopy"] = "This object cannot connect to nearby roads, change it or move it somewhere else",
 			["FlatSlopedTerrain"] = "Terrain Incline",
 			["Model"] = "Platform",
+			["ModelRaised"] = "Raised Platform",
 			["NoRailing0"] = "0 - No Railing",
 			["OpenTwinStairsFreeName"] = "Twin Stairs",
 			["OpenTwinStairsFreeDesc"] = "Twin stairs matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",

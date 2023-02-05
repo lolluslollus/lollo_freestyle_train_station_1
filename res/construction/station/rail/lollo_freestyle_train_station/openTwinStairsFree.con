@@ -120,36 +120,37 @@ function data()
                 baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_'.. _height ..'m.mdl'
             end
 
+            local _baseFaceZ = _stairsBase == 98 and -0.6 or 0
             local flatFaces = {}
             if _height == 2 then
                 flatFaces = { {
-                    {4, -_yHalfSize, 0}, {4, _yHalfSize, 0}, {-4, _yHalfSize, 0}, {-4, -_yHalfSize, 0}
+                    {4, -_yHalfSize, _baseFaceZ}, {4, _yHalfSize, _baseFaceZ}, {-4, _yHalfSize, _baseFaceZ}, {-4, -_yHalfSize, _baseFaceZ}
                 } }
             elseif _height == 4 then
                 flatFaces = { {
-                    {6, -_yHalfSize, 0}, {6, _yHalfSize, 0}, {-6, _yHalfSize, 0}, {-6, -_yHalfSize, 0}
+                    {6, -_yHalfSize, _baseFaceZ}, {6, _yHalfSize, _baseFaceZ}, {-6, _yHalfSize, _baseFaceZ}, {-6, -_yHalfSize, _baseFaceZ}
                 } }
             elseif _height == 6 then
                 flatFaces = { {
-                    {8.5, -_yHalfSize, 0}, {8.5, _yHalfSize, 0}, {-8.5, _yHalfSize, 0}, {-8.5, -_yHalfSize, 0}
+                    {8.5, -_yHalfSize, _baseFaceZ}, {8.5, _yHalfSize, _baseFaceZ}, {-8.5, _yHalfSize, _baseFaceZ}, {-8.5, -_yHalfSize, _baseFaceZ}
                 } }
             elseif _height == 8 then
                 flatFaces = { {
-                    {10.5, -_yHalfSize, 0}, {10.5, _yHalfSize, 0}, {-10.5, _yHalfSize, 0}, {-10.5, -_yHalfSize, 0}
+                    {10.5, -_yHalfSize, _baseFaceZ}, {10.5, _yHalfSize, _baseFaceZ}, {-10.5, _yHalfSize, _baseFaceZ}, {-10.5, -_yHalfSize, _baseFaceZ}
                 } }
             elseif _height == 10 then
                 flatFaces = { {
-                    {12.5, -_yHalfSize, 0}, {12.5, _yHalfSize, 0}, {-12.5, _yHalfSize, 0}, {-12.5, -_yHalfSize, 0}
+                    {12.5, -_yHalfSize, _baseFaceZ}, {12.5, _yHalfSize, _baseFaceZ}, {-12.5, _yHalfSize, _baseFaceZ}, {-12.5, -_yHalfSize, _baseFaceZ}
                 } }
             end
             local slopedFaces = {}
             if _height == 2 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 1}, {-2, _yHalfSize, 1}, {-4, _yHalfSize, -0.5}, {-4, -_yHalfSize, -0.5},
+                        {-2, -_yHalfSize, 1}, {-2, _yHalfSize, 1}, {-4, _yHalfSize, -0.5 + _baseFaceZ}, {-4, -_yHalfSize, -0.5 + _baseFaceZ},
                     },
                     {
-                        {4, -_yHalfSize, -0.5}, {4, _yHalfSize, -0.5}, {2, _yHalfSize, 1}, {2, -_yHalfSize, 1},
+                        {4, -_yHalfSize, -0.5 + _baseFaceZ}, {4, _yHalfSize, -0.5 + _baseFaceZ}, {2, _yHalfSize, 1}, {2, -_yHalfSize, 1},
                     },
                     {
                         {2, -_yHalfSize, 1}, {2, _yHalfSize, 1}, {-2, _yHalfSize, 1}, {-2, -_yHalfSize, 1},
@@ -158,10 +159,10 @@ function data()
             elseif _height == 4 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 3}, {-2, _yHalfSize, 3}, {-6, _yHalfSize, -0.5}, {-6, -_yHalfSize, -0.5},
+                        {-2, -_yHalfSize, 3}, {-2, _yHalfSize, 3}, {-6, _yHalfSize, -0.5 + _baseFaceZ}, {-6, -_yHalfSize, -0.5 + _baseFaceZ},
                     },
                     {
-                        {6, -_yHalfSize, -0.5}, {6, _yHalfSize, -0.5}, {2, _yHalfSize, 3}, {2, -_yHalfSize, 3},
+                        {6, -_yHalfSize, -0.5 + _baseFaceZ}, {6, _yHalfSize, -0.5 + _baseFaceZ}, {2, _yHalfSize, 3}, {2, -_yHalfSize, 3},
                     },
                     {
                         {2, -_yHalfSize, 3}, {2, _yHalfSize, 3}, {-2, _yHalfSize, 3}, {-2, -_yHalfSize, 3},
@@ -170,10 +171,10 @@ function data()
             elseif _height == 6 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 5}, {-2, _yHalfSize, 5}, {-8.5, _yHalfSize, -0.5}, {-8.5, -_yHalfSize, -0.5},
+                        {-2, -_yHalfSize, 5}, {-2, _yHalfSize, 5}, {-8.5, _yHalfSize, -0.5 + _baseFaceZ}, {-8.5, -_yHalfSize, -0.5 + _baseFaceZ},
                     },
                     {
-                        {8.5, -_yHalfSize, -0.5}, {8.5, _yHalfSize, -0.5}, {2, _yHalfSize, 5}, {2, -_yHalfSize, 5},
+                        {8.5, -_yHalfSize, -0.5 + _baseFaceZ}, {8.5, _yHalfSize, -0.5 + _baseFaceZ}, {2, _yHalfSize, 5}, {2, -_yHalfSize, 5},
                     },
                     {
                         {2, -_yHalfSize, 5}, {2, _yHalfSize, 5}, {-2, _yHalfSize, 5}, {-2, -_yHalfSize, 5},
@@ -182,10 +183,10 @@ function data()
             elseif _height == 8 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 7}, {-2, _yHalfSize, 7}, {-10.5, _yHalfSize, -0.5}, {-10.5, -_yHalfSize, -0.5},
+                        {-2, -_yHalfSize, 7}, {-2, _yHalfSize, 7}, {-10.5, _yHalfSize, -0.5 + _baseFaceZ}, {-10.5, -_yHalfSize, -0.5 + _baseFaceZ},
                     },
                     {
-                        {10.5, -_yHalfSize, -0.5}, {10.5, _yHalfSize, -0.5},  {2, _yHalfSize, 7}, {2, -_yHalfSize, 7},
+                        {10.5, -_yHalfSize, -0.5 + _baseFaceZ}, {10.5, _yHalfSize, -0.5 + _baseFaceZ},  {2, _yHalfSize, 7}, {2, -_yHalfSize, 7},
                     },
                     {
                         {2, -_yHalfSize, 7}, {2, _yHalfSize, 7}, {-2, _yHalfSize, 7}, {-2, -_yHalfSize, 7},
@@ -194,10 +195,10 @@ function data()
             elseif _height == 10 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 9}, {-2, _yHalfSize, 9}, {-12.5, _yHalfSize, -0.5}, {-12.5, -_yHalfSize, -0.5},
+                        {-2, -_yHalfSize, 9}, {-2, _yHalfSize, 9}, {-12.5, _yHalfSize, -0.5 + _baseFaceZ}, {-12.5, -_yHalfSize, -0.5 + _baseFaceZ},
                     },
                     {
-                        {12.5, -_yHalfSize, -0.5}, {12.5, _yHalfSize, -0.5}, {2, _yHalfSize, 9}, {2, -_yHalfSize, 9},
+                        {12.5, -_yHalfSize, -0.5 + _baseFaceZ}, {12.5, _yHalfSize, -0.5 + _baseFaceZ}, {2, _yHalfSize, 9}, {2, -_yHalfSize, 9},
                     },
                     {
                         {2, -_yHalfSize, 9}, {2, _yHalfSize, 9}, {-2, _yHalfSize, 9}, {-2, -_yHalfSize, 9},
@@ -264,7 +265,9 @@ function data()
             -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
 
             local _addBase = function(isLeft, leftOrRightTransf)
-                if _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
+                if _stairsBase == -1 then
+                    -- do nothing
+                elseif _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
                     local _baseLen = 1
                     local edgeX0 = 0
                     if _height == 2 then
@@ -324,7 +327,7 @@ function data()
                             }
                         )
                     end
-                elseif _stairsBase == 99 then -- model
+                else -- model
                     local modelId = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. 'open_stairs_base_' .. _height .. 'm.mdl'
                     table.insert(
                         result.models,
@@ -335,26 +338,25 @@ function data()
                     )
 
                     local facesBeforeTransf = {}
-                    local _zed = -0.7
                     if _height == 2 then
                         facesBeforeTransf = { {
-                            {-4, -_yHalfSize, _zed}, {-4, _yHalfSize, _zed}, {-5.5, _yHalfSize, _zed}, {-5.5, -_yHalfSize, _zed}
+                            {-4, -_yHalfSize, _baseFaceZ}, {-4, _yHalfSize, _baseFaceZ}, {-5.5, _yHalfSize, _baseFaceZ}, {-5.5, -_yHalfSize, _baseFaceZ}
                         } }
                     elseif _height == 4 then
                         facesBeforeTransf = { {
-                            {-6, -_yHalfSize, _zed}, {-6, _yHalfSize, _zed}, {-7.5, _yHalfSize, _zed}, {-7.5, -_yHalfSize, _zed}
+                            {-6, -_yHalfSize, _baseFaceZ}, {-6, _yHalfSize, _baseFaceZ}, {-7.5, _yHalfSize, _baseFaceZ}, {-7.5, -_yHalfSize, _baseFaceZ}
                         } }
                     elseif _height == 6 then
                         facesBeforeTransf = { {
-                            {-8.5, -_yHalfSize, _zed}, {-8.5, _yHalfSize, _zed}, {-10, _yHalfSize, _zed}, {-10, -_yHalfSize, _zed}
+                            {-8.5, -_yHalfSize, _baseFaceZ}, {-8.5, _yHalfSize, _baseFaceZ}, {-10, _yHalfSize, _baseFaceZ}, {-10, -_yHalfSize, _baseFaceZ}
                         } }
                     elseif _height == 8 then
                         facesBeforeTransf = { {
-                            {-10.5, -_yHalfSize, _zed}, {-10.5, _yHalfSize, _zed}, {-12, _yHalfSize, _zed}, {-12, -_yHalfSize, _zed}
+                            {-10.5, -_yHalfSize, _baseFaceZ}, {-10.5, _yHalfSize, _baseFaceZ}, {-12, _yHalfSize, _baseFaceZ}, {-12, -_yHalfSize, _baseFaceZ}
                         } }
                     elseif _height == 10 then
                         facesBeforeTransf = { {
-                            {-12.5, -_yHalfSize, _zed}, {-12.5, _yHalfSize, _zed}, {-14, _yHalfSize, _zed}, {-14, -_yHalfSize, _zed}
+                            {-12.5, -_yHalfSize, _baseFaceZ}, {-12.5, _yHalfSize, _baseFaceZ}, {-14, _yHalfSize, _baseFaceZ}, {-14, -_yHalfSize, _baseFaceZ}
                         } }
                     end
 
