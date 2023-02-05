@@ -367,7 +367,7 @@ function data()
                         result.terrainAlignmentLists,
                         {
                             type = 'EQUAL',
-                            optional = false, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                            optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
                             slopeLow = 9.6,
                             slopeHigh = 9.9,
                             faces = _facesAfterTransf,
