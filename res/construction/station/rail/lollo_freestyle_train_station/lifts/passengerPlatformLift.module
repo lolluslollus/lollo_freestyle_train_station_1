@@ -158,13 +158,7 @@ return {
 	end,
 
 	getModelsFn = function(params)
-		return {
-			{
-				id = 'lollo_freestyle_train_station/lift/platform_lifts_9_5_20.mdl',
-				transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
-			},
-			moduleHelpers.lifts.getPreviewIcon(params),
-		}
+		return moduleHelpers.lifts.getPreview(params)
 	end
 }
 

@@ -42,16 +42,26 @@ local privateConstants = {
 }
 
 local privateFuncs = {
-    getFromVariant_FlatAreaHeight = function(variant, isFlush)
-        local _maxVariantAbsP1 = 13
-        return math.fmod(variant, _maxVariantAbsP1) * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
-    end,
     getFromVariant_0_or_1 = function(variant)
         return math.abs(math.fmod(variant, 2))
     end,
     getFromVariant_0_to_1 = function(variant, nSteps)
         local _nSteps = math.ceil(nSteps)
         return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
+    end,
+    getFromVariant_BridgeTilt = function(variant)
+        local tilt = variant * 0.0125
+        local _maxRadAbs = 0.36
+        if tilt > _maxRadAbs then tilt = _maxRadAbs elseif tilt < -_maxRadAbs then tilt = -_maxRadAbs end
+        -- logger.print('getFromVariant_BridgeTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
+        return tilt, -_maxRadAbs, _maxRadAbs
+    end,
+    getFromVariant_FlatAreaHeight = function(variant, isFlush)
+        local zShift = variant * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
+        local _maxValueAbs = 1.2
+        if zShift > _maxValueAbs then zShift = _maxValueAbs elseif zShift < -_maxValueAbs then zShift = -_maxValueAbs end
+        -- logger.print('getFromVariant_FlatAreaHeight returning', zShift, -_maxValueAbs, _maxValueAbs)
+        return zShift, -_maxValueAbs, _maxValueAbs
     end,
     getFromVariant_LiftHeight = function(variant)
         local deltaZ = 0
@@ -64,7 +74,8 @@ local privateFuncs = {
         elseif variant >= 1 then
             deltaZ = 5
         end
-        return deltaZ
+        -- logger.print('getFromVariant_LiftHeight returning', deltaZ, -10, 10)
+        return deltaZ, -10, 10
     end,
     getEraPrefix = function(params, nTerminal, nTrackEdge)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
@@ -376,21 +387,17 @@ privateFuncs.flatAreas = {
             tag = tag
         }
     end,
-    getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf, isFlush)
+    getMNAdjustedTransf = function(params, slotId, slotTransf, isFlush)
         local variant = privateFuncs.getVariant(params, slotId)
         local deltaZ = privateFuncs.getFromVariant_FlatAreaHeight(variant, isFlush)
-
         return transfUtils.getTransfZShiftedBy(slotTransf, deltaZ)
     end,
 }
 privateFuncs.openStairs = {
     getExitModelTransf = function(slotTransf, slotId, params)
-        local _maxRad = 0.36
-
-        local variant = privateFuncs.getVariant(params, slotId) * 0.0125
-        if variant > _maxRad then variant = _maxRad elseif variant < -_maxRad then variant = -_maxRad end
-
-        return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(variant))
+        local variant = privateFuncs.getVariant(params, slotId)
+        local tilt = privateFuncs.getFromVariant_BridgeTilt(variant)
+        return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
     end,
     getPedestrianBridgeModelId = function(length, eraPrefix, isWithEdge)
         -- eraPrefix is a string like 'era_a_'
@@ -1157,7 +1164,7 @@ return {
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			-- local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, true)
+			-- local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, true)
             local zAdjustedTransf = slotTransf
 
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
@@ -1310,11 +1317,8 @@ return {
         getFromVariant_0_to_1 = function(variant, nSteps)
             return privateFuncs.getFromVariant_0_to_1(variant, nSteps)
         end,
-        getFromVariant_FlatAreaHeight = function(variant, isFlush)
-            return privateFuncs.getFromVariant_FlatAreaHeight(variant, isFlush)
-        end,
-        getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf, isFlush)
-            return privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, isFlush)
+        getMNAdjustedTransf = function(params, slotId, slotTransf, isFlush)
+            return privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, isFlush)
         end,
         getMNAdjustedValue_0To1_Cycling = function(params, slotId, nSteps)
             local variant = privateFuncs.getVariant(params, slotId)
@@ -1322,10 +1326,16 @@ return {
         end,
         getPreviewIcon = function(params)
 			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
-			local deltaZ = privateFuncs.getFromVariant_FlatAreaHeight(variant, false)
-			local arrowModelId = 'lollo_freestyle_train_station/icon/square_blue.mdl'
+			local deltaZ, min, max = privateFuncs.getFromVariant_FlatAreaHeight(variant, false)
+			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
 			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  10, -2, 8, 1}
-			if deltaZ < 0 then
+			if deltaZ == min then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
+			elseif deltaZ == max then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  10, -2, 9, 1}
+            elseif deltaZ < 0 then
 				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
 				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
 			elseif deltaZ > 0 then
@@ -1352,7 +1362,7 @@ return {
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
-			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, false)
+			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, false)
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
@@ -1431,24 +1441,39 @@ return {
         end
     },
     lifts = {
-        getFromVariant_LiftHeight = function(variant)
-            return privateFuncs.getFromVariant_LiftHeight(variant)
-        end,
-        getPreviewIcon = function(params)
+        getPreview = function(params, isSideLift)
 			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
-			local deltaZ = privateFuncs.getFromVariant_LiftHeight(variant)
-			local arrowModelId = 'lollo_freestyle_train_station/icon/square_blue.mdl'
+			local deltaZ, min, max = privateFuncs.getFromVariant_LiftHeight(variant)
+			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
 			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -10, -10, 0, 1}
-			if deltaZ < 0 then
+            local mainModelId = isSideLift and 'lollo_freestyle_train_station/lift/side_lifts_9_5_20.mdl' or 'lollo_freestyle_train_station/lift/platform_lifts_9_5_20.mdl'
+			local mainModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 15, 1}
+            if deltaZ == min then
+                arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  -10, -10, 1, 1}
+                mainModelId = isSideLift and 'lollo_freestyle_train_station/lift/side_lifts_9_5_10.mdl' or 'lollo_freestyle_train_station/lift/platform_lifts_9_5_10.mdl'
+			elseif deltaZ == max then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  -10, -10, -1, 1}
+                mainModelId = isSideLift and 'lollo_freestyle_train_station/lift/side_lifts_9_5_30.mdl' or 'lollo_freestyle_train_station/lift/platform_lifts_9_5_30.mdl'
+            elseif deltaZ < 0 then
                 arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
 				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  -10, -10, 1, 1}
+                mainModelId = isSideLift and 'lollo_freestyle_train_station/lift/side_lifts_9_5_15.mdl' or 'lollo_freestyle_train_station/lift/platform_lifts_9_5_15.mdl'
 			elseif deltaZ > 0 then
 				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
 				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  -10, -10, -1, 1}
+                mainModelId = isSideLift and 'lollo_freestyle_train_station/lift/side_lifts_9_5_25.mdl' or 'lollo_freestyle_train_station/lift/platform_lifts_9_5_25.mdl'
 			end
             return {
-                id = arrowModelId,
-                transf = arrowModelTransf,
+                {
+                    id = arrowModelId,
+                    transf = arrowModelTransf,
+                },
+                {
+                    id = mainModelId,
+                    transf = mainModelTransf,
+                },
             }
         end,
         tryGetLiftHeight = function(params, nTerminal, nTrackEdge, slotId)
@@ -1652,6 +1677,29 @@ return {
             elseif length < 48 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_32m.mdl'
             else return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_64m.mdl'
             end
+        end,
+        getPreviewIcon = function(params)
+			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local tilt, min, max = privateFuncs.getFromVariant_BridgeTilt(variant)
+			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
+			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  10, -2, 8, 1}
+            if tilt == min then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  10, -2, 9, 1}
+            elseif tilt == max then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
+			elseif tilt < 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  10, -2, 9, 1}
+			elseif tilt > 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
+			end
+            return {
+                id = arrowModelId,
+                transf = arrowModelTransf,
+            }
         end,
     },
     platforms = {

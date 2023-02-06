@@ -33,7 +33,7 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)

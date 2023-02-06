@@ -36,7 +36,7 @@ function data()
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']

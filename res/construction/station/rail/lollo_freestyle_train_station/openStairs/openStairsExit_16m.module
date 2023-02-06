@@ -55,6 +55,7 @@ function data()
 					id = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_16m.mdl',
 					transf = _constants.idTransf,
 				},
+				moduleHelpers.openStairs.getPreviewIcon(params),
 			}
 		end
 	}

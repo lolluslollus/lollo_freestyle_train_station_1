@@ -37,7 +37,7 @@ function data()
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
 			moduleHelpers.flatAreas.addExitPole(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 			-- moduleHelpers.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
