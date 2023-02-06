@@ -14,21 +14,21 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { 'passenger-road-access', },
+			categories = { 'cargo-road-access', },
 		},
 		cost = {
 			price = 0,
 		},
 		description = {
-			name = _('FlushPassengerExitOuterName'),
-			description = _('FlushPassengerExitOuterDesc'),
-			icon = 'ui/lollo_freestyle_train_station/flushPassengerExitOuter.tga'
+			name = _('FlushCargoExitOuterName'),
+			description = _('FlushCargoExitOuterDesc'),
+			icon = 'ui/lollo_freestyle_train_station/flushCargoExitOuter.tga'
 		},
 		metadata = { },
 		order = {
 			value = 12,
 		},
-		type = _constants.flushPassengerExitModuleType,
+		type = _constants.flushCargoExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
@@ -40,7 +40,7 @@ function data()
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf)
 
 			moduleHelpers.flatAreas.addExitPole(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			-- moduleHelpers.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
@@ -67,7 +67,7 @@ function data()
 		getModelsFn = function(params)
 			return {
 				{
-					id = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl',
+					id = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl',
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1},
 				},
 				moduleHelpers.flatAreas.getPreviewIcon(params),

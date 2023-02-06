@@ -407,20 +407,20 @@ function data()
 										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatPassengerEdgeSlotId)
 									end
 								end
-								if cpl.type == 0 and cplP1.type == 0 then -- ground
-									if not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flushExitSlotId then
-										local myId = result.mangleId(t, i, _constants.idBases.flushExitSlotId)
-										table.insert(result.slots, {
-											-- height = 0,
-											id = myId,
-											spacing = {0.5, 1.5, -0.1, 1},
-											transf = myTransf,
-											type = _constants.flushExitModuleType,
-										})
-										if params.modules[myId] ~= nil then
-											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flushExitSlotId)
-										end
+							end
+							if cpl.type == 0 and cplP1.type == 0 then -- ground
+								if not(result.getOccupiedInfo4FlatAreas(t, i))
+								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flushExitSlotId then
+									local myId = result.mangleId(t, i, _constants.idBases.flushExitSlotId)
+									table.insert(result.slots, {
+										-- height = 0,
+										id = myId,
+										spacing = {0.5, 1.5, -0.1, 1},
+										transf = myTransf,
+										type = isCargoTerminal and _constants.flushCargoExitModuleType or _constants.flushPassengerExitModuleType,
+									})
+									if params.modules[myId] ~= nil then
+										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flushExitSlotId)
 									end
 								end
 							end
