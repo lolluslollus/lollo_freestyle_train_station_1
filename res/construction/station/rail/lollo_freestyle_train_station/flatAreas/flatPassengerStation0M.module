@@ -117,6 +117,7 @@ return {
 				id = 'lollo_freestyle_train_station/lift/side_lifts_9_5_0.mdl',
 				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
 			},
+			moduleHelpers.flatAreas.getPreviewIcon(params),
 		}
 	end
 }

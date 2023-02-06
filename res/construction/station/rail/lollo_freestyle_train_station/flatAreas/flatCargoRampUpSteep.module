@@ -90,6 +90,7 @@ function data()
 					id = _constants.era_c_flatCargoRampUpSteepModelFileName,
 					transf = _constants.idTransf,
 				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
 			}
 		end
 	}

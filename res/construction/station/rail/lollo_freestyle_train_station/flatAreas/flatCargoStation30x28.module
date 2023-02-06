@@ -112,8 +112,9 @@ function data()
 			return {
 				{
 					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_30x28.mdl',
-					transf = _constants.idTransf,
+					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -20, 0, 0, 1},
 				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
 			}
 		end
 	}

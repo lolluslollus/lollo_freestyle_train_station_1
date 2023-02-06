@@ -142,6 +142,7 @@ return {
 				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_30x8.mdl',
 				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
 			},
+			moduleHelpers.flatAreas.getPreviewIcon(params),
 		}
 	end
 }

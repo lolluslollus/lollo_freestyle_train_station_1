@@ -42,6 +42,30 @@ local privateConstants = {
 }
 
 local privateFuncs = {
+    getFromVariant_FlatAreaHeight = function(variant, isFlush)
+        local _maxVariantAbsP1 = 13
+        return math.fmod(variant, _maxVariantAbsP1) * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
+    end,
+    getFromVariant_0_or_1 = function(variant)
+        return math.abs(math.fmod(variant, 2))
+    end,
+    getFromVariant_0_to_1 = function(variant, nSteps)
+        local _nSteps = math.ceil(nSteps)
+        return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
+    end,
+    getFromVariant_LiftHeight = function(variant)
+        local deltaZ = 0
+        if variant <= -2 then
+            deltaZ = -10
+        elseif variant <= -1 then
+            deltaZ = -5
+        elseif variant >= 2 then
+            deltaZ = 10
+        elseif variant >= 1 then
+            deltaZ = 5
+        end
+        return deltaZ
+    end,
     getEraPrefix = function(params, nTerminal, nTrackEdge)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
         local result = cpl.era or constants.eras.era_c.prefix
@@ -133,7 +157,7 @@ local privateFuncs = {
 privateFuncs.deco = {
     getMNAdjustedValue_0Or1_Cycling = function(params, slotId)
         local variant = privateFuncs.getVariant(params, slotId)
-        return math.abs(math.fmod(variant, 2))
+        return privateFuncs.getFromVariant_0_or_1(variant)
     end,
     getStationSignFineIndexes = function(params, nTerminal)
         local results = {}
@@ -333,10 +357,8 @@ privateFuncs.flatAreas = {
         }
     end,
     getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf, isFlush)
-        local _maxVariantAbsP1 = 13
         local variant = privateFuncs.getVariant(params, slotId)
-        local deltaZ = math.fmod(variant, _maxVariantAbsP1) * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
-        -- if deltaZ < -1.2 then deltaZ = -1.2 elseif deltaZ > 1.2 then deltaZ = 1.2 end
+        local deltaZ = privateFuncs.getFromVariant_FlatAreaHeight(variant, isFlush)
 
         return transfUtils.getTransfZShiftedBy(slotTransf, deltaZ)
     end,
@@ -849,6 +871,22 @@ return {
         end,
     },
     deco = {
+        getFromVariant_0_or_1 = function(variant)
+            return privateFuncs.getFromVariant_0_or_1(variant)
+        end,
+        getPreviewIcon = function(params)
+			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local zeroOrOne = privateFuncs.getFromVariant_0_or_1(variant)
+            local arrowModelId = 'lollo_freestyle_train_station/icon/slant_wall.mdl'
+            local arrowModelTransf = {0.5, 0, 0, 0,  0, 0.5, 0, 0,  0, 0, 0.5, 0,  10, -2, 10, 1}
+            if zeroOrOne > 0 then
+                arrowModelId = 'lollo_freestyle_train_station/icon/perpendicular_wall.mdl'
+            end
+            return {
+                id = arrowModelId,
+                transf = arrowModelTransf,
+            }
+        end,
         getStationSignFineIndexes = function(params, nTerminal)
             return privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
         end,
@@ -1205,13 +1243,35 @@ return {
             }
             result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
         end,
+        getFromVariant_0_to_1 = function(variant, nSteps)
+            return privateFuncs.getFromVariant_0_to_1(variant, nSteps)
+        end,
+        getFromVariant_FlatAreaHeight = function(variant, isFlush)
+            return privateFuncs.getFromVariant_FlatAreaHeight(variant, isFlush)
+        end,
         getMNAdjustedTransf_Cycling = function(params, slotId, slotTransf, isFlush)
             return privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, isFlush)
         end,
         getMNAdjustedValue_0To1_Cycling = function(params, slotId, nSteps)
-            local _nSteps = math.ceil(nSteps)
             local variant = privateFuncs.getVariant(params, slotId)
-            return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
+            return privateFuncs.getFromVariant_0_to_1(variant, nSteps)
+        end,
+        getPreviewIcon = function(params)
+			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local deltaZ = privateFuncs.getFromVariant_FlatAreaHeight(variant, false)
+			local arrowModelId = 'lollo_freestyle_train_station/icon/square_blue.mdl'
+			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  10, -2, 8, 1}
+			if deltaZ < 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
+			elseif deltaZ > 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  10, -2, 9, 1}
+			end
+            return {
+                id = arrowModelId,
+                transf = arrowModelTransf,
+            }
         end,
         addCargoLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
             return privateFuncs.flatAreas.addCargoLaneToStreet(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
@@ -1324,6 +1384,26 @@ return {
         end
     },
     lifts = {
+        getFromVariant_LiftHeight = function(variant)
+            return privateFuncs.getFromVariant_LiftHeight(variant)
+        end,
+        getPreviewIcon = function(params)
+			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local deltaZ = privateFuncs.getFromVariant_LiftHeight(variant)
+			local arrowModelId = 'lollo_freestyle_train_station/icon/square_blue.mdl'
+			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -10, -10, 0, 1}
+			if deltaZ < 0 then
+                arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  -10, -10, 1, 1}
+			elseif deltaZ > 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  -10, -10, -1, 1}
+			end
+            return {
+                id = arrowModelId,
+                transf = arrowModelTransf,
+            }
+        end,
         tryGetLiftHeight = function(params, nTerminal, nTrackEdge, slotId)
             local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
             local cplP1 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge+1] or {}
@@ -1351,26 +1431,15 @@ return {
             else
                 buildingHeight = 40
             end
-    
-            local deltaZ = 0
+
             local variant = privateFuncs.getVariant(params, slotId)
-            -- logger.print('variant =', variant)
-            if variant <= -2 then
-                deltaZ = -10
-            elseif variant <= -1 then
-                deltaZ = -5
-            elseif variant >= 2 then
-                deltaZ = 10
-            elseif variant >= 1 then
-                deltaZ = 5
-            end
-            -- logger.print('deltaZ =', deltaZ)
-    
+            local deltaZ = privateFuncs.getFromVariant_LiftHeight(variant)
+
             buildingHeight = buildingHeight + deltaZ
             if buildingHeight < 0 then buildingHeight = 0
             elseif buildingHeight > 40 then buildingHeight = 40
             end
-    
+
             return buildingHeight
         end,
         tryGetSideLiftModelId = function(params, nTerminal, nTrackEdge, eraPrefix, bridgeHeight)
@@ -1378,7 +1447,7 @@ return {
             if eraPrefix == constants.eras.era_a.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_a_'
             elseif eraPrefix == constants.eras.era_b.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_b_'
             end
-    
+
             if bridgeHeight < privateConstants.lifts.bridgeHeights[1] then
                 buildingModelId = buildingModelId .. 'side_lifts_9_5_0.mdl'
             elseif bridgeHeight < privateConstants.lifts.bridgeHeights[2] then

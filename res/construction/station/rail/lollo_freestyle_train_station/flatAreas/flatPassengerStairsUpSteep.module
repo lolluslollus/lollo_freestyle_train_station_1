@@ -103,6 +103,7 @@ function data()
 					id = _constants.era_c_flatPassengerStairsUpSteepModelFileName,
 					transf = _constants.idTransf,
 				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
 			}
 		end
 	}

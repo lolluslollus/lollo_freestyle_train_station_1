@@ -98,6 +98,7 @@ function data()
 					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_10x15.mdl',
 					transf = _constants.idTransf,
 				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
 			}
 		end
 	}

@@ -52,7 +52,8 @@ function data()
 				id = _constants.platformWallIronGlassCopperPillar2_5MModelFileName,
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
-		return results
+			results[#results+1] = moduleHelpers.deco.getPreviewIcon(params)
+			return results
 		end
 	}
 end

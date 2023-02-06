@@ -7,6 +7,7 @@ local transfUtilsUG = require "transf"
 
 
 function data()
+	local _nAdjustableSteps = 4
 	return {
 		availability = {
 			yearFrom = 0,
@@ -43,7 +44,7 @@ function data()
 				moduleHelpers.getPlatformObjectTransf_AlwaysVertical(platformBorderPosTanX2),
 				result.laneZs[nTerminal]
 			)
-			local step0To1 = moduleHelpers.flatAreas.getMNAdjustedValue_0To1_Cycling(params, slotId, 4)
+			local step0To1 = moduleHelpers.flatAreas.getMNAdjustedValue_0To1_Cycling(params, slotId, _nAdjustableSteps)
 			local xAdjustedTransf = slotTransf
 			for n = 13, 15, 1 do
 				xAdjustedTransf[n] = slotTransf[n] + (myTransfAlongPlatformBorder[n] - slotTransf[n]) * step0To1
@@ -66,18 +67,25 @@ function data()
 		end,
 
 		getModelsFn = function(params)
+			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local deltaX = moduleHelpers.flatAreas.getFromVariant_0_to_1(variant, _nAdjustableSteps)
+			local arrowModelId = 'lollo_freestyle_train_station/icon/square_blue.mdl'
+			local arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  2, 2, 0, 1}
+			if deltaX < 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1, 0, 0, 1}
+			elseif deltaX > 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}
+			end
 			return {
 				{
 					id = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl',
 					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1},
 				},
 				{
-					id = 'lollo_freestyle_train_station/icon/arrow_blue.mdl',
-					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1},
-				},
-				{
-					id = 'lollo_freestyle_train_station/icon/arrow_blue.mdl',
-					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1, 0, 0, 1},
+					id = arrowModelId,
+					transf = arrowModelTransf,
 				},
 			}
 		end
