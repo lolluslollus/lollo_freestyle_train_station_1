@@ -31,7 +31,7 @@ function data()
 		getModelsFn = function(params)
 			return {
 				{
-					id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_stairs_edge.mdl',
+					id = 'lollo_freestyle_train_station/open_stairs/bridge_chunk_2m.mdl',
 					transf = _constants.idTransf,
 				},
 				moduleHelpers.flatAreas.getPreviewIcon(params),
