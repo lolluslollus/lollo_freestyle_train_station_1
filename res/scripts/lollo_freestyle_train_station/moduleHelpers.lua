@@ -1542,40 +1542,6 @@ return {
     
             return buildingModelId
         end,
-        doTerrain4SideLifts = function(buildingHeight, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
-            local groundFace = { -- the ground faces ignore z, the alignment lists don't
-                {-1, -5.2, -buildingHeight, 1},
-                {-1, 5.2, -buildingHeight, 1},
-                {6.0, 5.2, -buildingHeight, 1},
-                {6.0, -5.2, -buildingHeight, 1},
-            }
-            modulesutil.TransformFaces(slotTransf, groundFace)
-            table.insert(
-                result.groundFaces,
-                {
-                    face = groundFace,
-                    modes = {
-                        {
-                            type = 'FILL',
-                            key = groundFacesFillKey
-                        },
-                        {
-                            type = 'STROKE_OUTER',
-                            key = groundFacesStrokeOuterKey
-                        }
-                    }
-                }
-            )
-    
-            local terrainAlignmentList = {
-                faces = { groundFace },
-                optional = true,
-                slopeHigh = constants.slopeHigh,
-                slopeLow = constants.slopeLow,
-                type = 'EQUAL',
-            }
-            result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-        end,
         tryGetPlatformLiftModelId = function(params, nTerminal, nTrackEdge, eraPrefix, bridgeHeight)
             local buildingModelId = 'lollo_freestyle_train_station/lift/'
             if eraPrefix == constants.eras.era_a.prefix then buildingModelId = 'lollo_freestyle_train_station/lift/era_a_'
