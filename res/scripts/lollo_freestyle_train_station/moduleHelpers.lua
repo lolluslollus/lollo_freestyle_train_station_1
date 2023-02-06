@@ -1099,7 +1099,8 @@ return {
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, true)
+			-- local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, true)
+            local zAdjustedTransf = slotTransf
 
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
