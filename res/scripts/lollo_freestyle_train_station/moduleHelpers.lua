@@ -343,6 +343,26 @@ privateFuncs.flatAreas = {
         }
 
     end,
+    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        local isCargoTerminal = params.terminals[nTerminal].isCargo
+        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+        local perronModelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
+        if (isCargoTerminal) then
+            perronModelId = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl'
+        elseif eraPrefix == constants.eras.era_b.prefix then
+            perronModelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
+        elseif eraPrefix == constants.eras.era_a.prefix then
+            perronModelId = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl'
+        end
+        result.models[#result.models + 1] = {
+            id = perronModelId,
+            slotId = slotId,
+            transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.5, 0.5, 0, 1}),
+            tag = tag
+        }
+        -- the model index must be in base 0 !
+        result.labelText[#result.models - 1] = { tostring(nTerminal), "↑" }
+    end,
     addPassengerLaneToStreet = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
         local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
         local lane2AreaTransf = transfUtils.get1MLaneTransf(
@@ -1140,7 +1160,6 @@ return {
 			-- local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf_Cycling(params, slotId, slotTransf, true)
             local zAdjustedTransf = slotTransf
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
 
 			local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
@@ -1206,6 +1225,51 @@ return {
 				modulesutil.TransformFaces(zAdjustedTransf, face)
 			end
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+        end,
+        flushExit_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+            local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+
+			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[(nTrackEdge == 1 and 1 or #params.terminals[nTerminal].centrePlatformsFineRelative)]
+			local pos1 = (nTrackEdge == 1)
+				and cpf.posTanX2[1][1]
+				or cpf.posTanX2[2][1]
+			local deltaPos = (nTrackEdge == 1)
+				and transfUtils.getVectorNormalised(
+					{
+						cpf.posTanX2[1][1][1] - cpf.posTanX2[2][1][1],
+						cpf.posTanX2[1][1][2] - cpf.posTanX2[2][1][2],
+						cpf.posTanX2[1][1][3] - cpf.posTanX2[2][1][3],
+					},
+					1
+				)
+				or transfUtils.getVectorNormalised(
+					{
+						cpf.posTanX2[2][1][1] - cpf.posTanX2[1][1][1],
+						cpf.posTanX2[2][1][2] - cpf.posTanX2[1][1][2],
+						cpf.posTanX2[2][1][3] - cpf.posTanX2[1][1][3],
+					},
+					1
+				)
+			local pos2 = {
+				pos1[1] + deltaPos[1],
+				pos1[2] + deltaPos[2],
+				pos1[3] + deltaPos[3],
+			}
+
+			local laneTransf = transfUtils.getTransfZShiftedBy(
+				transfUtils.get1MLaneTransf(pos1, pos2),
+				result.laneZs[nTerminal]
+			)
+
+			result.models[#result.models+1] = {
+				id = 'lollo_freestyle_train_station/passenger_lane_linkable_irregular.mdl',
+				slotId = slotId,
+				transf = laneTransf,
+				tag = tag
+			}
         end,
     },
     flatAreas = {
@@ -1363,24 +1427,7 @@ return {
 		end,
 
         addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            local isCargoTerminal = params.terminals[nTerminal].isCargo
-            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
-			local perronModelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
-            if (isCargoTerminal) then
-                perronModelId = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl'
-            elseif eraPrefix == constants.eras.era_b.prefix then
-                perronModelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
-            elseif eraPrefix == constants.eras.era_a.prefix then
-                perronModelId = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl'
-            end
-			result.models[#result.models + 1] = {
-				id = perronModelId,
-				slotId = slotId,
-				transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.5, 0.5, 0, 1}),
-				tag = tag
-			}
-			-- the model index must be in base 0 !
-			result.labelText[#result.models - 1] = { tostring(nTerminal), "↑" }
+            return privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
         end
     },
     lifts = {
