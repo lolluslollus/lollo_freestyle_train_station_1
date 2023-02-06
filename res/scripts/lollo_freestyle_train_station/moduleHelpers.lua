@@ -642,10 +642,13 @@ privateFuncs.slopedAreas = {
     
         return waitingAreaScaleFactor, xScaleFactor
     end,
+    isSlopedAreaAllowed = function(cpf, areaWidth)
+        return cpf.type == 0 or (cpf.type == 1 and areaWidth <= 2.5)
+    end,
     _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
         -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
         local terrainCoordinates = {}
-    
+
         local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
         local iN = nTrackEdge + 1
         local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
@@ -676,7 +679,7 @@ privateFuncs.slopedAreas = {
             end
         end
         -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
-    
+
         local faces = {}
         for tc = 1, #terrainCoordinates do
             local face = { }
@@ -998,7 +1001,11 @@ return {
             end
         end,
         doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-            wall2_5ModelId, wall5ModelId, wall_low_2_5ModelId, wall_low_5ModelId, pillar2_5ModelId, pillar5ModelId, isTunnelOk)
+            wall2_5ModelId, wall5ModelId,
+            wall_low_2_5ModelId, wall_low_5ModelId,
+            pillar2_5ModelId, pillar5ModelId,
+            isTunnelOk
+        )
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
@@ -1042,7 +1049,8 @@ return {
                             local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
 
                             local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, leadingIndex).width
-                            local basePosTanX2, xScaleFactor, yShiftFromSlopedArea, zShift = cpf.posTanX2, 1, (isTrackOnPlatformLeft and (-slopedAreaWidth) or slopedAreaWidth), 0
+                            if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
+                            local basePosTanX2, xScaleFactor, zShift = cpf.posTanX2, 1, 0
                             if slopedAreaWidth ~= 0 then
                                 local xRatio, yRatio = 1, 1
                                 basePosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
@@ -1054,7 +1062,6 @@ return {
                                 -- xScaleFactor = math.max(xRatio, yRatio) * 1.02
                                 -- print('xRatio, yRatio =', xRatio, yRatio)
                                 -- xScaleFactor = xRatio * 1.05
-                                yShiftFromSlopedArea = 0
                                 zShift = constants.platformSideBitsZ
                             end
                             local modelId = cpf.type == 2 
@@ -1064,7 +1071,7 @@ return {
                                 id = modelId,
                                 transf = transfUtilsUG.mul(
                                     _wallTransfFunc(basePosTanX2),
-                                    { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShiftFromSlopedArea, constants.platformRoofZ + zShift, 1 }
+                                    { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }
                                 ),
                                 tag = tag
                             }
@@ -1081,7 +1088,7 @@ return {
                                 and not(_barredNumberSignIIs[ii+1])
                                 and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
                                 then
-                                    local yShift4Pillar = isTrackOnPlatformLeft and (yShiftFromSlopedArea + 0.1) or (yShiftFromSlopedArea - 0.1)
+                                    local yShift4Pillar = isTrackOnPlatformLeft and 0.1 or -0.1
                                     local myTransf = transfUtilsUG.mul(
                                         privateFuncs.getPlatformObjectTransf_AlwaysVertical(basePosTanX2),
                                         { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift4Pillar, constants.platformRoofZ + zShift, 1 }
@@ -1092,7 +1099,7 @@ return {
                                         tag = tag,
                                     }
 
-                                    local yShift4PerronNumber = -platformWidth * 0.5 + 0.20 + yShiftFromSlopedArea
+                                    local yShift4PerronNumber = -platformWidth * 0.5 + 0.20
                                     local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
                                     if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
                                     elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
@@ -1764,71 +1771,87 @@ return {
         getYShift = function(params, t, i, slopedAreaWidth)
             local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
             if not(params.terminals[t].centrePlatformsRelative[i]) then return false end
-    
+
             local platformWidth = params.terminals[t].centrePlatformsRelative[i].width
             local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.85
             local yShiftOutside = isTrackOnPlatformLeft and -baseYShift or baseYShift
-    
+
             local yShiftOutside4StreetAccess = slopedAreaWidth * 2 -- - 1.2 -- - 1.8
-    
+
             return yShiftOutside, yShiftOutside4StreetAccess
         end,
         addAll = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey, isCargo)
-            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            local waitingAreaScaleFactor = areaWidth * 0.8
-            local ii1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
-            local iiN = isEndFiller and nTrackEdge or (nTrackEdge + 1)
-            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local _isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
+            local _waitingAreaScaleFactor = areaWidth * 0.8
+            local _i1 = _isEndFiller and nTrackEdge or (nTrackEdge - 1)
+            local _iN = _isEndFiller and nTrackEdge or (nTrackEdge + 1)
+            local _isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+
             local waitingAreaIndex = 0
             local nWaitingAreas = 0
-
-            local cpfs = params.terminals[nTerminal].centrePlatformsFineRelative
-            for ii = 1, #cpfs do
+            local isDecoBarred = false
+            local _cpfs = params.terminals[nTerminal].centrePlatformsFineRelative
+            for ii = 1, #_cpfs do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
-                if leadingIndex > iiN then break end
-                if leadingIndex >= ii1 then
-                    local platformWidth = cpf.width
-                    local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
-                        cpf.posTanX2,
-                        (isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
-                    )
-                    local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(centreAreaPosTanX2)
+                if leadingIndex > _iN then break end
+                if leadingIndex >= _i1 then
+                    -- allow any size on ground or 2.5 m on bridges
+                    local isCanBuild = privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, areaWidth)
+                    if isCanBuild then
+                        local platformWidth = cpf.width
+                        local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
+                            cpf.posTanX2,
+                            (_isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
+                        )
+                        local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(centreAreaPosTanX2)
+                        local xScaleFactor = math.max(xRatio * yRatio, 1.05) -- this is a bit crude but it's cheap
+                        logger.print('xScaleFactor w ratios =', xScaleFactor)
+                        result.models[#result.models+1] = {
+                            id = modelId,
+                            transf = transfUtilsUG.mul(
+                                myTransf,
+                                { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformSideBitsZ, 1 }
+                            ),
+                            tag = tag
+                        }
 
-                    local xScaleFactor = math.max(xRatio * yRatio, 1.05) -- this is a bit crude but it's cheap
-                    logger.print('xScaleFactor w ratios =', xScaleFactor)
-                    result.models[#result.models+1] = {
-                        id = modelId,
-                        transf = transfUtilsUG.mul(
-                            myTransf,
-                            { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformSideBitsZ, 1 }
-                        ),
-                        tag = tag
-                    }
-
-                    if waitingAreaModelId ~= nil
-                    and cpfs[ii - 2]
-                    and cpfs[ii - 2].leadingIndex >= ii1
-                    and cpfs[ii + 2]
-                    and cpfs[ii + 2].leadingIndex <= iiN then
-                        if math.fmod(waitingAreaIndex, 5) == 0 then
-                            result.models[#result.models+1] = {
-                                id = waitingAreaModelId,
-                                transf = transfUtilsUG.mul(
-                                    myTransf,
-                                    { 0, waitingAreaScaleFactor, 0, 0,  -waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
-                                ),
-                                tag = slotHelpers.mangleModelTag(nTerminal, isCargo),
-                            }
-                            nWaitingAreas = nWaitingAreas + 1
+                        if waitingAreaModelId ~= nil
+                        and _cpfs[ii - 2] ~= nil
+                        and _cpfs[ii - 2].leadingIndex >= _i1
+                        and _cpfs[ii + 2] ~= nil
+                        and _cpfs[ii + 2].leadingIndex <= _iN then
+                            if math.fmod(waitingAreaIndex, 5) == 0 then
+                                result.models[#result.models+1] = {
+                                    id = waitingAreaModelId,
+                                    transf = transfUtilsUG.mul(
+                                        myTransf,
+                                        { 0, _waitingAreaScaleFactor, 0, 0,  -_waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, result.laneZs[nTerminal], 1 }
+                                    ),
+                                    tag = slotHelpers.mangleModelTag(nTerminal, isCargo),
+                                }
+                                nWaitingAreas = nWaitingAreas + 1
+                            end
+                            waitingAreaIndex = waitingAreaIndex + 1
                         end
-                        waitingAreaIndex = waitingAreaIndex + 1
+                    else
+                        isDecoBarred = true
+                        if waitingAreaModelId ~= nil
+                        and _cpfs[ii - 2] ~= nil
+                        and _cpfs[ii - 2].leadingIndex >= _i1
+                        and _cpfs[ii + 2] ~= nil
+                        and _cpfs[ii + 2].leadingIndex <= _iN then
+                            if math.fmod(waitingAreaIndex, 5) == 0 then
+                                nWaitingAreas = nWaitingAreas + 1
+                            end
+                            waitingAreaIndex = waitingAreaIndex + 1
+                        end
                     end
                 end
             end
 
-            privateFuncs.slopedAreas._doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
-            if waitingAreaModelId ~= nil then
+            privateFuncs.slopedAreas._doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, _isEndFiller, areaWidth, groundFacesFillKey)
+            if waitingAreaModelId ~= nil and not(isDecoBarred) then
                 local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
                 local verticalTransf = privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2)
                 if isCargo then
