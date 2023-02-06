@@ -594,30 +594,18 @@ function data()
 							},
 							_laneZ
 						)
-						local myId = result.mangleId(
-							t,
-							i,
-							_constants.idBases.axialFlushExitSlotId
-							-- isCargoTerminal and _constants.idBases.axialFlushCargoExitSlotId or _constants.idBases.axialFlushExitSlotId
-						)
 						table.insert(result.slots, {
 							-- height = 0,
-							id = myId,
+							id = result.mangleId(t, i, _constants.idBases.axialFlushExitSlotId),
 							spacing = {1, 1, 1, 1},
 							transf = myTransf,
 							type = isCargoTerminal and _constants.axialFlushCargoExitModuleType or _constants.axialFlushPassengerExitModuleType,
 						})
 
 						if not(isCargoTerminal) then
-							local myEdgeId = result.mangleId(
-								t,
-								i,
-								_constants.idBases.axialPassengerEdgeSlotId
-								-- isCargoTerminal and _constants.idBases.axialFlushCargoExitSlotId or _constants.idBases.axialFlushExitSlotId
-							)
 							table.insert(result.slots, {
 								-- height = 0,
-								id = myEdgeId,
+								id = result.mangleId(t, i, _constants.idBases.axialEdgeSlotId),
 								spacing = {1, 1, 1, 1},
 								transf = myTransf,
 								type = _constants.axialPassengerEdgeModuleType,
