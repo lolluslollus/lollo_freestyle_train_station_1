@@ -292,7 +292,7 @@ function data()
 				end
 				_addCargoShelves()
 
-				local function _addOutsideExtensions()
+				local function _addSlopedAreas()
 					local _iMax = #params.terminals[t].centrePlatformsRelative
 					local iss = {}
 					for i = 2, _iMax, 3 do iss[#iss+1] = i end
@@ -377,7 +377,7 @@ function data()
 						end
 					end
 				end
-				_addOutsideExtensions()
+				_addSlopedAreas()
 
 				local function _addFlatAreas()
 					for i = 2, #params.terminals[t].centrePlatformsRelative -1 do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges
