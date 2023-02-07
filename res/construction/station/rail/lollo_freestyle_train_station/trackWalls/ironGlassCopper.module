@@ -21,7 +21,7 @@ function data()
 		},
 		description = {
 			name = _("WallIronGlassCopperName"),
-			description = _("WallTIronGlassCopperDesc"),
+			description = _("WallIronGlassCopperDesc"),
 			icon = "ui/lollo_freestyle_train_station/wallIronGlassCopper.tga"
 		},
 		metadata = { },
@@ -36,6 +36,7 @@ function data()
 			moduleHelpers.deco.doTrackWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
 			'lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_5m.mdl',
 			'lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl',
+			'lollo_freestyle_train_station/trackWalls/wall_base_grey_5m.mdl',
 			true)
 		end,
 

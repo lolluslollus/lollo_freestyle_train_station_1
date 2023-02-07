@@ -1125,6 +1125,7 @@ return {
         doTrackWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
             wall5ModelId,
             wall_low_5ModelId,
+            wall_base_5ModelId,
             isTunnelOk
         )
             -- check this coz it was added later
@@ -1152,12 +1153,18 @@ return {
                         local modelId = ctf.type == 2
                             and wall5ModelId
                             or wall_low_5ModelId
+                        local myTransf = transfUtilsUG.mul(
+                            _wallTransfFunc(basePosTanX2),
+                            { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }
+                        )
                         result.models[#result.models+1] = {
                             id = modelId,
-                            transf = transfUtilsUG.mul(
-                                _wallTransfFunc(basePosTanX2),
-                                { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }
-                            ),
+                            transf = myTransf,
+                            tag = tag
+                        }
+                        result.models[#result.models+1] = {
+                            id = wall_base_5ModelId,
+                            transf = myTransf,
                             tag = tag
                         }
                     end
