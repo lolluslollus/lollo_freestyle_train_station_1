@@ -403,7 +403,7 @@ local helpers = {
         return results
     end,
 
-    getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight)
+    getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight, isAddExtraProps)
         local _addExtraProps = function(source, target)
             if isAddTerrainHeight then
                 target.terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
@@ -415,7 +415,7 @@ local helpers = {
                 --     edgeResults[#edgeResults].posTanX2[2][1][2]
                 -- ))
             end
-            -- if isAddExtraProps then
+            if isAddExtraProps then
                 target.catenary = source.catenary -- this is not totally accurate since we ignore the inner bounds
                 target.era = source.era or _constants.eras.era_c.prefix -- idem
                 target.trackType = source.trackType -- idem
@@ -423,7 +423,7 @@ local helpers = {
                 target.type = source.type -- idem
                 target.typeIndex = source.typeIndex -- idem
                 target.width = source.width or 0 -- idem
-            -- end
+            end
         end
 
         logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'first 3 and last 3 edgeLists =') --logger.debugPrint(edgeLists)
@@ -617,7 +617,7 @@ local helpers = {
                                 previousNodeBetween.position.z,
                             },
                             {
-                                previousNodeBetween.tangent.x * lengthUncovered, -- LOLLO TODO shouldn't this be some square or cubic root?
+                                previousNodeBetween.tangent.x * lengthUncovered,
                                 previousNodeBetween.tangent.y * lengthUncovered,
                                 previousNodeBetween.tangent.z * lengthUncovered,
                             }
@@ -629,7 +629,7 @@ local helpers = {
                                 previousRefEdge.posTanX2[2][1][3],
                             },
                             {
-                                previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength, -- LOLLO TODO also here, and also above
+                                previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength,
                                 previousRefEdge.posTanX2[2][2][2] * lengthUncovered / previousRefEdgeLength,
                                 previousRefEdge.posTanX2[2][2][3] * lengthUncovered / previousRefEdgeLength,
                             }
@@ -648,7 +648,7 @@ local helpers = {
         return results
     end,
 
-    calcCentralEdgePositions_GroupByMultiple = function(edgeLists, multiple, isAddTerrainHeight)
+    calcCentralEdgePositions_GroupByMultiple = function(edgeLists, multiple, isAddTerrainHeight, isAddExtraProps)
         logger.print('getCentralEdgePositions_GroupByMultiple starting, multiple =', multiple, 'edgeLists =') --logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(multiple) ~= 'number' or math.floor(multiple) < 2 then
             logger.err('getCentralEdgePositions_GroupByMultiple got wrong parameters, leaving')
@@ -683,13 +683,15 @@ local helpers = {
                         refEdge.posTanX2[1][2][3] * multiple,
                     }
                 }
-                newEdge.catenary = refEdge.catenary
-                newEdge.era = refEdge.era or _constants.eras.era_c.prefix
-                newEdge.trackType = refEdge.trackType
-                newEdge.trackTypeName = refEdge.trackTypeName
-                newEdge.type = refEdge.type
-                newEdge.typeIndex = refEdge.typeIndex
-                newEdge.width = refEdge.width or 0
+                if isAddExtraProps then
+                    newEdge.catenary = refEdge.catenary
+                    newEdge.era = refEdge.era or _constants.eras.era_c.prefix
+                    newEdge.trackType = refEdge.trackType
+                    newEdge.trackTypeName = refEdge.trackTypeName
+                    newEdge.type = refEdge.type
+                    newEdge.typeIndex = refEdge.typeIndex
+                    newEdge.width = refEdge.width or 0
+                end
                 if isAddTerrainHeight then
                     newEdge.terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
                         newEdge.posTanX2[1][1][1],

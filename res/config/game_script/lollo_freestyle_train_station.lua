@@ -1931,12 +1931,14 @@ function data()
                             eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 platformEdgeList_orientated,
                                 _constants.fineSegmentLength,
-                                false
+                                false,
+                                true
                             )
 
                             eventArgs.centrePlatforms = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
                                 eventArgs.centrePlatformsFine,
                                 args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
+                                true,
                                 true
                             )
                             logger.print('_setPlatformProps set eventArgs.centrePlatforms =') logger.debugPrint(eventArgs.centrePlatforms)
@@ -2013,13 +2015,15 @@ function data()
                             eventArgs.centreTracksFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 trackEdgeList_orientated,
                                 _constants.fineSegmentLength,
+                                false,
                                 false
                             )
 
                             eventArgs.centreTracks = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
                                 eventArgs.centreTracksFine,
                                 args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
-                                true
+                                false,
+                                false
                             )
                             logger.print('_setTrackProps set eventArgs.centreTracks =') logger.debugPrint(eventArgs.centreTracks)
                             logger.print('_setTrackProps set eventArgs.centreTracksFine =') logger.debugPrint(eventArgs.centreTracksFine)
