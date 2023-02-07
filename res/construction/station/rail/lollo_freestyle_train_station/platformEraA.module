@@ -7,7 +7,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "deco", },
+			categories = { "platform-deco", },
 		},
 		cost = {
 			price = 0,

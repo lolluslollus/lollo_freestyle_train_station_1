@@ -1,6 +1,6 @@
 function data()
 	return {
-		name = _("deco"),
+		name = _("platform-deco"),
 		order = 60,
 	}
 end
