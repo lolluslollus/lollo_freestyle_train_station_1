@@ -47,10 +47,6 @@ function data()
 					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
-			results[#results+1] = {
-				id = 'lollo_freestyle_train_station/platformWalls/tiled/platformWallPillar_2_5m.mdl',
-				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
-			}
 			results[#results+1] = moduleHelpers.deco.getPreviewIcon(params)
 			return results
 		end
