@@ -159,7 +159,12 @@ function data()
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
 					},
-					[_constants.wallModuleType] = {
+					[_constants.platformWallModuleType] = {
+						maxModules = -1,
+						message = nil, --'LOLLO slotConfig message',
+						skipCollisionCheck = true,
+					},
+					[_constants.trackWallModuleType] = {
 						maxModules = -1,
 						message = nil, --'LOLLO slotConfig message',
 						skipCollisionCheck = true,
@@ -663,7 +668,7 @@ function data()
 								id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
 								spacing = _wallSpacing,
 								transf = wallTransf,
-								type = _constants.wallModuleType,
+								type = _constants.platformWallModuleType,
 							})
 						end
 					end
@@ -671,6 +676,9 @@ function data()
 				_addPlatformRoofsAndWalls()
 
 				local function _addTrackWalls()
+					-- check this coz it was added later
+					if type(params.terminals[t].centreTracksRelative) ~= 'table' then return end
+
 					local _wallSpacing = isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
 					local _iMax = #params.terminals[t].centreTracksRelative
 					local iss = {}
@@ -679,17 +687,17 @@ function data()
 					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
 
 					for _, i in pairs(iss) do
-						local cpl = params.terminals[t].centreTracksRelative[i]
-						local cplM1 = params.terminals[t].centreTracksRelative[i-1] or {type = cpl.type}
-						local cplP1 = params.terminals[t].centreTracksRelative[i+1] or {type = cpl.type}
-						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
+						local ctl = params.terminals[t].centreTracksRelative[i]
+						local ctlM1 = params.terminals[t].centreTracksRelative[i-1] or {type = ctl.type}
+						local ctlP1 = params.terminals[t].centreTracksRelative[i+1] or {type = ctl.type}
+						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(ctl.posTanX2)
 						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
 
 						table.insert(result.slots, {
 							id = result.mangleId(t, i, _constants.idBases.trackWallSlotId),
 							spacing = _wallSpacing,
 							transf = transfUtils.getTransfZShiftedBy(myTransf, 3),
-							type = _constants.wallModuleType,
+							type = _constants.trackWallModuleType,
 						})
 					end
 				end

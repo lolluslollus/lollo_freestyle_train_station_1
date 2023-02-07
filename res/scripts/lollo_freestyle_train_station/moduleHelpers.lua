@@ -1122,6 +1122,48 @@ return {
                 end
             end
         end,
+        doTrackWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+            wall5ModelId,
+            wall_low_5ModelId,
+            isTunnelOk
+        )
+            -- check this coz it was added later
+            if type(params.terminals[nTerminal].centreTracksFineRelative) ~= 'table' then return end
+
+            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local transfXZoom = isTrackOnPlatformLeft and -1 or 1
+            local transfYZoom = isTrackOnPlatformLeft and -1 or 1
+            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
+
+            local _wallTransfFunc = privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) == 0
+                and privateFuncs.getPlatformObjectTransf_WithYRotation
+                or privateFuncs.getPlatformObjectTransf_AlwaysVertical
+
+            local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+            local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+
+            for ii = 1, #params.terminals[nTerminal].centreTracksFineRelative, privateConstants.deco.ceilingStep do
+                local ctf = params.terminals[nTerminal].centreTracksFineRelative[ii]
+                local leadingIndex = ctf.leadingIndex
+                if leadingIndex > _iMax then break end
+                if leadingIndex >= _i1 then
+                    if isTunnelOk or ctf.type ~= 2 then -- ground or bridge, tunnel only if allowed
+                        local basePosTanX2, xScaleFactor, zShift = ctf.posTanX2, 1, 0
+                        local modelId = ctf.type == 2
+                            and wall5ModelId
+                            or wall_low_5ModelId
+                        result.models[#result.models+1] = {
+                            id = modelId,
+                            transf = transfUtilsUG.mul(
+                                _wallTransfFunc(basePosTanX2),
+                                { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }
+                            ),
+                            tag = tag
+                        }
+                    end
+                end
+            end
+        end,
     },
     edges = {
         addEdges = function(result, tag, params, t)

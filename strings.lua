@@ -315,6 +315,7 @@ function data()
 			["passenger-road-access-stairs"] = "Stairs -> road",
 			["passenger-up-and-down"] = "Up and down",
 			["track-crossings"] = "Track crossings",
+			["track-deco"] = "Track Deco",
 			["train-tracks"] = "Train tracks",
 			["waypoints-for-freestyle-station"] = "Waypoints For Freestyle Stations",
 
