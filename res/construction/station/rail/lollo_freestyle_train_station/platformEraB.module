@@ -19,7 +19,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 42,
+			value = 52,
 		},
 		type = _constants.era_b_platformModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
