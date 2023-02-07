@@ -302,6 +302,14 @@ local _actions = {
                 args.centrePlatformsFine,
                 _getRelativePosTanX2s
             ),
+            centreTracksRelative = arrayUtils.map(
+                args.centreTracks,
+                _getRelativePosTanX2s
+            ),
+            centreTracksFineRelative = arrayUtils.map(
+                args.centreTracksFine,
+                _getRelativePosTanX2s
+            ),
             trackEdgeListMidIndex = args.trackEdgeListMidIndex,
             leftPlatformsRelative = arrayUtils.map(
                 args.leftPlatforms,
@@ -309,6 +317,14 @@ local _actions = {
             ),
             rightPlatformsRelative = arrayUtils.map(
                 args.rightPlatforms,
+                _getRelativePosTanX2s
+            ),
+            leftTracksRelative = arrayUtils.map(
+                args.leftTracks,
+                _getRelativePosTanX2s
+            ),
+            rightTracksRelative = arrayUtils.map(
+                args.rightTracks,
                 _getRelativePosTanX2s
             ),
             crossConnectorsRelative = arrayUtils.map(
@@ -1887,7 +1903,10 @@ function data()
                                 return result
                             end
                         end
+
                         local isTrackOnPlatformLeft = _reverseScrambledTracksAndPlatforms()
+                        local isTrackNWOfPlatform = stationHelpers.getIsTrackNorthOfPlatform(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
+                        logger.print('isTrackOnPlatformLeft, isTrackNWOfPlatform', isTrackOnPlatformLeft, isTrackNWOfPlatform)
 
                         local _setPlatformProps = function(platformEdgeList_notOrientated, midTrackEdge)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
@@ -1896,7 +1915,6 @@ function data()
                             -- There is also less data in centrePlatformsFine.
                             -- print('platformEdgeList_notOrientated =') debugPrint(platformEdgeList_notOrientated)
                             logger.print('_setPlatformProps starting')
-                            local isTrackNWOfPlatform = stationHelpers.getIsTrackNorthOfPlatform(platformEdgeList_notOrientated, midTrackEdge)
                             -- this name is for compatibility with older versions. Otherwise, I would choose a different name,
                             -- since we have two "isTrackOnPlatformLeft" with different meanings.
                             -- This comes with version 1.81, which adds the orientation
@@ -1979,6 +1997,38 @@ function data()
                             end
                         end
                         _setPlatformProps(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
+
+                        local _setTrackProps = function(trackEdgeList_notOrientated, midTrackEdge)
+                            -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
+                            -- The result is much neater, irrespective of how the user placed the edges.
+                            -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel, as large as _constants.fineSegmentLength
+                            -- There is also less data in centrePlatformsFine.
+                            -- print('platformEdgeList_notOrientated =') debugPrint(platformEdgeList_notOrientated)
+                            logger.print('_setTrackProps starting')
+
+                            local trackEdgeList_orientated = isTrackNWOfPlatform
+                            and arrayUtils.cloneDeepOmittingFields(trackEdgeList_notOrientated)
+                            or stationHelpers.reversePosTanX2ListInPlace(arrayUtils.cloneDeepOmittingFields(trackEdgeList_notOrientated))
+
+                            eventArgs.centreTracksFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
+                                trackEdgeList_orientated,
+                                _constants.fineSegmentLength,
+                                false
+                            )
+
+                            eventArgs.centreTracks = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
+                                eventArgs.centreTracksFine,
+                                args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
+                                true
+                            )
+                            logger.print('_setTrackProps set eventArgs.centreTracks =') logger.debugPrint(eventArgs.centreTracks)
+                            logger.print('_setTrackProps set eventArgs.centreTracksFine =') logger.debugPrint(eventArgs.centreTracksFine)
+
+                            local trackWidth = 5 -- LOLLO NOTE this is constant in the game
+                            eventArgs.leftTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, - trackWidth * 0.45)
+                            eventArgs.rightTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, trackWidth * 0.45)
+                        end
+                        _setTrackProps(eventArgs.trackEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
                         _actions.removeTracks(
                             platformEdgeIdsBetweenNodeIds,

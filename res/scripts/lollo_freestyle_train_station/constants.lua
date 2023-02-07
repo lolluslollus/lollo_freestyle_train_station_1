@@ -322,6 +322,7 @@ local constants = {
         trackSpeedSlotId = 61000000,
         platformRoofSlotId = 70000000,
         platformWallSlotId = 71000000,
+        trackWallSlotId = 72000000,
         platformEraASlotId = 80000000,
         platformEraBSlotId = 81000000,
         platformEraCSlotId = 82000000,

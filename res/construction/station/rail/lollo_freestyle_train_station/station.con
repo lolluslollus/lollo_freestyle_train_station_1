@@ -616,8 +616,6 @@ function data()
 				_addAxialExits()
 
 				local function _addPlatformRoofsAndWalls()
-					if isCargoTerminal then return end
-
 					local _roofSpacing = isTrackOnPlatformLeft and {-1.1, 2, -0.1, 0.9} or {2, -1.1, 0.9, -0.1}
 					local _wallSpacing = isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
 					local _iMax = #params.terminals[t].centrePlatformsRelative
@@ -633,13 +631,15 @@ function data()
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
 						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
 						myTransf = transfUtils.getTransfZShiftedBy(myTransf, 3)
-						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
-							table.insert(result.slots, {
-								id = result.mangleId(t, i, _constants.idBases.platformRoofSlotId),
-								spacing = _roofSpacing,
-								transf = myTransf,
-								type = _constants.platformRoofModuleType,
-							})
+						if not(isCargoTerminal) then
+							if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
+								table.insert(result.slots, {
+									id = result.mangleId(t, i, _constants.idBases.platformRoofSlotId),
+									spacing = _roofSpacing,
+									transf = myTransf,
+									type = _constants.platformRoofModuleType,
+								})
+							end
 						end
 
 						if (
@@ -669,6 +669,31 @@ function data()
 					end
 				end
 				_addPlatformRoofsAndWalls()
+
+				local function _addTrackWalls()
+					local _wallSpacing = isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
+					local _iMax = #params.terminals[t].centreTracksRelative
+					local iss = {}
+					for i = 2, _iMax, 3 do iss[#iss+1] = i end
+					-- fill the last if any
+					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
+
+					for _, i in pairs(iss) do
+						local cpl = params.terminals[t].centreTracksRelative[i]
+						local cplM1 = params.terminals[t].centreTracksRelative[i-1] or {type = cpl.type}
+						local cplP1 = params.terminals[t].centreTracksRelative[i+1] or {type = cpl.type}
+						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
+						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
+
+						table.insert(result.slots, {
+							id = result.mangleId(t, i, _constants.idBases.trackWallSlotId),
+							spacing = _wallSpacing,
+							transf = transfUtils.getTransfZShiftedBy(myTransf, 3),
+							type = _constants.wallModuleType,
+						})
+					end
+				end
+				_addTrackWalls()
 
 				local _addUpDownSlots = function()
 					if isCargoTerminal then return end
