@@ -431,14 +431,15 @@ local helpers = {
             logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
             return {}
         end
-        logger.debugPrint(edgeLists[1])
-        logger.debugPrint(edgeLists[2])
-        logger.debugPrint(edgeLists[3])
-        logger.print('...')
-        logger.debugPrint(edgeLists[#edgeLists-2])
-        logger.debugPrint(edgeLists[#edgeLists-1])
-        logger.debugPrint(edgeLists[#edgeLists])
-
+        if logger.isExtendedLog() then
+            logger.debugPrint(edgeLists[1])
+            logger.debugPrint(edgeLists[2])
+            logger.debugPrint(edgeLists[3])
+            logger.print('...')
+            logger.debugPrint(edgeLists[#edgeLists-2])
+            logger.debugPrint(edgeLists[#edgeLists-1])
+            logger.debugPrint(edgeLists[#edgeLists])
+        end
         local firstRefEdge = nil
         local firstRefEdgeLength = 0
         local lengthUncovered = 0
@@ -641,10 +642,12 @@ local helpers = {
                 logger.err('there is a piece missing')
             end
         end
-        logger.print('getCentralEdgePositions_OnlyOuterBounds last 3 results =')
-        logger.debugPrint(results[#results-2])
-        logger.debugPrint(results[#results-1])
-        logger.debugPrint(results[#results])
+        if logger.isExtendedLog() then
+            logger.print('getCentralEdgePositions_OnlyOuterBounds last 3 results =')
+            logger.debugPrint(results[#results-2])
+            logger.debugPrint(results[#results-1])
+            logger.debugPrint(results[#results])
+        end
         return results
     end,
 
