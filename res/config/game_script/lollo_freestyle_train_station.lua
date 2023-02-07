@@ -290,6 +290,7 @@ local _actions = {
             record.posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf)
             return record
         end
+        -- local memorySizeBefore = collectgarbage('count')
         local params_newTerminal = {
             isCargo = args.isCargo,
             platformEdgeLists = args.platformEdgeList,
@@ -335,7 +336,6 @@ local _actions = {
             isTrackOnPlatformLeft = args.isTrackOnPlatformLeft,
             -- slopedAreasFineRelative = {},
         }
-
         for _, cwas in pairs(args.cargoWaitingAreas) do
             params_newTerminal.cargoWaitingAreasRelative[#params_newTerminal.cargoWaitingAreasRelative+1] = arrayUtils.map(
                 cwas,
@@ -391,6 +391,9 @@ local _actions = {
             newCon.transf = oldCon.transf
         end
         newCon.playerEntity = api.engine.util.getPlayer()
+        -- local memorySizeAfter = collectgarbage('count')
+        -- local roughTableSize = memorySizeAfter - memorySizeBefore
+        -- logger.print('rough table size (kB) =', roughTableSize, 'memory size now (kB) =', memorySizeAfter)
 
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
