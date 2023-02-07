@@ -234,6 +234,8 @@ function data()
 			["WallConcretePlainDesc"] = "Concrete wall, also suitable for tunnels. Adjust slantness with <m> and <n>.",
 			["WallConcretePlainWRoofName"] = "Concrete wall and roof, plain",
 			["WallConcretePlainWRoofDesc"] = "Concrete wall and roof for passenger platforms",
+			["WallIronName"] = "Iron fence",
+			["WallIronDesc"] = "Iron fence, also suitable for tunnels. Adjust slantness with <m> and <n>.",
 			["WallIronGlassCopperName"] = "Iron and glass wall",
 			["WallIronGlassCopperDesc"] = "Iron and glass wall, also suitable for tunnels. Adjust slantness with <m> and <n>.",
 			["WallIronGlassCopperWRoofName"] = "Iron and glass wall and roof",
