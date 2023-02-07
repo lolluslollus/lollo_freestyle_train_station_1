@@ -405,6 +405,15 @@ local helpers = {
 
     getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight, isAddExtraProps)
         local _addExtraProps = function(source, target)
+            target.width = source.width or 0 -- idem
+            if isAddExtraProps then
+                target.catenary = source.catenary -- this is not totally accurate since we ignore the inner bounds
+                target.era = source.era or _constants.eras.era_c.prefix -- idem
+                target.trackType = source.trackType -- idem
+                target.trackTypeName = source.trackTypeName -- idem
+                target.type = source.type -- idem
+                target.typeIndex = source.typeIndex -- idem
+            end
             if isAddTerrainHeight then
                 target.terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
                     target.posTanX2[1][1][1],
@@ -414,15 +423,6 @@ local helpers = {
                 --     edgeResults[#edgeResults].posTanX2[2][1][1],
                 --     edgeResults[#edgeResults].posTanX2[2][1][2]
                 -- ))
-            end
-            if isAddExtraProps then
-                target.catenary = source.catenary -- this is not totally accurate since we ignore the inner bounds
-                target.era = source.era or _constants.eras.era_c.prefix -- idem
-                target.trackType = source.trackType -- idem
-                target.trackTypeName = source.trackTypeName -- idem
-                target.type = source.type -- idem
-                target.typeIndex = source.typeIndex -- idem
-                target.width = source.width or 0 -- idem
             end
         end
 
@@ -686,6 +686,7 @@ local helpers = {
                         refEdge.posTanX2[1][2][3] * multiple,
                     }
                 }
+                newEdge.width = refEdge.width or 0
                 if isAddExtraProps then
                     newEdge.catenary = refEdge.catenary
                     newEdge.era = refEdge.era or _constants.eras.era_c.prefix
@@ -693,7 +694,6 @@ local helpers = {
                     newEdge.trackTypeName = refEdge.trackTypeName
                     newEdge.type = refEdge.type
                     newEdge.typeIndex = refEdge.typeIndex
-                    newEdge.width = refEdge.width or 0
                 end
                 if isAddTerrainHeight then
                     newEdge.terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(

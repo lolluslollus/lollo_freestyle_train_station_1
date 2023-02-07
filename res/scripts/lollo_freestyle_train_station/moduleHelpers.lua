@@ -1131,8 +1131,8 @@ return {
             if type(params.terminals[nTerminal].centreTracksFineRelative) ~= 'table' then return end
 
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-            local transfXZoom = isTrackOnPlatformLeft and -1 or 1
-            local transfYZoom = isTrackOnPlatformLeft and -1 or 1
+            local transfXZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
+            local transfYZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
             local _wallTransfFunc = privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) == 0

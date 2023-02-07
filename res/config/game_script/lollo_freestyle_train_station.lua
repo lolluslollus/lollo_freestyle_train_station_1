@@ -2001,11 +2001,7 @@ function data()
                         _setPlatformProps(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
                         local _setTrackProps = function(trackEdgeList_notOrientated, midTrackEdge)
-                            -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
-                            -- The result is much neater, irrespective of how the user placed the edges.
-                            -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel, as large as _constants.fineSegmentLength
-                            -- There is also less data in centrePlatformsFine.
-                            -- print('platformEdgeList_notOrientated =') debugPrint(platformEdgeList_notOrientated)
+                            -- This is as new as Feb 2023
                             logger.print('_setTrackProps starting')
 
                             local trackEdgeList_orientated = isTrackNWOfPlatform
@@ -2028,7 +2024,11 @@ function data()
                             logger.print('_setTrackProps set eventArgs.centreTracks =') logger.debugPrint(eventArgs.centreTracks)
                             logger.print('_setTrackProps set eventArgs.centreTracksFine =') logger.debugPrint(eventArgs.centreTracksFine)
 
-                            local trackWidth = 5 -- LOLLO NOTE this is constant in the game
+                            local midCentreTrackItem = eventArgs.centreTracks[math.ceil(#eventArgs.centreTracks / 2)]
+                            logger.print('_setTrackProps found midCentrePlatformItem =') logger.debugPrint(midCentreTrackItem)
+
+                            local trackWidth = midCentreTrackItem.width  -- LOLLO NOTE this is constant in the game but it might change one day, so we still read it.
+
                             eventArgs.leftTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, - trackWidth * 0.45)
                             eventArgs.rightTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, trackWidth * 0.45)
                         end
