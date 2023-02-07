@@ -426,11 +426,18 @@ local helpers = {
             -- end
         end
 
-        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'edgeLists =') --logger.debugPrint(edgeLists)
+        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'first 3 and last 3 edgeLists =') --logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
             logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
             return {}
         end
+        logger.debugPrint(edgeLists[1])
+        logger.debugPrint(edgeLists[2])
+        logger.debugPrint(edgeLists[3])
+        logger.print('...')
+        logger.debugPrint(edgeLists[#edgeLists-2])
+        logger.debugPrint(edgeLists[#edgeLists-1])
+        logger.debugPrint(edgeLists[#edgeLists])
 
         local firstRefEdge = nil
         local firstRefEdgeLength = 0
@@ -610,7 +617,7 @@ local helpers = {
                                 previousNodeBetween.position.z,
                             },
                             {
-                                previousNodeBetween.tangent.x * lengthUncovered,
+                                previousNodeBetween.tangent.x * lengthUncovered, -- LOLLO TODO shouldn't this be some square or cubic root?
                                 previousNodeBetween.tangent.y * lengthUncovered,
                                 previousNodeBetween.tangent.z * lengthUncovered,
                             }
@@ -622,7 +629,7 @@ local helpers = {
                                 previousRefEdge.posTanX2[2][1][3],
                             },
                             {
-                                previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength,
+                                previousRefEdge.posTanX2[2][2][1] * lengthUncovered / previousRefEdgeLength, -- LOLLO TODO also here, and also above
                                 previousRefEdge.posTanX2[2][2][2] * lengthUncovered / previousRefEdgeLength,
                                 previousRefEdge.posTanX2[2][2][3] * lengthUncovered / previousRefEdgeLength,
                             }
@@ -634,7 +641,10 @@ local helpers = {
                 logger.err('there is a piece missing')
             end
         end
-        logger.print('getCentralEdgePositions_OnlyOuterBounds results =') --logger.debugPrint(results)
+        logger.print('getCentralEdgePositions_OnlyOuterBounds last 3 results =')
+        logger.debugPrint(results[#results-2])
+        logger.debugPrint(results[#results-1])
+        logger.debugPrint(results[#results])
         return results
     end,
 
