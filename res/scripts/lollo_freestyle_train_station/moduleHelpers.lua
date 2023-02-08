@@ -1001,8 +1001,8 @@ return {
             end
         end,
         doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-            wall2_5ModelId, wall5ModelId,
-            wall_low_2_5ModelId, wall_low_5ModelId,
+            wall2_5ModelId,
+            wall_low_2_5ModelId,
             pillar2_5ModelId, pillar5ModelId,
             isTunnelOk
         )
@@ -1040,7 +1040,7 @@ return {
             local _getWidthAbove2_5mBarePlatformWidth = function(cpf)
                 local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, cpf.leadingIndex).width
                 if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
-                return (cpf.width - 2.5) * 0.5 + slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
+                return (cpf.width - 2.5) * 0.5 + slopedAreaWidth, slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
             end
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
@@ -1052,7 +1052,8 @@ return {
                         -- no stations in this fine segment
                         if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
                             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                            local widthAboveMinimum, basePosTanX2, xScaleFactor, zShift = _getWidthAbove2_5mBarePlatformWidth(cpf), cpf.posTanX2, 1, 0
+                            local widthAboveMinimum, slopedAreaWidth = _getWidthAbove2_5mBarePlatformWidth(cpf)
+                            local basePosTanX2, xScaleFactor, zShift = cpf.posTanX2, 1, 0
                             if widthAboveMinimum ~= 0 then
                                 local xRatio, yRatio = 1, 1
                                 basePosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
@@ -1064,11 +1065,10 @@ return {
                                 -- xScaleFactor = math.max(xRatio, yRatio) * 1.02
                                 -- print('xRatio, yRatio =', xRatio, yRatio)
                                 -- xScaleFactor = xRatio * 1.05
+                            end
+                            if slopedAreaWidth > 0 then
                                 zShift = constants.platformSideBitsZ
                             end
-                            -- local wallModelId = cpf.type == 2
-                            --     and (platformWidth < 5 and wall2_5ModelId or wall5ModelId)
-                            --     or (platformWidth < 5 and wall_low_2_5ModelId or wall_low_5ModelId)
                             local wallModelId = cpf.type == 2 and wall2_5ModelId or wall_low_2_5ModelId
                             result.models[#result.models+1] = {
                                 id = wallModelId,
