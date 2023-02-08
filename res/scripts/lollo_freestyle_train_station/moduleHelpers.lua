@@ -1021,11 +1021,13 @@ return {
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
 
+            local isFreeFromRoof = {}
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
             for i = _i1, _iMax, 1 do
                 isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
                 isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
+                isFreeFromRoof[i] = not(params.modules[result.mangleId(nTerminal, i, constants.idBases.platformRoofSlotId)])
             end
 
             -- flat areas and deco are shifted by this amount, and it makes sense this way, so we must account for it
@@ -1047,10 +1049,10 @@ return {
                         if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
                             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                             local platformWidth = cpf.width
-                            local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
 
                             local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, leadingIndex).width
                             if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
+
                             local basePosTanX2, xScaleFactor, zShift = cpf.posTanX2, 1, 0
                             if slopedAreaWidth ~= 0 then
                                 local xRatio, yRatio = 1, 1
@@ -1065,14 +1067,19 @@ return {
                                 -- xScaleFactor = xRatio * 1.05
                                 zShift = constants.platformSideBitsZ
                             end
-                            local wallModelId = cpf.type == 2 
+                            local wallModelId = cpf.type == 2
                                 and (platformWidth < 5 and wall2_5ModelId or wall5ModelId)
                                 or (platformWidth < 5 and wall_low_2_5ModelId or wall_low_5ModelId)
                             result.models[#result.models+1] = {
                                 id = wallModelId,
                                 transf = transfUtilsUG.mul(
                                     _wallTransfFunc(basePosTanX2),
-                                    { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }
+                                    {
+                                        transfXZoom * xScaleFactor, 0, 0, 0,
+                                        0, transfYZoom, 0, 0,
+                                        0, 0, 1, 0,
+                                        0, 0, constants.platformRoofZ + zShift, 1
+                                    }
                                 ),
                                 tag = tag
                             }
@@ -1080,44 +1087,49 @@ return {
                             if cpf.type ~= 2
                             and not(isSkipPillars)
                             -- and slopedAreaWidth == 0
-                            and isFreeFromOpenStairs
+                            and isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
+                            and isFreeFromRoof[leadingIndex]
                             and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0
-                            -- no platform numbers if there is a roof
-                            and not(params.modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.platformRoofSlotId)])
+                            -- prevent overlapping with station name signs
+                            and not(_barredNumberSignIIs[ii])
+                            and not(_barredNumberSignIIs[ii+1])
+                            and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
                             then
-                                -- prevent overlapping with station name signs
-                                if not(_barredNumberSignIIs[ii])
-                                and not(_barredNumberSignIIs[ii+1])
-                                and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
-                                then
-                                    local yShift4Pillar = isTrackOnPlatformLeft and 0.1 or -0.1
-                                    local myTransf = transfUtilsUG.mul(
-                                        privateFuncs.getPlatformObjectTransf_AlwaysVertical(basePosTanX2),
-                                        { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift4Pillar, constants.platformRoofZ + zShift, 1 }
-                                    )
-                                    result.models[#result.models+1] = {
-                                        id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
-                                        transf = myTransf,
-                                        tag = tag,
+                                local myTransf = transfUtilsUG.mul(
+                                    privateFuncs.getPlatformObjectTransf_AlwaysVertical(basePosTanX2),
+                                    {
+                                        transfXZoom, 0, 0, 0,
+                                        0, transfYZoom, 0, 0,
+                                        0, 0, 1, 0,
+                                        0, isTrackOnPlatformLeft and 0.1 or -0.1, constants.platformRoofZ + zShift, 1
                                     }
+                                )
+                                result.models[#result.models+1] = {
+                                    id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
+                                    transf = myTransf,
+                                    tag = tag,
+                                }
 
-                                    local yShift4PerronNumber = -platformWidth * 0.5 + 0.20
-                                    local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                                    if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                                    elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
-                                    end
-                                    result.models[#result.models + 1] = {
-                                        id = perronNumberModelId,
-                                        slotId = slotId,
-                                        transf = transfUtilsUG.mul(
-                                            myTransf,
-                                            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift4PerronNumber, 4.83 + zShift, 1 }
-                                        ),
-                                        tag = tag
-                                    }
-                                    -- the model index must be in base 0 !
-                                    result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+                                local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                                if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                                elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
                                 end
+                                result.models[#result.models + 1] = {
+                                    id = perronNumberModelId,
+                                    slotId = slotId,
+                                    transf = transfUtilsUG.mul(
+                                        myTransf,
+                                        {
+                                            1, 0, 0, 0,
+                                            0, 1, 0, 0,
+                                            0, 0, 1, 0,
+                                            0, -platformWidth * 0.5 + 0.20, 4.83 + zShift, 1
+                                        }
+                                    ),
+                                    tag = tag
+                                }
+                                -- the model index must be in base 0 !
+                                result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
                             end
                         end
                     end
