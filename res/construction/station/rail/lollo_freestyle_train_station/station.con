@@ -689,8 +689,6 @@ function data()
 
 					for _, i in pairs(iss) do
 						local ctl = params.terminals[t].centreTracksRelative[i]
-						local ctlM1 = params.terminals[t].centreTracksRelative[i-1] or {type = ctl.type}
-						local ctlP1 = params.terminals[t].centreTracksRelative[i+1] or {type = ctl.type}
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(ctl.posTanX2)
 						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
 
