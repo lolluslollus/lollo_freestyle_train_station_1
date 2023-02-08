@@ -680,6 +680,7 @@ function data()
 					-- check this coz it was added later
 					if type(params.terminals[t].centreTracksRelative) ~= 'table' then return end
 
+					-- do not confuse the tracks array with the platforms array: they are similar but different
 					local _wallSpacing = isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
 					local _iMax = #params.terminals[t].centreTracksRelative
 					local iss = {}

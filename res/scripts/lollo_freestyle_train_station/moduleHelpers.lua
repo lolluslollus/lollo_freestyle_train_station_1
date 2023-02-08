@@ -1136,6 +1136,7 @@ return {
             -- check this coz it was added later
             if type(params.terminals[nTerminal].centreTracksFineRelative) ~= 'table' then return end
 
+            -- do not confuse the tracks array with the platforms array: they are similar but different
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
