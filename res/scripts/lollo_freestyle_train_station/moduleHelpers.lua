@@ -1142,9 +1142,8 @@ return {
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
 
-            -- print('params.terminals[nTerminal].centreTracksFineRelative[1] =') debugPrint(params.terminals[nTerminal].centreTracksFineRelative[1])
-            -- print('params.terminals[nTerminal].centreTracksRelative[1] =') debugPrint(params.terminals[nTerminal].centreTracksRelative[1])
-            -- query the first platform segment coz track segment have no knowledge of the era, it only has leadingIndex, posTanX2 and width.
+            -- query the first platform segment coz track segments, unlike platform segments,
+            -- have no knowledge of the era: they only have leadingIndex, posTanX2 and width.
             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
             local wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
             if eraPrefix == constants.eras.era_a.prefix then
