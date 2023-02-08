@@ -1,75 +1,97 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 4848,
-					offset = 15576,
+					count = 2712,
+					offset = 10456,
 				},
 				position = {
-					count = 4848,
-					offset = 5880,
+					count = 2712,
+					offset = 13168,
 				},
 				tangent = {
-					count = 4848,
-					offset = 20424,
+					count = 2712,
+					offset = 7744,
 				},
 				uv0 = {
-					count = 4848,
-					offset = 10728,
+					count = 2712,
+					offset = 5032,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/bridge/rail.mtl", 
+				"lollo_freestyle_train_station/bridge/z0.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 1992,
+					offset = 19864,
+				},
+				position = {
+					count = 1992,
+					offset = 21856,
+				},
+				tangent = {
+					count = 1992,
+					offset = 17872,
+				},
+				uv0 = {
+					count = 1992,
+					offset = 15880,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/platformWalls/staccionata_fs/z1.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 25560,
+					offset = 24136,
 				},
 				position = {
 					count = 144,
-					offset = 25272,
+					offset = 24280,
 				},
 				tangent = {
 					count = 144,
-					offset = 25704,
+					offset = 23992,
 				},
 				uv0 = {
 					count = 144,
-					offset = 25416,
+					offset = 23848,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/roofs/iron_glass_copper/base.mtl", 
+				"lollo_freestyle_train_station/platformWalls/staccionata_fs/z2.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 720,
+			count = 504,
 			numComp = 3,
-			offset = 4392,
+			offset = 1744,
 		},
 		position = {
-			count = 2832,
+			count = 2784,
 			numComp = 3,
-			offset = 0,
+			offset = 2248,
 		},
 		tangent = {
-			count = 768,
+			count = 288,
 			numComp = 4,
-			offset = 5112,
+			offset = 1456,
 		},
 		uv0 = {
-			count = 1560,
+			count = 1456,
 			numComp = 2,
-			offset = 2832,
+			offset = 0,
 		},
 	},
 }

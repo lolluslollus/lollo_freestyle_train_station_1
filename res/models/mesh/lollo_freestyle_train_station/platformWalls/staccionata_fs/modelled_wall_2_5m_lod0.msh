@@ -1,75 +1,97 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 4848,
-					offset = 15644,
+					count = 2712,
+					offset = 10464,
 				},
 				position = {
-					count = 4848,
-					offset = 5948,
+					count = 2712,
+					offset = 13176,
 				},
 				tangent = {
-					count = 4848,
-					offset = 20492,
+					count = 2712,
+					offset = 7752,
 				},
 				uv0 = {
-					count = 4848,
-					offset = 10796,
+					count = 2712,
+					offset = 5040,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/bridge/rail.mtl", 
+				"lollo_freestyle_train_station/bridge/z0.001.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 1992,
+					offset = 19872,
+				},
+				position = {
+					count = 1992,
+					offset = 21864,
+				},
+				tangent = {
+					count = 1992,
+					offset = 17880,
+				},
+				uv0 = {
+					count = 1992,
+					offset = 15888,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/roofs/iron_glass_copper/z1.001.mtl", 
 			},
 		}, {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 25628,
+					offset = 24144,
 				},
 				position = {
 					count = 144,
-					offset = 25340,
+					offset = 24288,
 				},
 				tangent = {
 					count = 144,
-					offset = 25772,
+					offset = 24000,
 				},
 				uv0 = {
 					count = 144,
-					offset = 25484,
+					offset = 23856,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/roofs/iron_glass_copper/base.mtl", 
+				"lollo_freestyle_train_station/platformWalls/staccionata_fs/z2.001.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 804,
+			count = 504,
 			numComp = 3,
-			offset = 4392,
+			offset = 1752,
 		},
 		position = {
-			count = 2832,
+			count = 2784,
 			numComp = 3,
-			offset = 0,
+			offset = 2256,
 		},
 		tangent = {
-			count = 752,
+			count = 288,
 			numComp = 4,
-			offset = 5196,
+			offset = 1464,
 		},
 		uv0 = {
-			count = 1560,
+			count = 1464,
 			numComp = 2,
-			offset = 2832,
+			offset = 0,
 		},
 	},
 }

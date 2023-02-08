@@ -11,7 +11,6 @@ function data()
                         {
                             materials = {
                                 'headquarter/headquarter_era_b_03/headquarter_era_b_03_assets.mtl',
-                                'lollo_freestyle_train_station/station_concrete_1.mtl',
                             },
                             -- mesh = 'headquarter/headquarter_era_b_03/headquarter_era_b_03_fence_lod0.msh',
                             mesh = 'lollo_freestyle_train_station/platformWalls/iron/wall_2_5m_lod0.msh',
