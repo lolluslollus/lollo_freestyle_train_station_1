@@ -1129,8 +1129,8 @@ return {
             end
         end,
         doTrackWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-            wall5ModelId,
-            wall_low_5ModelId,
+            wall_5m_ModelId,
+            wall_low_5m_ModelId,
             isTunnelOk
         )
             -- check this coz it was added later
@@ -1149,7 +1149,7 @@ return {
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
 
             -- query the first platform segment coz track segments, unlike platform segments,
-            -- have no knowledge of the era: they only have leadingIndex, posTanX2 and width.
+            -- have no knowledge of the era: they only have leadingIndex, posTanX2, type and width.
             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
             local wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
             if eraPrefix == constants.eras.era_a.prefix then
@@ -1165,9 +1165,7 @@ return {
                 if leadingIndex >= _i1 then
                     if isTunnelOk or ctf.type ~= 2 then -- ground or bridge, tunnel only if allowed
                         local basePosTanX2, xScaleFactor, zShift = ctf.posTanX2, 1, 0
-                        local wallModelId = ctf.type == 2
-                            and wall5ModelId
-                            or wall_low_5ModelId
+                        local wallModelId = ctf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                         local myTransf = transfUtilsUG.mul(
                             _wallTransfFunc(basePosTanX2),
                             { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }

@@ -406,12 +406,12 @@ local helpers = {
     getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight, isAddExtraProps)
         local _addExtraProps = function(source, target)
             target.width = source.width or 0 -- idem
+            target.type = source.type -- 0 == ground, 1 == bridge, 2 == tunnel
             if isAddExtraProps then
                 target.catenary = source.catenary -- this is not totally accurate since we ignore the inner bounds
                 target.era = source.era or _constants.eras.era_c.prefix -- idem
                 target.trackType = source.trackType -- idem
                 target.trackTypeName = source.trackTypeName -- idem
-                target.type = source.type -- idem
                 target.typeIndex = source.typeIndex -- idem
             end
             if isAddTerrainHeight then
@@ -687,12 +687,12 @@ local helpers = {
                     }
                 }
                 newEdge.width = refEdge.width or 0
+                newEdge.type = refEdge.type or 0
                 if isAddExtraProps then
                     newEdge.catenary = refEdge.catenary
                     newEdge.era = refEdge.era or _constants.eras.era_c.prefix
                     newEdge.trackType = refEdge.trackType
                     newEdge.trackTypeName = refEdge.trackTypeName
-                    newEdge.type = refEdge.type
                     newEdge.typeIndex = refEdge.typeIndex
                 end
                 if isAddTerrainHeight then
