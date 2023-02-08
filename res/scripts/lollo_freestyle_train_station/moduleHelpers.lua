@@ -1001,8 +1001,8 @@ return {
             end
         end,
         doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-            wall2_5ModelId,
-            wall_low_2_5ModelId,
+            wall_5m_ModelId,
+            wall_low_5m_ModelId,
             pillar2_5ModelId, pillar5ModelId,
             isTunnelOk
         )
@@ -1037,10 +1037,10 @@ return {
                 isFreeFromFlatAreas[i] = not(result.getOccupiedInfo4FlatAreas(nTerminal, i))
             end
             -- print('*** isFreeFromFlatAreas =') debugPrint(isFreeFromFlatAreas)
-            local _getWidthAbove2_5mBarePlatformWidth = function(cpf)
+            local _getWidthAbove_5m_BarePlatformWidth = function(cpf)
                 local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, cpf.leadingIndex).width
                 if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
-                return (cpf.width - 2.5) * 0.5 + slopedAreaWidth, slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
+                return (cpf.width - 5) * 0.5 + slopedAreaWidth, slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
             end
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
@@ -1052,7 +1052,7 @@ return {
                         -- no stations in this fine segment
                         if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
                             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                            local widthAboveMinimum, slopedAreaWidth = _getWidthAbove2_5mBarePlatformWidth(cpf)
+                            local widthAboveMinimum, slopedAreaWidth = _getWidthAbove_5m_BarePlatformWidth(cpf)
                             local basePosTanX2, xScaleFactor, zShift = cpf.posTanX2, 1, 0
                             if widthAboveMinimum ~= 0 then
                                 local xRatio, yRatio = 1, 1
@@ -1069,7 +1069,7 @@ return {
                             if slopedAreaWidth > 0 then
                                 zShift = constants.platformSideBitsZ
                             end
-                            local wallModelId = cpf.type == 2 and wall2_5ModelId or wall_low_2_5ModelId
+                            local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             result.models[#result.models+1] = {
                                 id = wallModelId,
                                 transf = transfUtilsUG.mul(

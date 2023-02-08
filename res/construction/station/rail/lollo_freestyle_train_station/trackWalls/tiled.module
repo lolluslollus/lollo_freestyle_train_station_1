@@ -43,7 +43,7 @@ function data()
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = 'lollo_freestyle_train_station/platformWalls/tiled/platformWall_2_5m.mdl',
+					id = 'lollo_freestyle_train_station/platformWalls/tiled/platformWall_5m.mdl',
 					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
