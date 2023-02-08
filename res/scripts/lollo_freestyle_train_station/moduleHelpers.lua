@@ -78,7 +78,7 @@ local privateFuncs = {
         return deltaZ, -10, 10
     end,
     getEraPrefix = function(params, nTerminal, nTrackEdge)
-        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge] or params.terminals[nTerminal].centrePlatformsRelative[1]
         local result = cpl.era or constants.eras.era_c.prefix
         if params.modules then
             if params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraASlotId)] then
@@ -1142,7 +1142,10 @@ return {
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
 
-            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _i1)
+            -- print('params.terminals[nTerminal].centreTracksFineRelative[1] =') debugPrint(params.terminals[nTerminal].centreTracksFineRelative[1])
+            -- print('params.terminals[nTerminal].centreTracksRelative[1] =') debugPrint(params.terminals[nTerminal].centreTracksRelative[1])
+            -- query the first platform segment coz track segment have no knowledge of the era, it only has leadingIndex, posTanX2 and width.
+            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
             local wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
             if eraPrefix == constants.eras.era_a.prefix then
                 wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
