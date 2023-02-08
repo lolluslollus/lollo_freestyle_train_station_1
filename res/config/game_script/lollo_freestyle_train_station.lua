@@ -320,14 +320,14 @@ local _actions = {
                 args.rightPlatforms,
                 _getRelativePosTanX2s
             ),
-            leftTracksRelative = arrayUtils.map(
-                args.leftTracks,
-                _getRelativePosTanX2s
-            ),
-            rightTracksRelative = arrayUtils.map(
-                args.rightTracks,
-                _getRelativePosTanX2s
-            ),
+            -- leftTracksRelative = arrayUtils.map(
+            --     args.leftTracks,
+            --     _getRelativePosTanX2s
+            -- ),
+            -- rightTracksRelative = arrayUtils.map(
+            --     args.rightTracks,
+            --     _getRelativePosTanX2s
+            -- ),
             crossConnectorsRelative = arrayUtils.map(
                 args.crossConnectors,
                 _getRelativePosTanX2s
@@ -1949,7 +1949,6 @@ function data()
 
                             local midCentrePlatformItem = eventArgs.centrePlatforms[math.ceil(#eventArgs.centrePlatforms / 2)]
                             logger.print('_setPlatformProps found midCentrePlatformItem =') logger.debugPrint(midCentrePlatformItem)
-
                             local platformWidth = midCentrePlatformItem.width
                             eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
                             eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
@@ -2027,13 +2026,11 @@ function data()
                             logger.print('_setTrackProps set eventArgs.centreTracks =') logger.debugPrint(eventArgs.centreTracks)
                             logger.print('_setTrackProps set eventArgs.centreTracksFine =') logger.debugPrint(eventArgs.centreTracksFine)
 
-                            local midCentreTrackItem = eventArgs.centreTracks[math.ceil(#eventArgs.centreTracks / 2)]
-                            logger.print('_setTrackProps found midCentrePlatformItem =') logger.debugPrint(midCentreTrackItem)
-
-                            local trackWidth = midCentreTrackItem.width  -- LOLLO NOTE this is constant in the game but it might change one day, so we still read it.
-
-                            eventArgs.leftTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, - trackWidth * 0.45)
-                            eventArgs.rightTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, trackWidth * 0.45)
+                            -- local midCentreTrackItem = eventArgs.centreTracks[math.ceil(#eventArgs.centreTracks / 2)]
+                            -- logger.print('_setTrackProps found midCentreTrackItem =') logger.debugPrint(midCentreTrackItem)
+                            -- local trackWidth = midCentreTrackItem.width  -- LOLLO NOTE this is constant in the game but it might change one day, so we still read it.
+                            -- eventArgs.leftTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, - trackWidth * 0.45)
+                            -- eventArgs.rightTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, trackWidth * 0.45)
                         end
                         _setTrackProps(eventArgs.trackEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
