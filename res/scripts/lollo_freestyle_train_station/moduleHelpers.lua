@@ -1142,7 +1142,7 @@ return {
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
 
-            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _i1)
             local wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
             if eraPrefix == constants.eras.era_a.prefix then
                 wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
