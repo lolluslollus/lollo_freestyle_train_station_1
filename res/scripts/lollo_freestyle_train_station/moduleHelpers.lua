@@ -1125,7 +1125,6 @@ return {
         doTrackWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
             wall5ModelId,
             wall_low_5ModelId,
-            wall_base_5ModelId,
             isTunnelOk
         )
             -- check this coz it was added later
@@ -1142,6 +1141,14 @@ return {
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+
+            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+            local wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
+            if eraPrefix == constants.eras.era_a.prefix then
+                wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
+            elseif eraPrefix == constants.eras.era_b.prefix then
+                wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
+            end
 
             for ii = 1, #params.terminals[nTerminal].centreTracksFineRelative, privateConstants.deco.ceilingStep do
                 local ctf = params.terminals[nTerminal].centreTracksFineRelative[ii]
@@ -1163,7 +1170,7 @@ return {
                             tag = tag
                         }
                         result.models[#result.models+1] = {
-                            id = wall_base_5ModelId,
+                            id = wallBaseModelId,
                             transf = myTransf,
                             tag = tag
                         }
