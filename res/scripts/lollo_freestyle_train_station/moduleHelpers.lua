@@ -1037,7 +1037,11 @@ return {
                 isFreeFromFlatAreas[i] = not(result.getOccupiedInfo4FlatAreas(nTerminal, i))
             end
             -- print('*** isFreeFromFlatAreas =') debugPrint(isFreeFromFlatAreas)
-
+            local _getWidthAbove2_5mBarePlatformWidth = function(cpf)
+                local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, cpf.leadingIndex).width
+                if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
+                return (cpf.width - 2.5) * 0.5 + slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
+            end
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
@@ -1048,17 +1052,12 @@ return {
                         -- no stations in this fine segment
                         if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
                             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                            local platformWidth = cpf.width
-                            local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
-
-                            local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, leadingIndex).width
-                            if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
-                            local basePosTanX2, xScaleFactor, zShift = cpf.posTanX2, 1, 0
-                            if slopedAreaWidth ~= 0 then
+                            local widthAboveMinimum, basePosTanX2, xScaleFactor, zShift = _getWidthAbove2_5mBarePlatformWidth(cpf), cpf.posTanX2, 1, 0
+                            if widthAboveMinimum ~= 0 then
                                 local xRatio, yRatio = 1, 1
                                 basePosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
                                     cpf.posTanX2,
-                                    (isTrackOnPlatformLeft and -slopedAreaWidth or slopedAreaWidth)
+                                    (isTrackOnPlatformLeft and -widthAboveMinimum or widthAboveMinimum)
                                 )
                                 xScaleFactor = math.max(xRatio * yRatio, 1.01) -- this is a bit crude but it's cheap
                                 -- xScaleFactor = xRatio * yRatio * 1.01
@@ -1067,22 +1066,27 @@ return {
                                 -- xScaleFactor = xRatio * 1.05
                                 zShift = constants.platformSideBitsZ
                             end
-                            local wallModelId = cpf.type == 2 
-                                and (platformWidth < 5 and wall2_5ModelId or wall5ModelId)
-                                or (platformWidth < 5 and wall_low_2_5ModelId or wall_low_5ModelId)
+                            -- local wallModelId = cpf.type == 2
+                            --     and (platformWidth < 5 and wall2_5ModelId or wall5ModelId)
+                            --     or (platformWidth < 5 and wall_low_2_5ModelId or wall_low_5ModelId)
+                            local wallModelId = cpf.type == 2 and wall2_5ModelId or wall_low_2_5ModelId
                             result.models[#result.models+1] = {
                                 id = wallModelId,
                                 transf = transfUtilsUG.mul(
                                     _wallTransfFunc(basePosTanX2),
-                                    { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }
+                                    {
+                                        transfXZoom * xScaleFactor, 0, 0, 0,
+                                        0, transfYZoom, 0, 0,
+                                        0, 0, 1, 0,
+                                        0, 0, constants.platformRoofZ + zShift, 1
+                                    }
                                 ),
                                 tag = tag
                             }
 
                             if cpf.type ~= 2
                             and not(isSkipPillars)
-                            -- and slopedAreaWidth == 0
-                            and isFreeFromOpenStairs
+                            and isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
                             and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0
                             -- no platform numbers if there is a roof
                             and isFreeFromRoof
@@ -1097,12 +1101,12 @@ return {
                                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift4Pillar, constants.platformRoofZ + zShift, 1 }
                                 )
                                 result.models[#result.models+1] = {
-                                    id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
+                                    id = cpf.width < 5 and pillar2_5ModelId or pillar5ModelId,
                                     transf = myTransf,
                                     tag = tag,
                                 }
 
-                                local yShift4PerronNumber = -platformWidth * 0.5 + 0.20
+                                local yShift4PerronNumber = -cpf.width * 0.5 + 0.20
                                 local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
                                 if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
                                 elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
