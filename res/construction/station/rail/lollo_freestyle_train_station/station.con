@@ -623,6 +623,7 @@ function data()
 				local function _addPlatformRoofsAndWalls()
 					local _roofSpacing = isTrackOnPlatformLeft and {-1.1, 2, -0.1, 0.9} or {2, -1.1, 0.9, -0.1}
 					local _wallSpacing = isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
+					-- make indexes
 					local _iMax = #params.terminals[t].centrePlatformsRelative
 					local iss = {}
 					for i = 2, _iMax, 3 do iss[#iss+1] = i end
@@ -659,9 +660,9 @@ function data()
 							local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(t, i).width
 							if slopedAreaWidth ~= 0 then
 								local platformWidth = params.terminals[t].centrePlatformsRelative[i].width
-								local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5) -- -0.85
+								local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5)
 								local yShiftAreaBorder = isTrackOnPlatformLeft and -baseYShift4AreaBorder or baseYShift4AreaBorder
-								-- I need the transf here, merely shifting looks cheap but it's wrong
+								-- I need the transf here, merely shifting isPlatform2 cheap but wrong
 								wallTransf = transfUtils.getTransfYShiftedBy(myTransf, yShiftAreaBorder)
 							end
 							table.insert(result.slots, {
