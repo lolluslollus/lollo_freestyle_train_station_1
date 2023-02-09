@@ -32,6 +32,7 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
+			local adjustedTransf = moduleHelpers.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'flatPassengerStairsDownSteepModelFileName']
@@ -39,7 +40,7 @@ function data()
 			result.models[#result.models + 1] = {
 				id = myModelId,
 				slotId = slotId,
-				transf = slotTransf,
+				transf = adjustedTransf,
 				tag = tag
 			}
 
@@ -51,7 +52,7 @@ function data()
 				{2.75, 2, -_constants.stairsAndRampHeight -0.2, 1},
 				{2.75, -2, -_constants.stairsAndRampHeight -0.2, 1},
 			}
-			modulesutil.TransformFaces(slotTransf, groundFace)
+			modulesutil.TransformFaces(adjustedTransf, groundFace)
 			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
 
 			local terrainAlignmentList = {
@@ -70,6 +71,7 @@ function data()
 					id = _constants.era_c_flatPassengerStairsDownSteepModelFileName,
 					transf = _constants.idTransf,
 				},
+				moduleHelpers.axialAreas.getPreviewIcon(params)
 			}
 		end
 	}

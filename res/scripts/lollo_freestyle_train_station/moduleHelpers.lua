@@ -49,6 +49,13 @@ local privateFuncs = {
         local _nSteps = math.ceil(nSteps)
         return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
     end,
+    getFromVariant_AxialAreaTilt = function(variant)
+        local tilt = -variant * 0.025
+        local _maxRadAbs = 0.36
+        if tilt > _maxRadAbs then tilt = _maxRadAbs elseif tilt < -_maxRadAbs then tilt = -_maxRadAbs end
+        -- logger.print('getFromVariant_AxialAreaTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
+        return tilt, -_maxRadAbs, _maxRadAbs
+    end,
     getFromVariant_BridgeTilt = function(variant)
         local tilt = variant * 0.0125
         local _maxRadAbs = 0.36
@@ -163,6 +170,13 @@ local privateFuncs = {
             variant = params.modules[slotId].variant or 0
         end
         return variant
+    end,
+}
+privateFuncs.axialAreas = {
+    getMNAdjustedTransf = function(params, slotId, slotTransf)
+        local variant = privateFuncs.getVariant(params, slotId)
+        local tilt = privateFuncs.getFromVariant_AxialAreaTilt(variant)
+        return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
     end,
 }
 privateFuncs.deco = {
@@ -1234,8 +1248,7 @@ return {
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			-- local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, true)
-            local zAdjustedTransf = slotTransf
+            local adjustedTransf = privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
 
@@ -1245,7 +1258,7 @@ return {
 			result.models[#result.models + 1] = {
 				id = myModelId,
 				slotId = slotId,
-				transf = zAdjustedTransf,
+				transf = adjustedTransf,
 				tag = tag
 			}
 
@@ -1259,7 +1272,7 @@ return {
 							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
 							{ { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
 						},
-						zAdjustedTransf
+						adjustedTransf
 					),
 					-- better make it a bridge to avoid ugly autolinks between nearby modules
 					edgeType = 'BRIDGE',
@@ -1299,7 +1312,7 @@ return {
 				type = 'LESS',
 			}
 			for _, face in pairs(terrainAlignmentList.faces) do
-				modulesutil.TransformFaces(zAdjustedTransf, face)
+				modulesutil.TransformFaces(adjustedTransf, face)
 			end
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
         end,
@@ -1309,7 +1322,7 @@ return {
 
 			privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[(nTrackEdge == 1 and 1 or #params.terminals[nTerminal].centrePlatformsFineRelative)]
+            local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[(nTrackEdge == 1 and 1 or #params.terminals[nTerminal].centrePlatformsFineRelative)]
 			local pos1 = (nTrackEdge == 1)
 				and cpf.posTanX2[1][1]
 				or cpf.posTanX2[2][1]
@@ -1341,12 +1354,39 @@ return {
 				result.laneZs[nTerminal]
 			)
 
+            local adjustedTransf = privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 			result.models[#result.models+1] = {
 				id = 'lollo_freestyle_train_station/passenger_lane_linkable_irregular.mdl',
 				slotId = slotId,
-				transf = laneTransf,
+				transf = adjustedTransf,
 				tag = tag
 			}
+        end,
+        getMNAdjustedTransf = function(params, slotId, slotTransf)
+            return privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+        end,
+        getPreviewIcon = function(params)
+			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local tilt, min, max = privateFuncs.getFromVariant_AxialAreaTilt(variant)
+			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
+			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  10, -2, 8, 1}
+            if tilt == min then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  10, -2, 9, 1}
+            elseif tilt == max then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
+			elseif tilt < 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  10, -2, 9, 1}
+			elseif tilt > 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
+			end
+            return {
+                id = arrowModelId,
+                transf = arrowModelTransf,
+            }
         end,
     },
     flatAreas = {
