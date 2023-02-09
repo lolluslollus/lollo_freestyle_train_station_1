@@ -575,14 +575,14 @@ function data()
 					for _, ii in pairs(ii_s) do
 						local cpf = params.terminals[t].centrePlatformsFineRelative[ii]
 						local adjacentTransf = (ii == 1)
-							and moduleHelpers.getPlatformObjectTransf_AlwaysVertical(
+							and moduleHelpers.getPlatformObjectTransf_WithYRotation(
 								-- transfUtils.getPosTanX2Normalised(
 									transfUtils.getPosTanX2Reversed(
 										cpf.posTanX2
 									)
 								-- )
 							)
-							or moduleHelpers.getPlatformObjectTransf_AlwaysVertical(
+							or moduleHelpers.getPlatformObjectTransf_WithYRotation(
 								-- transfUtils.getPosTanX2Normalised(
 									cpf.posTanX2
 								-- )
