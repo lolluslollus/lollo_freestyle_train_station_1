@@ -1239,7 +1239,7 @@ return {
 
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
 
-			local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
 
 			result.models[#result.models + 1] = {
@@ -1276,13 +1276,13 @@ return {
 				}
 			)
 
-			local groundFace = {
-				{-1, -2, 0, 1},
-				{-1, 2, 0, 1},
-				{1.0, 2, 0, 1},
-				{1.0, -2, 0, 1},
-			}
-			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			-- local groundFace = {
+			-- 	{-1, -2, 0, 1},
+			-- 	{-1, 2, 0, 1},
+			-- 	{1.0, 2, 0, 1},
+			-- 	{1.0, -2, 0, 1},
+			-- }
+			-- modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 
 			local terrainAlignmentList = {
 				faces = {
@@ -1437,7 +1437,7 @@ return {
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
 
-			local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
 
 			result.models[#result.models + 1] = {
@@ -1477,13 +1477,13 @@ return {
 				}
 			)
 
-			local groundFace = {
-				{-1, -2, 0, 1},
-				{-1, 2, 0, 1},
-				{1.0, 2, 0, 1},
-				{1.0, -2, 0, 1},
-			}
-			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			-- local groundFace = {
+			-- 	{-1, -2, 0, 1},
+			-- 	{-1, 2, 0, 1},
+			-- 	{1.0, 2, 0, 1},
+			-- 	{1.0, -2, 0, 1},
+			-- }
+			-- modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 			-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
 
 			local terrainAlignmentList = {
