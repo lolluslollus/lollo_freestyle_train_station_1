@@ -180,6 +180,133 @@ privateFuncs.axialAreas = {
     end,
 }
 privateFuncs.deco = {
+    addWallsAcross = function(cpf, isSideA, slopedAreaWidth, result, tag, wallModelId, zShift, deltaY)
+        -- LOLLO TODO skip the wall around axial exits
+        if isSideA then
+            local posTanX2_1 = transfUtils.getParallelSidewaysWithRotZ(
+                cpf.posTanX2,
+                cpf.width / 2 + slopedAreaWidth - deltaY
+            )
+            local posTanX2_2 = transfUtils.getParallelSidewaysWithRotZ(
+                cpf.posTanX2,
+                cpf.width / 2 + slopedAreaWidth
+            )
+            local lengthAcross = deltaY
+            local pos1 = posTanX2_1[1][1]
+            local pos2 = posTanX2_2[1][1]
+
+            result.models[#result.models+1] = {
+                id = 'lollo_freestyle_train_station/icon/blue.mdl',
+                transf = {
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    pos1[1], pos1[2], pos1[3], 1
+                },
+                tag = tag
+            }
+            result.models[#result.models+1] = {
+                id = 'lollo_freestyle_train_station/icon/orange.mdl',
+                transf = {
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    pos2[1], pos2[2], pos2[3], 1
+                },
+                tag = tag
+            }
+
+            -- print('pos1, pos2 =') debugPrint(pos1) debugPrint(pos2)
+            local sinZ = (pos2[2] - pos1[2]) / lengthAcross
+            local cosZ = (pos2[1] - pos1[1]) / lengthAcross
+            -- print('length, cosZ, sinZ =', lengthAcross, cosZ, sinZ)
+
+            for p = 1, lengthAcross, 1 do
+                result.models[#result.models+1] = {
+                    id = wallModelId,
+                    transf = transfUtilsUG.mul(
+                        {
+                            cosZ, sinZ, 0, 0,
+                            -sinZ, cosZ, 0, 0,
+                            0, 0, 1, 0,
+                            pos1[1] + (p-0.5) * cosZ, pos1[2] + (p-0.5) * sinZ, pos1[3] + constants.platformRoofZ + zShift, 1
+                        },
+                        {
+                            1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            0, -2.5, 0, 1
+                        }
+                    ),
+                    tag = tag
+                }
+            end
+        -- elseif (ii > 1 and params.terminals[nTerminal].centrePlatformsFineRelative[ii-1].type == 2) then
+        -- getting out of a tunnel: draw full or skip altogether
+        else
+            -- same as above, checking the following element
+            local posTanX2_1 = transfUtils.getParallelSidewaysWithRotZ(
+                cpf.posTanX2,
+                cpf.width / 2 + slopedAreaWidth - deltaY
+            )
+            local posTanX2_2 = transfUtils.getParallelSidewaysWithRotZ(
+                cpf.posTanX2,
+                cpf.width / 2 + slopedAreaWidth
+            )
+            local lengthAcross = cpf.width + slopedAreaWidth
+            local pos1 = posTanX2_1[2][1]
+            local pos2 = posTanX2_2[2][1]
+
+            result.models[#result.models+1] = {
+                id = 'lollo_freestyle_train_station/icon/green.mdl',
+                transf = {
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    pos1[1], pos1[2], pos1[3], 1
+                },
+                tag = tag
+            }
+            result.models[#result.models+1] = {
+                id = 'lollo_freestyle_train_station/icon/yellow.mdl',
+                transf = {
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    pos2[1], pos2[2], pos2[3], 1
+                },
+                tag = tag
+            }
+
+            -- print('pos1, pos2 =') debugPrint(pos1) debugPrint(pos2)
+            local sinZ = (pos2[2] - pos1[2]) / lengthAcross
+            local cosZ = (pos2[1] - pos1[1]) / lengthAcross
+            -- print('length, cosZ, sinZ =', lengthAcross, cosZ, sinZ)
+
+            for p = 1, lengthAcross, 1 do
+                result.models[#result.models+1] = {
+                    id = wallModelId,
+                    transf = transfUtilsUG.mul(
+                        {
+                            cosZ, sinZ, 0, 0,
+                            -sinZ, cosZ, 0, 0,
+                            0, 0, 1, 0,
+                            pos1[1] + (p-0.5) * cosZ, pos1[2] + (p-0.5) * sinZ, pos1[3] + constants.platformRoofZ + zShift, 1
+                        },
+                        {
+                            -1, 0, 0, 0,
+                            0, -1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 2.5, 0, 1
+                        }
+                    ),
+                    tag = tag
+                }
+            end
+        -- elseif (ii < _iiMax and params.terminals[nTerminal].centrePlatformsFineRelative[ii+1].type == 2) then
+        -- getting out of a tunnel: draw full or skip altogether
+        end
+    end,
     getMNAdjustedValue_0Or1_Cycling = function(params, slotId)
         local variant = privateFuncs.getVariant(params, slotId)
         return privateFuncs.getFromVariant_0_or_1(variant)
@@ -1056,7 +1183,8 @@ return {
                 if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
                 return (cpf.width - 5) * 0.5 + slopedAreaWidth, slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
             end
-            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
+            local _iiMax = #params.terminals[nTerminal].centrePlatformsFineRelative
+            for ii = 1, _iiMax, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
@@ -1098,6 +1226,7 @@ return {
                                 tag = tag
                             }
 
+                            -- add pillars
                             if cpf.type ~= 2
                             and not(isSkipPillars)
                             and isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
@@ -1136,6 +1265,27 @@ return {
                                 }
                                 -- the model index must be in base 0 !
                                 result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+                            end
+
+                            -- add walls across
+                            if cpf.type ~= 2 then
+                                local cpfM1 = ii ~= 1 and params.terminals[nTerminal].centrePlatformsFineRelative[ii-1] or nil
+                                local cpfP1 = ii ~= _iiMax and params.terminals[nTerminal].centrePlatformsFineRelative[ii+1] or nil
+                                if ii == 1 then
+                                    privateFuncs.deco.addWallsAcross(cpf, true, slopedAreaWidth, result, tag, wallModelId, zShift, slopedAreaWidth + cpf.width)
+                                elseif leadingIndex ~= cpfM1.leadingIndex then
+                                    local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
+                                    if deltaY > 0 then
+                                        privateFuncs.deco.addWallsAcross(cpf, true, slopedAreaWidth, result, tag, wallModelId, zShift, deltaY)
+                                    end
+                                elseif ii == _iiMax then
+                                    privateFuncs.deco.addWallsAcross(cpf, false, slopedAreaWidth, result, tag, wallModelId, zShift, slopedAreaWidth + cpf.width)
+                                elseif leadingIndex ~= cpfP1.leadingIndex then
+                                    local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
+                                    if deltaY > 0 then
+                                        privateFuncs.deco.addWallsAcross(cpf, false, slopedAreaWidth, result, tag, wallModelId, zShift, deltaY)
+                                    end
+                                end
                             end
                         end
                     end
