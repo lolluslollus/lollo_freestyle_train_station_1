@@ -13,66 +13,45 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "passenger-road-access", },
+			categories = { "passenger-road-access-axial", },
 		},
 		cost = {
 			price = 0,
 		},
 		description = {
-			name = _("FlatPassengerStairsUpSmoothName"),
-			description = _("FlatPassengerStairsUpSmoothDesc"),
-			icon = "ui/lollo_freestyle_train_station/flatPassengerStairsUpSmooth.tga"
+			name = _("AxialPassengerStairsUpSteepName"),
+			description = _("AxialPassengerStairsUpSteepDesc"),
+			icon = "ui/lollo_freestyle_train_station/flatPassengerStairsUpSteep.tga"
 		},
 		metadata = { },
 		order = {
-			value = 18,
+			value = 19,
 		},
-		type = _constants.flatPassengerStairsModuleType,
+		type = _constants.axialPassengerExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
-			-- in base_config.lua
-			-- Set it into the models, so the game knows what module they belong to.
-
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
-
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
-			local myModelId = _constants[era .. 'flatPassengerStairsUpSmoothModelFileName']
+			local myModelId = _constants[era .. 'flatPassengerStairsUpSteepModelFileName']
 
 			result.models[#result.models + 1] = {
 				id = myModelId,
 				slotId = slotId,
-				transf = zAdjustedTransf,
+				transf = slotTransf,
 				tag = tag
 			}
 
 			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-
-			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
-				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}
-			end
-			table.insert(
-				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal],
-				{
-					t = nTerminal,
-					-- lanePosTanX2 = cpl.posTanX2,
-					pos = transfUtils.transf2Position(transfUtilsUG.mul(zAdjustedTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2.5, 0, _constants.stairsAndRampHeight, 1}))
-				}
-			)
 
 			local groundFace = {
 				{-1, -2, 0, 1},
 				{-1, 2, 0, 1},
-				{3.5, 2, 0, 1},
-				{3.5, -2, 0, 1},
+				{2.75, 2, 0, 1},
+				{2.75, -2, 0, 1},
 			}
-			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			modulesutil.TransformFaces(slotTransf, groundFace)
 			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
 
 			local terrainAlignmentList = {
@@ -86,8 +65,8 @@ function data()
 					{
 						{0.0, -2, _constants.platformSideBitsZ, 1},
 						{0.0, 2, _constants.platformSideBitsZ, 1},
-						{3.5, 2, _constants.stairsAndRampHeight, 1},
-						{3.5, -2, _constants.stairsAndRampHeight, 1},
+						{2.75, 2, _constants.stairsAndRampHeight, 1},
+						{2.75, -2, _constants.stairsAndRampHeight, 1},
 					}
 				},
 				optional = true,
@@ -96,7 +75,7 @@ function data()
 				type = 'EQUAL',
 			}
 			for _, face in pairs(terrainAlignmentList.faces) do
-				modulesutil.TransformFaces(zAdjustedTransf, face)
+				modulesutil.TransformFaces(slotTransf, face)
 			end
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 		end,
@@ -104,10 +83,9 @@ function data()
 		getModelsFn = function(params)
 			return {
 				{
-					id = _constants.era_c_flatPassengerStairsUpSmoothModelFileName,
+					id = _constants.era_c_flatPassengerStairsUpSteepModelFileName,
 					transf = _constants.idTransf,
 				},
-				moduleHelpers.flatAreas.getPreviewIcon(params),
 			}
 		end
 	}

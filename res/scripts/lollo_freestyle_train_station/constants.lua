@@ -93,9 +93,11 @@ local constants = {
     },
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
 
+    axialCargoExitModuleType = 'freestyleTrainStationAxialCargoExit',
     axialFlushCargoExitModuleType = 'freestyleTrainStationAxialFlushCargoExit',
     axialFlushPassengerExitModuleType = 'freestyleTrainStationAxialFlushPassengerExit',
     axialPassengerEdgeModuleType = 'freestyleTrainStationAxialPassengerEdge',
+    axialPassengerExitModuleType = 'freestyleTrainStationAxialPassengerExit',
     cargoStationSquareModuleType = 'freestyleTrainStationCargoStationSquare',
     flatCargoRampModuleType = 'freestyleTrainStationFlatCargoRamp',
     flatPassengerStairsModuleType = 'freestyleTrainStationFlatPassengerStairs',
@@ -333,6 +335,7 @@ local constants = {
         flushExitSlotId = 93000000,
         cargoShelfSlotId = 94000000,
         axialFlushExitSlotId = 95000000,
+        axialStairsOrRampSlotId = 96000000,
     },
     idTransf = {
         1, 0, 0, 0,

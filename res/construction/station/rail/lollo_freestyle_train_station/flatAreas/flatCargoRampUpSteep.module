@@ -48,6 +48,7 @@ function data()
 			}
 
 			moduleHelpers.flatAreas.addCargoLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local groundFace = {
 				{-1, -2, 0, 1},

@@ -607,13 +607,23 @@ function data()
 							type = isCargoTerminal and _constants.axialFlushCargoExitModuleType or _constants.axialFlushPassengerExitModuleType,
 						})
 
-						if not(isCargoTerminal) then
+						if not(isCargoTerminal) then -- edges only for passengers
 							table.insert(result.slots, {
 								-- height = 0,
 								id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialEdgeSlotId),
 								spacing = {1, 1, 1, 1},
 								transf = myTransf,
 								type = _constants.axialPassengerEdgeModuleType,
+							})
+						end
+
+						if cpf.type == 0 then -- ramps and stairs only on ground
+							table.insert(result.slots, {
+								-- height = 0,
+								id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialStairsOrRampSlotId),
+								spacing = {1, 1, 1, 1},
+								transf = myTransf,
+								type = isCargoTerminal and _constants.axialCargoExitModuleType or _constants.axialPassengerExitModuleType,
 							})
 						end
 					end
