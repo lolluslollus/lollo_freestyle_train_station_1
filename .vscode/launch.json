@@ -11,6 +11,22 @@
             "request": "launch",
             "stopOnEntry": true,
             "type": "lua"
+        },
+        {
+            "arg": [],
+            "name": "scratch6",
+            "program": "${workspaceFolder}/res/scripts/lollo_freestyle_train_station/scratch/scratch6.lua",
+            "request": "launch",
+            "stopOnEntry": true,
+            "type": "lua"
+        },
+        {
+            "arg": [],
+            "name": "scratch7",
+            "program": "${workspaceFolder}/res/scripts/lollo_freestyle_train_station/scratch/scratch7.lua",
+            "request": "launch",
+            "stopOnEntry": true,
+            "type": "lua"
         }
     ]
 }

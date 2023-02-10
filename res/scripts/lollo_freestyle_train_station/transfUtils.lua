@@ -225,6 +225,22 @@ utils.getVec123Transformed = function(vec123, transf)
     }
 end
 
+utils.getVec123ZRotated90Deg = function(vec123)
+    return {
+        -vec123[2],
+        vec123[1],
+        vec123[3]
+    }
+end
+
+utils.getVec123ZRotatedM90Deg = function(vec123)
+    return {
+        vec123[2],
+        -vec123[1],
+        vec123[3]
+    }
+end
+
 utils.getPosTanX2Transformed = function(posTanX2, transf)
     local pos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
     local pos2 = {posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3]}
@@ -434,7 +450,7 @@ utils.getPositionsMiddle = function(pos0, pos1)
 end
 
 -- the result will be identical to the original but shifted sideways
-utils.getParallelSideways = function(posTanX2, sideShift)
+utils.getParallelSidewaysOLD = function(posTanX2, sideShift)
     local result = {
         {
             {},
@@ -457,18 +473,53 @@ utils.getParallelSideways = function(posTanX2, sideShift)
     return result
 end
 
+-- the result will be identical to the original but shifted sideways
+utils.getParallelSideways = function(posTanX2, sideShift)
+    local _pos1 = posTanX2[1][1]
+    local _pos2 = posTanX2[2][1]
+
+    local sinZ = _pos2[2] - _pos1[2]
+    local cosZ = _pos2[1] - _pos1[1]
+    local _lengthZ = math.sqrt(sinZ * sinZ + cosZ * cosZ)
+    sinZ, cosZ = sinZ / _lengthZ, cosZ / _lengthZ
+
+    return {
+        {
+            { _pos1[1] + sinZ * sideShift, _pos1[2] - cosZ * sideShift, _pos1[3] },
+            posTanX2[1][2]
+        },
+        {
+            { _pos2[1] + sinZ * sideShift, _pos2[2] - cosZ * sideShift, _pos2[3] },
+            posTanX2[2][2]
+        },
+    }
+end
+
 -- the result will be parallel to the original at its ends but stretched or compressed due to the shift.
+-- LOLLO TODO try this
 utils.getParallelSidewaysWithRotZ = function(posTanX2, sideShiftOnXYPlane)
-    local _rot90Transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, }
+    -- local _rot90Transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, }
 
     local oldPos1 = posTanX2[1][1]
     local oldPos2 = posTanX2[2][1]
+    if oldPos1[1] == oldPos2[1] and oldPos1[2] == oldPos2[2] then
+        return posTanX2, 1, 1
+    end
     -- we reset Z coz we rotate around the Z axis and we want to obtain a distance on the XY plane
     local oldTan1 = {posTanX2[1][2][1], posTanX2[1][2][2], 0}
     local oldTan2 = {posTanX2[2][2][1], posTanX2[2][2][2], 0}
 
-    local tan1RotatedAndNormalised = utils.getVectorNormalised(utils.getVec123Transformed(oldTan1, _rot90Transf), sideShiftOnXYPlane)
-    local tan2RotatedAndNormalised = utils.getVectorNormalised(utils.getVec123Transformed(oldTan2, _rot90Transf), sideShiftOnXYPlane)
+    -- local tan1RotatedAndNormalised = utils.getVectorNormalised(utils.getVec123Transformed(oldTan1, _rot90Transf), sideShiftOnXYPlane)
+    -- local tan2RotatedAndNormalised = utils.getVectorNormalised(utils.getVec123Transformed(oldTan2, _rot90Transf), sideShiftOnXYPlane)
+
+    local tan1RotatedAndNormalised = utils.getVectorNormalised(
+        utils.getVec123ZRotated90Deg(oldTan1),
+        sideShiftOnXYPlane
+    )
+    local tan2RotatedAndNormalised = utils.getVectorNormalised(
+        utils.getVec123ZRotated90Deg(oldTan2),
+        sideShiftOnXYPlane
+    )
 
     local newPos1 = { oldPos1[1] + tan1RotatedAndNormalised[1], oldPos1[2] + tan1RotatedAndNormalised[2], oldPos1[3] }
     local newPos2 = { oldPos2[1] + tan2RotatedAndNormalised[1], oldPos2[2] + tan2RotatedAndNormalised[2], oldPos2[3] }

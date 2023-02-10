@@ -110,23 +110,23 @@ local privateFuncs = {
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
-        local newTransf = transfUtilsUG.rotZTransl(
-            math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-            {
-                x = (pos1[1] + pos2[1]) * 0.5,
-                y = (pos1[2] + pos2[2]) * 0.5,
-                z = (pos1[3] + pos2[3]) * 0.5,
-            }
-        )
+        local sinZ = (pos2[2] - pos1[2]) -- / lengthAcross
+        local cosZ = (pos2[1] - pos1[1]) -- / lengthAcross
+        local length = math.sqrt(sinZ * sinZ + cosZ * cosZ)
+        sinZ, cosZ = sinZ / length, cosZ / length
 
-        -- print('newTransf =') debugPrint(newTransf)
-        return newTransf
+        return {
+            cosZ, sinZ, 0, 0,
+            -sinZ, cosZ, 0, 0,
+            0, 0, 1, 0,
+            (pos1[1] + pos2[1]) * 0.5, (pos1[2] + pos2[2]) * 0.5, (pos1[3] + pos2[3]) * 0.5, 1
+        }
     end,
-    getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
+    getPlatformObjectTransf_WithYRotationOLD = function(posTanX2) --, angleYFactor)
         -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
-    
+
         local angleZ = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1])
         local transfZ = transfUtilsUG.rotZTransl(
             angleZ,
@@ -136,14 +136,7 @@ local privateFuncs = {
                 z = (pos1[3] + pos2[3]) * 0.5,
             }
         )
-        -- local angleY = -math.atan((pos2[3] - pos1[3]) / transfUtils.getVectorLength(
-        --     {
-        --         pos2[1] - pos1[1],
-        --         pos2[2] - pos1[2],
-        --         0
-        --     }
-        -- ))
-    
+
         local angleY = math.atan2(
             (pos2[3] - pos1[3]),
             transfUtils.getVectorLength(
@@ -154,11 +147,47 @@ local privateFuncs = {
                 }
             ) -- * (angleYFactor or 1)
         )
-    
+
         local transfY = transfUtilsUG.rotY(-angleY)
-    
+
         return transfUtilsUG.mul(transfZ, transfY)
         -- return transfUtilsUG.mul(transfY, transfZ) -- NO!
+    end,
+    getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
+        -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
+        local pos1 = posTanX2[1][1]
+        local pos2 = posTanX2[2][1]
+
+        local sinZ = pos2[2] - pos1[2]
+        local cosZ = pos2[1] - pos1[1]
+        local _lengthZ = math.sqrt(sinZ * sinZ + cosZ * cosZ)
+        sinZ, cosZ = sinZ / _lengthZ, cosZ / _lengthZ
+
+        -- local transfZ = {
+        --     cosZ,   sinZ,   0,  0,
+        --     -sinZ,  cosZ,   0,  0,
+        --     0,      0,      1,      0,
+        --     (pos1[1] + pos2[1]) * 0.5, (pos1[2] + pos2[2]) * 0.5, (pos1[3] + pos2[3]) * 0.5, 1
+        -- }
+
+        local sinY = pos2[3] - pos1[3]
+        local cosY = _lengthZ
+        local _lengthY = math.sqrt(sinY * sinY + cosY * cosY)
+        sinY, cosY = sinY / _lengthY, cosY / _lengthY
+
+        -- local transfY = {
+        --     cosY,   0,  sinY,   0,
+        --     0,      1,  0,      0,
+        --     -sinY,  0,  cosY,   0,
+        --     0,      0,  0,      1
+        -- }
+
+        return {
+            cosZ * cosY,    sinZ * cosY,    sinY,       0,
+            -sinZ,          cosZ,           0,          0,
+            -cosZ * sinY,   -sinZ * sinY,   cosY,       0,
+            (pos1[1] + pos2[1]) * 0.5,  (pos1[2] + pos2[2]) * 0.5,  (pos1[3] + pos2[3]) * 0.5,  1
+        }
     end,
     -- returns an integer starting at 0, it can be positive or negative
     getVariant = function(params, slotId)
@@ -977,17 +1006,18 @@ return {
         -- print('getTerminalDecoTransf starting, posTanX2 =') debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
-        local newTransf = transfUtilsUG.rotZTransl(
-            math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-            {
-                x = pos1[1],
-                y = pos1[2],
-                z = pos1[3],
-            }
-        )
-    
-        -- print('newTransf =') debugPrint(newTransf)
-        return newTransf
+
+        local sinZ = (pos2[2] - pos1[2])
+        local cosZ = (pos2[1] - pos1[1])
+        local length = math.sqrt(sinZ * sinZ + cosZ * cosZ)
+        sinZ, cosZ = sinZ / length, cosZ / length
+
+        return {
+            cosZ, sinZ, 0, 0,
+            -sinZ, cosZ, 0, 0,
+            0, 0, 1, 0,
+            pos1[1], pos1[2], pos1[3], 1
+        }
     end,
     getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
         return privateFuncs.getPlatformObjectTransf_AlwaysVertical(posTanX2)
