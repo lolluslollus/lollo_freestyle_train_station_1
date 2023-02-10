@@ -191,10 +191,24 @@ function data()
 			}
 
 			local occupiedInfo = {
+				axialAreas = { },
 				crossConnectorsWithFlatAreas = { },
 				crossConnectorsWithSlopedAreas = { },
 				slopedAreaWidths= {}
 			}
+			result.getOccupiedInfo4AxialAreas = function(t, i)
+				if occupiedInfo.axialAreas[t] == nil or occupiedInfo.axialAreas[t][i] == nil then
+					return nil
+				else
+					return occupiedInfo.axialAreas[t][i]
+				end
+			end
+			local _setOccupiedInfo4AxialAreas = function(t, i, newId)
+				if occupiedInfo.axialAreas[t] == nil then
+					occupiedInfo.axialAreas[t] = {}
+				end
+				occupiedInfo.axialAreas[t][i] = newId
+			end
 			result.getOccupiedInfo4FlatAreas = function(t, i)
 				if occupiedInfo.crossConnectorsWithFlatAreas[t] == nil or occupiedInfo.crossConnectorsWithFlatAreas[t][i] == nil then
 					return nil
@@ -599,32 +613,44 @@ function data()
 							},
 							_laneZ
 						)
+						local flushExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialFlushExitSlotId)
 						table.insert(result.slots, {
 							-- height = 0,
-							id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialFlushExitSlotId),
+							id = flushExitId,
 							spacing = {1, 1, 1, 1},
 							transf = myTransf,
 							type = isCargoTerminal and _constants.axialFlushCargoExitModuleType or _constants.axialFlushPassengerExitModuleType,
 						})
+						if params.modules[flushExitId] ~= nil then
+							_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
+						end
 
 						if not(isCargoTerminal) then -- edges only for passengers
+							local edgeExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialEdgeSlotId)
 							table.insert(result.slots, {
 								-- height = 0,
-								id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialEdgeSlotId),
+								id = edgeExitId,
 								spacing = {1, 1, 1, 1},
 								transf = myTransf,
 								type = _constants.axialPassengerEdgeModuleType,
 							})
+							if params.modules[edgeExitId] ~= nil then
+								_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
+							end
 						end
 
 						if cpf.type == 0 then -- ramps and stairs only on ground
+							local stairsOrRampExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialStairsOrRampSlotId)
 							table.insert(result.slots, {
 								-- height = 0,
-								id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialStairsOrRampSlotId),
+								id = stairsOrRampExitId,
 								spacing = {1, 1, 1, 1},
 								transf = myTransf,
 								type = isCargoTerminal and _constants.axialCargoExitModuleType or _constants.axialPassengerExitModuleType,
 							})
+							if params.modules[stairsOrRampExitId] ~= nil then
+								_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
+							end
 						end
 					end
 				end
