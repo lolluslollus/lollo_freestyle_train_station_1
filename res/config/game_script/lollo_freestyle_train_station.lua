@@ -1950,8 +1950,8 @@ function data()
                             local midCentrePlatformItem = eventArgs.centrePlatforms[math.ceil(#eventArgs.centrePlatforms / 2)]
                             logger.print('_setPlatformProps found midCentrePlatformItem =') logger.debugPrint(midCentrePlatformItem)
                             local platformWidth = midCentrePlatformItem.width
-                            eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, - platformWidth * 0.45)
-                            eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
+                            eventArgs.leftPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, platformWidth * 0.45)
+                            eventArgs.rightPlatforms = stationHelpers.getShiftedEdgePositions(eventArgs.centrePlatforms, -platformWidth * 0.45)
 
                             logger.print('_setPlatformProps found platformWidth =', platformWidth)
 
@@ -2029,8 +2029,8 @@ function data()
                             -- local midCentreTrackItem = eventArgs.centreTracks[math.ceil(#eventArgs.centreTracks / 2)]
                             -- logger.print('_setTrackProps found midCentreTrackItem =') logger.debugPrint(midCentreTrackItem)
                             -- local trackWidth = midCentreTrackItem.width  -- LOLLO NOTE this is constant in the game but it might change one day, so we still read it.
-                            -- eventArgs.leftTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, - trackWidth * 0.45)
-                            -- eventArgs.rightTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, trackWidth * 0.45)
+                            -- eventArgs.leftTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, trackWidth * 0.45)
+                            -- eventArgs.rightTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, -trackWidth * 0.45)
                         end
                         _setTrackProps(eventArgs.trackEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 

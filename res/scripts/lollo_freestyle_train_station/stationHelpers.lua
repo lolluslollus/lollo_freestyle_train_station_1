@@ -749,9 +749,9 @@ local helpers = {
             results[#results+1] = {
                 -- catenary = edgeLists[i].catenary,
                 leadingIndex = edgeLists[i].leadingIndex,
-                posTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift),
-                -- this is different!
-                -- posTanX2 = transfUtils.getParallelSidewaysWithRotZ(edgeLists[i].posTanX2, sideShift),
+                posTanX2 = transfUtils.getParallelSidewaysCoarse(edgeLists[i].posTanX2, sideShift),
+                -- this is slower
+                -- posTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift),
                 -- trackType = edgeLists[i].trackType,
                 -- trackTypeName = edgeLists[i].trackTypeName,
                 -- type = edgeLists[i].type,
@@ -1959,8 +1959,8 @@ helpers.getIsTrackOnPlatformLeft = function(platformEdgeList, midTrackEdge)
     logger.print('_centrePlatformIndex_Nearest2_TrackMid =') logger.debugPrint(_centrePlatformIndex_Nearest2_TrackMid)
 
     local _platformWidth = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid].width
-    local _leftPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, - _platformWidth * 0.5)
-    local _rightPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, _platformWidth * 0.5)
+    local _leftPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, _platformWidth * 0.5)
+    local _rightPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, -_platformWidth * 0.5)
     -- logger.print('eee')
 
     local _midLeftPlatformPoint = transfUtils.getPositionsMiddle(

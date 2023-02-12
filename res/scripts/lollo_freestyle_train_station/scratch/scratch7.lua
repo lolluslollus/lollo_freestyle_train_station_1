@@ -213,6 +213,7 @@ local moduleHelpers = {
 
 local tr1, tr2, tr3, tr4, tr5, tr6, tr7, tr8
 local tr1B, tr2B, tr3B, tr4B, tr5B, tr6B, tr7B, tr8B
+local tr1C, tr2C, tr3C, tr4C, tr5C, tr6C, tr7C, tr8C
 -- logger.profile(
 --     'OLD takes',
 --     function()
@@ -273,55 +274,85 @@ local tr1B, tr2B, tr3B, tr4B, tr5B, tr6B, tr7B, tr8B
 --         end
 --     end
 -- )
-logger.profile(
-    'OLD',
-    function()
-        for i = 1, 100000, 1 do
-        tr1 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_straight)
-        tr2 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_straight_diagonal)
-        tr3 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve1)
-        tr4 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve1_shifted)
-        tr5 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve2)
-        tr6 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve3)
-        tr7 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve4)
-        tr8 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve5)
-        end
-    end
-)
-logger.profile(
-    'NEW',
-    function()
-        for i = 1, 100000, 1 do
-        tr1B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_straight)
-        tr2B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_straight_diagonal)
-        tr3B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve1)
-        tr4B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve1_shifted)
-        tr5B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve2)
-        tr6B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve3)
-        tr7B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve4)
-        tr8B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve5)
-        end
-    end
-)
+-- logger.profile(
+--     'OLD',
+--     function()
+--         for i = 1, 100000, 1 do
+--         tr1 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_straight)
+--         tr2 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_straight_diagonal)
+--         tr3 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve1)
+--         tr4 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve1_shifted)
+--         tr5 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve2)
+--         tr6 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve3)
+--         tr7 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve4)
+--         tr8 = moduleHelpers.getPlatformObjectTransf_WithYRotationOLD(posTanX2_curve5)
+--         end
+--     end
+-- )
+-- logger.profile(
+--     'NEW',
+--     function()
+--         for i = 1, 100000, 1 do
+--         tr1B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_straight)
+--         tr2B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_straight_diagonal)
+--         tr3B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve1)
+--         tr4B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve1_shifted)
+--         tr5B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve2)
+--         tr6B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve3)
+--         tr7B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve4)
+--         tr8B = moduleHelpers.getPlatformObjectTransf_WithYRotation(posTanX2_curve5)
+--         end
+--     end
+-- )
 
 local sideShift = 2
+-- logger.profile(
+--     'OLD tr',
+--     function()
+--         for i = 1, 100000, 1 do
+--         tr1 = transfUtils.getParallelSidewaysOLD(posTanX2_straight, sideShift)
+--         tr2 = transfUtils.getParallelSidewaysOLD(posTanX2_straight_diagonal, sideShift)
+--         tr3 = transfUtils.getParallelSidewaysOLD(posTanX2_curve1, sideShift)
+--         tr4 = transfUtils.getParallelSidewaysOLD(posTanX2_curve1_shifted, sideShift)
+--         tr5 = transfUtils.getParallelSidewaysOLD(posTanX2_curve2, sideShift)
+--         tr6 = transfUtils.getParallelSidewaysOLD(posTanX2_curve3, sideShift)
+--         tr7 = transfUtils.getParallelSidewaysOLD(posTanX2_curve4, sideShift)
+--         tr8 = transfUtils.getParallelSidewaysOLD(posTanX2_curve5, sideShift)
+--         end
+--     end
+-- )
 logger.profile(
-    'OLD tr',
+    'NEW tr',
     function()
         for i = 1, 100000, 1 do
-        tr1 = transfUtils.getParallelSidewaysOLD(posTanX2_straight, sideShift)
-        tr2 = transfUtils.getParallelSidewaysOLD(posTanX2_straight_diagonal, sideShift)
-        tr3 = transfUtils.getParallelSidewaysOLD(posTanX2_curve1, sideShift)
-        tr4 = transfUtils.getParallelSidewaysOLD(posTanX2_curve1_shifted, sideShift)
-        tr5 = transfUtils.getParallelSidewaysOLD(posTanX2_curve2, sideShift)
-        tr6 = transfUtils.getParallelSidewaysOLD(posTanX2_curve3, sideShift)
-        tr7 = transfUtils.getParallelSidewaysOLD(posTanX2_curve4, sideShift)
-        tr8 = transfUtils.getParallelSidewaysOLD(posTanX2_curve5, sideShift)
+        tr1C = transfUtils.getParallelSidewaysCoarse(posTanX2_straight, sideShift)
+        tr2C = transfUtils.getParallelSidewaysCoarse(posTanX2_straight_diagonal, sideShift)
+        tr3C = transfUtils.getParallelSidewaysCoarse(posTanX2_curve1, sideShift)
+        tr4C = transfUtils.getParallelSidewaysCoarse(posTanX2_curve1_shifted, sideShift)
+        tr5C = transfUtils.getParallelSidewaysCoarse(posTanX2_curve2, sideShift)
+        tr6C = transfUtils.getParallelSidewaysCoarse(posTanX2_curve3, sideShift)
+        tr7C = transfUtils.getParallelSidewaysCoarse(posTanX2_curve4, sideShift)
+        tr8C = transfUtils.getParallelSidewaysCoarse(posTanX2_curve5, sideShift)
         end
     end
 )
+-- logger.profile(
+--     'OLD tr with rot Z',
+--     function()
+--         for i = 1, 100000, 1 do
+--         tr1 = transfUtils.getParallelSidewaysWithRotZOLD(posTanX2_straight, sideShift)
+--         tr2 = transfUtils.getParallelSidewaysWithRotZOLD(posTanX2_straight_diagonal, sideShift)
+--         tr3 = transfUtils.getParallelSidewaysWithRotZOLD(posTanX2_curve1, sideShift)
+--         tr4 = transfUtils.getParallelSidewaysWithRotZOLD(posTanX2_curve1_shifted, sideShift)
+--         tr5 = transfUtils.getParallelSidewaysWithRotZOLD(posTanX2_curve2, sideShift)
+--         tr6 = transfUtils.getParallelSidewaysWithRotZOLD(posTanX2_curve3, sideShift)
+--         tr7 = transfUtils.getParallelSidewaysWithRotZOLD(posTanX2_curve4, sideShift)
+--         tr8 = transfUtils.getParallelSidewaysWithRotZOLD(posTanX2_curve5, sideShift)
+--         end
+--     end
+-- )
 logger.profile(
-    'NEW tr',
+    'NEW tr with rot Z',
     function()
         for i = 1, 100000, 1 do
         tr1B = transfUtils.getParallelSideways(posTanX2_straight, sideShift)
@@ -332,21 +363,6 @@ logger.profile(
         tr6B = transfUtils.getParallelSideways(posTanX2_curve3, sideShift)
         tr7B = transfUtils.getParallelSideways(posTanX2_curve4, sideShift)
         tr8B = transfUtils.getParallelSideways(posTanX2_curve5, sideShift)
-        end
-    end
-)
-logger.profile(
-    'NEW tr with rot Z',
-    function()
-        for i = 1, 100000, 1 do
-        tr1B = transfUtils.getParallelSidewaysWithRotZ(posTanX2_straight, sideShift)
-        tr2B = transfUtils.getParallelSidewaysWithRotZ(posTanX2_straight_diagonal, sideShift)
-        tr3B = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve1, sideShift)
-        tr4B = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve1_shifted, sideShift)
-        tr5B = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve2, sideShift)
-        tr6B = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve3, sideShift)
-        tr7B = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve4, sideShift)
-        tr8B = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve5, sideShift)
         end
     end
 )

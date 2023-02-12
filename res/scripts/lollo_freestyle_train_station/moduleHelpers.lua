@@ -214,13 +214,13 @@ privateFuncs.deco = {
         if absDeltaY <= 0 then return end
 
         if isSideA then
-            local posTanX2_1 = transfUtils.getParallelSidewaysWithRotZ(
+            local posTanX2_1 = transfUtils.getParallelSideways(
                 cpf.posTanX2,
                 isTrackOnPlatformLeft
                     and (-cpf.width / 2 - slopedAreaWidth + absDeltaY)
                     or (cpf.width / 2 + slopedAreaWidth - absDeltaY)
             )
-            local posTanX2_2 = transfUtils.getParallelSidewaysWithRotZ(
+            local posTanX2_2 = transfUtils.getParallelSideways(
                 cpf.posTanX2,
                 isTrackOnPlatformLeft
                     and (-cpf.width / 2 - slopedAreaWidth)
@@ -283,13 +283,13 @@ privateFuncs.deco = {
                 }
             end
         else
-            local posTanX2_1 = transfUtils.getParallelSidewaysWithRotZ(
+            local posTanX2_1 = transfUtils.getParallelSideways(
                 cpf.posTanX2,
                 isTrackOnPlatformLeft
                     and (-cpf.width / 2 - slopedAreaWidth + absDeltaY)
                     or (cpf.width / 2 + slopedAreaWidth - absDeltaY)
             )
-            local posTanX2_2 = transfUtils.getParallelSidewaysWithRotZ(
+            local posTanX2_2 = transfUtils.getParallelSideways(
                 cpf.posTanX2,
                 isTrackOnPlatformLeft
                     and (-cpf.width / 2 - slopedAreaWidth)
@@ -848,7 +848,7 @@ privateFuncs.slopedAreas = {
             if cpf.type == 0 then -- only on ground
                 if leadingIndex >= i1 then
                     local platformWidth = cpf.width
-                    local outerAreaEdgePosTanX2 = transfUtils.getParallelSidewaysWithRotZ(
+                    local outerAreaEdgePosTanX2 = transfUtils.getParallelSideways(
                         cpf.posTanX2,
                         (isTrackOnPlatformLeft and (-areaWidth -platformWidth * 0.5) or (areaWidth + platformWidth * 0.5))
                     )
@@ -1245,7 +1245,7 @@ return {
                             local basePosTanX2, xScaleFactor, zShift = cpf.posTanX2, 1, 0
                             if widthAboveMinimum ~= 0 then
                                 local xRatio, yRatio = 1, 1
-                                basePosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
+                                basePosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
                                     cpf.posTanX2,
                                     (isTrackOnPlatformLeft and -widthAboveMinimum or widthAboveMinimum)
                                 )
@@ -2111,7 +2111,7 @@ return {
                     local isCanBuild = privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, areaWidth)
                     if isCanBuild then
                         local platformWidth = cpf.width
-                        local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
+                        local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
                             cpf.posTanX2,
                             (_isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
                         )

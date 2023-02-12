@@ -60,18 +60,18 @@ local posTanX2_curve3 = {
   },
 }
 
-local aP1, bP1, cP1 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_straight, 2)
-local aP2, bP2, cP2 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_straight, -2)
-local aP3, bP3, cP3 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_straight_diagonal, 2)
-local aP4, bP4, cP4 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_straight_diagonal, -2)
-local aP5, bP5, cP5 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve1, 2)
-local aP6, bP6, cP6 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve1, -2)
-local aP7, bP7, cP7 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve1_shifted, 2)
-local aP8, bP8, cP8 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve1_shifted, -2)
-local aP9, bP9, cP9 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve2, 2)
-local aP10, bP10, cP10 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve2, -2)
-local aP11, bP11, cP11 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve3, 2)
-local aP12, bP12, cP12 = transfUtils.getParallelSidewaysWithRotZ(posTanX2_curve3, -2)
+local aP1, bP1, cP1 = transfUtils.getParallelSideways(posTanX2_straight, 2)
+local aP2, bP2, cP2 = transfUtils.getParallelSideways(posTanX2_straight, -2)
+local aP3, bP3, cP3 = transfUtils.getParallelSideways(posTanX2_straight_diagonal, 2)
+local aP4, bP4, cP4 = transfUtils.getParallelSideways(posTanX2_straight_diagonal, -2)
+local aP5, bP5, cP5 = transfUtils.getParallelSideways(posTanX2_curve1, 2)
+local aP6, bP6, cP6 = transfUtils.getParallelSideways(posTanX2_curve1, -2)
+local aP7, bP7, cP7 = transfUtils.getParallelSideways(posTanX2_curve1_shifted, 2)
+local aP8, bP8, cP8 = transfUtils.getParallelSideways(posTanX2_curve1_shifted, -2)
+local aP9, bP9, cP9 = transfUtils.getParallelSideways(posTanX2_curve2, 2)
+local aP10, bP10, cP10 = transfUtils.getParallelSideways(posTanX2_curve2, -2)
+local aP11, bP11, cP11 = transfUtils.getParallelSideways(posTanX2_curve3, 2)
+local aP12, bP12, cP12 = transfUtils.getParallelSideways(posTanX2_curve3, -2)
 
 local dummy2 = 123
 
