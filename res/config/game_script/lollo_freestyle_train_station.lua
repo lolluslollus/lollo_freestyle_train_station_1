@@ -1550,6 +1550,9 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     if isAnyTrackFailed then
         -- cannot call the popup from the worker thread
         state.isShowBuildSnappyTracksFailed = true
+    else
+        state.isShowBuildInProgress = false
+        state.isShowRestoreInProgress = false
     end
 end
 
@@ -1582,9 +1585,27 @@ function data()
                     -- debugPrint(args)
 
                     if name == _eventNames.HIDE_WARNINGS then
+                        state.isShowBuildInProgress = false
+                        state.isShowRestoreInProgress = false
                         state.isShowBuildSnappyTracksFailed = false
                         state.isShowNeedAdjust4Snap = false
                         guiHelpers.isShowingWarning = false
+                    elseif name == _eventNames.SHOW_BUILD_IN_PROGRESS then
+                        state.isShowBuildInProgress = true
+                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                            string.sub(debug.getinfo(1, 'S').source, 1),
+                            _eventId,
+                            args.nextEventName,
+                            args.nextEventArgs
+                        ))
+                    elseif name == _eventNames.SHOW_RESTORE_IN_PROGRESS then
+                        state.isShowRestoreInProgress = true
+                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                            string.sub(debug.getinfo(1, 'S').source, 1),
+                            _eventId,
+                            args.nextEventName,
+                            args.nextEventArgs
+                        ))
                     elseif name == _eventNames.HIDE_HOLE_REQUESTED then
                         -- _actions.rebuildUndergroundDepotWithoutHole(args.conId)
                     elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
@@ -2244,14 +2265,18 @@ function data()
                                             -- a terminal was bulldozed
                                             if type(nTerminalToRemove) == 'number' and nTerminalToRemove > 0 then
                                                 logger.print('nTerminalToRemove =', nTerminalToRemove or 'NIL')
+                                                guiHelpers.showWarningWindowWithState(_('RestoreInProgress'))
                                                 api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                     string.sub(debug.getinfo(1, 'S').source, 1),
                                                     _eventId,
-                                                    _eventNames.REMOVE_TERMINAL_REQUESTED,
+                                                    _eventNames.SHOW_RESTORE_IN_PROGRESS,
                                                     {
-                                                        stationConstructionId = conId,
-                                                        nRemainingTerminals = nRemainingTerminals,
-                                                        nTerminalToRemove = nTerminalToRemove
+                                                        nextEventName = _eventNames.REMOVE_TERMINAL_REQUESTED,
+                                                        nextEventArgs = {
+                                                            stationConstructionId = conId,
+                                                            nRemainingTerminals = nRemainingTerminals,
+                                                            nTerminalToRemove = nTerminalToRemove
+                                                        }
                                                     }
                                                 ))
                                             end
@@ -2593,16 +2618,22 @@ function data()
                                                 isCargo,
                                                 nearbyFreestyleStations,
                                                 _eventId,
-                                                _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                                _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                                eventArgs -- join2StationConId will be added by the popup
+                                                _eventNames.SHOW_BUILD_IN_PROGRESS,
+                                                _eventNames.SHOW_BUILD_IN_PROGRESS,
+                                                { -- join2StationConId will be added by the popup
+                                                    nextEventName = _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
+                                                    nextEventArgs = eventArgs,
+                                                }
                                             )
                                         else
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                                 _eventId,
-                                                _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                                eventArgs
+                                                _eventNames.SHOW_BUILD_IN_PROGRESS,
+                                                {
+                                                    nextEventName = _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
+                                                    nextEventArgs = eventArgs,
+                                                }
                                             ))
                                         end
                                     end
@@ -2663,28 +2694,42 @@ function data()
                     guiHelpers.showWarningWindowWithState(_('BuildSnappyTracksFailed'))
                 elseif state.isShowNeedAdjust4Snap then
                     guiHelpers.showWarningWindowWithState(_('NeedAdjust4Snap'))
+                elseif state.isShowBuildInProgress then
+                    guiHelpers.showWarningWindowWithState(_('BuildInProgress'))
+                elseif state.isShowRestoreInProgress then
+                    guiHelpers.showWarningWindowWithState(_('RestoreInProgress'))
                 end
             end
         end,
         save = function()
             -- only fires when the worker thread changes the state
-            if not state then state = {} end
-            if not state.isShowBuildSnappyTracksFailed then state.isShowBuildSnappyTracksFailed = false end
-            if not state.isShowNeedAdjust4Snap then state.isShowNeedAdjust4Snap = false end
+            if state == nil then state = {} end
+            if not(state.isShowBuildInProgress) then state.isShowBuildInProgress = false end
+            if not(state.isShowBuildSnappyTracksFailed) then state.isShowBuildSnappyTracksFailed = false end
+            if not(state.isShowNeedAdjust4Snap) then state.isShowNeedAdjust4Snap = false end
+            if not(state.isShowRestoreInProgress) then state.isShowRestoreInProgress = false end
+            -- print('save about to return state =') debugPrint(state)
             return state
         end,
         load = function(loadedState)
             -- fires once in the worker thread, at game load, and many times in the UI thread
-            if loadedState then
-                state = {}
-                state.isShowBuildSnappyTracksFailed = loadedState.isShowBuildSnappyTracksFailed or false
-                state.isShowNeedAdjust4Snap = loadedState.isShowNeedAdjust4Snap or false
+            -- print('load got loadedState =') debugPrint(loadedState)
+            if loadedState ~= nil then
+                state = {
+                    isShowBuildInProgress = loadedState.isShowBuildInProgress or false,
+                    isShowBuildSnappyTracksFailed = loadedState.isShowBuildSnappyTracksFailed or false,
+                    isShowNeedAdjust4Snap = loadedState.isShowNeedAdjust4Snap or false,
+                    isShowRestoreInProgress = loadedState.isShowRestoreInProgress or false,
+                }
             else
                 state = {
+                    isShowBuildInProgress = false,
                     isShowBuildSnappyTracksFailed = false,
                     isShowNeedAdjust4Snap = false,
+                    isShowRestoreInProgress = false,
                 }
             end
+            -- print('load set state =') debugPrint(state)
         end,
     }
 end
