@@ -868,13 +868,14 @@ privateFuncs.slopedAreas = {
         -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
 
         local faces = {}
+        local deltaZ = result.laneZs[nTerminal] -constants.stairsAndRampHeight + constants.platformSideBitsZ
         for tc = 1, #terrainCoordinates do
             local face = { }
             for i = 1, 4 do
                 face[i] = {
                     terrainCoordinates[tc][i][1],
                     terrainCoordinates[tc][i][2],
-                    terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + constants.platformSideBitsZ,
+                    terrainCoordinates[tc][i][3] + deltaZ,
                     1
                 }
             end
