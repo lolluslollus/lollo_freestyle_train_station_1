@@ -20,84 +20,130 @@ local _eventId = _constants.eventData.eventId
 local _eventNames = _constants.eventData.eventNames
 local _guiPlatformWaypointModelId = nil
 local _guiTrackWaypointModelId = nil
+local _guiTexts = {
+    buildInProgress = '',
+    buildMoreWaypoints = '',
+    buildSnappyTracksFailed = '',
+    differentPlatformWidths = '',
+    modName = '',
+    needAdjust4Snap = '',
+    restoreInProgress = '',
+    trackWaypointBuiltOnPlatform = '',
+    waypointAlreadyBuilt = '',
+    waypointsCrossCrossing = '',
+    waypointsCrossSignal = '',
+    waypointsCrossStation = '',
+    waypointsTooCloseToStation = '',
+    waypointsTooFar = '',
+    waypointsNotConnected = '',
+    waypointsWrong = '',
+}
 
-local getAverageZ = function(edgeId)
-    if not(edgeUtils.isValidAndExistingId(edgeId)) then return nil end
+local _utils = {
+    getAverageZ = function(edgeId)
+        if not(edgeUtils.isValidAndExistingId(edgeId)) then return nil end
 
-    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-    if baseEdge == nil then return nil end
+        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+        if baseEdge == nil then return nil end
 
-    local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-    local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-    if baseNode0 == nil
-    or baseNode1 == nil
-    or baseNode0.position == nil
-    or baseNode1.position == nil
-    or type(baseNode0.position.z) ~= 'number'
-    or type(baseNode1.position.z) ~= 'number'
-    then
-        return nil
-    end
+        local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+        local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+        if baseNode0 == nil
+        or baseNode1 == nil
+        or baseNode0.position == nil
+        or baseNode1.position == nil
+        or type(baseNode0.position.z) ~= 'number'
+        or type(baseNode1.position.z) ~= 'number'
+        then
+            return nil
+        end
 
-    return (baseNode0.position.z + baseNode1.position.z) / 2
-end
+        return (baseNode0.position.z + baseNode1.position.z) / 2
+    end,
+    sendAllowProgress = function()
+        api.cmd.sendCommand(
+            api.cmd.make.sendScriptEvent(
+                string.sub(debug.getinfo(1, 'S').source, 1),
+                _eventId,
+                _eventNames.ALLOW_PROGRESS
+            )
+        )
+    end,
+    sendHideProgress = function()
+        api.cmd.sendCommand(
+            api.cmd.make.sendScriptEvent(
+                string.sub(debug.getinfo(1, 'S').source, 1),
+                _eventId,
+                _eventNames.HIDE_PROGRESS
+            )
+        )
+    end,
+    sendHideWarnings = function()
+        api.cmd.sendCommand(
+            api.cmd.make.sendScriptEvent(
+                string.sub(debug.getinfo(1, 'S').source, 1),
+                _eventId,
+                _eventNames.HIDE_WARNINGS
+            )
+        )
+    end,
+    tryRenameStationGroup = function(conId)
+        -- For some reason, adding a cargo station to a passengers station (or viceversa)
+        -- sets the name of the older station to an empty string.
+        -- This function goes around it.
+        if not edgeUtils.isValidAndExistingId(conId) then return end
 
-local _tryRenameStationGroup = function(conId)
-    -- For some reason, adding a cargo station to a passengers station (or viceversa)
-    -- sets the name of the older station to an empty string.
-    -- This function goes around it.
-    if not edgeUtils.isValidAndExistingId(conId) then return end
+        xpcall(
+            function()
+                local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                if not con or not(con.stations) then return end
 
-    xpcall(
-        function()
-            local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-            if not con or not(con.stations) then return end
+                local stationsIdsInCon = con.stations
+                local stationGroupIdsInCon = {}
 
-            local stationsIdsInCon = con.stations
-            local stationGroupIdsInCon = {}
-
-            for _, stationId in pairs(stationsIdsInCon) do
-                if edgeUtils.isValidAndExistingId(stationId) then
-                    local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
-                    if edgeUtils.isValidAndExistingId(stationGroupId) then
-                        if not(stationGroupIdsInCon[stationGroupId]) then stationGroupIdsInCon[stationGroupId] = {} end
-                        local stationGroupName_struct = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
-                        if stationGroupName_struct and not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
-                            stationGroupIdsInCon[stationGroupId].name = stationGroupName_struct.name
+                for _, stationId in pairs(stationsIdsInCon) do
+                    if edgeUtils.isValidAndExistingId(stationId) then
+                        local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
+                        if edgeUtils.isValidAndExistingId(stationGroupId) then
+                            if not(stationGroupIdsInCon[stationGroupId]) then stationGroupIdsInCon[stationGroupId] = {} end
+                            local stationGroupName_struct = api.engine.getComponent(stationGroupId, api.type.ComponentType.NAME)
+                            if stationGroupName_struct and not stringUtils.isNullOrEmptyString(stationGroupName_struct.name) then
+                                stationGroupIdsInCon[stationGroupId].name = stationGroupName_struct.name
+                            end
                         end
                     end
                 end
-            end
 
-            logger.print('stationGroupIdsInCon =') logger.debugPrint(stationGroupIdsInCon)
+                logger.print('stationGroupIdsInCon =') logger.debugPrint(stationGroupIdsInCon)
 
-            local fallbackName_struct = {}
-            for stationGroupId, staGroupInfo in pairs(stationGroupIdsInCon) do
-                if staGroupInfo and not stringUtils.isNullOrEmptyString(staGroupInfo.name) then
-                    fallbackName_struct = {stationGroupId = stationGroupId, name = staGroupInfo.name}
+                local fallbackName_struct = {}
+                for stationGroupId, staGroupInfo in pairs(stationGroupIdsInCon) do
+                    if staGroupInfo and not stringUtils.isNullOrEmptyString(staGroupInfo.name) then
+                        fallbackName_struct = {stationGroupId = stationGroupId, name = staGroupInfo.name}
+                    end
                 end
-            end
 
-            logger.print('fallbackName_struct =') logger.debugPrint(fallbackName_struct)
+                logger.print('fallbackName_struct =') logger.debugPrint(fallbackName_struct)
 
-            for stationGroupId, staGroupInfo in pairs(stationGroupIdsInCon) do
-                if staGroupInfo and stringUtils.isNullOrEmptyString(staGroupInfo.name) and not stringUtils.isNullOrEmptyString(fallbackName_struct.name) then
-                    logger.print('renaming...')
-                    api.cmd.sendCommand(
-                        api.cmd.make.setName(
-                            stationGroupId,
-                            fallbackName_struct.name
-                        ),
-                        function(result, success)
-                            logger.print('_tryRename sent out a command that returned success =', not(not(success)))
-                        end
-                    )
+                for stationGroupId, staGroupInfo in pairs(stationGroupIdsInCon) do
+                    if staGroupInfo and stringUtils.isNullOrEmptyString(staGroupInfo.name) and not stringUtils.isNullOrEmptyString(fallbackName_struct.name) then
+                        logger.print('renaming...')
+                        api.cmd.sendCommand(
+                            api.cmd.make.setName(
+                                stationGroupId,
+                                fallbackName_struct.name
+                            ),
+                            function(result, success)
+                                logger.print('_tryRename sent out a command that returned success =', not(not(success)))
+                            end
+                        )
+                    end
                 end
-            end
-        end,
-        logger.xpErrorHandler
-    )
-end
+            end,
+            logger.xpErrorHandler
+        )
+    end,
+}
 
 local _actions = {
     -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
@@ -419,7 +465,7 @@ local _actions = {
                 if success then
                     local stationConstructionId = result.resultEntities[1]
                     logger.print('buildStation succeeded, stationConstructionId = ', stationConstructionId)
-                    _tryRenameStationGroup(stationConstructionId)
+                    _utils.tryRenameStationGroup(stationConstructionId)
                     if successEventName ~= nil then
                         -- logger.print('station proposal data = ', result.resultProposalData) -- userdata
                         -- logger.print('station entities = ', result.resultEntities) -- userdata
@@ -1158,7 +1204,7 @@ local _actions = {
                 logger.print('upgradeStationConstruction succeeded') logger.debugPrint(upgradedConId)
             end,
             function(error)
-                state.isShowNeedAdjust4Snap = true
+                state.warningText = _('NeedAdjust4Snap')
                 logger.warn(error)
             end
         )
@@ -1549,13 +1595,11 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
 
     if isAnyTrackFailed then
         -- cannot call the popup from the worker thread
-        state.isShowBuildSnappyTracksFailed = true
+        state.warningText = _('BuildSnappyTracksFailed')
     end
-end
 
--- local function _isBuildingPlatformMarker(args)
---     return stationHelpers.isBuildingConstructionWithFileName(args, _constants.platformMarkerConName)
--- end
+    _utils.sendHideProgress()
+end
 
 function data()
     return {
@@ -1564,6 +1608,22 @@ function data()
         guiInit = function()
             _guiPlatformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
             _guiTrackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
+            _guiTexts.differentPlatformWidths = _('DifferentPlatformWidths')
+            _guiTexts.buildInProgress = _('BuildInProgress')
+            _guiTexts.buildMoreWaypoints = _('BuildMoreWaypoints')
+            _guiTexts.buildSnappyTracksFailed = _('BuildSnappyTracksFailed')
+            _guiTexts.modName = _('NAME')
+            _guiTexts.needAdjust4Snap = _('NeedAdjust4Snap')
+            _guiTexts.restoreInProgress = _('RestoreInProgress')
+            _guiTexts.trackWaypointBuiltOnPlatform = _('TrackWaypointBuiltOnPlatform')
+            _guiTexts.waypointAlreadyBuilt = _('WaypointAlreadyBuilt')
+            _guiTexts.waypointsCrossCrossing = _('WaypointsCrossCrossing')
+            _guiTexts.waypointsCrossSignal = _('WaypointsCrossSignal')
+            _guiTexts.waypointsCrossStation = _('WaypointsCrossStation')
+            _guiTexts.waypointsTooCloseToStation = _('WaypointsTooCloseToStation')
+            _guiTexts.waypointsTooFar = _('WaypointsTooFar')
+            _guiTexts.waypointsNotConnected = _('WaypointsNotConnected')
+            _guiTexts.waypointsWrong = _('WaypointsWrong')
         end,
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
@@ -1582,9 +1642,11 @@ function data()
                     -- debugPrint(args)
 
                     if name == _eventNames.HIDE_WARNINGS then
-                        state.isShowBuildSnappyTracksFailed = false
-                        state.isShowNeedAdjust4Snap = false
-                        guiHelpers.isShowingWarning = false
+                        state.warningText = nil
+                    elseif name == _eventNames.HIDE_PROGRESS then
+                        state.isHideProgress = true
+                    elseif name == _eventNames.ALLOW_PROGRESS then
+                        state.isHideProgress = false
                     elseif name == _eventNames.HIDE_HOLE_REQUESTED then
                         -- _actions.rebuildUndergroundDepotWithoutHole(args.conId)
                     elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
@@ -1594,13 +1656,12 @@ function data()
                         _actions.replaceEdgeWithSameRemovingObject(args.edgeId, args.waypointId)
                     elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.trackWaypoint1Id))
-                        then return end
+                        then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.trackWaypoint1Id)
-                        if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
+                        if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint1Id)
-                        -- UG TODO see if the api can get the exact percentage shift.
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
 
                         _actions.splitEdgeRemovingObject(
@@ -1613,10 +1674,10 @@ function data()
                         )
                     elseif name == _eventNames.TRACK_WAYPOINT_2_SPLIT_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.trackWaypoint2Id))
-                        then return end
+                        then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.trackWaypoint2Id)
-                        if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
+                        if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint2Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
@@ -1630,10 +1691,10 @@ function data()
                         )
                     elseif name == _eventNames.PLATFORM_WAYPOINT_1_SPLIT_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.platformWaypoint1Id))
-                        then return end
+                        then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.platformWaypoint1Id)
-                        if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
+                        if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint1Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
@@ -1648,10 +1709,10 @@ function data()
                         )
                     elseif name == _eventNames.PLATFORM_WAYPOINT_2_SPLIT_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.platformWaypoint2Id))
-                        then return end
+                        then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.platformWaypoint2Id)
-                        if not(edgeUtils.isValidAndExistingId(edgeId)) then return end
+                        if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint2Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
@@ -2093,6 +2154,7 @@ function data()
                         _actions.buildSnappyStreetEdges(args.stationConstructionId)
                         _actions.buildSnappyTracks(args.stationConstructionId, 1, #con.params.terminals)
                     elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
+                        _utils.sendHideProgress()
                         _actions.bulldozeConstruction(args.stationConstructionId)
                     elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
@@ -2114,7 +2176,7 @@ function data()
                                 )
                                 logger.print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
                                 if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then
-                                    local averageZ = getAverageZ(nearestEdgeId)
+                                    local averageZ = _utils.getAverageZ(nearestEdgeId)
                                     logger.print('averageZ =', averageZ or 'NIL')
                                     if type(averageZ) == 'number' then
                                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(
@@ -2199,7 +2261,7 @@ function data()
                                         )
                                         if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
                                             local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition) or 0
-                                            guiHelpers.showWaypointDistance(tostring((_('WaypointDistanceWindowTitle') .. " %.0f m"):format(distance)))
+                                            guiHelpers.showWaypointDistance(distance)
                                             return true
                                         end
 
@@ -2222,7 +2284,7 @@ function data()
                                 end
                             end
                         elseif name == 'builder.apply' then
-                            guiHelpers.hideAllWarnings()
+                            guiHelpers.hideWarningWithGoTo()
                             -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
                             if id == 'bulldozer' then
                                 for _, conId in pairs(args.proposal.toRemove) do
@@ -2244,6 +2306,7 @@ function data()
                                             -- a terminal was bulldozed
                                             if type(nTerminalToRemove) == 'number' and nTerminalToRemove > 0 then
                                                 logger.print('nTerminalToRemove =', nTerminalToRemove or 'NIL')
+                                                guiHelpers.showProgress(_guiTexts.restoreInProgress, _guiTexts.modName, _utils.sendAllowProgress)
                                                 api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                     string.sub(debug.getinfo(1, 'S').source, 1),
                                                     _eventId,
@@ -2314,7 +2377,7 @@ function data()
 
                                         -- forbid building track waypoint on a platform or platform waypoint on a track
                                         if trackUtils.isPlatform(args.proposal.proposal.addedSegments[1].trackEdge.trackType) ~= mustBeOnPlatform then
-                                            guiHelpers.showWarningWindowWithGoto(_('TrackWaypointBuiltOnPlatform'))
+                                            guiHelpers.showWarningWithGoto(_guiTexts.trackWaypointBuiltOnPlatform)
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                                 _eventId,
@@ -2331,7 +2394,7 @@ function data()
                                         logger.print('similarObjectsIdsInAnyEdges =') logger.debugPrint(similarObjectIdsInAnyEdges)
                                         -- forbid building more then two waypoints of the same type
                                         if #similarObjectIdsInAnyEdges > 2 then
-                                            guiHelpers.showWarningWindowWithGoto(_('WaypointAlreadyBuilt'), newWaypointId, similarObjectIdsInAnyEdges)
+                                            guiHelpers.showWarningWithGoto(_guiTexts.waypointAlreadyBuilt, newWaypointId, similarObjectIdsInAnyEdges)
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                                 _eventId,
@@ -2361,28 +2424,42 @@ function data()
                                                         local stationEndEntities = stationHelpers.getStationEndEntities(conId)
                                                         -- logger.print('stationEndEntities =') logger.debugPrint(stationEndEntities)
                                                         -- if any end nodes are too close to my waypoint
-                                                        for __, stationEndEntities4T in pairs(stationEndEntities) do
-                                                            if transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
-                                                            or transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
-                                                            or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
-                                                            or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
-                                                            then
-                                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsTooCloseToStation'), newWaypointId)
-                                                                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                                                                    string.sub(debug.getinfo(1, 'S').source, 1),
-                                                                    _eventId,
-                                                                    _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
-                                                                    {
-                                                                        edgeId = lastBuiltEdgeId,
-                                                                        waypointId = newWaypointId,
-                                                                    }
-                                                                ))
-                                                                return false
+                                                        if stationEndEntities == nil then
+                                                            guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooCloseToStation, newWaypointId)
+                                                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                                                _eventId,
+                                                                _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                                {
+                                                                    edgeId = lastBuiltEdgeId,
+                                                                    waypointId = newWaypointId,
+                                                                }
+                                                            ))
+                                                            return false
+                                                        else
+                                                            for __, stationEndEntities4T in pairs(stationEndEntities) do
+                                                                if transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
+                                                                or transfUtils.getPositionsDistance(stationEndEntities4T.platforms.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
+                                                                or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node1, newWaypointPosition) < _minDistance
+                                                                or transfUtils.getPositionsDistance(stationEndEntities4T.tracks.stationEndNodePositions.node2, newWaypointPosition) < _minDistance
+                                                                then
+                                                                    guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooCloseToStation, newWaypointId)
+                                                                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                                                        string.sub(debug.getinfo(1, 'S').source, 1),
+                                                                        _eventId,
+                                                                        _eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                                                                        {
+                                                                            edgeId = lastBuiltEdgeId,
+                                                                            waypointId = newWaypointId,
+                                                                        }
+                                                                    ))
+                                                                    return false
+                                                                end
                                                             end
                                                         end
                                                     else -- if con.stations ~= nil and #con.stations > 0 then
                                                         -- no knowledge of end nodes: just forbid the waypoint
-                                                        guiHelpers.showWarningWindowWithGoto(_('WaypointsTooCloseToStation'), newWaypointId)
+                                                        guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooCloseToStation, newWaypointId)
                                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                             string.sub(debug.getinfo(1, 'S').source, 1),
                                                             _eventId,
@@ -2400,7 +2477,7 @@ function data()
 
                                         if #similarObjectIdsInAnyEdges < 2 then
                                             -- not ready yet
-                                            -- guiHelpers.showWarningWindowWithGoto(_('BuildMoreWaypoints'), newWaypointId)
+                                            -- guiHelpers.showWarningWithGoto(_guiTexts.buildMoreWaypoints), newWaypointId)
                                             return false
                                         end
 
@@ -2412,7 +2489,7 @@ function data()
                                         if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
                                             local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition)
                                             if distance > _constants.maxWaypointDistance then
-                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsTooFar'), newWaypointId, similarObjectIdsInAnyEdges)
+                                                guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooFar, newWaypointId, similarObjectIdsInAnyEdges)
                                                 api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                     string.sub(debug.getinfo(1, 'S').source, 1),
                                                     _eventId,
@@ -2433,7 +2510,7 @@ function data()
                                         logger.print('contiguous track edges =') logger.debugPrint(contiguousTrackEdgeProps)
                                         -- make sure the waypoints are on connected tracks
                                         if #contiguousTrackEdgeProps < 1 then
-                                            guiHelpers.showWarningWindowWithGoto(_('WaypointsNotConnected'), newWaypointId, similarObjectIdsInAnyEdges)
+                                            guiHelpers.showWarningWithGoto(_guiTexts.waypointsNotConnected, newWaypointId, similarObjectIdsInAnyEdges)
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                                 _eventId,
@@ -2453,7 +2530,7 @@ function data()
                                             if edgeUtils.isValidAndExistingId(conId) then
                                                 local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                                                 if con ~= nil and con.stations ~= nil and #con.stations > 0 then
-                                                    guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossStation'), newWaypointId)
+                                                    guiHelpers.showWarningWithGoto(_guiTexts.waypointsCrossStation, newWaypointId)
                                                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                         string.sub(debug.getinfo(1, 'S').source, 1),
                                                         _eventId,
@@ -2479,7 +2556,7 @@ function data()
                                         local _map = api.engine.system.streetSystem.getNode2SegmentMap()
                                         for __, nodeId in pairs(nodesBetweenWps) do
                                             if _map[nodeId] and #_map[nodeId] > 2 then
-                                                guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossCrossing'), newWaypointId)
+                                                guiHelpers.showWarningWithGoto(_guiTexts.waypointsCrossCrossing, newWaypointId)
                                                 api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                     string.sub(debug.getinfo(1, 'S').source, 1),
                                                     _eventId,
@@ -2500,7 +2577,7 @@ function data()
                                                 for __, edgeObj in pairs(baseEdge.objects) do
                                                     logger.print('edgeObj between waypoints =') logger.debugPrint(edgeObj)
                                                     if edgeObj[1] ~= newWaypointId and edgeObj[1] ~= twinWaypointId then
-                                                        guiHelpers.showWarningWindowWithGoto(_('WaypointsCrossSignal'), newWaypointId)
+                                                        guiHelpers.showWarningWithGoto(_guiTexts.waypointsCrossSignal, newWaypointId)
                                                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                             string.sub(debug.getinfo(1, 'S').source, 1),
                                                             _eventId,
@@ -2530,7 +2607,7 @@ function data()
                                         if #trackDistances > 1 then
                                             for __, td in pairs(trackDistances) do -- don't use _ here, we call it below to translate the message!
                                                 if td > 5 then
-                                                    guiHelpers.showWarningWindowWithGoto(_('DifferentPlatformWidths'), newWaypointId)
+                                                    guiHelpers.showWarningWithGoto(_guiTexts.differentPlatformWidths, newWaypointId)
                                                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                         string.sub(debug.getinfo(1, 'S').source, 1),
                                                         _eventId,
@@ -2595,9 +2672,11 @@ function data()
                                                 _eventId,
                                                 _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
                                                 _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
-                                                eventArgs -- join2StationConId will be added by the popup
+                                                eventArgs, -- join2StationConId will be added by the popup
+                                                function() guiHelpers.showProgress(_guiTexts.buildInProgress, _guiTexts.modName, _utils.sendAllowProgress) end
                                             )
                                         else
+                                            guiHelpers.showProgress(_guiTexts.buildInProgress, _guiTexts.modName, _utils.sendAllowProgress)
                                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                                 _eventId,
@@ -2655,36 +2734,57 @@ function data()
             end
             if isHideDistance then guiHelpers.hideWaypointDistance() end
         end,
-        -- update = function()
-        -- end,
         guiUpdate = function()
-            if not(guiHelpers.isShowingWarning) then
-                if state.isShowBuildSnappyTracksFailed then
-                    guiHelpers.showWarningWindowWithState(_('BuildSnappyTracksFailed'))
-                elseif state.isShowNeedAdjust4Snap then
-                    guiHelpers.showWarningWindowWithState(_('NeedAdjust4Snap'))
-                end
+            -- LOLLO NOTE these warnings are issued in the worker thread after the operation chain has completed,
+            -- so they are displayed when needed;
+            -- the progress info is also sent to the state after the operation chain has completed,
+            -- but it's too late for it.
+            -- To get all notices at the right moment, we use different systems:
+            -- Warnings are shown when the state wants so, and only closed by hand.
+            -- Progress info is shown when the GUI is at the right point, and closed when the operation chain has completed.
+            -- Both restore the pre-notice state when closed, so future notices will show up.
+            if state.warningText == nil then
+                guiHelpers.hideWarning()
+            elseif not(guiHelpers.isShowingWarning) then -- avoid rendering many times
+                guiHelpers.showWarning(
+                    state.warningText,
+                    _utils.sendHideWarnings
+                )
+            end
+            if state.isHideProgress then
+                guiHelpers.hideProgress(
+                    _utils.sendAllowProgress
+                )
+            end
+        end,
+        load = function(loadedState)
+            -- fires once in the worker thread, at game load, and many times in the UI thread
+            -- print('load got loadedState =') debugPrint(loadedState)
+            if not(api.gui) or not(loadedState) then
+                -- not(api.gui) is the one call from the worker thread, when starting
+                -- (there are actually two calls on start, not one, never mind)
+                -- with not(api.gui), loadedState is the last saved state from the save file (eg lollo-test-01.sav.lua)
+                -- use it to reset the state if it gets stuck, which should never happen
+                state = {
+                    isHideProgress = false,
+                    warningText = nil,
+                }
+                logger.print('script.load firing from the worker thread, state =') logger.debugPrint(state)
+            else
+                state = {
+                    isHideProgress = loadedState.isHideProgress or false,
+                    warningText = loadedState.warningText or nil,
+                }
             end
         end,
         save = function()
             -- only fires when the worker thread changes the state
-            if not state then state = {} end
-            if not state.isShowBuildSnappyTracksFailed then state.isShowBuildSnappyTracksFailed = false end
-            if not state.isShowNeedAdjust4Snap then state.isShowNeedAdjust4Snap = false end
+            if state == nil then state = {} end
+            if not(state.isHideProgress) then state.isHideProgress = false end
+            if state.warningText == '' then state.warningText = nil end
             return state
         end,
-        load = function(loadedState)
-            -- fires once in the worker thread, at game load, and many times in the UI thread
-            if loadedState then
-                state = {}
-                state.isShowBuildSnappyTracksFailed = loadedState.isShowBuildSnappyTracksFailed or false
-                state.isShowNeedAdjust4Snap = loadedState.isShowNeedAdjust4Snap or false
-            else
-                state = {
-                    isShowBuildSnappyTracksFailed = false,
-                    isShowNeedAdjust4Snap = false,
-                }
-            end
-        end,
+        -- update = function()
+        -- end,
     }
 end
