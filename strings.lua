@@ -380,6 +380,7 @@ function data()
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
 			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with the track splitter if you need to get close. The platform heads will connect automatically if they are closer than 7 metres",
 			["WaypointsTooFar"] = "Too far from its twin",
+			["WaypointsWrong"] = "Place two markers on the same platform and two on the same track",
 
 			-- free open stairs and free lifts
 			["BaseMode"] = "Base Mode",
@@ -827,6 +828,7 @@ function data()
 			["WaypointsNotConnected"] = "Dieser Marker ist nicht mit seinem Zwilling verbunden, oder es liegt ein Bahnhof / eine Verbindung / ein Semaphor dazwischen, oder er ist zu nahe an einem Bahnhof / einer Verbindung / einem Semaphor",
 			["WaypointsTooCloseToStation"] = "Zu nahe an einem bestehenden Bahnhof oder Depot. Schneiden Sie das Gleis mit dem Gleisteiler, wenn Sie näher herankommen müssen. Die Bahnsteigköpfe verbinden sich automatisch, wenn sie näher als 7 Meter sind",
 			["WaypointsTooFar"] = "Zu weit von seinem Zwilling entfernt",
+			["WaypointsWrong"] = "Platziere zwei Marker auf demselben Bahnsteig und zwei auf demselben Gleis",
 
 			-- lose offene Treppen und lose Aufzüge
 			["BaseMode"] = "Basismodus",
