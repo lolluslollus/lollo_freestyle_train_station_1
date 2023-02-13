@@ -50,6 +50,8 @@ function data()
 				- Underground stations are now in the assets.
 				- Minor version 1.81 (31st August 2022) introduced important layout changes. Previously built terminals will keep working but might have some glitches. To benefit from the changes, remove them, wait for them to reappear and build them anew.
 				- Platforms do not connect automatically to adjacent roads, you must add an exit or a station.
+				- Minor version 1.99 (13th February 2023) makes existing walls invisible until you build a new one.
+				- Walls around tracks are only available on terminals built with version 1.99 or newer.
 
 				[h1]Known issues:[/h1]
 				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
