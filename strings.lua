@@ -350,7 +350,7 @@ function data()
 			["waypoints-for-freestyle-station"] = "Waypoints For Freestyle Stations",
 
 			-- messages
-			["BuildInProgress"] = "Building platform and track...",
+			["BuildInProgress"] = "Building terminal...",
 			["BuildMoreWaypoints"] = "Plop two track markers and two platform markers to build a freestyle station",
 			["BuildSnappyTracksFailed"] = "Fix the station connections to the adjacent tracks, the game cannot do it for you this time",
 			["ConConfigWindowTitle"] = "Configuration",
@@ -796,7 +796,7 @@ function data()
 			["waypoints-for-freestyle-station"] = "Marker für Freestyle-Bahnhöfe",
 
 			-- Meldungen
-			["BuildInProgress"] = "Bau von Bahnsteig und Gleis...",
+			["BuildInProgress"] = "Bau eines Bahnsteigs...",
 			["BuildMoreWaypoints"] = "Setze zwei Gleismarker und zwei Bahnsteigmarker ein, um einen Freestyle-Bahnhof zu bauen",
 			["BuildSnappyTracksFailed"] = "Repariere die Bahnhofsverbindungen zu den angrenzenden Gleisen, das Spiel kann es diesmal nicht für dich tun",
 			["ConConfigWindowTitle"] = "Konfiguration",
