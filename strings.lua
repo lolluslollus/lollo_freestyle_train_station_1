@@ -5,22 +5,22 @@ function data()
 			["DESC"] = [[
 				A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
 
-                [h1]Instructions[/h1]
+			    [h1]Instructions[/h1]
 				Lay platforms alongside normal tracks, then place a platform marker and a track marker where you want the platform and the track to end. Repeat at the other end.
 				WAIT A MOMENT and let the computer think.
-                Now you have built a terminal, trains will stop between your track markers.
-                Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
+			    Now you have built a terminal, trains will stop between your track markers.
+			    Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
 
-                Now click your station to open the configuration menu and add some connections.
-                - Adjacent platforms are connected together automatically. If they are too far apart, connect them with exits, stairs or underpasses. You can also connect two bridge exits with a suitable path, if you are prepared to fight a bit with the game. <AltGr> + <L> is your friend.
-                - Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
-                - Every set of adjacent bridge platforms requires a lift or an underpass.
-                - Every bridge level requires a lift, or an underpass near a ground platform lift or stairs.
-                - Every set of adjacent underground platforms requires stairs.
-                - Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
+			    Now click your station to open the configuration menu and add some connections.
+			    - Adjacent platforms are connected together automatically. If they are too far apart, connect them with exits, stairs or underpasses. You can also connect two bridge exits with a suitable path, if you are prepared to fight a bit with the game. <AltGr> + <L> is your friend.
+			    - Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
+			    - Every set of adjacent bridge platforms requires a lift or an underpass.
+			    - Every bridge level requires a lift, or an underpass near a ground platform lift or stairs.
+			    - Every set of adjacent underground platforms requires stairs.
+			    - Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
 
-                You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, the heads will connect automatically if they are 7 metres apart or less.
-                You cannot share one stretch of platform among multiple terminals.
+			    You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, the heads will connect automatically if they are 7 metres apart or less.
+			    You cannot share one stretch of platform among multiple terminals.
 
 				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
 				When you bulldoze the station, everything will be bulldozed.
@@ -28,13 +28,13 @@ function data()
 				Lifts, stairs and underground entrances are in the assets, search for "freestyle station".
 				
 				[h1]Tips:[/h1]
-                - Platforms are tracks and they can also suffer from micro splits, very difficult to see.
+			    - Platforms are tracks and they can also suffer from micro splits, very difficult to see.
 				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>. This is particularly useful with multi-level underground stations.
 				- To work underground, use <NumPad 4> or the 'Look Underground' track construction.
 				- Platforms only carry passengers or cargo if they are part of a terminal.
 				- 2.5 m platforms do not agree with bridges and tunnels. My 'no railing' bridges help, tunnels can't be helped.
-                - This mod adds bridges to help with elevated stations.
-                - This mod adds pedestrian paths and bridges. Some of those paths turn into bridges after placing them. They can be tricky to place, the street fine tuning mod's "chunks" and "splitter" constructions come to the rescue.
+			    - This mod adds bridges to help with elevated stations.
+			    - This mod adds pedestrian paths and bridges. Some of those paths turn into bridges after placing them. They can be tricky to place, the street fine tuning mod's "chunks" and "splitter" constructions come to the rescue.
 				- Very thin paths help with certain setups: those are in my street fine tuning mod.
 				- Sound effects for stations are in my dedicated mod.
 				- Sound effects for trains are in my dedicated mod.
@@ -163,18 +163,18 @@ function data()
 			["LookUndergroundDesc"] = "Hover or build this to look underground, remove it when done.",
 			["OpenLiftName"] = "Lift up for ground platform",
 			["OpenLiftDesc"] = "Connects ground passenger platforms to their twins, to nearby bridge underpasses or, if you add an exit, to the road network.",
-            ["OpenStairsUpLeftName"] = "Stairs up left for ground platform",
+			["OpenStairsUpLeftName"] = "Stairs up left for ground platform",
 			["OpenStairsUpLeftDesc"] = "Connects ground passenger platforms to their twins, to nearby bridge underpasses or, if you add an exit, to the road network.",
 			["OpenStairsUpRightName"] = "Stairs up right for ground platform",
 			["OpenStairsUpRightDesc"] = "Connects ground passenger platforms to their twins, to nearby bridge underpasses or, if you add an exit, to the road network.",
 			["OpenStairsExitWithEdgeName_2m"] = "Entrance to stairs with auto bridge",
 			["OpenStairsExitWithSnappyEdgeName_2m"] = "Entrance to stairs with snappy auto bridge",
-            ["OpenStairsExitName_4m"] = "Entrance to stairs, 4 m",
+			["OpenStairsExitName_4m"] = "Entrance to stairs, 4 m",
 			["OpenStairsExitName_8m"] = "Entrance to stairs, 8 m",
 			["OpenStairsExitName_16m"] = "Entrance to stairs, 16 m",
 			["OpenStairsExitName_32m"] = "Entrance to stairs, 32 m",
 			["OpenStairsExitName_64m"] = "Entrance to stairs, 64 m",
-            ["OpenStairsExitDesc"] = "Connects stairs and lifts to the outside. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets if required.",
+			["OpenStairsExitDesc"] = "Connects stairs and lifts to the outside. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets if required.",
 			["OpenStairsExitWithEdgeDesc"] = "Connects stairs and lifts to the road network. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets, bridges or paths as required. It will become snappy at the next config update.",
 			["OpenStairsExitWithSnappyEdgeDesc"] = "Connects stairs and lifts to the road network. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets, bridges or paths as required.",
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
@@ -337,7 +337,7 @@ function data()
 			["cargo-road-access"] = "Cargo side -> road",
 			["cargo-road-access-axial"] = "Cargo end -> road",
 			["cargo-shelves"] = "Cargo shelves",
-            ["passenger-platform-extensions"] = "Passenger extensions",
+			["passenger-platform-extensions"] = "Passenger extensions",
 			["passenger-platform-tracks"] = "Passenger platforms to be laid as tracks",
 			["passenger-road-access"] = "Passengers side -> road",
 			["passenger-road-access-axial"] = "Passengers end -> road",
@@ -408,7 +408,7 @@ function data()
 			["SnappyEdgeWithBridge"] = "Snappy Bridge",
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["Stairs"] = "Stairs, lifts, underground entrances, assets for the Freestyle Train Station",
-            ["StairsBase"] = "Expand Base",
+			["StairsBase"] = "Expand Base",
 			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",
@@ -448,22 +448,22 @@ function data()
 			["DESC"] = [[
 				Ein Freestyle-Bahnhof. Er führt einige neue Spezialgleise ein, die als Bahnsteige für Fracht oder Passagiere dienen werden.
 
-                [h1]Anleitung[/h1]
+			    [h1]Anleitung[/h1]
 				Legen Sie Bahnsteigen entlang normaler Gleise und platzieren Sie dann eine Bahnsteig- und einen Gleismarker dort, wo die Bahnsteig und das Gleis enden sollen. Wiederholen Sie den Vorgang am anderen Ende.
 				WARTEN Sie einen Moment und lassen Sie den Computer nachdenken.
-                Jetzt haben Sie einen Bahnhof gebaut, und die Züge werden zwischen den Gleismarker halten.
-                Fügen Sie weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird Sie fragen, ob Sie Ihren neuen Terminal mit den anderen verbinden möchten. Sie können bis zu 12 Terminals in einem Bahnhof haben.
+			    Jetzt haben Sie einen Bahnhof gebaut, und die Züge werden zwischen den Gleismarker halten.
+			    Fügen Sie weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird Sie fragen, ob Sie Ihren neuen Terminal mit den anderen verbinden möchten. Sie können bis zu 12 Terminals in einem Bahnhof haben.
 
-                Klicken Sie nun auf Ihren Bahnhof, um das Konfigurationsmenü zu öffnen und einige Verbindungen hinzuzufügen.
-                - Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinden Sie sie mit Ausgängen, Treppen oder Unterführungen. Sie können auch zwei Brückenausgänge mit einem geeigneten Weg verbinden, wenn Sie bereit sind, ein wenig mit dem Spiel zu kämpfen. <AltGr> + <L> ist dein Freund.
-                - Jeder Satz benachbarter Bahnsteige am Boden erfordert einen Straßenzugang, eine Unterführung, einen Aufzug oder eine Treppe.
-                - Jede Reihe von benachbarten erhöhten Bahnsteigen erfordert einen Aufzug oder eine Unterführung.
-                - Jede Brückenebene erfordert einen Aufzug oder eine Unterführung in der Nähe eines ebenerdigen Bahnsteigs oder eine Treppe.
-                - Jede Gruppe von benachbarten unterirdischen Bahnsteigen erfordert eine Treppe.
-                - Jede unterirdische Ebene erfordert einen unterirdischen Eingang oder einen Bahnsteig am Boden mit einer Unterführung oder eine höhere unterirdische Ebene mit einer Treppe nach unten (wenn Sie mehrere unterirdische Ebenen haben, können Sie auf den höheren Ebenen eine Treppe hinzufügen, um zu den unteren Ebenen hinunter zu gelangen).
+			    Klicken Sie nun auf Ihren Bahnhof, um das Konfigurationsmenü zu öffnen und einige Verbindungen hinzuzufügen.
+			    - Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinden Sie sie mit Ausgängen, Treppen oder Unterführungen. Sie können auch zwei Brückenausgänge mit einem geeigneten Weg verbinden, wenn Sie bereit sind, ein wenig mit dem Spiel zu kämpfen. <AltGr> + <L> ist dein Freund.
+			    - Jeder Satz benachbarter Bahnsteige am Boden erfordert einen Straßenzugang, eine Unterführung, einen Aufzug oder eine Treppe.
+			    - Jede Reihe von benachbarten erhöhten Bahnsteigen erfordert einen Aufzug oder eine Unterführung.
+			    - Jede Brückenebene erfordert einen Aufzug oder eine Unterführung in der Nähe eines ebenerdigen Bahnsteigs oder eine Treppe.
+			    - Jede Gruppe von benachbarten unterirdischen Bahnsteigen erfordert eine Treppe.
+			    - Jede unterirdische Ebene erfordert einen unterirdischen Eingang oder einen Bahnsteig am Boden mit einer Unterführung oder eine höhere unterirdische Ebene mit einer Treppe nach unten (wenn Sie mehrere unterirdische Ebenen haben, können Sie auf den höheren Ebenen eine Treppe hinzufügen, um zu den unteren Ebenen hinunter zu gelangen).
 
-                Sie können einen Bahnsteig zwischen zwei Terminals teilen, zum Beispiel die ersten 100 Meter mit Terminal 1 und den Rest mit Terminal 2. In diesem Fall werden die Köpfe automatisch verbunden, wenn sie höchstens 7 Meter voneinander entfernt sind.
-                Sie können einen Bahnsteigabschnitt nicht mit mehreren Terminals teilen.
+			    Sie können einen Bahnsteig zwischen zwei Terminals teilen, zum Beispiel die ersten 100 Meter mit Terminal 1 und den Rest mit Terminal 2. In diesem Fall werden die Köpfe automatisch verbunden, wenn sie höchstens 7 Meter voneinander entfernt sind.
+			    Sie können einen Bahnsteigabschnitt nicht mit mehreren Terminals teilen.
 
 				Wenn Sie einen Terminal mit einem Bulldozer abreißen, versucht der Mod, die Gleise so wiederherzustellen, wie sie vorher waren, um Änderungen zu vereinfachen: Reißen Sie einen Terminal mit einem Bulldozer auf, ändern Sie, was Sie brauchen, und bauen Sie ihn dann mit den Markern wieder auf.
 				Wenn Sie den Bahnhof mit dem Bulldozer zerstören, wird alles mit dem Bulldozer abgerissen.
@@ -471,13 +471,13 @@ function data()
 				Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen Sie nach "freestyle station".
 				
 				[h1]Hinweise:[/h1]
-                - Bahnsteigen sind Gleise und können auch unter Mikrospalten leiden, die sehr schwer zu sehen sind.
+			    - Bahnsteigen sind Gleise und können auch unter Mikrospalten leiden, die sehr schwer zu sehen sind.
 				- Um die Fahrspuren und die Spaltungen zu visualisieren, starten Sie das Spiel im Debug-Modus und drücken Sie <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich.
 				- Um unterirdisch zu arbeiten, verwende <NumPad 4> oder die Gleiskonstruktion "Unterirdisch sehen".
 				- Bahnsteige befördern nur dann Passagiere oder Fracht, wenn sie Teil eines Terminals sind.
 				- 2,5 m Bahnsteige passen nicht zu Brücken und Tunneln. Meine "kein Geländer" Brücken helfen, in Tunnels kann nicht geholfen werden.
-                - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
-                - Dieser Mod fügt Fußgängerwege und Brücken hinzu. Einige dieser Wege verwandeln sich in Brücken, nachdem sie platziert wurden. Sie können knifflig zu platzieren sein, die "Chunks" und "Splitter" vom "Street fine tuning"-Mod können helfen.
+			    - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
+			    - Dieser Mod fügt Fußgängerwege und Brücken hinzu. Einige dieser Wege verwandeln sich in Brücken, nachdem sie platziert wurden. Sie können knifflig zu platzieren sein, die "Chunks" und "Splitter" vom "Street fine tuning"-Mod können helfen.
 				- Sehr dünne Pfade helfen bei bestimmten Aufbauten: diese sind in meinem "Street fine tuning"-Mod enthalten.
 				- Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
 				- Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
@@ -606,13 +606,13 @@ function data()
 			["LookUndergroundDesc"] = "Schwebe oder baue dies, um unterirdisch auszusehen, entferne es, wenn du fertig bist",
 			["OpenLiftName"] = "Nach oben heben für Bahnsteig am Boden",
 			["OpenLiftDesc"] = "Verbindet Bodenbahnsteige mit ihren Zwillingen, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
-            ["OpenStairsUpLeftName"] = "Treppe oben links für Bodenbahnsteig",
+			["OpenStairsUpLeftName"] = "Treppe oben links für Bodenbahnsteig",
 			["OpenStairsUpLeftDesc"] = "Verbindet Bodenbahnsteige mit ihren Zwillingen, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz",
 			["OpenStairsUpRightName"] = "Treppe oben rechts für Bodenbahnsteig",
 			["OpenStairsUpRightDesc"] = "Verbindet Bodenbahnsteige mit ihren Zwillingen, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz",
 			["OpenStairsExitWithEdgeName_2m"] = "Eingang zur Treppe mit Autobrücke",
 			["OpenStairsExitWithSnappyEdgeName_2m"] = "Eingang zur Treppe mit zackiger Autobrücke",
-            ["OpenStairsExitName_4m"] = "Eingang zur Treppe, 4 m",
+			["OpenStairsExitName_4m"] = "Eingang zur Treppe, 4 m",
 			["OpenStairsExitName_8m"] = "Eingang zur Treppe, 8 m",
 			["OpenStairsExitName_16m"] = "Eingang zur Treppe, 16 m",
 			["OpenStairsExitName_16m"] = "Eingang zur Treppe, 16 m",
@@ -620,7 +620,7 @@ function data()
 			["OpenStairsExitName_32m"] = "Eingang zur Treppe, 32 m",
 			["OpenStairsExitName_64m"] = "Eingang zur Treppe, 64 m",
 			["OpenStairsExitName_64m"] = "Eingang zur Treppe, 64 m",
-            ["OpenStairsExitDesc"] = "Verbindet Treppen und Aufzüge mit dem Außenbereich. Stelle seine Neigung mit <m> und <n> ein. Verbinden Sie sie bei Bedarf mit dem Treppen-Asset ",
+			["OpenStairsExitDesc"] = "Verbindet Treppen und Aufzüge mit dem Außenbereich. Stelle seine Neigung mit <m> und <n> ein. Verbinden Sie sie bei Bedarf mit dem Treppen-Asset ",
 			["OpenStairsExitWithEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz. Passen Sie seine Neigung mit <m> und <n> an. Verknüpfen Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen. Sie wird bei der nächsten Konfigurationsaktualisierung biegsam sein.",
 			["OpenStairsExitWithSnappyEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz. Passen Sie die Neigung mit <m> und <n> an. Verbinden Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen.",
 			["PassengerSideLiftName"] = "Personenaufzug zu einer Brückenseite",
@@ -783,7 +783,7 @@ function data()
 			["cargo-road-access"] = "Fracht Seite -> Straße",
 			["cargo-road-access-axial"] = "Fracht Ende -> Straße",
 			["cargo-shelves"] = "Frachtregale",
-            ["passenger-platform-extensions"] = "Passagiererweiterung",
+			["passenger-platform-extensions"] = "Passagiererweiterung",
 			["passenger-platform-tracks"] = "Passagierbahnsteige, die als Gleise zu verlegen sind",
 			["passenger-road-access"] = "Passagiere Seite -> Straße",
 			["passenger-road-access-axial"] = "Passagiere Ende -> Straße",
@@ -855,7 +855,7 @@ function data()
 			["SnappyEdgeWithBridge"] = "Snappy-Brücke",
 			["SnappyEdgeWithNoBridge"] = "Snappy-Pfad",
 			["Stairs"] = "Treppen, Aufzüge, unterirdische Eingänge, Assets für den Freestyle-Bahnhof",
-            ["StairsBase"] = "Basis ausbauen",
+			["StairsBase"] = "Basis ausbauen",
 			["StairsBaseTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit AltGr + L.",
 			["TerrainAlignmentType"] = "Terrainausrichtung",
 			["TerrainAlignmentTypeFlat"] = "Flach",
