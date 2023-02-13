@@ -350,6 +350,7 @@ function data()
 			["waypoints-for-freestyle-station"] = "Waypoints For Freestyle Stations",
 
 			-- messages
+			["BuildInProgress"] = "Building terminal...",
 			["BuildMoreWaypoints"] = "Plop two track markers and two platform markers to build a freestyle station",
 			["BuildSnappyTracksFailed"] = "Fix the station connections to the adjacent tracks, the game cannot do it for you this time",
 			["ConConfigWindowTitle"] = "Configuration",
@@ -359,6 +360,7 @@ function data()
 			["Join"] = "Join",
 			["NeedAdjust4Snap"] = "Some street connections have unsnapped: make any change to the station configuration to fix this",
 			["NoJoin"] = "Do not join",
+			["RestoreInProgress"] = "Restoring platform and track...",
 			["ShowUnderground"] = "Show Underground",
 			["ShowUndergroundTooltip"] = "It cannot be changed once plopped. If you want assistance to place it easily, use the 'Look Underground' track construction instead of this.",
 			["StationPickerWindowTitle"] = "Pick a station to join",
@@ -378,6 +380,7 @@ function data()
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
 			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with the track splitter if you need to get close. The platform heads will connect automatically if they are closer than 7 metres",
 			["WaypointsTooFar"] = "Too far from its twin",
+			["WaypointsWrong"] = "Place two markers on the same platform and two on the same track",
 
 			-- free open stairs and free lifts
 			["BaseMode"] = "Base Mode",

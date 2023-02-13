@@ -1,13 +1,11 @@
-local _constants = require('lollo_freestyle_train_station.constants')
+local constants = require('lollo_freestyle_train_station.constants')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
-local _eventId = _constants.eventData.eventId
-local _eventNames = _constants.eventData.eventNames
-
+local _progressWindowId = 'lollo_freestyle_station_progress_window'
 local _stationPickerWindowId = 'lollo_freestyle_station_picker_window'
+local _warningWindowId = 'lollo_freestyle_station_warning_window_no_goto'
 local _warningWindowWithGotoId = 'lollo_freestyle_station_warning_window_with_goto'
-local _warningWindowWithStateId = 'lollo_freestyle_station_warning_window_with_state'
 local _waypointDistanceWindowId = 'lollo_freestyle_station_waypoint_distance_window'
 
 local _texts = {
@@ -25,7 +23,9 @@ local _windowXShift = 40
 local _windowYShift = 40
 
 local guiHelpers = {
+    isShowingProgress = false,
     isShowingWarning = false,
+    isShowingWarningWithGoTo = false,
     isShowingWaypointDistance = false,
     moveCamera = function(position)
         local cameraData = game.gui.getCamera()
@@ -33,7 +33,47 @@ local guiHelpers = {
     end
 }
 
-guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eventId, joinEventName, noJoinEventName, eventArgs)
+---@param text string
+---@param title string
+---@param onCloseFunc function
+guiHelpers.showProgress = function(text, title, onCloseFunc)
+    guiHelpers.isShowingProgress = true
+
+    local layout = api.gui.layout.BoxLayout.new('VERTICAL')
+    local window = api.gui.util.getById(_progressWindowId)
+    if window == nil then
+        window = api.gui.comp.Window.new(title or _texts.warningWindowTitle, layout)
+        window:setId(_progressWindowId)
+    else
+        window:setContent(layout)
+        window:setVisible(true, false)
+    end
+
+    layout:addItem(api.gui.comp.TextView.new(text))
+
+    -- window:setHighlighted(true)
+    window:setMinimumSize(api.gui.util.Size.new(400, 70))
+    -- local uiContentRect = api.gui.util.getGameUI():getContentRect()
+    -- window:setPosition(uiContentRect.w - _windowXShift, uiContentRect.h - _windowYShift)
+    window:setPosition(500, 200) -- easier and quicker
+    -- window:addHideOnCloseHandler()
+    window:onClose(
+        function()
+            guiHelpers.isShowingProgress = false
+            window:setVisible(false, false)
+            if type(onCloseFunc) == 'function' then onCloseFunc() end
+        end
+    )
+end
+
+---@param isTheNewObjectCargo boolean
+---@param stations table<any>
+---@param eventId string
+---@param joinEventName string
+---@param noJoinEventName string|nil
+---@param eventArgs table<any>
+---@param onClickFunc? function
+guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eventId, joinEventName, noJoinEventName, eventArgs, onClickFunc)
     -- print('showNearbyStationPicker starting')
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
     local window = api.gui.util.getById(_stationPickerWindowId)
@@ -75,6 +115,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             local joinButton = api.gui.comp.Button.new(joinButtonLayout, true)
             joinButton:onClick(
                 function()
+                    if type(onClickFunc) == 'function' then onClickFunc() end
                     if not(stringUtils.isNullOrEmptyString(joinEventName)) then
                         eventArgs.join2StationConId = station.id
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -113,6 +154,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 2) =') debugPrint(string.sub(debug.getinfo(2, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 3) =') debugPrint(string.sub(debug.getinfo(3, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 4) =') debugPrint(string.sub(debug.getinfo(4, 'S').source, 1))
+                if type(onClickFunc) == 'function' then onClickFunc() end
                 if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -179,7 +221,44 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
     )
 end
 
-guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObjectsIds)
+---@param text string
+---@param onCloseFunc function
+guiHelpers.showWarning = function(text, onCloseFunc)
+    guiHelpers.isShowingWarning = true
+
+    local layout = api.gui.layout.BoxLayout.new('VERTICAL')
+    local window = api.gui.util.getById(_warningWindowId)
+    if window == nil then
+        window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
+        window:setId(_warningWindowId)
+    else
+        window:setContent(layout)
+        window:setVisible(true, false)
+    end
+
+    layout:addItem(api.gui.comp.TextView.new(text))
+
+    window:setHighlighted(true)
+    window:setMinimumSize(api.gui.util.Size.new(400, 70))
+    -- local uiContentRect = api.gui.util.getGameUI():getContentRect()
+    -- window:setPosition(uiContentRect.w - _windowXShift, uiContentRect.h - _windowYShift)
+    window:setPosition(500, 400) -- easier and quicker
+    -- window:addHideOnCloseHandler()
+    window:onClose(
+        function()
+            guiHelpers.isShowingWarning = false
+            window:setVisible(false, false)
+            if type(onCloseFunc) == 'function' then onCloseFunc() end
+        end
+    )
+end
+
+---@param text string
+---@param wrongObjectId? integer
+---@param similarObjectsIds? table<integer>
+guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds)
+    guiHelpers.isShowingWarningWithGoTo = true
+
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
     local window = api.gui.util.getById(_warningWindowWithGotoId)
     if window == nil then
@@ -253,44 +332,20 @@ guiHelpers.showWarningWindowWithGoto = function(text, wrongObjectId, similarObje
     window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
     window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
-    window:addHideOnCloseHandler()
-end
-
-guiHelpers.showWarningWindowWithState = function(text)
-    guiHelpers.isShowingWarning = true
-    local layout = api.gui.layout.BoxLayout.new('VERTICAL')
-    local window = api.gui.util.getById(_warningWindowWithStateId)
-    if window == nil then
-        window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
-        window:setId(_warningWindowWithStateId)
-    else
-        window:setContent(layout)
-        window:setVisible(true, false)
-    end
-
-    layout:addItem(api.gui.comp.TextView.new(text))
-
-    window:setHighlighted(true)
-    -- local uiContentRect = api.gui.util.getGameUI():getContentRect()
-    -- window:setPosition(uiContentRect.w - _windowXShift, uiContentRect.h - _windowYShift)
-    window:setPosition(500, 400) -- easier and quicker
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
+            guiHelpers.isShowingWarningWithGoTo = false
             window:setVisible(false, false)
-            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                string.sub(debug.getinfo(1, 'S').source, 1),
-                _eventId,
-                _eventNames.HIDE_WARNINGS,
-                {}
-            ))
         end
     )
 end
 
-guiHelpers.showWaypointDistance = function(text)
+---@param distance number
+guiHelpers.showWaypointDistance = function(distance)
     guiHelpers.isShowingWaypointDistance = true
 
+    local text = tostring((_texts.waypointDistanceWindowTitle .. " %.0f m"):format(distance))
     local content = api.gui.layout.BoxLayout.new('VERTICAL')
     local window = api.gui.util.getById(_waypointDistanceWindowId)
     if window == nil then
@@ -310,18 +365,52 @@ guiHelpers.showWaypointDistance = function(text)
     window:getLayout():getItem(0):setVisible(false, false)
 
     window:onClose(
-        guiHelpers.hideWaypointDistance
+        function()
+            guiHelpers.isShowingWaypointDistance = false
+            window:setVisible(false, false)
+        end
     )
 end
 
-guiHelpers.hideAllWarnings = function()
-    local window = api.gui.util.getById(_stationPickerWindowId)
-    if window ~= nil then
-        window:setVisible(false, false)
+---@param onCloseFunc function
+guiHelpers.hideProgress = function(onCloseFunc)
+    if guiHelpers.isShowingProgress then -- only for performance
+        guiHelpers.isShowingProgress = false
+
+        local window = api.gui.util.getById(_progressWindowId)
+        if window ~= nil then
+            window:setVisible(false, false)
+            if type(onCloseFunc) == 'function' then onCloseFunc() end
+        end
     end
-    window = api.gui.util.getById(_warningWindowWithGotoId)
-    if window ~= nil then
-        window:setVisible(false, false)
+end
+
+-- guiHelpers.hideStationPicker = function()
+--     local window = api.gui.util.getById(_stationPickerWindowId)
+--     if window ~= nil then
+--         window:setVisible(false, false)
+--     end
+-- end
+
+guiHelpers.hideWarning = function()
+    if guiHelpers.isShowingWarning then -- only for performance
+        guiHelpers.isShowingWarning = false
+
+        local window = api.gui.util.getById(_warningWindowId)
+        if window ~= nil then
+            window:setVisible(false, false)
+        end
+    end
+end
+
+guiHelpers.hideWarningWithGoTo = function()
+    if guiHelpers.isShowingWarningWithGoTo then -- only for performance
+        guiHelpers.isShowingWarningWithGoTo = false
+
+        local window = api.gui.util.getById(_warningWindowWithGotoId)
+        if window ~= nil then
+            window:setVisible(false, false)
+        end
     end
 end
 
