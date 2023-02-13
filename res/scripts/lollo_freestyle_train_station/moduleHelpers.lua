@@ -49,6 +49,13 @@ local privateFuncs = {
         local _nSteps = math.ceil(nSteps)
         return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
     end,
+    getFromVariant_AxialAreaTilt = function(variant)
+        local tilt = -variant * 0.025
+        local _maxRadAbs = 0.36
+        if tilt > _maxRadAbs then tilt = _maxRadAbs elseif tilt < -_maxRadAbs then tilt = -_maxRadAbs end
+        -- logger.print('getFromVariant_AxialAreaTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
+        return tilt, -_maxRadAbs, _maxRadAbs
+    end,
     getFromVariant_BridgeTilt = function(variant)
         local tilt = variant * 0.0125
         local _maxRadAbs = 0.36
@@ -78,7 +85,7 @@ local privateFuncs = {
         return deltaZ, -10, 10
     end,
     getEraPrefix = function(params, nTerminal, nTrackEdge)
-        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge] or params.terminals[nTerminal].centrePlatformsRelative[1]
         local result = cpl.era or constants.eras.era_c.prefix
         if params.modules then
             if params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraASlotId)] then
@@ -103,23 +110,23 @@ local privateFuncs = {
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
-        local newTransf = transfUtilsUG.rotZTransl(
-            math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-            {
-                x = (pos1[1] + pos2[1]) * 0.5,
-                y = (pos1[2] + pos2[2]) * 0.5,
-                z = (pos1[3] + pos2[3]) * 0.5,
-            }
-        )
+        local sinZ = (pos2[2] - pos1[2]) -- / lengthAcross
+        local cosZ = (pos2[1] - pos1[1]) -- / lengthAcross
+        local length = math.sqrt(sinZ * sinZ + cosZ * cosZ)
+        sinZ, cosZ = sinZ / length, cosZ / length
 
-        -- print('newTransf =') debugPrint(newTransf)
-        return newTransf
+        return {
+            cosZ, sinZ, 0, 0,
+            -sinZ, cosZ, 0, 0,
+            0, 0, 1, 0,
+            (pos1[1] + pos2[1]) * 0.5, (pos1[2] + pos2[2]) * 0.5, (pos1[3] + pos2[3]) * 0.5, 1
+        }
     end,
-    getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
+    getPlatformObjectTransf_WithYRotationOLD = function(posTanX2) --, angleYFactor)
         -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
-    
+
         local angleZ = math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1])
         local transfZ = transfUtilsUG.rotZTransl(
             angleZ,
@@ -129,14 +136,7 @@ local privateFuncs = {
                 z = (pos1[3] + pos2[3]) * 0.5,
             }
         )
-        -- local angleY = -math.atan((pos2[3] - pos1[3]) / transfUtils.getVectorLength(
-        --     {
-        --         pos2[1] - pos1[1],
-        --         pos2[2] - pos1[2],
-        --         0
-        --     }
-        -- ))
-    
+
         local angleY = math.atan2(
             (pos2[3] - pos1[3]),
             transfUtils.getVectorLength(
@@ -147,11 +147,47 @@ local privateFuncs = {
                 }
             ) -- * (angleYFactor or 1)
         )
-    
+
         local transfY = transfUtilsUG.rotY(-angleY)
-    
+
         return transfUtilsUG.mul(transfZ, transfY)
         -- return transfUtilsUG.mul(transfY, transfZ) -- NO!
+    end,
+    getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
+        -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
+        local pos1 = posTanX2[1][1]
+        local pos2 = posTanX2[2][1]
+
+        local sinZ = pos2[2] - pos1[2]
+        local cosZ = pos2[1] - pos1[1]
+        local _lengthZ = math.sqrt(sinZ * sinZ + cosZ * cosZ)
+        sinZ, cosZ = sinZ / _lengthZ, cosZ / _lengthZ
+
+        -- local transfZ = {
+        --     cosZ,   sinZ,   0,  0,
+        --     -sinZ,  cosZ,   0,  0,
+        --     0,      0,      1,      0,
+        --     (pos1[1] + pos2[1]) * 0.5, (pos1[2] + pos2[2]) * 0.5, (pos1[3] + pos2[3]) * 0.5, 1
+        -- }
+
+        local sinY = pos2[3] - pos1[3]
+        local cosY = _lengthZ
+        local _lengthY = math.sqrt(sinY * sinY + cosY * cosY)
+        sinY, cosY = sinY / _lengthY, cosY / _lengthY
+
+        -- local transfY = {
+        --     cosY,   0,  sinY,   0,
+        --     0,      1,  0,      0,
+        --     -sinY,  0,  cosY,   0,
+        --     0,      0,  0,      1
+        -- }
+
+        return {
+            cosZ * cosY,    sinZ * cosY,    sinY,       0,
+            -sinZ,          cosZ,           0,          0,
+            -cosZ * sinY,   -sinZ * sinY,   cosY,       0,
+            (pos1[1] + pos2[1]) * 0.5,  (pos1[2] + pos2[2]) * 0.5,  (pos1[3] + pos2[3]) * 0.5,  1
+        }
     end,
     -- returns an integer starting at 0, it can be positive or negative
     getVariant = function(params, slotId)
@@ -165,7 +201,158 @@ local privateFuncs = {
         return variant
     end,
 }
+privateFuncs.axialAreas = {
+    getMNAdjustedTransf = function(params, slotId, slotTransf)
+        local variant = privateFuncs.getVariant(params, slotId)
+        local tilt = privateFuncs.getFromVariant_AxialAreaTilt(variant)
+        return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
+    end,
+}
 privateFuncs.deco = {
+    addWallsAcross = function(cpf, isSideA, slopedAreaWidth, result, tag, wallModelId, zShift, absDeltaY, isTrackOnPlatformLeft)
+        -- logger.print('addWallsAcross, absDeltaY =', absDeltaY, ', isSideA =', isSideA)
+        if absDeltaY <= 0 then return end
+
+        if isSideA then
+            local posTanX2_1 = transfUtils.getParallelSideways(
+                cpf.posTanX2,
+                isTrackOnPlatformLeft
+                    and (-cpf.width / 2 - slopedAreaWidth + absDeltaY)
+                    or (cpf.width / 2 + slopedAreaWidth - absDeltaY)
+            )
+            local posTanX2_2 = transfUtils.getParallelSideways(
+                cpf.posTanX2,
+                isTrackOnPlatformLeft
+                    and (-cpf.width / 2 - slopedAreaWidth)
+                    or (cpf.width / 2 + slopedAreaWidth)
+            )
+            local lengthAcross = absDeltaY
+            local pos1 = posTanX2_1[1][1]
+            local pos2 = posTanX2_2[1][1]
+
+            -- result.models[#result.models+1] = {
+            --     id = 'lollo_freestyle_train_station/icon/blue.mdl',
+            --     transf = {
+            --         1, 0, 0, 0,
+            --         0, 1, 0, 0,
+            --         0, 0, 1, 0,
+            --         pos1[1], pos1[2], pos1[3], 1
+            --     },
+            --     tag = tag
+            -- }
+            -- result.models[#result.models+1] = {
+            --     id = 'lollo_freestyle_train_station/icon/orange.mdl',
+            --     transf = {
+            --         1, 0, 0, 0,
+            --         0, 1, 0, 0,
+            --         0, 0, 1.1, 0,
+            --         pos2[1], pos2[2], pos2[3], 1
+            --     },
+            --     tag = tag
+            -- }
+
+            local sinZ = (pos2[2] - pos1[2]) / lengthAcross
+            local cosZ = (pos2[1] - pos1[1]) / lengthAcross
+
+            local correctionTransf = isTrackOnPlatformLeft
+                and {
+                    -1, 0, 0, 0,
+                    0, -1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 2.5, 0, 1
+                }
+                or {
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, -2.5, 0, 1
+                }
+            for p = 1, lengthAcross, 1 do
+                result.models[#result.models+1] = {
+                    id = wallModelId,
+                    transf = transfUtilsUG.mul(
+                        {
+                            cosZ, sinZ, 0, 0,
+                            -sinZ, cosZ, 0, 0,
+                            0, 0, 1, 0,
+                            pos1[1] + (p-0.5) * cosZ, pos1[2] + (p-0.5) * sinZ, pos1[3] + constants.platformRoofZ + zShift, 1
+                        },
+                        correctionTransf
+                    ),
+                    tag = tag
+                }
+            end
+        else
+            local posTanX2_1 = transfUtils.getParallelSideways(
+                cpf.posTanX2,
+                isTrackOnPlatformLeft
+                    and (-cpf.width / 2 - slopedAreaWidth + absDeltaY)
+                    or (cpf.width / 2 + slopedAreaWidth - absDeltaY)
+            )
+            local posTanX2_2 = transfUtils.getParallelSideways(
+                cpf.posTanX2,
+                isTrackOnPlatformLeft
+                    and (-cpf.width / 2 - slopedAreaWidth)
+                    or (cpf.width / 2 + slopedAreaWidth)
+            )
+            local lengthAcross = cpf.width + slopedAreaWidth
+            local pos1 = posTanX2_1[2][1]
+            local pos2 = posTanX2_2[2][1]
+
+            -- result.models[#result.models+1] = {
+            --     id = 'lollo_freestyle_train_station/icon/lilac.mdl',
+            --     transf = {
+            --         1, 0, 0, 0,
+            --         0, 1, 0, 0,
+            --         0, 0, 1.2, 0,
+            --         pos1[1], pos1[2], pos1[3], 1
+            --     },
+            --     tag = tag
+            -- }
+            -- result.models[#result.models+1] = {
+            --     id = 'lollo_freestyle_train_station/icon/yellow.mdl',
+            --     transf = {
+            --         1, 0, 0, 0,
+            --         0, 1, 0, 0,
+            --         0, 0, 1.3, 0,
+            --         pos2[1], pos2[2], pos2[3], 1
+            --     },
+            --     tag = tag
+            -- }
+
+            local sinZ = (pos2[2] - pos1[2]) / lengthAcross
+            local cosZ = (pos2[1] - pos1[1]) / lengthAcross
+
+            local correctionTransf = isTrackOnPlatformLeft
+                and {
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, -2.5, 0, 1
+                }
+                or {
+                    -1, 0, 0, 0,
+                    0, -1, 0, 0,
+                    0, 0, 1, 0,
+                    0, 2.5, 0, 1
+                }
+            for p = 1, lengthAcross, 1 do
+                result.models[#result.models+1] = {
+                    id = wallModelId,
+                    transf = transfUtilsUG.mul(
+                        {
+                            cosZ, sinZ, 0, 0,
+                            -sinZ, cosZ, 0, 0,
+                            0, 0, 1, 0,
+                            pos1[1] + (p-0.5) * cosZ, pos1[2] + (p-0.5) * sinZ, pos1[3] + constants.platformRoofZ + zShift, 1
+                        },
+                        correctionTransf
+                    ),
+                    tag = tag
+                }
+            end
+        end
+    end,
     getMNAdjustedValue_0Or1_Cycling = function(params, slotId)
         local variant = privateFuncs.getVariant(params, slotId)
         return privateFuncs.getFromVariant_0_or_1(variant)
@@ -661,7 +848,7 @@ privateFuncs.slopedAreas = {
             if cpf.type == 0 then -- only on ground
                 if leadingIndex >= i1 then
                     local platformWidth = cpf.width
-                    local outerAreaEdgePosTanX2 = transfUtils.getParallelSidewaysWithRotZ(
+                    local outerAreaEdgePosTanX2 = transfUtils.getParallelSideways(
                         cpf.posTanX2,
                         (isTrackOnPlatformLeft and (-areaWidth -platformWidth * 0.5) or (areaWidth + platformWidth * 0.5))
                     )
@@ -681,13 +868,14 @@ privateFuncs.slopedAreas = {
         -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
 
         local faces = {}
+        local deltaZ = result.laneZs[nTerminal] -constants.stairsAndRampHeight + constants.platformSideBitsZ
         for tc = 1, #terrainCoordinates do
             local face = { }
             for i = 1, 4 do
                 face[i] = {
                     terrainCoordinates[tc][i][1],
                     terrainCoordinates[tc][i][2],
-                    terrainCoordinates[tc][i][3] + result.laneZs[nTerminal] * 0.5 + constants.platformSideBitsZ,
+                    terrainCoordinates[tc][i][3] + deltaZ,
                     1
                 }
             end
@@ -819,17 +1007,18 @@ return {
         -- print('getTerminalDecoTransf starting, posTanX2 =') debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
-        local newTransf = transfUtilsUG.rotZTransl(
-            math.atan2(pos2[2] - pos1[2], pos2[1] - pos1[1]),
-            {
-                x = pos1[1],
-                y = pos1[2],
-                z = pos1[3],
-            }
-        )
-    
-        -- print('newTransf =') debugPrint(newTransf)
-        return newTransf
+
+        local sinZ = (pos2[2] - pos1[2])
+        local cosZ = (pos2[1] - pos1[1])
+        local length = math.sqrt(sinZ * sinZ + cosZ * cosZ)
+        sinZ, cosZ = sinZ / length, cosZ / length
+
+        return {
+            cosZ, sinZ, 0, 0,
+            -sinZ, cosZ, 0, 0,
+            0, 0, 1, 0,
+            pos1[1], pos1[2], pos1[3], 1
+        }
     end,
     getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
         return privateFuncs.getPlatformObjectTransf_AlwaysVertical(posTanX2)
@@ -1001,11 +1190,12 @@ return {
             end
         end,
         doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-            wall2_5ModelId, wall5ModelId,
-            wall_low_2_5ModelId, wall_low_5ModelId,
+            wall_5m_ModelId,
+            wall_low_5m_ModelId,
             pillar2_5ModelId, pillar5ModelId,
             isTunnelOk
         )
+            local isSkipPillars = params.terminals[nTerminal].isCargo or pillar2_5ModelId == nil or pillar5ModelId == nil
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
@@ -1027,6 +1217,8 @@ return {
                 isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
 
+            local isFreeFromRoof = not(params.modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.platformRoofSlotId)])
+
             -- flat areas and deco are shifted by this amount, and it makes sense this way, so we must account for it
             local _deco2FlatAreaShiftInt = math.floor(constants.maxPassengerWaitingAreaEdgeLength / 2)
             local isFreeFromFlatAreas = {}
@@ -1034,8 +1226,13 @@ return {
                 isFreeFromFlatAreas[i] = not(result.getOccupiedInfo4FlatAreas(nTerminal, i))
             end
             -- print('*** isFreeFromFlatAreas =') debugPrint(isFreeFromFlatAreas)
-
-            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
+            local _getWidthAbove_5m_BarePlatformWidth = function(cpf)
+                local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, cpf.leadingIndex).width
+                if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
+                return (cpf.width - 5) * 0.5 + slopedAreaWidth, slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
+            end
+            local _iiMax = #params.terminals[nTerminal].centrePlatformsFineRelative
+            for ii = 1, _iiMax, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
@@ -1045,79 +1242,168 @@ return {
                         -- no stations in this fine segment
                         if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
                             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                            local platformWidth = cpf.width
-                            local isFreeFromOpenStairs = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
-
-                            local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, leadingIndex).width
-                            if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
+                            local widthAboveMinimum, slopedAreaWidth = _getWidthAbove_5m_BarePlatformWidth(cpf)
                             local basePosTanX2, xScaleFactor, zShift = cpf.posTanX2, 1, 0
-                            if slopedAreaWidth ~= 0 then
+                            if widthAboveMinimum ~= 0 then
                                 local xRatio, yRatio = 1, 1
-                                basePosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
+                                basePosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
                                     cpf.posTanX2,
-                                    (isTrackOnPlatformLeft and -slopedAreaWidth or slopedAreaWidth)
+                                    (isTrackOnPlatformLeft and -widthAboveMinimum or widthAboveMinimum)
                                 )
                                 xScaleFactor = math.max(xRatio * yRatio, 1.01) -- this is a bit crude but it's cheap
                                 -- xScaleFactor = xRatio * yRatio * 1.01
                                 -- xScaleFactor = math.max(xRatio, yRatio) * 1.02
                                 -- print('xRatio, yRatio =', xRatio, yRatio)
                                 -- xScaleFactor = xRatio * 1.05
+                            end
+                            if slopedAreaWidth > 0 then
                                 zShift = constants.platformSideBitsZ
                             end
-                            local modelId = cpf.type == 2 
-                                and (platformWidth < 5 and wall2_5ModelId or wall5ModelId)
-                                or (platformWidth < 5 and wall_low_2_5ModelId or wall_low_5ModelId)
+                            local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             result.models[#result.models+1] = {
-                                id = modelId,
+                                id = wallModelId,
                                 transf = transfUtilsUG.mul(
                                     _wallTransfFunc(basePosTanX2),
-                                    { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }
+                                    {
+                                        transfXZoom * xScaleFactor, 0, 0, 0,
+                                        0, transfYZoom, 0, 0,
+                                        0, 0, 1, 0,
+                                        0, 0, constants.platformRoofZ + zShift, 1
+                                    }
                                 ),
                                 tag = tag
                             }
 
+                            -- add pillars
                             if cpf.type ~= 2
-                            -- and slopedAreaWidth == 0
-                            and isFreeFromOpenStairs
+                            and not(isSkipPillars)
+                            and isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
                             and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0
                             -- no platform numbers if there is a roof
-                            and not(params.modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.platformRoofSlotId)])
+                            and isFreeFromRoof
+                            -- prevent overlapping with station name signs
+                            and not(_barredNumberSignIIs[ii])
+                            and not(_barredNumberSignIIs[ii+1])
+                            and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
                             then
-                                -- prevent overlapping with station name signs
-                                if not(_barredNumberSignIIs[ii])
-                                and not(_barredNumberSignIIs[ii+1])
-                                and (ii == 1 or not(_barredNumberSignIIs[ii-1]))
-                                then
-                                    local yShift4Pillar = isTrackOnPlatformLeft and 0.1 or -0.1
-                                    local myTransf = transfUtilsUG.mul(
-                                        privateFuncs.getPlatformObjectTransf_AlwaysVertical(basePosTanX2),
-                                        { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift4Pillar, constants.platformRoofZ + zShift, 1 }
-                                    )
-                                    result.models[#result.models+1] = {
-                                        id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
-                                        transf = myTransf,
-                                        tag = tag,
-                                    }
+                                local yShift4Pillar = isTrackOnPlatformLeft and 0.1 or -0.1
+                                local myTransf = transfUtilsUG.mul(
+                                    privateFuncs.getPlatformObjectTransf_AlwaysVertical(basePosTanX2),
+                                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, yShift4Pillar, constants.platformRoofZ + zShift, 1 }
+                                )
+                                result.models[#result.models+1] = {
+                                    id = cpf.width < 5 and pillar2_5ModelId or pillar5ModelId,
+                                    transf = myTransf,
+                                    tag = tag,
+                                }
 
-                                    local yShift4PerronNumber = -platformWidth * 0.5 + 0.20
-                                    local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                                    if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                                    elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                                local yShift4PerronNumber = -cpf.width * 0.5 + 0.20
+                                local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+                                if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+                                elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+                                end
+                                result.models[#result.models + 1] = {
+                                    id = perronNumberModelId,
+                                    slotId = slotId,
+                                    transf = transfUtilsUG.mul(
+                                        myTransf,
+                                        { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift4PerronNumber, 4.83 + zShift, 1 }
+                                    ),
+                                    tag = tag
+                                }
+                                -- the model index must be in base 0 !
+                                result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+                            end
+
+                            -- add walls across
+                            if cpf.type ~= 2 then
+                                -- whenever getting in or out of a tunnel, skip altogether
+                                local cpfM1 = ii ~= 1 and params.terminals[nTerminal].centrePlatformsFineRelative[ii-1] or nil
+                                local cpfP1 = ii ~= _iiMax and params.terminals[nTerminal].centrePlatformsFineRelative[ii+1] or nil
+                                if ii == 1 then
+                                    if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
+                                        -- logger.print('_ONE')
+                                        privateFuncs.deco.addWallsAcross(cpf, true, slopedAreaWidth, result, tag, wallModelId, zShift, slopedAreaWidth + cpf.width, isTrackOnPlatformLeft)
+                                    else
+                                        -- logger.print('_TWO')
+                                        privateFuncs.deco.addWallsAcross(cpf, true, slopedAreaWidth, result, tag, wallModelId, zShift, slopedAreaWidth, isTrackOnPlatformLeft)
                                     end
-                                    result.models[#result.models + 1] = {
-                                        id = perronNumberModelId,
-                                        slotId = slotId,
-                                        transf = transfUtilsUG.mul(
-                                            myTransf,
-                                            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift4PerronNumber, 4.83 + zShift, 1 }
-                                        ),
-                                        tag = tag
-                                    }
-                                    -- the model index must be in base 0 !
-                                    result.labelText[#result.models - 1] = { tostring(nTerminal), tostring(nTerminal)}
+                                elseif ii == _iiMax then
+                                    if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
+                                        -- logger.print('_FOUR')
+                                        privateFuncs.deco.addWallsAcross(cpf, false, slopedAreaWidth, result, tag, wallModelId, zShift, slopedAreaWidth + cpf.width, isTrackOnPlatformLeft)
+                                    else
+                                        -- logger.print('_FIVE')
+                                        privateFuncs.deco.addWallsAcross(cpf, false, slopedAreaWidth, result, tag, wallModelId, zShift, slopedAreaWidth, isTrackOnPlatformLeft)
+                                    end
+                                elseif leadingIndex ~= cpfM1.leadingIndex then
+                                    local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
+                                    -- logger.print('_THREE')
+                                    privateFuncs.deco.addWallsAcross(cpf, true, slopedAreaWidth, result, tag, wallModelId, zShift, deltaY, isTrackOnPlatformLeft)
+                                elseif leadingIndex ~= cpfP1.leadingIndex then
+                                    local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
+                                    -- logger.print('_SIX')
+                                    privateFuncs.deco.addWallsAcross(cpf, false, slopedAreaWidth, result, tag, wallModelId, zShift, deltaY, isTrackOnPlatformLeft)
                                 end
                             end
                         end
+                    end
+                end
+            end
+        end,
+        doTrackWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+            wall_5m_ModelId,
+            wall_low_5m_ModelId,
+            isTunnelOk
+        )
+            -- check this coz it was added later
+            if type(params.terminals[nTerminal].centreTracksFineRelative) ~= 'table' then return end
+
+            -- do not confuse the tracks array with the platforms array: they are similar but different
+            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local transfXZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
+            local transfYZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
+            local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
+
+            local _wallTransfFunc = privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) == 0
+                and privateFuncs.getPlatformObjectTransf_WithYRotation
+                or privateFuncs.getPlatformObjectTransf_AlwaysVertical
+
+            local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
+            local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
+
+            -- query the first platform segment coz track segments, unlike platform segments,
+            -- have no knowledge of the era: they only have leadingIndex, posTanX2, type and width.
+            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
+            local wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
+            if eraPrefix == constants.eras.era_a.prefix then
+                wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
+            elseif eraPrefix == constants.eras.era_b.prefix then
+                wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
+            end
+
+            for ii = 1, #params.terminals[nTerminal].centreTracksFineRelative, privateConstants.deco.ceilingStep do
+                local ctf = params.terminals[nTerminal].centreTracksFineRelative[ii]
+                local leadingIndex = ctf.leadingIndex
+                if leadingIndex > _iMax then break end
+                if leadingIndex >= _i1 then
+                    if isTunnelOk or ctf.type ~= 2 then -- ground or bridge, tunnel only if allowed
+                        local basePosTanX2, xScaleFactor, zShift = ctf.posTanX2, 1, 0
+                        local wallModelId = ctf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
+                        local myTransf = transfUtilsUG.mul(
+                            _wallTransfFunc(basePosTanX2),
+                            { transfXZoom * xScaleFactor, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ + zShift, 1 }
+                        )
+                        result.models[#result.models+1] = {
+                            id = wallModelId,
+                            transf = myTransf,
+                            tag = tag
+                        }
+                        result.models[#result.models+1] = {
+                            id = wallBaseModelId,
+                            transf = myTransf,
+                            tag = tag
+                        }
                     end
                 end
             end
@@ -1171,18 +1457,17 @@ return {
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			-- local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, true)
-            local zAdjustedTransf = slotTransf
+            local adjustedTransf = privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
 
-			local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
 
 			result.models[#result.models + 1] = {
 				id = myModelId,
 				slotId = slotId,
-				transf = zAdjustedTransf,
+				transf = adjustedTransf,
 				tag = tag
 			}
 
@@ -1196,7 +1481,7 @@ return {
 							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
 							{ { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
 						},
-						zAdjustedTransf
+						adjustedTransf
 					),
 					-- better make it a bridge to avoid ugly autolinks between nearby modules
 					edgeType = 'BRIDGE',
@@ -1213,13 +1498,13 @@ return {
 				}
 			)
 
-			local groundFace = {
-				{-1, -2, 0, 1},
-				{-1, 2, 0, 1},
-				{1.0, 2, 0, 1},
-				{1.0, -2, 0, 1},
-			}
-			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			-- local groundFace = {
+			-- 	{-1, -2, 0, 1},
+			-- 	{-1, 2, 0, 1},
+			-- 	{1.0, 2, 0, 1},
+			-- 	{1.0, -2, 0, 1},
+			-- }
+			-- modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 
 			local terrainAlignmentList = {
 				faces = {
@@ -1236,7 +1521,7 @@ return {
 				type = 'LESS',
 			}
 			for _, face in pairs(terrainAlignmentList.faces) do
-				modulesutil.TransformFaces(zAdjustedTransf, face)
+				modulesutil.TransformFaces(adjustedTransf, face)
 			end
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
         end,
@@ -1246,7 +1531,7 @@ return {
 
 			privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[(nTrackEdge == 1 and 1 or #params.terminals[nTerminal].centrePlatformsFineRelative)]
+            local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[(nTrackEdge == 1 and 1 or #params.terminals[nTerminal].centrePlatformsFineRelative)]
 			local pos1 = (nTrackEdge == 1)
 				and cpf.posTanX2[1][1]
 				or cpf.posTanX2[2][1]
@@ -1278,12 +1563,39 @@ return {
 				result.laneZs[nTerminal]
 			)
 
+            local adjustedTransf = privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 			result.models[#result.models+1] = {
 				id = 'lollo_freestyle_train_station/passenger_lane_linkable_irregular.mdl',
 				slotId = slotId,
-				transf = laneTransf,
+				transf = adjustedTransf,
 				tag = tag
 			}
+        end,
+        getMNAdjustedTransf = function(params, slotId, slotTransf)
+            return privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+        end,
+        getPreviewIcon = function(params)
+			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local tilt, min, max = privateFuncs.getFromVariant_AxialAreaTilt(variant)
+			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
+			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  10, -2, 8, 1}
+            if tilt == min then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  10, -2, 9, 1}
+            elseif tilt == max then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_end_blue_orange.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
+			elseif tilt < 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  10, -2, 9, 1}
+			elseif tilt > 0 then
+				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'
+				arrowModelTransf = {0, 0, -1, 0,  0, 1, 0, 0,  1, 0, 0, 0,  10, -2, 7, 1}
+			end
+            return {
+                id = arrowModelId,
+                transf = arrowModelTransf,
+            }
         end,
     },
     flatAreas = {
@@ -1374,7 +1686,7 @@ return {
 			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
 
-			local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
 
 			result.models[#result.models + 1] = {
@@ -1414,13 +1726,13 @@ return {
 				}
 			)
 
-			local groundFace = {
-				{-1, -2, 0, 1},
-				{-1, 2, 0, 1},
-				{1.0, 2, 0, 1},
-				{1.0, -2, 0, 1},
-			}
-			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			-- local groundFace = {
+			-- 	{-1, -2, 0, 1},
+			-- 	{-1, 2, 0, 1},
+			-- 	{1.0, 2, 0, 1},
+			-- 	{1.0, -2, 0, 1},
+			-- }
+			-- modulesutil.TransformFaces(zAdjustedTransf, groundFace)
 			-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
 
 			local terrainAlignmentList = {
@@ -1800,7 +2112,7 @@ return {
                     local isCanBuild = privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, areaWidth)
                     if isCanBuild then
                         local platformWidth = cpf.width
-                        local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSidewaysWithRotZ(
+                        local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
                             cpf.posTanX2,
                             (_isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
                         )

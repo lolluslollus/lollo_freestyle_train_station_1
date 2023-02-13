@@ -225,6 +225,22 @@ utils.getVec123Transformed = function(vec123, transf)
     }
 end
 
+utils.getVec123ZRotated90Deg = function(vec123)
+    return {
+        -vec123[2],
+        vec123[1],
+        vec123[3]
+    }
+end
+
+utils.getVec123ZRotatedM90Deg = function(vec123)
+    return {
+        vec123[2],
+        -vec123[1],
+        vec123[3]
+    }
+end
+
 utils.getPosTanX2Transformed = function(posTanX2, transf)
     local pos1 = {posTanX2[1][1][1], posTanX2[1][1][2], posTanX2[1][1][3]}
     local pos2 = {posTanX2[2][1][1], posTanX2[2][1][2], posTanX2[2][1][3]}
@@ -434,7 +450,7 @@ utils.getPositionsMiddle = function(pos0, pos1)
 end
 
 -- the result will be identical to the original but shifted sideways
-utils.getParallelSideways = function(posTanX2, sideShift)
+utils.getParallelSidewaysOLD = function(posTanX2, sideShift)
     local result = {
         {
             {},
@@ -458,37 +474,80 @@ utils.getParallelSideways = function(posTanX2, sideShift)
 end
 
 -- the result will be parallel to the original at its ends but stretched or compressed due to the shift.
-utils.getParallelSidewaysWithRotZ = function(posTanX2, sideShiftOnXYPlane)
-    local _rot90Transf = { 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, }
+-- tan changes are ignored for speed.
+utils.getParallelSidewaysCoarse = function(posTanX2, sideShift)
+    local _oldPos1 = posTanX2[1][1]
+    local _oldPos2 = posTanX2[2][1]
+    if _oldPos1[1] == _oldPos2[1] and _oldPos1[2] == _oldPos2[2] then
+        return posTanX2
+    end
 
-    local oldPos1 = posTanX2[1][1]
-    local oldPos2 = posTanX2[2][1]
-    -- we reset Z coz we rotate around the Z axis and we want to obtain a distance on the XY plane
-    local oldTan1 = {posTanX2[1][2][1], posTanX2[1][2][2], 0}
-    local oldTan2 = {posTanX2[2][2][1], posTanX2[2][2][2], 0}
+    -- we ignore Z coz we rotate around the Z axis and we want to obtain a distance on the XY plane
+    -- here, we imagine segments perpendicular to the tangents
+    local sinZ1 = -posTanX2[1][2][2]
+    local cosZ1 = posTanX2[1][2][1]
+    local sinZ2 = -posTanX2[2][2][2]
+    local cosZ2 = posTanX2[2][2][1]
+    local _lengthZ1 = math.sqrt(sinZ1 * sinZ1 + cosZ1 * cosZ1)
+    sinZ1, cosZ1 = sinZ1 / _lengthZ1, cosZ1 / _lengthZ1
+    local _lengthZ2 = math.sqrt(sinZ2 * sinZ2 + cosZ2 * cosZ2)
+    sinZ2, cosZ2 = sinZ2 / _lengthZ2, cosZ2 / _lengthZ2
 
-    local tan1RotatedAndNormalised = utils.getVectorNormalised(utils.getVec123Transformed(oldTan1, _rot90Transf), sideShiftOnXYPlane)
-    local tan2RotatedAndNormalised = utils.getVectorNormalised(utils.getVec123Transformed(oldTan2, _rot90Transf), sideShiftOnXYPlane)
+    local _newPos1 = { _oldPos1[1] + sinZ1 * sideShift, _oldPos1[2] + cosZ1 * sideShift, _oldPos1[3] }
+    local _newPos2 = { _oldPos2[1] + sinZ2 * sideShift, _oldPos2[2] + cosZ2 * sideShift, _oldPos2[3] }
 
-    local newPos1 = { oldPos1[1] + tan1RotatedAndNormalised[1], oldPos1[2] + tan1RotatedAndNormalised[2], oldPos1[3] }
-    local newPos2 = { oldPos2[1] + tan2RotatedAndNormalised[1], oldPos2[2] + tan2RotatedAndNormalised[2], oldPos2[3] }
-    local xRatio = (oldPos2[1] ~= oldPos1[1]) and math.abs((newPos2[1] - newPos1[1]) / (oldPos2[1] - oldPos1[1])) or nil
-    local yRatio = (oldPos2[2] ~= oldPos1[2]) and math.abs((newPos2[2] - newPos1[2]) / (oldPos2[2] - oldPos1[2])) or nil
-    if not(xRatio) or not(yRatio) then xRatio, yRatio = 1, 1 end
-    local newTan1 = { posTanX2[1][2][1] * xRatio, posTanX2[1][2][2] * yRatio, posTanX2[1][2][3] }
-    local newTan2 = { posTanX2[2][2][1] * xRatio, posTanX2[2][2][2] * yRatio, posTanX2[2][2][3] }
-    local result = {
+    return {
         {
-            newPos1,
-            newTan1,
+            _newPos1,
+            posTanX2[1][2],
         },
         {
-            newPos2,
-            newTan2,
+            _newPos2,
+            posTanX2[2][2],
         },
     }
+end
 
-    return result, xRatio, yRatio
+-- the result will be parallel to the original at its ends but stretched or compressed due to the shift.
+utils.getParallelSideways = function(posTanX2, sideShift)
+    local _oldPos1 = posTanX2[1][1]
+    local _oldPos2 = posTanX2[2][1]
+    if _oldPos1[1] == _oldPos2[1] and _oldPos1[2] == _oldPos2[2] then
+        return posTanX2, 1, 1
+    end
+
+    -- we ignore Z coz we rotate around the Z axis and we want to obtain a distance on the XY plane
+    -- here, we imagine segments perpendicular to the tangents
+    local sinZ1 = -posTanX2[1][2][2]
+    local cosZ1 = posTanX2[1][2][1]
+    local sinZ2 = -posTanX2[2][2][2]
+    local cosZ2 = posTanX2[2][2][1]
+    local _lengthZ1 = math.sqrt(sinZ1 * sinZ1 + cosZ1 * cosZ1)
+    sinZ1, cosZ1 = sinZ1 / _lengthZ1, cosZ1 / _lengthZ1
+    local _lengthZ2 = math.sqrt(sinZ2 * sinZ2 + cosZ2 * cosZ2)
+    sinZ2, cosZ2 = sinZ2 / _lengthZ2, cosZ2 / _lengthZ2
+
+    local _newPos1 = { _oldPos1[1] + sinZ1 * sideShift, _oldPos1[2] + cosZ1 * sideShift, _oldPos1[3] }
+    local _newPos2 = { _oldPos2[1] + sinZ2 * sideShift, _oldPos2[2] + cosZ2 * sideShift, _oldPos2[3] }
+
+    local xRatio = (_oldPos2[1] ~= _oldPos1[1]) and math.abs((_newPos2[1] - _newPos1[1]) / (_oldPos2[1] - _oldPos1[1])) or nil
+    local yRatio = (_oldPos2[2] ~= _oldPos1[2]) and math.abs((_newPos2[2] - _newPos1[2]) / (_oldPos2[2] - _oldPos1[2])) or nil
+    if not(xRatio) or not(yRatio) then xRatio, yRatio = 1, 1 end -- vertical or horizontal posTanX2
+    local _newTan1 = { posTanX2[1][2][1] * xRatio, posTanX2[1][2][2] * yRatio, posTanX2[1][2][3] }
+    local _newTan2 = { posTanX2[2][2][1] * xRatio, posTanX2[2][2][2] * yRatio, posTanX2[2][2][3] }
+
+    return {
+        {
+            _newPos1,
+            _newTan1,
+        },
+        {
+            _newPos2,
+            _newTan2,
+        },
+    },
+    xRatio,
+    yRatio
 end
 
 utils.get1MLaneTransf = function(pos1, pos2)
@@ -830,7 +889,7 @@ local _isSameSgnNumVeryClose = function (num1, num2, significantFigures)
     -- return math.floor(roundedNum1 / roundingFactor) == math.floor(roundedNum2 / roundingFactor)
     -- but what I really want are the first significant figures, never mind how big the number is
 
-    -- LOLLO TODO decide for one when done testing
+    -- This is slower and less accurate
     -- local result1 = _getVeryCloseResult1(num1, num2, significantFigures)
     -- or _getVeryCloseResult1(num1 * _isVeryCloseTesters[significantFigures], num2 * _isVeryCloseTesters[significantFigures], significantFigures)
 

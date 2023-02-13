@@ -1,0 +1,124 @@
+function data()
+    local _arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+    -- local _constants = require('lollo_freestyle_train_station.constants')
+    local _fenceModelHelper = require('lollo_fence_assets.modelHelper')
+    local logger = require('lollo_freestyle_train_station.logger')
+
+	return {
+        type = 'ASSET_DEFAULT',
+		description = {
+			name = _('FenceAssetsName'),
+			description = _('FenceAssetsDesc'),
+            icon = 'ui/construction/lollo_freestyle_train_station/fence_assets.tga',
+		},
+		availability = {
+			yearFrom = 0,
+			yearTo = 0,
+		},
+        categories = { 'stairs' },
+		order = 1110,
+		autoRemovable = false,
+        -- buildMode = 'MULTI',
+		skipCollision = true,
+		params = _fenceModelHelper.getConParams(),
+		updateFn = function(params)
+            logger.print('fenceAssetsScript.updateFn firing, params =') logger.debugPrint(_arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+
+            local function _getWallModelId ()
+                local wallModelId = nil
+                if params.lolloFenceAssets_wallEraPrefix == 1 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
+                elseif params.lolloFenceAssets_wallEraPrefix == 2 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
+                elseif params.lolloFenceAssets_wallEraPrefix == 3 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
+                end
+                return wallModelId
+            end
+
+            local result = {
+                colliders = {},
+                cost = 0,
+                edgeLists = {},
+                groundFaces = {
+                    {
+                        face = {
+                            {0.1, -0.1, 0.0, 1.0},
+                            {0.1, 0.1, 0.0, 1.0},
+                            {-0.1, 0.1, 0.0, 1.0},
+                            {-0.1, -0.1, 0.0, 1.0},
+                        },
+                        modes = {
+                            {
+                                type = 'FILL',
+                                key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                            }
+                        }
+                    },
+                },
+                models = {
+					-- {
+					-- 	id = 'lollo_freestyle_train_station/icon/blue.mdl',
+                    --     transf = {1, 0, 0, 0,
+                    --         0, 1, 0, 0,
+                    --         0, 0, 1, 0,
+                    --         0, 0, 0, 1},
+					-- },
+                },
+                terrainAlignmentLists = { {
+                    type = 'EQUAL',
+                    optional = true,
+                    faces =  { }
+                } },
+            }
+
+            local function _addFences()
+                local zShift = _getWallModelId() ~= nil and 0 or -1.4
+                local fenceModelId = _fenceModelHelper.getModels()[params.lolloFenceAssets_model + 1].fileName
+                for i = 1, params.lolloFenceAssets_length + 1, 1 do
+                    result.models[#result.models+1] = {
+                        id = fenceModelId,
+                        transf = {
+                            1, 0, 0, 0,
+                            0, 1, 0, 0,
+                            0, 0, 1, 0,
+                            i-1, 0, zShift, 1
+                        }
+                    }
+                end
+            end
+            _addFences()
+
+            local function _addWalls()
+                local wallModelId = nil
+                if params.lolloFenceAssets_wallEraPrefix == 1 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
+                elseif params.lolloFenceAssets_wallEraPrefix == 2 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
+                elseif params.lolloFenceAssets_wallEraPrefix == 3 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
+                end
+                if wallModelId ~= nil then
+                    for i = 1, params.lolloFenceAssets_length + 1, 1 do
+                        result.models[#result.models+1] = {
+                            id = wallModelId,
+                            transf = {
+                                1, 0, 0, 0,
+                                0, 1, 0, 0,
+                                0, 0, 1, 0,
+                                i-1, 0, 0, 1
+                            }
+                        }
+                    end
+                end
+            end
+            _addWalls()
+
+			return result
+		end,
+
+        upgradeFn = function(params)
+            return {}
+        end,
+	}
+end

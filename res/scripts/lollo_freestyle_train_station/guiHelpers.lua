@@ -271,8 +271,9 @@ guiHelpers.showWarningWindowWithState = function(text)
     layout:addItem(api.gui.comp.TextView.new(text))
 
     window:setHighlighted(true)
-    local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
+    -- local uiContentRect = api.gui.util.getGameUI():getContentRect()
+    -- window:setPosition(uiContentRect.w - _windowXShift, uiContentRect.h - _windowYShift)
+    window:setPosition(500, 400) -- easier and quicker
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()

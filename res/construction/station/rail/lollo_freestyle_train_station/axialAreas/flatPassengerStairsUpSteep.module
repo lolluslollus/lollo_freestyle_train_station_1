@@ -1,0 +1,94 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local modulesutil = require "modulesutil"
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-road-access-axial", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("AxialPassengerStairsUpSteepName"),
+			description = _("AxialPassengerStairsUpSteepDesc"),
+			icon = "ui/lollo_freestyle_train_station/flatPassengerStairsUpSteep.tga"
+		},
+		metadata = { },
+		order = {
+			value = 19,
+		},
+		type = _constants.axialPassengerExitModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			local adjustedTransf = moduleHelpers.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
+			local myModelId = _constants[era .. 'flatPassengerStairsUpSteepModelFileName']
+
+			result.models[#result.models + 1] = {
+				id = myModelId,
+				slotId = slotId,
+				transf = adjustedTransf,
+				tag = tag
+			}
+
+			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+
+			local groundFace = {
+				{-1, -2, 0, 1},
+				{-1, 2, 0, 1},
+				{2.75, 2, 0, 1},
+				{2.75, -2, 0, 1},
+			}
+			modulesutil.TransformFaces(adjustedTransf, groundFace)
+			result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
+
+			local terrainAlignmentList = {
+				faces = {
+					{
+						{-1, -2, _constants.platformSideBitsZ, 1},
+						{-1, 2, _constants.platformSideBitsZ, 1},
+						{0.0, 2, _constants.platformSideBitsZ, 1},
+						{0.0, -2, _constants.platformSideBitsZ, 1},
+					},
+					{
+						{0.0, -2, _constants.platformSideBitsZ, 1},
+						{0.0, 2, _constants.platformSideBitsZ, 1},
+						{2.75, 2, _constants.stairsAndRampHeight, 1},
+						{2.75, -2, _constants.stairsAndRampHeight, 1},
+					}
+				},
+				optional = true,
+				slopeHigh = _constants.slopeHigh,
+				slopeLow = _constants.slopeLow,
+				type = 'EQUAL',
+			}
+			for _, face in pairs(terrainAlignmentList.faces) do
+				modulesutil.TransformFaces(slotTransf, face)
+			end
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = _constants.era_c_flatPassengerStairsUpSteepModelFileName,
+					transf = _constants.idTransf,
+				},
+				moduleHelpers.axialAreas.getPreviewIcon(params)
+			}
+		end
+	}
+end

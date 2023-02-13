@@ -1,0 +1,98 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 72,
+					offset = 676,
+				},
+				position = {
+					count = 72,
+					offset = 604,
+				},
+				tangent = {
+					count = 72,
+					offset = 532,
+				},
+				uv0 = {
+					count = 72,
+					offset = 748,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/roofs/iron_glass_copper/z0.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 72,
+					offset = 964,
+				},
+				position = {
+					count = 72,
+					offset = 892,
+				},
+				tangent = {
+					count = 72,
+					offset = 820,
+				},
+				uv0 = {
+					count = 72,
+					offset = 1036,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/trackWalls/z1.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 48,
+					offset = 1204,
+				},
+				position = {
+					count = 48,
+					offset = 1156,
+				},
+				tangent = {
+					count = 48,
+					offset = 1108,
+				},
+				uv0 = {
+					count = 48,
+					offset = 1252,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/trackWalls/z2.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 60,
+			numComp = 3,
+			offset = 240,
+		},
+		position = {
+			count = 144,
+			numComp = 3,
+			offset = 96,
+		},
+		tangent = {
+			count = 96,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 232,
+			numComp = 2,
+			offset = 300,
+		},
+	},
+}
+end

@@ -403,8 +403,17 @@ local helpers = {
         return results
     end,
 
-    getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight)
+    getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight, isAddExtraProps)
         local _addExtraProps = function(source, target)
+            target.width = source.width or 0 -- idem
+            target.type = source.type -- 0 == ground, 1 == bridge, 2 == tunnel
+            if isAddExtraProps then
+                target.catenary = source.catenary -- this is not totally accurate since we ignore the inner bounds
+                target.era = source.era or _constants.eras.era_c.prefix -- idem
+                target.trackType = source.trackType -- idem
+                target.trackTypeName = source.trackTypeName -- idem
+                target.typeIndex = source.typeIndex -- idem
+            end
             if isAddTerrainHeight then
                 target.terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
                     target.posTanX2[1][1][1],
@@ -415,23 +424,22 @@ local helpers = {
                 --     edgeResults[#edgeResults].posTanX2[2][1][2]
                 -- ))
             end
-            -- if isAddExtraProps then
-                target.catenary = source.catenary -- this is not totally accurate since we ignore the inner bounds
-                target.era = source.era or _constants.eras.era_c.prefix -- idem
-                target.trackType = source.trackType -- idem
-                target.trackTypeName = source.trackTypeName -- idem
-                target.type = source.type -- idem
-                target.typeIndex = source.typeIndex -- idem
-                target.width = source.width or 0 -- idem
-            -- end
         end
 
-        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'edgeLists =') --logger.debugPrint(edgeLists)
+        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'first 3 and last 3 edgeLists =') --logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
             logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
             return {}
         end
-
+        if logger.isExtendedLog() then
+            logger.debugPrint(edgeLists[1])
+            logger.debugPrint(edgeLists[2])
+            logger.debugPrint(edgeLists[3])
+            logger.print('...')
+            logger.debugPrint(edgeLists[#edgeLists-2])
+            logger.debugPrint(edgeLists[#edgeLists-1])
+            logger.debugPrint(edgeLists[#edgeLists])
+        end
         local firstRefEdge = nil
         local firstRefEdgeLength = 0
         local lengthUncovered = 0
@@ -634,11 +642,16 @@ local helpers = {
                 logger.err('there is a piece missing')
             end
         end
-        logger.print('getCentralEdgePositions_OnlyOuterBounds results =') --logger.debugPrint(results)
+        if logger.isExtendedLog() then
+            logger.print('getCentralEdgePositions_OnlyOuterBounds last 3 results =')
+            logger.debugPrint(results[#results-2])
+            logger.debugPrint(results[#results-1])
+            logger.debugPrint(results[#results])
+        end
         return results
     end,
 
-    calcCentralEdgePositions_GroupByMultiple = function(edgeLists, multiple, isAddTerrainHeight)
+    calcCentralEdgePositions_GroupByMultiple = function(edgeLists, multiple, isAddTerrainHeight, isAddExtraProps)
         logger.print('getCentralEdgePositions_GroupByMultiple starting, multiple =', multiple, 'edgeLists =') --logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(multiple) ~= 'number' or math.floor(multiple) < 2 then
             logger.err('getCentralEdgePositions_GroupByMultiple got wrong parameters, leaving')
@@ -673,13 +686,15 @@ local helpers = {
                         refEdge.posTanX2[1][2][3] * multiple,
                     }
                 }
-                newEdge.catenary = refEdge.catenary
-                newEdge.era = refEdge.era or _constants.eras.era_c.prefix
-                newEdge.trackType = refEdge.trackType
-                newEdge.trackTypeName = refEdge.trackTypeName
-                newEdge.type = refEdge.type
-                newEdge.typeIndex = refEdge.typeIndex
                 newEdge.width = refEdge.width or 0
+                newEdge.type = refEdge.type or 0
+                if isAddExtraProps then
+                    newEdge.catenary = refEdge.catenary
+                    newEdge.era = refEdge.era or _constants.eras.era_c.prefix
+                    newEdge.trackType = refEdge.trackType
+                    newEdge.trackTypeName = refEdge.trackTypeName
+                    newEdge.typeIndex = refEdge.typeIndex
+                end
                 if isAddTerrainHeight then
                     newEdge.terrainHeight1 = api.engine.terrain.getBaseHeightAt(api.type.Vec2f.new(
                         newEdge.posTanX2[1][1][1],
@@ -734,9 +749,9 @@ local helpers = {
             results[#results+1] = {
                 -- catenary = edgeLists[i].catenary,
                 leadingIndex = edgeLists[i].leadingIndex,
-                posTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift),
-                -- this is different!
-                -- posTanX2 = transfUtils.getParallelSidewaysWithRotZ(edgeLists[i].posTanX2, sideShift),
+                posTanX2 = transfUtils.getParallelSidewaysCoarse(edgeLists[i].posTanX2, sideShift),
+                -- this is slower
+                -- posTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift),
                 -- trackType = edgeLists[i].trackType,
                 -- trackTypeName = edgeLists[i].trackTypeName,
                 -- type = edgeLists[i].type,
@@ -1944,8 +1959,8 @@ helpers.getIsTrackOnPlatformLeft = function(platformEdgeList, midTrackEdge)
     logger.print('_centrePlatformIndex_Nearest2_TrackMid =') logger.debugPrint(_centrePlatformIndex_Nearest2_TrackMid)
 
     local _platformWidth = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid].width
-    local _leftPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, - _platformWidth * 0.5)
-    local _rightPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, _platformWidth * 0.5)
+    local _leftPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, _platformWidth * 0.5)
+    local _rightPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, -_platformWidth * 0.5)
     -- logger.print('eee')
 
     local _midLeftPlatformPoint = transfUtils.getPositionsMiddle(

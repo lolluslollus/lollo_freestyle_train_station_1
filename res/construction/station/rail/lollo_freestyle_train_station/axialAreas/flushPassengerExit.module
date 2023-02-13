@@ -1,0 +1,46 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require 'constructionutil'
+-- local logger = require('lollo_freestyle_train_station.logger')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local modulesutil = require 'modulesutil'
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require 'transf'
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { 'passenger-road-access-axial', },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _('AxialFlushPassengerExitName'),
+			description = _('AxialFlushPassengerExitDesc'),
+			icon = 'ui/lollo_freestyle_train_station/axialFlushPassengerExit.tga'
+		},
+		metadata = { },
+		order = {
+			value = 14,
+		},
+		type = _constants.axialFlushPassengerExitModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			moduleHelpers.axialAreas.flushExit_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl',
+					transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1},
+				},
+				moduleHelpers.axialAreas.getPreviewIcon(params)
+			}
+		end
+	}
+end

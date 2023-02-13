@@ -14,7 +14,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "deco", },
+			categories = { "platform-deco", },
 		},
 		cost = {
 			price = 0,
@@ -26,16 +26,16 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 37,
+			value = 38,
 		},
-		type = _constants.wallModuleType,
+		type = _constants.platformWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-			'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_5m.mdl',
-			'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_2_5m.mdl', 'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_5m.mdl',
+			'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_5m.mdl',
+			'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_5m.mdl',
 			_constants.platformWallMetalGlassPillar2_5MModelFileName, _constants.platformWallMetalGlassPillar5MModelFileName,
 			true)
 		end,
@@ -44,7 +44,7 @@ function data()
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = 'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_2_5m.mdl',
+					id = 'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_5m.mdl',
 					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end

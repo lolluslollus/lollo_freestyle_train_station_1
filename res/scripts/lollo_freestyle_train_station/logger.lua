@@ -1,7 +1,7 @@
 local _isExtendedLogActive = false
 local _isWarningLogActive = true
 local _isErrorLogActive = true
-local _isTimersActive = false
+local _isTimersActive = true
 
 return {
     isExtendedLog = function()

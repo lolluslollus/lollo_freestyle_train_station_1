@@ -498,6 +498,32 @@ local edgeLists4 = {
   }
 -- local splits4 = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(edgeLists4, 40)
 
+local edgeLists5 = {
+  {
+      leadingIndex = 1,
+      posTanX2 = {
+          {
+              {0, 0, 0}, {10, 10, 10}
+          },
+          {
+              {10, 10, 10}, {10, 10, 10}
+          },
+      },
+  },
+  {
+      leadingIndex = 2,
+      posTanX2 = {
+          {
+              {10, 10, 10}, {10, 10, 10}
+          },
+          {
+              {20, 20, 20}, {10, 10, 10}
+          },
+      },
+  },
+}
+local splits5 = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(edgeLists5, 7)
+
 local fineEdgeLists = {
   {
     catenary = true,
