@@ -106,79 +106,80 @@ function data()
 					-- },
 					-- [_constants.slopedPassengerArea1x5ModuleType] = {
 					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	message = nil,
 					-- 	skipCollisionCheck = true,
 					-- },
 					-- [_constants.slopedCargoArea1x10ModuleType] = {
 					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	message = nil,
 					-- 	skipCollisionCheck = true,
 					-- },
 					-- [_constants.slopedPassengerArea1x10ModuleType] = {
 					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	message = nil,
 					-- 	skipCollisionCheck = true,
 					-- },
 					-- [_constants.slopedCargoArea1x20ModuleType] = {
 					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	message = nil,
 					-- 	skipCollisionCheck = true,
 					-- },
 					-- [_constants.slopedPassengerArea1x20ModuleType] = {
 					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	message = nil,
 					-- 	skipCollisionCheck = true,
 					-- },
 					[_constants.trackElectrificationModuleType] = {
 						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
+						message = nil,
 						skipCollisionCheck = true,
 					},
 					[_constants.trackSpeedModuleType] = {
 						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
+						message = nil,
 						skipCollisionCheck = true,
 					},
 					-- [_constants.cargoTerminalModuleType] = {
 					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	message = nil,
 					-- 	skipCollisionCheck = true,
 					-- },
 					-- [_constants.passengerTerminalModuleType] = {
 					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	message = nil,
 					-- 	skipCollisionCheck = true,
 					-- },
 					-- [_constants.subwayModuleType] = {
 					-- 	maxModules = -1,
-					-- 	message = nil, --'LOLLO slotConfig message',
+					-- 	message = nil,
 					-- 	skipCollisionCheck = true,
 					-- },
 					[_constants.platformRoofModuleType] = {
 						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
+						message = nil,
 						skipCollisionCheck = true,
 					},
 					[_constants.platformWallModuleType] = {
 						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
+						message = nil,
 						skipCollisionCheck = true,
 					},
 					[_constants.trackWallModuleType] = {
 						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
+						message = nil,
 						skipCollisionCheck = true,
 					},
-					[_constants.axialFlushCargoExitModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
-					[_constants.axialFlushPassengerExitModuleType] = {
-						maxModules = -1,
-						message = nil, --'LOLLO slotConfig message',
-						skipCollisionCheck = true,
-					},
+					-- LOLLO NOTE these affect the tabs that appear in the modules menu, so we set them dynamically
+					-- [_constants.axialFlushCargoExitModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil,
+					-- 	skipCollisionCheck = true,
+					-- },
+					-- [_constants.axialFlushPassengerExitModuleType] = {
+					-- 	maxModules = -1,
+					-- 	message = nil,
+					-- 	skipCollisionCheck = true,
+					-- },
 				},
                 slots = {},
 				stations = {},
@@ -585,6 +586,7 @@ function data()
 				_addFlatAreas()
 
 				local function _addAxialExits()
+					local isAddedCargo, isAddedPassengers = false, false
 					local ii_s = {1, #params.terminals[t].centrePlatformsFineRelative}
 					for _, ii in pairs(ii_s) do
 						local cpf = params.terminals[t].centrePlatformsFineRelative[ii]
@@ -623,6 +625,11 @@ function data()
 						})
 						if params.modules[flushExitId] ~= nil then
 							_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
+							if isCargoTerminal then
+								isAddedCargo = true
+							else
+								isAddedPassengers = true
+							end
 						end
 
 						if not(isCargoTerminal) then -- edges only for passengers
@@ -652,6 +659,21 @@ function data()
 								_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
 							end
 						end
+					end
+					-- LOLLO NOTE we add these here, only if required, because they affect the tabs that appear in the modules menu.
+					if isAddedCargo then
+						result.slotConfig[_constants.axialFlushCargoExitModuleType] = {
+							maxModules = -1,
+							message = nil,
+							skipCollisionCheck = true,
+						}
+					end
+					if isAddedPassengers then
+						result.slotConfig[_constants.axialFlushPassengerExitModuleType] = {
+							maxModules = -1,
+							message = nil,
+							skipCollisionCheck = true,
+						}
 					end
 				end
 				_addAxialExits()
