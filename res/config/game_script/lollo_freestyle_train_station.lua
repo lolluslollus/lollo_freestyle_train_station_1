@@ -2734,8 +2734,6 @@ function data()
             end
             if isHideDistance then guiHelpers.hideWaypointDistance() end
         end,
-        -- update = function()
-        -- end,
         guiUpdate = function()
             -- LOLLO NOTE these warnings are issued in the worker thread after the operation chain has completed,
             -- so they are displayed when needed;
@@ -2759,29 +2757,34 @@ function data()
                 )
             end
         end,
+        load = function(loadedState)
+            -- fires once in the worker thread, at game load, and many times in the UI thread
+            -- print('load got loadedState =') debugPrint(loadedState)
+            if not(api.gui) or not(loadedState) then
+                -- not(api.gui) is the one call from the worker thread, when starting
+                -- (there are actually two calls on start, not one, never mind)
+                -- with not(api.gui), loadedState is the last saved state from the save file (eg lollo-test-01.sav.lua)
+                -- use it to reset the state if it gets stuck, which should never happen
+                state = {
+                    isHideProgress = false,
+                    warningText = nil,
+                }
+                logger.print('script.load firing from the worker thread, state =') logger.debugPrint(state)
+            else
+                state = {
+                    isHideProgress = loadedState.isHideProgress or false,
+                    warningText = loadedState.warningText or nil,
+                }
+            end
+        end,
         save = function()
             -- only fires when the worker thread changes the state
             if state == nil then state = {} end
             if not(state.isHideProgress) then state.isHideProgress = false end
             if state.warningText == '' then state.warningText = nil end
-            -- print('save about to return state =') debugPrint(state)
             return state
         end,
-        load = function(loadedState)
-            -- fires once in the worker thread, at game load, and many times in the UI thread
-            -- print('load got loadedState =') debugPrint(loadedState)
-            if loadedState ~= nil then
-                state = {
-                    isHideProgress = loadedState.isHideProgress or false,
-                    warningText = loadedState.warningText or nil,
-                }
-            else
-                state = {
-                    isHideProgress = false,
-                    warningText = nil,
-                }
-            end
-            -- print('load set state =') debugPrint(state)
-        end,
+        -- update = function()
+        -- end,
     }
 end
