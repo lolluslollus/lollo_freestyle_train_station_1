@@ -796,7 +796,7 @@ function data()
 			["waypoints-for-freestyle-station"] = "Marker für Freestyle-Bahnhöfe",
 
 			-- Meldungen
-			["BuildInProgress"] = " Bau von Bahnsteig und Gleis...",
+			["BuildInProgress"] = "Bau von Bahnsteig und Gleis...",
 			["BuildMoreWaypoints"] = "Setze zwei Gleismarker und zwei Bahnsteigmarker ein, um einen Freestyle-Bahnhof zu bauen",
 			["BuildSnappyTracksFailed"] = "Repariere die Bahnhofsverbindungen zu den angrenzenden Gleisen, das Spiel kann es diesmal nicht für dich tun",
 			["ConConfigWindowTitle"] = "Konfiguration",
