@@ -3,63 +3,63 @@ function data()
 	return {
 		en = {
 			["DESC"] = [[
-				A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
+A freestyle train station. It introduces some new special tracks, which will serve as platforms for cargo or passengers.
 
-			    [h1]Instructions[/h1]
-				Lay platforms alongside normal tracks, then place a platform marker and a track marker where you want the platform and the track to end. Repeat at the other end.
-				WAIT A MOMENT and let the computer think.
-			    Now you have built a terminal, trains will stop between your track markers.
-			    Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
+[h1]Instructions[/h1]
+Lay platforms alongside normal tracks, then place a platform marker and a track marker where you want the platform and the track to end. Repeat at the other end.
+WAIT A MOMENT and let the computer think.
+Now you have built a terminal, trains will stop between your track markers.
+Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
 
-			    Now click your station to open the configuration menu and add some connections.
-			    - Adjacent platforms are connected together automatically. If they are too far apart, connect them with exits, stairs or underpasses. You can also connect two bridge exits with a suitable path, if you are prepared to fight a bit with the game. <AltGr> + <L> is your friend.
-			    - Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
-			    - Every set of adjacent bridge platforms requires a lift or an underpass.
-			    - Every bridge level requires a lift, or an underpass near a ground platform lift or stairs.
-			    - Every set of adjacent underground platforms requires stairs.
-			    - Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
+Now click your station to open the configuration menu and add some connections.
+- Adjacent platforms are connected together automatically. If they are too far apart, connect them with exits, stairs or underpasses. You can also connect two bridge exits with a suitable path - or a stairs or lift asset.
+- Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
+- Every set of adjacent bridge platforms requires a lift or an underpass.
+- Every bridge level requires a lift, or an underpass close to a ground platform lift or stairs.
+- Every set of adjacent underground platforms requires stairs.
+- Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
 
-			    You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, the heads will connect automatically if they are 7 metres apart or less.
-			    You cannot share one stretch of platform among multiple terminals.
+You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, the heads will connect automatically if they are 7 metres apart or less. If they are farther, use end exits and connect them with a suitable path (street menu).
+You cannot share one stretch of platform or track among multiple terminals.
 
-				When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
-				When you bulldoze the station, everything will be bulldozed.
+When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
+When you bulldoze the station, everything will be bulldozed.
 
-				Lifts, stairs and underground entrances are in the assets, search for "freestyle station".
-				
-				[h1]Tips:[/h1]
-			    - Platforms are tracks and they can also suffer from micro splits, very difficult to see.
-				- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>. This is particularly useful with multi-level underground stations.
-				- To work underground, use <NumPad 4> or the 'Look Underground' track construction.
-				- Platforms only carry passengers or cargo if they are part of a terminal.
-				- 2.5 m platforms do not agree with bridges and tunnels. My 'no railing' bridges help, tunnels can't be helped.
-			    - This mod adds bridges to help with elevated stations.
-			    - This mod adds pedestrian paths and bridges. Some of those paths turn into bridges after placing them. They can be tricky to place, the street fine tuning mod's "chunks" and "splitter" constructions come to the rescue.
-				- Very thin paths help with certain setups: those are in my street fine tuning mod.
-				- Sound effects for stations are in my dedicated mod.
-				- Sound effects for trains are in my dedicated mod.
-				- Extra ground textures are in my terrain tweaks mod.
-				- If you want different buildings, use assets. There are mods with those.
-				- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My 'Construction Mover' mod helps to place them easily. Still, the game does not handle them gracefully and AltGr + L will help you snap them to your network. Cycling between snappy and non-snappy roads or bridges will help, too.
-				- Use the track constructions "Track splitter" to do precision work.
-				- Upgrading tracks does all tracks at once.
-				- If you have too many track types, use the categories in the menu to make life easier.
-				- After a while, the area surrounding your station will have developped and might throw collision errors whenever you try to config the station. Patiently look for the culpable street, building or asset and remove it. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
+Lifts, stairs and underground entrances are in the assets, search for "freestyle station".
 
-				[h1]Note:[/h1]
-				- Underground stations are now in the assets.
-				- Minor version 1.81 (31st August 2022) introduced important layout changes. Previously built terminals will keep working but might have some glitches. To benefit from the changes, remove them, wait for them to reappear and build them anew.
-				- Platforms do not connect automatically to adjacent roads, you must add an exit or a station.
-				- Minor version 1.99 (13th February 2023) makes existing walls invisible until you build a new one.
-				- Walls around tracks are only available on terminals built with version 1.99 or newer.
+[h1]Tips:[/h1]
+- Platforms are tracks and they can also suffer from micro splits, very difficult to see.
+- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>. This is particularly useful with multi-level underground stations.
+- To work underground, use <NumPad 4> or the "Look Underground" track construction.
+- Platforms only carry passengers or cargo if they are part of a terminal.
+- 2.5 m platforms do not agree with bridges and tunnels. My "no railing" bridges help, tunnels can't be helped.
+- This mod adds bridges to help with elevated stations.
+- Very thin paths help with certain setups: those are in my Street Fine Tuning mod.
+- This mod adds pedestrian paths and bridges; some turn into bridges after placing them. For precision work, use the Street Fine Tuning "chunks" and "splitter" constructions.
+- Sound effects for stations are in my dedicated mod.
+- Sound effects for trains are in my dedicated mod.
+- Extra ground textures are in my terrain tweaks mod.
+- If you want different buildings, use assets. There are mods with those.
+- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My "Construction Mover" mod helps to place them easily. Still, the game does not handle them gracefully and <AltGr> + <L> will help you check if they snap to your network. Cycling between snappy and non-snappy roads or bridges in the parameter window might help.
+- Use the track constructions "Track splitter" to do precision work.
+- Upgrading tracks does all tracks at once.
+- If you have too many track types, use the categories in the menu to make life easier.
+- After a while, the area surrounding your station will have developped and might throw collision errors whenever you try to config the station. Patiently look for the guilty street, building or asset and remove it. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
 
-				[h1]Known issues:[/h1]
-				- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
-				- Station naming does not work properly.
-				- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
-				- The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
-				- Some modules can only be placed after some others, eg stairs exits after stairs, but the configuration menu does not refresh automatically. After placing the first set of stairs, you need to close and reopen the menu for stairs exits to appear.
-				- Some track and signal mods are incompatible. As a general rule, avoid mods that overwrite or disable stock game tracks. Chances are you won't miss them anyway.
+[h1]Note:[/h1]
+- Underground stations are now in the assets.
+- Minor version 1.81 (31st August 2022) introduced important layout changes. Previously built terminals will keep working but might have some glitches. To benefit from the changes, remove them, wait for them to reappear and build them anew.
+- Platforms do not connect automatically to adjacent roads, you must add an exit or a station.
+- Minor version 1.99 (13th February 2023) makes existing walls invisible until you build a new one.
+- Walls around tracks are only available on terminals built with version 1.99 or newer.
+
+[h1]Known issues:[/h1]
+- Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
+- Station naming does not work properly.
+- 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
+- The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
+- Some modules can only be placed after some others, eg stairs exits after stairs, but the configuration menu does not refresh automatically. After placing the first set of stairs, you need to close and reopen the menu for stairs exits to appear.
+- Some track and signal mods are incompatible. As a general rule, avoid mods that overwrite or disable stock game tracks. Chances are you won't miss them anyway.
 			]],
 			["NAME"] = "Freestyle train station",
 
@@ -409,20 +409,20 @@ function data()
 			["SnappyEdgeWithBridge"] = "Snappy Bridge",
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["Stairs"] = "Stairs, lifts, underground entrances, assets for the Freestyle Train Station",
-			["StairsBase"] = "Expand Base",
-			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
+      ["StairsBase"] = "Expand Base",
+			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",
 			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
-			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
+			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
 			["TopPlatformNorthLength"] = "Top Platform One",
 			["TopPlatformSouthLength"] = "Top Platform Two",
-			["TopPlatformNorthLengthTooltip"] = "It might be easier to select \"Auto Bridge\" when building or changing properties and change it to \"Snappy Bridge\" once done. Check the connections with AltGr + L.",
+			["TopPlatformNorthLengthTooltip"] = "It might be easier to select \"Auto Bridge\" when building or changing properties and change it to \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
 
 			-- track splitter
 			["TrackSplitterName"] = "Track splitter",
-			["TrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use AltGr + L to see its effect.",
+			["TrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use <AltGr> + <L> to see its effect.",
 
 			-- platform as asset
 			["PlatformAsAssetName"] = "Platform as asset",
