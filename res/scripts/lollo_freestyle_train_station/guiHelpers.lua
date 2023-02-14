@@ -1,5 +1,6 @@
 local constants = require('lollo_freestyle_train_station.constants')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local logger = require('lollo_freestyle_train_station.logger')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 local _progressWindowId = 'lollo_freestyle_station_progress_window'
@@ -116,6 +117,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             joinButton:onClick(
                 function()
                     if type(onClickFunc) == 'function' then onClickFunc() end
+                    logger.print('guiHelpers 120')
                     if not(stringUtils.isNullOrEmptyString(joinEventName)) then
                         eventArgs.join2StationConId = station.id
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -155,6 +157,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 3) =') debugPrint(string.sub(debug.getinfo(3, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 4) =') debugPrint(string.sub(debug.getinfo(4, 'S').source, 1))
                 if type(onClickFunc) == 'function' then onClickFunc() end
+                logger.print('guiHelpers 160')
                 if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -208,14 +211,16 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
     window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
     window:onClose(
         function()
-            if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
-                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                    string.sub(debug.getinfo(1, 'S').source, 1),
-                    eventId,
-                    noJoinEventName,
-                    eventArgs
-                ))
-            end
+            -- do not do anything!
+            logger.print('guiHelpers 215')
+            -- if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
+            --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+            --         string.sub(debug.getinfo(1, 'S').source, 1),
+            --         eventId,
+            --         noJoinEventName,
+            --         eventArgs
+            --     ))
+            -- end
             window:setVisible(false, false)
         end
     )
@@ -392,13 +397,15 @@ end
 --     end
 -- end
 
-guiHelpers.hideWarning = function()
+---@param onCloseFunc? function
+guiHelpers.hideWarning = function(onCloseFunc)
     if guiHelpers.isShowingWarning then -- only for performance
         guiHelpers.isShowingWarning = false
 
         local window = api.gui.util.getById(_warningWindowId)
         if window ~= nil then
             window:setVisible(false, false)
+            if type(onCloseFunc) == 'function' then onCloseFunc() end
         end
     end
 end

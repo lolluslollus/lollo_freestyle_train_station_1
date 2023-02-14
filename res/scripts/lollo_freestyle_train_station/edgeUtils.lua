@@ -8,7 +8,7 @@ local transfUtilsUG = require('transf')
 local helper = {}
 
 helper.isValidId = function(id)
-    return type(id) == 'number' and id > 0
+    return type(id) == 'number' and id >= 0
 end
 
 helper.isValidAndExistingId = function(id)
