@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 15264,
+					offset = 32796,
+				},
+				position = {
+					count = 15264,
+					offset = 78588,
+				},
+				tangent = {
+					count = 15264,
+					offset = 48060,
+				},
+				uv0 = {
+					count = 15264,
+					offset = 63324,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/subway/iron.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 5772,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 7824,
+			numComp = 3,
+			offset = 24972,
+		},
+		tangent = {
+			count = 12096,
+			numComp = 4,
+			offset = 5772,
+		},
+		uv0 = {
+			count = 7104,
+			numComp = 2,
+			offset = 17868,
+		},
+	},
+}
+end
