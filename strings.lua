@@ -479,7 +479,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - 2,5 m hohe Bahnsteige vertragen sich nicht mit Brücken und Tunneln. Meine "geländerlosen" Brücken helfen, bei Tunneln kann man nichts machen.
 - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
 - Sehr dünne Pfade helfen bei bestimmten Setups: diese sind in meinem "Street Fine Tuning" Mod.
-- Dieser Mod fügt Fußgängerwege und Brücken hinzu; einige verwandeln sich in Brücken, nachdem sie platziert wurden. Für Präzisionsarbeit, verwenden Sie die "Street Fine Tuning" "chnunks" und "splitter" Konstruktionen.
+- Dieser Mod fügt Fußgängerwege und Brücken hinzu; einige verwandeln sich in Brücken, nachdem sie platziert wurden. Für Präzisionsarbeit, verwenden Sie die "Street Fine Tuning" "Chunks" und "Splits" Konstruktionen.
 - Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
 - Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
 - Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
