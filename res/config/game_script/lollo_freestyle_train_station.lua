@@ -226,7 +226,7 @@ local _utils = {
 }
 
 local _actions = {
-    -- LOLLO api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
+    -- LOLLO NOTE api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
     addSubway = function(stationConstructionId, subwayConstructionId, successEventName)
         logger.print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
@@ -372,7 +372,7 @@ local _actions = {
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
 
-        local _mainTransf = oldCon == nil
+        local _mainTransf = (oldCon == nil)
             and arrayUtils.cloneDeepOmittingFields(conTransf)
             or arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true)
         logger.print('_mainTransf =') logger.debugPrint(_mainTransf)
@@ -1312,6 +1312,11 @@ local _guiActions = {
         -- set a place to build the station
         local platformWaypoint1Pos = edgeUtils.getObjectPosition(platformWaypointIds[1])
         local platformWaypoint2Pos = edgeUtils.getObjectPosition(platformWaypointIds[2])
+        if platformWaypoint1Pos == nil or platformWaypoint2Pos == nil then
+            logger.err('handleValidWaypointBuilt cannot find the platform waypoint positions')
+            return
+        end
+
         local platformWaypointMidTransf = transfUtils.position2Transf({
             (platformWaypoint1Pos[1] + platformWaypoint2Pos[1]) * 0.5,
             (platformWaypoint1Pos[2] + platformWaypoint2Pos[2]) * 0.5,
@@ -1757,12 +1762,18 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     logger.print('buildSnappyStreetEdges starting')
 
     local endEntities = stationHelpers.getStationStreetEndEntities(stationConId)
+    if endEntities == nil then
+        logger.err('buildSnappyStreetEdges cannot find the station end entities')
+        return
+    end
+
     local proposal = api.type.SimpleProposal.new()
     local _addNodeToRemove = function(nodeId)
         if edgeUtils.isValidAndExistingId(nodeId) and not(arrayUtils.arrayHasValue(proposal.streetProposal.nodesToRemove, nodeId)) then
             proposal.streetProposal.nodesToRemove[#proposal.streetProposal.nodesToRemove+1] = nodeId
         end
     end
+
     local nNewEntities = 0
     local isSuccess = true
     local isAnyNodeAdjoiningAConstruction = false

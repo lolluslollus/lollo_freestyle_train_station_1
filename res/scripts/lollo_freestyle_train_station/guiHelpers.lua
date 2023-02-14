@@ -211,8 +211,8 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
     window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
     window:onClose(
         function()
-            -- do not do anything!
             logger.print('guiHelpers 215')
+            -- do not do anything!
             -- if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
             --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             --         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -371,6 +371,7 @@ guiHelpers.showWaypointDistance = function(distance)
 
     window:onClose(
         function()
+            logger.print('guiHelpers 374')
             guiHelpers.isShowingWaypointDistance = false
             window:setVisible(false, false)
         end
@@ -427,6 +428,7 @@ guiHelpers.hideWaypointDistance = function()
 
         local window = api.gui.util.getById(_waypointDistanceWindowId)
         if window ~= nil then
+            logger.print('guiHelpers 431')
             window:setVisible(false, false)
         end
     end
