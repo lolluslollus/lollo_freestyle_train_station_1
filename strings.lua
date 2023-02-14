@@ -409,7 +409,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["SnappyEdgeWithBridge"] = "Snappy Bridge",
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["Stairs"] = "Stairs, lifts, underground entrances, assets for the Freestyle Train Station",
-      		["StairsBase"] = "Expand Base",
+			["StairsBase"] = "Expand Base",
 			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",
@@ -456,15 +456,15 @@ Jetzt haben Sie einen Bahnhof gebaut, und die Züge werden zwischen den Gleismar
 Fügen Sie weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird Sie fragen, ob Sie Ihren neuen Terminal mit den anderen verbinden möchten. Sie können bis zu 12 Terminals in einem Bahnhof haben.
 
 Klicken Sie nun auf Ihren Bahnhof, um das Konfigurationsmenü zu öffnen und einige Verbindungen hinzuzufügen.
-- Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinden Sie sie mit Ausgängen, Treppen oder Unterführungen. Sie können auch zwei Brückenausgänge mit einem geeigneten Weg verbinden, wenn Sie bereit sind, ein wenig mit dem Spiel zu kämpfen. <AltGr> + <L> ist dein Freund.
+- Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinden Sie sie mit Ausgängen, Treppen oder Unterführungen. Sie können auch zwei Brückenausgänge mit einem geeigneten Weg verbinden - oder eine Treppe oder eine Aufzugsanlage.
 - Jeder Satz benachbarter Bahnsteige am Boden erfordert einen Straßenzugang, eine Unterführung, einen Aufzug oder eine Treppe.
 - Jede Reihe von benachbarten erhöhten Bahnsteigen erfordert einen Aufzug oder eine Unterführung.
-- Jede Brückenebene erfordert einen Aufzug oder eine Unterführung in der Nähe eines ebenerdigen Bahnsteigs oder eine Treppe.
+- Jede Brückenebene erfordert einen Aufzug oder eine Unterführung in der Nähe eines ebenerdigen Aufzugs oder einer Treppe.
 - Jede Gruppe von benachbarten unterirdischen Bahnsteigen erfordert eine Treppe.
 - Jede unterirdische Ebene erfordert einen unterirdischen Eingang oder einen Bahnsteig am Boden mit einer Unterführung oder eine höhere unterirdische Ebene mit einer Treppe nach unten (wenn Sie mehrere unterirdische Ebenen haben, können Sie auf den höheren Ebenen eine Treppe hinzufügen, um zu den unteren Ebenen hinunter zu gelangen).
 
-Sie können einen Bahnsteig zwischen zwei Terminals teilen, zum Beispiel die ersten 100 Meter mit Terminal 1 und den Rest mit Terminal 2. In diesem Fall werden die Köpfe automatisch verbunden, wenn sie höchstens 7 Meter voneinander entfernt sind.
-Sie können einen Bahnsteigabschnitt nicht mit mehreren Terminals teilen.
+Sie können einen Bahnsteig zwischen zwei Terminals teilen, zum Beispiel die ersten 100 Meter mit Terminal 1 und den Rest mit Terminal 2. Wenn Sie dies tun, verbinden sich die Köpfe automatisch, wenn sie höchstens 7 Meter voneinander entfernt sind. Sind sie weiter voneinander entfernt, verwenden Sie Endausgänge und verbinden Sie sie mit einem geeigneten Weg (Straßenmenü).
+Sie können einen Bahnsteig- oder Gleisabschnitt nicht mit mehreren Terminals teilen.
 
 Wenn Sie einen Terminal mit einem Bulldozer abreißen, versucht der Mod, die Gleise so wiederherzustellen, wie sie vorher waren, um Änderungen zu vereinfachen: Reißen Sie einen Terminal mit einem Bulldozer auf, ändern Sie, was Sie brauchen, und bauen Sie ihn dann mit den Markern wieder auf.
 Wenn Sie den Bahnhof mit dem Bulldozer zerstören, wird alles mit dem Bulldozer abgerissen.
@@ -474,27 +474,27 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 [h1]Hinweise:[/h1]
 - Bahnsteigen sind Gleise und können auch unter Mikrospalten leiden, die sehr schwer zu sehen sind.
 - Um die Fahrspuren und die Spaltungen zu visualisieren, starten Sie das Spiel im Debug-Modus und drücken Sie <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich.
-- Um unterirdisch zu arbeiten, verwende <NumPad 4> oder die Gleiskonstruktion "Unterirdisch sehen".
+- Um unterirdisch zu arbeiten, verwenden Sie <NumPad 4> oder die Gleiskonstruktion "Unterirdisch suchen".
 - Bahnsteige befördern nur dann Passagiere oder Fracht, wenn sie Teil eines Terminals sind.
-- 2,5 m Bahnsteige passen nicht zu Brücken und Tunneln. Meine "kein Geländer" Brücken helfen, in Tunnels kann nicht geholfen werden.
+- 2,5 m hohe Bahnsteige vertragen sich nicht mit Brücken und Tunneln. Meine "geländerlosen" Brücken helfen, bei Tunneln kann man nichts machen.
 - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
-- Dieser Mod fügt Fußgängerwege und Brücken hinzu. Einige dieser Wege verwandeln sich in Brücken, nachdem sie platziert wurden. Sie können knifflig zu platzieren sein, die "Chunks" und "Splitter" vom "Street fine tuning"-Mod können helfen.
-- Sehr dünne Pfade helfen bei bestimmten Aufbauten: diese sind in meinem "Street fine tuning"-Mod enthalten.
+- Sehr dünne Pfade helfen bei bestimmten Setups: diese sind in meinem "Street Fine Tuning" Mod.
+- Dieser Mod fügt Fußgängerwege und Brücken hinzu; einige verwandeln sich in Brücken, nachdem sie platziert wurden. Für Präzisionsarbeit, verwenden Sie die "Street Fine Tuning" "chnunks" und "splitter" Konstruktionen.
 - Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
 - Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
 - Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
 - Wenn du andere Gebäude willst, benutze Assets. Es gibt Mods mit diesen.
-- Dieser Mod fügt Treppen und Aufzüge als konfigurierbare Assets hinzu; sie können überall verwendet werden. Mein "Construction Mover"-Mod hilft, sie einfach zu platzieren. Dennoch geht das Spiel nicht sehr zimperlich mit ihnen um, und AltGr + L hilft dir, sie an dein Netzwerk zu binden. Das Wechseln zwischen "snappy" und "non-snappy" Straßen oder Brücken hilft ebenfalls.
+- Diese Mod fügt Treppen und Aufzüge als konfigurierbare Objekte hinzu; sie können überall verwendet werden. Meine "Construction Mover" Mod hilft, sie leicht zu platzieren. Dennoch, das Spiel behandelt sie nicht anmutig und <AltGr> + <L> wird Ihnen helfen, zu überprüfen, ob sie in Ihrem Netzwerk einrasten. Das Wechseln zwischen einrastenden und nicht einrastenden Straßen oder Brücken im Parameterfenster könnte helfen.
 - Verwenden Sie den Gleisbau-"Gleisteiler", um Präzisionsarbeit zu leisten.
 - Beim Aufrüsten von Gleisen werden alle Gleise auf einmal ausgebaut.
 - Wenn Sie zu viele Streckentypen haben, nutzen Sie die Kategorien im Menü, um sich das Leben leichter zu machen.
-- Nach einer Weile wird die Umgebung Ihres Bahnhofs zugewachsen sein und möglicherweise Kollisionsfehler anzeigen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Suchen Sie geduldig nach der schuldigen Straße, dem schuldigen Gebäude oder der schuldigen Anlage und entfernen Sie sie. Im schlimmsten Fall können Sie die Mod "build with collision" verwenden, um kollidierende Bahnhofsmodule zu entfernen.
+- Nach einer Weile wird sich das Gebiet um Ihren Bahnhof herum entwickelt haben und möglicherweise Kollisionsfehler verursachen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Suchen Sie geduldig nach der schuldigen Straße, dem Gebäude oder der Anlage und entfernen Sie sie. Im schlimmsten Fall können Sie die Mod "build with collision" verwenden, um kollidierende Bahnhofsmodule zu entfernen.
 
 [h1]Anmerkung:[/h1]
 - U-Bahnhöfe sind jetzt in den Assets enthalten.
 - Mit der Minor-Version 1.81 (31. August 2022) wurden wichtige Änderungen am Layout vorgenommen. Zuvor gebaute Terminals werden weiterhin funktionieren, können aber einige Fehler aufweisen. Um von den Änderungen zu profitieren, entfernen Sie sie, warten Sie, bis sie wieder auftauchen, und bauen Sie sie neu.
 - Bahnsteige verbinden sich nicht mehr automatisch mit angrenzenden Straßen, Sie müssen eine Ausfahrt oder einen Bahnhof hinzufügen.
-- Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis Sie eine neue bauen.
+- Minor Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis Sie eine neue bauen.
 - Mauern um Gleise sind nur auf Terminals verfügbar, die mit Version 1.99 oder neuer gebaut wurden.
 
 [h1]Bekannte Probleme:[/h1]
@@ -855,19 +855,19 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["SnappyEdgeWithNoBridge"] = "Snappy-Pfad",
 			["Stairs"] = "Treppen, Aufzüge, unterirdische Eingänge, Assets für den Freestyle-Bahnhof",
 			["StairsBase"] = "Basis ausbauen",
-			["StairsBaseTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit AltGr + L.",
+			["StairsBaseTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
 			["TerrainAlignmentType"] = "Terrainausrichtung",
 			["TerrainAlignmentTypeFlat"] = "Flach",
 			["TerrainAlignmentTypeSloped"] = "Abgeschrägt",
 			["TopPlatformLength"] = "Obere Bahnsteiglänge",
-			["TopPlatformLengthTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften die Option \"Auto Path\" oder \"Auto Bridge\" auszuwählen und sie anschließend in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit AltGr + L.",
+			["TopPlatformLengthTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
 			["TopPlatformNorthLength"] = "Obere Bahnsteig Eins",
 			["TopPlatformSouthLength"] = "Oberste Bahnsteig Zwei",
-			["TopPlatformNorthLengthTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften die Option \"Automatische Brücke\" auszuwählen und sie nach Abschluss in \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit AltGr + L.",
+			["TopPlatformNorthLengthTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften die Option \"Automatische Brücke\" auszuwählen und sie nach Abschluss in \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
 
 			-- Gleisteiler
 			["TrackSplitterName"] = "Gleisteiler",
-			["TrackSplitterDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwenden Sie AltGr + L, um die Wirkung zu sehen.",
+			["TrackSplitterDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwenden Sie <AltGr> + <L>, um die Wirkung zu sehen.",
 
 			-- Bahnsteige als Asset
 			["PlatformAsAssetName"] = "Bahnsteig als Asset",
