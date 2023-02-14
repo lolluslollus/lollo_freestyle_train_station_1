@@ -409,7 +409,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["SnappyEdgeWithBridge"] = "Snappy Bridge",
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["Stairs"] = "Stairs, lifts, underground entrances, assets for the Freestyle Train Station",
-      ["StairsBase"] = "Expand Base",
+      		["StairsBase"] = "Expand Base",
 			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",
@@ -447,63 +447,63 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 		},
 		de = {
 			["DESC"] = [[
-				Ein Freestyle-Bahnhof. Er führt einige neue Spezialgleise ein, die als Bahnsteige für Fracht oder Passagiere dienen werden.
+Ein Freestyle-Bahnhof. Er führt einige neue Spezialgleise ein, die als Bahnsteige für Fracht oder Passagiere dienen werden.
 
-			    [h1]Anleitung[/h1]
-				Legen Sie Bahnsteigen entlang normaler Gleise und platzieren Sie dann eine Bahnsteig- und einen Gleismarker dort, wo die Bahnsteig und das Gleis enden sollen. Wiederholen Sie den Vorgang am anderen Ende.
-				WARTEN Sie einen Moment und lassen Sie den Computer nachdenken.
-			    Jetzt haben Sie einen Bahnhof gebaut, und die Züge werden zwischen den Gleismarker halten.
-			    Fügen Sie weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird Sie fragen, ob Sie Ihren neuen Terminal mit den anderen verbinden möchten. Sie können bis zu 12 Terminals in einem Bahnhof haben.
+[h1]Anleitung[/h1]
+Legen Sie Bahnsteigen entlang normaler Gleise und platzieren Sie dann eine Bahnsteig- und einen Gleismarker dort, wo die Bahnsteig und das Gleis enden sollen. Wiederholen Sie den Vorgang am anderen Ende.
+WARTEN Sie einen Moment und lassen Sie den Computer nachdenken.
+Jetzt haben Sie einen Bahnhof gebaut, und die Züge werden zwischen den Gleismarker halten.
+Fügen Sie weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird Sie fragen, ob Sie Ihren neuen Terminal mit den anderen verbinden möchten. Sie können bis zu 12 Terminals in einem Bahnhof haben.
 
-			    Klicken Sie nun auf Ihren Bahnhof, um das Konfigurationsmenü zu öffnen und einige Verbindungen hinzuzufügen.
-			    - Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinden Sie sie mit Ausgängen, Treppen oder Unterführungen. Sie können auch zwei Brückenausgänge mit einem geeigneten Weg verbinden, wenn Sie bereit sind, ein wenig mit dem Spiel zu kämpfen. <AltGr> + <L> ist dein Freund.
-			    - Jeder Satz benachbarter Bahnsteige am Boden erfordert einen Straßenzugang, eine Unterführung, einen Aufzug oder eine Treppe.
-			    - Jede Reihe von benachbarten erhöhten Bahnsteigen erfordert einen Aufzug oder eine Unterführung.
-			    - Jede Brückenebene erfordert einen Aufzug oder eine Unterführung in der Nähe eines ebenerdigen Bahnsteigs oder eine Treppe.
-			    - Jede Gruppe von benachbarten unterirdischen Bahnsteigen erfordert eine Treppe.
-			    - Jede unterirdische Ebene erfordert einen unterirdischen Eingang oder einen Bahnsteig am Boden mit einer Unterführung oder eine höhere unterirdische Ebene mit einer Treppe nach unten (wenn Sie mehrere unterirdische Ebenen haben, können Sie auf den höheren Ebenen eine Treppe hinzufügen, um zu den unteren Ebenen hinunter zu gelangen).
+Klicken Sie nun auf Ihren Bahnhof, um das Konfigurationsmenü zu öffnen und einige Verbindungen hinzuzufügen.
+- Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinden Sie sie mit Ausgängen, Treppen oder Unterführungen. Sie können auch zwei Brückenausgänge mit einem geeigneten Weg verbinden, wenn Sie bereit sind, ein wenig mit dem Spiel zu kämpfen. <AltGr> + <L> ist dein Freund.
+- Jeder Satz benachbarter Bahnsteige am Boden erfordert einen Straßenzugang, eine Unterführung, einen Aufzug oder eine Treppe.
+- Jede Reihe von benachbarten erhöhten Bahnsteigen erfordert einen Aufzug oder eine Unterführung.
+- Jede Brückenebene erfordert einen Aufzug oder eine Unterführung in der Nähe eines ebenerdigen Bahnsteigs oder eine Treppe.
+- Jede Gruppe von benachbarten unterirdischen Bahnsteigen erfordert eine Treppe.
+- Jede unterirdische Ebene erfordert einen unterirdischen Eingang oder einen Bahnsteig am Boden mit einer Unterführung oder eine höhere unterirdische Ebene mit einer Treppe nach unten (wenn Sie mehrere unterirdische Ebenen haben, können Sie auf den höheren Ebenen eine Treppe hinzufügen, um zu den unteren Ebenen hinunter zu gelangen).
 
-			    Sie können einen Bahnsteig zwischen zwei Terminals teilen, zum Beispiel die ersten 100 Meter mit Terminal 1 und den Rest mit Terminal 2. In diesem Fall werden die Köpfe automatisch verbunden, wenn sie höchstens 7 Meter voneinander entfernt sind.
-			    Sie können einen Bahnsteigabschnitt nicht mit mehreren Terminals teilen.
+Sie können einen Bahnsteig zwischen zwei Terminals teilen, zum Beispiel die ersten 100 Meter mit Terminal 1 und den Rest mit Terminal 2. In diesem Fall werden die Köpfe automatisch verbunden, wenn sie höchstens 7 Meter voneinander entfernt sind.
+Sie können einen Bahnsteigabschnitt nicht mit mehreren Terminals teilen.
 
-				Wenn Sie einen Terminal mit einem Bulldozer abreißen, versucht der Mod, die Gleise so wiederherzustellen, wie sie vorher waren, um Änderungen zu vereinfachen: Reißen Sie einen Terminal mit einem Bulldozer auf, ändern Sie, was Sie brauchen, und bauen Sie ihn dann mit den Markern wieder auf.
-				Wenn Sie den Bahnhof mit dem Bulldozer zerstören, wird alles mit dem Bulldozer abgerissen.
+Wenn Sie einen Terminal mit einem Bulldozer abreißen, versucht der Mod, die Gleise so wiederherzustellen, wie sie vorher waren, um Änderungen zu vereinfachen: Reißen Sie einen Terminal mit einem Bulldozer auf, ändern Sie, was Sie brauchen, und bauen Sie ihn dann mit den Markern wieder auf.
+Wenn Sie den Bahnhof mit dem Bulldozer zerstören, wird alles mit dem Bulldozer abgerissen.
 
-				Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen Sie nach "freestyle station".
-				
-				[h1]Hinweise:[/h1]
-			    - Bahnsteigen sind Gleise und können auch unter Mikrospalten leiden, die sehr schwer zu sehen sind.
-				- Um die Fahrspuren und die Spaltungen zu visualisieren, starten Sie das Spiel im Debug-Modus und drücken Sie <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich.
-				- Um unterirdisch zu arbeiten, verwende <NumPad 4> oder die Gleiskonstruktion "Unterirdisch sehen".
-				- Bahnsteige befördern nur dann Passagiere oder Fracht, wenn sie Teil eines Terminals sind.
-				- 2,5 m Bahnsteige passen nicht zu Brücken und Tunneln. Meine "kein Geländer" Brücken helfen, in Tunnels kann nicht geholfen werden.
-			    - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
-			    - Dieser Mod fügt Fußgängerwege und Brücken hinzu. Einige dieser Wege verwandeln sich in Brücken, nachdem sie platziert wurden. Sie können knifflig zu platzieren sein, die "Chunks" und "Splitter" vom "Street fine tuning"-Mod können helfen.
-				- Sehr dünne Pfade helfen bei bestimmten Aufbauten: diese sind in meinem "Street fine tuning"-Mod enthalten.
-				- Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
-				- Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
-				- Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
-				- Wenn du andere Gebäude willst, benutze Assets. Es gibt Mods mit diesen.
-				- Dieser Mod fügt Treppen und Aufzüge als konfigurierbare Assets hinzu; sie können überall verwendet werden. Mein "Construction Mover"-Mod hilft, sie einfach zu platzieren. Dennoch geht das Spiel nicht sehr zimperlich mit ihnen um, und AltGr + L hilft dir, sie an dein Netzwerk zu binden. Das Wechseln zwischen "snappy" und "non-snappy" Straßen oder Brücken hilft ebenfalls.
-				- Verwenden Sie den Gleisbau-"Gleisteiler", um Präzisionsarbeit zu leisten.
-				- Beim Aufrüsten von Gleisen werden alle Gleise auf einmal ausgebaut.
-				- Wenn Sie zu viele Streckentypen haben, nutzen Sie die Kategorien im Menü, um sich das Leben leichter zu machen.
-				- Nach einer Weile wird die Umgebung Ihres Bahnhofs zugewachsen sein und möglicherweise Kollisionsfehler anzeigen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Suchen Sie geduldig nach der schuldigen Straße, dem schuldigen Gebäude oder der schuldigen Anlage und entfernen Sie sie. Im schlimmsten Fall können Sie die Mod "build with collision" verwenden, um kollidierende Bahnhofsmodule zu entfernen.
+Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen Sie nach "freestyle station".
 
-				[h1]Anmerkung:[/h1]
-				- U-Bahnhöfe sind jetzt in den Assets enthalten.
-				- Mit der Minor-Version 1.81 (31. August 2022) wurden wichtige Änderungen am Layout vorgenommen. Zuvor gebaute Terminals werden weiterhin funktionieren, können aber einige Fehler aufweisen. Um von den Änderungen zu profitieren, entfernen Sie sie, warten Sie, bis sie wieder auftauchen, und bauen Sie sie neu.
-				- Bahnsteige verbinden sich nicht mehr automatisch mit angrenzenden Straßen, Sie müssen eine Ausfahrt oder einen Bahnhof hinzufügen.
-				- Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis Sie eine neue bauen.
-				- Mauern um Gleise sind nur auf Terminals verfügbar, die mit Version 1.99 oder neuer gebaut wurden.
+[h1]Hinweise:[/h1]
+- Bahnsteigen sind Gleise und können auch unter Mikrospalten leiden, die sehr schwer zu sehen sind.
+- Um die Fahrspuren und die Spaltungen zu visualisieren, starten Sie das Spiel im Debug-Modus und drücken Sie <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich.
+- Um unterirdisch zu arbeiten, verwende <NumPad 4> oder die Gleiskonstruktion "Unterirdisch sehen".
+- Bahnsteige befördern nur dann Passagiere oder Fracht, wenn sie Teil eines Terminals sind.
+- 2,5 m Bahnsteige passen nicht zu Brücken und Tunneln. Meine "kein Geländer" Brücken helfen, in Tunnels kann nicht geholfen werden.
+- Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
+- Dieser Mod fügt Fußgängerwege und Brücken hinzu. Einige dieser Wege verwandeln sich in Brücken, nachdem sie platziert wurden. Sie können knifflig zu platzieren sein, die "Chunks" und "Splitter" vom "Street fine tuning"-Mod können helfen.
+- Sehr dünne Pfade helfen bei bestimmten Aufbauten: diese sind in meinem "Street fine tuning"-Mod enthalten.
+- Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
+- Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
+- Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
+- Wenn du andere Gebäude willst, benutze Assets. Es gibt Mods mit diesen.
+- Dieser Mod fügt Treppen und Aufzüge als konfigurierbare Assets hinzu; sie können überall verwendet werden. Mein "Construction Mover"-Mod hilft, sie einfach zu platzieren. Dennoch geht das Spiel nicht sehr zimperlich mit ihnen um, und AltGr + L hilft dir, sie an dein Netzwerk zu binden. Das Wechseln zwischen "snappy" und "non-snappy" Straßen oder Brücken hilft ebenfalls.
+- Verwenden Sie den Gleisbau-"Gleisteiler", um Präzisionsarbeit zu leisten.
+- Beim Aufrüsten von Gleisen werden alle Gleise auf einmal ausgebaut.
+- Wenn Sie zu viele Streckentypen haben, nutzen Sie die Kategorien im Menü, um sich das Leben leichter zu machen.
+- Nach einer Weile wird die Umgebung Ihres Bahnhofs zugewachsen sein und möglicherweise Kollisionsfehler anzeigen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Suchen Sie geduldig nach der schuldigen Straße, dem schuldigen Gebäude oder der schuldigen Anlage und entfernen Sie sie. Im schlimmsten Fall können Sie die Mod "build with collision" verwenden, um kollidierende Bahnhofsmodule zu entfernen.
 
-				[h1]Bekannte Probleme:[/h1]
-				- Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
-				- Die Benennung von Bahnhöfen funktioniert nicht richtig.
-				- 2,5 m Bahnsteige stimmen nicht mit Brücken und Tunneln überein. Bitten Sie UG, trackDistance zum Laufen zu bringen.
-				- Je größer ein Bahnhof ist, desto länger dauert es, ein Terminal hinzuzufügen oder zu entfernen. Es kann über eine Minute dauern. Warte einfach ab.
-				- Einige Module können nur nach anderen platziert werden, z.B. Treppenausgänge nach Treppen, aber das Konfigurationsmenü wird nicht automatisch aktualisiert. Nachdem Sie die erste Treppe platziert haben, müssen Sie das Menü schließen und erneut öffnen, damit die Treppenausgänge erscheinen.
-				- Einige Gleis- und Signalmods sind nicht kompatibel. Generell gilt: Vermeiden Sie Mods, die die Originalgleise des Spiels überschreiben oder deaktivieren. Wahrscheinlich werden Sie sie ohnehin nicht vermissen.
+[h1]Anmerkung:[/h1]
+- U-Bahnhöfe sind jetzt in den Assets enthalten.
+- Mit der Minor-Version 1.81 (31. August 2022) wurden wichtige Änderungen am Layout vorgenommen. Zuvor gebaute Terminals werden weiterhin funktionieren, können aber einige Fehler aufweisen. Um von den Änderungen zu profitieren, entfernen Sie sie, warten Sie, bis sie wieder auftauchen, und bauen Sie sie neu.
+- Bahnsteige verbinden sich nicht mehr automatisch mit angrenzenden Straßen, Sie müssen eine Ausfahrt oder einen Bahnhof hinzufügen.
+- Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis Sie eine neue bauen.
+- Mauern um Gleise sind nur auf Terminals verfügbar, die mit Version 1.99 oder neuer gebaut wurden.
+
+[h1]Bekannte Probleme:[/h1]
+- Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
+- Die Benennung von Bahnhöfen funktioniert nicht richtig.
+- 2,5 m Bahnsteige stimmen nicht mit Brücken und Tunneln überein. Bitten Sie UG, trackDistance zum Laufen zu bringen.
+- Je größer ein Bahnhof ist, desto länger dauert es, ein Terminal hinzuzufügen oder zu entfernen. Es kann über eine Minute dauern. Warte einfach ab.
+- Einige Module können nur nach anderen platziert werden, z.B. Treppenausgänge nach Treppen, aber das Konfigurationsmenü wird nicht automatisch aktualisiert. Nachdem Sie die erste Treppe platziert haben, müssen Sie das Menü schließen und erneut öffnen, damit die Treppenausgänge erscheinen.
+- Einige Gleis- und Signalmods sind nicht kompatibel. Generell gilt: Vermeiden Sie Mods, die die Originalgleise des Spiels überschreiben oder deaktivieren. Wahrscheinlich werden Sie sie ohnehin nicht vermissen.
 			]],
 			["NAME"] = "Freestyle-Bahnhof",
 
@@ -616,10 +616,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["OpenStairsExitName_4m"] = "Eingang zur Treppe, 4 m",
 			["OpenStairsExitName_8m"] = "Eingang zur Treppe, 8 m",
 			["OpenStairsExitName_16m"] = "Eingang zur Treppe, 16 m",
-			["OpenStairsExitName_16m"] = "Eingang zur Treppe, 16 m",
 			["OpenStairsExitName_32m"] = "Eingang zur Treppe, 32 m",
-			["OpenStairsExitName_32m"] = "Eingang zur Treppe, 32 m",
-			["OpenStairsExitName_64m"] = "Eingang zur Treppe, 64 m",
 			["OpenStairsExitName_64m"] = "Eingang zur Treppe, 64 m",
 			["OpenStairsExitDesc"] = "Verbindet Treppen und Aufzüge mit dem Außenbereich. Stelle seine Neigung mit <m> und <n> ein. Verbinden Sie sie bei Bedarf mit dem Treppen-Asset ",
 			["OpenStairsExitWithEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz. Passen Sie seine Neigung mit <m> und <n> an. Verknüpfen Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen. Sie wird bei der nächsten Konfigurationsaktualisierung biegsam sein.",

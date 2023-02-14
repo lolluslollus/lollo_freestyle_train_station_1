@@ -6,7 +6,7 @@ function data()
 
     return {
         info = {
-            minorVersion = 99,
+            minorVersion = 100,
             severityAdd = 'NONE',
             severityRemove = 'WARNING',
             name = _('NAME'),
@@ -28,6 +28,10 @@ function data()
                 {
                     name = 'Lollus',
                     role = 'CREATOR'
+                },
+                {
+                    name = 'GordonDry',
+                    role = 'TRANSLATOR'
                 },
             }
         },
