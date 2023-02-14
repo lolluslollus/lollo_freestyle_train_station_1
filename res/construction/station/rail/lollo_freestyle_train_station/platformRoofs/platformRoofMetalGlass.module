@@ -35,7 +35,7 @@ function data()
 
 			moduleHelpers.deco.doPlatformRoof(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
 			_constants.platformRoofMetalGlassCeiling2_5MModelFileName, _constants.platformRoofMetalGlassCeiling5MModelFileName,
-			_constants.platformRoofMetalGlassPillar2_5MModelFileName, _constants.platformRoofMetalGlassPillar5MModelFileName)
+			'lollo_freestyle_train_station/roofs/metal_glass/platformRoofPillar_2_5m.mdl', 'lollo_freestyle_train_station/roofs/metal_glass/platformRoofPillar_5m.mdl')
 		end,
 
 		getModelsFn = function(params)
@@ -47,7 +47,7 @@ function data()
 				}
 			end
 			results[#results+1] = {
-				id = _constants.platformRoofMetalGlassPillar2_5MModelFileName,
+				id = 'lollo_freestyle_train_station/roofs/metal_glass/platformRoofPillar_2_5m.mdl',
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 		return results

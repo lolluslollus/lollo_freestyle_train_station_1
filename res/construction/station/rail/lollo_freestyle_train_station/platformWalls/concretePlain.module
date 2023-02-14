@@ -36,7 +36,7 @@ function data()
 			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
 			'lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_5m.mdl',
 			'lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_low_5m.mdl',
-			_constants.platformWallConcretePlainPillar2_5MModelFileName, _constants.platformWallConcretePlainPillar5MModelFileName,
+			'lollo_freestyle_train_station/roofs/concrete_plain/platformRoofPillar_2_5m.mdl', 'lollo_freestyle_train_station/roofs/concrete_plain/platformRoofPillar_5m.mdl',
 			true)
 		end,
 
@@ -49,7 +49,7 @@ function data()
 				}
 			end
 			results[#results+1] = {
-				id = _constants.platformWallConcretePlainPillar2_5MModelFileName,
+				id = 'lollo_freestyle_train_station/roofs/concrete_plain/platformRoofPillar_2_5m.mdl',
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
 			}
 			results[#results+1] = moduleHelpers.deco.getPreviewIcon(params)

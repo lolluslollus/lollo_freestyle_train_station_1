@@ -1,4 +1,5 @@
 function data()
+    -- LOLLO TODO this is obsolete, remove it one day
     local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
     return {
@@ -8,15 +9,6 @@ function data()
             {
                 node = {
                     children = {
-                        -- {
-                        --     -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
-                        --     materials = {
-                        --         'lollo_freestyle_train_station/metal/metal_deco_curls.mtl',
-                        --         'lollo_freestyle_train_station/metal/metal_w_rivets.mtl',
-                        --     },
-                        --     mesh = 'lollo_freestyle_train_station/platformWalls/tiled/deco_pillar_2_5m_lod0.msh',
-                        --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
-                        -- },
                         {
                             materials = {
                                 "lollo_freestyle_train_station/metal/metal_w_rivets.mtl",
