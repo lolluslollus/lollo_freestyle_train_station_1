@@ -1111,6 +1111,10 @@ return {
         end,
         doPlatformRoof = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
             ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId, alternativeCeiling2_5ModelId, alternativeCeiling5ModelId, isTunnelOk)
+            -- LOLLO TODO in every cpf, extend xZoom up to 1.06 for 5m platforms and 1.03 for 2.5m platforms (make it 1.1 and 1.05)
+            -- only if the bend is tight enough - the direction does not matter coz roofs are centered on cpf by construction.
+            -- and remove these corrective factors from the *.mdl files.
+            -- This would prevent mini glitches linked to roof edges overlapping.
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
@@ -1135,12 +1139,12 @@ return {
                         local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
                         local isFreeFromOpenStairsAndTunnels = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex] and cpf.type ~= 2
-                        local modelId = isFreeFromOpenStairsAndTunnels
-                        and (platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId)
-                        or (platformWidth < 5 and alternativeCeiling2_5ModelId or alternativeCeiling5ModelId)
-                        if modelId ~= nil then
+                        local roofModelId = isFreeFromOpenStairsAndTunnels
+                            and (platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId)
+                            or (platformWidth < 5 and alternativeCeiling2_5ModelId or alternativeCeiling5ModelId)
+                        if roofModelId ~= nil then
                             result.models[#result.models+1] = {
-                                id = modelId,
+                                id = roofModelId,
                                 transf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
                                     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }

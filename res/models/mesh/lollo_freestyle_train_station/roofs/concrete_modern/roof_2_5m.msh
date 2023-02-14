@@ -10,19 +10,19 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 1112,
+					offset = 1124,
 				},
 				position = {
 					count = 24,
-					offset = 1088,
+					offset = 1148,
 				},
 				tangent = {
 					count = 24,
-					offset = 1040,
+					offset = 1196,
 				},
 				uv0 = {
 					count = 24,
-					offset = 1064,
+					offset = 1172,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 240,
-					offset = 1856,
+					offset = 1220,
 				},
 				position = {
 					count = 240,
-					offset = 1616,
+					offset = 1460,
 				},
 				tangent = {
 					count = 240,
-					offset = 1136,
+					offset = 1940,
 				},
 				uv0 = {
 					count = 240,
-					offset = 1376,
+					offset = 1700,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 2168,
+					offset = 2180,
 				},
 				position = {
 					count = 24,
-					offset = 2144,
+					offset = 2204,
 				},
 				tangent = {
 					count = 24,
-					offset = 2096,
+					offset = 2252,
 				},
 				uv0 = {
 					count = 24,
-					offset = 2120,
+					offset = 2228,
 				},
 			},
 			materials = {
@@ -79,19 +79,19 @@ return {
 			indices = {
 				normal = {
 					count = 192,
-					offset = 2768,
+					offset = 2276,
 				},
 				position = {
 					count = 192,
-					offset = 2576,
+					offset = 2468,
 				},
 				tangent = {
 					count = 192,
-					offset = 2192,
+					offset = 2852,
 				},
 				uv0 = {
 					count = 192,
-					offset = 2384,
+					offset = 2660,
 				},
 			},
 			materials = {
@@ -101,24 +101,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 108,
+			count = 132,
 			numComp = 3,
-			offset = 932,
+			offset = 0,
 		},
 		position = {
-			count = 324,
+			count = 288,
 			numComp = 3,
-			offset = 608,
+			offset = 132,
 		},
 		tangent = {
-			count = 96,
+			count = 192,
 			numComp = 4,
-			offset = 0,
+			offset = 932,
 		},
 		uv0 = {
 			count = 512,
 			numComp = 2,
-			offset = 96,
+			offset = 420,
 		},
 	},
 }

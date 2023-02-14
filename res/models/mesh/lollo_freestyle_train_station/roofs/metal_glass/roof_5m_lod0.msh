@@ -12,15 +12,15 @@ return {
 				},
 				position = {
 					count = 144,
-					offset = 3036,
+					offset = 2748,
 				},
 				tangent = {
 					count = 144,
-					offset = 2892,
+					offset = 3036,
 				},
 				uv0 = {
 					count = 144,
-					offset = 2748,
+					offset = 2892,
 				},
 			},
 			materials = {
@@ -34,15 +34,15 @@ return {
 				},
 				position = {
 					count = 1008,
-					offset = 6204,
+					offset = 4188,
 				},
 				tangent = {
 					count = 1008,
-					offset = 5196,
+					offset = 6204,
 				},
 				uv0 = {
 					count = 1008,
-					offset = 4188,
+					offset = 5196,
 				},
 			},
 			materials = {
@@ -52,24 +52,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 396,
+			count = 444,
 			numComp = 3,
 			offset = 0,
 		},
 		position = {
 			count = 672,
 			numComp = 3,
-			offset = 1932,
+			offset = 444,
 		},
 		tangent = {
-			count = 368,
+			count = 320,
 			numComp = 4,
-			offset = 1564,
+			offset = 2284,
 		},
 		uv0 = {
 			count = 1168,
 			numComp = 2,
-			offset = 396,
+			offset = 1116,
 		},
 	},
 }
