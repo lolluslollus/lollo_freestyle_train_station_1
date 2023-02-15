@@ -67,7 +67,7 @@ local privateFuncs = {
         local zShift = variant * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
         local _maxValueAbs = 1.2
         if zShift > _maxValueAbs then zShift = _maxValueAbs elseif zShift < -_maxValueAbs then zShift = -_maxValueAbs end
-        -- logger.print('getFromVariant_FlatAreaHeight returning', zShift, -_maxValueAbs, _maxValueAbs)
+        -- logger.print('_getFromVariant_FlatAreaHeight returning', zShift, -_maxValueAbs, _maxValueAbs)
         return zShift, -_maxValueAbs, _maxValueAbs
     end,
     getFromVariant_LiftHeight = function(variant)
@@ -713,13 +713,13 @@ privateFuncs.slopedAreas = {
         result.models[#result.models + 1] = {
             id = roofModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift1, yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift1, yShift, result.laneZs[nTerminal], 1 }),
             tag = tag
         }
         result.models[#result.models + 1] = {
             id = roofModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  xShift2, yShift, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  xShift2, yShift, result.laneZs[nTerminal], 1 }),
             tag = tag
         }
     end,
@@ -759,19 +759,19 @@ privateFuncs.slopedAreas = {
         result.models[#result.models + 1] = {
             id = chairsModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift1, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift1, result.laneZs[nTerminal], 1 }),
             tag = tag
         }
         result.models[#result.models + 1] = {
             id = binModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift2, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift2, result.laneZs[nTerminal], 1 }),
             tag = tag
         }
         result.models[#result.models + 1] = {
             id = arrivalsModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift + 6.2, yShift3, result.laneZs[nTerminal] + constants.platformSideBitsZ, 1 }),
+            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift + 6.2, yShift3, result.laneZs[nTerminal], 1 }),
             tag = tag
         }
     end,
@@ -910,7 +910,7 @@ privateFuncs.slopedAreas = {
     isSlopedAreaAllowed = function(cpf, areaWidth)
         return cpf.type == 0 or (cpf.type == 1 and areaWidth <= 2.5)
     end,
-    _doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
+    doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
         -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
         local terrainCoordinates = {}
 
@@ -946,7 +946,7 @@ privateFuncs.slopedAreas = {
         -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
 
         local faces = {}
-        local deltaZ = result.laneZs[nTerminal] -constants.stairsAndRampHeight + constants.platformSideBitsZ
+        local deltaZ = result.laneZs[nTerminal] -constants.stairsAndRampHeight
         for tc = 1, #terrainCoordinates do
             local face = { }
             for i = 1, 4 do
@@ -1405,7 +1405,8 @@ return {
                             )
                             local xScaleFactor = math.abs(xRatio) * 1.01 -- dx/dl * safety factor to avoid gaps, accounting for the wall thickness
                             -- local yShift4Wall = _isTrackOnPlatformLeft and 2.5 or -2.5 -- wall models are shifted by 2.5m - not anymore
-                            local zShift = slopedAreaWidth > 0 and constants.platformSideBitsZ or 0
+                            -- local zShift = slopedAreaWidth > 0 and constants.platformSideBitsZ or 0 -- no more, extensions are now flush with platforms
+                            local zShift = 0
                             local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             local wallTransf = transfUtilsUG.mul(
                                 _wallTransfFunc(wallPosTanX2),
@@ -2269,12 +2270,13 @@ return {
                         )
                         local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(centreAreaPosTanX2)
                         local xScaleFactor = math.max(xRatio * yRatio, 1.05) -- this is a bit crude but it's cheap
+                        -- local xScaleFactor = xRatio * 1.05 -- dx/dl -- no good here
                         logger.print('xScaleFactor w ratios =', xScaleFactor)
                         result.models[#result.models+1] = {
                             id = modelId,
                             transf = transfUtilsUG.mul(
                                 myTransf,
-                                { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformSideBitsZ, 1 }
+                                { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
                             ),
                             tag = tag
                         }
@@ -2313,7 +2315,7 @@ return {
                 end
             end
 
-            privateFuncs.slopedAreas._doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, _isEndFiller, areaWidth, groundFacesFillKey)
+            privateFuncs.slopedAreas.doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, _isEndFiller, areaWidth, groundFacesFillKey)
             if waitingAreaModelId ~= nil and not(isDecoBarred) then
                 local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
                 local verticalTransf = privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2)

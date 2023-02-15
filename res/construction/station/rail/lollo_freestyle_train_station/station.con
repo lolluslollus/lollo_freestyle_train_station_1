@@ -337,7 +337,7 @@ function data()
 									spacing = isTrackOnPlatformLeft and {1.5, 0, 0, 3} or {0, 1.5, 3, 0},
 									transf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
 									),
 									type = _constants.slopedPassengerArea1x2_5ModuleType,
 								})
@@ -358,7 +358,7 @@ function data()
 									spacing = isTrackOnPlatformLeft and {2, 0, 0, 3} or {0, 2, 3, 0},
 									transf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
 									),
 									type = isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
 								})
@@ -373,7 +373,7 @@ function data()
 									spacing = isTrackOnPlatformLeft and {3, 2, 0, 3} or {2, 3, 3, 0},
 									transf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
 									),
 									type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
 								})
@@ -388,7 +388,7 @@ function data()
 									spacing = isTrackOnPlatformLeft and {8, 4, 0, 3} or {4, 8, 3, 0},
 									transf = transfUtilsUG.mul(
 										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, _constants.platformSideBitsZ, 1 }
+										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
 									),
 									type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
 								})
