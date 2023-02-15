@@ -8,19 +8,13 @@ function data()
         lods = {
             {
                 node = {
-                    children = {
-                        {
-                            materials = {
-                                'lollo_freestyle_train_station/square_cobbles.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_z.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
-                            },
-                            mesh = 'lollo_freestyle_train_station/trackWalls/wall_base_5m_lod0.msh',
-                            transf = {1.02, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
-                        },
+                    materials = {
+                        'lollo_freestyle_train_station/square_cobbles.mtl',
+                        'lollo_freestyle_train_station/square_cobbles_z.mtl',
+                        'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
                     },
-                    name = 'RootNode',
-                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                    mesh = 'lollo_freestyle_train_station/trackWalls/wall_base_5m_lod0.msh',
+                    transf = {1.02, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                 },
                 static = false,
                 visibleFrom = 0,
