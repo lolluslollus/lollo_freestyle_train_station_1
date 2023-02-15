@@ -209,10 +209,9 @@ privateFuncs.axialAreas = {
     end,
 }
 privateFuncs.deco = {
-    addWallsAcross = function(cpf, isLowIEnd, slopedAreaWidth, result, tag, wallModelId, absDeltaY, isTrackOnPlatformLeft, isVertical, wallTransf, laneZ, ii, iMax)
+    addWallsAcross = function(cpf, isLowIEnd, result, tag, wallModelId, absDeltaY, isTrackOnPlatformLeft, isVertical, wallTransf, ii, iMax)
         if absDeltaY <= 0 then return end
-
-        local testPegZ = 0
+--[[
         logger.print(
             ', _addWallsAcross, absDeltaY =',
             absDeltaY,
@@ -227,47 +226,42 @@ privateFuncs.deco = {
             ', iMax =',
             iMax
         )
+]]
+        local sideWallBase = (isLowIEnd ~= isTrackOnPlatformLeft)
+            and {-0.5, 0, 0}
+            or {0.5, 0, 0}
+        local outerPos = transfUtils.getVec123Transformed(sideWallBase, wallTransf)
 
-        local posTanX2_Inwards = transfUtils.getParallelSideways(
-            cpf.posTanX2,
-            isTrackOnPlatformLeft
-                and (-cpf.width / 2 - slopedAreaWidth + absDeltaY)
-                or (cpf.width / 2 + slopedAreaWidth - absDeltaY)
-        )
-        local posTanX2_Outwards = transfUtils.getParallelSideways(
-            cpf.posTanX2,
-            isTrackOnPlatformLeft
-                and (-cpf.width / 2 - slopedAreaWidth)
-                or (cpf.width / 2 + slopedAreaWidth)
-        )
-        logger.print('wallTransf[15] =', wallTransf[15])
-        logger.print('cpf.posTanX2 Zs =', cpf.posTanX2[1][1][3], cpf.posTanX2[2][1][3])
-        logger.print('posTanX2_Inwards Zs =', posTanX2_Inwards[1][1][3], posTanX2_Inwards[2][1][3])
-        logger.print('posTanX2_Outwards Zs =', posTanX2_Outwards[1][1][3], posTanX2_Outwards[2][1][3])
-
-        local posInwards, posOutwards
-        if isLowIEnd then
-            posInwards = posTanX2_Inwards[1][1]
-            posOutwards = posTanX2_Outwards[1][1]
-        else
-            posInwards = posTanX2_Inwards[2][1]
-            posOutwards = posTanX2_Outwards[2][1]
-        end
-
-
-        -- extra precision LOLLO TODO decide which one, or maybe add the shifts later
-        -- posInwards[3] = (posTanX2_Inwards[1][1][3] + posTanX2_Inwards[2][1][3]) * 0.5
-        -- posOutwards[3] = (posTanX2_Outwards[1][1][3] + posTanX2_Outwards[2][1][3]) * 0.5
-        -- posInwards[3] = (posTanX2_Inwards[1][1][3] + posTanX2_Inwards[2][1][3]) * 0.5 + zShift + laneZ
-        -- posOutwards[3] = (posTanX2_Outwards[1][1][3] + posTanX2_Outwards[2][1][3]) * 0.5 + zShift + laneZ
-        -- posInwards[3] = wallTransf[15]
-        -- posOutwards[3] = wallTransf[15]
-        logger.print('posInwards =') logger.debugPrint(posInwards)
-        logger.print('posOutwards =') logger.debugPrint(posOutwards)
-
+        local sideWallBaseFront = (isLowIEnd ~= isTrackOnPlatformLeft)
+            and {-0.5, -absDeltaY, 0}
+            or {0.5, -absDeltaY, 0}
+        local innerPos = transfUtils.getVec123Transformed(sideWallBaseFront, wallTransf)
+--[[
+        local testPegZ = 0
+        result.models[#result.models+1] = {
+            id = 'lollo_freestyle_train_station/icon/blue.mdl',
+            transf = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                outerPos[1], outerPos[2], outerPos[3] + testPegZ + 0.5, 1
+            },
+            tag = tag
+        }
+        result.models[#result.models+1] = {
+            id = 'lollo_freestyle_train_station/icon/orange.mdl',
+            transf = {
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                innerPos[1], innerPos[2], innerPos[3] + testPegZ + 0.0, 1
+            },
+            tag = tag
+        }
+]]
         local lengthAcross = absDeltaY
-        local sinZ = (posOutwards[2] - posInwards[2]) / lengthAcross
-        local cosZ = (posOutwards[1] - posInwards[1]) / lengthAcross
+        local sinZ = (outerPos[2] - innerPos[2]) / lengthAcross
+        local cosZ = (outerPos[1] - innerPos[1]) / lengthAcross
 
         local sinX, cosX
         if isVertical then
@@ -283,29 +277,14 @@ privateFuncs.deco = {
                 sinX = -sinX -- invert
             end
         end
-        logger.print('sinX, cosX =', sinX, cosX)
+        -- logger.print('sinX, cosX =', sinX, cosX)
 
-        -- local flipAndShiftTransf = isTrackOnPlatformLeft
-        --     and {
-        --         -cosX, 0, sinX, 0,
-        --         0, -1, 0, 0,
-        --         sinX, 0, cosX, 0,
-        --         0, 0, 0, 1
-        --     }
-        --     or {
-        --         cosX, 0, sinX, 0,
-        --         0, 1, 0, 0,
-        --         -sinX, 0, cosX, 0,
-        --         0, 0, 0, 1
-        --     }
-        local wallThickness = isLowIEnd and 0 or 0.1
-        wallThickness = 0.1 -- when flipping, this model rotates around its back: account for its thickness
         local flipShiftTiltTransf = (isLowIEnd == isTrackOnPlatformLeft)
             and {
                 -1, 0, 0, 0,
                 0, -cosX, sinX, 0,
                 0, sinX, cosX, 0,
-                0, -wallThickness, 0, 1
+                0, 0, 0, 1
             }
             or {
                 1, 0, 0, 0,
@@ -313,48 +292,6 @@ privateFuncs.deco = {
                 0, -sinX, cosX, 0,
                 0, 0, 0, 1
             }
---[[
-        logger.print('mul1 =') logger.debugPrint(transfUtilsUG.mul(
-            {
-                -1, 0, 0, 0,
-                0, -1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            },
-            -- {
-            --     cosY,   0,  sinY,   0,
-            --     0,      1,  0,      0,
-            --     -sinY,  0,  cosY,   0,
-            --     0,      0,  0,      1
-            -- }
-            {
-                1,   0,      0,     0,
-                0,   cosX,   sinX,  0,
-                0,   -sinX,  cosX,  0,
-                0,   0,      0,     1
-            }
-        ))
-        logger.print('mul2 =') logger.debugPrint(transfUtilsUG.mul(
-            {
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 0, 0, 1
-            },
-            -- {
-            --     cosY,   0,  sinY,   0,
-            --     0,      1,  0,      0,
-            --     -sinY,  0,  cosY,   0,
-            --     0,      0,  0,      1
-            -- }
-            {
-                1,   0,      0,     0,
-                0,   cosX,   sinX,  0,
-                0,   -sinX,  cosX,  0,
-                0,   0,      0,     1
-            }
-        ))
-]]
 
         for p = 1, lengthAcross, 1 do
             local transf4P = transfUtilsUG.mul(
@@ -362,9 +299,7 @@ privateFuncs.deco = {
                     cosZ, sinZ, 0, 0,
                     -sinZ, cosZ, 0, 0,
                     0, 0, 1, 0,
-                    posInwards[1] + (p-0.5) * cosZ, posInwards[2] + (p-0.5) * sinZ, posInwards[3] + laneZ, 1
-                    -- posInwards[1] + (p-0.5) * cosZ, posInwards[2] + (p-0.5) * sinZ, wallTransf[15], 1
-                    -- posInwards[1] + (p-0.5) * cosZ, posInwards[2] + (p-0.5) * sinZ, posInwards[3], 1
+                    innerPos[1] + (p-0.5) * cosZ, innerPos[2] + (p-0.5) * sinZ, innerPos[3], 1
                 },
                 flipShiftTiltTransf
             )
@@ -373,7 +308,7 @@ privateFuncs.deco = {
                 transf = transf4P,
                 tag = tag
             }
-            logger.print('transf 4 p = ') logger.debugPrint(transf4P)
+            -- logger.print('transf 4 p = ') logger.debugPrint(transf4P)
         end
         -- close the last bit if it is shorter than 1 metre - remember walls are all 1 metre wide
         if lengthAcross > math.floor(absDeltaY) then
@@ -384,16 +319,15 @@ privateFuncs.deco = {
                         cosZ, sinZ, 0, 0,
                         -sinZ, cosZ, 0, 0,
                         0, 0, 1, 0,
-                        posInwards[1] + (lengthAcross-0.5) * cosZ, posInwards[2] + (lengthAcross-0.5) * sinZ, posInwards[3] + laneZ, 1
-                        -- posInwards[1] + (lengthAcross-0.5) * cosZ, posInwards[2] + (lengthAcross-0.5) * sinZ, wallTransf[15], 1
-                        -- posInwards[1] + (lengthAcross-0.5) * cosZ, posInwards[2] + (lengthAcross-0.5) * sinZ, posInwards[3], 1
+                        innerPos[1] + (lengthAcross-0.5) * cosZ, innerPos[2] + (lengthAcross-0.5) * sinZ, innerPos[3], 1
                     },
                     flipShiftTiltTransf
                 ),
                 tag = tag
             }
         end
-
+--[[
+        local testPegZ = 0
         if isLowIEnd then
             result.models[#result.models+1] = {
                 id = 'lollo_freestyle_train_station/icon/blue.mdl',
@@ -477,6 +411,7 @@ privateFuncs.deco = {
                 tag = tag
             }
         end
+        ]]
     end,
     getMNAdjustedValue_0Or1_Cycling = function(params, slotId)
         local variant = privateFuncs.getVariant(params, slotId)
@@ -1405,7 +1340,7 @@ return {
             local _transfXZoom = _isTrackOnPlatformLeft and -1 or 1
             local _transfYZoom = _isTrackOnPlatformLeft and -1 or 1
             local _isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            logger.print('_isEndFiller =', _isEndFiller)
+            -- logger.print('_isEndFiller =', _isEndFiller)
             local _laneZ = result.laneZs[nTerminal]
 
             local _isVertical = (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0)
@@ -1525,28 +1460,28 @@ return {
                                 local cpfP1 = ii ~= _iiMax and params.terminals[nTerminal].centrePlatformsFineRelative[ii+1] or nil
                                 if ii == 1 then
                                     if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                        logger.print('_ONE')
-                                        privateFuncs.deco.addWallsAcross(cpf, true, slopedAreaWidth, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, _isVertical, wallTransf, _laneZ, ii, _iiMax)
+                                        -- logger.print('_ONE')
+                                        privateFuncs.deco.addWallsAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
                                     else
-                                        logger.print('_TWO')
-                                        privateFuncs.deco.addWallsAcross(cpf, true, slopedAreaWidth, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, _isVertical, wallTransf, _laneZ, ii, _iiMax)
+                                        -- logger.print('_TWO')
+                                        privateFuncs.deco.addWallsAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
                                     end
                                 elseif ii == _iiMax then
                                     if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                        logger.print('_FOUR')
-                                        privateFuncs.deco.addWallsAcross(cpf, false, slopedAreaWidth, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, _isVertical, wallTransf, _laneZ, ii, _iiMax)
+                                        -- logger.print('_THREE')
+                                        privateFuncs.deco.addWallsAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
                                     else
-                                        logger.print('_FIVE')
-                                        privateFuncs.deco.addWallsAcross(cpf, false, slopedAreaWidth, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, _isVertical, wallTransf, _laneZ, ii, _iiMax)
+                                        -- logger.print('_FOUR')
+                                        privateFuncs.deco.addWallsAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
                                     end
                                 elseif leadingIndex ~= cpfM1.leadingIndex then
                                     local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
-                                    logger.print('_THREE')
-                                    privateFuncs.deco.addWallsAcross(cpf, true, slopedAreaWidth, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, _isVertical, wallTransf, _laneZ, ii, _iiMax)
+                                        -- logger.print('_FIVE')
+                                        privateFuncs.deco.addWallsAcross(cpf, true, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
                                 elseif leadingIndex ~= cpfP1.leadingIndex then
                                     local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
-                                    logger.print('_SIX')
-                                    privateFuncs.deco.addWallsAcross(cpf, false, slopedAreaWidth, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, _isVertical, wallTransf, _laneZ, ii, _iiMax)
+                                    -- logger.print('_SIX')
+                                    privateFuncs.deco.addWallsAcross(cpf, false, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
                                 end
                             end
                         end
