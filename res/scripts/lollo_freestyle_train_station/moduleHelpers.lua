@@ -284,13 +284,13 @@ privateFuncs.deco = {
                 -1, 0, 0, 0,
                 0, -cosX, sinX, 0,
                 0, sinX, cosX, 0,
-                0, 0, 0, 1
+                0, 0, 0, 1 -- I could add some shift at [14] to account for the wall thickness but it looks ok without
             }
             or {
                 1, 0, 0, 0,
                 0, cosX, sinX, 0,
                 0, -sinX, cosX, 0,
-                0, 0, 0, 1
+                0, 0, 0, 1 -- I could add some shift at [14] to account for the wall thickness but it looks ok without
             }
 
         for p = 1, lengthAcross, 1 do
