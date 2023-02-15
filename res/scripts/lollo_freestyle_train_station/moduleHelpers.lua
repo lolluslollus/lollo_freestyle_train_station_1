@@ -1502,7 +1502,6 @@ return {
             local transfXZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            local yShift = isTrackOnPlatformLeft and 2.5 or -2.5 -- tracks are always 5m wide
             local laneZ = result.laneZs[nTerminal]
 
             local _wallTransfFunc = privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) == 0
@@ -1528,25 +1527,30 @@ return {
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
                     if isTunnelOk or ctf.type ~= 2 then -- ground or bridge, tunnel only if allowed
-                        local basePosTanX2, xScaleFactor = ctf.posTanX2, 1
+                        local widthAboveNil = ctf.width * 0.5
+                        local wallPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
+                            ctf.posTanX2,
+                            (isTrackOnPlatformLeft and widthAboveNil or -widthAboveNil)
+                        )
+                        local xScaleFactor = math.abs(xRatio) * 1.01 -- dx/dl * safety factor to avoid gaps, accounting for the wall thickness
                         local wallModelId = ctf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
-                        local myTransf = transfUtilsUG.mul(
-                            _wallTransfFunc(basePosTanX2),
+                        local wallTransf = transfUtilsUG.mul(
+                            _wallTransfFunc(wallPosTanX2),
                             {
                                 transfXZoom * xScaleFactor, 0, 0, 0,
                                 0, transfYZoom, 0, 0,
                                 0, 0, 1, 0,
-                                0, yShift, laneZ, 1
+                                0, 0, laneZ, 1
                             }
                         )
                         result.models[#result.models+1] = {
                             id = wallModelId,
-                            transf = myTransf,
+                            transf = wallTransf,
                             tag = tag
                         }
                         result.models[#result.models+1] = {
                             id = wallBaseModelId,
-                            transf = myTransf,
+                            transf = wallTransf,
                             tag = tag
                         }
                     end
