@@ -1,30 +1,52 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, }, 
+		{ 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 384,
-					offset = 1060,
+					count = 240,
+					offset = 1540,
 				},
 				position = {
-					count = 384,
-					offset = 1444,
+					count = 240,
+					offset = 1300,
 				},
 				tangent = {
-					count = 384,
-					offset = 2212,
+					count = 240,
+					offset = 1780,
 				},
 				uv0 = {
-					count = 384,
-					offset = 1828,
+					count = 240,
+					offset = 1060,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/roofs/concrete.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 144,
+					offset = 2308,
+				},
+				position = {
+					count = 144,
+					offset = 2164,
+				},
+				tangent = {
+					count = 144,
+					offset = 2452,
+				},
+				uv0 = {
+					count = 144,
+					offset = 2020,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/roofs/concrete/low_prio.mtl", 
 			},
 		}, 
 	},
@@ -32,12 +54,12 @@ return {
 		normal = {
 			count = 156,
 			numComp = 3,
-			offset = 0,
+			offset = 776,
 		},
 		position = {
 			count = 240,
 			numComp = 3,
-			offset = 156,
+			offset = 536,
 		},
 		tangent = {
 			count = 128,
@@ -47,7 +69,7 @@ return {
 		uv0 = {
 			count = 536,
 			numComp = 2,
-			offset = 396,
+			offset = 0,
 		},
 	},
 }

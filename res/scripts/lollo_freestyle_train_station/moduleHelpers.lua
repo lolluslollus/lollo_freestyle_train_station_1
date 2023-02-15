@@ -1111,10 +1111,67 @@ return {
         end,
         doPlatformRoof = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
             ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId, alternativeCeiling2_5ModelId, alternativeCeiling5ModelId, isTunnelOk)
-            -- LOLLO TODO in every cpf, extend xZoom up to 1.06 for 5m platforms and 1.03 for 2.5m platforms (make it 1.1 and 1.05)
-            -- only if the bend is tight enough - the direction does not matter coz roofs are centered on cpf by construction.
-            -- and remove these corrective factors from the *.mdl files.
-            -- This would prevent mini glitches linked to roof edges overlapping.
+            -- LOLLO NOTE
+            -- In every cpf, xZoom needs to grow to 1.06 for 5m platforms and 1.03 for 2.5m platforms,
+            -- or even higher, to avoid holes.
+            -- The bend direction does not matter coz roofs are centered on cpf by construction.
+            -- Straight bits do not get this, to prevent mini glitches linked to roof edges overlapping.
+            -- LOLLO TODO bones would be better.
+            -- A curvy bit looks like
+            -- posTanX2 = {
+            --     {
+            --       { 74.618930516671, -88.926375041206, -4.9961046930325, },
+            --       { 0.90736612885754, 0.41917300105761, -0.031316184097685, },
+            --     },
+            --     {
+            --       { 75.51871658098, -88.501071479124, -5.0269231771651, },
+            --       { 0.89988157866202, 0.43506088272462, -0.030580593644242, },
+            --     },
+            --   },
+            -- or
+            -- posTanX2 = {
+            --     {
+            --       { 75.51871658098, -88.501071479124, -5.0269231771651, },
+            --       { 0.89988157866202, 0.43506088272462, -0.030580593644242, },
+            --     },
+            --     {
+            --       { 76.412225809289, -88.05935427218, -5.0570392340728, },
+            --       { 0.89211113597398, 0.45083114383442, -0.029816116785429, },
+            --     },
+            --   },
+            -- A straightish bit looks like
+            -- posTanX2 = {
+            --     {
+            --       { 91.189691606841, 25.450743870049, -2.4291994686295, },
+            --       { -0.84243349866338, 0.53434102600061, 0.069177079024722, },
+            --     },
+            --     {
+            --       { 90.31703601565, 25.996040985237, -2.3569855705537, },
+            --       { -0.84945713464798, 0.5228807240266, 0.070840135778156, },
+            --     },
+            --   },
+            -- A straight bit looks like
+            -- posTanX2 = {
+            --     {
+            --       { 70.709585599846, 37.930313278609, -0.71223737503918, },
+            --       { -0.85204926314401, 0.51855870913001, 0.071476698029324, },
+            --     },
+            --     {
+            --       { 69.857536015662, 38.448872150194, -0.64076065204387, },
+            --       { -0.85204929311475, 0.51855866008981, 0.071476696541689, },
+            --     },
+            --   },
+            -- By construction, all bits are 1m long, except the very first or very last of a platform, which could be shorter.
+            -- This is set in constants.fineSegmentLength, which is 1.
+            -- posTanX2[*][2][2] is dy/dl
+            -- (posTanX2[1][2][2] - posTanX2[2][2][2]) / 1 is Dy/Dl, and it is proportional to the extra arc length for small angles;
+            -- these are all small angles by construction, so posTanX2[1][2][2] - posTanX2[2][2][2] is proportional to the extra arc length.
+            -- We still need to find a correction factor; checking the data:
+            -- abs(posTanX2[1][2][2] - posTanX2[2][2][2]) == 0.0 -> totalStretchFactor == 1.0
+            -- abs(posTanX2[1][2][2] - posTanX2[2][2][2]) == 0.015 -> totalStretchFactor == 1.05
+            -- => totalStretchFactor = abs(posTanX2[1][2][2] - posTanX2[2][2][2]) * 0.05 / 0.015 / 5 * platformWidth + 1
+            -- => totalStretchFactor = abs(posTanX2[1][2][2] - posTanX2[2][2][2]) * 0.66667 * platformWidth + 1
+            -- Season 0.6667 to taste, it's empyrical.
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
@@ -1147,10 +1204,27 @@ return {
                                 id = roofModelId,
                                 transf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-                                    { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
+                                    -- {
+                                    --     transfXZoom + transfXZoom * math.abs(cpf.posTanX2[1][2][2] - cpf.posTanX2[2][2][2]) * 0.66667 * platformWidth, 0, 0, 0,
+                                    --     0, transfYZoom, 0, 0,
+                                    --     0, 0, 1, 0,
+                                    --     0, 0, constants.platformRoofZ, 1
+                                    -- }
+                                    {
+                                        transfXZoom + transfXZoom * math.abs(cpf.posTanX2[1][2][2] - cpf.posTanX2[2][2][2]) * platformWidth, 0, 0, 0,
+                                        0, transfYZoom, 0, 0,
+                                        0, 0, 1, 0,
+                                        0, 0, constants.platformRoofZ, 1
+                                    }
                                 ),
                                 tag = tag
                             }
+                            -- print(
+                            --     'xZoom =',
+                            --     transfXZoom + transfXZoom * math.abs(cpf.posTanX2[1][2][2] - cpf.posTanX2[2][2][2]) * 0.8 * platformWidth,
+                            --     'platformWidth =',
+                            --     platformWidth
+                            -- )
 
                             if cpf.type ~= 2 and isFreeFromOpenStairsAndTunnels and math.fmod(ii, privateConstants.deco.pillarPeriod) == 0 then
                                 local myTransf = transfUtilsUG.mul(

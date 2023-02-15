@@ -6,25 +6,14 @@ function data()
 		lods = {
 			{
 				node = {
-					children = {
-						{
-							children = {
-								{
-									materials = {
-										"station/rail/era_c/era_c_trainstation_roof_wood.mtl",
-										"station/rail/era_c/era_c_trainstation_borders_1.mtl",
-										"station/rail/era_c/era_c_trainstation_roof_white.mtl",
-										"lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl"
-									},
-									mesh = "lollo_freestyle_train_station/roofs/concrete_modern/roof_5m.msh",
-									transf = { 1.06, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-								},
-							},
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-						},
+					materials = {
+						"station/rail/era_c/era_c_trainstation_roof_wood.mtl",
+						"station/rail/era_c/era_c_trainstation_borders_1.mtl",
+						"station/rail/era_c/era_c_trainstation_roof_white.mtl",
+						"lollo_freestyle_train_station/lollo_trainstation_wall_white_low_prio.mtl"
 					},
-					name = "RootNode",
-					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					mesh = "lollo_freestyle_train_station/roofs/concrete_modern/roof_5m.msh",
+					transf = { 1.0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 				},
 				static = false,
 				visibleFrom = 0,
@@ -32,22 +21,11 @@ function data()
 			},
 			{
 				node = {
-					children = {
-						{
-							children = {
-								{
-									materials = {
-										"station/rail/era_c/era_c_trainstation_borders_1.mtl",
-										"station/rail/era_c/era_c_trainstation_roof_white.mtl",
-									},
-									mesh = "lollo_freestyle_train_station/roofs/concrete_modern/roof_5m_lod1.msh",
-									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-								},
-							},
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-						},
+					materials = {
+						"station/rail/era_c/era_c_trainstation_borders_1.mtl",
+						"station/rail/era_c/era_c_trainstation_roof_white.mtl",
 					},
-					name = "RootNode",
+					mesh = "lollo_freestyle_train_station/roofs/concrete_modern/roof_5m_lod1.msh",
 					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 				},
 				static = false,
