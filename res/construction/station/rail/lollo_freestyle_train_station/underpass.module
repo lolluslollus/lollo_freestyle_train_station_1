@@ -51,7 +51,7 @@ function data()
 			end
 			result.models[#result.models+1] = {
 				id = underpassFloorModelId,
-				transf = transfUtils.getTransfZShiftedBy(
+				transf = transfUtils.getTransf_ZShifted(
 					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 					result.laneZs[nTerminal] - 0.02
 				)

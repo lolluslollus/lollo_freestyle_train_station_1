@@ -48,9 +48,9 @@ function data()
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitInnerSlotId),
 				shape = 1,
 				spacing = {-1, 3, 0.5, 0.5},
-				transf = transfUtilsUG.mul(
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
 					slotTransf,
-					{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -1, _constants.openStairsUpZ, 1 }
+					{0, -1, _constants.openStairsUpZ}
 				),
 				type = _constants.openStairsExitModuleType,
 			})
@@ -60,14 +60,9 @@ function data()
 					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitCentreSlotId),
 					shape = 1,
 					spacing = {-1, 3, 0.5, 0.5},
-					transf = transfUtilsUG.mul(
+					transf = transfUtils.getTransf_Shifted(
 						slotTransf,
-						{
-							1, 0, 0, 0,
-							0, 1, 0, 0,
-							0, 0, 1, 0,
-							1, 0, _constants.openStairsUpZ, 1
-						}
+						{1, 0, _constants.openStairsUpZ}
 					),
 					type = _constants.openStairsExitModuleType,
 				})
@@ -76,9 +71,9 @@ function data()
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitOuterSlotId),
 				shape = 1,
 				spacing = {-1, 3, 0.5, 0.5},
-				transf = transfUtilsUG.mul(
+				transf = transfUtils.getTransf_ZRotatedP90_Shifted(
 					slotTransf,
-					{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 1, _constants.openStairsUpZ, 1 }
+					{0, 1, _constants.openStairsUpZ}
 				),
 				type = _constants.openStairsExitModuleType,
 			})

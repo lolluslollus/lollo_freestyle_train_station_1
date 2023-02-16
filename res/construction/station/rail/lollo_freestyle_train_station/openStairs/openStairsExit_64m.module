@@ -44,7 +44,8 @@ function data()
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/passenger_lane.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}),
+				-- transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}),
+				transf = transfUtils.getTransf_XShifted(slotTransf, -1),
 				tag = tag
 			}
 		end,

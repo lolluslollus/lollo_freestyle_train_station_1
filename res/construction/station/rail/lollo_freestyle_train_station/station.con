@@ -69,8 +69,6 @@ function data()
 			logger.print('station.con updateFn starting')
 			-- logger.print('updateFn starting, params =') logger.debugPrint(params)
 			-- logger.print('station.con updateFn starting, params.modules =') logger.debugPrint(params.modules)
-			-- LOLLO TODO sometimes, there used to be too many modules of type trackSpeed or trackElectrification
-			-- It seems fixed, but keep checking it.
 			if not params.modules then params.modules = {} end
 
 			-- LOLLO NOTE I cannot call the api from here, sigh. api is there, but api.res is NIL. Also game is there, but game.interface is NIL
@@ -323,6 +321,7 @@ function data()
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {type = cpl.type}
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
+						local cplTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
 						-- no thin extensions in tunnels unless we are at the entrance
 						if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) and not(isCargoTerminal) then
 							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x2_5SlotId then
@@ -335,9 +334,13 @@ function data()
 									-- which have the same thing reversed.
 									-- This way, sloped areas and flat areas can be easily combined.
 									spacing = isTrackOnPlatformLeft and {1.5, 0, 0, 3} or {0, 1.5, 3, 0},
-									transf = transfUtilsUG.mul(
-										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+									-- transf = transfUtilsUG.mul(
+									-- 	cplTransf,
+									-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+									-- ),
+									transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+										cplTransf,
+										{0, yShiftOutside, 0}
 									),
 									type = _constants.slopedPassengerArea1x2_5ModuleType,
 								})
@@ -356,9 +359,13 @@ function data()
 									-- which have the same thing reversed.
 									-- This way, sloped areas and flat areas can be easily combined.
 									spacing = isTrackOnPlatformLeft and {2, 0, 0, 3} or {0, 2, 3, 0},
-									transf = transfUtilsUG.mul(
-										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+									-- transf = transfUtilsUG.mul(
+									-- 	cplTransf,
+									-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+									-- ),
+									transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+										cplTransf,
+										{0, yShiftOutside, 0}
 									),
 									type = isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
 								})
@@ -371,9 +378,13 @@ function data()
 									-- height = 0,
 									id = myId,
 									spacing = isTrackOnPlatformLeft and {3, 2, 0, 3} or {2, 3, 3, 0},
-									transf = transfUtilsUG.mul(
-										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+									-- transf = transfUtilsUG.mul(
+									-- 	cplTransf,
+									-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+									-- ),
+									transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+										cplTransf,
+										{0, yShiftOutside, 0}
 									),
 									type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
 								})
@@ -386,9 +397,13 @@ function data()
 									-- height = 0,
 									id = myId,
 									spacing = isTrackOnPlatformLeft and {8, 4, 0, 3} or {4, 8, 3, 0},
-									transf = transfUtilsUG.mul(
-										moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-										{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+									-- transf = transfUtilsUG.mul(
+									-- 	cplTransf,
+									-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+									-- ),
+									transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+										cplTransf,
+										{0, yShiftOutside, 0}
 									),
 									type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
 								})
@@ -408,7 +423,7 @@ function data()
 							local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
 							local yShift = cpl.width + result.getOccupiedInfo4SlopedAreas(t, i).yShift
 							local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
-							local myTransf = transfUtils.getTransfZShiftedBy(
+							local myTransf = transfUtils.getTransf_ZShifted(
 								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
 								_laneZ
 							)
@@ -606,7 +621,7 @@ function data()
 						local endPos = (ii == 1)
 							and cpf.posTanX2[1][1]
 							or cpf.posTanX2[2][1]
-						local myTransf = transfUtils.getTransfZShiftedBy(
+						local myTransf = transfUtils.getTransf_ZShifted(
 							{
 								adjacentTransf[1], adjacentTransf[2], adjacentTransf[3], adjacentTransf[4],
 								adjacentTransf[5], adjacentTransf[6], adjacentTransf[7], adjacentTransf[8],
@@ -694,7 +709,7 @@ function data()
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
 						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
-						myTransf = transfUtils.getTransfZShiftedBy(myTransf, 3)
+						myTransf = transfUtils.getTransf_ZShifted(myTransf, 3)
 						if not(isCargoTerminal) then
 							if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
 								table.insert(result.slots, {
@@ -721,7 +736,7 @@ function data()
 								local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5)
 								local yShiftAreaBorder = isTrackOnPlatformLeft and -baseYShift4AreaBorder or baseYShift4AreaBorder
 								-- I need the transf here, merely shifting isPlatform2 cheap but wrong
-								wallTransf = transfUtils.getTransfYShiftedBy(myTransf, yShiftAreaBorder)
+								wallTransf = transfUtils.getTransf_YShifted(myTransf, yShiftAreaBorder)
 							end
 							table.insert(result.slots, {
 								id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
@@ -754,7 +769,7 @@ function data()
 						table.insert(result.slots, {
 							id = result.mangleId(t, i, _constants.idBases.trackWallSlotId),
 							spacing = _wallSpacing,
-							transf = transfUtils.getTransfZShiftedBy(myTransf, 3),
+							transf = transfUtils.getTransf_ZShifted(myTransf, 3),
 							type = _constants.trackWallModuleType,
 						})
 					end
@@ -771,7 +786,7 @@ function data()
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
 						local era = moduleHelpers.getEraPrefix(params, t, i)
-						local myTransf = transfUtils.getTransfZShiftedBy(
+						local myTransf = transfUtils.getTransf_ZShifted(
 							moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
 							_laneZ
 						)
@@ -851,9 +866,8 @@ function data()
 														-- height = 0,
 														id = result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId),
 														spacing = _mySpacing,
-														transf = transfUtilsUG.mul(
-															myTransf,
-															{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+														transf = transfUtils.getTransf_ZRotated180(
+															myTransf
 														),
 														type = _constants.openStairsUpRightModuleType,
 													})
@@ -923,7 +937,7 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 						local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
-						local crossConnectorTransf = transfUtils.getTransfZShiftedBy(
+						local crossConnectorTransf = transfUtils.getTransf_ZShifted(
 							transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
 							_laneZ
 						)
@@ -995,19 +1009,19 @@ function data()
                             if isOpenStairsUpLeft then
                                 result.models[#result.models+1] = {
                                     id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_next.mdl',
-									transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
+									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
                                 }
                             end
                             if isOpenStairsUpRight then
                                 result.models[#result.models+1] = {
                                     id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_prev.mdl',
-									transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
+									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
                                 }
                             end
                         else
                             result.models[#result.models+1] = {
                                 id = myModelId,
-								transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
+								transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
                             }
                         end
 						if isStairsUp then
@@ -1020,9 +1034,13 @@ function data()
 									t = t,
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
-										transfUtilsUG.mul(
+										-- transfUtilsUG.mul(
+										-- 	centreLaneTransf,
+										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+										-- ),
+										transfUtils.getTransf_Shifted(
 											centreLaneTransf,
-											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
 										)
 									)
 								}
@@ -1038,9 +1056,13 @@ function data()
 									bottomTwinIndex = topBottomTwinIndex,
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
-										transfUtilsUG.mul(
+										-- transfUtilsUG.mul(
+										-- 	centreLaneTransf,
+										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+										-- )
+										transfUtils.getTransf_Shifted(
 											centreLaneTransf,
-											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
 										)
 									)
 								}
@@ -1055,9 +1077,13 @@ function data()
 									topTwinIndex = topBottomTwinIndex,
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
-										transfUtilsUG.mul(
+										-- transfUtilsUG.mul(
+										-- 	centreLaneTransf,
+										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+										-- )
+										transfUtils.getTransf_Shifted(
 											centreLaneTransf,
-											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
 										)
 									)
 								}
@@ -1074,9 +1100,13 @@ function data()
 									era = moduleHelpers.getEraPrefix(params, t, i),
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
-										transfUtilsUG.mul(
+										-- transfUtilsUG.mul(
+										-- 	centreLaneTransf,
+										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+										-- )
+										transfUtils.getTransf_Shifted(
 											centreLaneTransf,
-											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
 										)
 									)
 								}
@@ -1091,9 +1121,13 @@ function data()
 									t = t,
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
-										transfUtilsUG.mul(
+										-- transfUtilsUG.mul(
+										-- 	centreLaneTransf,
+										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+										-- )
+										transfUtils.getTransf_Shifted(
 											centreLaneTransf,
-											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
 										)
 									)
 								}
@@ -1109,9 +1143,13 @@ function data()
 									era = moduleHelpers.getEraPrefix(params, t, i),
 									lanePosTanX2 = cpl.posTanX2,
 									pos2Link = transfUtils.transf2Position(
-										transfUtilsUG.mul(
+										-- transfUtilsUG.mul(
+										-- 	centreLaneTransf,
+										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.openStairsUpZ, 1 }
+										-- )
+										transfUtils.getTransf_Shifted(
 											centreLaneTransf,
-											{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.openStairsUpZ, 1 }
+											{0.5, 0, _laneZ + _constants.openStairsUpZ}
 										)
 									)
 								}
@@ -1130,7 +1168,7 @@ function data()
 								result.models[#result.models+1] = {
 									id = _constants.cargoWaitingAreaModelId,
 									tag = slotHelpers.mangleModelTag(t, true),
-									transf = transfUtils.getTransfZShiftedBy(centreLaneTransf, _laneZ)
+									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
 								}
 							end
 						end
@@ -1143,7 +1181,7 @@ function data()
 								result.models[#result.models+1] = {
 									id = _constants.passengerWaitingAreaModelId,
 									tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtils.getTransfZShiftedBy(leftLaneTransf, _laneZ)
+									transf = transfUtils.getTransf_ZShifted(leftLaneTransf, _laneZ)
 								}
 							end
 						else
@@ -1158,7 +1196,7 @@ function data()
 									tag = slotHelpers.mangleModelTag(t, false),
 									-- if you touch this, you screw things
 									-- transf = transfUtilsUG.mul(rightLaneTransf, {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
-									transf = transfUtils.getTransfZShiftedBy(rightLaneTransf, _laneZ)
+									transf = transfUtils.getTransf_ZShifted(rightLaneTransf, _laneZ)
 								}
 							end
 						end
@@ -1172,7 +1210,7 @@ function data()
 					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf)
 					-- local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 2)
 					local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 0.1) -- does not need to be perfectly centred
-					local myTransf = transfUtils.getTransfZShiftedBy(
+					local myTransf = transfUtils.getTransf_ZShifted(
 						moduleHelpers.getPlatformObjectTransf_WithYRotation(nearlyCentredPosTanX2),
 						_laneZ
 					)

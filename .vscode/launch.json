@@ -27,6 +27,14 @@
             "request": "launch",
             "stopOnEntry": true,
             "type": "lua"
+        },
+        {
+            "arg": [],
+            "name": "scratch8",
+            "program": "${workspaceFolder}/res/scripts/lollo_freestyle_train_station/scratch/scratch8.lua",
+            "request": "launch",
+            "stopOnEntry": true,
+            "type": "lua"
         }
     ]
 }

@@ -39,10 +39,11 @@ return {
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
 		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
-		local buildingTransf = transfUtilsUG.mul(
-			zAdjustedTransf,
-			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-		)
+		-- local buildingTransf = transfUtilsUG.mul(
+		-- 	zAdjustedTransf,
+		-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+		-- )
+		local buildingTransf = transfUtils.getTransf_ZRotatedP90(zAdjustedTransf)
 
 		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
         local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
@@ -70,9 +71,13 @@ return {
 			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 			shape = 1,
 			spacing = {-1, 4, 4, 4},
-			transf = transfUtilsUG.mul(
+			-- transf = transfUtilsUG.mul(
+			-- 	buildingTransf,
+			-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -_constants.stairsAndRampHeight, 1 }
+			-- ),
+			transf = transfUtils.getTransf_ZRotatedM90_Shifted(
 				buildingTransf,
-				{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -_constants.stairsAndRampHeight, 1 }
+				{0, -4.75, -_constants.stairsAndRampHeight}
 			),
 			type = _constants.passengerStationSquareModuleType,
 		})

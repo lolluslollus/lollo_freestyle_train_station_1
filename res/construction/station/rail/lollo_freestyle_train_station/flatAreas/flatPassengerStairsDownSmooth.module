@@ -62,7 +62,16 @@ function data()
 				{
 					t = nTerminal,
 					-- lanePosTanX2 = cpl.posTanX2,
-					pos = transfUtils.transf2Position(transfUtilsUG.mul(zAdjustedTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2.5, 0, -_constants.stairsAndRampHeight, 1}))
+					pos = transfUtils.transf2Position(
+						-- transfUtilsUG.mul(
+						-- 	zAdjustedTransf,
+						-- 	{1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  2.5, 0, -_constants.stairsAndRampHeight, 1}
+						-- )
+						transfUtils.getTransf_Shifted(
+							zAdjustedTransf,
+							{2.5, 0, -_constants.stairsAndRampHeight}
+						)
+					)
 				}
 			)
 

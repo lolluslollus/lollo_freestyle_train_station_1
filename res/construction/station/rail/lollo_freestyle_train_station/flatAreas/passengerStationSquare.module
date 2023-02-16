@@ -55,10 +55,11 @@ return {
 		result.models[#result.models + 1] = {
 			id = modelId,
 			slotId = slotId,
-			transf = transfUtilsUG.mul(
-				slotTransf,
-				{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-			),
+			-- transf = transfUtilsUG.mul(
+			-- 	slotTransf,
+			-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+			-- ),
+			transf = transfUtils.getTransf_ZRotatedP90(slotTransf),
 			tag = tag
 		}
 

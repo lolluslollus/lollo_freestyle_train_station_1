@@ -37,7 +37,7 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			local zAdjustedTransf = transfUtils.getTransfXShiftedBy(
+			local zAdjustedTransf = transfUtils.getTransf_XShifted(
 				moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf),
 				5
 			)
@@ -84,9 +84,13 @@ function data()
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
 				shape = 1,
 				spacing = {1, 1, 2, 2},
-				transf = transfUtilsUG.mul(
+				-- transf = transfUtilsUG.mul(
+				-- 	zAdjustedTransf,
+				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, 0, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1 }
+				-- ),
+				transfUtils.getTransf_Shifted(
 					zAdjustedTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, 0, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1 }
+					{7.5, 0, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ}
 				),
 				type = _constants.cargoStationSquareModuleType,
 			})

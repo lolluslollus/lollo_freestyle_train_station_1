@@ -50,7 +50,7 @@ function data()
 			-- result.models[#result.models + 1] = {
 			-- 	id = 'lollo_freestyle_train_station/icon/blue.mdl',
 			-- 	slotId = slotId,
-			-- 	transf = transfUtils.getTransfZShiftedBy(zAdjustedTransf, nTerminal),
+			-- 	transf = transfUtils.getTransf_ZShifted(zAdjustedTransf, nTerminal),
 			-- 	tag = tag
 			-- }
 

@@ -69,7 +69,7 @@ return {
 				t = nTerminal,
 				lanePosTanX2 = cpl.posTanX2,
 				pos2Link = transfUtils.transf2Position(
-					transfUtils.getTransfZShiftedBy(slotTransf, -buildingHeight + _constants.underpassZ)
+					transfUtils.getTransf_ZShifted(slotTransf, -buildingHeight + _constants.underpassZ)
 				)
 			}
 		)
@@ -80,9 +80,13 @@ return {
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 				shape = 1,
 				spacing = {-1, 4, 4, 4},
-				transf = transfUtilsUG.mul(
+				-- transf = transfUtilsUG.mul(
+				-- 	slotTransf,
+				-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -3.4, -buildingHeight, 1 }
+				-- ),
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
 					slotTransf,
-					{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -3.4, -buildingHeight, 1 }
+					{0, -3.4, -buildingHeight}
 				),
 				type = _constants.passengerStationSquareModuleType,
 			})
@@ -91,9 +95,13 @@ return {
 					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareInnerSlotId),
 					shape = 1,
 					spacing = {-1, 4, 4, 4},
-					transf = transfUtilsUG.mul(
+					-- transf = transfUtilsUG.mul(
+					-- 	slotTransf,
+					-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 2.9, -buildingHeight, 1 }
+					-- ),
+					transf = transfUtils.getTransf_ZRotatedP90_Shifted(
 						slotTransf,
-						{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 2.9, -buildingHeight, 1 }
+						{0, 2.9, -buildingHeight}
 					),
 					type = _constants.passengerStationSquareModuleType,
 				})
@@ -103,12 +111,9 @@ return {
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 				shape = 1,
 				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransfZShiftedBy(
-					transfUtilsUG.mul(
-						slotTransf,
-						{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -3.4, -buildingHeight, 1 }
-					),
-					-5
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+					slotTransf,
+					{0, -3.4, -buildingHeight -5}
 				),
 				type = _constants.passengerStationSquareModuleType,
 			})
@@ -134,9 +139,13 @@ return {
 				result.models[#result.models + 1] = {
 					id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
 					slotId = slotId,
-					transf = transfUtilsUG.mul(
+					-- transf = transfUtilsUG.mul(
+					-- 	slotTransf,
+					-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 6.0 - buildingHeight, 1 }
+					-- ),
+					transf = transfUtils.getTransf_Shifted(
 						slotTransf,
-						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 6.0 - buildingHeight, 1 }
+						{0, _tableY, 6.0 - buildingHeight}
 					),
 					tag = tag
 				}

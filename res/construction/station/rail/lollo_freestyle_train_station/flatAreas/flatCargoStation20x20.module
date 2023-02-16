@@ -85,9 +85,13 @@ function data()
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
 				shape = 1,
 				spacing = {1, 1, 2, 2},
-				transf = transfUtilsUG.mul(
-					zAdjustedTransf, -- this model requires some z shift
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  17.2, 2.5, _constants.platformSideBitsZ -0.8, 1 }
+				-- transf = transfUtilsUG.mul(
+				-- 	zAdjustedTransf, -- this model requires some z shift
+				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  17.2, 2.5, _constants.platformSideBitsZ -0.8, 1 }
+				-- ),
+				transfUtils.getTransf_Shifted(
+					zAdjustedTransf,
+					{17.2, 2.5, _constants.platformSideBitsZ -0.8}
 				),
 				type = _constants.cargoStationSquareModuleType,
 			})

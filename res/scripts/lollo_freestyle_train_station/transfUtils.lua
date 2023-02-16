@@ -24,7 +24,257 @@ end
 
 local matrixUtils = require('lollo_freestyle_train_station.matrix')
 
-local utils = {}
+local utils = {
+    --#region faster than mul()
+    getTransf_XShifted = function(transf, shift)
+        if transf == nil or type(shift) ~= 'number' then return transf end
+
+        return {
+            transf[1], transf[2], transf[3], transf[4],
+            transf[5], transf[6], transf[7], transf[8],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[1] * shift + transf[13],
+            transf[2] * shift + transf[14],
+            transf[3] * shift + transf[15],
+            transf[4] * shift + transf[16],
+        }
+    end,
+
+    getTransf_YShifted = function(transf, shift)
+        if transf == nil or type(shift) ~= 'number' then return transf end
+
+        return {
+            transf[1], transf[2], transf[3], transf[4],
+            transf[5], transf[6], transf[7], transf[8],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[5] * shift + transf[13],
+            transf[6] * shift + transf[14],
+            transf[7] * shift + transf[15],
+            transf[8] * shift + transf[16],
+        }
+    end,
+
+    getTransf_ZShifted = function(transf, shift)
+        if transf == nil or type(shift) ~= 'number' then return transf end
+
+        return {
+            transf[1], transf[2], transf[3], transf[4],
+            transf[5], transf[6], transf[7], transf[8],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[9] * shift + transf[13],
+            transf[10] * shift + transf[14],
+            transf[11] * shift + transf[15],
+            transf[12] * shift + transf[16],
+        }
+    end,
+    ---@param transf table<number>
+    ---@param shifts123 table<number>
+    ---@return table<number>
+    getTransf_Shifted = function(transf, shifts123)
+        if type(transf) ~= 'table' or type(shifts123) ~= 'table' then return transf end
+        local x, y, z = table.unpack(shifts123)
+        -- if type(x) ~= 'number' or type[y] ~= 'number' or type(z) ~= 'number' then return transf end
+
+        return {
+            transf[1], transf[2], transf[3], transf[4],
+            transf[5], transf[6], transf[7], transf[8],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[1] * x + transf[5] * y + transf[9]  * z + transf[13],
+            transf[2] * x + transf[6] * y + transf[10] * z + transf[14],
+            transf[3] * x + transf[7] * y + transf[11] * z + transf[15],
+            transf[4] * x + transf[8] * y + transf[12] * z + transf[16],
+        }
+    end,
+    ---@param transf table<number>
+    ---@param rotYRad number
+    ---@return table<number>
+    getTransf_YRotated = function(transf, rotYRad)
+        if type(transf) ~= 'table' or type(rotYRad) ~= 'number' then return transf end
+
+        local cosY, sinY = math.cos(rotYRad), math.sin(rotYRad)
+
+        return {
+            transf[1] * cosY - transf[9]  * sinY,
+            transf[2] * cosY - transf[10] * sinY,
+            transf[3] * cosY - transf[11] * sinY,
+            transf[4] * cosY - transf[12] * sinY,
+            transf[5],
+            transf[6],
+            transf[7],
+            transf[8],
+            transf[1] * sinY + transf[9]  * cosY,
+            transf[2] * sinY + transf[10] * cosY,
+            transf[3] * sinY + transf[11] * cosY,
+            transf[4] * sinY + transf[12] * cosY,
+            transf[13],
+            transf[14],
+            transf[15],
+            transf[16],
+        }
+    end,
+    ---@param transf table<number>
+    ---@param rotZRad number
+    ---@return table<number>
+    getTransf_ZRotated = function(transf, rotZRad)
+        if type(transf) ~= 'table' or type(rotZRad) ~= 'number' then return transf end
+
+        local cosZ, sinZ = math.cos(rotZRad), math.sin(rotZRad)
+
+        return {
+            transf[1] * cosZ  + transf[5] * sinZ,
+            transf[2] * cosZ  + transf[6] * sinZ,
+            transf[3] * cosZ  + transf[7] * sinZ,
+            transf[4] * cosZ  + transf[8] * sinZ,
+            -transf[1] * sinZ  + transf[5] * cosZ,
+            -transf[2] * sinZ  + transf[6] * cosZ,
+            -transf[3] * sinZ  + transf[7] * cosZ,
+            -transf[4] * sinZ  + transf[8] * cosZ,
+            transf[9],
+            transf[10],
+            transf[11],
+            transf[12],
+            transf[13],
+            transf[14],
+            transf[15],
+            transf[16],
+        }
+    end,
+    --- faster than calling mul(transf, {0, 1, 0, 0,  -1, 0, 0, 0...})
+    ---@param transf table<number>
+    ---@return table<number>
+    getTransf_ZRotatedP90 = function(transf)
+        if type(transf) ~= 'table' then return transf end
+
+        return {
+            transf[5], transf[6], transf[7], transf[8],
+            -transf[1], -transf[2], -transf[3], -transf[4],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[13], transf[14], transf[15], transf[16],
+        }
+    end,
+    --- faster than calling mul(transf, {0, -1, 0, 0,  1, 0, 0, 0...})
+    ---@param transf table<number>
+    ---@return table<number>
+    getTransf_ZRotatedM90 = function(transf)
+        if type(transf) ~= 'table' then return transf end
+
+        local cosZ, sinZ = 0, -1
+
+        return {
+            -transf[5], -transf[6], -transf[7], -transf[8],
+            transf[1], transf[2], transf[3], transf[4],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[13], transf[14], transf[15], transf[16],
+        }
+    end,
+    --- faster than calling mul(transf, {-1, 0, 0, 0,  0, -1, 0, 0...})
+    ---@param transf table<number>
+    ---@return table<number>
+    getTransf_ZRotated180 = function(transf)
+        if type(transf) ~= 'table' then return transf end
+
+        return {
+            -transf[1], -transf[2], -transf[3], -transf[4],
+            -transf[5], -transf[6], -transf[7], -transf[8],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[13], transf[14], transf[15], transf[16],
+        }
+    end,
+    ---@param transf table<number>
+    ---@param rotZRad number
+    ---@param shifts123? table<number>
+    ---@return table<number>
+    getTransf_ZRotated_Shifted = function(transf, rotZRad, shifts123)
+        if type(transf) ~= 'table' or type(rotZRad) ~= 'number' then return transf end
+        local x, y, z = 0, 0, 0
+        if type(shifts123) == 'table' then x, y, z = table.unpack(shifts123) end
+        -- if type(x) ~= 'number' or type[y] ~= 'number' or type(z) ~= 'number' then return transf end
+
+        local cosZ, sinZ = math.cos(rotZRad), math.sin(rotZRad)
+
+        return {
+            transf[1] * cosZ  + transf[5] * sinZ,
+            transf[2] * cosZ  + transf[6] * sinZ,
+            transf[3] * cosZ  + transf[7] * sinZ,
+            transf[4] * cosZ  + transf[8] * sinZ,
+            -transf[1] * sinZ  + transf[5] * cosZ,
+            -transf[2] * sinZ  + transf[6] * cosZ,
+            -transf[3] * sinZ  + transf[7] * cosZ,
+            -transf[4] * sinZ  + transf[8] * cosZ,
+            transf[9],
+            transf[10],
+            transf[11],
+            transf[12],
+            transf[1] * x + transf[5] * y + transf[9]  * z + transf[13],
+            transf[2] * x + transf[6] * y + transf[10] * z + transf[14],
+            transf[3] * x + transf[7] * y + transf[11] * z + transf[15],
+            transf[4] * x + transf[8] * y + transf[12] * z + transf[16],
+        }
+    end,
+    --- faster than calling mul(transf, {0, 1, 0, 0,  -1, 0, 0, 0...})
+    ---@param transf table<number>
+    ---@param shifts123? table<number>
+    ---@return table<number>
+    getTransf_ZRotatedP90_Shifted = function(transf, shifts123)
+        if type(transf) ~= 'table' then return transf end
+        local x, y, z = 0, 0, 0
+        if type(shifts123) == 'table' then x, y, z = table.unpack(shifts123) end
+        -- if type(x) ~= 'number' or type[y] ~= 'number' or type(z) ~= 'number' then return transf end
+
+        return {
+            transf[5], transf[6], transf[7], transf[8],
+            -transf[1], -transf[2], -transf[3], -transf[4],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[1] * x + transf[5] * y + transf[9]  * z + transf[13],
+            transf[2] * x + transf[6] * y + transf[10] * z + transf[14],
+            transf[3] * x + transf[7] * y + transf[11] * z + transf[15],
+            transf[4] * x + transf[8] * y + transf[12] * z + transf[16],
+        }
+    end,
+    --- faster than calling mul(transf, {0, -1, 0, 0,  1, 0, 0, 0...})
+    ---@param transf table<number>
+    ---@param shifts123? table<number>
+    ---@return table<number>
+    getTransf_ZRotatedM90_Shifted = function(transf, shifts123)
+        if type(transf) ~= 'table' then return transf end
+        local x, y, z = 0, 0, 0
+        if type(shifts123) == 'table' then x, y, z = table.unpack(shifts123) end
+        -- if type(x) ~= 'number' or type[y] ~= 'number' or type(z) ~= 'number' then return transf end
+
+        local cosZ, sinZ = 0, -1
+
+        return {
+            -transf[5], -transf[6], -transf[7], -transf[8],
+            transf[1], transf[2], transf[3], transf[4],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[1] * x + transf[5] * y + transf[9]  * z + transf[13],
+            transf[2] * x + transf[6] * y + transf[10] * z + transf[14],
+            transf[3] * x + transf[7] * y + transf[11] * z + transf[15],
+            transf[4] * x + transf[8] * y + transf[12] * z + transf[16],
+        }
+    end,
+    --- faster than calling mul(transf, {-1, 0, 0, 0,  0, -1, 0, 0...})
+    ---@param transf table<number>
+    ---@param shifts123? table<number>
+    ---@return table<number>
+    getTransf_ZRotated180_Shifted = function(transf, shifts123)
+        if type(transf) ~= 'table' then return transf end
+        local x, y, z = 0, 0, 0
+        if type(shifts123) == 'table' then x, y, z = table.unpack(shifts123) end
+        -- if type(x) ~= 'number' or type[y] ~= 'number' or type(z) ~= 'number' then return transf end
+
+        return {
+            -transf[1], -transf[2], -transf[3], -transf[4],
+            -transf[5], -transf[6], -transf[7], -transf[8],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[1] * x + transf[5] * y + transf[9]  * z + transf[13],
+            transf[2] * x + transf[6] * y + transf[10] * z + transf[14],
+            transf[3] * x + transf[7] * y + transf[11] * z + transf[15],
+            transf[4] * x + transf[8] * y + transf[12] * z + transf[16],
+        }
+    end,
+--#endregion faster than mul()
+}
 
 local _getMatrix = function(transf)
     return {
@@ -225,7 +475,7 @@ utils.getVec123Transformed = function(vec123, transf)
     }
 end
 
-utils.getVec123ZRotated90Deg = function(vec123)
+utils.getVec123ZRotatedP90Deg = function(vec123)
     return {
         -vec123[2],
         vec123[1],
@@ -237,6 +487,14 @@ utils.getVec123ZRotatedM90Deg = function(vec123)
     return {
         vec123[2],
         -vec123[1],
+        vec123[3]
+    }
+end
+
+utils.getVec123ZRotated180Deg = function(vec123)
+    return {
+        -vec123[1],
+        -vec123[2],
         vec123[3]
     }
 end
@@ -325,51 +583,6 @@ utils.getPositionRaisedBy = function(position, raiseBy)
             position[1], position[2], position[3] + raiseBy
         }
     end
-end
-
-utils.getTransfXShiftedBy = function(transf, shift)
-    -- faster than calling mul()
-    if transf == nil or type(shift) ~= 'number' then return transf end
-
-    return {
-        transf[1], transf[2], transf[3], transf[4],
-        transf[5], transf[6], transf[7], transf[8],
-        transf[9], transf[10], transf[11], transf[12],
-        transf[1] * shift + transf[13],
-        transf[2] * shift + transf[14],
-		transf[3] * shift + transf[15],
-		transf[4] * shift + transf[16],
-    }
-end
-
-utils.getTransfYShiftedBy = function(transf, shift)
-    -- faster than calling mul()
-    if transf == nil or type(shift) ~= 'number' then return transf end
-
-    return {
-        transf[1], transf[2], transf[3], transf[4],
-        transf[5], transf[6], transf[7], transf[8],
-        transf[9], transf[10], transf[11], transf[12],
-        transf[5] * shift + transf[13],
-        transf[6] * shift + transf[14],
-		transf[7] * shift + transf[15],
-		transf[8] * shift + transf[16],
-    }
-end
-
-utils.getTransfZShiftedBy = function(transf, shift)
-    -- faster than calling mul()
-    if transf == nil or type(shift) ~= 'number' then return transf end
-
-    return {
-        transf[1], transf[2], transf[3], transf[4],
-        transf[5], transf[6], transf[7], transf[8],
-        transf[9], transf[10], transf[11], transf[12],
-        transf[9] * shift + transf[13],
-        transf[10] * shift + transf[14],
-		transf[11] * shift + transf[15],
-		transf[12] * shift + transf[16],
-    }
 end
 
 utils.getVectorLength = function(xyz)

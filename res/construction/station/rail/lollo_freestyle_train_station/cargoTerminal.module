@@ -46,6 +46,7 @@ return {
 		-- 	tag = tag
 		-- }
 
+		local laneZ = result.laneZs[nTerminal]
 		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
 		if logger.isExtendedLog() then
 			if isTrackOnPlatformLeft then
@@ -80,7 +81,8 @@ return {
 			result.models[#result.models + 1] = {
 				id = stationSignModelId,
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, result.laneZs[nTerminal], 1 }),
+				-- transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  4, yShift, laneZ, 1 }),
+				transf = transfUtils.getTransf_Shifted(transf, {4, yShift, laneZ}),
 				tag = tag
 			}
 		end
@@ -92,7 +94,8 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  2, yShift, result.laneZs[nTerminal], 1 }),
+				-- transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  2, yShift, laneZ, 1 }),
+				transf = transfUtils.getTransf_ZRotatedP90_Shifted(transf, {2, yShift, laneZ}),
 				tag = tag
 			}
 			-- the model index must be in base 0 !
@@ -112,7 +115,8 @@ return {
 			result.models[#result.models + 1] = {
 				id = lampsModelId,
 				slotId = slotId,
-				transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, result.laneZs[nTerminal], 1 }),
+				-- transf = transfUtilsUG.mul(transf, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShift, laneZ, 1 }),
+				transf = transfUtils.getTransf_ZRotatedP90_Shifted(transf, {0, yShift, laneZ}),
 				tag = tag
 			}
 		end
@@ -126,7 +130,8 @@ return {
 				result.models[#result.models + 1] = {
 					id = 'lollo_freestyle_train_station/asset/cargo_speakers.mdl',
 					slotId = slotId,
-					transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, result.laneZs[nTerminal], 1 }),
+					-- transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, laneZ, 1 }),
+					transf = transfUtils.getTransf_Shifted(transf, {0, yShift, laneZ}),
 					tag = tag
 				}
 			end

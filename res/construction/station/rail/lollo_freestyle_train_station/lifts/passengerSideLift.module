@@ -51,10 +51,11 @@ return {
 		-- logger.print('buildingHeight, buildingModelId =', buildingHeight, buildingModelId)
 
 		-- add building
-		local buildingTransf = transfUtilsUG.mul(
-			slotTransf,
-			{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-		)
+		-- local buildingTransf = transfUtilsUG.mul(
+		-- 	slotTransf,
+		-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+		-- )
+		local buildingTransf = transfUtils.getTransf_ZRotatedP90(slotTransf)
 		result.models[#result.models + 1] = {
 			id = buildingModelId,
 			slotId = slotId,
@@ -73,7 +74,7 @@ return {
 			}
 
 			-- add underpass bottom pos 2 link
-			local underpassBottomTransf = transfUtils.getTransfZShiftedBy(slotTransf, _constants.underpassZ)
+			local underpassBottomTransf = transfUtils.getTransf_ZShifted(slotTransf, _constants.underpassZ)
 			if result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] == nil then
 				result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] = {}
 			end
@@ -97,7 +98,14 @@ return {
 					t = nTerminal,
 					lanePosTanX2 = cpl.posTanX2,
 					pos2Link = transfUtils.transf2Position(
-						transfUtilsUG.mul(buildingTransf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.0, -buildingHeight + _constants.underpassZ, 1 })
+						-- transfUtilsUG.mul(
+						-- 	buildingTransf,
+						-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.0, -buildingHeight + _constants.underpassZ, 1}
+						-- )
+						transfUtils.getTransf_Shifted(
+							buildingTransf,
+							{0, -2.0, -buildingHeight + _constants.underpassZ}
+						)
 					)
 				}
 			)
@@ -119,9 +127,13 @@ return {
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 				shape = 1,
 				spacing = {-1, 4, 4, 4},
-				transf = transfUtilsUG.mul(
+				-- transf = transfUtilsUG.mul(
+				-- 	buildingTransf,
+				-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -buildingHeight, 1 }
+				-- ),
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
 					buildingTransf,
-					{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -buildingHeight, 1 }
+					{0, -4.75, -buildingHeight}
 				),
 				type = _constants.passengerStationSquareModuleType,
 			})
@@ -130,9 +142,13 @@ return {
 					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareInnerSlotId),
 					shape = 1,
 					spacing = {-1, 4, 4, 4},
-					transf = transfUtilsUG.mul(
+					-- transf = transfUtilsUG.mul(
+					-- 	buildingTransf,
+					-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0.75, -buildingHeight, 1 }
+					-- ),
+					transf = transfUtils.getTransf_ZRotatedP90_Shifted(
 						buildingTransf,
-						{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0.75, -buildingHeight, 1 }
+						{0, 0.75, -buildingHeight}
 					),
 					type = _constants.passengerStationSquareModuleType,
 				})
@@ -142,10 +158,14 @@ return {
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 				shape = 1,
 				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransfZShiftedBy(
-					transfUtilsUG.mul(
+				transf = transfUtils.getTransf_ZShifted(
+					-- transfUtilsUG.mul(
+					-- 	buildingTransf,
+					-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -buildingHeight, 1 }
+					-- ),
+					transfUtils.getTransf_ZRotatedM90_Shifted(
 						buildingTransf,
-						{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -buildingHeight, 1 }
+						{0, -4.75, -buildingHeight}
 					),
 					-result.laneZs[nTerminal]
 				),
@@ -167,9 +187,13 @@ return {
 			result.models[#result.models + 1] = {
 				id = clockModelId,
 				slotId = slotId,
-				transf = transfUtilsUG.mul(
+				-- transf = transfUtilsUG.mul(
+				-- 	buildingTransf,
+				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 3.8, 1 }
+				-- ),
+				transf = transfUtils.getTransf_Shifted(
 					buildingTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 3.8, 1 }
+					{0, _clockY, - 3.8}
 				),
 				tag = tag
 			}
@@ -177,9 +201,13 @@ return {
 			result.models[#result.models + 1] = {
 				id = clockModelId,
 				slotId = slotId,
-				transf = transfUtilsUG.mul(
+				-- transf = transfUtilsUG.mul(
+				-- 	buildingTransf,
+				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 5.8, 1 }
+				-- ),
+				transf = transfUtils.getTransf_Shifted(
 					buildingTransf,
-					{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 5.8, 1 }
+					{0, _clockY, - 5.8}
 				),
 				tag = tag
 			}
@@ -191,9 +219,13 @@ return {
 				result.models[#result.models + 1] = {
 					id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
 					slotId = slotId,
-					transf = transfUtilsUG.mul(
+					-- transf = transfUtilsUG.mul(
+					-- 	buildingTransf,
+					-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 6.2 - buildingHeight, 1 }
+					-- ),
+					transf = transfUtils.getTransf_Shifted(
 						buildingTransf,
-						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 6.2 - buildingHeight, 1 }
+						{0, _tableY, 6.2 - buildingHeight}
 					),
 					tag = tag
 				}
@@ -201,9 +233,13 @@ return {
 				result.models[#result.models + 1] = {
 					id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
 					slotId = slotId,
-					transf = transfUtilsUG.mul(
+					-- transf = transfUtilsUG.mul(
+					-- 	buildingTransf,
+					-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 5.5 - buildingHeight, 1 }
+					-- ),
+					transf = transfUtils.getTransf_Shifted(
 						buildingTransf,
-						{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 5.5 - buildingHeight, 1 }
+						{0, _tableY, 5.5 - buildingHeight}
 					),
 					tag = tag
 				}
@@ -214,18 +250,18 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(
+				transf = transfUtils.getTransf_Shifted(
 					buildingTransf,
-					{ 1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  2.7, -3.3, 0, 1 }
+					{2.7, -3.3, 0}
 				),
 				tag = tag
 			}
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/asset/partenze.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(
+				transf = transfUtils.getTransf_Shifted(
 					buildingTransf,
-					{ -1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -2.7, -3.3, 0, 1 }
+					{-2.7, -3.3, 0}
 				),
 				tag = tag
 			}

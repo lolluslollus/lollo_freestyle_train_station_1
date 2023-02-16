@@ -40,7 +40,7 @@ function data()
 			local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
 			local yShift = cpl.width
 			local platformBorderPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
-			local myTransfAlongPlatformBorder = transfUtils.getTransfZShiftedBy(
+			local myTransfAlongPlatformBorder = transfUtils.getTransf_ZShifted(
 				moduleHelpers.getPlatformObjectTransf_AlwaysVertical(platformBorderPosTanX2),
 				result.laneZs[nTerminal]
 			)

@@ -42,13 +42,19 @@ local privateConstants = {
 }
 
 local privateFuncs = {
+    ---@param variant integer
+    ---@return number
     getFromVariant_0_or_1 = function(variant)
         return math.abs(math.fmod(variant, 2))
     end,
+    ---@param variant integer
+    ---@return number
     getFromVariant_0_to_1 = function(variant, nSteps)
         local _nSteps = math.ceil(nSteps)
         return math.abs(math.fmod(variant, _nSteps) / (nSteps - 1))
     end,
+    ---@param variant integer
+    ---@return number, number, number
     getFromVariant_AxialAreaTilt = function(variant)
         local tilt = -variant * 0.025
         local _maxRadAbs = 0.36
@@ -56,6 +62,8 @@ local privateFuncs = {
         -- logger.print('getFromVariant_AxialAreaTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
         return tilt, -_maxRadAbs, _maxRadAbs
     end,
+    ---@param variant integer
+    ---@return number, number, number
     getFromVariant_BridgeTilt = function(variant)
         local tilt = variant * 0.0125
         local _maxRadAbs = 0.36
@@ -63,6 +71,8 @@ local privateFuncs = {
         -- logger.print('getFromVariant_BridgeTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
         return tilt, -_maxRadAbs, _maxRadAbs
     end,
+    ---@param variant integer
+    ---@return number, number, number
     getFromVariant_FlatAreaHeight = function(variant, isFlush)
         local zShift = variant * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
         local _maxValueAbs = 1.2
@@ -70,6 +80,8 @@ local privateFuncs = {
         -- logger.print('_getFromVariant_FlatAreaHeight returning', zShift, -_maxValueAbs, _maxValueAbs)
         return zShift, -_maxValueAbs, _maxValueAbs
     end,
+    ---@param variant integer
+    ---@return integer, integer, integer
     getFromVariant_LiftHeight = function(variant)
         local deltaZ = 0
         if variant <= -2 then
@@ -205,7 +217,8 @@ privateFuncs.axialAreas = {
     getMNAdjustedTransf = function(params, slotId, slotTransf)
         local variant = privateFuncs.getVariant(params, slotId)
         local tilt = privateFuncs.getFromVariant_AxialAreaTilt(variant)
-        return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
+        -- return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
+        return transfUtils.getTransf_YRotated(slotTransf, tilt)
     end,
 }
 privateFuncs.deco = {
@@ -615,7 +628,8 @@ privateFuncs.flatAreas = {
         result.models[#result.models + 1] = {
             id = perronModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.5, 0.5, 0, 1}),
+            -- transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.5, 0.5, 0, 1}),
+            transf = transfUtils.getTransf_Shifted(slotTransf, {-0.5, 0.5, 0}),
             tag = tag
         }
         -- the model index must be in base 0 !
@@ -637,14 +651,15 @@ privateFuncs.flatAreas = {
     getMNAdjustedTransf = function(params, slotId, slotTransf, isFlush)
         local variant = privateFuncs.getVariant(params, slotId)
         local deltaZ = privateFuncs.getFromVariant_FlatAreaHeight(variant, isFlush)
-        return transfUtils.getTransfZShiftedBy(slotTransf, deltaZ)
+        return transfUtils.getTransf_ZShifted(slotTransf, deltaZ)
     end,
 }
 privateFuncs.openStairs = {
     getExitModelTransf = function(slotTransf, slotId, params)
         local variant = privateFuncs.getVariant(params, slotId)
         local tilt = privateFuncs.getFromVariant_BridgeTilt(variant)
-        return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
+        -- return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
+        return transfUtils.getTransf_YRotated(slotTransf, tilt)
     end,
     getPedestrianBridgeModelId = function(length, eraPrefix, isWithEdge)
         -- eraPrefix is a string like 'era_a_'
@@ -696,13 +711,15 @@ privateFuncs.slopedAreas = {
         result.models[#result.models + 1] = {
             id = roofModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift1, yShift, laneZ, 1 }),
+            -- transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift1, yShift, laneZ, 1 }),
+            transf = transfUtils.getTransf_ZRotatedP90_Shifted(verticalTransfAtPlatformCentre, {xShift1, yShift, laneZ}),
             tag = tag
         }
         result.models[#result.models + 1] = {
             id = roofModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  xShift2, yShift, laneZ, 1 }),
+            -- transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  xShift2, yShift, laneZ, 1 }),
+            transf = transfUtils.getTransf_ZRotatedM90_Shifted(verticalTransfAtPlatformCentre, {xShift2, yShift, laneZ}),
             tag = tag
         }
     end,
@@ -743,19 +760,22 @@ privateFuncs.slopedAreas = {
         result.models[#result.models + 1] = {
             id = chairsModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift1, laneZ, 1 }),
+            -- transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift1, laneZ, 1 }),
+            transf = transfUtils.getTransf_Shifted(verticalTransfAtPlatformCentre, {xShift + 1.6, yShift1, laneZ}),
             tag = tag
         }
         result.models[#result.models + 1] = {
             id = binModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift2, laneZ, 1 }),
+            -- transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 1.6, yShift2, laneZ, 1 }),
+            transf = transfUtils.getTransf_Shifted(verticalTransfAtPlatformCentre, {xShift + 1.6, yShift2, laneZ}),
             tag = tag
         }
         result.models[#result.models + 1] = {
             id = arrivalsModelId,
             slotId = slotId,
-            transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift + 6.2, yShift3, laneZ, 1 }),
+            -- transf = transfUtilsUG.mul(verticalTransfAtPlatformCentre, { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  xShift + 6.2, yShift3, laneZ, 1 }),
+            transf = transfUtils.getTransf_ZRotatedP90_Shifted(verticalTransfAtPlatformCentre, {xShift + 6.2, yShift3, laneZ}),
             tag = tag
         }
     end,
@@ -1313,10 +1333,11 @@ return {
                                         result.models[#result.models + 1] = {
                                             id = perronNumberModelId,
                                             slotId = slotId,
-                                            transf = transfUtilsUG.mul(
-                                                myTransf,
-                                                { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
-                                            ),
+                                            -- transf = transfUtilsUG.mul(
+                                            --     myTransf,
+                                            --     { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
+                                            -- ),
+                                            transf = transfUtils.getTransf_Shifted(myTransf, {0, yShift, 4.83}),
                                             tag = tag
                                         }
                                         -- the model index must be in base 0 !
@@ -1443,10 +1464,11 @@ return {
                                 result.models[#result.models + 1] = {
                                     id = perronNumberModelId,
                                     slotId = slotId,
-                                    transf = transfUtilsUG.mul(
-                                        pillarTransf,
-                                        { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift4PerronNumber, 4.83, 1 }
-                                    ),
+                                    -- transf = transfUtilsUG.mul(
+                                    --     pillarTransf,
+                                    --     { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift4PerronNumber, 4.83, 1 }
+                                    -- ),
+                                    transf = transfUtils.getTransf_Shifted(pillarTransf, {0, yShift4PerronNumber, 4.83}),
                                     tag = tag
                                 }
                                 -- the model index must be in base 0 !
@@ -1708,7 +1730,7 @@ return {
 				pos1[3] + deltaPos[3],
 			}
 
-			local laneTransf = transfUtils.getTransfZShiftedBy(
+			local laneTransf = transfUtils.getTransf_ZShifted(
 				transfUtils.get1MLaneTransf(pos1, pos2),
 				laneZ
 			)
@@ -2058,7 +2080,9 @@ return {
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/passenger_lane.mdl',
 				slotId = slotId,
-				transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}),
+				-- transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}),
+                -- transf = transfUtils.getTransf_Shifted(slotTransf, {-1, 0, 0}),
+                transf = transfUtils.getTransf_XShifted(slotTransf, -1),
 				tag = tag
 			}
 
@@ -2273,10 +2297,16 @@ return {
                         logger.print('xScaleFactor w ratios =', xScaleFactor)
                         result.models[#result.models+1] = {
                             id = modelId,
-                            transf = transfUtilsUG.mul(
-                                myTransf,
-                                { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-                            ),
+                            -- transf = transfUtilsUG.mul(
+                            --     myTransf,
+                            --     { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+                            -- ),
+                            transf = {
+                                myTransf[1] * xScaleFactor, myTransf[2] * xScaleFactor, myTransf[3] * xScaleFactor, myTransf[4] * xScaleFactor,
+                                myTransf[5], myTransf[6], myTransf[7], myTransf[8],
+                                myTransf[9], myTransf[10], myTransf[11], myTransf[12],
+                                myTransf[13], myTransf[14], myTransf[15], myTransf[16],
+                            },
                             tag = tag
                         }
 
