@@ -3,7 +3,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 1, 1, 1, },
+                albedoScale = { 0.9, 0.9, 1.4, },
             },
             alpha_scale = {
                 alphaScale = 1,
@@ -52,4 +52,3 @@ function data()
         type = "PHYS_TRANSPARENT_NRML_MAP",
     }
     end
-    
