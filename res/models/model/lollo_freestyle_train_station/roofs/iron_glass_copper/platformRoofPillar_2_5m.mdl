@@ -14,7 +14,9 @@ function data()
                                 "lollo_freestyle_train_station/metal/metal_deco_curls_green_left_2.mtl",
                             },
                             -- mesh = 'lollo_freestyle_train_station/roofs/iron/pillar_2_5m_lod0.msh',
-                            mesh = 'lollo_freestyle_train_station/roofs/iron/pillar_deco_2_5m_lod0.msh',
+                            -- mesh = 'lollo_freestyle_train_station/roofs/iron/pillar_more_rivets_2_5m_lod0.msh',
+                            -- mesh = 'lollo_freestyle_train_station/roofs/iron/pillar_deco_2_5m_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/roofs/iron/pillar_more_rivets_deco_2_5m_lod0.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },
