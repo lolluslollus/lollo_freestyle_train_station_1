@@ -8,11 +8,11 @@ return {
 			indices = {
 				normal = {
 					count = 1992,
-					offset = 10576,
+					offset = 8584,
 				},
 				position = {
 					count = 1992,
-					offset = 8584,
+					offset = 10576,
 				},
 				tangent = {
 					count = 1992,
@@ -30,11 +30,11 @@ return {
 			indices = {
 				normal = {
 					count = 1992,
-					offset = 18544,
+					offset = 16552,
 				},
 				position = {
 					count = 1992,
-					offset = 16552,
+					offset = 18544,
 				},
 				tangent = {
 					count = 1992,
@@ -52,11 +52,11 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 20680,
+					offset = 20632,
 				},
 				position = {
 					count = 48,
-					offset = 20632,
+					offset = 20680,
 				},
 				tangent = {
 					count = 48,
@@ -76,12 +76,12 @@ return {
 		normal = {
 			count = 480,
 			numComp = 3,
-			offset = 4120,
+			offset = 1720,
 		},
 		position = {
 			count = 2400,
 			numComp = 3,
-			offset = 1720,
+			offset = 2200,
 		},
 		tangent = {
 			count = 256,

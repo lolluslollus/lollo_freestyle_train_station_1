@@ -13,7 +13,7 @@ function data()
                     -- mesh = 'headquarter/headquarter_era_b_03/headquarter_era_b_03_fence_lod0.msh',
                     mesh = 'lollo_freestyle_train_station/platformWalls/iron/wall_5m_lod0.msh',
                     name = 'headquarter_era_b_03_fence',
-                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -2.5, -1.4, 1, },
+                    -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                 },
                 static = false,
                 visibleFrom = 0,

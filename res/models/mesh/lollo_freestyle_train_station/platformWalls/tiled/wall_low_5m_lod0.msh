@@ -10,19 +10,19 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 972,
+					offset = 964,
 				},
 				position = {
 					count = 24,
-					offset = 1020,
+					offset = 988,
 				},
 				tangent = {
 					count = 24,
-					offset = 1044,
+					offset = 940,
 				},
 				uv0 = {
 					count = 24,
-					offset = 996,
+					offset = 916,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 1068,
+					offset = 1108,
 				},
 				position = {
 					count = 48,
-					offset = 1164,
+					offset = 1156,
 				},
 				tangent = {
 					count = 48,
-					offset = 1212,
+					offset = 1060,
 				},
 				uv0 = {
 					count = 48,
-					offset = 1116,
+					offset = 1012,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 168,
-					offset = 1260,
+					offset = 1540,
 				},
 				position = {
 					count = 168,
-					offset = 1596,
+					offset = 1708,
 				},
 				tangent = {
 					count = 168,
-					offset = 1764,
+					offset = 1372,
 				},
 				uv0 = {
 					count = 168,
-					offset = 1428,
+					offset = 1204,
 				},
 			},
 			materials = {
@@ -79,19 +79,19 @@ return {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 1932,
+					offset = 2164,
 				},
 				position = {
 					count = 144,
-					offset = 2220,
+					offset = 2308,
 				},
 				tangent = {
 					count = 144,
-					offset = 2364,
+					offset = 2020,
 				},
 				uv0 = {
 					count = 144,
-					offset = 2076,
+					offset = 1876,
 				},
 			},
 			materials = {
@@ -103,22 +103,22 @@ return {
 		normal = {
 			count = 132,
 			numComp = 3,
-			offset = 0,
+			offset = 496,
 		},
 		position = {
 			count = 288,
 			numComp = 3,
-			offset = 476,
+			offset = 628,
 		},
 		tangent = {
-			count = 208,
+			count = 160,
 			numComp = 4,
-			offset = 764,
+			offset = 336,
 		},
 		uv0 = {
-			count = 344,
+			count = 336,
 			numComp = 2,
-			offset = 132,
+			offset = 0,
 		},
 	},
 }
