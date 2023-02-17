@@ -13,7 +13,7 @@ function data()
                         'lollo_freestyle_train_station/station_concrete_2_low_prio.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m_lod0.msh',
-                    transf = {1.02, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, -1.4, 1}
+                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, -1.4, 1}
                 },
                 static = false,
                 visibleFrom = 0,
@@ -27,7 +27,7 @@ function data()
                         'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl' -- bricked edge
                     },
                     mesh = 'lollo_freestyle_train_station/platformWalls/staccionata_fs/normal_wall_5m_lod0.msh',
-                    transf = {1.02, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1.8, 0,  0, -2.5, -2.5, 1}
+                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1.8, 0,  0, -2.5, -2.5, 1}
                 },
                 static = false,
                 visibleFrom = 200,

@@ -4,16 +4,48 @@ function data()
     return {
         boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
         collider = _mdlHelpers.getVoidCollider(),
+        -- lods = {
+        --     {
+        --         node = {
+        --             materials = {
+        --                 -- 'lollo_freestyle_train_station/metal/rough_alu.mtl',
+        --                 'lollo_freestyle_train_station/metal/rough_copper.mtl',
+        --                 'lollo_freestyle_train_station/metal/copper_glass_diamonds_001.mtl'
+        --             },
+        --             mesh = 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/wall_low_5m_lod0.msh',
+        --             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, -1.4, 1}
+        --         },
+        --         static = false,
+        --         visibleFrom = 0,
+        --         visibleTo = 1000,
+        --     },
+        -- },
         lods = {
             {
                 node = {
-                    materials = {
-                        -- "lollo_freestyle_train_station/metal/rough_alu.mtl",
-                        "lollo_freestyle_train_station/metal/rough_copper.mtl",
-                        "lollo_freestyle_train_station/metal/copper_glass_diamonds_001.mtl"
-                    },
-                    mesh = 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/wall_low_5m_lod0.msh',
-                    transf = {1.02, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, -1.4, 1}
+                    -- children = {
+                    --     {
+                            children = {
+                                {
+                                    name = 'lollo_wall_low_bone_1m_start',
+                                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.5, -0.5, 0, 1, },
+                                },
+                                {
+                                    name = 'lollo_wall_low_bone_1m_end',
+                                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, -0.5, 0, 1, },
+                                },
+                            },
+                            name = 'lollo_wall_low',
+                            skin = 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/wall_skinned_low_5m_lod0.msh',
+                            skinMaterials = {
+                                'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
+                                'lollo_freestyle_train_station/metal/copper_glass_diamonds_001_skinned.mtl'
+                            },
+                            -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                    --     },
+                    -- },
+                    -- name = "RootNode",
+                    -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                 },
                 static = false,
                 visibleFrom = 0,

@@ -930,7 +930,7 @@ privateFuncs.slopedAreas = {
             if cpf.type == 0 then -- only on ground
                 if leadingIndex >= i1 then
                     local platformWidth = cpf.width
-                    local outerAreaEdgePosTanX2 = transfUtils.getParallelSideways(
+                    local outerAreaEdgePosTanX2 = transfUtils.getParallelSidewaysCoarse(
                         cpf.posTanX2,
                         (isTrackOnPlatformLeft and (-areaWidth -platformWidth * 0.5) or (areaWidth + platformWidth * 0.5))
                     )
@@ -1406,11 +1406,12 @@ return {
                         -- no stations in this fine segment
                         if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
                             local widthAboveNil, slopedAreaWidth = _getWidthAbove_0m_BarePlatformWidth(cpf)
-                            local wallPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
+                            local wallPosTanX2 = transfUtils.getParallelSidewaysCoarse(
                                 cpf.posTanX2,
                                 (_isTrackOnPlatformLeft and -widthAboveNil or widthAboveNil)
                             )
-                            local xScaleFactor = math.abs(xRatio) * 1.01 -- dx/dl * safety factor to avoid gaps, accounting for the wall thickness
+                            -- we should divide the following by the fine length, but it is always 1, as set by constants.fineSegmentLength
+                            local xScaleFactor = transfUtils.getPositionsDistance(wallPosTanX2[1][1], wallPosTanX2[2][1])
                             local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             local wallTransf = transfUtilsUG.mul(
                                 _wallTransfFunc(wallPosTanX2),
@@ -1550,11 +1551,12 @@ return {
                 if leadingIndex >= _i1 then
                     if isTunnelOk or ctf.type ~= 2 then -- ground or bridge, tunnel only if allowed
                         local widthAboveNil = ctf.width * 0.5
-                        local wallPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
+                        local wallPosTanX2 = transfUtils.getParallelSidewaysCoarse(
                             ctf.posTanX2,
                             (isTrackOnPlatformLeft and widthAboveNil or -widthAboveNil)
                         )
-                        local xScaleFactor = math.abs(xRatio) * 1.01 -- dx/dl * safety factor to avoid gaps, accounting for the wall thickness
+                        -- we should divide the following by the fine length, but it is always 1, as set by constants.fineSegmentLength
+                        local xScaleFactor = transfUtils.getPositionsDistance(wallPosTanX2[1][1], wallPosTanX2[2][1])
                         local wallModelId = ctf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                         local wallTransf = transfUtilsUG.mul(
                             _wallTransfFunc(wallPosTanX2),
@@ -2287,6 +2289,7 @@ return {
                     local isCanBuild = privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, areaWidth)
                     if isCanBuild then
                         local platformWidth = cpf.width
+                        -- LOLLO TODO MAYBE check the following, it may need updating - but it is good so far.
                         local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
                             cpf.posTanX2,
                             (_isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
