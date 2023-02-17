@@ -1,16 +1,12 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-local modulesutil = require "modulesutil"
-local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
-local transfUtils = require('lollo_freestyle_train_station.transfUtils')
-local transfUtilsUG = require "transf"
 
 
 function data()
 	return {
 		availability = {
-			yearFrom = moduleHelpers.eras.era_c.startYear,
+			yearFrom = 0,
 			yearTo = 0
 		},
 		category = {
@@ -20,13 +16,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("WallConcreteModernName"),
-			description = _("WallConcreteModernDesc"),
-			icon = "ui/lollo_freestyle_train_station/wallConcreteModern.tga"
+			name = _("WallTunnelyName"),
+			description = _("WallTunnelyDesc"),
+			icon = "ui/lollo_freestyle_train_station/wallTunnely.tga"
 		},
 		metadata = { },
 		order = {
-			value = 38,
+			value = 35,
 		},
 		type = _constants.trackWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -34,8 +30,8 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			moduleHelpers.deco.doTrackWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
-			'lollo_freestyle_train_station/platformWalls/concrete_modern/wall_5m.mdl',
-			'lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl',
+			'lollo_freestyle_train_station/platformWalls/tunnely/wall_5m.mdl',
+			'lollo_freestyle_train_station/platformWalls/tunnely/wall_low_5m.mdl',
 			true)
 		end,
 
@@ -43,7 +39,7 @@ function data()
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = 'lollo_freestyle_train_station/platformWalls/concrete_modern/wall_5m.mdl',
+					id = 'lollo_freestyle_train_station/platformWalls/tunnely/wall_5m.mdl',
 					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
