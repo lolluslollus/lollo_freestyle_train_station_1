@@ -1198,7 +1198,6 @@ return {
             -- or even higher, to avoid holes.
             -- The bend direction does not matter coz roofs are centered on cpf by construction.
             -- Straight bits do not get this, to prevent mini glitches linked to roof edges overlapping.
-            -- LOLLO TODO bones would be better.
             -- A curvy bit looks like
             -- posTanX2 = {
             --     {
@@ -1254,6 +1253,7 @@ return {
             -- => totalStretchFactor = abs(posTanX2[1][2][2] - posTanX2[2][2][2]) * 0.05 / 0.015 / 5 * platformWidth + 1
             -- => totalStretchFactor = abs(posTanX2[1][2][2] - posTanX2[2][2][2]) * 0.66667 * platformWidth + 1
             -- Season 0.6667 to taste, it's empyrical.
+            -- In real life I don't know how x and y are orientated, so I must account for both, and also z could give surprises if I have a hump.
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
@@ -1282,18 +1282,30 @@ return {
                             and (platformWidth < 5 and ceiling2_5ModelId or ceiling5ModelId)
                             or (platformWidth < 5 and alternativeCeiling2_5ModelId or alternativeCeiling5ModelId)
                         if roofModelId ~= nil then
+                            local dx_dl = cpf.posTanX2[2][2][1] - cpf.posTanX2[1][2][1]
+                            local dy_dl = cpf.posTanX2[2][2][2] - cpf.posTanX2[1][2][2]
+                            local dz_dl = cpf.posTanX2[2][2][3] - cpf.posTanX2[1][2][3]
+                            -- local dz = cpf.posTanX2[2][1][3] - cpf.posTanX2[1][1][3]
+                            local tr1 = transfXZoom * (
+                                1
+                                + math.abs(dx_dl) * platformWidth -- account for z rotations, * 1 is an experimental coefficient
+                                + math.abs(dy_dl) * platformWidth -- account for z rotations, * 1 is an experimental coefficient
+                                - dz_dl * 4 -- account for xy rotations (humps or pits), all roofs are about 5m high, this can be negative
+                                -- + math.abs(dz) * 0.1 -- account for extra length due to slope
+                            )
+                            -- this is s bit slower and a bit more accurate
+                            -- local tr1 = transfXZoom * (
+                            --     1
+                            --     + math.sqrt(dx_dl * dx_dl + dy_dl * dy_dl) * platformWidth -- account for z rotations, * 1 is an experimental coefficient
+                            --     - dz_dl * 4 -- account for xy rotations (humps or pits), all roofs are about 5m high, this can be negative
+                            -- --     + math.sqrt(dz * dz + 1) -1 -- account for extra length due to slope
+                            -- )
                             result.models[#result.models+1] = {
                                 id = roofModelId,
                                 transf = transfUtilsUG.mul(
                                     privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-                                    -- {
-                                    --     transfXZoom + transfXZoom * math.abs(cpf.posTanX2[1][2][2] - cpf.posTanX2[2][2][2]) * 0.66667 * platformWidth, 0, 0, 0,
-                                    --     0, transfYZoom, 0, 0,
-                                    --     0, 0, 1, 0,
-                                    --     0, 0, constants.platformRoofZ, 1
-                                    -- }
                                     {
-                                        transfXZoom + transfXZoom * math.abs(cpf.posTanX2[1][2][2] - cpf.posTanX2[2][2][2]) * platformWidth, 0, 0, 0,
+                                        tr1, 0, 0, 0,
                                         0, transfYZoom, 0, 0,
                                         0, 0, 1, 0,
                                         0, 0, constants.platformRoofZ, 1
@@ -1301,12 +1313,6 @@ return {
                                 ),
                                 tag = tag
                             }
-                            -- print(
-                            --     'xZoom =',
-                            --     transfXZoom + transfXZoom * math.abs(cpf.posTanX2[1][2][2] - cpf.posTanX2[2][2][2]) * 0.8 * platformWidth,
-                            --     'platformWidth =',
-                            --     platformWidth
-                            -- )
 
                             if cpf.type ~= 2 and isFreeFromOpenStairsAndTunnels and math.fmod(ii, privateConstants.deco.pillarPeriod) == 0 then
                                 local myTransf = transfUtilsUG.mul(
@@ -2168,7 +2174,7 @@ return {
             -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
             -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
             -- The former is a bit glitchy, the latter is prettier.
-            local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, nTrackEdge, era,
+            local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, nTrackEdge, eraPrefix,
             previousLeadingIndex, currentLeadingIndex, nextLeadingIndex)
                 local myModelId = ''
                 if isCargo then
@@ -2206,9 +2212,9 @@ return {
                     end
                 end
     
-                if era == constants.eras.era_a.prefix then
+                if eraPrefix == constants.eras.era_a.prefix then
                     return myModelId:gsub(constants.eras.era_c.prefix, constants.eras.era_a.prefix)
-                elseif era == constants.eras.era_b.prefix then
+                elseif eraPrefix == constants.eras.era_b.prefix then
                     return myModelId:gsub(constants.eras.era_c.prefix, constants.eras.era_b.prefix)
                 else
                     return myModelId

@@ -28,8 +28,8 @@ When you bulldoze the station, everything will be bulldozed.
 Lifts, stairs and underground entrances are in the assets, search for "freestyle station".
 
 [h1]Tips:[/h1]
-- Platforms are tracks and they can also suffer from micro splits, very difficult to see.
-- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>. This is particularly useful with multi-level underground stations.
+- Platforms are tracks and they can also suffer from micro splits and unevennesses, very difficult to see.
+- To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>. This is particularly useful with multi-level underground stations. Try to lay platforms and tracks smoothly and cleanly.
 - To work underground, use <NumPad 4> or the "Look Underground" track construction.
 - Platforms only carry passengers or cargo if they are part of a terminal.
 - 2.5 m platforms do not agree with bridges and tunnels. My "no railing" bridges help, tunnels can't be helped.
@@ -466,8 +466,8 @@ Wenn Sie den Bahnhof mit dem Bulldozer zerstören, wird alles mit dem Bulldozer 
 Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen Sie nach "freestyle station".
 
 [h1]Hinweise:[/h1]
-- Bahnsteigen sind Gleise und können auch unter Mikrospalten leiden, die sehr schwer zu sehen sind.
-- Um die Fahrspuren und die Spaltungen zu visualisieren, starten Sie das Spiel im Debug-Modus und drücken Sie <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich.
+- Bahnsteigen sind Gleise und können auch unter Mikrospalten und Unebenheiten leiden, die sehr schwer zu sehen sind.
+- Um die Fahrspuren und die Spaltungen zu visualisieren, starten Sie das Spiel im Debug-Modus und drücken Sie <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich. Versuchen Sie, Gleise und Bahnsteige sauber zu verlegen.
 - Um unterirdisch zu arbeiten, verwenden Sie <NumPad 4> oder die Gleiskonstruktion "Unterirdisch suchen".
 - Bahnsteige befördern nur dann Passagiere oder Fracht, wenn sie Teil eines Terminals sind.
 - 2,5 m hohe Bahnsteige vertragen sich nicht mit Brücken und Tunneln. Meine "geländerlosen" Brücken helfen, bei Tunneln kann man nichts machen.
