@@ -89,7 +89,7 @@ function data()
 				-- 	zAdjustedTransf, -- this model requires some z shift
 				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  17.2, 2.5, _constants.platformSideBitsZ -0.8, 1 }
 				-- ),
-				transfUtils.getTransf_Shifted(
+				transf = transfUtils.getTransf_Shifted(
 					zAdjustedTransf,
 					{17.2, 2.5, _constants.platformSideBitsZ -0.8}
 				),

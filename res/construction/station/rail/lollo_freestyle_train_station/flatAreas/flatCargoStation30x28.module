@@ -92,7 +92,7 @@ function data()
 				-- 	zAdjustedTransf,
 				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.8, 7.5, _constants.platformSideBitsZ, 1 }
 				-- ),
-				transfUtils.getTransf_Shifted(
+				transf = transfUtils.getTransf_Shifted(
 					zAdjustedTransf,
 					{22.8, 7.5, _constants.platformSideBitsZ}
 				),
@@ -107,7 +107,7 @@ function data()
 					-- 	zAdjustedTransf,
 					-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  22.8, -7.5, _constants.platformSideBitsZ, 1 }
 					-- ),
-					transfUtils.getTransf_Shifted(
+					transf = transfUtils.getTransf_Shifted(
 						zAdjustedTransf,
 						{22.8, -7.5, _constants.platformSideBitsZ}
 					),
