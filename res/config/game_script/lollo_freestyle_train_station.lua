@@ -2340,6 +2340,10 @@ function data()
                                 false,
                                 true
                             )
+                            print('HUMP stationHelpers.getCentralEdgePositions_OnlyOuterBounds received')
+                            debugPrint(platformEdgeList_orientated)
+                            print('HUMP stationHelpers.getCentralEdgePositions_OnlyOuterBounds returned')
+                            debugPrint(eventArgs.centrePlatformsFine)
 
                             eventArgs.centrePlatforms = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
                                 eventArgs.centrePlatformsFine,
