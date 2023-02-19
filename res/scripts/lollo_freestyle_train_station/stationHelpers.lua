@@ -108,10 +108,11 @@ local helpers = {
 
         local results = {}
         for i = 1, #edgeIds do
-            -- logger.print('edgeId =', edgeIds[i])
-            local baseEdge = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE)
+            local edgeId = edgeIds[i]
+            -- logger.print('edgeId =', edgeId)
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
             -- logger.print('baseEdge =') logger.debugPrint(baseEdge)
-            local baseEdgeTrack = api.engine.getComponent(edgeIds[i], api.type.ComponentType.BASE_EDGE_TRACK)
+            local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
             -- logger.print('baseEdgeTrack =') logger.debugPrint(baseEdgeTrack)
             local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
@@ -146,6 +147,7 @@ local helpers = {
             end
 
             local result = {
+                edgeId = edgeId,
                 catenary = baseEdgeTrack.catenary,
                 posTanX2 = {
                     {
@@ -254,7 +256,8 @@ local helpers = {
         local results = {}
         for _, refEdge in pairs(edgeLists) do
             leadingIndex = leadingIndex + 1
-            local edgeLength = (transfUtils.getVectorLength(refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(refEdge.posTanX2[2][2])) * 0.5
+            -- local edgeLength = (transfUtils.getVectorLength(refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(refEdge.posTanX2[2][2])) * 0.5
+            local edgeLength = edgeUtils.getEdgeLength(refEdge.edgeId)
             -- logger.print('edgeLength =') logger.debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
             -- logger.print('nModelsInEdge =') logger.debugPrint(nModelsInEdge)
@@ -270,7 +273,8 @@ local helpers = {
                     transfUtils.oneTwoThree2XYZ(refEdge.posTanX2[2][1]),
                     transfUtils.oneTwoThree2XYZ(refEdge.posTanX2[1][2]),
                     transfUtils.oneTwoThree2XYZ(refEdge.posTanX2[2][2]),
-                    i / nModelsInEdge
+                    i / nModelsInEdge,
+                    edgeLength
                 )
                 -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                 if nodeBetween == nil then
@@ -450,7 +454,8 @@ local helpers = {
         local results = {}
         for _, _refEdge in pairs(edgeLists) do
             -- These should be identical but they are not quite so, so we average
-            local _refEdgeLength = (transfUtils.getVectorLength(_refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(_refEdge.posTanX2[2][2])) * 0.5
+            -- local _refEdgeLength = (transfUtils.getVectorLength(_refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(_refEdge.posTanX2[2][2])) * 0.5
+            local _refEdgeLength = edgeUtils.getEdgeLength(_refEdge.edgeId) -- LOLLO TODO get vector length with edgeUtils, across the app
             if firstRefEdge == nil and _refEdgeLength > 0 then
                 firstRefEdge = _refEdge
                 firstRefEdgeLength = _refEdgeLength
@@ -477,9 +482,10 @@ local helpers = {
                         transfUtils.oneTwoThree2XYZ(_refEdge.posTanX2[1][2]),
                         transfUtils.oneTwoThree2XYZ(_refEdge.posTanX2[2][2]),
                         currentStepPercent,
+                        _refEdgeLength,
                         logger.isExtendedLog()
                     )
-                    -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                    logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                     if nodeBetween == nil then
                         logger.err('nodeBetween not found; oldEdge =') -- logger.errorDebugPrint(oldEdge)
                         return {}

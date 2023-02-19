@@ -9,7 +9,7 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local dummy = 123
 
 local stationHelpers = require('lollo_freestyle_train_station.stationHelpers')
-
+--[[
 local edgeLists1 = {
     {
         leadingIndex = 1,
@@ -736,7 +736,116 @@ local fineEdgeLists = {
   },
 }
 local groups1 = stationHelpers.calcCentralEdgePositions_GroupByMultiple(fineEdgeLists, 10)
+]]
 
+--[[
+logger.print('scratch4 starting')
+local edgeListWithHump = {
+  {
+    catenary = false,
+    edgeType = "BRIDGE",
+    edgeTypeName = "stone.lua",
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { 96.944892883301, 684.10473632813, 56.14391708374, },
+        { 6.94162940979, 0.19010773301125, 0.31464478373528, },
+      },
+      {
+        { 103.88204956055, 684.29473876953, 56.414089202881, },
+        { 6.9450469017029, 0.19018466770649, 0.22697106003761, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 1,
+    typeIndex = 2,
+    width = 5,
+  },
+  {
+    catenary = true,
+    edgeType = "BRIDGE",
+    edgeTypeName = "stone.lua",
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { 103.88204956055, 684.29473876953, 56.414089202881, },
+        { 4.9876294136047, 0.13657999038696, 0.15421308577061, },
+      },
+      {
+        { 109.86787414551, 684.45861816406, 56.578479766846, },
+        { 4.9875664710999, 0.13659618794918, 0.11138851940632, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 1,
+    typeIndex = 2,
+    width = 5,
+  },
+  {
+    catenary = false,
+    edgeType = "BRIDGE",
+    edgeTypeName = "stone.lua",
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { 109.86787414551, 684.45861816406, 56.578479766846, },
+        { 4.9883551597595, 0.13661772012711, 0.11140441894531, },
+      },
+      {
+        { 114.85623931885, 684.59521484375, 56.669219970703, },
+        { 4.9883642196655, 0.13662470877171, 0.070376686751842, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 1,
+    typeIndex = 2,
+    width = 5,
+  },
+}
+local humpFineSegments = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
+    edgeListWithHump,
+    1,
+    false,
+    true
+)
+]]
 
+-- it boils down to this returning a wrong position (x should be < 106 but it is 106.29; refDistance0 is 2.05, which is what I wish, but it is inconsistent with the position)
+local pos0 = {
+  x = 103.88204956055,
+  y = 684.29473876953,
+  z = 56.414089202881,
+}
+local pos1 = {
+  x = 109.86787414551,
+  y = 684.45861816406,
+  z = 56.578479766846,
+}
+local tan0 = {
+  x = 4.9876294136047,
+  y = 0.13657999038696,
+  z = 0.15421308577061,
+}
+local tan1 = {
+  x = 4.9875664710999,
+  y = 0.13659618794918,
+  z = 0.11138851940632,
+}
+local straightLength = transfUtils.getPositionsDistance(pos0, pos1) -- this is 5.99
+
+local rightResult = edgeUtils.getNodeBetween( -- this finds a length of 4.99: it makes no sense. The tangents in the input are too short.
+-- the correct length can be obtained with
+-- api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK).edges[1].geometry.length
+-- which gives 5.9903
+    pos0,
+    pos1,
+    tan0,
+    tan1,
+    0.41044438488067,
+    5.9903
+)
 
 local dummy2 = 123

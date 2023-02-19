@@ -2230,8 +2230,17 @@ return {
                 local cpfP1 = params.terminals[nTerminal].centrePlatformsFineRelative[ii+1] or {}
                 local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
                 local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, cpf.leadingIndex)
-                local myModelId = _getPlatformModelId(isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix,
-                cpfM1.leadingIndex, cpf.leadingIndex, cpfP1.leadingIndex)
+                local myModelId = _getPlatformModelId(
+                    isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix,
+                    cpfM1.leadingIndex, cpf.leadingIndex, cpfP1.leadingIndex
+                )
+-- LOLLO NOTE platforms and sloped areas look wrong on humps: they are full of cuts
+-- The trouble is, edges on humps have the wrong tangents (too short)
+-- Possibly, something in the handler of TRACK_BULLDOZE_REQUESTED screws up;
+-- or it is a game error. However, it is difficult to reproduce after the latest smoothing out.
+-- Whatever the cause is, this confuses getNodeBetween, which now relies on an api to get the edge length.
+-- LOLLO TODO it needs testing though.
+-- see scratch4 for details
                 result.models[#result.models+1] = {
                     id = myModelId,
                     slotId = slotId,
@@ -2296,6 +2305,7 @@ return {
                     if isCanBuild then
                         local platformWidth = cpf.width
                         -- LOLLO TODO MAYBE check the following, it may need updating - but it is good so far.
+                        -- There can be a small glitch with humps.
                         local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
                             cpf.posTanX2,
                             (_isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
