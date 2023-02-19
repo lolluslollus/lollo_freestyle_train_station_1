@@ -455,7 +455,7 @@ local helpers = {
         for _, _refEdge in pairs(edgeLists) do
             -- These should be identical but they are not quite so, so we average
             -- local _refEdgeLength = (transfUtils.getVectorLength(_refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(_refEdge.posTanX2[2][2])) * 0.5
-            local _refEdgeLength = edgeUtils.getEdgeLength(_refEdge.edgeId) -- LOLLO TODO get vector length with edgeUtils, across the app
+            local _refEdgeLength = edgeUtils.getEdgeLength(_refEdge.edgeId)
             if firstRefEdge == nil and _refEdgeLength > 0 then
                 firstRefEdge = _refEdge
                 firstRefEdgeLength = _refEdgeLength

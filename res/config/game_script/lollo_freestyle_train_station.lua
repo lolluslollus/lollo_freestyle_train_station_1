@@ -2182,7 +2182,8 @@ function data()
                             for i = 1, #eventArgs.trackEdgeList do
                                 local tel = eventArgs.trackEdgeList[i]
                                 -- these should be identical, but they are not really so, so we average them
-                                local length = (transfUtils.getVectorLength(tel.posTanX2[1][2]) + transfUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
+                                -- local length = (transfUtils.getVectorLength(tel.posTanX2[1][2]) + transfUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
+                                local length = edgeUtils.getEdgeLength(tel.edgeId, logger.isExtendedLog())
                                 trackLengths[i] = length
                                 totalLength = totalLength + length
                             end
@@ -2236,7 +2237,7 @@ function data()
                                 local nodeBetween = edgeUtils.getNodeBetween(
                                     position0, position1, tangent0, tangent1,
                                     (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength],
-                                    edgeUtils.getEdgeLength(eventArgs.trackEdgeList[iAcrossMidLength].edgeId)
+                                    edgeUtils.getEdgeLength(eventArgs.trackEdgeList[iAcrossMidLength].edgeId, logger.isExtendedLog())
                                 )
                                 logger.print('nodeBetween 2223 =') logger.debugPrint(nodeBetween)
                                 -- LOLLO NOTE it seems fixed, but keep checking it:
