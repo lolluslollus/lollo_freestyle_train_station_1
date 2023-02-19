@@ -438,6 +438,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["wallEraPrefix_0IsNoWall"] = "Wall bottom Era",
 			["NoWall"] = "No wall bottom",
 			["Length"] = "Length m",
+			["ZDelta"] = "Slope",
+			["ZRotation"] = "Rotation",
 		},
 		de = {
 			["DESC"] = [[
@@ -877,6 +879,8 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["wallEraPrefix_0IsNoWall"] = "Wand unten Epoche",
 			["NoWall"] = "Keine Wand unten",
 			["Length"] = "Länge m",
+			["ZDelta"] = "Steigung",
+			["ZRotation"] = "Drehung",
 		},
 	}
 end
