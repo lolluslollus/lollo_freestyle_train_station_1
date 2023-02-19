@@ -2653,6 +2653,42 @@ posTanX2 =
 ]]
 
 -- see scratch4 for details
+
+-- the culprit seems to be edgeUtils.getNodeBetween. Start it with
+--[[
+    getNodeBetween starting, shift0To1 =	0.41044438488067	length =	4.9912807694652
+position0, position1 =
+{
+  x = 103.88204956055,
+  y = 684.29473876953,
+  z = 56.414089202881,
+}
+{
+  x = 109.86787414551,
+  y = 684.45861816406,
+  z = 56.578479766846,
+}
+tangent0, tangent1 =
+{
+  x = 4.9876294136047,
+  y = 0.13657999038696,
+  z = 0.15421308577061,
+}
+{
+  x = 4.9875664710999,
+  y = 0.13659618794918,
+  z = 0.11138851940632,
+}
+]]
+-- the resulting position is
+-- position = {
+--     x = 106.29564082714,
+--     y = 684.36081734647,
+--     z = 56.485374585346,
+--   },
+-- and
+-- refDistance0 = 2.0486431651899
+-- and it is too far, it should have x < 106, even though the resulting refDistance0 is OK: these two variables disagree for some reason.
                 local dz_dl = cpf.posTanX2[2][2][3] - cpf.posTanX2[1][2][3]
                 local xScaleFactor = 1 - dz_dl * 4 -- account for xy rotations (humps or pits)
                 myTransf = {

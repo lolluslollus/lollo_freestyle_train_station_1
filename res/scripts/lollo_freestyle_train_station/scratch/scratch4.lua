@@ -805,10 +805,35 @@ local edgeListWithHump = {
   },
 }
 local humpFineSegments = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
-  edgeListWithHump,
-  1,
-  false,
-  true
+    edgeListWithHump,
+    1,
+    false,
+    true
+)
+
+-- it boils down to this returning a wrong position (x should be < 106 but it is 106.29; refDistance0 is 2.05, which is what I wish, but it is inconsistent with the position)
+local wrongResult = edgeUtils.getNodeBetween(
+    {
+        x = 103.88204956055,
+        y = 684.29473876953,
+        z = 56.414089202881,
+    },
+    {
+        x = 109.86787414551,
+        y = 684.45861816406,
+        z = 56.578479766846,
+    },
+    {
+        x = 4.9876294136047,
+        y = 0.13657999038696,
+        z = 0.15421308577061,
+    },
+    {
+        x = 4.9875664710999,
+        y = 0.13659618794918,
+        z = 0.11138851940632,
+    },
+    0.41044438488067
 )
 
 

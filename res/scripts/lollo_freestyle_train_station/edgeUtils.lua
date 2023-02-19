@@ -190,10 +190,12 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
     if type(length) ~= 'number' or length <= 0 then return nil end
 
     if isExtendedLog then
+        print('getNodeBetween starting, shift0To1 =', shift0To1, 'length =', length)
+        print('position0, position1 =') debugPrint(position0) debugPrint(position1)
+        print('tangent0, tangent1 =') debugPrint(tangent0) debugPrint(tangent1)
         print('getNodeBetween: ', 'length0 =', length0 or 'NIL', 'length1 =', length1 or 'NIL', 'length =', length or 'NIL')
     end
 
-    -- print('getNodeBetween starting, shift0To1 =', shift0To1, 'length =', length)
     -- print('baseEdge =') debugPrint(baseEdge)
     -- print('baseNode0 =') debugPrint(baseNode0)
     -- print('baseNode1 =') debugPrint(baseNode1)

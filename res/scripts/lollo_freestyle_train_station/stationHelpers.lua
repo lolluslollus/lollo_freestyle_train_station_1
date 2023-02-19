@@ -479,7 +479,7 @@ local helpers = {
                         currentStepPercent,
                         logger.isExtendedLog()
                     )
-                    -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                    logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                     if nodeBetween == nil then
                         logger.err('nodeBetween not found; oldEdge =') -- logger.errorDebugPrint(oldEdge)
                         return {}
