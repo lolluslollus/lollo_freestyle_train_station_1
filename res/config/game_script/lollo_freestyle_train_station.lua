@@ -2216,9 +2216,10 @@ function data()
 
                                 local nodeBetween = edgeUtils.getNodeBetween(
                                     position0, position1, tangent0, tangent1,
-                                    (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength]
+                                    (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength],
+                                    edgeUtils.getEdgeLength(eventArgs.trackEdgeList[iAcrossMidLength].edgeId)
                                 )
-                                logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                logger.print('nodeBetween 2223 =') logger.debugPrint(nodeBetween)
                                 -- LOLLO NOTE it seems fixed, but keep checking it:
                                 -- this can screw up the directions. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
                                 -- in these cases, split produces something like:
