@@ -2133,18 +2133,18 @@ function data()
                             )
                             return
                         end
-
                         logger.print('at least two track edges found')
+
                         local platformEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
                             args.splitPlatformNode1Id,
                             args.splitPlatformNode2Id
                         )
+                        -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
+                        -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                         if #platformEdgeIdsBetweenNodeIds == 0 then
                             logger.err('#platformEdgeIdsBetweenNodeIds == 0')
                             return
                         end
-                        -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
-                        -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                         if #platformEdgeIdsBetweenNodeIds == 1 then
                             logger.print('only one platform edge, going to split it')
                             local edgeId = platformEdgeIdsBetweenNodeIds[1]
@@ -2153,7 +2153,6 @@ function data()
                             logger.print('args.splitPlatformNode1Id =') logger.debugPrint(args.splitPlatformNode1Id)
                             logger.print('args.splitPlatformNode2Id =') logger.debugPrint(args.splitPlatformNode2Id)
                             logger.print('edgeId =') logger.debugPrint(edgeId)
-
                             local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, 0.5)
                             _actions.splitEdgeRemovingObject(
                                 edgeId,
@@ -2329,15 +2328,15 @@ function data()
                                 return result
                             end
                         end
-
                         local isTrackOnPlatformLeft = _reverseScrambledTracksAndPlatforms()
+
                         local isTrackNWOfPlatform = stationHelpers.getIsTrackNorthOfPlatform(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
                         logger.print('isTrackOnPlatformLeft, isTrackNWOfPlatform', isTrackOnPlatformLeft, isTrackNWOfPlatform)
 
                         local _setPlatformProps = function(platformEdgeList_notOrientated, midTrackEdge)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
                             -- The result is much neater, irrespective of how the user placed the edges.
-                            -- There is an accuracy price to pay detectind if we are on a bridge or a tunnel, as large as _constants.fineSegmentLength
+                            -- There is an accuracy price to pay detecting if we are on a bridge or a tunnel, as large as _constants.fineSegmentLength
                             -- There is also less data in centrePlatformsFine.
                             -- print('platformEdgeList_notOrientated =') debugPrint(platformEdgeList_notOrientated)
                             logger.print('_setPlatformProps starting')
@@ -2351,8 +2350,8 @@ function data()
                             end
 
                             local platformEdgeList_orientated = isTrackNWOfPlatform
-                            and arrayUtils.cloneDeepOmittingFields(platformEdgeList_notOrientated)
-                            or stationHelpers.reversePosTanX2ListInPlace(arrayUtils.cloneDeepOmittingFields(platformEdgeList_notOrientated))
+                                and arrayUtils.cloneDeepOmittingFields(platformEdgeList_notOrientated)
+                                or stationHelpers.reversePosTanX2ListInPlace(arrayUtils.cloneDeepOmittingFields(platformEdgeList_notOrientated))
 
                             eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 platformEdgeList_orientated,

@@ -749,9 +749,8 @@ local helpers = {
             results[#results+1] = {
                 -- catenary = edgeLists[i].catenary,
                 leadingIndex = edgeLists[i].leadingIndex,
-                posTanX2 = transfUtils.getParallelSidewaysCoarse(edgeLists[i].posTanX2, sideShift),
-                -- this is slower
-                -- posTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift),
+                -- posTanX2 = transfUtils.getParallelSidewaysCoarse(edgeLists[i].posTanX2, sideShift),
+                posTanX2 = transfUtils.getParallelSideways(edgeLists[i].posTanX2, sideShift),
                 -- trackType = edgeLists[i].trackType,
                 -- trackTypeName = edgeLists[i].trackTypeName,
                 -- type = edgeLists[i].type,
@@ -759,6 +758,8 @@ local helpers = {
             }
         end
 
+        -- make shifted edges match
+        --[[
         for i = 1, #results - 1 do
             local pos1 = results[i].posTanX2[2][1]
             local pos2 = results[i + 1].posTanX2[1][1]
@@ -788,7 +789,16 @@ local helpers = {
                 }
             end
         end
-
+        ]]
+        for i = 1, #results - 1 do
+            local pos1 = results[i].posTanX2[2][1]
+            local pos2 = results[i + 1].posTanX2[1][1]
+            if pos1[1] ~= pos2[1] or pos1[2] ~= pos2[2] or pos1[3] ~= pos2[3] then
+                local midPos = transfUtils.getPositionsMiddle(pos1, pos2)
+                results[i].posTanX2[2][1] = midPos
+                results[i + 1].posTanX2[1][1] = midPos
+            end
+        end
         return results
     end,
 
@@ -1992,7 +2002,7 @@ helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
     -- which is where the train bellies will stop.
 
     -- not the centre but the first of the two (nodes in the edge) is going to be my vehicleNode
-    local _midTrackPoint = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
+    local _midTrackPos = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
     local _centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
         platformEdgeList,
         40,
@@ -2000,15 +2010,15 @@ helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
     )
     -- logger.print('test centrePlatforms =') logger.debugPrint(centrePlatforms)
 
-    local _centrePlatformIndex_Nearest2_TrackMid = _getPosTanX2ListIndex_Nearest2_Point(_centrePlatforms, _midTrackPoint)
+    local _centrePlatformIndex_Nearest2_TrackMid = _getPosTanX2ListIndex_Nearest2_Point(_centrePlatforms, _midTrackPos)
     logger.print('_centrePlatformIndex_Nearest2_TrackMid =') logger.debugPrint(_centrePlatformIndex_Nearest2_TrackMid)
 
     local _midPlatformItem = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid]
-    local _midPlatformPoint = transfUtils.getPositionsMiddle(_midPlatformItem.posTanX2[1][1], _midPlatformItem.posTanX2[2][1])
+    local _midPlatformPos = transfUtils.getPositionsMiddle(_midPlatformItem.posTanX2[1][1], _midPlatformItem.posTanX2[2][1])
 
-    local result = (_midTrackPoint[2] == _midPlatformPoint[2])
-    and (_midTrackPoint[1] < _midPlatformPoint[1])
-    or (_midTrackPoint[2] > _midPlatformPoint[2])
+    local result = (_midTrackPos[2] == _midPlatformPos[2])
+        and (_midTrackPos[1] < _midPlatformPos[1])
+        or (_midTrackPos[2] > _midPlatformPos[2])
     logger.print('getIsTrackNorthOfPlatform is returning', result)
     -- print('### getIsTrackNorthOfPlatform is returning', result)
 
