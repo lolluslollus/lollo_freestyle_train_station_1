@@ -1947,8 +1947,10 @@ function data()
         -- ini = function()
         -- end,
         guiInit = function()
+            -- read variables
             _guiPlatformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
             _guiTrackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
+            -- read texts
             _guiTexts.differentPlatformWidths = _('DifferentPlatformWidths')
             _guiTexts.buildInProgress = _('BuildInProgress')
             _guiTexts.buildMoreWaypoints = _('BuildMoreWaypoints')
@@ -1965,6 +1967,24 @@ function data()
             _guiTexts.waypointsTooFar = _('WaypointsTooFar')
             _guiTexts.waypointsNotConnected = _('WaypointsNotConnected')
             _guiTexts.waypointsWrong = _('WaypointsWrong')
+            -- make param window resizable coz our parameters are massive
+			for _, id in pairs({
+				-- 'menu.construction.road.settingsWindow',
+				'menu.construction.rail.settingsWindow',
+				-- 'menu.construction.water.settingsWindow',
+				-- 'menu.construction.air.settingsWindow',
+				-- 'menu.construction.terrain.settingsWindow',
+				-- 'menu.construction.town.settingsWindow',
+				-- 'menu.construction.industry.settingsWindow',
+				'menu.modules.settingsWindow',
+			}) do
+				local iLayoutItem = api.gui.util.getById(id)
+				if iLayoutItem ~= nil then
+					iLayoutItem:setResizable(true)
+                    iLayoutItem:setMaximumSize(api.gui.util.Size.new(800,1200))
+					iLayoutItem:setIcon('ui/hammer19.tga')
+				end
+			end
         end,
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
