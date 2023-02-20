@@ -848,7 +848,6 @@ local rightResult = edgeUtils.getNodeBetween( -- this finds a length of 4.99: it
     5.9903
 )
 
-
 local edgeListDodgy = {
   {
     catenary = false,

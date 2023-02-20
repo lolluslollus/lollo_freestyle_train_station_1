@@ -6,6 +6,14 @@
     "configurations": [
         {
             "arg": [],
+            "name": "launch current",
+            "program": "${file}",
+            "request": "launch",
+            "stopOnEntry": true,
+            "type": "lua"
+        },
+        {
+            "arg": [],
             "name": "scratch4",
             "program": "${workspaceFolder}/res/scripts/lollo_freestyle_train_station/scratch/scratch4.lua",
             "request": "launch",

@@ -2349,7 +2349,7 @@ function data()
                         local isTrackNWOfPlatform = stationHelpers.getIsTrackNorthOfPlatform(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
                         logger.print('isTrackOnPlatformLeft, isTrackNWOfPlatform', isTrackOnPlatformLeft, isTrackNWOfPlatform)
 
-                        local _setPlatformProps = function(platformEdgeList_notOrientated, midTrackEdge)
+                        local _trySetPlatformProps = function(platformEdgeList_notOrientated, midTrackEdge)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
                             -- The result is much neater, irrespective of how the user placed the edges.
                             -- There is an accuracy price to pay detecting if we are on a bridge or a tunnel, as large as _constants.fineSegmentLength
@@ -2375,6 +2375,8 @@ function data()
                                 false,
                                 true
                             )
+                            logger.print('_setPlatformProps set eventArgs.centrePlatformsFine =') logger.debugPrint(eventArgs.centrePlatformsFine)
+                            if #eventArgs.centrePlatformsFine < 1 then return false end
 
                             eventArgs.centrePlatforms = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
                                 eventArgs.centrePlatformsFine,
@@ -2383,7 +2385,7 @@ function data()
                                 true
                             )
                             logger.print('_setPlatformProps set eventArgs.centrePlatforms =') logger.debugPrint(eventArgs.centrePlatforms)
-                            logger.print('_setPlatformProps set eventArgs.centrePlatformsFine =') logger.debugPrint(eventArgs.centrePlatformsFine)
+                            if #eventArgs.centrePlatforms < 1 then return false end
 
                             local midCentrePlatformItem = eventArgs.centrePlatforms[math.ceil(#eventArgs.centrePlatforms / 2)]
                             logger.print('_setPlatformProps found midCentrePlatformItem =') logger.debugPrint(midCentrePlatformItem)
@@ -2437,10 +2439,15 @@ function data()
                             else
                                 eventArgs.cargoWaitingAreas = {}
                             end
-                        end
-                        _setPlatformProps(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
 
-                        local _setTrackProps = function(trackEdgeList_notOrientated, midTrackEdge)
+                            return true
+                        end
+                        if not(_trySetPlatformProps(eventArgs.platformEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])) then
+                            logger.err('cannot set platform props')
+                            return
+                        end
+
+                        local _trySetTrackProps = function(trackEdgeList_notOrientated, midTrackEdge)
                             -- This is as new as Feb 2023
                             logger.print('_setTrackProps starting')
 
@@ -2454,6 +2461,8 @@ function data()
                                 false,
                                 false
                             )
+                            logger.print('_setTrackProps set eventArgs.centreTracksFine =') logger.debugPrint(eventArgs.centreTracksFine)
+                            if #eventArgs.centreTracksFine < 1 then return false end
 
                             eventArgs.centreTracks = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
                                 eventArgs.centreTracksFine,
@@ -2462,15 +2471,20 @@ function data()
                                 false
                             )
                             logger.print('_setTrackProps set eventArgs.centreTracks =') logger.debugPrint(eventArgs.centreTracks)
-                            logger.print('_setTrackProps set eventArgs.centreTracksFine =') logger.debugPrint(eventArgs.centreTracksFine)
+                            if #eventArgs.centreTracks < 1 then return false end
 
                             -- local midCentreTrackItem = eventArgs.centreTracks[math.ceil(#eventArgs.centreTracks / 2)]
                             -- logger.print('_setTrackProps found midCentreTrackItem =') logger.debugPrint(midCentreTrackItem)
                             -- local trackWidth = midCentreTrackItem.width  -- LOLLO NOTE this is constant in the game but it might change one day, so we still read it.
                             -- eventArgs.leftTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, trackWidth * 0.45)
                             -- eventArgs.rightTracks = stationHelpers.getShiftedEdgePositions(eventArgs.centreTracks, -trackWidth * 0.45)
+
+                            return true
                         end
-                        _setTrackProps(eventArgs.trackEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])
+                        if not(_trySetTrackProps(eventArgs.trackEdgeList, eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex])) then
+                            logger.err('cannot set track props')
+                            return
+                        end
 
                         _actions.removeTracks(
                             platformEdgeIdsBetweenNodeIds,

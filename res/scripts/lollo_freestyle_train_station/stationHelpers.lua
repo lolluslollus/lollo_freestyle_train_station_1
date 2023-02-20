@@ -436,28 +436,32 @@ local helpers = {
             return {}
         end
         if logger.isExtendedLog() then
-            -- logger.debugPrint(edgeLists[1])
-            -- logger.debugPrint(edgeLists[2])
-            -- logger.debugPrint(edgeLists[3])
-            -- logger.print('...')
-            -- logger.debugPrint(edgeLists[#edgeLists-2])
-            -- logger.debugPrint(edgeLists[#edgeLists-1])
-            -- logger.debugPrint(edgeLists[#edgeLists])
-            logger.print('########## edgeLists =')
-            logger.debugPrint(edgeLists)
+            logger.debugPrint(edgeLists[1])
+            logger.debugPrint(edgeLists[2])
+            logger.debugPrint(edgeLists[3])
+            logger.print('...')
+            logger.debugPrint(edgeLists[#edgeLists-2])
+            logger.debugPrint(edgeLists[#edgeLists-1])
+            logger.debugPrint(edgeLists[#edgeLists])
+            -- logger.print('########## edgeLists =')
+            -- logger.debugPrint(edgeLists)
         end
         local firstRefEdge = nil
-        local firstRefEdgeLength = 0
-        local lengthUncovered = 0
+        local firstRefEdgeLength = 0.0
+        local lengthUncovered = 0.0
         local previousNodeBetween = nil
         local previousRefEdge = nil
-        local previousRefEdgeLength = 0
+        local previousRefEdgeLength = 0.0
 
         local results = {}
         for _, _refEdge in pairs(edgeLists) do
             -- These should be identical but they are not quite so, so we average
             -- local _refEdgeLength = (transfUtils.getVectorLength(_refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(_refEdge.posTanX2[2][2])) * 0.5
             local _refEdgeLength = edgeUtils.getEdgeLength(_refEdge.edgeId, logger.isExtendedLog())
+            if _refEdgeLength == nil then
+                logger.err('getCentralEdgePositions_OnlyOuterBounds could not find length of edge ' .. (_refEdge.edgeId or 'NIL') .. ', leaving')
+                return {}
+            end
             if firstRefEdge == nil and _refEdgeLength > 0 then
                 firstRefEdge = _refEdge
                 firstRefEdgeLength = _refEdgeLength

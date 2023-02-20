@@ -593,6 +593,17 @@ utils.getVectorLength = function(xyz)
     return math.sqrt(x * x + y * y + z * z)
 end
 
+---runs no checks, takes an xyz table
+---@param xyz table
+---@return number
+utils.getVectorLength_FAST = function(xyz)
+    -- if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
+    local x = xyz.x
+    local y = xyz.y
+    local z = xyz.z
+    return math.sqrt(x * x + y * y + z * z)
+end
+
 utils.getVectorLength_onlyXY = function(xy)
     if type(xy) ~= 'table' and type(xy) ~= 'userdata' then return nil end
     local x = xy.x or xy[1] or 0.0
@@ -602,7 +613,7 @@ end
 
 utils.getVectorNormalised = function(xyz, targetLength)
     if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
-    if type(targetLength) == 'number' and targetLength == 0 then return { 0, 0, 0 } end
+    if targetLength == 0 then return { 0, 0, 0 } end
 
     local _oldLength = utils.getVectorLength(xyz)
     if _oldLength == 0 then return { 0, 0, 0 } end
@@ -623,6 +634,25 @@ utils.getVectorNormalised = function(xyz, targetLength)
     end
 end
 
+---runs no checks, takes and returns an xyz table
+---@param xyz table
+---@param targetLength? number
+---@return table
+utils.getVectorNormalised_FAST = function(xyz, targetLength)
+    -- if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
+    if targetLength == 0 then return { 0, 0, 0 } end
+
+    local _oldLength = utils.getVectorLength_FAST(xyz)
+    if _oldLength == 0 then return { 0, 0, 0 } end
+
+    local _lengthFactor = (type(targetLength) == 'number' and targetLength or 1.0) / _oldLength
+    return {
+        x = xyz.x * _lengthFactor,
+        y = xyz.y * _lengthFactor,
+        z = xyz.z * _lengthFactor
+    }
+end
+
 utils.getVectorMultiplied = function(xyz, factor)
     if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
     if type(factor) ~= 'number' then return nil end
@@ -640,6 +670,22 @@ utils.getVectorMultiplied = function(xyz, factor)
             xyz[3] * factor
         }
     end
+end
+
+utils.getVectorsDot = function(xyz1, xyz2)
+    -- returns |xyz1| * |xyz2| * cos(angle between xyz1 and xyz2)
+    if type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata' then return nil end
+    if type(xyz2) ~= 'table' and type(xyz2) ~= 'userdata' then return nil end
+
+    local x1 = xyz1.x or xyz1[1] or 0.0
+    local y1 = xyz1.y or xyz1[2] or 0.0
+    local z1 = xyz1.z or xyz1[3] or 0.0
+
+    local x2 = xyz2.x or xyz2[1] or 0.0
+    local y2 = xyz2.y or xyz2[2] or 0.0
+    local z2 = xyz2.z or xyz2[3] or 0.0
+
+    return x1 * x2 + y1 * y2 + z1 * z2
 end
 
 utils.getPositionsDistance = function(pos0, pos1)
@@ -1155,21 +1201,26 @@ utils.isNumVeryClose = function(num1, num2, significantFigures)
     end
 end
 
-utils.isXYVeryClose = function(xy1, xy2, significantFigures)
-    if (type(xy1) ~= 'table' and type(xy1) ~= 'userdata')
-    or (type(xy2) ~= 'table' and type(xy2) ~= 'userdata')
-    then return false end
+---takes two vectors with x and y
+---@param xy1 table
+---@param xy2 table
+---@param significantFigures integer
+---@return boolean
+utils.isXYVeryClose_FAST = function(xy1, xy2, significantFigures)
+    -- if (type(xy1) ~= 'table' and type(xy1) ~= 'userdata')
+    -- or (type(xy2) ~= 'table' and type(xy2) ~= 'userdata')
+    -- then return false end
 
-    local X1 = xy1.x or xy1[1]
-    local Y1 = xy1.y or xy1[2]
-    local X2 = xy2.x or xy2[1]
-    local Y2 = xy2.y or xy2[2]
+    -- local X1 = xy1.x or xy1[1]
+    -- local Y1 = xy1.y or xy1[2]
+    -- local X2 = xy2.x or xy2[1]
+    -- local Y2 = xy2.y or xy2[2]
 
-    if type(X1) ~= 'number' or type(Y1) ~= 'number' then return false end
-    if type(X2) ~= 'number' or type(Y2) ~= 'number' then return false end
+    -- if type(X1) ~= 'number' or type(Y1) ~= 'number' then return false end
+    -- if type(X2) ~= 'number' or type(Y2) ~= 'number' then return false end
 
-    return utils.isNumVeryClose(X1, X2, significantFigures)
-    and utils.isNumVeryClose(Y1, Y2, significantFigures)
+    return utils.isNumVeryClose(xy1.x, xy2.x, significantFigures)
+    and utils.isNumVeryClose(xy1.y, xy2.y, significantFigures)
 end
 
 utils.isXYZVeryClose = function(xyz1, xyz2, significantFigures)
