@@ -6,7 +6,8 @@ function data()
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
 	return {
-        type = 'ASSET_DEFAULT',
+        -- type = 'ASSET_DEFAULT',
+        type = 'ASSET_TRACK', -- this is not the same as snapping.rail below, coz it lowers the asset to the ground.
 		availability = {
 			yearFrom = 0,
 			yearTo = 0,

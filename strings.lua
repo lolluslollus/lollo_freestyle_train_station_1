@@ -440,7 +440,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["Length"] = "Length m",
 			["YShift"] = "Shift m",
 			["ZDelta"] = "Slope",
-			["ZRotation"] = "Rotation",
+			["ZRotation"] = "Bending",
 		},
 		de = {
 			["DESC"] = [[
@@ -882,7 +882,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["Length"] = "Länge m",
 			["YShift"] = "Versetzung m",
 			["ZDelta"] = "Steigung",
-			["ZRotation"] = "Drehung",
+			["ZRotation"] = "Biegung",
 		},
 	}
 end

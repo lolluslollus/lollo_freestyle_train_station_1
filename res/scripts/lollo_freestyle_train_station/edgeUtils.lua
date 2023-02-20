@@ -215,6 +215,7 @@ helper.getEdgeLength = function(edgeId, isExtendedLog)
         local pos1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE).position
         local straightLength = transfUtils.getPositionsDistance(pos0, pos1)
         print('the straight distance is', straightLength or 'NIL')
+        print('edgeUtils.getEdgeLength is about to return', TNLength or BELength or 'NIL')
     end
     return TNLength or BELength
 end

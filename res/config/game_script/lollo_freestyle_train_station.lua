@@ -1973,7 +1973,7 @@ function data()
 				'menu.construction.rail.settingsWindow',
 				-- 'menu.construction.water.settingsWindow',
 				-- 'menu.construction.air.settingsWindow',
-				-- 'menu.construction.terrain.settingsWindow',
+				'menu.construction.terrain.settingsWindow',
 				-- 'menu.construction.town.settingsWindow',
 				-- 'menu.construction.industry.settingsWindow',
 				'menu.modules.settingsWindow',
