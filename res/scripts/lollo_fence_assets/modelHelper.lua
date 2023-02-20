@@ -1,14 +1,37 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 
 local privateValues = {
+    yShiftMaxIndex = 24,
     zDeltaMaxIndex = 32,
     zRotationMaxIndex = 32,
+}
+privateValues.defaults = {
+    length = 9,
+    model = 0,
+    wallEraPrefix = 0,
+    yShift = privateValues.yShiftMaxIndex + 5,
+    zDelta = privateValues.zDeltaMaxIndex,
+    zRotation = privateValues.zRotationMaxIndex,
 }
 local privateFuncs = {
     getLengthValues = function()
         local results = {}
         for i = 1, 40, 1 do
             results[#results+1] = tostring(i)
+        end
+        return results
+    end,
+    getYShiftActualValues = function()
+        local results = {}
+        for i = -privateValues.yShiftMaxIndex, privateValues.yShiftMaxIndex, 1 do
+            results[#results+1] = i / 2
+        end
+        return results
+    end,
+    getYShiftDisplayValues = function()
+        local results = {}
+        for i = -privateValues.yShiftMaxIndex, privateValues.yShiftMaxIndex, 1 do
+            results[#results+1] = ("%.3g"):format(i / 2)
         end
         return results
     end,
@@ -50,15 +73,15 @@ local privateFuncs = {
                 name = name
             }
         end
-        add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
-        add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
+        add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
+        add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
         add('lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
-        add('lollo_freestyle_train_station/platformWalls/bricks/platformWall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
-        add('lollo_freestyle_train_station/platformWalls/tunnely/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
-        add('lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
-        add('lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga', _("WallTiledWLargeStripesName"))
-        add('lollo_freestyle_train_station/platformWalls/concrete_modern/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteModern.tga', _("WallConcreteModernName"))
-        add('lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalGlass.tga', _("WallMetalGlassName"))
+        add('lollo_freestyle_train_station/platformWalls/bricks/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
+        add('lollo_freestyle_train_station/platformWalls/tunnely/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
+        add('lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+        add('lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga', _("WallTiledWLargeStripesName"))
+        add('lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteModern.tga', _("WallConcreteModernName"))
+        add('lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalGlass.tga', _("WallMetalGlassName"))
         add('lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFs.tga', _("WallStaccionataFsName"))
         add('lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFsTall.tga', _("WallStaccionataFsTallName"))
         return results
@@ -133,6 +156,7 @@ return {
         local models = privateFuncs.getModels()
         return {
             {
+                defaultIndex = privateValues.defaults.model,
                 key = 'lolloFenceAssets_model',
                 name = _('fenceModelName'),
                 values = arrayUtils.map(
@@ -145,27 +169,35 @@ return {
                 uiType = 'ICON_BUTTON',
             },
             {
+                defaultIndex = privateValues.defaults.wallEraPrefix,
                 key = 'lolloFenceAssets_wallEraPrefix',
                 name = _('wallEraPrefix_0IsNoWall'),
                 uiType = 'BUTTON',
                 values = {_('NoWall'), 'A', 'B', 'C'},
             },
             {
-                defaultIndex = 9,
+                defaultIndex = privateValues.defaults.length,
                 key = 'lolloFenceAssets_length',
                 name = _('Length'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getLengthValues(),
             },
             {
-                defaultIndex = privateValues.zRotationMaxIndex,
+                defaultIndex = privateValues.defaults.yShift,
+                key = 'lolloFenceAssets_yShift',
+                name = _('YShift'),
+                uiType = 'SLIDER',
+                values = privateFuncs.getYShiftDisplayValues(),
+            },
+            {
+                defaultIndex = privateValues.defaults.zRotation,
                 key = 'lolloFenceAssets_zRotation',
                 name = _('ZRotation'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getZRotationDisplayValues(),
             },
             {
-                defaultIndex = privateValues.zDeltaMaxIndex,
+                defaultIndex = privateValues.defaults.zDelta,
                 key = 'lolloFenceAssets_zDelta',
                 name = _('ZDelta'),
                 uiType = 'SLIDER',
@@ -182,13 +214,19 @@ return {
         else return 0
         end
     end,
+    getYShiftActualValues = function()
+        return privateFuncs.getYShiftActualValues()
+    end,
     getZDeltaActualValues = function()
         return privateFuncs.getZDeltaActualValues()
     end,
     getZRotationActualValues = function()
         return privateFuncs.getZRotationActualValues()
     end,
-    getConstants = function()
-        return privateValues
-    end,
+    getDefaultIndexes = function()
+        return privateValues.defaults
+    end
+    -- getConstants = function()
+    --     return privateValues
+    -- end,
 }

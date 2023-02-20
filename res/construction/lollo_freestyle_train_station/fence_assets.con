@@ -7,41 +7,42 @@ function data()
 
 	return {
         type = 'ASSET_DEFAULT',
-		description = {
-			name = _('FenceAssetsName'),
-			description = _('FenceAssetsDesc'),
-            icon = 'ui/construction/lollo_freestyle_train_station/fence_assets.tga',
-		},
 		availability = {
 			yearFrom = 0,
 			yearTo = 0,
 		},
         categories = { 'stairs' },
+		description = {
+			name = _('FenceAssetsName'),
+			description = _('FenceAssetsDesc'),
+            icon = 'ui/construction/lollo_freestyle_train_station/fence_assets.tga',
+		},
 		order = 1110,
 		autoRemovable = false,
         -- buildMode = 'MULTI',
 		skipCollision = true,
+        snapping = {
+			rail = true,
+			road = true,
+			water = false
+		},
 		params = fenceModelHelper.getConParams(),
 		updateFn = function(params)
             logger.print('fenceAssetsScript.updateFn firing, params =') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
 
-            -- note that writing into params has no effect coz it is passed by value
-            -- logger.print('params.paramX =', params.paramX or 'NIL')
-            -- local _zRotationIndexBase0 = math.min(
-            --     math.max(
-            --         math.ceil(
-            --             math.fmod(
-            --                 ((params.paramX or 0) * 16 / math.pi),
-            --                 32
-            --             )
-            --         ) + params.lolloFenceAssets_zRotation,
-            --         0
-            --     ),
-            --     2 * fenceModelHelper.getConstants().zRotationMaxIndex + 1
-            -- )
-            -- logger.print('_zRotationIndexBase0 =', _zRotationIndexBase0 or 'NIL')
+            local _initParams = function()
+                local defaults = fenceModelHelper.getDefaultIndexes()
+                params.lolloFenceAssets_length = params.lolloFenceAssets_length or defaults.length
+                params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.model
+                params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.wallEraPrefix
+                params.lolloFenceAssets_yShift = params.lolloFenceAssets_yShift or defaults.yShift
+                params.lolloFenceAssets_zDelta = params.lolloFenceAssets_zDelta or defaults.zDelta
+                params.lolloFenceAssets_zRotation = params.lolloFenceAssets_zRotation or defaults.zRotation
+            end
+            _initParams()
 
-            -- local _paramsParamY = params.paramY or 0
+            -- we don't use paramX and paramY coz they are awkward here
+            -- they cycle in steps of math.pi / 16, just in case you want to add them.
 
             local function _getWallModelId()
                 local wallModelId = nil
@@ -55,12 +56,14 @@ function data()
                 return wallModelId
             end
 
-            local function _getZDeltaParameters()
-                local zShift = params.lolloFenceAssets_length == 0
-                    and 0
-                    or fenceModelHelper.getZDeltaActualValues()[params.lolloFenceAssets_zDelta + 1] -- / (params.lolloFenceAssets_length)
+            local function _getYStart()
+                local result = fenceModelHelper.getYShiftActualValues()[params.lolloFenceAssets_yShift + 1]
+                return result
+            end
 
-                return zShift
+            local function _getZShift()
+                local result = fenceModelHelper.getZDeltaActualValues()[params.lolloFenceAssets_zDelta + 1]
+                return result
             end
 
             local function _getZRotationParameters()
@@ -116,17 +119,19 @@ function data()
 
             local function _addTop()
                 local zStart = _getWallModelId() == nil and 0 or 1.4
+                local yStart = _getYStart()
+
                 local fenceModelId = fenceModelHelper.getModels()[params.lolloFenceAssets_model + 1].fileName
 
                 local xShift, yShift, zRotRad = _getZRotationParameters()
-                local zShift = _getZDeltaParameters()
+                local zShift = _getZShift()
                 logger.print('_addTop got zRotRad =', 180 / math.pi * zRotRad, ', yShift =', yShift, ', xShift =', xShift, ', zShift =', zShift)
 
                 local myTransf = {
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, 0,
-                    0, 0, zStart, 1
+                    0, yStart, zStart, 1
                 }
                 for i = 1, params.lolloFenceAssets_length + 1, 1 do
                     result.models[#result.models+1] = {
@@ -143,6 +148,8 @@ function data()
             _addTop()
 
             local function _addBottom()
+                local yStart = _getYStart()
+
                 local wallModelId = nil
                 if params.lolloFenceAssets_wallEraPrefix == 1 then
                     wallModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
@@ -150,28 +157,30 @@ function data()
                     wallModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
                 elseif params.lolloFenceAssets_wallEraPrefix == 3 then
                     wallModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
+                else
+                    return
                 end
-                if wallModelId ~= nil then
-                    local xShift, yShift, zRotRad = _getZRotationParameters()
-                    logger.print('_addBottom wall got zRotRad =', 180 / math.pi * zRotRad, ', yShift =', yShift, ', xShift =', xShift)
 
-                    local myTransf = {
-                        1, 0, 0, 0,
-                        0, 1, 0, 0,
-                        0, 0, 1, 0,
-                        0, 0, 1.4, 1
+                local xShift, yShift, zRotRad = _getZRotationParameters()
+                local zShift = _getZShift()
+                logger.print('_addBottom wall got zRotRad =', 180 / math.pi * zRotRad, ', yShift =', yShift, ', xShift =', xShift, ', zShift =', zShift)
+
+                local myTransf = {
+                    1, 0, 0, 0,
+                    0, 1, 0, 0,
+                    0, 0, 1, 0,
+                    0, yStart, 1.4, 1
+                }
+                for i = 1, params.lolloFenceAssets_length + 1, 1 do
+                    result.models[#result.models+1] = {
+                        id = wallModelId,
+                        transf = myTransf
                     }
-                    for i = 1, params.lolloFenceAssets_length + 1, 1 do
-                        result.models[#result.models+1] = {
-                            id = wallModelId,
-                            transf = myTransf
-                        }
-                        myTransf = transfUtils.getTransf_ZRotated_Shifted(
+                    myTransf = transfUtils.getTransf_ZRotated_Shifted(
                         myTransf,
                         zRotRad,
-                        {xShift, yShift, 0}
+                        {xShift, yShift, zShift * xShift}
                     )
-                    end
                 end
             end
             _addBottom()
