@@ -848,4 +848,74 @@ local rightResult = edgeUtils.getNodeBetween( -- this finds a length of 4.99: it
     5.9903
 )
 
+
+local edgeListDodgy = {
+  {
+    catenary = false,
+    edgeId = 29993,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -152.35504150391, 963.31140136719, 32.565147399902, },
+        { 7.1476078033447, -5.4395661354065, -0.51387196779251, },
+      },
+      {
+        { -136.50604248047, 953.66687011719, 31.343250274658, },
+        { 8.0759773254395, -3.9024362564087, -0.70058166980743, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = true,
+    edgeId = 25967,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -136.50604248047, 953.66687011719, 31.343250274658, },
+        { 11.099843978882, -5.3636150360107, -0.96289849281311, },
+      },
+      {
+        { -125.42318725586, 949.15148925781, 30.600067138672, },
+        { 11.679042816162, -3.9456105232239, -0.96654570102692, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+  {
+    catenary = false,
+    edgeId = 22117,
+    era = "era_c_",
+    posTanX2 = {
+      {
+        { -125.42318725586, 949.15148925781, 30.600067138672, },
+        { 4.0173897743225, -1.3572220802307, -0.33247497677803, },
+      },
+      {
+        { -121.37700653076, 947.88439941406, 30.355686187744, },
+        { 4.0733313560486, -1.1787433624268, -0.31803420186043, },
+      },
+    },
+    trackType = 20,
+    trackTypeName = "lollo_freestyle_train_station/era_c_passenger_platform_5m.lua",
+    type = 0,
+    typeIndex = -1,
+    width = 5,
+  },
+}
+local dodgyFineSegments = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
+    edgeListDodgy,
+    1,
+    false,
+    true
+)
+
 local dummy2 = 123

@@ -1418,7 +1418,9 @@ return {
                             )
                             local dz_dl = cpf.posTanX2[2][2][3] - cpf.posTanX2[1][2][3]
                             -- we should divide the following by the fine length, but it is always 1, as set by constants.fineSegmentLength
-                            local xScaleFactor = transfUtils.getPositionsDistance(wallPosTanX2[1][1], wallPosTanX2[2][1])
+                            -- LOLLO TODO this is still glitchy with extreme humps and wide extensions. This is weird.
+                            -- The track walls have no extensions and do not suffer from this.
+                            local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
                                 * (1 + math.abs(dz_dl) * 6) -- account for xy rotations (humps or pits), all roofs are about 5m high, dz_dl can be negative
                             local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             local wallTransf = transfUtilsUG.mul(
@@ -1565,7 +1567,7 @@ return {
                         )
                         local dz_dl = ctf.posTanX2[2][2][3] - ctf.posTanX2[1][2][3]
                         -- we should divide the following by the fine length, but it is always 1, as set by constants.fineSegmentLength
-                        local xScaleFactor = transfUtils.getPositionsDistance(wallPosTanX2[1][1], wallPosTanX2[2][1])
+                        local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
                             * (1 + math.abs(dz_dl) * 6) -- account for xy rotations (humps or pits), all roofs are about 5m high, dz_dl can be negative
                         local wallModelId = ctf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                         local wallTransf = transfUtilsUG.mul(

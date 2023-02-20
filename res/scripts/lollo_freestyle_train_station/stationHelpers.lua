@@ -436,13 +436,15 @@ local helpers = {
             return {}
         end
         if logger.isExtendedLog() then
-            logger.debugPrint(edgeLists[1])
-            logger.debugPrint(edgeLists[2])
-            logger.debugPrint(edgeLists[3])
-            logger.print('...')
-            logger.debugPrint(edgeLists[#edgeLists-2])
-            logger.debugPrint(edgeLists[#edgeLists-1])
-            logger.debugPrint(edgeLists[#edgeLists])
+            -- logger.debugPrint(edgeLists[1])
+            -- logger.debugPrint(edgeLists[2])
+            -- logger.debugPrint(edgeLists[3])
+            -- logger.print('...')
+            -- logger.debugPrint(edgeLists[#edgeLists-2])
+            -- logger.debugPrint(edgeLists[#edgeLists-1])
+            -- logger.debugPrint(edgeLists[#edgeLists])
+            logger.print('########## edgeLists =')
+            logger.debugPrint(edgeLists)
         end
         local firstRefEdge = nil
         local firstRefEdgeLength = 0
@@ -455,7 +457,7 @@ local helpers = {
         for _, _refEdge in pairs(edgeLists) do
             -- These should be identical but they are not quite so, so we average
             -- local _refEdgeLength = (transfUtils.getVectorLength(_refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(_refEdge.posTanX2[2][2])) * 0.5
-            local _refEdgeLength = edgeUtils.getEdgeLength(_refEdge.edgeId)
+            local _refEdgeLength = edgeUtils.getEdgeLength(_refEdge.edgeId, logger.isExtendedLog())
             if firstRefEdge == nil and _refEdgeLength > 0 then
                 firstRefEdge = _refEdge
                 firstRefEdgeLength = _refEdgeLength
@@ -466,7 +468,7 @@ local helpers = {
                 local _firstStep = stepLength - lengthUncovered
                 local _firstStepPercent = _firstStep / _refEdgeLength
                 local _nextStepPercent = stepLength / _refEdgeLength
-                logger.print('_refEdgeLength, firstStepPercent, nextStepPercent =', _refEdgeLength, _firstStepPercent, _nextStepPercent)
+                logger.print('_refEdgeLength, _firstStep, firstStepPercent, nextStepPercent =', _refEdgeLength, _firstStep, _firstStepPercent, _nextStepPercent)
                 if _firstStepPercent < 0 then
                     logger.err('firstStep cannot be < 0; _refEdgeLength, lengthUncovered =', _refEdgeLength, lengthUncovered)
                     return {}
@@ -482,8 +484,8 @@ local helpers = {
                         transfUtils.oneTwoThree2XYZ(_refEdge.posTanX2[1][2]),
                         transfUtils.oneTwoThree2XYZ(_refEdge.posTanX2[2][2]),
                         currentStepPercent,
-                        _refEdgeLength,
-                        logger.isExtendedLog()
+                        _refEdgeLength
+                        -- logger.isExtendedLog()
                     )
                     logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                     if nodeBetween == nil then
@@ -573,6 +575,7 @@ local helpers = {
         end
         -- now we see to the remaining bit, which may have rounding errors: if we can, we force the last result to the original edge end...
         if #results == 0 then -- if the step is longer than the segments, there will be no results
+            logger.print('the step is longer than the segments')
             if firstRefEdge ~= nil and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
                 results = {
                     {

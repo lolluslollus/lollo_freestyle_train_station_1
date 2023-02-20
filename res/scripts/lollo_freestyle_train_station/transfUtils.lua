@@ -593,6 +593,13 @@ utils.getVectorLength = function(xyz)
     return math.sqrt(x * x + y * y + z * z)
 end
 
+utils.getVectorLength_onlyXY = function(xy)
+    if type(xy) ~= 'table' and type(xy) ~= 'userdata' then return nil end
+    local x = xy.x or xy[1] or 0.0
+    local y = xy.y or xy[2] or 0.0
+    return math.sqrt(x * x + y * y)
+end
+
 utils.getVectorNormalised = function(xyz, targetLength)
     if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
     if type(targetLength) == 'number' and targetLength == 0 then return { 0, 0, 0 } end
@@ -640,6 +647,14 @@ utils.getPositionsDistance = function(pos0, pos1)
         (pos0.x or pos0[1]) - (pos1.x or pos1[1]),
         (pos0.y or pos0[2]) - (pos1.y or pos1[2]),
         (pos0.z or pos0[3]) - (pos1.z or pos1[3]),
+    })
+    return distance
+end
+
+utils.getPositionsDistance_onlyXY = function(pos0, pos1)
+    local distance = utils.getVectorLength_onlyXY({
+        (pos0.x or pos0[1]) - (pos1.x or pos1[1]),
+        (pos0.y or pos0[2]) - (pos1.y or pos1[2]),
     })
     return distance
 end
@@ -1138,6 +1153,23 @@ utils.isNumVeryClose = function(num1, num2, significantFigures)
 
         return _isSameSgnNumVeryClose(num1 + addFactor, num2 + addFactor, significantFigures)
     end
+end
+
+utils.isXYVeryClose = function(xy1, xy2, significantFigures)
+    if (type(xy1) ~= 'table' and type(xy1) ~= 'userdata')
+    or (type(xy2) ~= 'table' and type(xy2) ~= 'userdata')
+    then return false end
+
+    local X1 = xy1.x or xy1[1]
+    local Y1 = xy1.y or xy1[2]
+    local X2 = xy2.x or xy2[1]
+    local Y2 = xy2.y or xy2[2]
+
+    if type(X1) ~= 'number' or type(Y1) ~= 'number' then return false end
+    if type(X2) ~= 'number' or type(Y2) ~= 'number' then return false end
+
+    return utils.isNumVeryClose(X1, X2, significantFigures)
+    and utils.isNumVeryClose(Y1, Y2, significantFigures)
 end
 
 utils.isXYZVeryClose = function(xyz1, xyz2, significantFigures)

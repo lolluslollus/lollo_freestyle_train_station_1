@@ -2024,7 +2024,8 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint1Id)
-                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), logger.isExtendedLog())
+                        if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
                             edgeId,
@@ -2042,7 +2043,9 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint2Id)
-                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), logger.isExtendedLog())
+                        if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
+
                         _actions.splitEdgeRemovingObject(
                             edgeId,
                             nodeBetween,
@@ -2060,6 +2063,7 @@ function data()
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint1Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
+                        if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
                             edgeId,
@@ -2078,6 +2082,7 @@ function data()
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint2Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
+                        if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
                             edgeId,
@@ -2122,6 +2127,8 @@ function data()
                             logger.print('edgeId =') logger.debugPrint(edgeId)
                             local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, 0.5)
                             logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                            if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
+
                             _actions.splitEdgeRemovingObject(
                                 edgeId,
                                 nodeBetween,
@@ -2154,6 +2161,8 @@ function data()
                             logger.print('args.splitPlatformNode2Id =') logger.debugPrint(args.splitPlatformNode2Id)
                             logger.print('edgeId =') logger.debugPrint(edgeId)
                             local nodeBetween = edgeUtils.getNodeBetweenByPercentageShift(edgeId, 0.5)
+                            if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
+
                             _actions.splitEdgeRemovingObject(
                                 edgeId,
                                 nodeBetween,
@@ -2240,6 +2249,11 @@ function data()
                                     edgeUtils.getEdgeLength(eventArgs.trackEdgeList[iAcrossMidLength].edgeId, logger.isExtendedLog())
                                 )
                                 logger.print('nodeBetween 2223 =') logger.debugPrint(nodeBetween)
+                                if nodeBetween == nil then
+                                    state.warningText = _('WrongTrack')
+                                    _utils.sendHideProgress()
+                                    return -1, nil, nil
+                                end
                                 -- LOLLO NOTE it seems fixed, but keep checking it:
                                 -- this can screw up the directions. It happens on tracks where slope varies, ie tan0.z ~= tan1.z
                                 -- in these cases, split produces something like:
@@ -2553,6 +2567,8 @@ function data()
                                             logger.isExtendedLog()
                                         )
                                         logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                        if nodeBetween == nil then return end
+
                                         _actions.splitEdgeRemovingObject(
                                             nearestEdgeId,
                                             nodeBetween,
@@ -2576,6 +2592,8 @@ function data()
                                     --     logger.isExtendedLog()
                                     -- )
                                     -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                    -- if nodeBetween == nil then return end
+                                    --
                                     -- _actions.splitEdgeRemovingObject(
                                     --     nearestEdgeId,
                                     --     nodeBetween,

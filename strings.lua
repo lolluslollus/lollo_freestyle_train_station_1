@@ -375,6 +375,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with the track splitter if you need to get close. The platform heads will connect automatically if they are closer than 7 metres",
 			["WaypointsTooFar"] = "Too far from its twin",
 			["WaypointsWrong"] = "Place two markers on the same platform and two on the same track",
+			["WrongTrack"] = "The track and / or platform is too irregular, lay it again cleanly.",
 
 			-- free open stairs and free lifts
 			["BaseMode"] = "Base Mode",
@@ -817,6 +818,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["WaypointsTooCloseToStation"] = "Zu nahe an einem bestehenden Bahnhof oder Depot. Schneiden Sie das Gleis mit dem Gleisteiler, wenn Sie näher herankommen müssen. Die Bahnsteigköpfe verbinden sich automatisch, wenn sie näher als 7 Meter sind",
 			["WaypointsTooFar"] = "Zu weit von seinem Zwilling entfernt",
 			["WaypointsWrong"] = "Platziere zwei Marker auf demselben Bahnsteig und zwei auf demselben Gleis",
+			["WrongTrack"] = "Bahnsteig und / oder Gleis sind zu dreckig, verlegen Sie sie neu.",
 
 			-- lose offene Treppen und lose Aufzüge
 			["BaseMode"] = "Basismodus",
