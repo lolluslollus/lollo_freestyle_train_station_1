@@ -309,6 +309,33 @@ local utils = {
             transf[13], transf[14], transf[15], transf[16]
         }
     end,
+    getTransf_XSkewedOnZ = function(transf, skew)
+        local m2 = {
+            1, 0, skew, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1,
+        }
+
+        return {
+            transf[1]  + transf[9]  * skew,
+            transf[2]  + transf[10] * skew,
+            transf[3]  + transf[11] * skew,
+            transf[4]  + transf[12] * skew,
+            transf[5],
+            transf[6],
+            transf[7],
+            transf[8],
+            transf[9],
+            transf[10],
+            transf[11],
+            transf[12],
+            transf[13],
+            transf[14],
+            transf[15],
+            transf[16],
+        }
+    end,
 --#endregion faster than mul()
 }
 

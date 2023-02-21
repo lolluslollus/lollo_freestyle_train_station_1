@@ -276,20 +276,20 @@ privateFuncs.deco = {
         local sinZ = (outerPos[2] - innerPos[2]) / lengthAcross
         local cosZ = (outerPos[1] - innerPos[1]) / lengthAcross
 
-        local sinX, cosX
-        if isVertical then
-            sinX, cosX = 0, 1
-        else
-            local cpfPos1, cpfPos2 = cpf.posTanX2[1][1], cpf.posTanX2[2][1]
-            sinX = cpfPos2[3] - cpfPos1[3]
-            cosX = math.sqrt((cpfPos2[1] - cpfPos1[1]) * (cpfPos2[1] - cpfPos1[1]) + (cpfPos2[2] - cpfPos1[2]) * (cpfPos2[2] - cpfPos1[2]))
-            local lengthX = math.sqrt(sinX * sinX + cosX * cosX)
-            sinX, cosX = sinX / lengthX, cosX / lengthX
+        local sinX, cosX = 0, 1
+        -- if isVertical then
+        --     sinX, cosX = 0, 1
+        -- else
+        --     local cpfPos1, cpfPos2 = cpf.posTanX2[1][1], cpf.posTanX2[2][1]
+        --     sinX = cpfPos2[3] - cpfPos1[3]
+        --     cosX = math.sqrt((cpfPos2[1] - cpfPos1[1]) * (cpfPos2[1] - cpfPos1[1]) + (cpfPos2[2] - cpfPos1[2]) * (cpfPos2[2] - cpfPos1[2]))
+        --     local lengthX = math.sqrt(sinX * sinX + cosX * cosX)
+        --     sinX, cosX = sinX / lengthX, cosX / lengthX
 
-            if isLowIEnd then
-                sinX = -sinX -- invert
-            end
-        end
+        --     if isLowIEnd then
+        --         sinX = -sinX -- invert
+        --     end
+        -- end
         -- logger.print('sinX, cosX =', sinX, cosX)
 
         local flipShiftTiltTransf = (isLowIEnd == isTrackOnPlatformLeft)
@@ -1371,9 +1371,6 @@ return {
             local _laneZ = result.laneZs[nTerminal]
 
             local _isVertical = (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0)
-            local _wallTransfFunc = _isVertical
-                and privateFuncs.getPlatformObjectTransf_AlwaysVertical
-                or privateFuncs.getPlatformObjectTransf_WithYRotation
 
             local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
@@ -1425,30 +1422,12 @@ return {
                             --     (_isTrackOnPlatformLeft and -widthAboveNil or widthAboveNil)
                             -- )
 
-                            -- logger.print('<<<<< ii, leadingIndex =', ii, leadingIndex)
-                            -- print('wallPosTanX2 =') debugPrint(wallPosTanX2)
-                            -- print('xRatio = ', xRatio)
                             -- we should divide the following by the models length, but it is always 1, as set in the meshes
                             local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
-                            -- local xScaleFactor = xRatio * yRatio
-                            -- logger.print('xScaleFactor =', xScaleFactor)
-                            if not(_isVertical) then
-            -- LOLLO TODO this is still glitchy with extreme humps, but only with extensions. This is weird.
-            -- The track walls have no extensions and do not suffer from this.
-            -- The problem does not happen with vertical walls.
-            -- The only elegant way out is a skew transformation.
-                                local dz_dl = wallPosTanX2[2][2][3] - wallPosTanX2[1][2][3]
-                                if dz_dl < 0 then -- raise with humps (or the top will be too short), do nothing with pits (or the base will be too short)
-                                    -- logger.print('dz_dl =', dz_dl)
-                                    xScaleFactor = xScaleFactor * (1 - dz_dl * 8) -- account for xy rotations (humps or pits), all roofs are about 5m high, dz_dl can be negative
-                                    -- logger.print('xScaleFactor =', xScaleFactor)
-                                end
-                            end
-                            -- logger.print('>>>>')
 
                             local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             local wallTransf = transfUtilsUG.mul(
-                                _wallTransfFunc(wallPosTanX2),
+                                privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                                 {
                                     _transfXZoom * xScaleFactor, 0, 0, 0,
                                     0, _transfYZoom, 0, 0,
@@ -1456,6 +1435,11 @@ return {
                                     0, 0, _laneZ, 1
                                 }
                             )
+                            if not(_isVertical) then
+                                local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
+                                if _isTrackOnPlatformLeft then skew = -skew end
+                                wallTransf = transfUtils.getTransf_XSkewedOnZ(wallTransf, skew)
+                            end
                             result.models[#result.models+1] = {
                                 id = wallModelId,
                                 transf = wallTransf,
@@ -1569,9 +1553,6 @@ return {
             local laneZ = result.laneZs[nTerminal]
 
             local _isVertical = (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0)
-            local _wallTransfFunc = _isVertical
-                and privateFuncs.getPlatformObjectTransf_AlwaysVertical
-                or privateFuncs.getPlatformObjectTransf_WithYRotation
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
@@ -1597,17 +1578,11 @@ return {
                             ctf.posTanX2,
                             (isTrackOnPlatformLeft and widthAboveNil or -widthAboveNil)
                         )
-                        -- we should divide the following by the fine length, but it is always 1, as set by constants.fineSegmentLength
+                        -- we should divide the following by the models length, but it is always 1, as set in the mesh
                         local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
-                        if not(_isVertical) then
-                            local dz_dl = wallPosTanX2[2][2][3] - wallPosTanX2[1][2][3]
-                            if dz_dl < 0 then -- raise with humps (or the top will be too short), do nothing with pits (or the base will be too short)
-                                xScaleFactor = xScaleFactor * (1 - dz_dl * 5) -- account for xy rotations (humps or pits), all roofs are about 5m high, dz_dl can be negative
-                            end
-                        end
                         local wallModelId = ctf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                         local wallTransf = transfUtilsUG.mul(
-                            _wallTransfFunc(wallPosTanX2),
+                            privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                             {
                                 transfXZoom * xScaleFactor, 0, 0, 0,
                                 0, transfYZoom, 0, 0,
@@ -1615,6 +1590,11 @@ return {
                                 0, 0, laneZ, 1
                             }
                         )
+                        if not(_isVertical) then
+                            local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
+                            if not(isTrackOnPlatformLeft) then skew = -skew end
+                            wallTransf = transfUtils.getTransf_XSkewedOnZ(wallTransf, skew)
+                        end
                         result.models[#result.models+1] = {
                             id = wallModelId,
                             transf = wallTransf,
