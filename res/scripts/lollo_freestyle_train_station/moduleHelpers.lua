@@ -122,10 +122,10 @@ local privateFuncs = {
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
-        local sinZ = (pos2[2] - pos1[2]) -- / lengthAcross
-        local cosZ = (pos2[1] - pos1[1]) -- / lengthAcross
-        local length = math.sqrt(sinZ * sinZ + cosZ * cosZ)
-        sinZ, cosZ = sinZ / length, cosZ / length
+        local sinZ = pos2[2] - pos1[2]
+        local cosZ = pos2[1] - pos1[1]
+        local _lengthZ = math.sqrt(sinZ * sinZ + cosZ * cosZ)
+        sinZ, cosZ = sinZ / _lengthZ, cosZ / _lengthZ
 
         return {
             cosZ, sinZ, 0, 0,
@@ -1402,6 +1402,7 @@ return {
                 return cpf.width * 0.5 + slopedAreaWidth, slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
             end
             local _iiMax = #params.terminals[nTerminal].centrePlatformsFineRelative
+            -- logger.print('############')
             for ii = 1, _iiMax, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
@@ -1412,16 +1413,39 @@ return {
                         -- no stations in this fine segment
                         if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
                             local widthAboveNil, slopedAreaWidth = _getWidthAbove_0m_BarePlatformWidth(cpf)
+                            -- this would help if I take cpf.posTanX2, but then I'd get some ugly steps.
+                            -- local yShift = _isTrackOnPlatformLeft and -cpf.width * 0.5 - slopedAreaWidth or cpf.width * 0.5 + slopedAreaWidth
+
                             local wallPosTanX2 = transfUtils.getParallelSidewaysCoarse(
                                 cpf.posTanX2,
                                 (_isTrackOnPlatformLeft and -widthAboveNil or widthAboveNil)
                             )
-                            local dz_dl = cpf.posTanX2[2][2][3] - cpf.posTanX2[1][2][3]
-                            -- we should divide the following by the fine length, but it is always 1, as set by constants.fineSegmentLength
-                            -- LOLLO TODO this is still glitchy with extreme humps and wide extensions. This is weird.
-                            -- The track walls have no extensions and do not suffer from this.
+                            -- local wallPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
+                            --     cpf.posTanX2,
+                            --     (_isTrackOnPlatformLeft and -widthAboveNil or widthAboveNil)
+                            -- )
+
+                            -- logger.print('<<<<< ii, leadingIndex =', ii, leadingIndex)
+                            -- print('wallPosTanX2 =') debugPrint(wallPosTanX2)
+                            -- print('xRatio = ', xRatio)
+                            -- we should divide the following by the models length, but it is always 1, as set in the meshes
                             local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
-                                * (1 + math.abs(dz_dl) * 6) -- account for xy rotations (humps or pits), all roofs are about 5m high, dz_dl can be negative
+                            -- local xScaleFactor = xRatio * yRatio
+                            -- logger.print('xScaleFactor =', xScaleFactor)
+                            if not(_isVertical) then
+            -- LOLLO TODO this is still glitchy with extreme humps, but only with extensions. This is weird.
+            -- The track walls have no extensions and do not suffer from this.
+            -- The problem does not happen with vertical walls.
+            -- The only elegant way out is a skew transformation.
+                                local dz_dl = wallPosTanX2[2][2][3] - wallPosTanX2[1][2][3]
+                                if dz_dl < 0 then -- raise with humps (or the top will be too short), do nothing with pits (or the base will be too short)
+                                    -- logger.print('dz_dl =', dz_dl)
+                                    xScaleFactor = xScaleFactor * (1 - dz_dl * 8) -- account for xy rotations (humps or pits), all roofs are about 5m high, dz_dl can be negative
+                                    -- logger.print('xScaleFactor =', xScaleFactor)
+                                end
+                            end
+                            -- logger.print('>>>>')
+
                             local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             local wallTransf = transfUtilsUG.mul(
                                 _wallTransfFunc(wallPosTanX2),
@@ -1437,6 +1461,13 @@ return {
                                 transf = wallTransf,
                                 tag = tag
                             }
+                            -- if ii % 4 == 0 then
+                            --     result.models[#result.models+1] = {
+                            --         id = 'lollo_freestyle_train_station/icon/blue.mdl',
+                            --         transf = wallTransf,
+                            --         tag = tag
+                            --     }
+                            -- end
 
                             -- add pillars
                             if cpf.type ~= 2
@@ -1537,9 +1568,10 @@ return {
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
             local laneZ = result.laneZs[nTerminal]
 
-            local _wallTransfFunc = privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) == 0
-                and privateFuncs.getPlatformObjectTransf_WithYRotation
-                or privateFuncs.getPlatformObjectTransf_AlwaysVertical
+            local _isVertical = (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0)
+            local _wallTransfFunc = _isVertical
+                and privateFuncs.getPlatformObjectTransf_AlwaysVertical
+                or privateFuncs.getPlatformObjectTransf_WithYRotation
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
@@ -1565,10 +1597,14 @@ return {
                             ctf.posTanX2,
                             (isTrackOnPlatformLeft and widthAboveNil or -widthAboveNil)
                         )
-                        local dz_dl = ctf.posTanX2[2][2][3] - ctf.posTanX2[1][2][3]
                         -- we should divide the following by the fine length, but it is always 1, as set by constants.fineSegmentLength
                         local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
-                            * (1 + math.abs(dz_dl) * 6) -- account for xy rotations (humps or pits), all roofs are about 5m high, dz_dl can be negative
+                        if not(_isVertical) then
+                            local dz_dl = wallPosTanX2[2][2][3] - wallPosTanX2[1][2][3]
+                            if dz_dl < 0 then -- raise with humps (or the top will be too short), do nothing with pits (or the base will be too short)
+                                xScaleFactor = xScaleFactor * (1 - dz_dl * 5) -- account for xy rotations (humps or pits), all roofs are about 5m high, dz_dl can be negative
+                            end
+                        end
                         local wallModelId = ctf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                         local wallTransf = transfUtilsUG.mul(
                             _wallTransfFunc(wallPosTanX2),

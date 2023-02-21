@@ -273,6 +273,42 @@ local utils = {
             transf[4] * x + transf[8] * y + transf[12] * z + transf[16],
         }
     end,
+    getTransf_XScaled = function(transf, scale)
+        return {
+            transf[1] * scale, transf[2] * scale, transf[3] * scale, transf[4] * scale,
+            transf[5], transf[6], transf[7], transf[8],
+            transf[9], transf[10], transf[11], transf[12],
+            transf[13], transf[14], transf[15], transf[16]
+        }
+    end,
+    getTransf_YScaled = function(transf, scale)
+        return {
+            transf[1], transf[2], transf[3], transf[4],
+            transf[5] * scale, transf[6] * scale, transf[7] * scale, transf[8] * scale,
+            transf[9], transf[10], transf[11], transf[12],
+            transf[13], transf[14], transf[15], transf[16]
+        }
+    end,
+    getTransf_ZScaled = function(transf, scale)
+        return {
+            transf[1], transf[2], transf[3], transf[4],
+            transf[5], transf[6], transf[7], transf[8],
+            transf[9] * scale, transf[10] * scale, transf[11] * scale, transf[12] * scale,
+            transf[13], transf[14], transf[15], transf[16]
+        }
+    end,
+    getTransf_Scaled = function(transf, scales123)
+        if type(transf) ~= 'table' then return transf end
+        local x, y, z = 1, 1, 1
+        if type(scales123) == 'table' then x, y, z = table.unpack(scales123) end
+
+        return {
+            transf[1] * x, transf[2] * x, transf[3] * x, transf[4] * x,
+            transf[5] * y, transf[6] * y, transf[7] * y, transf[8] * y,
+            transf[9] * z, transf[10] * z, transf[11] * z, transf[12] * z,
+            transf[13], transf[14], transf[15], transf[16]
+        }
+    end,
 --#endregion faster than mul()
 }
 
@@ -747,8 +783,11 @@ utils.getParallelSidewaysOLD = function(posTanX2, sideShift)
     return result
 end
 
--- the result will be parallel to the original at its ends but stretched or compressed due to the shift.
--- tan changes are ignored for speed.
+---the result will be parallel to the original at its ends but stretched or compressed due to the shift; tan changes are ignored for speed.
+---do not use this for edges
+---@param posTanX2 table
+---@param sideShift number
+---@return table
 utils.getParallelSidewaysCoarse = function(posTanX2, sideShift)
     local _oldPos1 = posTanX2[1][1]
     local _oldPos2 = posTanX2[2][1]
@@ -766,23 +805,35 @@ utils.getParallelSidewaysCoarse = function(posTanX2, sideShift)
     sinZ1, cosZ1 = sinZ1 / _lengthZ1, cosZ1 / _lengthZ1
     local _lengthZ2 = math.sqrt(sinZ2 * sinZ2 + cosZ2 * cosZ2)
     sinZ2, cosZ2 = sinZ2 / _lengthZ2, cosZ2 / _lengthZ2
-
     local _newPos1 = { _oldPos1[1] + sinZ1 * sideShift, _oldPos1[2] + cosZ1 * sideShift, _oldPos1[3] }
     local _newPos2 = { _oldPos2[1] + sinZ2 * sideShift, _oldPos2[2] + cosZ2 * sideShift, _oldPos2[3] }
 
     return {
         {
             _newPos1,
-            posTanX2[1][2],
+            {
+                posTanX2[1][2][1],
+                posTanX2[1][2][2],
+                posTanX2[1][2][3],
+            }
         },
         {
             _newPos2,
-            posTanX2[2][2],
+            {
+                posTanX2[2][2][1],
+                posTanX2[2][2][2],
+                posTanX2[2][2][3],
+            }
         },
     }
 end
 
--- the result will be parallel to the original at its ends but stretched or compressed due to the shift.
+---the result will be parallel to the original at its ends but stretched or compressed due to the shift.
+---@param posTanX2 table
+---@param sideShift number
+---@return table
+---@return number
+---@return number
 utils.getParallelSideways = function(posTanX2, sideShift)
     local _oldPos1 = posTanX2[1][1]
     local _oldPos2 = posTanX2[2][1]
@@ -807,6 +858,7 @@ utils.getParallelSideways = function(posTanX2, sideShift)
     local xRatio = (_oldPos2[1] ~= _oldPos1[1]) and math.abs((_newPos2[1] - _newPos1[1]) / (_oldPos2[1] - _oldPos1[1])) or nil
     local yRatio = (_oldPos2[2] ~= _oldPos1[2]) and math.abs((_newPos2[2] - _newPos1[2]) / (_oldPos2[2] - _oldPos1[2])) or nil
     if not(xRatio) or not(yRatio) then xRatio, yRatio = 1, 1 end -- vertical or horizontal posTanX2
+
     local _newTan1 = { posTanX2[1][2][1] * xRatio, posTanX2[1][2][2] * yRatio, posTanX2[1][2][3] }
     local _newTan2 = { posTanX2[2][2][1] * xRatio, posTanX2[2][2][2] * yRatio, posTanX2[2][2][3] }
 

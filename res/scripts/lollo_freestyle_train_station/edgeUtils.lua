@@ -291,9 +291,11 @@ helper.getEdgeLength = function(edgeId, isExtendedLog)
     end
 
     return math.max(resultWithBaseEdge, resultWithTN) -- LOLLO TODO this looks like a good estimator but I wouldn't bet the farm on it
-    -- I'd still look for a better algo, based on the normalised tans.
     -- The crux is, these tans are not always perfect.
-    -- There may be something to the tune of "length of hermite curve" or so.
+    -- The game algo, which is the same as the TRANSPORT_NETWORK, is not very good.
+    -- I'd still look for a better algo, based on the normalised tans;
+    -- but we'd need to know more if we don't know the tans accurately,
+    -- for example a third point.
 --[[
     local tansLength = _getEdgeLength_WithTans(edgeId, isExtendedLog) or 0
     local tNLength = _getEdgeLength_WithTN(edgeId, isExtendedLog) or 0
