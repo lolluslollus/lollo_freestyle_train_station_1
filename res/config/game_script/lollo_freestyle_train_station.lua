@@ -981,19 +981,27 @@ local _actions = {
 
         if not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)) and not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node1.position)) then
             logger.err('splitEdge cannot find the nodes')
+            return
         end
 
-        local isNodeBetweenOrientatedLikeMyEdge = edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)
-        logger.print('isNodeBetweenOrientatedLikeMyEdge =', isNodeBetweenOrientatedLikeMyEdge)
-        local distance0 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance0 or nodeBetween.refDistance1
-        local distance1 = isNodeBetweenOrientatedLikeMyEdge and nodeBetween.refDistance1 or nodeBetween.refDistance0
+        -- LOLLO TODO check this thoroughly, particularly with splits near track ends: it's new
+        if edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position) then
+            logger.print('nodeBetween is orientated like my edge')
+        else
+            logger.print('nodeBetween is not orientated like my edge')
+            nodeBetween.refDistance0, nodeBetween.refDistance1 = nodeBetween.refDistance1, nodeBetween.refDistance0
+            nodeBetween.refPosition0, nodeBetween.refPosition1 = nodeBetween.refPosition1, nodeBetween.refPosition0
+            nodeBetween.refTangent0, nodeBetween.refTangent1 = nodeBetween.refTangent1, nodeBetween.refTangent0
+            nodeBetween.tangent = transfUtils.getVectorMultiplied(nodeBetween.tangent, -1)
+        end
+        local distance0 = nodeBetween.refDistance0
+        local distance1 = nodeBetween.refDistance1
         logger.print('distance0 =') logger.debugPrint(distance0)
         logger.print('distance1 =') logger.debugPrint(distance1)
         local isNode0EndOfLine = #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node0})) == 1
         local isNode1EndOfLine = #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node1})) == 1
         logger.print('isNode0EndOfLine =') logger.debugPrint(isNode0EndOfLine)
         logger.print('isNode1EndOfLine =') logger.debugPrint(isNode1EndOfLine)
-        local tanSign = isNodeBetweenOrientatedLikeMyEdge and 1 or -1
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -1035,16 +1043,15 @@ local _actions = {
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(successEventArgs)
                         if not(stringUtils.isNullOrEmptyString(newArgName)) then
                             local splitNodeId = -1
-                            if reasonForNotSplitting == 1 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8one')
-                            elseif reasonForNotSplitting == 2 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8two')
+                            if reasonForNotSplitting == 1 then splitNodeId = oldBaseEdge.node0 logger.print('8one')
+                            elseif reasonForNotSplitting == 2 then splitNodeId = oldBaseEdge.node1 logger.print('8two')
                             elseif reasonForNotSplitting == 3 then splitNodeId = oldBaseEdge.node0 logger.print('8three')
                             elseif reasonForNotSplitting == 4 then splitNodeId = oldBaseEdge.node1 logger.print('8four')
-                            elseif reasonForNotSplitting == 5 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node0 or oldBaseEdge.node1 logger.print('8five')
-                            elseif reasonForNotSplitting == 6 then splitNodeId = isNodeBetweenOrientatedLikeMyEdge and oldBaseEdge.node1 or oldBaseEdge.node0 logger.print('8six')
+                            elseif reasonForNotSplitting == 5 then splitNodeId = oldBaseEdge.node0 logger.print('8five')
+                            elseif reasonForNotSplitting == 6 then splitNodeId = oldBaseEdge.node1 logger.print('8six')
                             else
                                 logger.err('impossible condition, distance0 =') logger.errorDebugPrint(distance0)
                                 logger.err('distance1 =') logger.errorDebugPrint(distance1)
-                                logger.err('isNodeBetweenOrientatedLikeMyEdge =') logger.errorDebugPrint(isNodeBetweenOrientatedLikeMyEdge)
                             end
                             logger.print('splitEdgeRemovingObject is about to raise its event with splitNodeId =', splitNodeId or 'NIL')
                             eventArgs[newArgName] = splitNodeId
@@ -1061,8 +1068,8 @@ local _actions = {
             return
         end
 
-        local oldTan0Length = isNodeBetweenOrientatedLikeMyEdge and transfUtils.getVectorLength(oldBaseEdge.tangent0) or transfUtils.getVectorLength(oldBaseEdge.tangent1)
-        local oldTan1Length = isNodeBetweenOrientatedLikeMyEdge and transfUtils.getVectorLength(oldBaseEdge.tangent1) or transfUtils.getVectorLength(oldBaseEdge.tangent0)
+        local oldTan0Length = transfUtils.getVectorLength(oldBaseEdge.tangent0)
+        local oldTan1Length = transfUtils.getVectorLength(oldBaseEdge.tangent1)
         -- logger.print('oldTan0Length =') logger.debugPrint(oldTan0Length)
         -- logger.print('oldTan1Length =') logger.debugPrint(oldTan1Length)
 
@@ -1085,9 +1092,9 @@ local _actions = {
             oldBaseEdge.tangent0.z * distance0 / oldTan0Length
         )
         newEdge0.comp.tangent1 = api.type.Vec3f.new(
-            nodeBetween.tangent.x * distance0 * tanSign,
-            nodeBetween.tangent.y * distance0 * tanSign,
-            nodeBetween.tangent.z * distance0 * tanSign
+            nodeBetween.tangent.x * distance0,
+            nodeBetween.tangent.y * distance0,
+            nodeBetween.tangent.z * distance0
         )
         newEdge0.comp.type = oldBaseEdge.type -- respect bridge or tunnel
         newEdge0.comp.typeIndex = oldBaseEdge.typeIndex -- respect bridge or tunnel type
@@ -1100,9 +1107,9 @@ local _actions = {
         newEdge1.comp.node0 = -3
         newEdge1.comp.node1 = oldBaseEdge.node1
         newEdge1.comp.tangent0 = api.type.Vec3f.new(
-            nodeBetween.tangent.x * distance1 * tanSign,
-            nodeBetween.tangent.y * distance1 * tanSign,
-            nodeBetween.tangent.z * distance1 * tanSign
+            nodeBetween.tangent.x * distance1,
+            nodeBetween.tangent.y * distance1,
+            nodeBetween.tangent.z * distance1
         )
         newEdge1.comp.tangent1 = api.type.Vec3f.new(
             oldBaseEdge.tangent1.x * distance1 / oldTan1Length,
