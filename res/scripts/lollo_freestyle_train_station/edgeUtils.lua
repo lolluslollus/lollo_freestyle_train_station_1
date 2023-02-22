@@ -1,5 +1,4 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
-local matrixUtils = require('lollo_freestyle_train_station.matrix')
 local quadrangleUtils = require('lollo_freestyle_train_station.quadrangleUtils')
 -- local streetutil = require('streetutil')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
