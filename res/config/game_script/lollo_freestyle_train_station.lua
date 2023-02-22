@@ -2194,6 +2194,7 @@ function data()
                                 -- these should be identical, but they are not really so, so we average them
                                 -- local length = (transfUtils.getVectorLength(tel.posTanX2[1][2]) + transfUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
                                 local length = edgeUtils.getEdgeLength(tel.edgeId, logger.isExtendedLog())
+                                if not(length) then return -1, nil, nil end
                                 trackLengths[i] = length
                                 totalLength = totalLength + length
                             end

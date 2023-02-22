@@ -411,7 +411,7 @@ local _getEdgeLength_Track = function(edgeId, isExtendedLog, baseEdge, tn)
 end
 
 ---@param edgeId integer
----@param isExtendedLog boolean
+---@param isExtendedLog? boolean
 ---@return number|nil "edge length"
 ---@return boolean "can use the result"
 ---@return boolean "the result is accurate"

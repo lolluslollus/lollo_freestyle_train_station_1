@@ -257,7 +257,7 @@ local helpers = {
         for _, refEdge in pairs(edgeLists) do
             leadingIndex = leadingIndex + 1
             -- local edgeLength = (transfUtils.getVectorLength(refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(refEdge.posTanX2[2][2])) * 0.5
-            local edgeLength = edgeUtils.getEdgeLength(refEdge.edgeId)
+            local edgeLength, isEdgeLengthUsable, isEdgeLengthAccurate = edgeUtils.getEdgeLength(refEdge.edgeId)
             -- logger.print('edgeLength =') logger.debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
             -- logger.print('nModelsInEdge =') logger.debugPrint(nModelsInEdge)
@@ -457,7 +457,7 @@ local helpers = {
         for _, _refEdge in pairs(edgeLists) do
             -- These should be identical but they are not quite so, so we average
             -- local _refEdgeLength = (transfUtils.getVectorLength(_refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(_refEdge.posTanX2[2][2])) * 0.5
-            local _refEdgeLength = edgeUtils.getEdgeLength(_refEdge.edgeId, logger.isExtendedLog())
+            local _refEdgeLength, isUsable, isAccurate = edgeUtils.getEdgeLength(_refEdge.edgeId, logger.isExtendedLog())
             if _refEdgeLength == nil then
                 logger.err('getCentralEdgePositions_OnlyOuterBounds could not find length of edge ' .. (_refEdge.edgeId or 'NIL') .. ', leaving')
                 return {}
