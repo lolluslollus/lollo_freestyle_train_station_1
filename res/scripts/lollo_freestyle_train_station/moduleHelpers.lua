@@ -118,7 +118,7 @@ local privateFuncs = {
         return math.fmod(nTrackEdge, 3) == 1
     end,
     getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
-        -- print('getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =') debugPrint(posTanX2)
+        -- logger.print('getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =') logger.debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -135,7 +135,7 @@ local privateFuncs = {
         }
     end,
     getPlatformObjectTransf_WithYRotationOLD = function(posTanX2) --, angleYFactor)
-        -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
+        -- logger.print('_getUnderpassTransfWithYRotation starting, posTanX2 =') logger.debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -166,7 +166,7 @@ local privateFuncs = {
         -- return transfUtilsUG.mul(transfY, transfZ) -- NO!
     end,
     getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
-        -- print('_getUnderpassTransfWithYRotation starting, posTanX2 =') debugPrint(posTanX2)
+        -- logger.print('_getUnderpassTransfWithYRotation starting, posTanX2 =') logger.debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -819,13 +819,13 @@ privateFuncs.slopedAreas = {
             {x2, y2, 0},
             {xM, yM, 0}
         )
-        -- print('segmentHunch =', segmentHunch)
+        -- logger.print('segmentHunch =', segmentHunch)
     
         -- local segmentLength = transfUtils.getPositionsDistance(
         --     centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
         --     centrePlatforms[nTrackEdge + 1].posTanX2[1][1]
         -- )
-        -- print('segmentLength =', segmentLength)
+        -- logger.print('segmentLength =', segmentLength)
         -- if segmentHunch / segmentLength < privateConstants.slopedAreas.hunchLengthRatioToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
         if segmentHunch < privateConstants.slopedAreasOLD.hunchToClaimBend then return privateConstants.slopedAreasOLD.innerDegrees.neutral end
     
@@ -845,7 +845,7 @@ privateFuncs.slopedAreas = {
         local innerSign = transfUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
     
         if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
-        -- print('terminal', nTerminal, 'innerSign =', innerSign)
+        -- logger.print('terminal', nTerminal, 'innerSign =', innerSign)
         return innerSign
     end,
     _getSlopedAreaTweakFactorsOLD = function(innerDegree, areaWidth)
@@ -906,8 +906,8 @@ privateFuncs.slopedAreas = {
                 xScaleFactor = 1.25
             end
         end
-        -- print('xScaleFactor =', xScaleFactor)
-        -- print('angleYFactor =', angleYFactor)
+        -- logger.print('xScaleFactor =', xScaleFactor)
+        -- logger.print('angleYFactor =', angleYFactor)
     
         return waitingAreaScaleFactor, xScaleFactor
     end,
@@ -915,7 +915,7 @@ privateFuncs.slopedAreas = {
         return cpf.type == 0 or (cpf.type == 1 and areaWidth <= 2.5)
     end,
     doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
-        -- print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
+        -- logger.print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
         local terrainCoordinates = {}
 
         local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
@@ -947,7 +947,7 @@ privateFuncs.slopedAreas = {
                 end
             end
         end
-        -- print('terrainCoordinates =') debugPrint(terrainCoordinates)
+        -- logger.print('terrainCoordinates =') logger.debugPrint(terrainCoordinates)
 
         local faces = {}
         local deltaZ = result.laneZs[nTerminal] -constants.stairsAndRampHeight
@@ -1075,8 +1075,7 @@ return {
             raisedFace[i] = face[i]
             raisedFace[i][3] = raisedFace[i][3] + raiseBy
         end
-        -- print('LOLLO raisedFaces =')
-        -- debugPrint(raisedFace)
+        -- logger.print('LOLLO raisedFaces =') logger.debugPrint(raisedFace)
         return {
             faces = {raisedFace},
             optional = true,
@@ -1086,7 +1085,7 @@ return {
         }
     end,
     getTerminalDecoTransf = function(posTanX2)
-        -- print('getTerminalDecoTransf starting, posTanX2 =') debugPrint(posTanX2)
+        -- logger.print('getTerminalDecoTransf starting, posTanX2 =') logger.debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -1392,7 +1391,7 @@ return {
             for i = _i1, _iMax + 1, 1 do -- look ahead one more bit because of the shift
                 isFreeFromFlatAreas[i] = not(result.getOccupiedInfo4FlatAreas(nTerminal, i))
             end
-            -- print('*** isFreeFromFlatAreas =') debugPrint(isFreeFromFlatAreas)
+            -- logger.print('*** isFreeFromFlatAreas =') logger.debugPrint(isFreeFromFlatAreas)
             local _getWidthAbove_0m_BarePlatformWidth = function(cpf)
                 local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, cpf.leadingIndex).width
                 if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
@@ -1417,10 +1416,6 @@ return {
                                 cpf.posTanX2,
                                 (_isTrackOnPlatformLeft and -widthAboveNil or widthAboveNil)
                             )
-                            -- local wallPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
-                            --     cpf.posTanX2,
-                            --     (_isTrackOnPlatformLeft and -widthAboveNil or widthAboveNil)
-                            -- )
 
                             -- we should divide the following by the models length, but it is always 1, as set in the meshes
                             local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
@@ -1612,7 +1607,7 @@ return {
     },
     edges = {
         addEdges = function(result, tag, params, t)
-            -- logger.print('moduleHelpers.edges.addEdges starting for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
+            -- logger.print('moduleHelpers.edges.addEdges starting for terminal', t, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
     
             local nNodesInTerminalSoFar = privateFuncs.edges._getNNodesInTerminalsSoFar(params, t)
     
@@ -1631,7 +1626,7 @@ return {
             privateFuncs.edges._addPlatformEdges(result, tag2nodes, params, t)
             privateFuncs.edges._addTrackEdges(result, tag2nodes, params, t)
     
-            -- print('moduleHelpers.edges.addEdges ending for terminal', t, ', result.edgeLists =') debugPrint(result.edgeLists)
+            -- logger.print('moduleHelpers.edges.addEdges ending for terminal', t, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
         end,
     },
     extraStationCapacity = {
@@ -2256,13 +2251,11 @@ return {
                     isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix,
                     cpfM1.leadingIndex, cpf.leadingIndex, cpfP1.leadingIndex
                 )
--- LOLLO NOTE platforms and sloped areas look wrong on humps: they are full of cuts
+-- LOLLO NOTE platforms and sloped areas used to look wrong on humps: they were full of cuts.
 -- The trouble is, edges on humps have the wrong tangents (too short)
 -- Possibly, something in the handler of TRACK_BULLDOZE_REQUESTED screws up;
--- or it is a game error. However, it is difficult to reproduce after the latest smoothing out.
--- Whatever the cause is, this confuses getNodeBetween, which now relies on an api to get the edge length.
--- LOLLO TODO it needs testing though.
--- see scratch4 for details
+-- or it is a game error. However, it is hard to reproduce.
+-- Whatever the cause is, this confused getNodeBetween, which now relies on an api to get the edge length.
                 result.models[#result.models+1] = {
                     id = myModelId,
                     slotId = slotId,
@@ -2327,7 +2320,7 @@ return {
                     if isCanBuild then
                         local platformWidth = cpf.width
                         -- LOLLO TODO MAYBE check the following, it may need updating - but it is good so far.
-                        -- There can be a small glitch with humps.
+                        -- There can be a small glitch with humps but nothing much.
                         local centreAreaPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
                             cpf.posTanX2,
                             (_isTrackOnPlatformLeft and (-areaWidth -platformWidth) or (areaWidth + platformWidth)) * 0.5
@@ -2342,12 +2335,7 @@ return {
                             --     myTransf,
                             --     { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
                             -- ),
-                            transf = {
-                                myTransf[1] * xScaleFactor, myTransf[2] * xScaleFactor, myTransf[3] * xScaleFactor, myTransf[4] * xScaleFactor,
-                                myTransf[5], myTransf[6], myTransf[7], myTransf[8],
-                                myTransf[9], myTransf[10], myTransf[11], myTransf[12],
-                                myTransf[13], myTransf[14], myTransf[15], myTransf[16],
-                            },
+                            transf = transfUtils.getTransf_XScaled(myTransf, xScaleFactor),
                             tag = tag
                         }
 

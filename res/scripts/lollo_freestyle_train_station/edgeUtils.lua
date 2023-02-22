@@ -71,8 +71,7 @@ helper.getNearbyObjectIds = function(transf, searchRadius, componentType, minZ, 
     local results = {}
     local callbackDefault = function(entity, boundingVolume)
         -- print('callback0 found entity', entity)
-        -- print('boundingVolume =')
-        -- debugPrint(boundingVolume)
+        -- print('boundingVolume =') debugPrint(boundingVolume)
         if not(entity) then return end
 
         if not(api.engine.getComponent(entity, componentType)) then return end
@@ -83,8 +82,7 @@ helper.getNearbyObjectIds = function(transf, searchRadius, componentType, minZ, 
     -- LOLLO NOTE nodes may have a bounding box: for them, we check the position only
     local callback4Nodes = function(entity, boundingVolume)
         -- print('callback0 found entity', entity)
-        -- print('boundingVolume =')
-        -- debugPrint(boundingVolume)
+        -- print('boundingVolume =') debugPrint(boundingVolume)
         if not(entity) then return {} end
 
         local node = api.engine.getComponent(entity, api.type.ComponentType.BASE_NODE)
@@ -117,8 +115,7 @@ helper.getNearbyObjects = function(transf, searchRadius, componentType, minZ, ma
     local results = {}
     local callbackDefault = function(entityId, boundingVolume)
         -- print('callback0 found entity', entity)
-        -- print('boundingVolume =')
-        -- debugPrint(boundingVolume)
+        -- print('boundingVolume =') debugPrint(boundingVolume)
         if not(entityId) then return end
 
         local props = api.engine.getComponent(entityId, componentType)
@@ -128,8 +125,7 @@ helper.getNearbyObjects = function(transf, searchRadius, componentType, minZ, ma
     -- LOLLO NOTE nodes may have a bounding box: for them, we check the position only
     local callback4Nodes = function(entityId, boundingVolume)
         -- print('callback0 found entity', entity)
-        -- print('boundingVolume =')
-        -- debugPrint(boundingVolume)
+        -- print('boundingVolume =') debugPrint(boundingVolume)
         if not(entityId) then return end
 
         local props = api.engine.getComponent(entityId, api.type.ComponentType.BASE_NODE)
@@ -296,34 +292,11 @@ helper.getEdgeLength = function(edgeId, isExtendedLog)
     -- I'd still look for a better algo, based on the normalised tans;
     -- but we'd need to know more if we don't know the tans accurately,
     -- for example a third point.
---[[
-    local tansLength = _getEdgeLength_WithTans(edgeId, isExtendedLog) or 0
-    local tNLength = _getEdgeLength_WithTN(edgeId, isExtendedLog) or 0
-
-    if isExtendedLog then
-        if not(helper.isNumVeryClose(tNLength, tansLength, 3)) then
-            local tn = api.engine.getComponent(edgeId, api.type.ComponentType.TRANSPORT_NETWORK)
-            local posLength = _getEdgeLength_WithPos(edgeId, isExtendedLog) or 0
-            print('edgeUtils.getEdgeLength: edgeId', edgeId, 'has two different lengths: baseEdge says', tansLength, 'and TN says', tNLength)
-            print('pos0, pos1, tan0, tan1 =') debugPrint(pos0) debugPrint(pos1) debugPrint(tan0) debugPrint(tan1)
-            print('tn.edges[1].geometry =') debugPrint(tn.edges[1].geometry)
-            print('the straight distance is', posLength or 'NIL')
-        end
-        print('edgeUtils.getEdgeLength is about to return', math.max(tansLength, tNLength))
-    end
-
-    return math.max(tansLength, tNLength)
-]]
 end
 --#endregion getEdgeLength
 
 --#region getNodeBetween
 local _getNodeBetween = function(pos0, pos1, tan0, tan1, shift0To1, length, isExtendedLog)
-    -- local lengthWithTans = math.sqrt(
-    --     tan0.x * tan0.x + tan0.y * tan0.y + tan0.z * tan0.z
-    --     +
-    --     tan1.x * tan1.x + tan1.y * tan1.y + tan1.z * tan1.z
-    -- )
     if isExtendedLog then
         print('_getNodeBetween starting, shift0To1 =', shift0To1, 'length =', length)
         print('pos0, pos1 =') debugPrint(pos0) debugPrint(pos1)
@@ -864,8 +837,7 @@ helper.street = {
         local baseEdgeIds = {}
         local callback0 = function(entity, boundingVolume)
             -- print('callback0 found entity', entity)
-            -- print('boundingVolume =')
-            -- debugPrint(boundingVolume)
+            -- print('boundingVolume =') debugPrint(boundingVolume)
             if not(entity) then return end
 
             if not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE)) then return end
@@ -962,12 +934,10 @@ helper.track = {
                     isExit = true
                 else
                     for _, _edgeId in pairs(edgeIds) do -- cannot use edgeIds[index] here
-                        -- print('edgeId =')
-                        -- debugPrint(_edgeId)
+                        -- print('edgeId =') debugPrint(_edgeId)
                         if _edgeId ~= refEdgeId then
                             local baseEdgeTrack = api.engine.getComponent(_edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                            -- print('baseEdgeTrack =')
-                            -- debugPrint(baseEdgeTrack)
+                            -- print('baseEdgeTrack =') debugPrint(baseEdgeTrack)
                             if not(baseEdgeTrack) or not(arrayUtils.arrayHasValue(acceptedTrackTypes, baseEdgeTrack.trackType)) then
                                 isExit = true
                                 break
@@ -993,10 +963,8 @@ helper.track = {
             end
         end
 
-        -- print('getContiguousEdges starting, edgeId =')
-        -- debugPrint(edgeId)
-        -- print('track type =')
-        -- debugPrint(trackType)
+        -- print('getContiguousEdges starting, edgeId =') debugPrint(edgeId)
+        -- print('track type =') debugPrint(trackType)
 
         if not(edgeId) or acceptedTrackTypes == nil or #acceptedTrackTypes == 0 then return {} end
 
@@ -1026,8 +994,7 @@ helper.track = {
         local baseEdgeIds = {}
         local callback0 = function(entity, boundingVolume)
             -- print('callback0 found entity', entity)
-            -- print('boundingVolume =')
-            -- debugPrint(boundingVolume)
+            -- print('boundingVolume =') debugPrint(boundingVolume)
             if not(entity) then return end
 
             if not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE)) then return end
