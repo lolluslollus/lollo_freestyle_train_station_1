@@ -963,7 +963,7 @@ local _actions = {
     end,
 
     splitEdgeRemovingObject = function(wholeEdgeId, nodeBetween, objectIdToRemove, successEventName, successEventArgs, newArgName, mustSplit)
-        -- logger.print('splitEdgeRemovingObject starting')
+        -- logger.print('splitEdgeRemovingObject starting, wholeEdgeId =', wholeEdgeId or 'NIL')
         if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
 
         -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
@@ -1017,6 +1017,7 @@ local _actions = {
                 reasonForNotSplitting = 6
             end
         end
+        logger.print('reasonForNotSplitting =', reasonForNotSplitting)
 
         if reasonForNotSplitting > 0 then
             -- we use this to avoid unnecessary splits, unless they must happen
@@ -1113,7 +1114,7 @@ local _actions = {
         newEdge1.playerOwned = playerOwned
         newEdge1.trackEdge = oldBaseEdgeTrack
 
-        if type(oldBaseEdge.objects) == 'table' and #oldBaseEdge.objects > 1 then
+        if type(oldBaseEdge.objects) == 'table' then
             logger.print('splitting: edge objects found')
             local edge0Objects = {}
             local edge1Objects = {}
@@ -1992,6 +1993,7 @@ function data()
             xpcall(
                 function()
                     logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
+                    -- logger.print('args =') logger.debugPrint(args)
                     logger.print('state =') logger.debugPrint(state)
                     -- LOLLO NOTE ONLY SOMETIMES, it can crash when calling game.interface.getEntity(stationId).
                     -- Things are better now, it seems that the error came after a fast loop of calling split and raising the event, then calling split again.
@@ -2001,7 +2003,6 @@ function data()
                     -- the split succeeds, then control returns here and the eggs break.
                     -- if you put debugPrint(args) inside split(), it will crash there.
                     -- if you remove it, it won't crash.
-                    -- debugPrint(args)
 
                     if name == _eventNames.HIDE_WARNINGS then
                         state.warningText = nil
