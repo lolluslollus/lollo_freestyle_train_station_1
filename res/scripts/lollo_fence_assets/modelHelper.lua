@@ -89,6 +89,7 @@ local privateFuncs = {
 }
 
 return {
+--[[
     getModelsWApi = function()
         local results = {}
         local add = function(fileName)
@@ -117,9 +118,6 @@ return {
         add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_5m.mdl')
         add('lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_5m.mdl')
         return results
-    end,
-    getModels = function()
-        return privateFuncs.getModels()
     end,
     getConParamsWApi = function (modelData)
         return {
@@ -151,6 +149,10 @@ return {
                 values = privateFuncs.getLengthValues(),
             },
         }
+    end,
+]]
+    getModels = function()
+        return privateFuncs.getModels()
     end,
     getConParams = function ()
         local models = privateFuncs.getModels()

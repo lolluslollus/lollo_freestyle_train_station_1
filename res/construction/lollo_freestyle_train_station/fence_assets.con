@@ -137,7 +137,7 @@ function data()
                 for i = 1, params.lolloFenceAssets_length + 1, 1 do
                     result.models[#result.models+1] = {
                         id = fenceModelId,
-                        transf = myTransf
+                        transf = transfUtils.getTransf_XSkewedOnZ(myTransf, zShift)
                     }
                     myTransf = transfUtils.getTransf_ZRotated_Shifted(
                         myTransf,
