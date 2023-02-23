@@ -1345,7 +1345,7 @@ local _guiActions = {
         }
 
         local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
-        if #nearbyFreestyleStations > 0 and #nearbyFreestyleStations < _constants.maxNTerminals then
+        if #nearbyFreestyleStations > 0 then
             guiHelpers.showNearbyStationPicker(
                 isCargo,
                 nearbyFreestyleStations,
@@ -1412,6 +1412,27 @@ local _guiActions = {
         )
 
         return true
+    end,
+    tryShowDistance = function(targetWaypointModelId, newWaypointTransf, mustBeOnPlatform)
+        if not(targetWaypointModelId) or not(newWaypointTransf) then return false end
+
+        local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
+        if #similarObjectIdsInAnyEdges ~= 1 then
+            -- not ready yet
+            return false
+        end
+
+        local twinWaypointPosition = edgeUtils.getObjectPosition(similarObjectIdsInAnyEdges[1])
+        local newWaypointPosition = transfUtils.transf2Position(
+            transfUtilsUG.new(newWaypointTransf:cols(0), newWaypointTransf:cols(1), newWaypointTransf:cols(2), newWaypointTransf:cols(3))
+        )
+        if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
+            local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition) or 0
+            guiHelpers.showWaypointDistance(distance)
+            return true
+        end
+
+        return false
     end,
     validateWaypointBuilt = function(targetWaypointModelId, newWaypointId, waypointEdgeId, trackTypeIndex, mustBeOnPlatform)
         logger.print('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
@@ -2651,36 +2672,14 @@ function data()
                                 and args.proposal.proposal.edgeObjectsToAdd[1]
                                 and args.proposal.proposal.edgeObjectsToAdd[1].modelInstance
                                 then
-                                    local _tryShowDistance = function(targetWaypointModelId, newWaypointTransf, mustBeOnPlatform)
-                                        if not(targetWaypointModelId) or not(newWaypointTransf) then return false end
-
-                                        local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
-                                        if #similarObjectIdsInAnyEdges ~= 1 then
-                                            -- not ready yet
-                                            return false
-                                        end
-
-                                        local twinWaypointPosition = edgeUtils.getObjectPosition(similarObjectIdsInAnyEdges[1])
-                                        local newWaypointPosition = transfUtils.transf2Position(
-                                            transfUtilsUG.new(newWaypointTransf:cols(0), newWaypointTransf:cols(1), newWaypointTransf:cols(2), newWaypointTransf:cols(3))
-                                        )
-                                        if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
-                                            local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition) or 0
-                                            guiHelpers.showWaypointDistance(distance)
-                                            return true
-                                        end
-
-                                        return false
-                                    end
-
                                     if args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiPlatformWaypointModelId then
-                                        isHideDistance = not(_tryShowDistance(
+                                        isHideDistance = not(_guiActions.tryShowDistance(
                                             _guiPlatformWaypointModelId,
                                             args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf,
                                             true
                                         ))
                                     elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiTrackWaypointModelId then
-                                        isHideDistance = not(_tryShowDistance(
+                                        isHideDistance = not(_guiActions.tryShowDistance(
                                             _guiTrackWaypointModelId,
                                             args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.transf,
                                             false
