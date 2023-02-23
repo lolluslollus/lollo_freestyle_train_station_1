@@ -1030,7 +1030,6 @@ local _actions = {
         if reasonForNotSplitting > 0 then
             -- we use this to avoid unnecessary splits, unless they must happen
             logger.print('nodeBetween is at the end of an edge; nodeBetween =') logger.debugPrint(nodeBetween)
-            logger.print('reasonForNotSplitting =', reasonForNotSplitting)
             local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(wholeEdgeId, objectIdToRemove)
             if not(proposal) then return end
 
@@ -2032,7 +2031,7 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint1Id)
-                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), logger.isExtendedLog())
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, logger.isExtendedLog())
                         if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
@@ -2051,7 +2050,7 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint2Id)
-                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), logger.isExtendedLog())
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, logger.isExtendedLog())
                         if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
@@ -2070,7 +2069,7 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint1Id)
-                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false)
                         if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
@@ -2089,7 +2088,7 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint2Id)
-                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition))
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false)
                         if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
@@ -2587,6 +2586,7 @@ function data()
                                                 y = conTransf[14],
                                                 z = averageZ,
                                             },
+                                            true,
                                             logger.isExtendedLog()
                                         )
                                         logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
@@ -2612,6 +2612,7 @@ function data()
                                     --         y = conTransf[14],
                                     --         z = conTransf[15] + _constants.splitterZShift,
                                     --     },
+                                    --     true,
                                     --     logger.isExtendedLog()
                                     -- )
                                     -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
