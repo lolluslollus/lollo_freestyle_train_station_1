@@ -984,7 +984,6 @@ local _actions = {
             return
         end
 
-        -- LOLLO TODO check this thoroughly, particularly with splits near track ends: it's new
         if edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position) then
             logger.print('nodeBetween is orientated like my edge')
         else
