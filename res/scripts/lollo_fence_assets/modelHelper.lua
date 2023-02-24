@@ -1,9 +1,10 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 
 local privateValues = {
+    maxLength = 200,
     yShiftMaxIndex = 24,
-    zDeltaMaxIndex = 32,
-    zRotationMaxIndex = 32,
+    zDeltaMaxIndex = 64,
+    zRotationMaxIndex = 64,
 }
 privateValues.defaults = {
     length = 9,
@@ -16,7 +17,7 @@ privateValues.defaults = {
 local privateFuncs = {
     getLengthValues = function()
         local results = {}
-        for i = 1, 40, 1 do
+        for i = 1, privateValues.maxLength, 1 do
             results[#results+1] = tostring(i)
         end
         return results
