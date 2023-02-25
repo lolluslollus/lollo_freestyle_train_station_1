@@ -6,7 +6,7 @@ local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 local _extraHeight4Title = 100
 local _extraHeight4Param = 40
-local _conConfigLayoutIdPrefix = 'lollo_freestyle_train_station_con_config_layout_'
+local _conConfigLayoutIdPrefix = 'lollo_stairs_con_config_layout_'
 
 local _texts = {
     conConfigWindowTitle = _('ConConfigWindowTitle'),

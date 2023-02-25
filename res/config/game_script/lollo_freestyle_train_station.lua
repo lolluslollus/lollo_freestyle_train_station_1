@@ -3,6 +3,7 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local guiHelpers = require('lollo_freestyle_train_station.guiHelpers')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stationHelpers = require('lollo_freestyle_train_station.stationHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
@@ -332,7 +333,7 @@ local _actions = {
         )
     end,
 
-    bulldozeMarker = function(conId)
+    bulldozeCon = function(conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
         -- local oldCon = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
@@ -560,7 +561,7 @@ local _actions = {
                         ))
                     end
                 else
-                    logger.warn('result =') logger.warningDebugPrint(result)
+                    logger.warn('buildStation failed, result =') logger.warningDebugPrint(result)
                 end
             end
         )
@@ -895,14 +896,20 @@ local _actions = {
         )
     end,
 
-    replaceEdgeWithSameRemovingObject = function(oldEdgeId, objectIdToRemove)
-        logger.print('replaceEdgeWithSameRemovingObject starting')
+    replaceEdgeWithSameRemovingObject = function(objectIdToRemove)
+        logger.print('_replaceEdgeWithSameRemovingObject starting')
+        if not(edgeUtils.isValidAndExistingId(objectIdToRemove)) then return end
+
+        logger.print('_replaceEdgeWithSameRemovingObject found, the edge object id is valid')
+        local oldEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(objectIdToRemove)
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
-        logger.print('replaceEdgeWithSameRemovingObject found, the old edge id is valid')
+
+        logger.print('_replaceEdgeWithSameRemovingObject found, the old edge id is valid')
         -- replaces a track segment with an identical one, without destroying the buildings
         local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
         if not(proposal) then return end
-        logger.print('replaceEdgeWithSameRemovingObject likes the proposal')
+
+        logger.print('_replaceEdgeWithSameRemovingObject likes the proposal')
         -- logger.debugPrint(proposal)
         --[[ local sampleNewEdge =
         {
@@ -956,8 +963,7 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
-                -- logger.print('LOLLO replaceEdgeWithSameRemovingObject result = ') logger.debugPrint(result)
-                logger.print('LOLLO replaceEdgeWithSameRemovingObject success = ') logger.debugPrint(success)
+                logger.print('LOLLO _replaceEdgeWithSameRemovingObject success = ') logger.debugPrint(success)
             end
         )
     end,
@@ -1585,7 +1591,8 @@ local _guiActions = {
 
         local contiguousTrackEdgeProps = stationHelpers.getTrackEdgePropsBetweenEdgeIds(
             api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
-            api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId)
+            api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId),
+            _constants.maxWaypointDistance
         )
         logger.print('contiguous track edges =') logger.debugPrint(contiguousTrackEdgeProps)
         -- make sure the waypoints are on connected tracks
@@ -2039,10 +2046,10 @@ function data()
                     elseif name == _eventNames.HIDE_HOLE_REQUESTED then
                         -- _actions.rebuildUndergroundDepotWithoutHole(args.conId)
                     elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
-                        _actions.bulldozeMarker(args.platformMarkerConstructionEntityId)
+                        _actions.bulldozeCon(args.platformMarkerConstructionEntityId)
                     elseif name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
                         -- game.interface.bulldoze(args.waypointId) -- dumps
-                        _actions.replaceEdgeWithSameRemovingObject(args.edgeId, args.waypointId)
+                        _actions.replaceEdgeWithSameRemovingObject(args.waypointId)
                     elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.trackWaypoint1Id))
                         then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
@@ -2136,7 +2143,8 @@ function data()
 
                         local trackEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
                             args.splitTrackNode1Id,
-                            args.splitTrackNode2Id
+                            args.splitTrackNode2Id,
+                            _constants.maxWaypointDistance
                         )
                         -- LOLLO NOTE I need this, or a station with only one track edge will dump with
                         -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
@@ -2171,7 +2179,8 @@ function data()
 
                         local platformEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
                             args.splitPlatformNode1Id,
-                            args.splitPlatformNode2Id
+                            args.splitPlatformNode2Id,
+                            _constants.maxWaypointDistance
                         )
                         -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
                         -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
@@ -2651,6 +2660,8 @@ function data()
                             end
                             _actions.bulldozeConstruction(args.conId)
                         end
+                    elseif name == _eventNames.BULLDOZE_CON_REQUESTED then
+                        _actions.bulldozeCon(args.conId)
                     end
                 end,
                 logger.xpErrorHandler

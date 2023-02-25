@@ -208,6 +208,42 @@ return {
             },
         }
     end,
+    getParamsMetadata = function()
+        local models = privateFuncs.getModels()
+        local metadata_sorted = {
+            {
+                defaultIndex = privateValues.defaults.model,
+                key = 'model',
+                name = _('fenceModelName'),
+                values = arrayUtils.map(
+                    models,
+                    function(model)
+                        -- return model.name
+                        return model.icon
+                    end
+                ),
+                uiType = 'ICON_BUTTON',
+            },
+            {
+                defaultIndex = privateValues.defaults.wallEraPrefix,
+                key = 'wallEraPrefix',
+                name = _('wallEraPrefix_0IsNoWall'),
+                uiType = 'BUTTON',
+                values = {_('NoWall'), 'A', 'B', 'C'},
+            },
+        }
+        -- add defaultIndex wherever not present
+        for _, record in pairs(metadata_sorted) do
+            record.defaultIndex = record.defaultIndex or 0
+        end
+        local metadata_indexed = {}
+        for _, record in pairs(metadata_sorted) do
+            metadata_indexed[record.key] = record
+        end
+        -- logger.print('metadata_sorted =') logger.debugPrint(metadata_sorted)
+        -- logger.print('metadata_indexed =') logger.debugPrint(metadata_indexed)
+        return metadata_sorted, metadata_indexed
+    end,
     getUiTypeNumber = function(uiTypeStr)
         if uiTypeStr == 'BUTTON' then return 0
         elseif uiTypeStr == 'SLIDER' then return 1

@@ -9,7 +9,7 @@ local transfUtilsUG = require('transf')
 
 
 local helpers = {
-    getEdgeIdsProperties = function(edgeIds)
+    getEdgeIdsProperties = function(edgeIds, isPreserveOrientation)
         if type(edgeIds) ~= 'table' then return {} end
 
         local _getEdgeType = function(baseEdgeType)
@@ -42,27 +42,29 @@ local helpers = {
             local tan0 = baseEdge.tangent0
             local tan1 = baseEdge.tangent1
 
-            local _swap = function()
-                -- LOLLO NOTE lua does not need the third variable for swapping since the assignments take place at the same time
-                pos0, pos1 = pos1, pos0
-                tan0, tan1 = tan1, tan0
-                tan0.x = -tan0.x
-                tan0.y = -tan0.y
-                tan0.z = -tan0.z
-                tan1.x = -tan1.x
-                tan1.y = -tan1.y
-                tan1.z = -tan1.z
-            end
-            -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
-            if i == 1 then
-                if i < #edgeIds then
-                    -- logger.print('nextBaseEdgeId =') logger.debugPrint(edgeIds[i + 1])
-                    local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
-                    if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
+            if not(isPreserveOrientation) then
+                local _swap = function()
+                    -- LOLLO NOTE lua does not need the third variable for swapping since the assignments take place at the same time
+                    pos0, pos1 = pos1, pos0
+                    tan0, tan1 = tan1, tan0
+                    tan0.x = -tan0.x
+                    tan0.y = -tan0.y
+                    tan0.z = -tan0.z
+                    tan1.x = -tan1.x
+                    tan1.y = -tan1.y
+                    tan1.z = -tan1.z
                 end
-            else
-                local prevBaseEdge = api.engine.getComponent(edgeIds[i - 1], api.type.ComponentType.BASE_EDGE)
-                if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then _swap() end
+                -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
+                if i == 1 then
+                    if i < #edgeIds then
+                        -- logger.print('nextBaseEdgeId =') logger.debugPrint(edgeIds[i + 1])
+                        local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
+                        if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
+                    end
+                else
+                    local prevBaseEdge = api.engine.getComponent(edgeIds[i - 1], api.type.ComponentType.BASE_EDGE)
+                    if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then _swap() end
+                end
             end
 
             local result = {
@@ -1454,7 +1456,132 @@ helpers.getStationStreetEndEntities = function(stationConstructionId)
     return _getStationStreetEndEntities(con)
 end
 
-helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
+local _getTrackEdgeIdsBetweenEdgeAndEdge = function(edge0Id, edge1Id, maxDistance)
+    if edge0Id == edge1Id then return {edge0Id} end
+
+    local edge0IdTyped = api.type.EdgeId.new(edge0Id, 0)
+    local edge0IdDirFalse = api.type.EdgeIdDirAndLength.new(edge0IdTyped, false, 0)
+    local edge0IdDirTrue = api.type.EdgeIdDirAndLength.new(edge0IdTyped, true, 0)
+
+    local baseEdge0 = api.engine.getComponent(edge0Id, api.type.ComponentType.BASE_EDGE)
+    if not(baseEdge0) or not(edgeUtils.isValidAndExistingId(baseEdge0.node0)) then return {} end
+    local baseEdge1 = api.engine.getComponent(edge1Id, api.type.ComponentType.BASE_EDGE)
+    if not(baseEdge1) or not(edgeUtils.isValidAndExistingId(baseEdge1.node0)) then return {} end
+    if baseEdge0.node0 == baseEdge1.node0
+    or baseEdge0.node0 == baseEdge1.node1
+    or baseEdge0.node1 == baseEdge1.node0
+    or baseEdge0.node1 == baseEdge1.node1
+    then
+        return {edge0Id, edge1Id}
+    end
+
+    local pos00 = api.engine.getComponent(baseEdge0.node0, api.type.ComponentType.BASE_NODE).position
+    local pos01 = api.engine.getComponent(baseEdge0.node1, api.type.ComponentType.BASE_NODE).position
+    local pos10 = api.engine.getComponent(baseEdge1.node0, api.type.ComponentType.BASE_NODE).position
+    local pos11 = api.engine.getComponent(baseEdge1.node1, api.type.ComponentType.BASE_NODE).position
+    local node1Typed
+    if transfUtils.getPositionsDistance(pos00, pos10) > transfUtils.getPositionsDistance(pos00, pos11) then
+        node1Typed = api.type.NodeId.new(baseEdge1.node0, 0)
+    else
+        node1Typed = api.type.NodeId.new(baseEdge1.node1, 0)
+    end
+
+    local myPath = api.engine.util.pathfinding.findPath(
+        { edge0IdDirFalse, edge0IdDirTrue },
+        { node1Typed },
+        {
+            api.type.enum.TransportMode.TRAIN,
+            -- api.type.enum.TransportMode.ELECTRIC_TRAIN
+        },
+        maxDistance
+    )
+    local results = {}
+    for _, value in pairs(myPath) do
+        -- remove non-edge funds, this api can add some nodes to its output. UG TODO.
+        local baseEdge = api.engine.getComponent(value.entity, api.type.ComponentType.BASE_EDGE)
+        if baseEdge ~= nil then
+            results[#results+1] = value.entity
+        end
+    end
+    return results
+end
+
+local _getTrackEdgePropsBetweenEdgeAndNode = function(edgeId, nodeId, maxDistance)
+    local edge1IdTyped = api.type.EdgeId.new(edgeId, 0)
+    local edgeIdDir1False = api.type.EdgeIdDirAndLength.new(edge1IdTyped, false, 0)
+    local edgeIdDir1True = api.type.EdgeIdDirAndLength.new(edge1IdTyped, true, 0)
+    local node2Typed = api.type.NodeId.new(nodeId, 0)
+    local myPath = api.engine.util.pathfinding.findPath(
+        { edgeIdDir1False, edgeIdDir1True },
+        { node2Typed },
+        {
+            api.type.enum.TransportMode.TRAIN,
+            -- api.type.enum.TransportMode.ELECTRIC_TRAIN
+        },
+        maxDistance
+    )
+    local results = {}
+    for _, value in pairs(myPath) do
+        -- remove non-edge funds, this api can add some nodes to its output. UG TODO.
+        local baseEdge = api.engine.getComponent(value.entity, api.type.ComponentType.BASE_EDGE)
+        if baseEdge ~= nil then
+            results[#results+1] = value.entity
+        end
+    end
+    return results
+end
+
+helpers.getTrackEdgeIdsBetweenEdgeIds = function(edge1Id, edge2Id, maxDistance)
+    logger.print('getTrackEdgeIdsBetweenEdgeIds starting')
+    logger.print('edge1Id =', edge1Id) logger.print('edge2Id =', edge2Id)
+    logger.print('ONE')
+    if not(edgeUtils.isValidAndExistingId(edge1Id)) then return {} end
+    logger.print('ONE AND A HALF')
+    if not(edgeUtils.isValidAndExistingId(edge2Id)) then return {} end
+    logger.print('TWO')
+    if edge1Id == edge2Id then return {edge1Id} end
+    logger.print('THREE')
+
+    local trackEdgeIdsBetweenEdgeIds = _getTrackEdgeIdsBetweenEdgeAndEdge(edge1Id, edge2Id, maxDistance)
+    logger.print('trackEdgeIdsBetweenEdgeIds =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
+
+    local isExit = false
+    while not(isExit) do
+        if #trackEdgeIdsBetweenEdgeIds > 1
+        and edge1Id == trackEdgeIdsBetweenEdgeIds[1]
+        and edge1Id == trackEdgeIdsBetweenEdgeIds[2]
+        then
+            logger.print('ELEVEN')
+            table.remove(trackEdgeIdsBetweenEdgeIds, 1)
+            logger.print('trackEdgeIdsBetweenEdgeIds during pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
+        else
+            logger.print('TWELVE')
+            isExit = true
+        end
+    end
+    isExit = false
+    while not(isExit) do
+        if #trackEdgeIdsBetweenEdgeIds > 1
+        and edge2Id == trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds]
+        and edge2Id == trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]
+        then
+            logger.print('THIRTEEN HALF')
+            table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
+            logger.print('trackEdgeIdsBetweenEdgeIds during pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
+        else
+            logger.print('FOURTEEN')
+            isExit = true
+        end
+    end
+
+    if arrayUtils.arrayHasValue(trackEdgeIdsBetweenEdgeIds, edge1Id) and arrayUtils.arrayHasValue(trackEdgeIdsBetweenEdgeIds, edge2Id) then
+        return trackEdgeIdsBetweenEdgeIds
+    end
+    logger.warn('the edges do not connect')
+    return {}
+end
+
+helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id, maxDistance)
     logger.print('getTrackEdgeIdsBetweenNodeIds starting')
     logger.print('node1Id =', _node1Id) logger.print('node2Id =', _node2Id)
     logger.print('ONE')
@@ -1509,32 +1636,7 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     -- logger.print('adjacentEdge1Ids =') logger.debugPrint(adjacentEdge1Ids)
     -- logger.print('adjacentEdge2Ids =') logger.debugPrint(adjacentEdge2Ids)
 
-    local _getTrackEdgePropsBetweenEdgeAndNode = function(edgeId, nodeId)
-        local edge1IdTyped = api.type.EdgeId.new(edgeId, 0)
-        local edgeIdDir1False = api.type.EdgeIdDirAndLength.new(edge1IdTyped, false, 0)
-        local edgeIdDir1True = api.type.EdgeIdDirAndLength.new(edge1IdTyped, true, 0)
-        local node2Typed = api.type.NodeId.new(nodeId, 0)
-        local myPath = api.engine.util.pathfinding.findPath(
-            { edgeIdDir1False, edgeIdDir1True },
-            { node2Typed },
-            {
-                api.type.enum.TransportMode.TRAIN,
-                -- api.type.enum.TransportMode.ELECTRIC_TRAIN
-            },
-            _constants.maxWaypointDistance
-        )
-        local results = {}
-        for _, value in pairs(myPath) do
-            -- remove non-edge funds, this api can add some nodes to its output. UG TODO.
-            local baseEdge = api.engine.getComponent(value.entity, api.type.ComponentType.BASE_EDGE)
-            if baseEdge ~= nil then
-                results[#results+1] = value.entity
-            end
-        end
-        return results
-    end
-
-    local trackEdgeIdsBetweenEdgeIds = _getTrackEdgePropsBetweenEdgeAndNode(adjacentEdge1Ids[1], _node2Id)
+    local trackEdgeIdsBetweenEdgeIds = _getTrackEdgePropsBetweenEdgeAndNode(adjacentEdge1Ids[1], _node2Id, maxDistance)
     logger.print('trackEdgeIdsBetweenEdgeIds before pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
     -- remove edges adjacent to but outside node1 and node2
 
@@ -1562,6 +1664,7 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     --     and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds])
     --     and arrayUtils.arrayHasValue(adjacentEdge2Ids, trackEdgeIdsBetweenEdgeIds[#trackEdgeIdsBetweenEdgeIds-1]) then
     --         logger.print('THIRTEEN HALF')
+    --         logger.warn('I reinstated this, check it')
     --         table.remove(trackEdgeIdsBetweenEdgeIds, #trackEdgeIdsBetweenEdgeIds)
     --         logger.print('trackEdgeIdsBetweenEdgeIds during pruning =') logger.debugPrint(trackEdgeIdsBetweenEdgeIds)
     --     else
@@ -1580,7 +1683,7 @@ helpers.getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id)
     return {}
 end
 
-helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
+helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id, maxDistance)
     -- this function returns the ids in the right sequence, but their node0 and node1 may be scrambled,
     -- depending how the user laid the tracks. The output is a table of objects like
     -- [6] = {
@@ -1608,7 +1711,11 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
                     -- or ((_map[baseEdge.node0] == nil or #_map[baseEdge.node0] < 3)
                     --     and (_map[baseEdge.node1] == nil or #_map[baseEdge.node1] < 3))
                     -- then
-                        results[#results+1] = { entity = value.entity, index = value.index }
+                    -- avoid duplicates, the api can add some
+                    local resultsCount = #results
+                    if (resultsCount == 0 or results[resultsCount].entity ~= value.entity) and value.entity then
+                        results[resultsCount+1] = { entity = value.entity, index = value.index }
+                    end
                     -- else
                     --     return {}
                     -- end
@@ -1649,7 +1756,7 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
             api.type.enum.TransportMode.TRAIN,
             -- api.type.enum.TransportMode.ELECTRIC_TRAIN
         },
-        _constants.maxWaypointDistance
+        maxDistance
     )
     logger.print('path =') logger.debugPrint(myPath)
     logger.print('clean path =') logger.debugPrint(_getCleanPath(myPath))
@@ -1666,7 +1773,7 @@ helpers.getTrackEdgePropsBetweenEdgeIds = function(edge1Id, edge2Id)
             api.type.enum.TransportMode.TRAIN,
             -- api.type.enum.TransportMode.ELECTRIC_TRAIN
         },
-        _constants.maxWaypointDistance
+        maxDistance
     )
 
     logger.print('now I have path =') logger.debugPrint(myPath)

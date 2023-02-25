@@ -1,0 +1,137 @@
+function data()
+    local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+    local constants = require('lollo_freestyle_train_station.constants')
+    local fenceModelHelper = require('lollo_fence.modelHelper')
+    local logger = require('lollo_freestyle_train_station.logger')
+    local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+
+	return {
+        -- type = 'ASSET_DEFAULT',
+        type = 'ASSET_TRACK', -- this is not the same as snapping.rail below, coz it lowers the asset to the ground.
+		availability = {
+			yearFrom = -1,
+			yearTo = -1,
+		},
+        categories = { 'stairs' },
+		description = {
+			name = _('FenceAssetsName'),
+			description = _('FenceAssetsDesc'),
+            icon = 'ui/construction/lollo_freestyle_train_station/fence_assets.tga',
+		},
+		order = 1110,
+		autoRemovable = false,
+        -- buildMode = 'MULTI',
+		skipCollision = true,
+        snapping = {
+			rail = true,
+			road = true,
+			water = false
+		},
+		params = {},
+		updateFn = function(params)
+            logger.print('auto_fence.updateFn firing, params =')
+            logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state', 'transfs'}, true))
+
+            local result = {
+                colliders = {},
+                cost = 0,
+                edgeLists = {},
+                groundFaces = { -- dummy ground faces so this is treated as a proper construction, and the construction mover can adjust it
+                    {
+                        face = {
+                            {0.1, -0.1, 0.0, 1.0},
+                            {0.1, 0.1, 0.0, 1.0},
+                            {-0.1, 0.1, 0.0, 1.0},
+                            {-0.1, -0.1, 0.0, 1.0},
+                        },
+                        modes = {
+                            {
+                                type = 'FILL',
+                                key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                            }
+                        }
+                    },
+                },
+                models = {
+					-- {
+					-- 	id = 'lollo_freestyle_train_station/icon/blue.mdl',
+                    --     transf = {1, 0, 0, 0,
+                    --         0, 1, 0, 0,
+                    --         0, 0, 1, 0,
+                    --         0, 0, 0, 1},
+					-- },
+                },
+                terrainAlignmentLists = { {
+                    type = 'EQUAL',
+                    optional = true,
+                    faces =  { }
+                } },
+            }
+
+            local fenceModelId = fenceModelHelper.getModels()[params.lolloFenceAssets_model + 1].fileName
+            local wallModelId = nil
+                if params.lolloFenceAssets_wallEraPrefix == 1 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
+                elseif params.lolloFenceAssets_wallEraPrefix == 2 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
+                elseif params.lolloFenceAssets_wallEraPrefix == 3 then
+                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
+                end
+
+            if wallModelId ~= nil then
+                -- the wall is 1.4m tall, so we sink all by 20cm. This is level with freestyle stations and looks good.
+                local zStart = constants.platformHeight
+                for _, myTransf in pairs(params.transfs) do
+                    local myTransfShifted = transfUtils.getTransf_ZShifted(myTransf, zStart)
+                    table.insert(
+                        result.models,
+                        {
+                            id = fenceModelId,
+                            transf = myTransfShifted
+                        }
+                    )
+                    table.insert(
+                        result.models,
+                        {
+                            id = wallModelId,
+                            transf = myTransfShifted
+                        }
+                    )
+                end
+            else
+                for _, myTransf in pairs(params.transfs) do
+                    table.insert(
+                        result.models,
+                        {
+                            id = fenceModelId,
+                            transf = myTransf
+                        }
+                    )
+                    -- table.insert(
+                    --     result.groundFaces,
+                    --     {
+                    --         face = {
+                    --             {myTransf[13], myTransf[14], myTransf[15], 1.0},
+                    --             {myTransf[13]+0.1, myTransf[14], myTransf[15], 1.0},
+                    --             {myTransf[13]+0.1, myTransf[14]+0.1, myTransf[15], 1.0},
+                    --             {myTransf[13], myTransf[14]+0.1, myTransf[15], 1.0},
+                    --         },
+                    --         modes = {
+                    --             {
+                    --                 type = 'FILL',
+                    --                 key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                    --             }
+                    --         }
+                    --     }
+                    -- )
+                end
+            end
+
+			return result
+		end,
+
+        upgradeFn = function(params)
+            return {}
+        end,
+	}
+end

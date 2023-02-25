@@ -1,7 +1,7 @@
 function data()
     local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
-    -- local constants = require('lollo_freestyle_train_station.constants')
-    local fenceModelHelper = require('lollo_fence_assets.modelHelper')
+    local constants = require('lollo_freestyle_train_station.constants')
+    local fenceModelHelper = require('lollo_fence.modelHelper')
     local logger = require('lollo_freestyle_train_station.logger')
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
@@ -118,15 +118,17 @@ function data()
                 } },
             }
 
-            local function _addTop()
-                local zStart = _getWallModelId() == nil and 0 or 1.4
-                local yStart = _getYStart()
-
+            local function _addModels()
                 local fenceModelId = fenceModelHelper.getModels()[params.lolloFenceAssets_model + 1].fileName
+                local wallModelId = _getWallModelId()
+
+                local yStart = _getYStart()
+                -- the wall is 1.4m tall, so we sink all by 20cm. This is level with freestyle stations and looks good.
+                local zStart = wallModelId == nil and 0 or constants.platformHeight
 
                 local xShift, yShift, zRotRad = _getZRotationParameters()
                 local zShift = _getZShift()
-                logger.print('_addTop got zRotRad =', 180 / math.pi * zRotRad, ', yShift =', yShift, ', xShift =', xShift, ', zShift =', zShift)
+                logger.print('_addModels got zRotRad =', 180 / math.pi * zRotRad, ', yShift =', yShift, ', xShift =', xShift, ', zShift =', zShift)
 
                 local myTransf = {
                     1, 0, 0, 0,
@@ -135,10 +137,17 @@ function data()
                     0, yStart, zStart, 1
                 }
                 for i = 1, params.lolloFenceAssets_length + 1, 1 do
+                    local skewedTransf = transfUtils.getTransf_XSkewedOnZ(myTransf, zShift)
                     result.models[#result.models+1] = {
                         id = fenceModelId,
-                        transf = transfUtils.getTransf_XSkewedOnZ(myTransf, zShift)
+                        transf = skewedTransf
                     }
+                    if wallModelId ~= nil then
+                        result.models[#result.models+1] = {
+                            id = wallModelId,
+                            transf = skewedTransf
+                        }
+                    end
                     myTransf = transfUtils.getTransf_ZRotated_Shifted(
                         myTransf,
                         zRotRad,
@@ -146,45 +155,7 @@ function data()
                     )
                 end
             end
-            _addTop()
-
-            local function _addBottom()
-                local yStart = _getYStart()
-
-                local wallModelId = nil
-                if params.lolloFenceAssets_wallEraPrefix == 1 then
-                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
-                elseif params.lolloFenceAssets_wallEraPrefix == 2 then
-                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
-                elseif params.lolloFenceAssets_wallEraPrefix == 3 then
-                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
-                else
-                    return
-                end
-
-                local xShift, yShift, zRotRad = _getZRotationParameters()
-                local zShift = _getZShift()
-                logger.print('_addBottom wall got zRotRad =', 180 / math.pi * zRotRad, ', yShift =', yShift, ', xShift =', xShift, ', zShift =', zShift)
-
-                local myTransf = {
-                    1, 0, 0, 0,
-                    0, 1, 0, 0,
-                    0, 0, 1, 0,
-                    0, yStart, 1.4, 1
-                }
-                for i = 1, params.lolloFenceAssets_length + 1, 1 do
-                    result.models[#result.models+1] = {
-                        id = wallModelId,
-                        transf = transfUtils.getTransf_XSkewedOnZ(myTransf, zShift)
-                    }
-                    myTransf = transfUtils.getTransf_ZRotated_Shifted(
-                        myTransf,
-                        zRotRad,
-                        {xShift, yShift, zShift * xShift}
-                    )
-                end
-            end
-            _addBottom()
+            _addModels()
 
 			return result
 		end,

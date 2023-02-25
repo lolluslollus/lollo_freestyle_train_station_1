@@ -1,0 +1,58 @@
+function data()
+	local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+	return {
+		-- boundingInfo = {
+		-- 	bbMax = { 0.58293998241425, 3.269150018692, 2.920243024826, },
+		-- 	bbMin = { -0.58293998241425, -3.269150018692, -0.79846996068954, },
+		-- },
+		-- collider = {
+		-- 	params = {
+		-- 		halfExtents = { 0.5, 2.5, 2, },
+		-- 	},
+		-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 2, 1, },
+		-- 	type = "CYLINDER",
+		-- },
+		boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+		lods = {
+			{
+				node = {
+					children = {
+						{
+							materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},
+							-- the wall is at y = +2.5
+							mesh = 'lollo_freestyle_train_station/icon/lod_0_icon_pointer_wall.msh',
+							transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
+						},
+					},
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 0,
+				visibleTo = 1000,
+			},
+		},
+		metadata = {
+			availability = {
+				yearFrom = 0,
+				yearTo = 0,
+			},
+			category = {
+				categories = {
+					'waypoints-for-freestyle-station'
+				},
+			},
+			cost = {
+				price = 2000,
+			},
+			description = {
+				description = _("FenceWaypointDesc"),
+				name = _("FenceWaypointName"),
+			},
+			signal = {
+				type = "WAYPOINT",
+			},
+		},
+		version = 1,
+	}
+end

@@ -262,6 +262,7 @@ end
 ---@param wrongObjectId? integer
 ---@param similarObjectsIds? table<integer>
 guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds)
+    logger.print('guiHelpers.showWarningWithGoto starting, text =', text or 'NIL')
     guiHelpers.isShowingWarningWithGoTo = true
 
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
@@ -269,9 +270,11 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
     if window == nil then
         window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
         window:setId(_warningWindowWithGotoId)
+        logger.print('the window does not exist yet, _warningWindowWithGotoId =', _warningWindowWithGotoId)
     else
         window:setContent(layout)
         window:setVisible(true, false)
+        logger.print('the window exists already, _warningWindowWithGotoId =', _warningWindowWithGotoId)
     end
 
     layout:addItem(api.gui.comp.TextView.new(text))
@@ -336,10 +339,12 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
 
     window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
+    logger.print('window position (without shifts) =') logger.debugPrint(position)
     window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
+            logger.print('guiHelpers.showWarningWithGoto closing')
             guiHelpers.isShowingWarningWithGoTo = false
             window:setVisible(false, false)
         end

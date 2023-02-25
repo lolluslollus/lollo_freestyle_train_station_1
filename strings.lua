@@ -286,6 +286,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["EraCCargoPlatform10MDesc"] = "Cargo platforms to be laid as tracks, 10 m wide, era C. They are in fact slow train tracks; they are not meant to be crossed.",
 			["EraCCargoPlatform20MName"] = "20 m cargo platform, era C",
 			["EraCCargoPlatform20MDesc"] = "Cargo platforms to be laid as tracks, 20 m wide, era C. They are in fact slow train tracks; they are not meant to be crossed.",
+			["FenceWaypointName"] = "Fence end marker",
+			["FenceWaypointDesc"] = "Marks the ends of a fence that will be drawn along a track. The direction of the second marker sets the side the fence will be on.",
 			["LolloFreestyleTrainStationName"] = "Freestyle train station",
 			["LolloFreestyleTrainStationDesc"] = "Freestyle train station",
 			["PlatformWaypointName"] = "Platform end marker",
@@ -420,6 +422,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["TrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use <AltGr> + <L> to see its effect.",
 
 			-- platform as asset
+			["Bulldoze"] = "Bulldoze",
 			["PlatformAsAssetName"] = "Platform as asset",
 			["PlatformAsAssetDesc"] = "Platform as asset. Adjust it with the Construction Mover.",
 			["PlatformAsAsset_CargoOrPassengers"] = "Cargo or passengers",
@@ -728,6 +731,8 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["EraCCargoPlatform10MDesc"] = "Frachtplattformen, die als Gleise zu verlegen sind, 10 m breit, Epoche C. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraCCargoPlatform20MName"] = "20 m Frachtplattform, Epoche C",
 			["EraCCargoPlatform20MDesc"] = "Frachtplattformen, die als Gleise zu verlegen sind, 20 m breit, Epoche C. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
+			["FenceWaypointName"] = "Zaunmarker",
+			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht.",
 			["LolloFreestyleTrainStationName"] = "Freestyle-Bahnhof",
 			["LolloFreestyleTrainStationDesc"] = "Freestyle-Bahnhof",
 			["PlatformWaypointName"] = "Bahnsteigmarker",
@@ -863,6 +868,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["TrackSplitterDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwenden Sie <AltGr> + <L>, um die Wirkung zu sehen.",
 
 			-- Bahnsteige als Asset
+			["Bulldoze"] = "Abreißen",
 			["PlatformAsAssetName"] = "Bahnsteig als Asset",
 			["PlatformAsAssetDesc"] = "Bahnsteig als Asset. Passen Sie sie mit dem \"Construction Mover\" an.",
 			["PlatformAsAsset_CargoOrPassengers"] = "Fracht oder Passagiere",
