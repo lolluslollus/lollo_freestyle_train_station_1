@@ -399,7 +399,7 @@ local _guiActions = {
         local contiguousTrackEdgeIds = edgeUtils.track.getTrackEdgeIdsBetweenEdgeIds(
             api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
             api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId),
-            _constants.maxWaypointDistance,
+            _constants.maxFenceWaypointDistance,
             true,
             logger.isExtendedLog()
         )
