@@ -1589,14 +1589,16 @@ local _guiActions = {
             end
         end
 
-        local contiguousTrackEdgeProps = stationHelpers.getTrackEdgePropsBetweenEdgeIds(
+        local contiguousTrackEdgeIds = edgeUtils.track.getTrackEdgeIdsBetweenEdgeIds(
             api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
             api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId),
-            _constants.maxWaypointDistance
+            _constants.maxWaypointDistance,
+            false,
+            logger.isExtendedLog()
         )
-        logger.print('contiguous track edges =') logger.debugPrint(contiguousTrackEdgeProps)
+        logger.print('contiguous track edge ids =') logger.debugPrint(contiguousTrackEdgeIds)
         -- make sure the waypoints are on connected tracks
-        if #contiguousTrackEdgeProps < 1 then
+        if #contiguousTrackEdgeIds < 1 then
             guiHelpers.showWarningWithGoto(_guiTexts.waypointsNotConnected, newWaypointId, similarObjectIdsInAnyEdges)
             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                 string.sub(debug.getinfo(1, 'S').source, 1),
@@ -1611,8 +1613,7 @@ local _guiActions = {
         end
 
         -- make sure the waypoints are not overlapping existing station tracks or platforms, for any sort of station
-        for __, obj in pairs(contiguousTrackEdgeProps) do -- don't use _ here, we call it below to translate the message!
-            local edgeId = obj.entity
+        for __, edgeId in pairs(contiguousTrackEdgeIds) do -- don't use _ here, we call it below to translate the message!
             local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
             if edgeUtils.isValidAndExistingId(conId) then
                 local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
@@ -1633,8 +1634,8 @@ local _guiActions = {
         end
 
         local contiguousEdgeIds = {}
-        for __, value in pairs(contiguousTrackEdgeProps) do
-            arrayUtils.addUnique(contiguousEdgeIds, value.entity)
+        for __, edgeId in pairs(contiguousTrackEdgeIds) do
+            arrayUtils.addUnique(contiguousEdgeIds, edgeId)
         end
         logger.print('contiguousEdgeIds =') logger.debugPrint(contiguousEdgeIds)
         -- make sure there are no crossings between the waypoints
@@ -1685,8 +1686,7 @@ local _guiActions = {
         -- on the other hand, different platform widths make trouble with cargo, which has multiple waiting areas:
         -- let's check if they are different only if one is > 5, which only happens with cargo.
         local trackDistances = {}
-        for _, obj in pairs(contiguousTrackEdgeProps) do
-            local edgeId = obj.entity
+        for _, edgeId in pairs(contiguousTrackEdgeIds) do
             local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
             local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
             arrayUtils.addUnique(trackDistances, baseEdgeProperties.trackDistance)
@@ -2141,10 +2141,11 @@ function data()
                             return
                         end
 
-                        local trackEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
+                        local trackEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(
                             args.splitTrackNode1Id,
                             args.splitTrackNode2Id,
-                            _constants.maxWaypointDistance
+                            _constants.maxWaypointDistance,
+                            logger.isExtendedLog()
                         )
                         -- LOLLO NOTE I need this, or a station with only one track edge will dump with
                         -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
@@ -2177,10 +2178,11 @@ function data()
                         end
                         logger.print('at least two track edges found')
 
-                        local platformEdgeIdsBetweenNodeIds = stationHelpers.getTrackEdgeIdsBetweenNodeIds(
+                        local platformEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(
                             args.splitPlatformNode1Id,
                             args.splitPlatformNode2Id,
-                            _constants.maxWaypointDistance
+                            _constants.maxWaypointDistance,
+                            logger.isExtendedLog()
                         )
                         -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
                         -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
