@@ -91,7 +91,7 @@ local _actions = {
         proposal.constructionsToAdd[1] = newCon
 
         local context = api.type.Context:new()
-        context.checkTerrainAlignment = true
+        -- context.checkTerrainAlignment = true
         -- context.cleanupStreetGraph = true
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
@@ -172,7 +172,7 @@ local _actions = {
         -- C:\GitLab-Runner\builds\1BJoMpBZ\0\ug\urban_games\train_fever\src\Game\UrbanSim\StockListUpdateHelper.cpp:166: __cdecl StockListUpdateHelper::~StockListUpdateHelper(void) noexcept(false): Assertion `0 <= pr.second && pr.second < (int)m_data->addedEntities->size()' failed.
 
         local context = api.type.Context:new()
-        context.checkTerrainAlignment = true -- default is false
+        -- context.checkTerrainAlignment = true -- default is false
         -- context.cleanupStreetGraph = true -- default is false
         -- context.gatherBuildings = true -- default is false
         -- context.gatherFields = true -- default is true
