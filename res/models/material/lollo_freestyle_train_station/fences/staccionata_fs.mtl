@@ -4,7 +4,7 @@ return {
 	order = 0,
 	params = {
 		albedo_scale = {
-			albedoScale = { 1, 1, 1, },
+			albedoScale = { 1.4, 1.4, 1.4, },
 		},
 		alpha_scale = {
 			alphaScale = 1,
@@ -40,7 +40,7 @@ return {
 			wrapT = "REPEAT",
 		},
 		normal_scale = {
-			normalScale = 1,
+			normalScale = 0.1,
 		},
 
 		polygon_offset = {
