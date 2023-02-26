@@ -1,5 +1,4 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
--- local constants = require('lollo_freestyle_train_station.constants')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
@@ -135,7 +134,7 @@ local _getConstructionConfigLayout = function(conId, paramsMetadataSorted, param
     end
     for _, paramMetadata in pairs(paramsMetadataSorted) do
         for valueKey, value in pairs(paramValues) do
-            if type(valueKey) == 'string' and valueKey == ('lolloFenceAssets_' .. paramMetadata.key) then
+            if type(valueKey) == 'string' and valueKey == (paramMetadata.key) then
                 addParam(valueKey, paramMetadata, value)
                 break
             end

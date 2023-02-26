@@ -68,12 +68,12 @@ local _actions = {
             seed = math.abs(math.ceil(conTransf[13] * 1000)),
             transfs = transfs,
         }
-        local paramsMetadata = modelHelper.getParamsMetadata()
+        local paramsMetadata = modelHelper.getChangeableParamsMetadata()
         -- logger.print('paramsMetadata =') logger.debugPrint(paramsMetadata)
         -- logger.print('modelHelper.getDefaultIndexes() =') logger.debugPrint(modelHelper.getDefaultIndexes())
         for _, pm in pairs(paramsMetadata) do
             -- logger.print('pm.key =', pm.key or 'NIL')
-            newParams['lolloFenceAssets_' .. pm.key] = modelHelper.getDefaultIndexes()[pm.key]
+            newParams[pm.key] = modelHelper.getDefaultIndexes()[pm.key]
         end
         newCon.params = newParams
         -- logger.print('newParams =') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(newParams, {'transfs'}, true))
@@ -148,13 +148,14 @@ local _actions = {
             return
         end
         local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
-        if oldCon == nil then
-            logger.warn('_updateConstruction cannot get the con')
+        if oldCon == nil or oldCon.fileName ~= _constants.fenceConFileName then
+            logger.print('_updateConstruction cannot get the con, or it is not one of mine')
             return
         end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = oldCon.fileName
+
         local newParams = arrayUtils.cloneDeepOmittingFields(oldCon.params, nil, true)
         newParams[paramKey] = newParamValueIndexBase0
         newParams.seed = newParams.seed + 1
@@ -203,8 +204,15 @@ local _guiActions = {
         return api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
     end,
     handleParamValueChanged = function(conId, paramsMetadata, paramKey, newParamValueIndexBase0)
+        logger.print('handleParamValueChanged starting for conId =', conId or 'NIL')
         if not(edgeUtils.isValidAndExistingId(conId)) then
             logger.warn('_handleParamValueChanged got no con or no valid con')
+            return
+        end
+
+        local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+        if con == nil or con.fileName ~= _constants.fenceConFileName then
+            logger.print('_handleParamValueChanged cannot get the con or it is not one of mine')
             return
         end
 
@@ -220,8 +228,15 @@ local _guiActions = {
         ))
     end,
     handleBulldozeClicked = function(conId)
+        logger.print('_handleBulldozeClicked starting for conId =', conId or 'NIL')
         if not(edgeUtils.isValidAndExistingId(conId)) then
             logger.warn('_handleBulldozeClicked got no con or no valid con')
+            return
+        end
+
+        local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+        if con == nil or con.fileName ~= _constants.fenceConFileName then
+            logger.print('_handleBulldozeClicked cannot get the con or it is not one of mine')
             return
         end
 
@@ -637,7 +652,28 @@ function data()
                         if not(con) or con.fileName ~= _constants.fenceConFileName then return end
 
                         logger.print('selected one of my fences, it has conId =', conId, 'and con.fileName =', con.fileName)
-                        guiHelpers.addConConfigToWindow(conId, _guiActions.handleParamValueChanged, modelHelper.getParamsMetadata(), con.params, _guiActions.handleBulldozeClicked)
+                        guiHelpers.addConConfigToWindow(
+                            conId,
+                            _guiActions.handleParamValueChanged,
+                            modelHelper.getChangeableParamsMetadata(),
+                            con.params,
+                            _guiActions.handleBulldozeClicked
+                        )
+                        -- not required but it might prevent a crash with the conMover: no it does not
+                        -- local paramsMetadata = modelHelper.getChangeableParamsMetadata()
+                        -- local changeableParams = {}
+                        -- for _, paramMetadata in pairs(paramsMetadata) do
+                        --     changeableParams[#changeableParams+1] = arrayUtils.cloneDeepOmittingFields(
+                        --         con.params[paramMetadata.key]
+                        --     )
+                        -- end
+                        -- guiHelpers.addConConfigToWindow(
+                        --     conId,
+                        --     _guiActions.handleParamValueChanged,
+                        --     paramsMetadata,
+                        --     changeableParams,
+                        --     _guiActions.handleBulldozeClicked
+                        -- )
                     end,
                     logger.xpErrorHandler
                 )

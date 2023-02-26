@@ -33,12 +33,12 @@ function data()
 
             local _initParams = function()
                 local defaults = fenceModelHelper.getDefaultIndexes()
-                params.lolloFenceAssets_length = params.lolloFenceAssets_length or defaults.length
-                params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.model
-                params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.wallEraPrefix
-                params.lolloFenceAssets_yShift = params.lolloFenceAssets_yShift or defaults.yShift
-                params.lolloFenceAssets_zDelta = params.lolloFenceAssets_zDelta or defaults.zDelta
-                params.lolloFenceAssets_zRotation = params.lolloFenceAssets_zRotation or defaults.zRotation
+                params.lolloFenceAssets_length = params.lolloFenceAssets_length or defaults.lolloFenceAssets_length
+                params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.lolloFenceAssets_model
+                params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.lolloFenceAssets_wallEraPrefix
+                params.lolloFenceAssets_yShift = params.lolloFenceAssets_yShift or defaults.lolloFenceAssets_yShift
+                params.lolloFenceAssets_zDelta = params.lolloFenceAssets_zDelta or defaults.lolloFenceAssets_zDelta
+                params.lolloFenceAssets_zRotation = params.lolloFenceAssets_zRotation or defaults.lolloFenceAssets_zRotation
             end
             _initParams()
 

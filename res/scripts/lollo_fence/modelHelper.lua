@@ -7,12 +7,12 @@ local privateValues = {
     zRotationMaxIndex = 64,
 }
 privateValues.defaults = {
-    length = 9,
-    model = 0,
-    wallEraPrefix = 0,
-    yShift = privateValues.yShiftMaxIndex + 5,
-    zDelta = privateValues.zDeltaMaxIndex,
-    zRotation = privateValues.zRotationMaxIndex,
+    lolloFenceAssets_length = 9,
+    lolloFenceAssets_model = 0,
+    lolloFenceAssets_wallEraPrefix = 0,
+    lolloFenceAssets_yShift = privateValues.yShiftMaxIndex + 5,
+    lolloFenceAssets_zDelta = privateValues.zDeltaMaxIndex,
+    lolloFenceAssets_zRotation = privateValues.zRotationMaxIndex,
 }
 local privateFuncs = {
     getLengthValues = function()
@@ -90,68 +90,6 @@ local privateFuncs = {
 }
 
 return {
---[[
-    getModelsWApi = function()
-        local results = {}
-        local add = function(fileName)
-            local id = api.res.modelRep.find(fileName)
-            if id < 0 then return false end
-
-            local model = api.res.modelRep.get(id)
-            if model == nil then return false end
-
-            results[#results+1] = {
-                fileName = fileName,
-                icon = model.metadata.description.icon,
-                id = id,
-                name = model.metadata.description.name
-            }
-        end
-        add('lollo_freestyle_train_station/platformWalls/bricks/platformWall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/tunnely/wall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/concrete_modern/wall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_5m.mdl')
-        add('lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_5m.mdl')
-        return results
-    end,
-    getConParamsWApi = function (modelData)
-        return {
-            {
-                defaultIndex = 0,
-                key = 'lolloFenceAssets_model',
-                name = _('fenceModelName'),
-                values = arrayUtils.map(
-                    modelData,
-                    function(model)
-                        -- return model.name
-                        return model.icon
-                    end
-                ),
-                uiType = 'ICON_BUTTON',
-            },
-            {
-                defaultIndex = 0,
-                key = 'lolloFenceAssets_wallEraPrefix',
-                name = _('wallEraPrefix_0IsNoWall'),
-                uiType = 'BUTTON',
-                values = {_('NoWall'), 'A', 'B', 'C'},
-            },
-            {
-                defaultIndex = 9,
-                key = 'lolloFenceAssets_length',
-                name = _('Length'),
-                uiType = 'SLIDER',
-                values = privateFuncs.getLengthValues(),
-            },
-        }
-    end,
-]]
     getModels = function()
         return privateFuncs.getModels()
     end,
@@ -159,7 +97,7 @@ return {
         local models = privateFuncs.getModels()
         return {
             {
-                defaultIndex = privateValues.defaults.model,
+                defaultIndex = privateValues.defaults.lolloFenceAssets_model,
                 key = 'lolloFenceAssets_model',
                 name = _('fenceModelName'),
                 values = arrayUtils.map(
@@ -172,35 +110,35 @@ return {
                 uiType = 'ICON_BUTTON',
             },
             {
-                defaultIndex = privateValues.defaults.wallEraPrefix,
+                defaultIndex = privateValues.defaults.lolloFenceAssets_wallEraPrefix,
                 key = 'lolloFenceAssets_wallEraPrefix',
                 name = _('wallEraPrefix_0IsNoWall'),
                 uiType = 'BUTTON',
                 values = {_('NoWall'), 'A', 'B', 'C'},
             },
             {
-                defaultIndex = privateValues.defaults.length,
+                defaultIndex = privateValues.defaults.lolloFenceAssets_length,
                 key = 'lolloFenceAssets_length',
                 name = _('Length'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getLengthValues(),
             },
             {
-                defaultIndex = privateValues.defaults.yShift,
+                defaultIndex = privateValues.defaults.lolloFenceAssets_yShift,
                 key = 'lolloFenceAssets_yShift',
                 name = _('YShift'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getYShiftDisplayValues(),
             },
             {
-                defaultIndex = privateValues.defaults.zRotation,
+                defaultIndex = privateValues.defaults.lolloFenceAssets_zRotation,
                 key = 'lolloFenceAssets_zRotation',
                 name = _('ZRotation'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getZRotationDisplayValues(),
             },
             {
-                defaultIndex = privateValues.defaults.zDelta,
+                defaultIndex = privateValues.defaults.lolloFenceAssets_zDelta,
                 key = 'lolloFenceAssets_zDelta',
                 name = _('ZDelta'),
                 uiType = 'SLIDER',
@@ -208,12 +146,12 @@ return {
             },
         }
     end,
-    getParamsMetadata = function()
+    getChangeableParamsMetadata = function()
         local models = privateFuncs.getModels()
         local metadata_sorted = {
             {
-                defaultIndex = privateValues.defaults.model,
-                key = 'model',
+                defaultIndex = privateValues.defaults.lolloFenceAssets_model,
+                key = 'lolloFenceAssets_model',
                 name = _('fenceModelName'),
                 values = arrayUtils.map(
                     models,
@@ -225,8 +163,8 @@ return {
                 uiType = 'ICON_BUTTON',
             },
             {
-                defaultIndex = privateValues.defaults.wallEraPrefix,
-                key = 'wallEraPrefix',
+                defaultIndex = privateValues.defaults.lolloFenceAssets_wallEraPrefix,
+                key = 'lolloFenceAssets_wallEraPrefix',
                 name = _('wallEraPrefix_0IsNoWall'),
                 uiType = 'BUTTON',
                 values = {_('NoWall'), 'A', 'B', 'C'},
