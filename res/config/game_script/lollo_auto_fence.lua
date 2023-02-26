@@ -249,11 +249,21 @@ local _guiActions = {
             }
         ))
     end,
-    handleValidFenceWaypointBuilt = function(isWaypointArrowAgainstTrackDirection)
-        logger.print('_handleValidFenceWaypointBuilt starting, isWaypointArrowAgainstTrackDirection =', isWaypointArrowAgainstTrackDirection)
+    handleValidFenceWaypointBuilt = function(lastWaypointData)
+        -- local lastWaypointData = {
+        --     isWaypointArrowAgainstTrackDirection = isWaypointArrowAgainstTrackDirection,
+        --     newWaypointId = newWaypointId,
+        --     twinWaypointId = twinWaypointId
+        -- }
+        logger.print('_handleValidFenceWaypointBuilt starting, lastWaypointData =')
+        logger.debugPrint(lastWaypointData)
         local fenceWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiFenceWaypointModelId)
         if #fenceWaypointIds ~= 2 then return end
 
+        -- sort the ids, the sequence matters here
+        if fenceWaypointIds[1] == lastWaypointData.newWaypointId then
+            fenceWaypointIds[1], fenceWaypointIds[2] = fenceWaypointIds[2], fenceWaypointIds[1]
+        end
         -- set a place to build the fence con
         local fenceWaypoint1Pos = edgeUtils.getObjectPosition(fenceWaypointIds[1])
         local fenceWaypoint2Pos = edgeUtils.getObjectPosition(fenceWaypointIds[2])
@@ -282,6 +292,10 @@ local _guiActions = {
             return
         end
 
+        -- convert userdata to table
+        local edge2Node0Pos = api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position
+        local edge2Node1Pos = api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position
+
         -- useless
         -- local edgeObject1Side, edgeObject2Side
         -- for _, obj in pairs(baseEdge1.objects) do
@@ -304,10 +318,12 @@ local _guiActions = {
         local eventArgs = {
             edge1Id = edge1Id,
             edge2Id = edge2Id,
+            edge2Node0Pos = {edge2Node0Pos.x, edge2Node0Pos.y, edge2Node0Pos.z},
+            edge2Node1Pos = {edge2Node1Pos.x, edge2Node1Pos.y, edge2Node1Pos.z},
             fenceWaypoint1Id = fenceWaypointIds[1],
             fenceWaypoint2Id = fenceWaypointIds[2],
             fenceWaypointMidTransf = fenceWaypointMidTransf,
-            isWaypoint2ArrowAgainstTrackDirection = isWaypointArrowAgainstTrackDirection,
+            isWaypoint2ArrowAgainstTrackDirection = lastWaypointData.isWaypointArrowAgainstTrackDirection,
         }
 
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -538,6 +554,8 @@ function data()
                         -- fence waypoints built, eventArgs = {
                         --     edge1Id = edge1Id,
                         --     edge2Id = edge2Id,
+                        --     edge2Node0Pos = edge2Node0Pos,
+                        --     edge2Node1Pos = edge2Node1Pos,
                         --     fenceWaypoint1Id = fenceWaypointIds[1],
                         --     fenceWaypoint2Id = fenceWaypointIds[2],
                         --     fenceWaypointMidTransf = fenceWaypointMidTransf,
@@ -548,31 +566,38 @@ function data()
                             args.edge1Id, args.edge2Id, _constants.maxFenceWaypointDistance, true, logger.isExtendedLog()
                         )
                         if #trackEdgeIdsBetweenEdgeIds > 0 then
-                            local trackEdgeList_AsLaid = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds, true)
-                            local trackEdgeList_Oriented = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds)
-                            if not(transfUtils.isXYZSame(
-                                trackEdgeList_Oriented[#trackEdgeList_Oriented].posTanX2[1][1],
-                                trackEdgeList_AsLaid[#trackEdgeList_AsLaid].posTanX2[1][1]
-                            ))
+                            local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds)
+                            if transfUtils.isXYZSame(
+                                trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1],
+                                args.edge2Node1Pos
+                            )
                             then
+                                logger.print('isWaypoint2ArrowAgainstTrackDirection does not need reversing')
+                            elseif transfUtils.isXYZSame(
+                                trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[1][1],
+                                args.edge2Node1Pos
+                            ) then
+                                logger.print('reversing isWaypoint2ArrowAgainstTrackDirection')
                                 args.isWaypoint2ArrowAgainstTrackDirection = not(args.isWaypoint2ArrowAgainstTrackDirection)
+                            else
+                                logger.warn('cannot find the right direction to build my fence')
                             end
+
                             if args.isWaypoint2ArrowAgainstTrackDirection then
                                 logger.print('reversing trackEdgeList')
-                                trackEdgeList_Oriented = stationHelpers.reversePosTanX2ListInPlace(trackEdgeList_Oriented)
+                                trackEdgeList_Ordered = stationHelpers.reversePosTanX2ListInPlace(trackEdgeList_Ordered)
                                 -- yShift = -yShift -- NO!
                             end
-                            logger.print('trackEdgeList =') logger.debugPrint(trackEdgeList_Oriented)
-                            -- LOLLO TODO MAYBE skip the segments beyond the waypoints
+                            logger.print('trackEdgeList =') logger.debugPrint(trackEdgeList_Ordered)
                             local trackEdgeListFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
-                                trackEdgeList_Oriented,
+                                trackEdgeList_Ordered,
                                 1,
                                 false,
                                 false
                             )
                             -- logger.print('trackEdgeListFine =') logger.debugPrint(trackEdgeListFine)
                             if #trackEdgeListFine > 0 then
-                                local yShift = trackEdgeList_Oriented[1].width * 0.5
+                                local yShift = trackEdgeList_Ordered[1].width * 0.5
                                 local trackEdgeListShifted = arrayUtils.map(
                                     trackEdgeListFine,
                                     function(tel)
@@ -634,7 +659,7 @@ function data()
                                 logger.print('fenceWaypointData =') logger.debugPrint(waypointData)
                                 if not(waypointData) then return end
 
-                                _guiActions.handleValidFenceWaypointBuilt(waypointData.isWaypointArrowAgainstTrackDirection)
+                                _guiActions.handleValidFenceWaypointBuilt(waypointData)
                             end
                         end
                     end,

@@ -9,7 +9,7 @@ local transfUtilsUG = require('transf')
 
 
 local helpers = {
-    getEdgeIdsProperties = function(edgeIds, isPreserveOrientation)
+    getEdgeIdsProperties = function(edgeIds)
         if type(edgeIds) ~= 'table' then return {} end
 
         local _getEdgeType = function(baseEdgeType)
@@ -42,29 +42,27 @@ local helpers = {
             local tan0 = baseEdge.tangent0
             local tan1 = baseEdge.tangent1
 
-            if not(isPreserveOrientation) then
-                local _swap = function()
-                    -- LOLLO NOTE lua does not need the third variable for swapping since the assignments take place at the same time
-                    pos0, pos1 = pos1, pos0
-                    tan0, tan1 = tan1, tan0
-                    tan0.x = -tan0.x
-                    tan0.y = -tan0.y
-                    tan0.z = -tan0.z
-                    tan1.x = -tan1.x
-                    tan1.y = -tan1.y
-                    tan1.z = -tan1.z
+            local _swap = function()
+                -- LOLLO NOTE lua does not need the third variable for swapping since the assignments take place at the same time
+                pos0, pos1 = pos1, pos0
+                tan0, tan1 = tan1, tan0
+                tan0.x = -tan0.x
+                tan0.y = -tan0.y
+                tan0.z = -tan0.z
+                tan1.x = -tan1.x
+                tan1.y = -tan1.y
+                tan1.z = -tan1.z
+            end
+            -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
+            if i == 1 then
+                if i < #edgeIds then
+                    -- logger.print('nextBaseEdgeId =') logger.debugPrint(edgeIds[i + 1])
+                    local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
+                    if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
                 end
-                -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
-                if i == 1 then
-                    if i < #edgeIds then
-                        -- logger.print('nextBaseEdgeId =') logger.debugPrint(edgeIds[i + 1])
-                        local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
-                        if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
-                    end
-                else
-                    local prevBaseEdge = api.engine.getComponent(edgeIds[i - 1], api.type.ComponentType.BASE_EDGE)
-                    if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then _swap() end
-                end
+            else
+                local prevBaseEdge = api.engine.getComponent(edgeIds[i - 1], api.type.ComponentType.BASE_EDGE)
+                if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then _swap() end
             end
 
             local result = {
@@ -412,7 +410,7 @@ local helpers = {
                         _refEdgeLength
                         -- logger.isExtendedLog()
                     )
-                    logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                    -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                     if nodeBetween == nil then
                         logger.err('nodeBetween not found; oldEdge =') -- logger.errorDebugPrint(oldEdge)
                         return {}
