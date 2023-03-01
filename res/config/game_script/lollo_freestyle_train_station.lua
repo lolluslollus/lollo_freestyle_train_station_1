@@ -1211,61 +1211,60 @@ local _actions = {
     end,
 
     rebuildUndergroundDepotWithoutHole = function(oldConId)
-        logger.print('rebuildUndergroundDepotWithoutHole starting, oldConId =', oldConId or 'NIL')
+        -- LOLLO NOTE programmatically adding a depot works, but as soon as you click the depot, the game will crash
+        logger.print('_rebuildUndergroundDepotWithoutHole starting, oldConId =', oldConId or 'NIL')
         local oldCon = edgeUtils.isValidAndExistingId(oldConId)
-        and api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
-        or nil
+            and api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
+            or nil
         if not(oldCon) then return end
 
         logger.print('oldCon =') logger.debugPrint(oldCon)
 
-        local newParams = {
-            catenary = oldCon.params.catenary,
-            isShowUnderground = 0, -- this is what this is all about: once built, stop showing underground
-            -- paramX = oldCon.params.paramX,
-            -- paramY = oldCon.params.paramY,
-            seed = oldCon.params.seed + 1,
-            trackType = oldCon.params.trackType,
-            -- year = oldCon.params.year,
-        }
-        -- LOLLO NOTE this is no ordinary construction, but a rail depot.
-        -- Some magic is involved.
-        -- Rebuilding it with the api will lead to crashes as soon as the user clicks it.
-        -- Instead, we try the old interface, which fails with the usual "pr.second failed"
-    --[[
-        game.interface.upgradeConstruction(
-            oldConId,
-            oldCon.fileName,
-            newParams
-        )
-    ]]
-    --[[
+        local newParams = arrayUtils.cloneDeepOmittingFields(oldCon.params, nil, true)
+        if newParams.isShowUnderground == 0 then return end
+
+        newParams.isShowUnderground = 0 -- this is what this is all about: once built, stop showing underground
+        newParams.seed = newParams.seed + 1
+
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = oldCon.fileName
         newCon.params = newParams
-        newCon.transf = oldCon.transf
         newCon.playerEntity = api.engine.util.getPlayer()
+        newCon.transf = oldCon.transf
 
         logger.print('newCon =') logger.debugPrint(newCon)
 
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
         proposal.constructionsToRemove = { oldConId }
-        proposal.old2new = {
-            oldConId, 0
-            -- oldConId, 1
-        }
+        -- proposal.old2new = { -- makes trouble
+        --     -- oldConId, 0
+        --     oldConId, 1
+        -- }
 
         logger.print('proposal =') logger.debugPrint(proposal)
 
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer()
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, nil, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('rebuild underground depot without hole callback, success =', success)
+                logger.print('_rebuildUndergroundDepotWithoutHole callback, success =', success)
                 -- logger.debugPrint(result)
+                if not(success) then
+                    logger.warn('_rebuildUndergroundDepotWithoutHole failed')
+                    logger.warn('proposal =') logger.warningDebugPrint(proposal)
+                    logger.warn('result =') logger.warningDebugPrint(result)
+                else
+                    local newConId = result.resultEntities[1]
+                    logger.print('_rebuildUndergroundDepotWithoutHole succeeded, conId = ', newConId)
+                end
             end
         )
-    ]]
     end,
 
     upgradeStationConstruction = function(oldConId)
@@ -1369,18 +1368,6 @@ local _guiActions = {
                 eventArgs
             ))
         end
-    end,
-    tryHideHole = function(conId, con)
-        if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.undergroundDepotConFileName or con.transf == nil then return false end
-
-        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-            string.sub(debug.getinfo(1, 'S').source, 1),
-            _eventId,
-            _eventNames.HIDE_HOLE_REQUESTED,
-            { conId = conId }
-        ))
-
-        return true
     end,
     tryJoinSubway = function(conId, con)
         if con == nil
@@ -2044,6 +2031,7 @@ function data()
                     elseif name == _eventNames.ALLOW_PROGRESS then
                         state.isHideProgress = false
                     elseif name == _eventNames.HIDE_HOLE_REQUESTED then
+                        -- LOLLO NOTE programmatically adding a depot works, but as soon as you click the depot, the game will crash
                         -- _actions.rebuildUndergroundDepotWithoutHole(args.conId)
                     elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
                         _actions.bulldozeCon(args.platformMarkerConstructionEntityId)
@@ -2749,8 +2737,7 @@ function data()
                                 -- logger.print('construction built, construction id =') logger.debugPrint(conId)
                                 if not(con) then return end
 
-                                if type(con.fileName) == 'string'
-                                and con.fileName == 'station/rail/lollo_freestyle_train_station/track_splitter.con'
+                                if con.fileName == 'station/rail/lollo_freestyle_train_station/track_splitter.con'
                                 and con.transf ~= nil
                                 then
                                     api.cmd.sendCommand(
@@ -2758,15 +2745,23 @@ function data()
                                             string.sub(debug.getinfo(1, 'S').source, 1),
                                             _eventId,
                                             _eventNames.TRACK_SPLIT_REQUESTED,
-                                            {
-                                                conId = conId
-                                            }
+                                            { conId = conId }
                                         )
                                     )
+                                -- elseif con.fileName == _constants.undergroundDepotConFileName
+                                -- and con.transf ~= nil
+                                -- then
+                                --     api.cmd.sendCommand(
+                                --         api.cmd.make.sendScriptEvent(
+                                --             string.sub(debug.getinfo(1, 'S').source, 1),
+                                --             _eventId,
+                                --             _eventNames.HIDE_HOLE_REQUESTED,
+                                --             { conId = conId }
+                                --         )
+                                --     )
                                 else
                                     _guiActions.tryJoinSubway(conId, con)
                                 end
-                                -- _guiActions.tryHideHole(conId, con)
                             elseif id == 'streetTerminalBuilder' then
                                 -- waypoint, traffic light, my own waypoints built
                                 if args and args.proposal and args.proposal.proposal

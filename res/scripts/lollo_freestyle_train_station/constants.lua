@@ -86,7 +86,7 @@ local constants = {
     era_b_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua',
     era_c_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_02_high_priority.lua',
 
-    fenceConFileName = 'lollo_freestyle_train_station/auto_fence.con',
+    autoFenceConFileName = 'lollo_freestyle_train_station/auto_fence.con',
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
     subwayConFileNames = {

@@ -9,20 +9,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 96,
-					offset = 1668,
+					count = 48,
+					offset = 908,
 				},
 				position = {
-					count = 96,
-					offset = 1572,
+					count = 48,
+					offset = 1004,
 				},
 				tangent = {
-					count = 96,
-					offset = 1764,
+					count = 48,
+					offset = 956,
 				},
 				uv0 = {
-					count = 96,
-					offset = 1476,
+					count = 48,
+					offset = 860,
 				},
 			},
 			materials = {
@@ -32,20 +32,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 192,
-					offset = 2244,
+					count = 96,
+					offset = 1148,
 				},
 				position = {
-					count = 192,
-					offset = 2052,
+					count = 96,
+					offset = 1340,
 				},
 				tangent = {
-					count = 192,
-					offset = 2436,
+					count = 96,
+					offset = 1244,
 				},
 				uv0 = {
-					count = 192,
-					offset = 1860,
+					count = 96,
+					offset = 1052,
 				},
 			},
 			materials = {
@@ -55,20 +55,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 96,
-					offset = 2820,
+					count = 48,
+					offset = 1484,
 				},
 				position = {
-					count = 96,
-					offset = 2724,
+					count = 48,
+					offset = 1580,
 				},
 				tangent = {
-					count = 96,
-					offset = 2916,
+					count = 48,
+					offset = 1532,
 				},
 				uv0 = {
-					count = 96,
-					offset = 2628,
+					count = 48,
+					offset = 1436,
 				},
 			},
 			materials = {
@@ -78,20 +78,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 192,
-					offset = 3396,
+					count = 96,
+					offset = 1724,
 				},
 				position = {
-					count = 192,
-					offset = 3204,
+					count = 96,
+					offset = 1916,
 				},
 				tangent = {
-					count = 192,
-					offset = 3588,
+					count = 96,
+					offset = 1820,
 				},
 				uv0 = {
-					count = 192,
-					offset = 3012,
+					count = 96,
+					offset = 1628,
 				},
 			},
 			materials = {
@@ -101,20 +101,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 3876,
+					count = 24,
+					offset = 2036,
 				},
 				position = {
-					count = 48,
-					offset = 3828,
+					count = 24,
+					offset = 2084,
 				},
 				tangent = {
-					count = 48,
-					offset = 3924,
+					count = 24,
+					offset = 2060,
 				},
 				uv0 = {
-					count = 48,
-					offset = 3780,
+					count = 24,
+					offset = 2012,
 				},
 			},
 			materials = {
@@ -124,20 +124,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 4068,
+					count = 24,
+					offset = 2132,
 				},
 				position = {
-					count = 48,
-					offset = 4020,
+					count = 24,
+					offset = 2180,
 				},
 				tangent = {
-					count = 48,
-					offset = 4116,
+					count = 24,
+					offset = 2156,
 				},
 				uv0 = {
-					count = 48,
-					offset = 3972,
+					count = 24,
+					offset = 2108,
 				},
 			},
 			materials = {
@@ -148,19 +148,19 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 4260,
+					offset = 2252,
 				},
 				position = {
 					count = 48,
-					offset = 4212,
+					offset = 2348,
 				},
 				tangent = {
 					count = 48,
-					offset = 4308,
+					offset = 2300,
 				},
 				uv0 = {
 					count = 48,
-					offset = 4164,
+					offset = 2204,
 				},
 			},
 			materials = {
@@ -170,22 +170,22 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 168,
+			count = 108,
 			numComp = 3,
-			offset = 1084,
+			offset = 368,
 		},
 		position = {
-			count = 540,
+			count = 288,
 			numComp = 3,
-			offset = 544,
+			offset = 572,
 		},
 		tangent = {
-			count = 224,
+			count = 96,
 			numComp = 4,
-			offset = 1252,
+			offset = 476,
 		},
 		uv0 = {
-			count = 544,
+			count = 368,
 			numComp = 2,
 			offset = 0,
 		},

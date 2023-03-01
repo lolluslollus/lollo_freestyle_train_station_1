@@ -3,15 +3,15 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
-local _extraHeight4Title = 100
-local _extraHeight4Param = 40
+local _extraHeight4Title = 40
+local _extraHeight4Param = 45 -- half the height of module icons, which we reuse here
 local _conConfigLayoutIdPrefix = 'lollo_fence_con_config_layout_'
 
 local _warningWindowWithGotoId = 'lollo_fence_warning_window_with_goto'
 
 local _texts = {
     bulldoze = _('Bulldoze'),
-    conConfigWindowTitle = _('ConConfigWindowTitle'),
+    conConfigWindowTitle = _('ConSettingsWindowTitle'),
     goBack = _('GoBack'),
     goThere = _('GoThere'), -- cannot put this directly inside the loop for some reason
     warningWindowTitle = _('WarningWindowTitle'),
@@ -34,7 +34,7 @@ local _getConstructionConfigLayout = function(conId, paramsMetadataSorted, param
     end
 
     local function addParam(paramKey, paramMetadata, paramValue)
-        logger.print('addParam starting')
+        logger.print('addParam starting, paramKey =', paramKey or 'NIL')
         if not(paramMetadata) or not(paramValue) then return end
 
         local paramNameTextBox = api.gui.comp.TextView.new(paramMetadata.name)
@@ -55,7 +55,10 @@ local _getConstructionConfigLayout = function(conId, paramsMetadataSorted, param
                 end
             )
             for indexBase1, value in pairs(paramMetadata.values) do
-                local button = api.gui.comp.ToggleButton.new(api.gui.comp.ImageView.new(value))
+                -- logger.print('### paramMetadata =') logger.debugPrint(paramMetadata)
+                local imageView = api.gui.comp.ImageView.new(value)
+                imageView:setMaximumSize(api.gui.util.Size.new(_extraHeight4Param, _extraHeight4Param))
+                local button = api.gui.comp.ToggleButton.new(imageView)
                 buttonRowLayout:add(button)
                 if indexBase1 -1 == _valueIndexBase0 then
                     button:setSelected(true, false)
@@ -133,12 +136,18 @@ local _getConstructionConfigLayout = function(conId, paramsMetadataSorted, param
         end
     end
     for _, paramMetadata in pairs(paramsMetadataSorted) do
+        local isFound = false
         for valueKey, value in pairs(paramValues) do
-            if type(valueKey) == 'string' and valueKey == (paramMetadata.key) then
+            if type(valueKey) == 'string' and valueKey == paramMetadata.key then
                 addParam(valueKey, paramMetadata, value)
+                isFound = true
                 break
             end
         end
+        -- allow adding new params to old cons that did not have them
+        -- if not(isFound) then
+        --     addParam(paramMetadata.key, paramMetadata, paramMetadata.defaultIndex)
+        -- end
     end
 --[[
     if type(onBulldozeClicked) == 'function' then

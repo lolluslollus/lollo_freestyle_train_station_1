@@ -1,7 +1,8 @@
-local logger = require('lollo_freestyle_train_station.logger')
-local paramsutil = require 'paramsutil'
-
 function data()
+	local constants = require('lollo_freestyle_train_station.constants')
+	local logger = require('lollo_freestyle_train_station.logger')
+	local paramsutil = require 'paramsutil'
+
 	local config = {
 		trackTypes = { 'standard.lua', 'high_speed.lua' },
 	}
@@ -29,23 +30,24 @@ function data()
             --     values = {
             --         _('NO'), _('YES')
             --     },
-            --     defaultIndex = 0,
+            --     defaultIndex = 1,
             -- },
 		},
 		updateFn = function(params)
-			logger.print('updateFn starting, params.upgrade =', params.upgrade) -- this is always nil
+			logger.print('updateFn starting, params.upgrade =', params.upgrade or 'NIL') -- this is always nil
 			local trackHeight = params.state.track.railBase + params.state.track.railHeight
             -- LOLLO NOTE If some edges are not free, I will need a dummy model,
             -- otherwise the game will say "hello there" or "easter egg" or other rubbish,
             -- then point away (to some animal) and do nothing,
             -- when the user clicks on a done construction to configure it.
 			local result = {
+				-- colliders = {},
 				cost = 18000,
 				edgeLists = {
 					{
 						type = 'TRACK',
 						params = {
-							type = config.trackTypes[params.trackType and params.trackType + 1 or 0],
+							type = config.trackTypes[params.trackType and (params.trackType + 1) or 0],
 							catenary = params.catenary == 1
 						},
 						edgeType = 'TUNNEL',
@@ -63,48 +65,74 @@ function data()
 							-- { { 0, -19.1, -trackHeight }, { 0, -20.0, 0 } },
 							-- { { 0, -39.1, -trackHeight }, { 0, -20.0, 0 } },
 						},
+						-- freeNodes = { 0, },
 						snapNodes = { 0, },
 					}
 				},
+				groundFaces = { },
+				-- groundFaces = { -- dummy ground faces so this is treated as a proper construction, and the construction mover can adjust it
+				-- 	{
+				-- 		face = {
+				-- 			{0.1, -0.1, 0.0, 1.0},
+				-- 			{0.1, 0.1, 0.0, 1.0},
+				-- 			{-0.1, 0.1, 0.0, 1.0},
+				-- 			{-0.1, -0.1, 0.0, 1.0},
+				-- 		},
+				-- 		modes = {
+				-- 			{
+				-- 				type = 'FILL',
+				-- 				key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+				-- 			}
+				-- 		}
+				-- 	},
+				-- },
 				models = {
 					{
 						id = 'lollo_freestyle_train_station/depot/underground_train_depot_era_a.mdl',
-						transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+						transf = constants.idTransf
 					},
 				},
-				terrainAlignmentLists = {
-					{
-						type = 'EQUAL',
-						optional = true,
-						faces = {}
-					}
-				}
+				terrainAlignmentLists = { {
+					type = 'EQUAL',
+					optional = true,
+					faces = {}
+				} }
 			}
 
 			if params.isShowUnderground == 1 then
 				local xSize = 25
 				local ySize = 100
-				local faces = { {
+				local face = {
 					{-xSize, -ySize, 0}, {xSize, -ySize, 0}, {xSize, ySize, 0}, {-xSize, ySize, 0}
-				} }
+				}
 
-				result.groundFaces = {
-					{
-						-- face = groundFace,
-						face = faces[1],
-						loop = true,
-						modes = {
-							{
-								-- key = 'lollo_freestyle_train_station/hole.lua',
-								key = 'hole.lua',
-								type = 'FILL',
-							},
-						}
+				result.groundFaces[#result.groundFaces+1] = {
+					-- face = groundFace,
+					face = face,
+					loop = true,
+					modes = {
+						{
+							-- key = 'lollo_freestyle_train_station/hole.lua',
+							key = 'hole.lua',
+							type = 'FILL',
+						},
+					}
+				}
+				result.models[#result.models+1] = {
+					id = 'lollo_freestyle_train_station/icon/yellow_huge.mdl',
+					transf = {
+						1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, 1, 0,
+						0, 39.1, 0, 1
 					}
 				}
 			end
 
 			return result
 		end,
+		upgradeFn = function(params)
+            return {}
+        end,
 	}
 end

@@ -26,7 +26,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 43,
+			value = 45,
 		},
 		type = _constants.platformWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -50,7 +50,7 @@ function data()
 			end
 			results[#results+1] = {
 				id = 'lollo_freestyle_train_station/roofs/concrete_modern/pillar_2_5m.mdl',
-				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
+				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 1.4, -1.3, 1},
 			}
 			results[#results+1] = moduleHelpers.deco.getPreviewIcon(params)
 			return results

@@ -5,6 +5,103 @@ function data()
     local logger = require('lollo_freestyle_train_station.logger')
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
+    local function _addGround(transf, result, zed, wallBehindModelId, isDoTerrain)
+        local _faceTransformed = wallBehindModelId == nil
+            and transfUtils.getFaceTransformed_FAST(
+                transf,
+                {
+                    {-0.5, -0.2, zed, 1.0},
+                    {0.5, -0.2, zed, 1.0},
+                    {0.5, 0.5, zed, 1.0},
+                    {-0.5, 0.5, zed, 1.0},
+                    -- {x, positive backwards, z, 1}
+                }
+            )
+            or transfUtils.getFaceTransformed_FAST(
+                transf,
+                {
+                    {-0.5, -0.2, zed, 1.0},
+                    {0.5, -0.2, zed, 1.0},
+                    {0.5, 1.0, zed, 1.0},
+                    {-0.5, 1.0, zed, 1.0},
+                    -- {x, positive backwards, z, 1}
+                }
+            )
+        table.insert(
+            result.groundFaces,
+            {
+                face = _faceTransformed,
+                loop = true,
+                modes = {
+                    {
+                        type = 'FILL',
+                        key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                    }
+                }
+            }
+        )
+
+        if isDoTerrain then
+            table.insert(
+                result.terrainAlignmentLists,
+                {
+                    faces =  { _faceTransformed },
+                    optional = true,
+                    slopeHigh = 9.9,
+                    slopeLow = 9.6,
+                    type = 'EQUAL',
+                }
+            )
+        end
+    end
+
+    local function _addWall(transf, result, wallMainModelId, wallBaseModelId)
+        if wallMainModelId ~= nil then
+            result.models[#result.models+1] = {
+                id = wallMainModelId,
+                transf = transf
+            }
+        end
+        if wallBaseModelId ~= nil then
+            result.models[#result.models+1] = {
+                id = wallBaseModelId,
+                transf = transf
+            }
+        end
+    end
+
+    local function _addWallBehind(transf, result, zShift, zRotRad, wallBehindModelId, wallBehindBaseModelId)
+        if wallBehindModelId == nil then return end
+
+        local wallBehindTransf
+        if zRotRad >= 0 then
+            -- this will never look perfect, it's in the nature of transformations
+            wallBehindTransf = transfUtils.getTransf_XSkewedOnZ(transf, zShift)
+        else
+            -- idem
+            wallBehindTransf = transfUtils.getTransf_XSkewedOnZ(
+                transfUtils.getTransf_XScaled(transf, 1 -zRotRad), -- all walls behind are 1m deep
+                zShift * (1 -zRotRad)
+            )
+        end
+        table.insert(
+            result.models,
+            {
+                id = wallBehindModelId,
+                transf = wallBehindTransf
+            }
+        )
+        if wallBehindBaseModelId ~= nil then
+            table.insert(
+                result.models,
+                {
+                    id = wallBehindBaseModelId,
+                    transf = wallBehindTransf
+                }
+            )
+        end
+    end
+
 	return {
         -- type = 'ASSET_DEFAULT',
         type = 'ASSET_TRACK', -- this is not the same as snapping.rail below, coz it lowers the asset to the ground.
@@ -33,9 +130,11 @@ function data()
 
             local _initParams = function()
                 local defaults = fenceModelHelper.getDefaultIndexes()
+                params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
                 params.lolloFenceAssets_length = params.lolloFenceAssets_length or defaults.lolloFenceAssets_length
                 params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.lolloFenceAssets_model
                 params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.lolloFenceAssets_wallEraPrefix
+                params.lolloFenceAssets_wallBehindModel = params.lolloFenceAssets_wallBehindModel or defaults.lolloFenceAssets_wallBehindModel
                 params.lolloFenceAssets_yShift = params.lolloFenceAssets_yShift or defaults.lolloFenceAssets_yShift
                 params.lolloFenceAssets_zDelta = params.lolloFenceAssets_zDelta or defaults.lolloFenceAssets_zDelta
                 params.lolloFenceAssets_zRotation = params.lolloFenceAssets_zRotation or defaults.lolloFenceAssets_zRotation
@@ -45,16 +144,30 @@ function data()
             -- we don't use paramX and paramY coz they are awkward here
             -- they cycle in steps of math.pi / 16, just in case you want to add them.
 
-            local function _getWallModelId()
-                local wallModelId = nil
+            local function _getWallBaseModelId()
+                local modelId = nil
                 if params.lolloFenceAssets_wallEraPrefix == 1 then
-                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
+                    modelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
                 elseif params.lolloFenceAssets_wallEraPrefix == 2 then
-                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
+                    modelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
                 elseif params.lolloFenceAssets_wallEraPrefix == 3 then
-                    wallModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
+                    modelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
                 end
-                return wallModelId
+                return modelId
+            end
+
+            local function _getWallBehindBaseModelId()
+                if not(fenceModelHelper.getWallBehindModels()[params.lolloFenceAssets_wallBehindModel + 1].fileName) then return nil end
+
+                local modelId = nil
+                if params.lolloFenceAssets_wallEraPrefix == 1 then
+                    modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_a_wall_base_5m.mdl'
+                elseif params.lolloFenceAssets_wallEraPrefix == 2 then
+                    modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_b_wall_base_5m.mdl'
+                elseif params.lolloFenceAssets_wallEraPrefix == 3 then
+                    modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_c_wall_base_5m.mdl'
+                end
+                return modelId
             end
 
             local function _getYStart()
@@ -119,37 +232,50 @@ function data()
             }
 
             local function _addModels()
-                local fenceModelId = fenceModelHelper.getModels()[params.lolloFenceAssets_model + 1].fileName
-                local wallModelId = _getWallModelId()
+                local isDoTerrain = params.lolloFenceAssets_doTerrain == 1
+                local wallMainModelId = fenceModelHelper.getModels()[params.lolloFenceAssets_model + 1].fileName
+                local wallBaseModelId = _getWallBaseModelId()
+                local wallBehindBaseModelId = _getWallBehindBaseModelId()
+                local wallBehindModelId = fenceModelHelper.getWallBehindModels()[params.lolloFenceAssets_wallBehindModel + 1].fileName
+                logger.print('_addModels got isDoTerrain =', isDoTerrain,
+                    'wallMainModelId =', wallMainModelId or 'NIL',
+                    'wallBaseModelId =', wallBaseModelId or 'NIL',
+                    'wallBehindBaseModelId =', wallBehindBaseModelId or 'NIL',
+                    'wallBehindModelId =', wallBehindModelId or 'NIL'
+                )
+                -- make sure something appears even if the models are all nil, so the costruction will not stay around as a ghost
+                if not(wallMainModelId) and not(wallBaseModelId) and not(wallBehindModelId) then
+                    result.labelText = {
+                        [0] = { _('wallWithNoModelsHere'), _('wallWithNoModelsHere') }
+                    }
+                    result.models = {{
+                        id = constants.yellowMessageModelFileName,
+                        transf = constants.idTransf
+                    }}
+                    return
+                end
 
                 local yStart = _getYStart()
                 -- the wall is 1.4m tall, so we sink all by 20cm. This is level with freestyle stations and looks good.
-                local zStart = wallModelId == nil and 0 or constants.platformHeight
+                local zStart = wallBaseModelId == nil and 0 or constants.platformHeight
 
                 local xShift, yShift, zRotRad = _getZRotationParameters()
                 local zShift = _getZShift()
                 logger.print('_addModels got zRotRad =', 180 / math.pi * zRotRad, ', yShift =', yShift, ', xShift =', xShift, ', zShift =', zShift)
 
-                local myTransf = {
+                local transf = {
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, 0,
                     0, yStart, zStart, 1
                 }
                 for i = 1, params.lolloFenceAssets_length + 1, 1 do
-                    local skewedTransf = transfUtils.getTransf_XSkewedOnZ(myTransf, zShift)
-                    result.models[#result.models+1] = {
-                        id = fenceModelId,
-                        transf = skewedTransf
-                    }
-                    if wallModelId ~= nil then
-                        result.models[#result.models+1] = {
-                            id = wallModelId,
-                            transf = skewedTransf
-                        }
-                    end
-                    myTransf = transfUtils.getTransf_ZRotated_Shifted(
-                        myTransf,
+                    local skewedTransf = transfUtils.getTransf_XSkewedOnZ(transf, zShift)
+                    _addWall(skewedTransf, result, wallMainModelId, wallBaseModelId)
+                    _addGround(skewedTransf, result, -zStart, wallBehindModelId, isDoTerrain)
+                    _addWallBehind(transf, result, zShift, zRotRad, wallBehindModelId, wallBehindBaseModelId)
+                    transf = transfUtils.getTransf_ZRotated_Shifted(
+                        transf,
                         zRotRad,
                         {xShift, yShift, zShift * xShift}
                     )

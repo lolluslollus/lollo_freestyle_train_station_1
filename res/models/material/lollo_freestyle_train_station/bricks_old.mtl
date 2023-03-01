@@ -36,7 +36,7 @@ function data()
                 wrapT = "REPEAT",
             },
             map_op_2 = {
-                fileName = "models/industry/overlay_textures/big_04.tga",
+                fileName = "models/industry/overlay_textures/big_02.tga",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
@@ -45,16 +45,18 @@ function data()
                 normalScale = 1,
             },
             operation_1 = {
-                mode = "NORMAL",
+                mode = "WORLD_XY",
+                -- mode = "NORMAL",
                 op = "OVERLAY",
-                opacity = 0.3,
-                scale = { 0.10000000149012, 0.10000000149012, },
+                opacity = 0.1,
+                scale = { 1.0, 1.0, },
             },
             operation_2 = {
+                -- mode = "WORLD_XY",
                 mode = "NORMAL",
                 op = "OVERLAY",
-                opacity = 0.30000001192093,
-                scale = { 0.050000000745058, 0.050000000745058, },
+                opacity = 0.02,
+                scale = { 0.05, 0.05, },
             },
             polygon_offset = {
                 factor = 0,

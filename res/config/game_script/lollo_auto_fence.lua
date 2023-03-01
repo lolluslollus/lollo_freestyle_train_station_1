@@ -26,47 +26,116 @@ local _guiTexts = {
 }
 
 local _actions = {
-    buildFence = function(trackEdgeList, yShift, conTransf, isWaypoint2ArrowAgainstTrackDirection)
+    buildFence = function(trackRecords, yShift, conTransf, isWaypoint2ArrowAgainstTrackDirection)
         logger.print('_buildFence starting, args =')
-        if not(trackEdgeList) or #trackEdgeList == 0 then return end
+        if not(trackRecords) or #trackRecords == 0 then return end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = _constants.fenceConFileName
+        newCon.fileName = _constants.autoFenceConFileName
 
         local _mainTransf = arrayUtils.cloneDeepOmittingFields(conTransf)
         local _inverseMainTransf = transfUtils.getInverseTransf(_mainTransf)
 
-        local transfs = arrayUtils.map(
-            arrayUtils.map(
-                trackEdgeList,
-                function(record)
-                    -- logger.print('record =') logger.debugPrint(record)
-                    return {
-                        posTanX2 = transfUtils.getPosTanX2Transformed(record.posTanX2, _inverseMainTransf),
-                        xRatio = record.xRatio,
-                        yRatio = record.yRatio,
-                    }
-                end
-            ),
+        local inverseTransfs = arrayUtils.map(
+            trackRecords,
             function(record)
-                -- logger.print('record2 =') logger.debugPrint(record)
-                local skew = record.posTanX2[2][1][3] - record.posTanX2[1][1][3]
-                -- if not(isWaypoint2ArrowAgainstTrackDirection) then skew = -skew end -- NO!
+                -- logger.print('record =') logger.debugPrint(record)
+                return {
+                    groundBridgeTunnel_012 = record.groundBridgeTunnel_012,
+                    posTanX2_main = transfUtils.getPosTanX2Transformed(record.posTanX2_main, _inverseMainTransf),
+                    -- posTanX2_wallBehind = transfUtils.getPosTanX2Transformed(record.posTanX2_wallBehind, _inverseMainTransf),
+                    xRatio_main = record.xRatio_main,
+                    yRatio_main = record.yRatio_main,
+                    xRatio_wallBehind = record.xRatio_wallBehind,
+                    yRatio_wallBehind = record.yRatio_wallBehind,
+                }
+            end
+        )
+--[[
+        -- early releases, now obsolete
+        local newTransfs = arrayUtils.map(
+            inverseTransfs,
+            function(record)
+                local skew = record.posTanX2_main[2][1][3] - record.posTanX2_main[1][1][3]
                 return transfUtils.getTransf_XSkewedOnZ(
                     transfUtils.getTransf_XScaled(
-                        moduleHelpers.getPlatformObjectTransf_AlwaysVertical(record.posTanX2),
-                        record.xRatio
+                        moduleHelpers.getPlatformObjectTransf_AlwaysVertical(record.posTanX2_main),
+                        record.xRatio_main
                     ),
                     skew
                 )
             end
         )
+]]
+--[[
+        -- This should be more accurate, but it looks the same
+        -- so we make one array instead of two
+        local newTransfs_ground = arrayUtils.map(
+            inverseTransfs,
+            function(record)
+                return {
+                    groundBridgeTunnel_012 = record.groundBridgeTunnel_012,
+                    transf = transfUtils.getTransf_XScaled(
+                        moduleHelpers.getPlatformObjectTransf_WithYRotation(record.posTanX2_main),
+                        record.xRatio_main
+                    ),
+                }
+            end
+        )
+]]
+        local newTransfs_ground = arrayUtils.map(
+            inverseTransfs,
+            function(record)
+                local skew = record.posTanX2_main[2][1][3] - record.posTanX2_main[1][1][3]
+                return {
+                    groundBridgeTunnel_012 = record.groundBridgeTunnel_012,
+                    transf = transfUtils.getTransf_XSkewedOnZ(
+                        transfUtils.getTransf_XScaled(
+                            moduleHelpers.getPlatformObjectTransf_AlwaysVertical(record.posTanX2_main),
+                            record.xRatio_main
+                        ),
+                        skew
+                    ),
+                }
+            end
+        )
+        local newTransfs_wallBehind = arrayUtils.map(
+            inverseTransfs,
+            function(record)
+                local skew = record.posTanX2_main[2][1][3] - record.posTanX2_main[1][1][3]
+                return {
+                    groundBridgeTunnel_012 = record.groundBridgeTunnel_012,
+                    transf = transfUtils.getTransf_XSkewedOnZ(
+                        transfUtils.getTransf_XScaled(
+                            moduleHelpers.getPlatformObjectTransf_AlwaysVertical(record.posTanX2_main),
+                            math.max(record.xRatio_wallBehind, record.xRatio_main)
+                        ),
+                        skew
+                    ),
+                }
+            end
+        )
+
+        -- logger.print('first 3 transfs =')
+        -- logger.debugPrint(newTransfs[1])
+        -- logger.debugPrint(newTransfs[2])
+        -- logger.debugPrint(newTransfs[3])
+        logger.print('first 3 newTransfs_ground =')
+        logger.debugPrint(newTransfs_ground[1])
+        logger.debugPrint(newTransfs_ground[2])
+        logger.debugPrint(newTransfs_ground[3])
+        logger.print('first 3 transfs_wallBehind =')
+        logger.debugPrint(newTransfs_wallBehind[1])
+        logger.debugPrint(newTransfs_wallBehind[2])
+        logger.debugPrint(newTransfs_wallBehind[3])
 
         local newParams = {
             inverseMainTransf = _inverseMainTransf,
             mainTransf = _mainTransf,
             seed = math.abs(math.ceil(conTransf[13] * 1000)),
-            transfs = transfs,
+            -- transfs = newTransfs, -- early releases, now obsolete
+            transfs_ground = newTransfs_ground,
+            transfs_wallBehind = newTransfs_wallBehind,
         }
         local paramsMetadata = modelHelper.getChangeableParamsMetadata()
         -- logger.print('paramsMetadata =') logger.debugPrint(paramsMetadata)
@@ -148,7 +217,7 @@ local _actions = {
             return
         end
         local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
-        if oldCon == nil or oldCon.fileName ~= _constants.fenceConFileName then
+        if oldCon == nil or oldCon.fileName ~= _constants.autoFenceConFileName then
             logger.print('_updateConstruction cannot get the con, or it is not one of mine')
             return
         end
@@ -160,8 +229,8 @@ local _actions = {
         newParams[paramKey] = newParamValueIndexBase0
         newParams.seed = newParams.seed + 1
         newCon.params = newParams
-        logger.print('oldCon.params =') logger.debugPrint(oldCon.params)
-        logger.print('newCon.params =') logger.debugPrint(newCon.params)
+        -- logger.print('oldCon.params =') logger.debugPrint(oldCon.params)
+        -- logger.print('newCon.params =') logger.debugPrint(newCon.params)
         newCon.playerEntity = api.engine.util.getPlayer()
         newCon.transf = oldCon.transf
 
@@ -211,7 +280,7 @@ local _guiActions = {
         end
 
         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-        if con == nil or con.fileName ~= _constants.fenceConFileName then
+        if con == nil or con.fileName ~= _constants.autoFenceConFileName then
             logger.print('_handleParamValueChanged cannot get the con or it is not one of mine')
             return
         end
@@ -235,7 +304,7 @@ local _guiActions = {
         end
 
         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-        if con == nil or con.fileName ~= _constants.fenceConFileName then
+        if con == nil or con.fileName ~= _constants.autoFenceConFileName then
             logger.print('_handleBulldozeClicked cannot get the con or it is not one of mine')
             return
         end
@@ -597,27 +666,36 @@ function data()
                             )
                             -- logger.print('trackEdgeListFine =') logger.debugPrint(trackEdgeListFine)
                             if #trackEdgeListFine > 0 then
-                                local yShift = trackEdgeList_Ordered[1].width * 0.5
-                                local trackEdgeListShifted = arrayUtils.map(
+                                local yShift_main = trackEdgeList_Ordered[1].width * 0.5
+                                local yShift_WallBehind = trackEdgeList_Ordered[1].width * 0.5 + 1 -- walls behind are 1m thick
+                                local transfs = arrayUtils.map(
                                     trackEdgeListFine,
                                     function(tel)
                                         -- the func returns three arguments, I only return the first, so no direct return
-                                        local gps, xRatio, yRatio = transfUtils.getParallelSideways(tel.posTanX2, yShift)
+                                        local gps_main, xRatio_main, yRatio_main = transfUtils.getParallelSideways(tel.posTanX2, yShift_main)
+                                        local gps_wallBehind, xRatio_wallBehind, yRatio_wallBehind = nil, 1, 1
+                                        if tel.type == 0 then -- only on ground
+                                            gps_wallBehind, xRatio_wallBehind, yRatio_wallBehind = transfUtils.getParallelSideways(tel.posTanX2, yShift_WallBehind)
+                                        end
                                         return {
-                                            posTanX2 = gps,
-                                            xRatio = xRatio,
-                                            yRatio = yRatio,
+                                            groundBridgeTunnel_012 = tel.type,
+                                            posTanX2_main = gps_main,
+                                            xRatio_main = xRatio_main,
+                                            yRatio_main = yRatio_main,
+                                            -- posTanX2_wallBehind = gps_wallBehind,
+                                            xRatio_wallBehind = xRatio_wallBehind,
+                                            yRatio_wallBehind = yRatio_wallBehind,
                                         }
                                     end
                                 )
-                                logger.print('trackEdgeListShifted, first 3 records =')
-                                logger.debugPrint(trackEdgeListShifted[1])
-                                logger.debugPrint(trackEdgeListShifted[2])
-                                logger.debugPrint(trackEdgeListShifted[3])
-                                if #trackEdgeListShifted > 0 then
+                                logger.print('transfs, first 3 records =')
+                                logger.debugPrint(transfs[1])
+                                logger.debugPrint(transfs[2])
+                                logger.debugPrint(transfs[3])
+                                if #transfs > 0 then
                                     _actions.buildFence(
-                                        trackEdgeListShifted,
-                                        yShift,
+                                        transfs,
+                                        yShift_main,
                                         args.fenceWaypointMidTransf,
                                         args.isWaypoint2ArrowAgainstTrackDirection
                                     )
@@ -676,7 +754,7 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
                         local con = _guiActions.getCon(conId)
-                        if not(con) or con.fileName ~= _constants.fenceConFileName then return end
+                        if not(con) or con.fileName ~= _constants.autoFenceConFileName then return end
 
                         logger.print('selected one of my fences, it has conId =', conId, 'and con.fileName =', con.fileName)
                         guiHelpers.addConConfigToWindow(

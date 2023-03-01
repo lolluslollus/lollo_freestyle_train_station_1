@@ -69,7 +69,8 @@ function data()
 		getModelsFn = function(params)
 			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
 			local deltaX = moduleHelpers.flatAreas.getFromVariant_0_to_1(variant, _nAdjustableSteps)
-			local arrowModelId = 'lollo_freestyle_train_station/icon/square_blue.mdl'
+			-- local arrowModelId = 'lollo_freestyle_train_station/icon/square_blue.mdl'
+			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
 			local arrowModelTransf = {0, 0, 1, 0,  0, 1, 0, 0,  -1, 0, 0, 0,  2, 2, 0, 1}
 			if deltaX < 0 then
 				arrowModelId = 'lollo_freestyle_train_station/icon/arrow_blue.mdl'

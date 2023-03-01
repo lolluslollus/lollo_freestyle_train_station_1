@@ -9,7 +9,7 @@ local _extraHeight4Param = 40
 local _conConfigLayoutIdPrefix = 'lollo_stairs_con_config_layout_'
 
 local _texts = {
-    conConfigWindowTitle = _('ConConfigWindowTitle'),
+    conConfigWindowTitle = _('ConSettingsWindowTitle'),
     goBack = _('GoBack'),
     goThere = _('GoThere'), -- cannot put this directly inside the loop for some reason
     warningWindowTitle = _('WarningWindowTitle'),

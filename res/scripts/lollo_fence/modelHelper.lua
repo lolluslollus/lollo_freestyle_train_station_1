@@ -7,9 +7,13 @@ local privateValues = {
     zRotationMaxIndex = 64,
 }
 privateValues.defaults = {
+    lolloFenceAssets_doTerrain = 0,
     lolloFenceAssets_length = 9,
-    lolloFenceAssets_model = 0,
+    lolloFenceAssets_model = 1,
     lolloFenceAssets_wallEraPrefix = 0,
+    lolloFenceAssets_wallBehindModel = 0,
+    lolloFenceAssets_wallBehindInTunnels = 0,
+    lolloFenceAssets_wallBehindOnBridges = 0,
     lolloFenceAssets_yShift = privateValues.yShiftMaxIndex + 5,
     lolloFenceAssets_zDelta = privateValues.zDeltaMaxIndex,
     lolloFenceAssets_zRotation = privateValues.zRotationMaxIndex,
@@ -74,9 +78,11 @@ local privateFuncs = {
                 name = name
             }
         end
+        add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
         add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
         add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
         add('lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
+        add('lollo_freestyle_train_station/platformWalls/arco_mattoni/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
         add('lollo_freestyle_train_station/platformWalls/bricks/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
         add('lollo_freestyle_train_station/platformWalls/tunnely/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
         add('lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
@@ -87,14 +93,34 @@ local privateFuncs = {
         add('lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFsTall.tga', _("WallStaccionataFsTallName"))
         return results
     end,
+    getWallBehindModels = function()
+        local results = {}
+        local add = function(modelFileName, iconFileName, name)
+            results[#results+1] = {
+                fileName = modelFileName,
+                icon = iconFileName,
+                -- id = id,
+                name = name
+            }
+        end
+        add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
+        add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
+        add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
+        add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+        return results
+    end,
 }
 
 return {
     getModels = function()
         return privateFuncs.getModels()
     end,
+    getWallBehindModels = function()
+        return privateFuncs.getWallBehindModels()
+    end,
     getConParams = function ()
         local models = privateFuncs.getModels()
+        local wallBehindModels = privateFuncs.getWallBehindModels()
         return {
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_model,
@@ -115,6 +141,26 @@ return {
                 name = _('wallEraPrefix_0IsNoWall'),
                 uiType = 'BUTTON',
                 values = {_('NoWall'), 'A', 'B', 'C'},
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_wallBehindModel,
+                key = 'lolloFenceAssets_wallBehindModel',
+                name = _('wallBehindModel_0IsNoWall'),
+                values = arrayUtils.map(
+                    wallBehindModels,
+                    function(model)
+                        -- return model.name
+                        return model.icon
+                    end
+                ),
+                uiType = 'ICON_BUTTON',
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_doTerrain,
+                key = 'lolloFenceAssets_doTerrain',
+                name = _('DoTerrain'),
+                uiType = 'BUTTON',
+                values = {_('NO'), _('YES')}
             },
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_length,
@@ -148,6 +194,7 @@ return {
     end,
     getChangeableParamsMetadata = function()
         local models = privateFuncs.getModels()
+        local wallBehindModels = privateFuncs.getWallBehindModels()
         local metadata_sorted = {
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_model,
@@ -168,6 +215,40 @@ return {
                 name = _('wallEraPrefix_0IsNoWall'),
                 uiType = 'BUTTON',
                 values = {_('NoWall'), 'A', 'B', 'C'},
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_wallBehindModel,
+                key = 'lolloFenceAssets_wallBehindModel',
+                name = _('wallBehindModel_0IsNoWall'),
+                values = arrayUtils.map(
+                    wallBehindModels,
+                    function(model)
+                        -- return model.name
+                        return model.icon
+                    end
+                ),
+                uiType = 'ICON_BUTTON',
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_wallBehindOnBridges,
+                key = 'lolloFenceAssets_wallBehindOnBridges',
+                name = _('wallBehind_isOnBridges'),
+                uiType = 'CHECKBOX',
+                values = {_('NO'), _('YES')}
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_wallBehindInTunnels,
+                key = 'lolloFenceAssets_wallBehindInTunnels',
+                name = _('wallBehind_isInTunnels'),
+                uiType = 'CHECKBOX',
+                values = {_('NO'), _('YES')}
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_doTerrain,
+                key = 'lolloFenceAssets_doTerrain',
+                name = _('DoTerrain'),
+                uiType = 'CHECKBOX',
+                values = {_('NO'), _('YES')}
             },
         }
         -- add defaultIndex wherever not present

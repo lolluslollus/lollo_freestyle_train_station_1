@@ -2,27 +2,27 @@ function data()
 return {
 	matConfigs = {
 		{
-			0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 
 		}, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 144,
-					offset = 1472,
+					count = 48,
+					offset = 1276,
 				},
 				position = {
-					count = 144,
-					offset = 1760,
+					count = 48,
+					offset = 1372,
 				},
 				tangent = {
-					count = 144,
-					offset = 1616,
+					count = 48,
+					offset = 1324,
 				},
 				uv0 = {
-					count = 144,
-					offset = 1904,
+					count = 48,
+					offset = 1228,
 				},
 			},
 			materials = {
@@ -32,20 +32,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 192,
-					offset = 2048,
+					count = 96,
+					offset = 1516,
 				},
 				position = {
-					count = 192,
-					offset = 2432,
+					count = 96,
+					offset = 1708,
 				},
 				tangent = {
-					count = 192,
-					offset = 2240,
+					count = 96,
+					offset = 1612,
 				},
 				uv0 = {
-					count = 192,
-					offset = 2624,
+					count = 96,
+					offset = 1420,
 				},
 			},
 			materials = {
@@ -56,19 +56,19 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 2816,
+					offset = 1852,
 				},
 				position = {
 					count = 48,
-					offset = 2912,
+					offset = 1948,
 				},
 				tangent = {
 					count = 48,
-					offset = 2864,
+					offset = 1900,
 				},
 				uv0 = {
 					count = 48,
-					offset = 2960,
+					offset = 1804,
 				},
 			},
 			materials = {
@@ -78,47 +78,70 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 192,
-					offset = 3008,
+					count = 96,
+					offset = 2092,
 				},
 				position = {
-					count = 192,
-					offset = 3392,
+					count = 96,
+					offset = 2284,
 				},
 				tangent = {
-					count = 192,
-					offset = 3200,
+					count = 96,
+					offset = 2188,
 				},
 				uv0 = {
-					count = 192,
-					offset = 3584,
+					count = 96,
+					offset = 1996,
 				},
 			},
 			materials = {
 				"station/train/passenger/edge_high_priority.mtl", 
 			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 2476,
+				},
+				position = {
+					count = 96,
+					offset = 2668,
+				},
+				tangent = {
+					count = 96,
+					offset = 2572,
+				},
+				uv0 = {
+					count = 96,
+					offset = 2380,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/platform/edge_low_prio.mtl", 
+			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 204,
+			count = 180,
 			numComp = 3,
-			offset = 0,
+			offset = 520,
 		},
 		position = {
-			count = 492,
+			count = 336,
 			numComp = 3,
-			offset = 396,
+			offset = 892,
 		},
 		tangent = {
 			count = 192,
 			numComp = 4,
-			offset = 204,
+			offset = 700,
 		},
 		uv0 = {
-			count = 584,
+			count = 520,
 			numComp = 2,
-			offset = 888,
+			offset = 0,
 		},
 	},
 }

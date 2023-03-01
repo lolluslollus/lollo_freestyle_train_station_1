@@ -9,20 +9,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 1224,
+					count = 24,
+					offset = 848,
 				},
 				position = {
-					count = 48,
-					offset = 1176,
+					count = 24,
+					offset = 776,
 				},
 				tangent = {
-					count = 48,
-					offset = 1080,
+					count = 24,
+					offset = 800,
 				},
 				uv0 = {
-					count = 48,
-					offset = 1128,
+					count = 24,
+					offset = 824,
 				},
 			},
 			materials = {
@@ -32,20 +32,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 240,
-					offset = 1992,
+					count = 144,
+					offset = 1304,
 				},
 				position = {
-					count = 240,
-					offset = 1752,
+					count = 144,
+					offset = 872,
 				},
 				tangent = {
-					count = 240,
-					offset = 1272,
+					count = 144,
+					offset = 1016,
 				},
 				uv0 = {
-					count = 240,
-					offset = 1512,
+					count = 144,
+					offset = 1160,
 				},
 			},
 			materials = {
@@ -55,20 +55,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 2376,
+					count = 24,
+					offset = 1520,
 				},
 				position = {
-					count = 48,
-					offset = 2328,
+					count = 24,
+					offset = 1448,
 				},
 				tangent = {
-					count = 48,
-					offset = 2232,
+					count = 24,
+					offset = 1472,
 				},
 				uv0 = {
-					count = 48,
-					offset = 2280,
+					count = 24,
+					offset = 1496,
 				},
 			},
 			materials = {
@@ -78,20 +78,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 192,
-					offset = 3000,
+					count = 96,
+					offset = 1832,
 				},
 				position = {
-					count = 192,
-					offset = 2808,
+					count = 96,
+					offset = 1544,
 				},
 				tangent = {
-					count = 192,
-					offset = 2424,
+					count = 96,
+					offset = 1640,
 				},
 				uv0 = {
-					count = 192,
-					offset = 2616,
+					count = 96,
+					offset = 1736,
 				},
 			},
 			materials = {
@@ -101,24 +101,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 132,
+			count = 120,
 			numComp = 3,
-			offset = 948,
+			offset = 656,
 		},
 		position = {
-			count = 396,
+			count = 216,
 			numComp = 3,
-			offset = 552,
+			offset = 0,
 		},
 		tangent = {
 			count = 128,
 			numComp = 4,
-			offset = 0,
+			offset = 216,
 		},
 		uv0 = {
-			count = 424,
+			count = 312,
 			numComp = 2,
-			offset = 128,
+			offset = 344,
 		},
 	},
 }

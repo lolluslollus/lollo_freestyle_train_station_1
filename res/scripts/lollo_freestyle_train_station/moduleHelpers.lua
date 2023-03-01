@@ -222,18 +222,16 @@ privateFuncs.axialAreas = {
     end,
 }
 privateFuncs.deco = {
-    addWallsAcross = function(cpf, isLowIEnd, result, tag, wallModelId, absDeltaY, isTrackOnPlatformLeft, isVertical, wallTransf, ii, iMax)
+    addWallAcross = function(cpf, isLowIEnd, result, tag, wallModelId, absDeltaY, isTrackOnPlatformLeft, wallTransf, ii, iMax)
         if absDeltaY <= 0 then return end
 --[[
         logger.print(
-            ', _addWallsAcross, absDeltaY =',
+            ', _addWallAcross, absDeltaY =',
             absDeltaY,
             ', isLowIEnd =',
             isLowIEnd,
             ', isTrackOnPlatformLeft =',
             isTrackOnPlatformLeft,
-            ', isVertical =',
-            isVertical,
             ', ii =',
             ii,
             ', iMax =',
@@ -426,6 +424,62 @@ privateFuncs.deco = {
         end
         ]]
     end,
+    addWallBehind = function (result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, eraPrefix)
+        local wallBehindTransf
+        if xScaleFactor > 1 then
+            -- walls behind are 1 m thick
+            local xScaleFactor_WallBehind = (widthAboveNil + 1) / widthAboveNil
+            wallBehindTransf = transfUtils.getTransf_XScaled(wallTransf, xScaleFactor_WallBehind)
+        else
+            wallBehindTransf = wallTransf
+        end
+        result.models[#result.models+1] = {
+            id = wallBehindModelId,
+            transf = wallBehindTransf,
+            tag = tag
+        }
+        result.models[#result.models+1] = {
+            id = wallBehindBaseModelId,
+            transf = wallBehindTransf,
+            tag = tag
+        }
+
+        local faceTransformed = transfUtils.getFaceTransformed_FAST(
+            wallBehindTransf,
+            {
+                {-0.5, 0, -1.2, 1}, -- put the terrain level with wallBehindBase, which is 1.4m high, plus a little something to get the wall jammed in
+                {-0.5, 1, -1.2, 1},
+                {0.5, 1, -1.2, 1},
+                {0.5, 0, -1.2, 1},
+            }
+        )
+        result.groundFaces[#result.groundFaces+1] = {
+            face = faceTransformed,
+            -- loop = true,
+            modes = {
+                {
+                    type = 'FILL',
+                    -- key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                    -- key = constants.era_c_groundFacesStrokeOuterKey
+                    key = constants[eraPrefix .. 'groundFacesFillKey'],
+                },
+                -- {
+                --     type = 'STROKE_OUTER',
+                --     key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                -- }
+            }
+        }
+
+        result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = {
+            faces = { faceTransformed }, -- Z is accounted here
+            optional = true,
+            -- slopeHigh = 9.6,
+            -- slopeLow = 9.6,
+            slopeHigh = constants.slopeHigh,
+            slopeLow = constants.slopeLow,
+            type = 'EQUAL', -- GREATER, LESS
+        }
+    end,
     getMNAdjustedValue_0Or1_Cycling = function(params, slotId)
         local variant = privateFuncs.getVariant(params, slotId)
         return privateFuncs.getFromVariant_0_or_1(variant)
@@ -436,6 +490,55 @@ privateFuncs.deco = {
             results[ii] = true
         end
         return results
+    end,
+    getWallBaseModelId = function(params, nTerminal, eraPrefix)
+        local wallModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
+        if eraPrefix == constants.eras.era_a.prefix then
+            wallModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
+        elseif eraPrefix == constants.eras.era_b.prefix then
+            wallModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
+        end
+        return wallModelId
+    end,
+    getWallBehindBaseModelId = function(params, nTerminal, eraPrefix)
+        local wallModelId = 'lollo_freestyle_train_station/trackWalls/behind/era_c_wall_base_5m.mdl'
+        if eraPrefix == constants.eras.era_a.prefix then
+            wallModelId = 'lollo_freestyle_train_station/trackWalls/behind/era_a_wall_base_5m.mdl'
+        elseif eraPrefix == constants.eras.era_b.prefix then
+            wallModelId = 'lollo_freestyle_train_station/trackWalls/behind/era_b_wall_base_5m.mdl'
+        end
+        return wallModelId
+    end,
+    getWallBehindModelId = function(wall_low_5m_ModelId)
+        local wallBehindLowModelId
+
+        if wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arco_mattoni/wall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/bricks/platformWall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tunnely/wall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+        elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl' then
+            wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+        end
+
+        return wallBehindLowModelId
     end,
 }
 privateFuncs.edges = {
@@ -1006,7 +1109,7 @@ privateFuncs.subways = {
         --     {4.7, -4.15, constants.platformSideBitsZ, 1},
         -- }
         if type(slotTransf) == 'table' then
-            -- modulesutil.TransformFaces(slotTransf, groundFace)
+            -- vs transfUtils.getFaceTransformed and transfUtils.getFaceTransformed_FAST
             modulesutil.TransformFaces(slotTransf, terrainFace)
         end
 
@@ -1177,10 +1280,12 @@ return {
         getPreviewIcon = function(params)
 			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
 			local zeroOrOne = privateFuncs.getFromVariant_0_or_1(variant)
-            local arrowModelId = 'lollo_freestyle_train_station/icon/slant_wall.mdl'
-            local arrowModelTransf = {0.5, 0, 0, 0,  0, 0.5, 0, 0,  0, 0, 0.5, 0,  10, -2, 10, 1}
+            -- local arrowModelId = 'lollo_freestyle_train_station/icon/slant_wall.mdl'
+            local arrowModelId = 'lollo_freestyle_train_station/icon/perpendicular_wall.mdl'
+            local arrowModelTransf = {0.5, 0, 0, 0,  0, 0.5, 0, 0,  0, 0, 0.5, 0,  2, 5, 2, 1}
             if zeroOrOne > 0 then
-                arrowModelId = 'lollo_freestyle_train_station/icon/perpendicular_wall.mdl'
+                -- arrowModelId = 'lollo_freestyle_train_station/icon/perpendicular_wall.mdl'
+                arrowModelId = 'lollo_freestyle_train_station/icon/thick_wall.mdl'
             end
             return {
                 id = arrowModelId,
@@ -1361,6 +1466,7 @@ return {
             pillar2_5ModelId, pillar5ModelId,
             isTunnelOk
         )
+            local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
             local _isSkipPillars = params.terminals[nTerminal].isCargo or pillar2_5ModelId == nil or pillar5ModelId == nil
             local _isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local _transfXZoom = _isTrackOnPlatformLeft and -1 or 1
@@ -1369,7 +1475,12 @@ return {
             -- logger.print('_isEndFiller =', _isEndFiller)
             local _laneZ = result.laneZs[nTerminal]
 
-            local _isVertical = (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0)
+            -- local _isVertical = false
+            local wallBehindModelId
+            if (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0) then
+                wallBehindModelId = privateFuncs.deco.getWallBehindModelId(wall_low_5m_ModelId)
+            end
+            local wallBehindBaseModelId = privateFuncs.deco.getWallBehindBaseModelId(params, nTerminal, _eraPrefix)
 
             local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
@@ -1419,8 +1530,6 @@ return {
 
                             -- we should divide the following by the models length, but it is always 1, as set in the meshes
                             local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
-
-                            local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             local wallTransf = transfUtilsUG.mul(
                                 privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                                 {
@@ -1430,16 +1539,20 @@ return {
                                     0, 0, _laneZ, 1
                                 }
                             )
-                            if not(_isVertical) then
+                            -- if not(_isVertical) then
                                 local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
                                 if _isTrackOnPlatformLeft then skew = -skew end
                                 wallTransf = transfUtils.getTransf_XSkewedOnZ(wallTransf, skew)
-                            end
+                            -- end
+                            local wallModelId = cpf.type == 2 and wall_5m_ModelId or wall_low_5m_ModelId
                             result.models[#result.models+1] = {
                                 id = wallModelId,
                                 transf = wallTransf,
                                 tag = tag
                             }
+                            if wallBehindModelId ~= nil and cpf.type == 0 then
+                                privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix)
+                            end
                             -- if ii % 4 == 0 then
                             --     result.models[#result.models+1] = {
                             --         id = 'lollo_freestyle_train_station/icon/blue.mdl',
@@ -1504,27 +1617,27 @@ return {
                                 if ii == 1 then
                                     if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
                                         -- logger.print('_ONE')
-                                        privateFuncs.deco.addWallsAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
+                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
                                     else
                                         -- logger.print('_TWO')
-                                        privateFuncs.deco.addWallsAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
+                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
                                     end
                                 elseif ii == _iiMax then
                                     if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
                                         -- logger.print('_THREE')
-                                        privateFuncs.deco.addWallsAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
+                                        privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
                                     else
                                         -- logger.print('_FOUR')
-                                        privateFuncs.deco.addWallsAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
+                                        privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
                                     end
                                 elseif leadingIndex ~= cpfM1.leadingIndex then
                                     local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
                                         -- logger.print('_FIVE')
-                                        privateFuncs.deco.addWallsAcross(cpf, true, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
+                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
                                 elseif leadingIndex ~= cpfP1.leadingIndex then
                                     local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
                                     -- logger.print('_SIX')
-                                    privateFuncs.deco.addWallsAcross(cpf, false, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, _isVertical, wallTransf, ii, _iiMax)
+                                    privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
                                 end
                             end
                         end
@@ -1541,26 +1654,24 @@ return {
             if type(params.terminals[nTerminal].centreTracksFineRelative) ~= 'table' then return end
 
             -- do not confuse the tracks array with the platforms array: they are similar but different
+            local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
             local laneZ = result.laneZs[nTerminal]
 
-            local _isVertical = (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0)
+            -- query the first platform segment coz track segments, unlike platform segments,
+            -- have no knowledge of the era: they only have leadingIndex, posTanX2, type and width.
+            local wallBaseModelId = privateFuncs.deco.getWallBaseModelId(params, nTerminal, _eraPrefix)
+            local wallBehindModelId
+            if (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0) then
+                wallBehindModelId = privateFuncs.deco.getWallBehindModelId(wall_low_5m_ModelId)
+            end
+            local wallBehindBaseModelId = privateFuncs.deco.getWallBehindBaseModelId(params, nTerminal, _eraPrefix)
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
-
-            -- query the first platform segment coz track segments, unlike platform segments,
-            -- have no knowledge of the era: they only have leadingIndex, posTanX2, type and width.
-            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
-            local wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
-            if eraPrefix == constants.eras.era_a.prefix then
-                wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
-            elseif eraPrefix == constants.eras.era_b.prefix then
-                wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_b_wall_base_5m.mdl'
-            end
 
             for ii = 1, #params.terminals[nTerminal].centreTracksFineRelative, privateConstants.deco.ceilingStep do
                 local ctf = params.terminals[nTerminal].centreTracksFineRelative[ii]
@@ -1585,11 +1696,11 @@ return {
                                 0, 0, laneZ, 1
                             }
                         )
-                        if not(_isVertical) then
+                        -- if not(_isVertical) then
                             local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
                             if not(isTrackOnPlatformLeft) then skew = -skew end
                             wallTransf = transfUtils.getTransf_XSkewedOnZ(wallTransf, skew)
-                        end
+                        -- end
                         result.models[#result.models+1] = {
                             id = wallModelId,
                             transf = wallTransf,
@@ -1600,6 +1711,9 @@ return {
                             transf = wallTransf,
                             tag = tag
                         }
+                        if wallBehindModelId ~= nil and ctf.type == 0 then
+                            privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix)
+                        end
                     end
                 end
             end
@@ -1694,31 +1808,23 @@ return {
 				}
 			)
 
-			-- local groundFace = {
-			-- 	{-1, -2, 0, 1},
-			-- 	{-1, 2, 0, 1},
-			-- 	{1.0, 2, 0, 1},
-			-- 	{1.0, -2, 0, 1},
-			-- }
-			-- modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-
 			local terrainAlignmentList = {
 				faces = {
-					{
-						{-1, -2, 0, 1},
-						{-1, 2, 0, 1},
-						{1.0, 2, 0, 1},
-						{1.0, -2, 0, 1},
-					}
+					transfUtils.getFaceTransformed_FAST(
+                        adjustedTransf,
+                        {
+                            {-1, -2, 0, 1},
+                            {-1, 2, 0, 1},
+                            {1.0, 2, 0, 1},
+                            {1.0, -2, 0, 1},
+                        }
+                    )
 				},
 				optional = true,
 				slopeHigh = constants.slopeHigh,
 				slopeLow = constants.slopeLow,
 				type = 'LESS',
 			}
-			for _, face in pairs(terrainAlignmentList.faces) do
-				modulesutil.TransformFaces(adjustedTransf, face)
-			end
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
         end,
         flushExit_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -1923,32 +2029,23 @@ return {
 				}
 			)
 
-			-- local groundFace = {
-			-- 	{-1, -2, 0, 1},
-			-- 	{-1, 2, 0, 1},
-			-- 	{1.0, 2, 0, 1},
-			-- 	{1.0, -2, 0, 1},
-			-- }
-			-- modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-			-- result.groundFaces[#result.groundFaces + 1] = moduleHelpers.getGroundFace(groundFace, myGroundFacesFillKey)
-
 			local terrainAlignmentList = {
 				faces = {
-					{
-						{-1, -2, constants.platformSideBitsZ, 1},
-						{-1, 2, constants.platformSideBitsZ, 1},
-						{1.0, 2, constants.platformSideBitsZ, 1},
-						{1.0, -2, constants.platformSideBitsZ, 1},
-					}
+                    transfUtils.getFaceTransformed_FAST(
+                        zAdjustedTransf,
+                        {
+                            {-1, -2, constants.platformSideBitsZ, 1},
+                            {-1, 2, constants.platformSideBitsZ, 1},
+                            {1.0, 2, constants.platformSideBitsZ, 1},
+                            {1.0, -2, constants.platformSideBitsZ, 1},
+                        }
+                    )
 				},
 				optional = true,
 				slopeHigh = constants.slopeHigh,
 				slopeLow = constants.slopeLow,
 				type = 'LESS',
 			}
-			for _, face in pairs(terrainAlignmentList.faces) do
-				modulesutil.TransformFaces(zAdjustedTransf, face)
-			end
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 		end,
 
@@ -2328,7 +2425,7 @@ return {
                         local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(centreAreaPosTanX2)
                         local xScaleFactor = math.max(xRatio * yRatio, 1.05) -- this is a bit crude but it's cheap
                         -- local xScaleFactor = xRatio * 1.05 -- dx/dl -- no good here
-                        logger.print('xScaleFactor w ratios =', xScaleFactor)
+                        -- logger.print('xScaleFactor w ratios =', xScaleFactor)
                         result.models[#result.models+1] = {
                             id = modelId,
                             -- transf = transfUtilsUG.mul(
@@ -2403,7 +2500,7 @@ return {
                 modulesutil.TransformFaces(slotTransf, groundFace)
                 modulesutil.TransformFaces(slotTransf, terrainFace)
             end
-        
+
             table.insert(
                 result.groundFaces,
                 {
@@ -2435,46 +2532,46 @@ return {
         end,
         doTerrain4HollowayMedium = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-                {-3.4, -4.7, constants.platformSideBitsZ, 1},
-                {-3.4, 4.7, constants.platformSideBitsZ, 1},
-                {4.9, 4.7, constants.platformSideBitsZ, 1},
-                {4.9, -4.7, constants.platformSideBitsZ, 1},
+                {-3.4, -4.7, 0, 1},
+                {-3.4, 4.7, 0, 1},
+                {4.9, 4.7, 0, 1},
+                {4.9, -4.7, 0, 1},
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
         doTerrain4HollowayLarge = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-                {-3.4, -7.5, constants.platformSideBitsZ, 1},
-                {-3.4, 7.5, constants.platformSideBitsZ, 1},
-                {4.9, 7.5, constants.platformSideBitsZ, 1},
-                {4.9, -7.5, constants.platformSideBitsZ, 1},
+                {-3.4, -7.5, 0, 1},
+                {-3.4, 7.5, 0, 1},
+                {4.9, 7.5, 0, 1},
+                {4.9, -7.5, 0, 1},
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
         doTerrain4ClaphamLarge = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-                {-3.4, -3.4, constants.platformSideBitsZ, 1},
-                {-3.4, 3.4, constants.platformSideBitsZ, 1},
-                {2.2, 7.4, constants.platformSideBitsZ, 1},
-                {2.2, -7.4, constants.platformSideBitsZ, 1},
+                {-3.4, -3.4, 0, 1},
+                {-3.4, 3.4, 0, 1},
+                {2.2, 7.4, 0, 1},
+                {2.2, -7.4, 0, 1},
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
         doTerrain4ClaphamMedium = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-                {-2.0, -3.4, constants.platformSideBitsZ, 1},
-                {-2.0, 3.4, constants.platformSideBitsZ, 1},
-                {1.7, 5.8, constants.platformSideBitsZ, 1},
-                {1.7, -5.8, constants.platformSideBitsZ, 1},
+                {-2.0, -3.4, 0, 1},
+                {-2.0, 3.4, 0, 1},
+                {1.7, 5.8, 0, 1},
+                {1.7, -5.8, 0, 1},
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
         doTerrain4ClaphamSmall = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
-                {-2.0, -2.9, constants.platformSideBitsZ, 1},
-                {-2.0, 2.9, constants.platformSideBitsZ, 1},
-                {1.7, 2.9, constants.platformSideBitsZ, 1},
-                {1.7, -2.9, constants.platformSideBitsZ, 1},
+                {-2.0, -2.9, 0, 1},
+                {-2.0, 2.9, 0, 1},
+                {1.7, 2.9, 0, 1},
+                {1.7, -2.9, 0, 1},
             }
             return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,

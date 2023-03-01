@@ -9,20 +9,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 820,
+					count = 24,
+					offset = 592,
 				},
 				position = {
-					count = 48,
-					offset = 724,
+					count = 24,
+					offset = 616,
 				},
 				tangent = {
-					count = 48,
-					offset = 868,
+					count = 24,
+					offset = 640,
 				},
 				uv0 = {
-					count = 48,
-					offset = 772,
+					count = 24,
+					offset = 568,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 96,
-					offset = 1108,
+					offset = 760,
 				},
 				position = {
 					count = 96,
-					offset = 916,
+					offset = 856,
 				},
 				tangent = {
 					count = 96,
-					offset = 1204,
+					offset = 952,
 				},
 				uv0 = {
 					count = 96,
-					offset = 1012,
+					offset = 664,
 				},
 			},
 			materials = {
@@ -55,20 +55,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 1396,
+					count = 24,
+					offset = 1072,
 				},
 				position = {
-					count = 48,
-					offset = 1300,
+					count = 24,
+					offset = 1096,
 				},
 				tangent = {
-					count = 48,
-					offset = 1444,
+					count = 24,
+					offset = 1120,
 				},
 				uv0 = {
-					count = 48,
-					offset = 1348,
+					count = 24,
+					offset = 1048,
 				},
 			},
 			materials = {
@@ -79,46 +79,46 @@ return {
 			indices = {
 				normal = {
 					count = 96,
-					offset = 1684,
+					offset = 1240,
 				},
 				position = {
 					count = 96,
-					offset = 1492,
+					offset = 1336,
 				},
 				tangent = {
 					count = 96,
-					offset = 1780,
+					offset = 1432,
 				},
 				uv0 = {
 					count = 96,
-					offset = 1588,
+					offset = 1144,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/railroad/slopedSides/edgeZ.002.mtl", 
+				"lollo_freestyle_train_station/railroad/slopedSides/edgeZ.mtl", 
 			},
 		},
 		{
 			indices = {
 				normal = {
 					count = 48,
-					offset = 1972,
+					offset = 1576,
 				},
 				position = {
 					count = 48,
-					offset = 1876,
+					offset = 1624,
 				},
 				tangent = {
 					count = 48,
-					offset = 2020,
+					offset = 1672,
 				},
 				uv0 = {
 					count = 48,
-					offset = 1924,
+					offset = 1528,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/railroad/slopedSides/edgeZ1.001.mtl", 
+				"lollo_freestyle_train_station/railroad/slopedSides/edgeZ1.mtl", 
 			},
 		}, 
 	},
@@ -126,22 +126,22 @@ return {
 		normal = {
 			count = 72,
 			numComp = 3,
-			offset = 540,
+			offset = 216,
 		},
 		position = {
-			count = 252,
+			count = 216,
 			numComp = 3,
-			offset = 0,
+			offset = 288,
 		},
 		tangent = {
-			count = 112,
+			count = 64,
 			numComp = 4,
-			offset = 612,
+			offset = 504,
 		},
 		uv0 = {
-			count = 288,
+			count = 216,
 			numComp = 2,
-			offset = 252,
+			offset = 0,
 		},
 	},
 }
