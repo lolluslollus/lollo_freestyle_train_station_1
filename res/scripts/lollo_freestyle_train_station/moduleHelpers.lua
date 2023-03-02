@@ -1523,13 +1523,19 @@ return {
                             -- this would help if I take cpf.posTanX2, but then I'd get some ugly steps.
                             -- local yShift = _isTrackOnPlatformLeft and -cpf.width * 0.5 - slopedAreaWidth or cpf.width * 0.5 + slopedAreaWidth
 
-                            local wallPosTanX2 = transfUtils.getParallelSidewaysCoarse(
+                            -- local wallPosTanX2 = transfUtils.getParallelSidewaysCoarse(
+                            --     cpf.posTanX2,
+                            --     (_isTrackOnPlatformLeft and -widthAboveNil or widthAboveNil)
+                            -- )
+                            local wallPosTanX2, xRatio, yRatio = transfUtils.getParallelSideways(
                                 cpf.posTanX2,
                                 (_isTrackOnPlatformLeft and -widthAboveNil or widthAboveNil)
                             )
+                            logger.print('widthAboveNil, xRatio, yRatio =', widthAboveNil, xRatio, yRatio)
 
                             -- we should divide the following by the models length, but it is always 1, as set in the meshes
-                            local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
+                            -- local xScaleFactor = transfUtils.getPositionsDistance_onlyXY(wallPosTanX2[1][1], wallPosTanX2[2][1])
+                            local xScaleFactor = xRatio
                             local wallTransf = transfUtilsUG.mul(
                                 privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                                 {
