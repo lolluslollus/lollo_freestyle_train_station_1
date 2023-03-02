@@ -17,7 +17,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 200,
+                visibleTo = 100,
             },
             {
                 node = {
@@ -30,7 +30,7 @@ function data()
                     -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                 },
                 static = false,
-                visibleFrom = 200,
+                visibleFrom = 100,
                 visibleTo = 1000,
             },
         },
