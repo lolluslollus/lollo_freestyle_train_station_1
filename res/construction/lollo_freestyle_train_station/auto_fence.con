@@ -85,24 +85,24 @@ function data()
     end
 
     local function _addWallBehind(transf, result, zShift, wallBehindModelId, wallBehindBaseModelId)
-        if wallBehindModelId ~= nil then
-            local _wallBehindTransf_ZShifted = transfUtils.getTransf_ZShifted(transf, zShift)
+        if wallBehindModelId == nil then return end
+
+        local _wallBehindTransf_ZShifted = transfUtils.getTransf_ZShifted(transf, zShift)
+        table.insert(
+            result.models,
+            {
+                id = wallBehindModelId,
+                transf = _wallBehindTransf_ZShifted
+            }
+        )
+        if wallBehindBaseModelId ~= nil then
             table.insert(
                 result.models,
                 {
-                    id = wallBehindModelId,
+                    id = wallBehindBaseModelId,
                     transf = _wallBehindTransf_ZShifted
                 }
             )
-            if wallBehindBaseModelId ~= nil then
-                table.insert(
-                    result.models,
-                    {
-                        id = wallBehindBaseModelId,
-                        transf = _wallBehindTransf_ZShifted
-                    }
-                )
-            end
         end
     end
 
