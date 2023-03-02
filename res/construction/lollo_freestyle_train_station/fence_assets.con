@@ -6,6 +6,8 @@ function data()
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
     local function _addGround(transf, result, zed, wallBehindModelId, isDoTerrain)
+        if not(isDoTerrain) then return end
+
         local _faceTransformed = wallBehindModelId == nil
             and transfUtils.getFaceTransformed_FAST(
                 transf,
@@ -41,18 +43,16 @@ function data()
             }
         )
 
-        if isDoTerrain then
-            table.insert(
-                result.terrainAlignmentLists,
-                {
-                    faces =  { _faceTransformed },
-                    optional = true,
-                    slopeHigh = 9.9,
-                    slopeLow = 9.6,
-                    type = 'EQUAL',
-                }
-            )
-        end
+        table.insert(
+            result.terrainAlignmentLists,
+            {
+                faces =  { _faceTransformed },
+                optional = true,
+                slopeHigh = 9.9,
+                slopeLow = 9.6,
+                type = 'EQUAL',
+            }
+        )
     end
 
     local function _addWall(transf, result, wallMainModelId, wallBaseModelId)

@@ -1,74 +1,124 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, 0, }, 
+		{
+			0, 0, 0, 0, 0, 
+		}, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 144,
-					offset = 824,
+					count = 96,
+					offset = 724,
 				},
 				position = {
-					count = 144,
-					offset = 680,
+					count = 96,
+					offset = 532,
 				},
 				tangent = {
-					count = 144,
-					offset = 1112,
+					count = 96,
+					offset = 628,
 				},
 				uv0 = {
-					count = 144,
-					offset = 968,
+					count = 96,
+					offset = 820,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/bridge/dark.mtl", 
+				"lollo_freestyle_train_station/bridge/vertical_medium_prio.mtl", 
 			},
-		}, {
+		},
+		{
 			indices = {
 				normal = {
 					count = 72,
-					offset = 1328,
+					offset = 1060,
 				},
 				position = {
 					count = 72,
-					offset = 1256,
+					offset = 916,
 				},
 				tangent = {
 					count = 72,
-					offset = 1472,
+					offset = 988,
 				},
 				uv0 = {
 					count = 72,
-					offset = 1400,
+					offset = 1132,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/platformWalls/concrete_plain/dark_low_prio.mtl", 
+				"lollo_freestyle_train_station/platformWalls/concrete_plain/vertical_low_prio.mtl", 
 			},
-		}, {
+		},
+		{
 			indices = {
 				normal = {
-					count = 72,
-					offset = 1616,
+					count = 24,
+					offset = 1252,
 				},
 				position = {
-					count = 72,
-					offset = 1544,
+					count = 24,
+					offset = 1204,
 				},
 				tangent = {
-					count = 72,
-					offset = 1760,
+					count = 24,
+					offset = 1228,
 				},
 				uv0 = {
-					count = 72,
-					offset = 1688,
+					count = 24,
+					offset = 1276,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/platformWalls/behind/dark_high_prio.mtl", 
+				"lollo_freestyle_train_station/platformWalls/behind/vertical_high_prio.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 1348,
+				},
+				position = {
+					count = 24,
+					offset = 1300,
+				},
+				tangent = {
+					count = 24,
+					offset = 1324,
+				},
+				uv0 = {
+					count = 24,
+					offset = 1372,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/platformWalls/behind/horizontal_medium_prio.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 1444,
+				},
+				position = {
+					count = 24,
+					offset = 1396,
+				},
+				tangent = {
+					count = 24,
+					offset = 1420,
+				},
+				uv0 = {
+					count = 24,
+					offset = 1468,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/platformWalls/behind/horizontal_high_prio.mtl", 
 			},
 		}, 
 	},
@@ -76,22 +126,22 @@ return {
 		normal = {
 			count = 84,
 			numComp = 3,
-			offset = 180,
+			offset = 256,
 		},
 		position = {
-			count = 180,
+			count = 144,
 			numComp = 3,
 			offset = 0,
 		},
 		tangent = {
-			count = 192,
+			count = 112,
 			numComp = 4,
-			offset = 488,
+			offset = 144,
 		},
 		uv0 = {
-			count = 224,
+			count = 192,
 			numComp = 2,
-			offset = 264,
+			offset = 340,
 		},
 	},
 }

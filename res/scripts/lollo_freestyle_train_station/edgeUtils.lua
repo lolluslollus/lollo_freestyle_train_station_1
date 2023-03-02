@@ -720,6 +720,13 @@ helper.isEdgeFrozen = function(edgeId)
     return false
 end
 
+helper.isEdgeInACon = function(edgeId)
+    if not(helper.isValidAndExistingId(edgeId)) then return false end
+
+    local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
+    return helper.isValidAndExistingId(conId)
+end
+
 helper.getEdgeObjectModelId = function(edgeObjectId)
     if helper.isValidAndExistingId(edgeObjectId) then
         local modelInstanceList = api.engine.getComponent(edgeObjectId, api.type.ComponentType.MODEL_INSTANCE_LIST)

@@ -29,33 +29,35 @@ function data()
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
-            map_op_1 = {
-                fileName = "models/industry/overlay_textures/big_05.tga",
+			map_op_1 = {
+                fileName = "models/industry/overlay_textures/big_05.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
             map_op_2 = {
-                fileName = "models/industry/overlay_textures/big_02.tga",
+                fileName = "models/industry/overlay_textures/big_02.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
-            normal_scale = {
-                normalScale = 1,
-            },
-            operation_1 = {
+			normal_scale = {
+				normalScale = 1,
+			},
+			operation_1 = {
                 mode = "WORLD_XY",
                 -- mode = "NORMAL",
                 op = "OVERLAY",
-                opacity = 0.1,
-                scale = { 1.0, 1.0, },
+				-- op = "MULTIPLICATION",
+                opacity = 0.25,
+                scale = { 0.01, 0.01, },
             },
             operation_2 = {
-                -- mode = "WORLD_XY",
-                mode = "NORMAL",
-                op = "OVERLAY",
-                opacity = 0.02,
+                mode = "WORLD_XY",
+                -- mode = "NORMAL",
+                -- op = "OVERLAY",
+				op = "MULTIPLICATION",
+                opacity = 0.25,
                 scale = { 0.05, 0.05, },
             },
             polygon_offset = {
