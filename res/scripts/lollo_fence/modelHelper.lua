@@ -7,6 +7,7 @@ local privateValues = {
     zRotationMaxIndex = 64,
 }
 privateValues.defaults = {
+    -- lolloFenceAssets_buildOnFrozenEdges = 0,
     lolloFenceAssets_doTerrain = 0,
     lolloFenceAssets_length = 9,
     lolloFenceAssets_model = 1,
@@ -250,6 +251,15 @@ return {
                 uiType = 'CHECKBOX',
                 values = {_('NO'), _('YES')}
             },
+            -- there is no way yet to accurately find out if an edge is frozen:
+            -- I often add or remove one metre, unless I rewrite getCentralEdgePositions_OnlyOuterBounds
+            -- {
+            --     defaultIndex = privateValues.defaults.lolloFenceAssets_buildOnFrozenEdges,
+            --     key = 'lolloFenceAssets_buildOnFrozenEdges',
+            --     name = _('BuildOnStations'),
+            --     uiType = 'CHECKBOX',
+            --     values = {_('NO'), _('YES')}
+            -- },
         }
         -- add defaultIndex wherever not present
         for _, record in pairs(metadata_sorted) do
