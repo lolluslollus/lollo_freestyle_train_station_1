@@ -34,9 +34,37 @@ function data()
 				wrapS = "REPEAT",
 				wrapT = "REPEAT",
 			},
+			map_op_1 = {
+                fileName = "models/industry/overlay_textures/big_05.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_2 = {
+                fileName = "models/industry/overlay_textures/big_02.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
 			normal_scale = {
 				normalScale = 1,
 			},
+			operation_1 = {
+                mode = "WORLD_XY",
+                -- mode = "NORMAL",
+                op = "OVERLAY",
+				-- op = "MULTIPLICATION",
+                opacity = 0.3,
+                scale = { 0.01, 0.01, },
+            },
+            operation_2 = {
+                mode = "WORLD_XY",
+                -- mode = "NORMAL",
+                -- op = "OVERLAY",
+				op = "MULTIPLICATION",
+                opacity = 0.2,
+                scale = { 0.05, 0.05, },
+            },
 			polygon_offset = {
 				factor = 0,
 				forceDepthWrite = false,
@@ -47,6 +75,6 @@ function data()
 				twoSided = false,
 			},
 		},
-		type = "PHYSICAL_NRML_MAP",
+		type = "PHYSICAL_NRML_MAP_OP",
 	}
 end

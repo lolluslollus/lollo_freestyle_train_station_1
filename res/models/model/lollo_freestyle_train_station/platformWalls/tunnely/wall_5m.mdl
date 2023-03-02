@@ -11,6 +11,8 @@ function data()
                         'lollo_freestyle_train_station/tunnel_rail_ug.mtl',
                         'lollo_freestyle_train_station/tunnel_rail_ug_high_prio.mtl',
                         'lollo_freestyle_train_station/tunnel_rail_ug_low_prio.mtl',
+                        'lollo_freestyle_train_station/tunnel_rail_ug_world_dirt.mtl',
+                        'lollo_freestyle_train_station/tunnel_rail_ug_world_dirt_high_prio.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/platformWalls/arch/modelled_wall_2_cube_proj_factor_5m_lod0.msh',
                     -- mesh = 'lollo_freestyle_train_station/platformWalls/arch/modelled_wall_5m_lod0.msh',
@@ -18,7 +20,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 200,
+                visibleTo = 100,
             },
             {
                 node = {
@@ -32,7 +34,7 @@ function data()
                     -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                 },
                 static = false,
-                visibleFrom = 200,
+                visibleFrom = 100,
                 visibleTo = 1000,
             },
         },

@@ -1,37 +1,35 @@
 function data()
+    -- copied from material/industry/oil_refinery/era_a/wall_2.mtl
     return {
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 0.8, 0.8, 0.8, },
+                albedoScale = { 1, 1, 1, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
                 fadeOutStartDist = 10000,
             },
             map_albedo = {
-                -- fileName = 'lollo_freestyle_train_station/concrete_001_albedo.dds',
-                fileName = 'lollo_freestyle_train_station/concrete_004_albedo.dds',
-                type = 'TWOD',
-                wrapS = 'REPEAT',
-                wrapT = 'REPEAT',
+                fileName = "models/industry/fuel_refinery/era_a/fr_wall_1_albedo.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
             },
             map_metal_gloss_ao = {
-                -- fileName = 'lollo_freestyle_train_station/concrete_001_metal_gloss_ao.dds',
-                fileName = 'lollo_freestyle_train_station/concrete_004_metal_gloss_ao.dds',
-                type = 'TWOD',
-                wrapS = 'REPEAT',
-                wrapT = 'REPEAT',
+                fileName = "models/industry/fuel_refinery/era_a/fr_wall_1_metal_gloss_ao.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
             },
             map_normal = {
-                -- fileName = 'lollo_freestyle_train_station/concrete_001_normal.dds',
-                fileName = 'lollo_freestyle_train_station/concrete_004_normal.dds',
+                fileName = "models/industry/fuel_refinery/era_a/fr_wall_1_normal.dds",
                 redGreen = true,
-                type = 'TWOD',
-                wrapS = 'REPEAT',
-                wrapT = 'REPEAT',
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
             },
-            map_op_1 = {
+			map_op_1 = {
                 fileName = "models/industry/overlay_textures/big_05.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
@@ -49,10 +47,9 @@ function data()
 			operation_1 = {
                 mode = "WORLD_XY",
                 -- mode = "NORMAL",
-                -- op = "OVERLAY",
-                op = "NO_OP",
+                op = "OVERLAY",
 				-- op = "MULTIPLICATION",
-                opacity = 0.075,
+                opacity = 0.5,
                 scale = { 0.01, 0.01, },
             },
             operation_2 = {
@@ -60,7 +57,7 @@ function data()
                 -- mode = "NORMAL",
                 -- op = "OVERLAY",
 				op = "MULTIPLICATION",
-                opacity = 0.4,
+                opacity = 0.5,
                 scale = { 0.05, 0.05, },
             },
             polygon_offset = {
@@ -73,7 +70,7 @@ function data()
                 twoSided = false,
             },
         },
-        type = 'PHYSICAL_NRML_MAP_OP',
+        type = "PHYSICAL_NRML_MAP_OP",
     }
-end
- 
+    end
+    
