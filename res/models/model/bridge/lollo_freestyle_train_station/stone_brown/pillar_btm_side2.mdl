@@ -1,0 +1,53 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 2, 0, 4, },
+		bbMin = { -2, -2, -2.4492937051703e-16, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 2, 1.0000002384186, 2.1499996185303, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						materials = { "lollo_freestyle_train_station/bridge/stone_brown.mtl", },
+						mesh = "bridge/stone/pillar_btm_side2/stone_pillar_btm_side2_lod0.msh",
+						name = "stone_pillar_btm_side2",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 200,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = { "lollo_freestyle_train_station/bridge/stone_brown.mtl", },
+						mesh = "bridge/stone/pillar_btm_side2/stone_pillar_btm_side2_lod1.msh",
+						name = "stone_pillar_btm_side2",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 200,
+			visibleTo = 2500,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

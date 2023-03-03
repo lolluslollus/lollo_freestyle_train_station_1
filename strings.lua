@@ -328,6 +328,12 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["era_b_PedestrianBasicBridgeNoPillarsNoSides"] = "Era B bridge with no pillars and no railing, for pedestrian paths and 2.5 m platforms",
 			["era_c_PedestrianBasicBridgeNoPillars"] = "Era C bridge with no pillars, for pedestrian paths",
 			["era_c_PedestrianBasicBridgeNoPillarsNoSides"] = "Era C bridge with no pillars and no railing, for pedestrian paths and 2.5 m platforms",
+			["BrownStoneBridge"] = "Dark stone bridge, compatible with 2.5 m platforms",
+			["BrownStoneBridge_NoSides"] = "Dark stone bridge with no railing, compatible with 2.5 m platforms",
+			["GreyStoneBridge"] = "Better stone bridge, compatible with 2.5 m platforms",
+			["GreyStoneBridge_NoSides"] = "Stone bridge with no railing, compatible with 2.5 m platforms",
+			["OrangeStoneBridge"] = "Sandstone bridge, compatible with 2.5 m platforms",
+			["OrangeStoneBridge_NoSides"] = "Sandstone bridge with no railing, compatible with 2.5 m platforms",
 
 			["NewStationName"] = "New Station",
 
@@ -782,6 +788,12 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["era_b_PedestrianBasicBridgeNoPillarsNoSides"] = "Brücke der Epoche B ohne Pfeiler und ohne Geländer, für Fußgängerwege und 2,5 m hohe Bahnsteige",
 			["era_c_PedestrianBasicBridgeNoPillars"] = "Epoche-C-Brücke ohne Pfeiler, für Fußgängerwege",
 			["era_c_PedestrianBasicBridgeNoPillarsNoSides"] = "Brücke der Epoche C ohne Pfeiler und ohne Geländer, für Fußgängerwege und 2,5 m hohe Bahnsteige",
+			["BrownStoneBridge"] = "Dunkle Steinbrücke, kompatibel mit 2,5 m Bahnsteigen",
+			["BrownStoneBridge_NoSides"] = "Dunkle Steinbrücke ohne Pfeiler, kompatibel mit 2,5 m Bahnsteigen",
+			["GreyStoneBridge"] = "Bessere Steinbrücke, kompatibel mit 2,5 m Bahnsteigen",
+			["GreyStoneBridge_NoSides"] = "Steinbrücke ohne Pfeiler, kompatibel mit 2,5 m Bahnsteigen",
+			["OrangeStoneBridge"] = "Sandsteinbrücke, kompatibel mit 2,5 m Bahnsteigen",
+			["OrangeStoneBridge_NoSides"] = "Sandsteinbrücke ohne Pfeiler, kompatibel mit 2,5 m Bahnsteigen",
 
 			["NewStationName"] = "Neuer Bahnhof",
 
