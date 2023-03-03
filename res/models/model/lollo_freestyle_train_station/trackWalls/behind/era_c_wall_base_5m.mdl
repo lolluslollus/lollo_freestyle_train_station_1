@@ -1,5 +1,4 @@
 function data()
-    -- to make this match a 2_5 wall, add 1.25 to Y
     local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
     return {
