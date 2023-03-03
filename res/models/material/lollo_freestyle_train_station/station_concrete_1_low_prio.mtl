@@ -53,7 +53,7 @@ function data()
                 op = "NO_OP",
 				-- op = "MULTIPLICATION",
                 opacity = 0.075,
-                scale = { 0.01, 0.01, },
+                scale = { 0.1, 0.1, },
             },
             operation_2 = {
                 mode = "WORLD_XY",
@@ -61,7 +61,7 @@ function data()
                 -- op = "OVERLAY",
 				op = "MULTIPLICATION",
                 opacity = 0.4,
-                scale = { 0.05, 0.05, },
+                scale = { 1.5, 1.5, },
             },
             polygon_offset = {
                 factor = 1,
