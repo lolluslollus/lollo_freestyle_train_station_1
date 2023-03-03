@@ -1,0 +1,66 @@
+function data()
+	return {
+		order = 0,
+		params = {
+			albedo_scale = {
+				albedoScale = { 1, 1, 1, },
+			},
+			fade_out_range = {
+				fadeOutEndDist = 20000,
+				fadeOutStartDist = 10000,
+			},
+			map_albedo = {
+				-- fileName = "models/bridge/stone_albedo.dds",
+				fileName = 'lollo_freestyle_train_station/bridge/stone_brown_albedo.dds',
+				type = "TWOD",
+			},
+			map_metal_gloss_ao = {
+				fileName = "models/bridge/stone_metal_gloss_ao.dds",
+				type = "TWOD",
+			},
+			map_normal = {
+				fileName = "models/bridge/stone_normal.dds",
+				redGreen = true,
+				type = "TWOD",
+			},
+			map_op_1 = {
+				fileName = "models/industry/overlay_textures/small_01.dds",
+				type = "TWOD",
+				wrapS = "REPEAT",
+				wrapT = "REPEAT",
+			},
+			map_op_2 = {
+				fileName = "models/industry/overlay_textures/big_05.dds",
+				type = "TWOD",
+				wrapS = "REPEAT",
+				wrapT = "REPEAT",
+			},
+			normal_scale = {
+				normalScale = 1.2999999523163,
+			},
+			operation_1 = {
+				mode = "NORMAL",
+				op = "OVERLAY",
+				opacity = 0.89999997615814,
+				scale = { 0.050000000745058, 0.050000000745058, },
+			},
+			operation_2 = {
+				mode = "NORMAL",
+				op = "OVERLAY",
+				opacity = 0.64999997615814,
+				scale = { 0.033333335071802, 0.033333335071802, },
+			},
+			polygon_offset = {
+				factor = 0,
+				forceDepthWrite = false,
+				units = 0,
+			},
+			two_sided = {
+				flipNormal = true,
+				twoSided = false,
+			},
+		},
+		type = "PHYSICAL_NRML_MAP_OP",
+	}
+	end
+	

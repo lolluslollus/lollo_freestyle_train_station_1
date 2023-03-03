@@ -1,0 +1,84 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 6, 0, 0, },
+		bbMin = { 0, -1.7999999523163, -7, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 3, 1.1250002384186, 3.5, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								name = "stone_bridge_bone_6m_start",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+							},
+							{
+								name = "stone_bridge_bone_6m_1",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 0, 1, },
+							},
+							{
+								name = "stone_bridge_bone_6m_end",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, 2, 0, 1, },
+							},
+						},
+						name = "container_6m",
+						skin = "bridge/stone/railing_end_side2_no_side/stone_railing_end_side2_no_side_lod0.msh",
+						skinMaterials = { "lollo_freestyle_train_station/bridge/stone_brown_skinned.mtl", },
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 200,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = { "lollo_freestyle_train_station/bridge/stone_brown.mtl", },
+						mesh = "bridge/stone/railing_end_side2_no_side/stone_railing_end_side2_no_side_lod1.msh",
+						name = "stone_railing_end_side2_no_side",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 200,
+			visibleTo = 500,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = { "lollo_freestyle_train_station/bridge/stone_brown.mtl", },
+						mesh = "bridge/stone/railing_end_side2_no_side/stone_railing_end_side2_no_side_lod2.msh",
+						name = "stone_railing_end_side2_no_side",
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = "RootNode",
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 500,
+			visibleTo = 2500,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

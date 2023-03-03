@@ -186,7 +186,7 @@ utils.getData4CementOBSOLETE = function(isSides)
         yearFrom = 65535, --0, -- obsolete, keep it for compatibility
         yearTo = 0,
         carriers = { 'RAIL', 'ROAD' },
-        speedLimit = 20.0 / 3.6,
+        speedLimit = 320.0 / 3.6,
         pillarLen = _pillarLength,
         pillarMinDist = 65535,
         pillarMaxDist = 65535,
@@ -344,8 +344,9 @@ utils.getData4Basic = function(eraPrefix, isSides)
         name = isSides and _(eraPrefix .. 'PedestrianBasicBridgeNoPillars') or _(eraPrefix .. 'PedestrianBasicBridgeNoPillarsNoSides'),
         yearFrom = 0, -- same as concrete paths
         yearTo = 0,
-        carriers = isSides and { 'ROAD' } or { 'RAIL', 'ROAD' },
-        speedLimit = 20.0 / 3.6,
+        -- carriers = isSides and { 'ROAD' } or { 'RAIL', 'ROAD' },
+        carriers = { 'RAIL', 'ROAD' },
+        speedLimit = 320.0 / 3.6,
         pillarLen = _pillarLength,
         pillarMinDist = 65535,
         pillarMaxDist = 65535,
@@ -395,6 +396,174 @@ utils.getData4Basic = function(eraPrefix, isSides)
         noParallelStripSubdivision = true,
         -- updateFn = updateFn,
         updateFn = newUpdateFn,
+    }
+end
+
+utils.getData4StoneLolloBridge = function(name, dir, isSides)
+    local _pillarLength = 3 -- 999 -- 1
+	local _pillarWidth = 2 --0.5
+
+    -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
+    -- and a list of lanes and offsets,
+    -- then places them together depending on this information.
+    -- The bounding boxes explain why bridges have a less flexible file structure.
+
+    -- One problem is, platform-tracks < 5 m don't work well on stock bridges.
+    -- Either we rewrite the whole thing, or we adjust something and use the automatisms
+    -- => number two.
+    -- My dedicated *_rep_* models have a mesh and bounding box 0.5 m wide instead of 4.
+    -- This applies to railing and pillars.
+    -- bridgeutil uses more instances if required, stacked sideways;
+    -- otherwise, only one, and it is narrow enough for anything.
+    -- This allows for bridges under 2.5 m platform-tracks and narrow paths;
+    -- Sadly, any sorts of sides won't work with 2.5 m platforms
+    -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
+
+    -- Skins and bones help bridges look better, they look segmented without them.
+    -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
+    -- Use the weight painting, then the gradient tool on every vertex group.
+    -- Don't forget to clean each vertex group after editing, like with meshes.
+
+    -- This particular bridge is for 1 metre roads, which are very bendy.
+    -- See the notes below.
+
+    local configWithSides = {
+        pillarBase = { dir .. "pillar_btm_side.mdl", dir .. "pillar_btm_rep.mdl", dir .. "pillar_btm_side2.mdl" },
+        pillarRepeat = { dir .. "pillar_rep_side.mdl", dir .. "pillar_rep_rep.mdl", dir .. "pillar_rep_side2.mdl" },
+        pillarTop = { dir .. "pillar_top_side.mdl", dir .. "pillar_top_rep.mdl", dir .. "pillar_top_side2.mdl" },
+    
+        railingBegin = {
+            dir .. "railing_start_side.mdl", dir .. "railing_start_side.mdl", dir .. "railing_start_side_no_side.mdl", 
+            dir .. "railing_start_rep.mdl", dir .. "railing_start_rep.mdl",
+            dir .. "railing_end_side2.mdl", dir .. "railing_end_side2.mdl", dir .. "railing_end_side2_no_side.mdl"
+        },
+        railingRepeat = {
+            dir .. "railing_rep_side.mdl",  dir .. "railing_rep_side.mdl",  dir .. "railing_rep_side_no_side.mdl",
+            dir .. "railing_rep_rep.mdl", dir .. "railing_rep_rep.mdl",
+            dir .. "railing_rep_side2.mdl",  dir .. "railing_rep_side2.mdl",  dir .. "railing_rep_side2_no_side.mdl",
+        },
+        railingEnd = {
+            dir .. "railing_end_side.mdl",  dir .. "railing_end_side.mdl",  dir .. "railing_end_side_no_side.mdl",
+            dir .. "railing_end_rep.mdl", dir .. "railing_end_rep.mdl",
+            dir .. "railing_start_side2.mdl",  dir .. "railing_start_side2.mdl",  dir .. "railing_start_side2_no_side.mdl",
+        },
+    }
+    local configWithNoSides = {
+        pillarBase = { dir .. "pillar_btm_side.mdl", dir .. "pillar_btm_rep.mdl", dir .. "pillar_btm_side2.mdl" },
+        pillarRepeat = { dir .. "pillar_rep_side.mdl", dir .. "pillar_rep_rep.mdl", dir .. "pillar_rep_side2.mdl" },
+        pillarTop = { dir .. "pillar_top_side.mdl", dir .. "pillar_top_rep.mdl", dir .. "pillar_top_side2.mdl" },
+
+        railingBegin = {
+            dir .. "railing_start_side_no_side.mdl", dir .. "railing_start_side_no_side.mdl", dir .. "railing_start_side_no_side.mdl", 
+            dir .. "railing_start_rep.mdl", dir .. "railing_start_rep.mdl",
+            dir .. "railing_end_side2_no_side.mdl", dir .. "railing_end_side2_no_side.mdl", dir .. "railing_end_side2_no_side.mdl"
+        },
+        railingRepeat = {
+            dir .. "railing_rep_side_no_side.mdl",  dir .. "railing_rep_side_no_side.mdl",  dir .. "railing_rep_side_no_side.mdl",
+            dir .. "railing_rep_rep.mdl", dir .. "railing_rep_rep.mdl",
+            dir .. "railing_rep_side2_no_side.mdl",  dir .. "railing_rep_side2_no_side.mdl",  dir .. "railing_rep_side2_no_side.mdl",
+        },
+        railingEnd = {
+            dir .. "railing_end_side_no_side.mdl",  dir .. "railing_end_side_no_side.mdl",  dir .. "railing_end_side_no_side.mdl",
+            dir .. "railing_end_rep.mdl", dir .. "railing_end_rep.mdl",
+            dir .. "railing_start_side2_no_side.mdl",  dir .. "railing_start_side2_no_side.mdl",  dir .. "railing_start_side2_no_side.mdl",
+        },
+    }
+    local config = isSides and configWithSides or configWithNoSides
+
+    local oldUpdateFn = bridgeutil.makeDefaultUpdateFn(config)
+    local newUpdateFn = function(params)
+        -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+        -- UG TODO
+        -- LOLLO NOTE
+        -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
+        -- this draws pointless artifacts on the sides. When it happens, pillarLength is different from the set value.
+        -- the reason is, the C routine giving us the params assumes that the road is at least 5 m wide.
+        -- this stupid C routine does not say how wide the road is, so we specialise the bridge on 1 metre wide roads.
+
+        -- params.pillarHeights = {}
+
+        if params.pillarLength ~= _pillarLength then
+            params.pillarLength = _pillarLength
+            params.pillarWidth = _pillarWidth
+
+            for _, railingInterval in pairs(params.railingIntervals) do
+                -- railingInterval.hasPillar = { -1, -1, }
+                for _, lane in pairs(railingInterval.lanes) do
+                    lane.offset = -0.5 -- goodish, it is minus the road width * 0.5
+                    -- lane.type = 0
+                end
+            end
+            -- params.railingWidth = 0.5
+            params.railingWidth = 1 -- goodish, it is the road width
+            -- print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+        end
+
+        local results = oldUpdateFn(params)
+        -- print('newUpdateFn returning =') debugPrint(results)
+        return results
+    end
+
+    return {
+        name = name,
+        yearFrom = 0, -- same as concrete paths
+        yearTo = 0,
+        carriers = { 'RAIL', 'ROAD' },
+        speedLimit = 320.0 / 3.6,
+        pillarLen = _pillarLength,
+        pillarMinDist = 12,
+        pillarMaxDist = 24,
+        pillarTargetDist = 12,
+        -- pillarWidth = _pillarWidth,
+        cost = 200.0,
+        costFactors = { 10.0, 2.5, 1.0 },
+        -- LOLLO NOTE
+        -- Sharp bends draw the street tangent to the bridge, outside,
+        -- because the game expects 6m long street segments, while this bridge has 2m long segments.
+        -- We can make street materials transparent, so sharp bends will look better.
+        -- However, this will give junctions a hole in the middle.
+        -- All in all, we choose junctions with no holes
+        -- and put up with segments in stupidly narrow bends.
+        materialsToReplace = {
+            -- streetPaving = {
+            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            -- },
+            -- streetLane = { -- this is the most conspicuous
+            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            -- },
+            -- crossingLane = {
+            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            -- },
+            sidewalkPaving = { -- this fills small gaps at junctions but also draws tangent stripes outside sharp bends
+                -- name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+                -- size = { 1.0, 1.0 },
+                -- name = 'lollo_freestyle_train_station/icon/green.mtl'
+                -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+                -- size = {4.0, 4.0},
+                name = "street/old_medium_sidewalk.mtl",
+                size = {5.0,5.0},
+            },
+            -- sidewalkCurb = { -- useless
+            --     -- size = { 3, 0.6 },
+            --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            --     name = 'lollo_freestyle_train_station/icon/yellow.mtl'
+            -- },
+            sidewalkBorderInner = {
+                -- size = { 2, 0.8 },
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+                size = {5.0,5.0},
+                -- name = 'lollo_freestyle_train_station/icon/blue.mtl'
+                -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+                -- size = {4.0, 4.0}
+            },
+            -- sidewalkLane = {
+            --     size = { 2, 0.8 },
+            --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            --     name = 'lollo_freestyle_train_station/icon/red.mtl'
+            -- },
+        },
+        noParallelStripSubdivision = true,
+        updateFn = newUpdateFn
     }
 end
 

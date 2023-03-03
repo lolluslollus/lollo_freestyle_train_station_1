@@ -1,0 +1,63 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				jointWeights = {
+					count = 96,
+					offset = 844,
+				},
+				normal = {
+					count = 96,
+					offset = 556,
+				},
+				position = {
+					count = 96,
+					offset = 748,
+				},
+				tangent = {
+					count = 96,
+					offset = 460,
+				},
+				uv0 = {
+					count = 96,
+					offset = 652,
+				},
+			},
+			materials = {
+				"bridge/stone.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		jointWeights = {
+			count = 112,
+			numComp = 4,
+			offset = 348,
+		},
+		normal = {
+			count = 36,
+			numComp = 3,
+			offset = 80,
+		},
+		position = {
+			count = 120,
+			numComp = 3,
+			offset = 228,
+		},
+		tangent = {
+			count = 80,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 112,
+			numComp = 2,
+			offset = 116,
+		},
+	},
+}
+end
