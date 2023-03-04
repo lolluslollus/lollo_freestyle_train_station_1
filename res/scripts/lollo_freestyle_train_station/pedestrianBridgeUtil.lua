@@ -79,11 +79,47 @@ local function getDynamicProps(eraPrefix)
 	return _lod0_skinMaterials_rep, _lod0_skinMaterials_side, _lod0_skinMaterials_side_no_railing, _lod1_materials
 end
 
-local utils = {}
+local utils = {
+    getBetterUpdateFn = function(_pillarLength, _pillarWidth, _roadWidth, _oldUpdateFn)
+        return function(params)
+            -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+            -- UG TODO
+            -- LOLLO NOTE
+            -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
+            -- this draws pointless artifacts on the sides. When it happens, pillarLength is different from the set value.
+            -- the reason is, the C routine giving us the params assumes that the road is at least 5 m wide.
+            -- this stupid C routine does not say how wide the road is, so we specialise the bridge on 1 metre wide roads.
+    
+            -- params.pillarHeights = {}
+    
+            if params.pillarLength ~= _pillarLength then
+                params.pillarLength = _pillarLength
+                params.pillarWidth = _pillarWidth
+    
+                for _, railingInterval in pairs(params.railingIntervals) do
+                    -- print('railingInterval =') debugPrint(railingInterval)
+                    -- railingInterval.hasPillar = { -1, -1, }
+                    for _, lane in pairs(railingInterval.lanes) do
+                        -- lane.offset = -0.5 -- goodish, it is minus the road width * 0.5
+                        -- print('lane before =') debugPrint(lane)
+                        lane.offset = -_roadWidth * 0.5
+                        -- lane.type = 0
+                        -- print('lane after =') debugPrint(lane)
+                    end
+                end
+                -- params.railingWidth = 0.5
+                -- params.railingWidth = 1 -- goodish, it is the road width
+                params.railingWidth = _roadWidth
+                -- print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+            end
+    
+            local results = _oldUpdateFn(params)
+            -- print('newUpdateFn returning =') debugPrint(results)
+            return results
+        end
+    end,
+}
 utils.getData4CementOBSOLETE = function(isSides)
-    local _pillarLength = 999 --1
-	local _pillarWidth = 0.5
-
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_cement/'
     local stockDir = 'bridge/cement/'
@@ -148,42 +184,15 @@ utils.getData4CementOBSOLETE = function(isSides)
         railingEnd = railing,
     }
 
-    local updateFn = bridgeutil.makeDefaultUpdateFn(config)
-    local newUpdateFn = function(params)
-        -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
-        -- UG TODO
-        -- LOLLO NOTE
-        -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
-        -- this draws pointless artifacts on the sides. When it happens, pillarLength is different from the set value.
-        -- the reason is, the C routine giving us the params assumes that the road is at least 5 m wide.
-        -- this stupid C routine does not say how wide the road is, so we specialise the bridge on 1 metre wide roads.
-
-        -- params.pillarHeights = {}
-
-        if params.pillarLength ~= _pillarLength then
-            params.pillarLength = _pillarLength
-            params.pillarWidth = _pillarWidth
-
-            for _, railingInterval in pairs(params.railingIntervals) do
-                -- railingInterval.hasPillar = { -1, -1, }
-                for _, lane in pairs(railingInterval.lanes) do
-                    lane.offset = -0.5 -- goodish, it is minus the road width * 0.5
-                    -- lane.type = 0
-                end
-            end
-            -- params.railingWidth = 0.5
-            params.railingWidth = 1 -- goodish, it is the road width
-            -- print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
-        end
-
-        local results = updateFn(params)
-        -- print('newUpdateFn returning =') debugPrint(results)
-        return results
-    end
+    local _pillarLength = 999
+	local _pillarWidth = 0.5
+    local _roadWidth = 1
+    local _oldUpdateFn = bridgeutil.makeDefaultUpdateFn(config)
+    local newUpdateFn = utils.getBetterUpdateFn(_pillarLength, _pillarWidth, _roadWidth, _oldUpdateFn)
 
     return {
         name = isSides and _('PedestrianCementBridgeNoPillars') or _('PedestrianCementBridgeNoPillarsNoSides'),
-        yearFrom = 65535, --0, -- obsolete, keep it for compatibility
+        yearFrom = 65535, -- obsolete, keep it for compatibility
         yearTo = 0,
         carriers = { 'RAIL', 'ROAD' },
         speedLimit = 320.0 / 3.6,
@@ -239,10 +248,7 @@ utils.getData4CementOBSOLETE = function(isSides)
     }
 end
 
-utils.getData4Basic = function(eraPrefix, isSides)
-    local _pillarLength = 999 -- 1
-	local _pillarWidth = 0.5
-
+utils.getData4PedestrianBridge = function(eraPrefix, isSides)
     local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_basic/' .. eraPrefix
     local stockDir = 'bridge/cement/'
@@ -307,44 +313,16 @@ utils.getData4Basic = function(eraPrefix, isSides)
         railingEnd = railing,
     }
 
-    local updateFn = bridgeutil.makeDefaultUpdateFn(config)
-    local newUpdateFn = function(params)
-        -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
-        -- UG TODO
-        -- LOLLO NOTE
-        -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
-        -- this draws pointless artifacts on the sides. When it happens, pillarLength is different from the set value.
-        -- the reason is, the C routine giving us the params assumes that the road is at least 5 m wide.
-        -- this stupid C routine does not say how wide the road is, so we specialise the bridge on 1 metre wide roads.
-
-        -- params.pillarHeights = {}
-
-        if params.pillarLength ~= _pillarLength then
-            params.pillarLength = _pillarLength
-            params.pillarWidth = _pillarWidth
-
-            for _, railingInterval in pairs(params.railingIntervals) do
-                -- railingInterval.hasPillar = { -1, -1, }
-                for _, lane in pairs(railingInterval.lanes) do
-                    lane.offset = -0.5 -- goodish, it is minus the road width * 0.5
-                    -- lane.type = 0
-                end
-            end
-            -- params.railingWidth = 0.5
-            params.railingWidth = 1 -- goodish, it is the road width
-            -- print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
-        end
-
-        local results = updateFn(params)
-        -- print('newUpdateFn returning =') debugPrint(results)
-        return results
-    end
+    local _pillarLength = 999
+	local _pillarWidth = 0.5
+    local _roadWidth = 1
+    local _oldUpdateFn = bridgeutil.makeDefaultUpdateFn(config)
+    local newUpdateFn = utils.getBetterUpdateFn(_pillarLength, _pillarWidth, _roadWidth, _oldUpdateFn)
 
     return {
         name = isSides and _(eraPrefix .. 'PedestrianBasicBridgeNoPillars') or _(eraPrefix .. 'PedestrianBasicBridgeNoPillarsNoSides'),
         yearFrom = 0, -- same as concrete paths
         yearTo = 0,
-        -- carriers = isSides and { 'ROAD' } or { 'RAIL', 'ROAD' },
         carriers = { 'RAIL', 'ROAD' },
         speedLimit = 320.0 / 3.6,
         pillarLen = _pillarLength,
@@ -400,9 +378,6 @@ utils.getData4Basic = function(eraPrefix, isSides)
 end
 
 utils.getData4StoneLolloBridge = function(name, dir, isSides)
-    local _pillarLength = 3 -- 999 -- 1
-	local _pillarWidth = 2 --0.5
-
     -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
     -- and a list of lanes and offsets,
     -- then places them together depending on this information.
@@ -471,48 +446,21 @@ utils.getData4StoneLolloBridge = function(name, dir, isSides)
     }
     local config = isSides and configWithSides or configWithNoSides
 
-    local oldUpdateFn = bridgeutil.makeDefaultUpdateFn(config)
-    local newUpdateFn = function(params)
-        -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
-        -- UG TODO
-        -- LOLLO NOTE
-        -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
-        -- this draws pointless artifacts on the sides. When it happens, pillarLength is different from the set value.
-        -- the reason is, the C routine giving us the params assumes that the road is at least 5 m wide.
-        -- this stupid C routine does not say how wide the road is, so we specialise the bridge on 1 metre wide roads.
-
-        -- params.pillarHeights = {}
-
-        if params.pillarLength ~= _pillarLength then
-            params.pillarLength = _pillarLength
-            params.pillarWidth = _pillarWidth
-
-            for _, railingInterval in pairs(params.railingIntervals) do
-                -- railingInterval.hasPillar = { -1, -1, }
-                for _, lane in pairs(railingInterval.lanes) do
-                    lane.offset = -0.5 -- goodish, it is minus the road width * 0.5
-                    -- lane.type = 0
-                end
-            end
-            -- params.railingWidth = 0.5
-            params.railingWidth = 1 -- goodish, it is the road width
-            -- print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
-        end
-
-        local results = oldUpdateFn(params)
-        -- print('newUpdateFn returning =') debugPrint(results)
-        return results
-    end
+    local _pillarLength = 3
+	local _pillarWidth = 2
+    local _roadWidth = 1
+    local _oldUpdateFn = bridgeutil.makeDefaultUpdateFn(config)
+    local newUpdateFn = utils.getBetterUpdateFn(_pillarLength, _pillarWidth, _roadWidth, _oldUpdateFn)
 
     return {
         name = name,
-        yearFrom = 0, -- same as concrete paths
+        yearFrom = 0,
         yearTo = 0,
         carriers = { 'RAIL', 'ROAD' },
         speedLimit = 320.0 / 3.6,
         pillarLen = _pillarLength,
         pillarMinDist = 12,
-        pillarMaxDist = 24,
+        pillarMaxDist = 48,
         pillarTargetDist = 12,
         -- pillarWidth = _pillarWidth,
         cost = 200.0,
@@ -556,6 +504,100 @@ utils.getData4StoneLolloBridge = function(name, dir, isSides)
                 -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
                 -- size = {4.0, 4.0}
             },
+            -- sidewalkLane = {
+            --     size = { 2, 0.8 },
+            --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            --     name = 'lollo_freestyle_train_station/icon/red.mtl'
+            -- },
+        },
+        noParallelStripSubdivision = true,
+        updateFn = newUpdateFn
+    }
+end
+
+utils.getData4CementGlassBridge = function(name, config, pillarMinDist, pillarMaxDist, pillarTargetDist)
+    -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
+    -- and a list of lanes and offsets,
+    -- then places them together depending on this information.
+    -- The bounding boxes explain why bridges have a less flexible file structure.
+
+    -- One problem is, platform-tracks < 5 m don't work well on stock bridges.
+    -- Either we rewrite the whole thing, or we adjust something and use the automatisms
+    -- => number two.
+    -- My dedicated *_rep_* models have a mesh and bounding box 0.5 m wide instead of 4.
+    -- This applies to railing and pillars.
+    -- bridgeutil uses more instances if required, stacked sideways;
+    -- otherwise, only one, and it is narrow enough for anything.
+    -- This allows for bridges under 2.5 m platform-tracks and narrow paths;
+    -- Sadly, any sorts of sides won't work with 2.5 m platforms
+    -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
+
+    -- Skins and bones help bridges look better, they look segmented without them.
+    -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
+    -- Use the weight painting, then the gradient tool on every vertex group.
+    -- Don't forget to clean each vertex group after editing, like with meshes.
+
+    -- This particular bridge is for 1 metre roads, which are very bendy.
+    -- See the notes below.
+
+    local _pillarLength = 3
+	local _pillarWidth = 2
+    local _roadWidth = 1
+    local _oldUpdateFn = bridgeutil.makeDefaultUpdateFn(config)
+    local newUpdateFn = utils.getBetterUpdateFn(_pillarLength, _pillarWidth, _roadWidth, _oldUpdateFn)
+
+    return {
+        name = name,
+        yearFrom = 0,
+        yearTo = 0,
+        carriers = { 'RAIL', 'ROAD' },
+        speedLimit = 320.0 / 3.6,
+        pillarLen = _pillarLength,
+        pillarMinDist = pillarMinDist,
+        pillarMaxDist = pillarMaxDist,
+        pillarTargetDist = pillarTargetDist,
+        -- pillarWidth = _pillarWidth,
+        cost = 200.0,
+        costFactors = { 10.0, 2.5, 1.0 },
+        -- LOLLO NOTE
+        -- Sharp bends draw the street tangent to the bridge, outside,
+        -- because the game expects 6m long street segments, while this bridge has 2m long segments.
+        -- We can make street materials transparent, so sharp bends will look better.
+        -- However, this will give junctions a hole in the middle.
+        -- All in all, we choose junctions with no holes
+        -- and put up with segments in stupidly narrow bends.
+        materialsToReplace = {
+            -- streetPaving = {
+            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            -- },
+            -- streetLane = { -- this is the most conspicuous
+            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            -- },
+            -- crossingLane = {
+            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            -- },
+            -- sidewalkPaving = { -- this fills small gaps at junctions but also draws tangent stripes outside sharp bends
+            --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+            --     -- size = { 1.0, 1.0 },
+            --     -- name = 'lollo_freestyle_train_station/icon/green.mtl'
+            --     -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+            --     -- size = {4.0, 4.0},
+            --     name = "street/old_medium_sidewalk.mtl",
+            --     size = {5.0,5.0},
+            -- },
+            -- sidewalkCurb = { -- useless
+            --     -- size = { 3, 0.6 },
+            --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
+            --     name = 'lollo_freestyle_train_station/icon/yellow.mtl'
+            -- },
+            -- sidewalkBorderInner = {
+            --     -- size = { 2, 0.8 },
+            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+            --     size = {5.0,5.0},
+            --     -- name = 'lollo_freestyle_train_station/icon/blue.mtl'
+            --     -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+            --     -- size = {4.0, 4.0}
+            -- },
             -- sidewalkLane = {
             --     size = { 2, 0.8 },
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'

@@ -6,46 +6,55 @@ return {
 	subMeshes = {
 		{
 			indices = {
+				jointWeights = {
+					count = 144,
+					offset = 1012,
+				},
 				normal = {
-					count = 600,
-					offset = 3180,
+					count = 144,
+					offset = 1156,
 				},
 				position = {
-					count = 600,
-					offset = 3780,
+					count = 144,
+					offset = 724,
 				},
 				tangent = {
-					count = 600,
-					offset = 2580,
+					count = 144,
+					offset = 868,
 				},
 				uv0 = {
-					count = 600,
-					offset = 1980,
+					count = 144,
+					offset = 580,
 				},
 			},
 			materials = {
-				"station/train/passenger/concrete.mtl", 
+				"lollo_freestyle_train_station/bridge/cement_glass/conc.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
+		jointWeights = {
+			count = 160,
+			numComp = 4,
+			offset = 360,
+		},
 		normal = {
-			count = 156,
+			count = 60,
 			numComp = 3,
-			offset = 1440,
+			offset = 520,
 		},
 		position = {
-			count = 384,
+			count = 120,
 			numComp = 3,
-			offset = 1596,
+			offset = 176,
 		},
 		tangent = {
-			count = 1056,
+			count = 64,
 			numComp = 4,
-			offset = 384,
+			offset = 296,
 		},
 		uv0 = {
-			count = 384,
+			count = 176,
 			numComp = 2,
 			offset = 0,
 		},

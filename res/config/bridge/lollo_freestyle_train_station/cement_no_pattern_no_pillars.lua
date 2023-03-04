@@ -1,9 +1,9 @@
-local bridgeutil = require 'bridgeutil'
+-- local bridgeutil = require 'bridgeutil'
+local pedestrianBridgeUtil = require('lollo_freestyle_train_station.pedestrianBridgeUtil')
 
 function data()
-    local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
+	local pillarDir = 'bridge/lollo_freestyle_train_station/iron_pillars_high/'
 	local railingDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
-	local stockDir = 'bridge/cement/'
 
 	-- bridgeutil uses the lane width to see how wide a bridge is. However, it does not respect 2.5 m platform-tracks,
 	-- it says 0 m instead of 2.5. As a consequence, this fancy bridge only goes with 5 m platforms.
@@ -16,17 +16,23 @@ function data()
 	}
 
 	local config = {
-		pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
-		pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
-		pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
+		pillarBase = { pillarDir .. "pillar_2_btm_side.mdl", pillarDir .. "pillar_2_btm_rep.mdl", pillarDir .. "pillar_2_btm_side_2.mdl" },
+        pillarRepeat = { pillarDir .. "pillar_2_rep_side.mdl", pillarDir .. "pillar_2_rep_rep.mdl", pillarDir .. "pillar_2_rep_side_2.mdl" },
+        pillarTop = { pillarDir .. "pillar_2_top_side.mdl", pillarDir .. "pillar_2_top_rep.mdl", pillarDir .. "pillar_2_top_side_2.mdl" },
 		railingBegin = railing,
 		railingRepeat = railing,
 		railingEnd = railing,
 	}
 
+	return pedestrianBridgeUtil.getData4CementGlassBridge(
+		_('CementBridgeGlassWallNoPillars'),
+		config,
+		65535, 65535, 65535
+	)
+--[[
 	return {
 		name = _('CementBridgeGlassWallNoPillars'),
-		yearFrom = 1960,
+		yearFrom = 0,
 		yearTo = 0,
 		carriers = { 'RAIL', 'ROAD' },
 		speedLimit = 320.0 / 3.6,
@@ -54,6 +60,7 @@ function data()
 				size = { 3, 0.6 },
 			},
 		},
-		updateFn = bridgeutil.makeDefaultUpdateFn(config),
+		-- updateFn = bridgeutil.makeDefaultUpdateFn(config),
 	}
+]]
 end
