@@ -772,8 +772,8 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["TrackWaypointDesc"] = "Markiert die Enden eines Gleises, das Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Track in der Nähe endet, hat dieses Ende eine höhere Priorität. Nahegelegene Signalmasten können stören, Sie sollten sie entfernen und wieder einfügen, sobald der Bahnhof angelegt ist.",
 
 			["CementBridgeGlassWallNoPillars"] = "Eisenbrücke mit Glasschirmen und ohne Pfeiler. Nur für 5 m Bahnsteige.",
-			["CementBridgeGlassWallNormalPillars"] = "Eisenbrücke mit Glasschilden. Nur für 5 m Bahnsteige.",
-			["CementBridgeGlassWallSpacedPillars"] = "Eisenbrücke mit Glasschilden und Abstandspfeilern. Nur für 5 m Bahnsteige.",
+			["CementBridgeGlassWallNormalPillars"] = "Eisenbrücke mit Glasschirmen. Nur für 5 m Bahnsteige.",
+			["CementBridgeGlassWallSpacedPillars"] = "Eisenbrücke mit Glasschirmen und Abstandspfeilern. Nur für 5 m Bahnsteige.",
 			["CementBridgeNoPillarsNoSides"] = "Betonbrücke ohne Pfeiler und ohne Geländer, kompatibel mit 2,5 m Bahnsteigen",
 			["CementBridgeNormalPillarsNoSides"] = "Betonbrücke ohne Geländer, kompatibel mit 2,5 m hohen Bahnsteigen",
 			["CementBridgeSpacedPillarsNoSides"] = "Betonbrücke mit Abstandspfeilern und ohne Geländer, kompatibel mit 2,5 m hohen Bahnsteigen",
