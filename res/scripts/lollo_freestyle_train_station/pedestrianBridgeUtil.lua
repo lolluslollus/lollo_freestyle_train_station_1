@@ -506,13 +506,13 @@ utils.getData4StoneLolloBridge = function(name, dir, isSides)
 
     return {
         name = name,
-        yearFrom = 0, -- same as concrete paths
+        yearFrom = 0,
         yearTo = 0,
         carriers = { 'RAIL', 'ROAD' },
         speedLimit = 320.0 / 3.6,
         pillarLen = _pillarLength,
         pillarMinDist = 12,
-        pillarMaxDist = 24,
+        pillarMaxDist = 48,
         pillarTargetDist = 12,
         -- pillarWidth = _pillarWidth,
         cost = 200.0,
