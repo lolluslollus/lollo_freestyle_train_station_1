@@ -6,25 +6,21 @@ return {
 	subMeshes = {
 		{
 			indices = {
-				jointWeights = {
-					count = 144,
-					offset = 600,
-				},
 				normal = {
 					count = 144,
-					offset = 744,
+					offset = 488,
 				},
 				position = {
 					count = 144,
-					offset = 456,
+					offset = 344,
 				},
 				tangent = {
 					count = 144,
-					offset = 1032,
+					offset = 776,
 				},
 				uv0 = {
 					count = 144,
-					offset = 888,
+					offset = 632,
 				},
 			},
 			materials = {
@@ -33,15 +29,10 @@ return {
 		}, 
 	},
 	vertexAttr = {
-		jointWeights = {
-			count = 112,
-			numComp = 4,
-			offset = 96,
-		},
 		normal = {
 			count = 72,
 			numComp = 3,
-			offset = 208,
+			offset = 96,
 		},
 		position = {
 			count = 96,
@@ -51,12 +42,12 @@ return {
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 392,
+			offset = 280,
 		},
 		uv0 = {
 			count = 112,
 			numComp = 2,
-			offset = 280,
+			offset = 168,
 		},
 	},
 }

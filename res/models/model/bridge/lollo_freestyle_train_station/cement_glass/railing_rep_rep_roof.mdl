@@ -1,14 +1,14 @@
 function data()
 return {
 	boundingInfo = {
-		bbMax = { 6, 4, 0, },
-		bbMin = { 0, 0, -3, },
+		bbMax = { 6, 4, 10, },
+		bbMin = { 0, 0, -2, },
 	},
 	collider = {
 		params = {
-			halfExtents = { 3, 2, 1.5, },
+			halfExtents = { 3, 2, 6, },
 		},
-		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 4, 1, },
 		type = "BOX",
 	},
 	lods = {
@@ -16,23 +16,50 @@ return {
 			node = {
 				children = {
 					{
-						materials = {
-							"lollo_freestyle_train_station/bridge/cement.mtl",
-							"lollo_freestyle_train_station/metal/rough_alu.mtl",
-							-- 'lollo_freestyle_train_station/icon/red.mtl',
-							"lollo_freestyle_train_station/glass_transparent_rough.mtl",
+						children = {
+							{
+								name = "cement_bridge_bone_6m_start",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -3, 0, 0, 1, },
+							},
+							{
+								name = "cement_bridge_bone_6m_end",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
+							},
 						},
-						-- mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_roof_lod0.msh",
-						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_deco_roof_lod0.msh",
+						skinMaterials = {
+							"lollo_freestyle_train_station/metal/metal_w_large_rivets_skinned.mtl",
+							-- "lollo_freestyle_train_station/metal/rough_alu.mtl",
+							"lollo_freestyle_train_station/metal/rough_iron_skinned.mtl",
+							"lollo_freestyle_train_station/glass_transparent_rough_skinned.mtl",
+						},
+						skin = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_deco_roof_lod0.msh",
 						name = "cement_railing_rep_rep",
-						transf = { 1.01, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 0, 1, },
 					},
 				},
 				name = "RootNode",
-				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				transf = { 1.01, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
 			},
 			static = false,
 			visibleFrom = 0,
+			visibleTo = 200
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = {
+							"lollo_freestyle_train_station/metal/metal_w_large_rivets.mtl",
+							"lollo_freestyle_train_station/glass_transparent_rough.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_rep_deco_roof_lod1.msh",
+						name = "cement_railing_rep_rep",
+					},
+				},
+				name = "RootNode",
+				transf = { 1.01, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 200,
 			visibleTo = 1000
 		},
 	},

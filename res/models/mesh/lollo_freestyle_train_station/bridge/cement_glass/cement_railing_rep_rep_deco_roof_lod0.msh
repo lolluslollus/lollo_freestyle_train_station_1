@@ -6,92 +6,109 @@ return {
 	subMeshes = {
 		{
 			indices = {
+				jointWeights = {
+					count = 144,
+					offset = 11308,
+				},
 				normal = {
-					count = 576,
-					offset = 9736,
+					count = 144,
+					offset = 11452,
 				},
 				position = {
-					count = 576,
-					offset = 10888,
+					count = 144,
+					offset = 11164,
 				},
 				tangent = {
-					count = 576,
-					offset = 10312,
+					count = 144,
+					offset = 11740,
 				},
 				uv0 = {
-					count = 576,
-					offset = 11464,
+					count = 144,
+					offset = 11596,
 				},
 			},
 			materials = {
-				"station/train/passenger/concrete.mtl", 
+				"cement.mtl", 
 			},
 		}, {
 			indices = {
+				jointWeights = {
+					count = 1728,
+					offset = 13612,
+				},
 				normal = {
 					count = 1728,
-					offset = 12040,
+					offset = 15340,
 				},
 				position = {
 					count = 1728,
-					offset = 15496,
+					offset = 11884,
 				},
 				tangent = {
 					count = 1728,
-					offset = 13768,
+					offset = 18796,
 				},
 				uv0 = {
 					count = 1728,
-					offset = 17224,
+					offset = 17068,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/bridge/iron.mtl", 
+				"iron.001.mtl", 
 			},
 		}, {
 			indices = {
+				jointWeights = {
+					count = 144,
+					offset = 20668,
+				},
 				normal = {
 					count = 144,
-					offset = 18952,
+					offset = 20812,
 				},
 				position = {
 					count = 144,
-					offset = 19240,
+					offset = 20524,
 				},
 				tangent = {
 					count = 144,
-					offset = 19096,
+					offset = 21100,
 				},
 				uv0 = {
 					count = 144,
-					offset = 19384,
+					offset = 20956,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/bridge/glass.mtl", 
+				"glass.001.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
+		jointWeights = {
+			count = 2320,
+			numComp = 4,
+			offset = 1920,
+		},
 		normal = {
-			count = 1368,
+			count = 1356,
+			numComp = 3,
+			offset = 4240,
+		},
+		position = {
+			count = 1920,
 			numComp = 3,
 			offset = 0,
 		},
-		position = {
-			count = 2160,
-			numComp = 3,
-			offset = 6088,
-		},
 		tangent = {
-			count = 4720,
+			count = 4384,
 			numComp = 4,
-			offset = 1368,
+			offset = 6780,
 		},
 		uv0 = {
-			count = 1488,
+			count = 1184,
 			numComp = 2,
-			offset = 8248,
+			offset = 5596,
 		},
 	},
 }

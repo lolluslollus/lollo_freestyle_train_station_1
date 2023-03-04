@@ -8,21 +8,25 @@ return {
 	subMeshes = {
 		{
 			indices = {
+				jointWeights = {
+					count = 432,
+					offset = 20412,
+				},
 				normal = {
-					count = 1080,
-					offset = 18328,
+					count = 432,
+					offset = 19548,
 				},
 				position = {
-					count = 1080,
-					offset = 17248,
+					count = 432,
+					offset = 19980,
 				},
 				tangent = {
-					count = 1080,
-					offset = 19408,
+					count = 432,
+					offset = 21276,
 				},
 				uv0 = {
-					count = 1080,
-					offset = 20488,
+					count = 432,
+					offset = 20844,
 				},
 			},
 			materials = {
@@ -31,21 +35,25 @@ return {
 		},
 		{
 			indices = {
+				jointWeights = {
+					count = 2112,
+					offset = 25932,
+				},
 				normal = {
 					count = 2112,
-					offset = 23680,
+					offset = 21708,
 				},
 				position = {
 					count = 2112,
-					offset = 21568,
+					offset = 23820,
 				},
 				tangent = {
 					count = 2112,
-					offset = 25792,
+					offset = 30156,
 				},
 				uv0 = {
 					count = 2112,
-					offset = 27904,
+					offset = 28044,
 				},
 			},
 			materials = {
@@ -54,44 +62,52 @@ return {
 		},
 		{
 			indices = {
+				jointWeights = {
+					count = 240,
+					offset = 32748,
+				},
 				normal = {
 					count = 240,
-					offset = 30256,
+					offset = 32268,
 				},
 				position = {
 					count = 240,
-					offset = 30016,
+					offset = 32508,
 				},
 				tangent = {
 					count = 240,
-					offset = 30496,
+					offset = 33228,
 				},
 				uv0 = {
 					count = 240,
-					offset = 30736,
+					offset = 32988,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/bridge/glass.mtl", 
+				"lollo_freestyle_train_station/bridge/glass.001.mtl", 
 			},
 		},
 		{
 			indices = {
+				jointWeights = {
+					count = 1392,
+					offset = 36252,
+				},
 				normal = {
 					count = 1392,
-					offset = 32368,
+					offset = 33468,
 				},
 				position = {
 					count = 1392,
-					offset = 30976,
+					offset = 34860,
 				},
 				tangent = {
 					count = 1392,
-					offset = 33760,
+					offset = 39036,
 				},
 				uv0 = {
 					count = 1392,
-					offset = 35152,
+					offset = 37644,
 				},
 			},
 			materials = {
@@ -100,25 +116,30 @@ return {
 		}, 
 	},
 	vertexAttr = {
-		normal = {
-			count = 1800,
-			numComp = 3,
-			offset = 4128,
+		jointWeights = {
+			count = 4544,
+			numComp = 4,
+			offset = 5508,
 		},
-		position = {
-			count = 4128,
+		normal = {
+			count = 1740,
 			numComp = 3,
 			offset = 0,
 		},
+		position = {
+			count = 3768,
+			numComp = 3,
+			offset = 1740,
+		},
 		tangent = {
-			count = 7632,
+			count = 5936,
 			numComp = 4,
-			offset = 5928,
+			offset = 13612,
 		},
 		uv0 = {
-			count = 3688,
+			count = 3560,
 			numComp = 2,
-			offset = 13560,
+			offset = 10052,
 		},
 	},
 }
