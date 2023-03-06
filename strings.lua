@@ -261,8 +261,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["WallConcreteModernDesc"] = "Concrete wall, also suitable for tunnels. Add/remove supporting wall with <m> and <n>.",
 			["WallConcretePlainName"] = "Concrete wall, plain",
 			["WallConcretePlainDesc"] = "Concrete wall, also suitable for tunnels. Add/remove supporting wall with <m> and <n>.",
-			["WallFenceMattoniName"] = "Brick fence",
-			["WallFenceMattoniDesc"] = "Brick fence, also suitable for tunnels. Add/remove supporting wall with <m> and <n>.",
+			["WallFenceMattoniName"] = "Brick wall",
+			["WallFenceMattoniDesc"] = "Brick wall, also suitable for tunnels. Add/remove supporting wall with <m> and <n>.",
 			["WallIronName"] = "Iron fence",
 			["WallIronDesc"] = "Iron fence, also suitable for tunnels. Add/remove supporting wall with <m> and <n>.",
 			["WallIronGlassCopperName"] = "Iron and glass wall",
@@ -504,7 +504,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
 - Sehr dünne Pfade helfen bei bestimmten Setups: diese sind in meinem "Street Fine Tuning" Mod.
 - Dieser Mod fügt Fußgängerwege und Brücken hinzu; einige verwandeln sich in Brücken, nachdem sie platziert wurden. Für Präzisionsarbeit, verwenden Sie die "Street Fine Tuning" "Chunks" und "Splits" Konstruktionen.
-- Du kannst mit Fußgängerwegen und Brücken deinen Bahnhof mit der Außenwelt verbinden. Diese Verbindungen können zunächst kaputt erscheinen, wenn das Konstrultionsmenu offen ist; sie reparieren sich aber von selbst, wenn das Menu sich schliesst.
+- Du kannst mit Fußgängerwegen und Brücken deinen Bahnhof mit der Außenwelt verbinden. Diese Verbindungen können zunächst als kaputt erscheinen, wenn das Konstrultionsmenu offen ist; sie reparieren sich aber von selbst, wenn das Menu sich schliesst.
 - Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
 - Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
 - Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
@@ -555,9 +555,9 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["AxialFlushCargoExitName"] = "Bündiger Frachtausgang, Bahnsteigende",
 			["AxialFlushCargoExitDesc"] = "Bündiger Frachtausgang an einem Bahnsteigende. Er kann mit ähnlichen Ausgängen, Straßen, Treppen und Aufzügen in der Nähe verbunden werden. Kippt mit <m> und <n>.",
 			["AxialPassengerStairsEdgeName"] = "Eingang zum Bahnsteigende mit Auto-Brücke",
-			["AxialPassengerStairsEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz. Verbinde es je nach Bedarf mit <m>Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
+			["AxialPassengerStairsEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz. Verbinde es je nach Bedarf mit Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
 			["AxialPassengerStairsSnappyEdgeName"] = "Eingang zum Bahnsteigende mit Snappy-Autobrücke",
-			["AxialPassengerStairsSnappyEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verbinde es je nach Bedarf mit <m>Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
+			["AxialPassengerStairsSnappyEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verbinde es je nach Bedarf mit Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
 			["AxialFlushPassengerExitName"] = "Bündiger Passagierausgang, Bahnsteigende",
 			["AxialFlushPassengerExitDesc"] = "Bündiger Passagierausstieg am Bahnsteigende. Er kann mit ähnlichen Ausgängen, Straßen, Treppen und Aufzügen in der Nähe verbunden werden. Kippt mit <m> und <n>.",
 			["CargoStationSquarePlainName"] = "Einfacher Bahnhofsplatz",
@@ -729,16 +729,16 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["WallConcreteModernDesc"] = "Betonwand, auch für Tunnels geeignet. Stützwand mit <m> und <n> einstellen.",
 			["WallConcretePlainName"] = "Betonwand, schlicht",
 			["WallConcretePlainDesc"] = "Betonwand, auch für Tunnels geeignet. Stützwand mit <m> und <n> einstellen.",
-			["WallFenceMattoniName"] = "Backsteinzaun",
-			["WallFenceMattoniDesc"] = "Backsteinzaun, auch für Tunnels geeignet. Stützwand mit <m> und <n> einstellen.",
+			["WallFenceMattoniName"] = "Backsteinmauer",
+			["WallFenceMattoniDesc"] = "Backsteinmauer, auch für Tunnels geeignet. Stützwand mit <m> und <n> einstellen.",
 			["WallIronName"] = "Eisenzaun",
 			["WallIronDesc"] = "Eisenzaun, auch für Tunnel geeignet. Stützwand mit <m> und <n> einstellen.",
 			["WallIronGlassCopperName"] = "Wand aus Eisen und Glas",
 			["WallIronGlassCopperDesc"] = "Eisen- und Glaswand, auch für Tunnels geeignet. Stützwand mit <m> und <n> einstellen.",
-			["WallStaccionataFsName"] = "1,4m Betonzaun",
-			["WallStaccionataFsDesc"] = "1,4m Betonzaun, auch für Tunnel geeignet. Stützwand mit <m> und <n> einstellen.",
-			["WallStaccionataFsTallName"] = "2m Betonzaun",
-			["WallStaccionataFsTallDesc"] = "2m Betonzaun, auch für Tunnel geeignet. Stützwand mit <m> und <n> einstellen.",
+			["WallStaccionataFsName"] = "1,4m Betonwand",
+			["WallStaccionataFsDesc"] = "1,4m Betonwand, auch für Tunnel geeignet. Stützwand mit <m> und <n> einstellen.",
+			["WallStaccionataFsTallName"] = "2m Betonwand",
+			["WallStaccionataFsTallDesc"] = "2m Betonwand, auch für Tunnel geeignet. Stützwand mit <m> und <n> einstellen.",
 			["WallTiledName"] = "Geflieste Wand, älter",
 			["WallTiledDesc"] = "Geflieste Wand, auch für Tunnel geeignet. Stützwand mit <m> und <n> einstellen.",
 			["WallTiledWLargeStripesName"] = "Geflieste Wand, neuere",
@@ -766,7 +766,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["EraCCargoPlatform20MName"] = "20 m Frachtplattform, Epoche C",
 			["EraCCargoPlatform20MDesc"] = "Frachtplattformen, die als Gleise zu verlegen sind, 20 m breit, Epoche C. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["FenceWaypointName"] = "Zaunmarker",
-			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicken Sie dann darauf, um den Zaun zu konfigurieren.",
+			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns / Mauer, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicken Sie dann darauf, um den Zaun / Mauer zu konfigurieren.",
 			["LolloFreestyleTrainStationName"] = "Freestyle-Bahnhof",
 			["LolloFreestyleTrainStationDesc"] = "Freestyle-Bahnhof",
 			["PlatformWaypointName"] = "Bahnsteigmarker",
@@ -864,7 +864,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["WaypointsTooCloseToStation"] = "Zu nahe an einem bestehenden Bahnhof oder Depot. Schneiden Sie das Gleis mit dem Gleisteiler, wenn Sie näher herankommen müssen. Die Bahnsteigköpfe verbinden sich automatisch, wenn sie näher als 7 Meter sind",
 			["WaypointsTooFar"] = "Zu weit von seinem Zwilling entfernt",
 			["WaypointsWrong"] = "Platziere zwei Marker auf demselben Bahnsteig und zwei auf demselben Gleis",
-			["WrongTrack"] = "Bahnsteig und / oder Gleis sind nicht sauber, verlegen Sie sie neu.",
+			["WrongTrack"] = "Bahnsteig und / oder Gleis sind zu ungenau, verlegen Sie sie neu.",
 
 			-- lose offene Treppen und lose Aufzüge
 			["BaseMode"] = "Basismodus",
