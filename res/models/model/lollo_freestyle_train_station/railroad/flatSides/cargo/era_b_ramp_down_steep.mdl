@@ -51,7 +51,7 @@ function data()
                                 2.0,
                             },
                         },
-                        transportModes = { 'PERSON', },
+                        transportModes = { 'CARGO', 'PERSON', },
                         speedLimit = 20,
                     },
                 },

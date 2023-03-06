@@ -221,13 +221,13 @@ local _getSplitId = function(entityA, entityB)
 end
 
 ---@param edgeId integer
----@param isExtendedLog boolean
 ---@param baseEdge table
 ---@param tn table
+---@param isExtendedLog? boolean
 ---@return number|nil "edge length"
 ---@return boolean "can use the result"
 ---@return boolean "the result is accurate"
-local _getEdgeLength_Street = function(edgeId, isExtendedLog, baseEdge, tn)
+local _getEdgeLength_Street = function(edgeId, baseEdge, tn, isExtendedLog)
     local node0Id, node1Id = baseEdge.node0, baseEdge.node1
     local tan0 = baseEdge.tangent0
     local tan1 = baseEdge.tangent1
@@ -340,13 +340,13 @@ local _getEdgeLength_Street = function(edgeId, isExtendedLog, baseEdge, tn)
 end
 
 ---@param edgeId integer
----@param isExtendedLog boolean
 ---@param baseEdge table
 ---@param tn table
+---@param isExtendedLog? boolean
 ---@return number "edge length"
 ---@return boolean "can use the result"
 ---@return boolean "the result is accurate"
-local _getEdgeLength_Track = function(edgeId, isExtendedLog, baseEdge, tn)
+local _getEdgeLength_Track = function(edgeId, baseEdge, tn, isExtendedLog)
     local tan0 = baseEdge.tangent0
     local tan1 = baseEdge.tangent1
     local resultWithBaseEdge = (transfUtils.getVectorLength_FAST(tan0) + transfUtils.getVectorLength_FAST(tan1)) * 0.5 -- they should be equal but they are not, so we average them
@@ -433,8 +433,8 @@ helper.getEdgeLength = function(edgeId, isExtendedLog)
     end
 
     local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
-    if not(baseEdgeStreet) then return _getEdgeLength_Track(edgeId, isExtendedLog, baseEdge, tn) end
-    return _getEdgeLength_Street(edgeId, isExtendedLog, baseEdge, tn)
+    if not(baseEdgeStreet) then return _getEdgeLength_Track(edgeId, baseEdge, tn, isExtendedLog) end
+    return _getEdgeLength_Street(edgeId, baseEdge, tn, isExtendedLog)
 end
 --#endregion getEdgeLength
 
@@ -623,6 +623,10 @@ helper.getNodeBetween = function(position0, position1, tangent0, tangent1, shift
         print('ERROR: edgeUtils.getNodeBetween got an edge length that is not a positive number, returning')
         return nil
     end
+    if type(shift0To1) ~= 'number' or shift0To1 < 0 or shift0To1 > 1 then
+        print('WARNING: edgeUtils.getNodeBetween got a shift0To1 that is not a positive number, adjusting to 0.5')
+        shift0To1 = 0.5
+    end
 
     return _getNodeBetween(position0, position1, tangent0, tangent1, shift0To1, edgeLength, isExtendedLog)
 end
@@ -630,7 +634,10 @@ end
 helper.getNodeBetweenByPercentageShift = function(edgeId, shift0To1, isExtendedLog)
     if not(helper.isValidAndExistingId(edgeId)) then return nil end
 
-    if type(shift0To1) ~= 'number' or shift0To1 < 0 or shift0To1 > 1 then shift0To1 = 0.5 end
+    if type(shift0To1) ~= 'number' or shift0To1 < 0 or shift0To1 > 1 then
+        print('WARNING: edgeUtils.getNodeBetweenByPercentageShift got a shift0To1 that is not a positive number, adjusting to 0.5')
+        shift0To1 = 0.5
+    end
 
     local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
     if baseEdge == nil then return nil end
@@ -639,7 +646,17 @@ helper.getNodeBetweenByPercentageShift = function(edgeId, shift0To1, isExtendedL
     local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
     if baseNode0 == nil or baseNode1 == nil then return nil end
 
-    local edgeLength = helper.getEdgeLength(edgeId, isExtendedLog)
+    local edgeLength, isEdgeLengthUsable, isEdgeLengthAccurate = helper.getEdgeLength(edgeId, isExtendedLog)
+    if isExtendedLog then
+        print('getNodeBetweenByPercentageShift firing, edgeId =', edgeId or 'NIL', 'shift0To1 =', shift0To1 or 'NIL')
+        print('baseNode0.position =') debugPrint(baseNode0.position)
+        print('baseNode1.position =') debugPrint(baseNode1.position)
+        print('baseEdge.tangent0 =') debugPrint(baseEdge.tangent0)
+        print('baseEdge.tangent1 =') debugPrint(baseEdge.tangent1)
+        print('edgeLength =', edgeLength or 'NIL', 'isEdgeLengthUsable =', isEdgeLengthUsable, 'isEdgeLengthAccurate =', isEdgeLengthAccurate)
+        print('getNodeBetween about to fire')
+    end
+    if not(edgeLength) then return nil end
 
     return helper.getNodeBetween(
         baseNode0.position,
@@ -689,7 +706,6 @@ helper.getNodeBetweenByPosition = function(edgeId, position, isIgnoreZ, isExtend
         print('edgeLength =', edgeLength or 'NIL', 'isEdgeLengthUsable =', isEdgeLengthUsable, 'isEdgeLengthAccurate =', isEdgeLengthAccurate)
         print('getNodeBetween about to fire')
     end
-
     if edgeLength == nil or distance_0_to_split == nil or distance_split_to_1 == nil then return nil end
 
     return helper.getNodeBetween(

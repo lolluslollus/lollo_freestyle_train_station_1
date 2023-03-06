@@ -127,7 +127,7 @@ function data()
                             },
                         },
                         speedLimit = 20,
-                        transportModes = {'PERSON', 'CARGO'}
+                        transportModes = { 'CARGO', 'PERSON', },
                     },
                     {
                         linkable = true,
@@ -144,7 +144,7 @@ function data()
                             },
                         },
                         speedLimit = 20,
-                        transportModes = {'PERSON', 'CARGO'}
+                        transportModes = { 'CARGO', 'PERSON', },
                     },
                 },
                 runways = {},

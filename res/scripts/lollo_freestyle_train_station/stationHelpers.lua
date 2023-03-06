@@ -177,6 +177,10 @@ local helpers = {
             leadingIndex = leadingIndex + 1
             -- local edgeLength = (transfUtils.getVectorLength(refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(refEdge.posTanX2[2][2])) * 0.5
             local edgeLength, isEdgeLengthUsable, isEdgeLengthAccurate = edgeUtils.getEdgeLength(refEdge.edgeId)
+            if edgeLength == nil then
+                logger.err('getCentralEdgePositions_OnlyOuterBounds could not find length of edge ' .. (refEdge.edgeId or 'NIL') .. ', leaving')
+                return {}
+            end
             -- logger.print('edgeLength =') logger.debugPrint(edgeLength)
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
             -- logger.print('nModelsInEdge =') logger.debugPrint(nModelsInEdge)
@@ -1110,21 +1114,34 @@ local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionX
 end
 
 local _getDisjointNeighbourEdgeIds = function(nodeId, frozenEdgeIds)
-    local freeEdgeIds = {}
+    local freeEdgeIds_indexed = {}
     local isAnyEdgeFrozenInAConstruction = false
+    local neighbourConIds_indexed = {}
 
     local connectedEdgeIds = edgeUtils.getConnectedEdgeIds({nodeId})
     for _, edgeId in pairs(connectedEdgeIds) do
         if not(arrayUtils.arrayHasValue(frozenEdgeIds, edgeId)) then
             -- check that the edge is not frozen in another construction, such as nearby stairs with a snappy bridge
-            if edgeUtils.isValidId(api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)) then
+            local neighbourConId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
+            if edgeUtils.isValidId(neighbourConId) then
                 isAnyEdgeFrozenInAConstruction = true
+                neighbourConIds_indexed[neighbourConId] = true
             else
-                freeEdgeIds[#freeEdgeIds+1] = edgeId
+                freeEdgeIds_indexed[edgeId] = true
             end
         end
     end
-    return freeEdgeIds, isAnyEdgeFrozenInAConstruction
+
+    local freeEdgeIds = {}
+    for edgeId, _ in pairs(freeEdgeIds_indexed) do
+        freeEdgeIds[#freeEdgeIds+1] = edgeId
+    end
+    local neighbourConIds = {}
+    for conId, _ in pairs(neighbourConIds_indexed) do
+        neighbourConIds[#neighbourConIds+1] = conId
+    end
+
+    return freeEdgeIds, isAnyEdgeFrozenInAConstruction, neighbourConIds
 end
 
 local _getStationStreetEndNodes = function(con, frozenEdges, frozenNodes)
@@ -1183,7 +1200,7 @@ local _getStationStreetEndEntities = function(con, t)
 
     for _, endEntity in pairs(results) do
         endEntity.disjointNeighbourNodeId = _getDisjointNeighbourNodeId(endEntity.nodeId, endEntity.nodePosition, frozenNodeIds)
-        endEntity.disjointNeighbourEdgeIds, endEntity.isNodeAdjoiningAConstruction = _getDisjointNeighbourEdgeIds(endEntity.disjointNeighbourNodeId, frozenEdgeIds)
+        endEntity.disjointNeighbourEdgeIds, endEntity.isNodeAdjoiningAConstruction, endEntity.neighbourConIds = _getDisjointNeighbourEdgeIds(endEntity.disjointNeighbourNodeId, frozenEdgeIds)
     end
 
     logger.print('_getStationStreetEndEntities results =') logger.debugPrint(results)
@@ -1252,19 +1269,19 @@ local _getStationEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNode
     }
 
     if result.platforms.node1Id == nil then
-        logger.warn('could not find platformnode1Id in station construction; nTerminal =')
+        logger.warn('could not find platform.node1Id in station construction; nTerminal =')
         logger.warningDebugPrint(nTerminal)
     end
     if result.platforms.node2Id == nil then
-        logger.warn('could not find platformnode2Id in station construction; nTerminal =')
+        logger.warn('could not find platform.node2Id in station construction; nTerminal =')
         logger.warningDebugPrint(nTerminal)
     end
     if result.tracks.node1Id == nil then
-        logger.warn('could not find tracknode1Id in station construction; nTerminal =')
+        logger.warn('could not find track.node1Id in station construction; nTerminal =')
         logger.warningDebugPrint(nTerminal)
     end
     if result.tracks.node2Id == nil then
-        logger.warn('WARNING: could not find tracknode2Id in station construction; nTerminal =')
+        logger.warn('WARNING: could not find track.node2Id in station construction; nTerminal =')
         logger.warningDebugPrint(nTerminal)
     end
 

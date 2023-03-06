@@ -1,0 +1,91 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+-- local modulesutil = require "modulesutil"
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-up-and-down", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("OpenStairsUpLeft_NoAutoLinkName"),
+			description = _("OpenStairsUpLeft_NoAutoLinkDesc"),
+			icon = "ui/lollo_freestyle_train_station/openStairsUpLeft_NoAutoLink.tga"
+		},
+		metadata = { },
+		order = {
+			value = 70,
+		},
+		type = _constants.openStairsUpLeftModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local modelId = nil
+			if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = _constants.era_a_openStairsUpModelId
+			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = _constants.era_b_openStairsUpModelId
+			else modelId = _constants.era_c_openStairsUpModelId
+			end
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitInnerSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+					slotTransf,
+					{0, -1, _constants.openStairsUpZ}
+				),
+				type = _constants.openStairsExitModuleType,
+			})
+			local twinStairsId = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsUpRightSlotId)
+			if not(params.modules[twinStairsId]) then
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitCentreSlotId),
+					shape = 1,
+					spacing = {-1, 3, 0.5, 0.5},
+					transf = transfUtils.getTransf_Shifted(
+						slotTransf,
+						{1, 0, _constants.openStairsUpZ}
+					),
+					type = _constants.openStairsExitModuleType,
+				})
+			end
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitOuterSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+					slotTransf,
+					{0, 1, _constants.openStairsUpZ}
+				),
+				type = _constants.openStairsExitModuleType,
+			})
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = _constants.era_c_openStairsUpModelId,
+					transf = _constants.idTransf,
+				},
+			}
+		end
+	}
+end

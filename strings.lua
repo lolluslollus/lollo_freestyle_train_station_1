@@ -36,6 +36,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - This mod adds bridges to help with elevated stations.
 - Very thin paths help with certain setups: those are in my Street Fine Tuning mod.
 - This mod adds pedestrian paths and bridges; some turn into bridges after placing them. For precision work, use the Street Fine Tuning "chunks" and "splitter" constructions.
+- You can use pedestrian paths and bridges to link your station to the outside world. Their connections may appear broken when the construction menu is open, but repair themselves after you closed it.
 - Sound effects for stations are in my dedicated mod.
 - Sound effects for trains are in my dedicated mod.
 - Extra ground textures are in my terrain tweaks mod.
@@ -44,7 +45,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Use the track constructions "Track splitter" to do precision work.
 - Upgrading tracks does all tracks at once.
 - If you have too many track types, use the categories in the menu to make life easier.
-- After a while, the area surrounding your station will have developped and might throw collision errors whenever you try to config the station. Patiently look for the guilty street, building or asset and remove it. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
+- After a while, the area surrounding your station will have developped and might throw collision errors whenever you try to config the station. Patiently look for the guilty street, building or asset and remove it. Snappy passenger connections may be at fault: try to replace them with non-snappy ones. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
 
 [h1]Note:[/h1]
 - Underground stations are now in the assets.
@@ -86,9 +87,9 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["AxialFlushCargoExitName"] = "Flush cargo exit, platform end",
 			["AxialFlushCargoExitDesc"] = "Flush cargo exit at a platform end. It can connect to nearby similar exits, roads, stairs and lift assets. Tilt with <m> and <n>.",
 			["AxialPassengerStairsEdgeName"] = "Entrance to platform end with auto bridge",
-			["AxialPassengerStairsEdgeDesc"] = "Connects a platform end to the road network. Link it to \"stairs\" assets, bridges or paths as required. Tilt with <m> and <n>. It will become snappy at the next config update.",
+			["AxialPassengerStairsEdgeDesc"] = "Connects a platform end to the road network. Link it to \"stairs\" assets, bridges or paths as required. Tilt with <m> and <n>.",
 			["AxialPassengerStairsSnappyEdgeName"] = "Entrance to platform end with snappy auto bridge",
-			["AxialPassengerStairsSnappyEdgeDesc"] = "Connects a platform end to the road network. Link it to \"stairs\" assets, bridges or paths as required. Tilt with <m> and <n>.",
+			["AxialPassengerStairsSnappyEdgeDesc"] = "Connects a platform end to the road network; it looks pretty but it can cause collisions. Link it to \"stairs\" assets, bridges or paths as required. Tilt with <m> and <n>.",
 			["AxialFlushPassengerExitName"] = "Flush passenger exit, platform end",
 			["AxialFlushPassengerExitDesc"] = "Flush passenger exit at the platform end. It can connect to nearby similar exits, roads, stairs and lift assets. Tilt with <m> and <n>.",
 			["CargoStationSquarePlainName"] = "Plain station square",
@@ -106,9 +107,9 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FlatPassengerStairsDownSteepName"] = "Exit with steep passenger stairs down",
 			["FlatPassengerStairsDownSteepDesc"] = "Steep passenger stairs leading outside and down, 2 m. It connects automatically to nearby platforms or exits. Adjust their height with <m> and <n>.",
 			["FlatPassengerStairsEdgeName"] = "Entrance to platform side with auto bridge",
-			["FlatPassengerStairsEdgeDesc"] = "Connects a platform side to the road network. Link it to \"stairs\" assets, bridges or paths as required. It will become snappy at the next config update. Adjust its height with <m> and <n>.",
+			["FlatPassengerStairsEdgeDesc"] = "Connects a platform side to the road network. Link it to \"stairs\" assets, bridges or paths as required. Adjust its height with <m> and <n>.",
 			["FlatPassengerStairsSnappyEdgeName"] = "Entrance to platform side with snappy auto bridge",
-			["FlatPassengerStairsSnappyEdgeDesc"] = "Connects a platform side to the road network. Link it to \"stairs\" assets, bridges or paths as required. Adjust its height with <m> and <n>.",
+			["FlatPassengerStairsSnappyEdgeDesc"] = "Connects a platform side to the road network; it looks pretty but it can cause collisions. Link it to \"stairs\" assets, bridges or paths as required. Adjust its height with <m> and <n>.",
 			["FlatPassengerStairsFlatName"] = "Flat passenger exit",
 			["FlatPassengerStairsFlatDesc"] = "Flat passenger exit, 2 m. It connects automatically to nearby platforms or exits. Adjust its height with <m> and <n>.",
 			["FlatCargoRampUpSmoothName"] = "Smooth cargo ramp up",
@@ -161,12 +162,18 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FlatPassengerStationLargeDesc"] = "Ornate passenger station with underpass inside. Adjust its height with <m> and <n>.",
 			["LookUndergroundName"] = "Look Underground",
 			["LookUndergroundDesc"] = "Hover or build this to look underground, remove it when done.",
-			["OpenLiftName"] = "Lift up for ground platform",
-			["OpenLiftDesc"] = "Connects ground passenger platforms to their twins, to nearby bridge underpasses or, if you add an exit, to the road network.",
-			["OpenStairsUpLeftName"] = "Stairs up left for ground platform",
-			["OpenStairsUpLeftDesc"] = "Connects ground passenger platforms to their twins, to nearby bridge underpasses or, if you add an exit, to the road network.",
-			["OpenStairsUpRightName"] = "Stairs up right for ground platform",
-			["OpenStairsUpRightDesc"] = "Connects ground passenger platforms to their twins, to nearby bridge underpasses or, if you add an exit, to the road network.",
+			["OpenLiftName"] = "Lift up for overground platforms",
+			["OpenLiftDesc"] = "Connects overground passenger platforms to their siblings, to nearby bridge underpasses or, if you add an exit and a pedestrian bridge, to the road network.",
+			["OpenLift_NoAutoLinkName"] = "Lift up for overground platforms, only manual link",
+			["OpenLift_NoAutoLinkDesc"] = "Connects overground passenger platforms to other lifts or stairs or to the road network, if you add an exit and a pedestrian bridge.",
+			["OpenStairsUpLeftName"] = "Stairs up left for overground platforms",
+			["OpenStairsUpLeftDesc"] = "Connects overground passenger platforms to their siblings, to nearby bridge underpasses or, if you add an exit and a pedestrian bridge, to the road network.",
+			["OpenStairsUpLeft_NoAutoLinkName"] = "Stairs up left for overground platforms, only manual link",
+			["OpenStairsUpLeft_NoAutoLinkDesc"] = "Connects overground passenger platforms to other lifts or stairs or to the road network, if you add an exit and a pedestrian bridge",
+			["OpenStairsUpRightName"] = "Stairs up right for overground platforms",
+			["OpenStairsUpRightDesc"] = "Connects overground passenger platforms to their siblings, to nearby bridge underpasses or, if you add an exit and a pedestrian bridge, to the road network.",
+			["OpenStairsUpRight_NoAutoLinkName"] = "Stairs up right for overground platforms, only manual link",
+			["OpenStairsUpRight_NoAutoLinkDesc"] = "Connects overground passenger platforms to other lifts or stairs or to the road network, if you add an exit and a pedestrian bridge",
 			["OpenStairsExitWithEdgeName_2m"] = "Entrance to stairs with auto bridge",
 			["OpenStairsExitWithSnappyEdgeName_2m"] = "Entrance to stairs with snappy auto bridge",
 			["OpenStairsExitName_4m"] = "Entrance to stairs, 4 m",
@@ -175,8 +182,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["OpenStairsExitName_32m"] = "Entrance to stairs, 32 m",
 			["OpenStairsExitName_64m"] = "Entrance to stairs, 64 m",
 			["OpenStairsExitDesc"] = "Connects stairs and lifts to the outside. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets if required.",
-			["OpenStairsExitWithEdgeDesc"] = "Connects stairs and lifts to the road network. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets, bridges or paths as required. It will become snappy at the next config update.",
-			["OpenStairsExitWithSnappyEdgeDesc"] = "Connects stairs and lifts to the road network. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets, bridges or paths as required.",
+			["OpenStairsExitWithEdgeDesc"] = "Connects stairs and lifts to the road network. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets, bridges or paths as required.",
+			["OpenStairsExitWithSnappyEdgeDesc"] = "Connects stairs and lifts to the road network; it looks pretty but it can cause collisions. Adjust its tilt with <m> and <n>. Link it to \"stairs\" assets, bridges or paths as required.",
 			["PassengerSideLiftName"] = "Passenger lift to a bridge side",
 			["PassengerSideLiftDesc"] = "Passenger lift to access a platform on a bridge, from the side. It connects to bridge underpasses and other lifts if they are close enough. Max height 40 m, adjust it with <m> and <n>. Repaint its ground with <shift> and a paint tool.",
 			["PassengerPlatformLiftName"] = "Passenger lift to a bridge",
@@ -234,7 +241,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["SubwayName"] = "Underground entrance",
 			["SubwayDesc"] = "Plop these near a freestyle station and join them with the popup. Make sure your station has underpasses and / or subway stairs.",
 			["TrackCrossingName"] = "Track crossing for two tracks",
-			["TrackCrossingDesc"] = "It connects to one platform and it can connect to the road network or to a twin opposite, if it is close enough.",
+			["TrackCrossingDesc"] = "It connects to one platform and, if it is close enough, to the road network or to a twin opposite.",
 			["TrackCrossingTwoStairsName"] = "Track crossing for a single track",
 			["TrackCrossingTwoStairsDesc"] = "It connects two opposite platforms if they are close enough.",
 			["TunnelStairsUpName"] = "Subway stairs up",
@@ -376,6 +383,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["TrackWaypointsMissing"] = "Build two track markers first",
 			["UndergroundTrainDepotName"] = "Underground Train depot",
 			["UndergroundTrainDepotDesc"] = "Used to buy/sell trains. The 'Look Underground' track construction helps to snap it to the track.",
+			["UnsnappedRoads"] = "Some street connections have unsnapped from their neighbours, check them with <AltGr> + <L>",
 			["Wait4Join"] = "Joining may take a while, wait a bit!",
 			["WarningWindowTitle"] = "Warning",
 			["WaypointAlreadyBuilt"] = "You can only build two markers",
@@ -496,6 +504,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
 - Sehr dünne Pfade helfen bei bestimmten Setups: diese sind in meinem "Street Fine Tuning" Mod.
 - Dieser Mod fügt Fußgängerwege und Brücken hinzu; einige verwandeln sich in Brücken, nachdem sie platziert wurden. Für Präzisionsarbeit, verwenden Sie die "Street Fine Tuning" "Chunks" und "Splits" Konstruktionen.
+- Du kannst mit Fußgängerwegen und Brücken deinen Bahnhof mit der Außenwelt verbinden. Diese Verbindungen können zunächst kaputt erscheinen, wenn das Konstrultionsmenu offen ist; sie reparieren sich aber von selbst, wenn das Menu sich schliesst.
 - Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
 - Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
 - Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
@@ -504,7 +513,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Verwenden Sie den Gleisbau-"Gleisteiler", um Präzisionsarbeit zu leisten.
 - Beim Aufrüsten von Gleisen werden alle Gleise auf einmal ausgebaut.
 - Wenn Sie zu viele Streckentypen haben, nutzen Sie die Kategorien im Menü, um sich das Leben leichter zu machen.
-- Nach einer Weile wird sich das Gebiet um Ihren Bahnhof herum entwickelt haben und möglicherweise Kollisionsfehler verursachen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Suchen Sie geduldig nach der schuldigen Straße, dem Gebäude oder der Anlage und entfernen Sie sie. Im schlimmsten Fall können Sie die Mod "build with collision" verwenden, um kollidierende Bahnhofsmodule zu entfernen.
+- Nach einer Weile wird sich das Gebiet um Ihren Bahnhof herum entwickelt haben und möglicherweise Kollisionsfehler verursachen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Suchen Sie geduldig nach der schuldigen Straße, dem Gebäude oder der Anlage und entfernen Sie sie. Biegsame Straßennetzverbindungen können schuld sein: ersetzen Sie sie mit Unbiegsamen. Im schlimmsten Fall können Sie die Mod "build with collision" verwenden, um kollidierende Bahnhofsmodule zu entfernen.
 
 [h1]Anmerkung:[/h1]
 - U-Bahnhöfe sind jetzt in den Assets enthalten.
@@ -546,9 +555,9 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["AxialFlushCargoExitName"] = "Bündiger Frachtausgang, Bahnsteigende",
 			["AxialFlushCargoExitDesc"] = "Bündiger Frachtausgang an einem Bahnsteigende. Er kann mit ähnlichen Ausgängen, Straßen, Treppen und Aufzügen in der Nähe verbunden werden. Kippt mit <m> und <n>.",
 			["AxialPassengerStairsEdgeName"] = "Eingang zum Bahnsteigende mit Auto-Brücke",
-			["AxialPassengerStairsEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz. Verbinde es je nach Bedarf mit <m>Assets, Brücken oder Wegen. Kippt mit <m> und <n>. Es wird beim nächsten Konfigurationsupdate biegsam werden.",
+			["AxialPassengerStairsEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz. Verbinde es je nach Bedarf mit <m>Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
 			["AxialPassengerStairsSnappyEdgeName"] = "Eingang zum Bahnsteigende mit Snappy-Autobrücke",
-			["AxialPassengerStairsSnappyEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz. Verbinde es je nach Bedarf mit <m>Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
+			["AxialPassengerStairsSnappyEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verbinde es je nach Bedarf mit <m>Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
 			["AxialFlushPassengerExitName"] = "Bündiger Passagierausgang, Bahnsteigende",
 			["AxialFlushPassengerExitDesc"] = "Bündiger Passagierausstieg am Bahnsteigende. Er kann mit ähnlichen Ausgängen, Straßen, Treppen und Aufzügen in der Nähe verbunden werden. Kippt mit <m> und <n>.",
 			["CargoStationSquarePlainName"] = "Einfacher Bahnhofsplatz",
@@ -566,9 +575,9 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["FlatPassengerStairsDownSteepName"] = "Ausgang mit steiler Personentreppe nach unten",
 			["FlatPassengerStairsDownSteepDesc"] = "Steile Passagiertreppe, die nach außen und nach unten führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stelle ihre Höhe mit <m> und <n> ein.",
 			["FlatPassengerStairsEdgeName"] = "Eingang zur Bahnsteigseite mit automatischer Brücke",
-			["FlatPassengerStairsEdgeDesc"] = "Verbindet eine Bahnsteigseite mit dem Straßennetz. Verknüpfen Sie sie je nach Bedarf mit Treppen-Assets, Brücken oder Wegen. Sie wird bei der nächsten Konfigurationsaktualisierung biegsam werden. Passt seine Höhe mit <m> und <n> an.",
+			["FlatPassengerStairsEdgeDesc"] = "Verbindet eine Bahnsteigseite mit dem Straßennetz. Verknüpfen Sie sie je nach Bedarf mit Treppen-Assets, Brücken oder Wegen. Passt seine Höhe mit <m> und <n> an.",
 			["FlatPassengerStairsSnappyEdgeName"] = "Eingang zur Bahnsteigseite mit bissiger Autobrücke",
-			["FlatPassengerStairsSnappyEdgeDesc"] = "Verbindet eine Bahnsteigseite mit dem Straßennetz. Verknüpfen Sie sie je nach Bedarf mit Treppen-Assets, Brücken oder Wegen. Passe ihre Höhe mit <m> und <n> an.",
+			["FlatPassengerStairsSnappyEdgeDesc"] = "Verbindet eine Bahnsteigseite mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verknüpfen Sie sie je nach Bedarf mit Treppen-Assets, Brücken oder Wegen. Passe ihre Höhe mit <m> und <n> an.",
 			["FlatPassengerStairsFlatName"] = "Flacher Passagierausgang",
 			["FlatPassengerStairsFlatDesc"] = "Flacher Passagierausgang, 2 m. Er verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stellen Sie seine Höhe mit <m> und <n> ein.",
 			["FlatCargoRampUpSmoothName"] = "Glatte Laderampe nach oben",
@@ -620,13 +629,19 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["FlatPassengerStationLargeName"] = "Verschnörkelter Personenbahnhof",
 			["FlatPassengerStationLargeDesc"] = "Verzierter Personenbahnhof mit Unterführung im Inneren. Passen Sie seine Höhe mit <m> und <n> an.",
 			["LookUndergroundName"] = "Unterirdisch aussehen",
-			["LookUndergroundDesc"] = "Schwebe oder baue dies, um unterirdisch auszusehen, entferne es, wenn du fertig bist",
-			["OpenLiftName"] = "Nach oben heben für Bahnsteig am Boden",
-			["OpenLiftDesc"] = "Verbindet Bodenbahnsteige mit ihren Zwillingen, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
+			["LookUndergroundDesc"] = "Schwebe oder baue dies, um unterirdisch reinzugucken, entferne es, wenn du fertig bist",
+			["OpenLiftName"] = "Aufzug nach oben für Freiluftbahnsteige",
+			["OpenLiftDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
+			["OpenLift_NoAutoLinkName"] = "Aufzug nach oben für Freiluftbahnsteige, nur manuell",
+			["OpenLift_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn Sie einen Ausgang und eine Fußgängerbrücke hinzufügen.",
 			["OpenStairsUpLeftName"] = "Treppe oben links für Bodenbahnsteig",
-			["OpenStairsUpLeftDesc"] = "Verbindet Bodenbahnsteige mit ihren Zwillingen, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz",
+			["OpenStairsUpLeftDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
+			["OpenStairsUpLeft_NoAutoLinkName"] = "Treppe oben links für Bodenbahnsteig, nur manuell",
+			["OpenStairsUpLeft_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn Sie einen Ausgang und eine Fußgängerbrücke hinzufügen.",
 			["OpenStairsUpRightName"] = "Treppe oben rechts für Bodenbahnsteig",
-			["OpenStairsUpRightDesc"] = "Verbindet Bodenbahnsteige mit ihren Zwillingen, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz",
+			["OpenStairsUpRightDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
+			["OpenStairsUpRight_NoAutoLinkName"] = "Treppe oben rechts für Bodenbahnsteig, nur manuell",
+			["OpenStairsUpRight_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn Sie einen Ausgang und eine Fußgängerbrücke hinzufügen.",
 			["OpenStairsExitWithEdgeName_2m"] = "Eingang zur Treppe mit Autobrücke",
 			["OpenStairsExitWithSnappyEdgeName_2m"] = "Eingang zur Treppe mit zackiger Autobrücke",
 			["OpenStairsExitName_4m"] = "Eingang zur Treppe, 4 m",
@@ -635,8 +650,8 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["OpenStairsExitName_32m"] = "Eingang zur Treppe, 32 m",
 			["OpenStairsExitName_64m"] = "Eingang zur Treppe, 64 m",
 			["OpenStairsExitDesc"] = "Verbindet Treppen und Aufzüge mit dem Außenbereich. Stelle seine Neigung mit <m> und <n> ein. Verbinden Sie sie bei Bedarf mit dem Treppen-Asset ",
-			["OpenStairsExitWithEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz. Passen Sie seine Neigung mit <m> und <n> an. Verknüpfen Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen. Sie wird bei der nächsten Konfigurationsaktualisierung biegsam sein.",
-			["OpenStairsExitWithSnappyEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz. Passen Sie die Neigung mit <m> und <n> an. Verbinden Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen.",
+			["OpenStairsExitWithEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz. Passen Sie seine Neigung mit <m> und <n> an. Verknüpfen Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen.",
+			["OpenStairsExitWithSnappyEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Passen Sie die Neigung mit <m> und <n> an. Verbinden Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen.",
 			["PassengerSideLiftName"] = "Personenaufzug zu einer Brückenseite",
 			["PassengerSideLiftDesc"] = "Personenaufzug für den Zugang zu einer Bahnsteig auf einer Brücke von der Seite. Er kann an Brückenunterführungen und andere Aufzüge angeschlossen werden, wenn diese nahe genug sind. Maximale Höhe 40 m, einstellbar mit <m> und <n>. Der Boden kann mit <shift> und einem Malwerkzeug neu bemalt werden.",
 			["PassengerPlatformLiftName"] = "Personenaufzug zu einer Brücke",
@@ -837,6 +852,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["TrackWaypointsMissing"] = "Baue zuerst zwei Gleismarker",
 			["UndergroundTrainDepotName"] = "U-Bahn-Depot",
 			["UndergroundTrainDepotDesc"] = "Wird zum Kauf/Verkauf von Zügen verwendet. Die Gleiskonstruktion 'Look Underground' hilft beim Einrasten auf dem Gleis.",
+			["UnsnappedRoads"] = "Einige Straßenverbindungen sind jetzt getrennt, überprüfen Sie sie mit <AltGr> + <L>",
 			["Wait4Join"] = "Das Verbinden kann eine Weile dauern, warte ein bisschen!",
 			["WarningWindowTitle"] = "Warnung",
 			["WaypointAlreadyBuilt"] = "Du kannst nur zwei Markierungen bauen",

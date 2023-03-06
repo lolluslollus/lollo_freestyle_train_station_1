@@ -30,6 +30,7 @@ local _guiTexts = {
     needAdjust4Snap = '',
     restoreInProgress = '',
     trackWaypointBuiltOnPlatform = '',
+    unsnappedRoads = '',
     waypointAlreadyBuilt = '',
     waypointsCrossCrossing = '',
     waypointsCrossSignal = '',
@@ -1267,6 +1268,51 @@ local _actions = {
         )
     end,
 
+    tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId)
+        logger.print('tryUpgradeStationOrStairsOrLiftConstruction starting, oldConId =', oldConId)
+        if not(edgeUtils.isValidAndExistingId(oldConId)) then return false end
+
+        local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
+        -- logger.print('oldCon =') logger.debugPrint(oldCon)
+        if not(oldCon)
+        or not(arrayUtils.arrayHasValue(
+            {
+                _constants.stationConFileName,
+                'station/rail/lollo_freestyle_train_station/openLiftFree.con',
+                'station/rail/lollo_freestyle_train_station/openStairsFree.con',
+                'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con',
+            },
+            oldCon.fileName
+        ))
+        or not(oldCon.params)
+        then return false end
+
+        local paramsBak = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
+        return xpcall(
+            function()
+                -- UG TODO there is no such thing in the new api,
+                -- nor an upgrade event, both would be useful
+                collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                logger.print('collectgarbage done')
+                logger.print('oldConId =') logger.debugPrint(oldConId)
+                logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
+                local upgradedConId = game.interface.upgradeConstruction(
+                    oldConId,
+                    oldCon.fileName,
+                    paramsBak
+                )
+                logger.print('tryUpgradeStationOrStairsOrLiftConstruction succeeded, upgradedConId =') logger.debugPrint(upgradedConId)
+                -- return true
+            end,
+            function(error)
+                logger.warn('tryUpgradeStationOrStairsOrLiftConstruction failed')
+                state.warningText = _('NeedAdjust4Snap')
+                logger.warn(error)
+                -- return false
+            end
+        )
+    end,
+
     upgradeStationConstruction = function(oldConId)
         logger.print('upgradeStationConstruction starting, oldConId =', oldConId)
         if not(edgeUtils.isValidAndExistingId(oldConId)) then return end
@@ -1723,7 +1769,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     if t > tMax then logger.print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
-    logger.print('endEntities4T =') logger.debugPrint(endEntities4T)
+    logger.print('endEntities4T ' .. (t or 'NIL') .. ' =') logger.debugPrint(endEntities4T)
     if endEntities4T == nil then return end
 
     local isAnyPlatformFailed = false
@@ -1745,29 +1791,34 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     end
 
     -- logger.print('proposal =') logger.debugPrint(proposal)
-    -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
     if isSuccess then
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-        -- context.cleanupStreetGraph = true -- default is false
-        -- context.gatherBuildings = false -- default is false
-        -- context.gatherFields = true -- default is true
-        -- context.player = api.engine.util.getPlayer()
-
-        local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
-        if expectedResult.errorState.critical then
-            logger.print('expectedResult =') logger.debugPrint(expectedResult)
-            isAnyPlatformFailed = true
-            _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
+        if #proposal.streetProposal.edgesToAdd > 0 then
+            local context = api.type.Context:new()
+            -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+            -- context.cleanupStreetGraph = true -- default is false
+            -- context.gatherBuildings = false -- default is false
+            -- context.gatherFields = true -- default is true
+            -- context.player = api.engine.util.getPlayer()
+            -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
+            local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+            if expectedResult.errorState.critical then
+                logger.print('expectedResult =') logger.debugPrint(expectedResult)
+                isAnyPlatformFailed = true
+                _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
+            else
+                api.cmd.sendCommand(
+                    api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                    function(result, success)
+                        logger.print('buildSnappyPlatforms callback for terminal', t or 'NIL', ', success =', success)
+                        if not(success) then isAnyPlatformFailed = true end
+                        -- move on to the next terminal
+                        _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
+                    end
+                )
+            end
         else
-            api.cmd.sendCommand(
-                api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-                function(result, success)
-                    logger.print('buildSnappyPlatforms callback for terminal', t or 'NIL', ', success =', success)
-                    -- move on to the next platform
-                    _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
-                end
-            )
+            -- move on to the next terminal
+            _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
         end
     else
         isAnyPlatformFailed = true
@@ -1782,8 +1833,8 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     -- If some are frozen in a construction, force-upgrade the station instead.
     logger.print('buildSnappyStreetEdges starting')
 
-    local endEntities = stationHelpers.getStationStreetEndEntities(stationConId)
-    if endEntities == nil then
+    local allEndEntities = stationHelpers.getStationStreetEndEntities(stationConId)
+    if allEndEntities == nil then
         logger.err('buildSnappyStreetEdges cannot find the station end entities')
         return
     end
@@ -1795,14 +1846,150 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         end
     end
 
-    local nNewEntities = 0
+-- LOLLO TODO you remove nodes that have entities attached
+-- the error is 
+-- Assertion `!ContainsEntity(m_proposal->removedNodes, entity)' failed
+-- it happens when building a bridge between two platforms at LeftRightThin,
+-- these platforms being separated by a piece of grass with a bridge above connecting them.
+-- There, I proposed removing two nodes and adding two edges, which need them.
+-- And why add two edges anyway?
+-- The error is fixed, but check it more
+--[[
+    In this case, we'll have:
+    _getStationStreetEndEntities results =
+        {
+            {
+                disjointNeighbourEdgeIds = { 29462, },
+                disjointNeighbourNodeId = 28429,
+                edgeId = 20883,
+                isNodeAdjoiningAConstruction = false,
+                neighbourConIds = { },
+                nodeId = 29504,
+                nodePosition = {
+                x = 71.972915649414,
+                y = 1241.5035400391,
+                z = 45.285850524902,
+                },
+            },
+            {
+                disjointNeighbourEdgeIds = { 29462, },
+                disjointNeighbourNodeId = 28919,
+                edgeId = 23547,
+                isNodeAdjoiningAConstruction = false,
+                neighbourConIds = { },
+                nodeId = 29619,
+                nodePosition = {
+                x = 46.655982971191,
+                y = 1233.583984375,
+                z = 45.712036132813,
+                },
+            },
+        }
+]]
     local isSuccess = true
     local isAnyNodeAdjoiningAConstruction = false
+    local neighbourConIds_indexed = {}
+    local newSegmentEntity = 0
+    local endEntities_GroupedBy_disjointNeighbourEdgeId = {}
+    for _, endEntity in pairs(allEndEntities) do
+        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
+            if edgeUtils.isValidAndExistingId(edgeId) then
+                if not(endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId]) then endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId] = {} end
 
-    for _, endEntity in pairs(endEntities) do
+                table.insert(
+                    endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId],
+                    endEntity
+                )
+            else
+                isSuccess = false
+                logger.warn('invalid disjointNeighbourEdgeId in buildSnappyStreetEdges')
+            end
+        end
+    end
+    if not(isSuccess) then
+        state.warningText = _('UnsnappedRoads')
+        return
+    end
+
+    for disjointNeighbourEdgeId, endEntities in pairs(endEntities_GroupedBy_disjointNeighbourEdgeId) do
+        logger.print('endEntities =') logger.debugPrint(endEntities)
+        logger.print('valid disjointNeighbourEdgeId in buildSnappyStreetEdges, going ahead')
+        for _, endEntity in pairs(endEntities) do
+            isAnyNodeAdjoiningAConstruction = isAnyNodeAdjoiningAConstruction or endEntity.isNodeAdjoiningAConstruction
+            for _, neighbourConId in pairs(endEntity.neighbourConIds) do
+                neighbourConIds_indexed[neighbourConId] = true
+            end
+        end
+        local newSegment = api.type.SegmentAndEntity.new()
+        newSegment.entity = newSegmentEntity - 1
+
+        local baseEdge = api.engine.getComponent(disjointNeighbourEdgeId, api.type.ComponentType.BASE_EDGE)
+        local isNode0ReplacingDisjoint = false
+        for _, endEntity in pairs(endEntities) do
+            if baseEdge.node0 == endEntity.disjointNeighbourNodeId then
+                newSegment.comp.node0 = endEntity.nodeId
+                _addNodeToRemove(endEntity.disjointNeighbourNodeId)
+                logger.print('twenty-one')
+                isNode0ReplacingDisjoint = true
+                break
+            end
+        end
+        if not(isNode0ReplacingDisjoint) then
+            newSegment.comp.node0 = baseEdge.node0
+            logger.print('twenty-three')
+        end
+
+        local isNode1ReplacingDisjoint = false
+        for _, endEntity in pairs(endEntities) do
+            if baseEdge.node1 == endEntity.disjointNeighbourNodeId then
+                newSegment.comp.node1 = endEntity.nodeId
+                _addNodeToRemove(endEntity.disjointNeighbourNodeId)
+                logger.print('twenty-four')
+                isNode1ReplacingDisjoint = true
+                break
+            end
+        end
+        if not(isNode1ReplacingDisjoint) then
+            newSegment.comp.node1 = baseEdge.node1
+            logger.print('twenty-six')
+        end
+
+        newSegment.comp.tangent0.x = baseEdge.tangent0.x
+        newSegment.comp.tangent0.y = baseEdge.tangent0.y
+        newSegment.comp.tangent0.z = baseEdge.tangent0.z
+        newSegment.comp.tangent1.x = baseEdge.tangent1.x
+        newSegment.comp.tangent1.y = baseEdge.tangent1.y
+        newSegment.comp.tangent1.z = baseEdge.tangent1.z
+        newSegment.comp.type = baseEdge.type
+        newSegment.comp.typeIndex = baseEdge.typeIndex
+        newSegment.comp.objects = baseEdge.objects
+        -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+        newSegment.type = _constants.streetEdgeType
+        local baseEdgeStreet = api.engine.getComponent(disjointNeighbourEdgeId, api.type.ComponentType.BASE_EDGE_STREET)
+        if baseEdgeStreet ~= nil then
+            logger.print('edgeId', disjointNeighbourEdgeId, 'is street')
+            newSegment.streetEdge.streetType = baseEdgeStreet.streetType
+            newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
+            newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
+            -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
+            -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
+        end
+
+        proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+        if not(arrayUtils.arrayHasValue(proposal.streetProposal.edgesToRemove, disjointNeighbourEdgeId)) then
+            proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = disjointNeighbourEdgeId
+        end
+
+        newSegmentEntity = newSegmentEntity - 1
+    end
+--[[
+    for _, endEntity in pairs(allEndEntities) do
         if not(isSuccess) then break end
 
         isAnyNodeAdjoiningAConstruction = isAnyNodeAdjoiningAConstruction or endEntity.isNodeAdjoiningAConstruction
+        for _, neighbourConId in pairs(endEntity.neighbourConIds) do
+            neighbourConIds_indexed[neighbourConId] = true
+        end
         for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
             if not(edgeUtils.isValidAndExistingId(edgeId)) then
                 logger.warn('invalid edgeId in buildSnappyStreetEdges')
@@ -1863,35 +2050,67 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         end
         logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
     end
-
+]]
     logger.print('proposal =') logger.debugPrint(proposal)
     logger.print('isAnyNodeAdjoiningAConstruction =') logger.debugPrint(isAnyNodeAdjoiningAConstruction)
-    -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
-    if isSuccess then
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-        -- context.cleanupStreetGraph = true -- default is false
-        -- context.gatherBuildings = false -- default is false
-        -- context.gatherFields = true -- default is true
-        -- context.player = api.engine.util.getPlayer()
-
-        local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
-        if expectedResult.errorState.critical then
-            logger.print('expectedResult =') logger.debugPrint(expectedResult)
-        else
-            api.cmd.sendCommand(
-                api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-                function(result, success)
-                    logger.print('buildSnappyStreetEdges callback, success =', success)
-                    -- cannot rebuild some of the edges coz they are be locked in a construction:
-                    -- rebuild the station instead
-                    if isAnyNodeAdjoiningAConstruction then
-                        _actions.upgradeStationConstruction(stationConId)
-                    end
-                end
-            )
-        end
+    logger.print('neighbourConIds_indexed =') logger.debugPrint(neighbourConIds_indexed)
+    if #proposal.streetProposal.edgesToAdd == 0 then
+        logger.print('no street edges added')
+        return
     end
+
+    local context = api.type.Context:new()
+    -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+    -- context.cleanupStreetGraph = true -- default is false
+    -- context.gatherBuildings = false -- default is false
+    -- context.gatherFields = true -- default is true
+    -- context.player = api.engine.util.getPlayer()
+    -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
+    local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+    if expectedResult.errorState.critical then
+        logger.print('expectedResult =') logger.debugPrint(expectedResult)
+        state.warningText = _('UnsnappedRoads')
+        return
+    end
+
+    api.cmd.sendCommand(
+        api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+        function(result, success)
+            logger.print('buildSnappyStreetEdges callback, success =', success)
+            -- cannot rebuild some of the edges coz they are be locked in a construction:
+            -- rebuild the station instead, or better: rebuild those adjoining constructions.
+            -- If they have snappy edges, they will resnap.
+            --[[
+                LOLLO NOTE Snapping trouble with street edges:
+                1) if an edge is non-snappy and it is attached to a road, fine: 
+                the station will resnap as soon as the user closes the construction menu.
+                2) if an edge is non-snappy and it is attached to a non-snappy con, fine:
+                there will be a road in between, so we are in case 1.
+                Obviously, the non-snappy con cannot be moved about or it will unsnap.
+                3) if an edge is non-snappy and it is attached to a snappy con, bad:
+                the mod will not restore the snappiness;
+                we try to fix this with tryUpgradeStationOrStairsOrLiftConstruction(),
+                only for our own constructions.
+                4) if an edge is snappy and it is attached to a road, fine: like case 1.
+                5) if an edge is snappy and it is attached to a non-snappy con, fine: like case 2.
+                6) if an edge is snappy and it is attached to a snappy con, fine:
+                the station will resnap at once.
+            ]]
+            local isAnyUpgradeFailed = false
+            for neighbourConId, _ in pairs(neighbourConIds_indexed) do
+                isAnyUpgradeFailed = isAnyUpgradeFailed or not(_actions.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
+            end
+            logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
+            if not(isAnyUpgradeFailed) then return end
+
+            state.warningText = _('UnsnappedRoads')
+            -- if isAnyUpgradeFailed then
+            --     -- if isAnyNodeAdjoiningAConstruction then
+            --         _actions.upgradeStationConstruction(stationConId)
+            --     -- end
+            -- end
+        end
+    )
 end
 
 _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
@@ -1926,27 +2145,33 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     end
 
     if isSuccess then
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
-        -- context.cleanupStreetGraph = true -- default is false
-        -- context.gatherBuildings = false -- default is false
-        -- context.gatherFields = true -- default is true
-        -- context.player = api.engine.util.getPlayer()
+        if #proposal.streetProposal.edgesToAdd > 0 then
+            local context = api.type.Context:new()
+            -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+            -- context.cleanupStreetGraph = true -- default is false
+            -- context.gatherBuildings = false -- default is false
+            -- context.gatherFields = true -- default is true
+            -- context.player = api.engine.util.getPlayer()
 
-        local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
-        if expectedResult.errorState.critical then
-            logger.print('critical error when building snappy tracks, expectedResult =') logger.debugPrint(expectedResult)
-            isAnyTrackFailed = true
-            _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
+            local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
+            if expectedResult.errorState.critical then
+                logger.print('critical error when building snappy tracks, expectedResult =') logger.debugPrint(expectedResult)
+                isAnyTrackFailed = true
+                _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
+            else
+                api.cmd.sendCommand(
+                    api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+                    function(result, success)
+                        logger.print('buildSnappyTracks callback for terminal', t or 'NIL', ', success =', success)
+                        if not(success) then isAnyTrackFailed = true end
+                        -- move on to the next terminal
+                        _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
+                    end
+                )
+            end
         else
-            api.cmd.sendCommand(
-                api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-                function(result, success)
-                    logger.print('buildSnappyTracks callback for terminal', t or 'NIL', ', success =', success)
-                    -- move on to the next terminal
-                    _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
-                end
-            )
+            -- move on to the next terminal
+            _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
         end
     else
         isAnyTrackFailed = true
@@ -1980,6 +2205,7 @@ function data()
             _guiTexts.needAdjust4Snap = _('NeedAdjust4Snap')
             _guiTexts.restoreInProgress = _('RestoreInProgress')
             _guiTexts.trackWaypointBuiltOnPlatform = _('TrackWaypointBuiltOnPlatform')
+            _guiTexts.unsnappedRoads = _('UnsnappedRoads')
             _guiTexts.waypointAlreadyBuilt = _('WaypointAlreadyBuilt')
             _guiTexts.waypointsCrossCrossing = _('WaypointsCrossCrossing')
             _guiTexts.waypointsCrossSignal = _('WaypointsCrossSignal')
@@ -2084,7 +2310,7 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint1Id)
-                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false)
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, false)
                         if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
@@ -2103,7 +2329,7 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint2Id)
-                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false)
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, false)
                         if nodeBetween == nil then state.warningText = _('WrongTrack') _utils.sendHideProgress() return end
 
                         _actions.splitEdgeRemovingObject(
@@ -2270,10 +2496,20 @@ function data()
                                 logger.print('tangent1 =') logger.debugPrint(tangent1)
                                 logger.print('(halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength] =') logger.debugPrint((halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength])
 
+                                local edgeLength = edgeUtils.getEdgeLength(eventArgs.trackEdgeList[iAcrossMidLength].edgeId, logger.isExtendedLog())
+                                if not(edgeLength) then
+                                    state.warningText = _('WrongTrack')
+                                    _utils.sendHideProgress()
+                                    return -1, nil, nil
+                                end
                                 local nodeBetween = edgeUtils.getNodeBetween(
-                                    position0, position1, tangent0, tangent1,
+                                    position0,
+                                    position1,
+                                    tangent0,
+                                    tangent1,
                                     (halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength],
-                                    edgeUtils.getEdgeLength(eventArgs.trackEdgeList[iAcrossMidLength].edgeId, logger.isExtendedLog())
+                                    edgeLength,
+                                    logger.isExtendedLog()
                                 )
                                 logger.print('nodeBetween 2223 =') logger.debugPrint(nodeBetween)
                                 if nodeBetween == nil then
@@ -2599,7 +2835,6 @@ function data()
                                     if type(averageZ) == 'number' then
                                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(
                                             nearestEdgeId,
-                                            -- LOLLO NOTE position and transf are always very similar
                                             {
                                                 x = conTransf[13],
                                                 y = conTransf[14],
@@ -2625,7 +2860,6 @@ function data()
                                     -- a user error can throw it out of whack more than the averageZ does.
                                     -- local nodeBetween = edgeUtils.getNodeBetweenByPosition(
                                     --     nearestEdgeId,
-                                    --     -- LOLLO NOTE position and transf are always very similar
                                     --     {
                                     --         x = conTransf[13],
                                     --         y = conTransf[14],
@@ -2650,6 +2884,17 @@ function data()
                             end
                             _actions.bulldozeConstruction(args.conId)
                         end
+                    elseif name == _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED then
+                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
+                            logger.err('args.stationConstructionId not valid')
+                            return
+                        end
+                        local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+                        if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
+                            logger.err('construction', args.stationConstructionId, 'is not a freestyle station')
+                            return
+                        end
+                        _actions.buildSnappyStreetEdges(args.stationConstructionId)
                     elseif name == _eventNames.BULLDOZE_CON_REQUESTED then
                         _actions.bulldozeCon(args.conId)
                     end
@@ -2658,10 +2903,42 @@ function data()
             )
         end,
         guiHandleEvent = function(id, name, args)
+            --[[
+                sample output after removing a module:
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.addModuleComp	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	temp.addModuleComp.params.entity_22997	name =	destroy
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.moduleBulldozer	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.lineManager	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.vehicleManager	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.road	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.rail	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.water	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.air	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.terrain	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.town	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.industry	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction	name =	visibilityChange
+                after adding an element:
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.addModuleComp	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	temp.addModuleComp.params.entity_22997	name =	destroy
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.moduleBulldozer	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.lineManager	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.vehicleManager	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.road	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.rail	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.water	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.air	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.terrain	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.town	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction.industry	name =	visibilityChange
+                lollo_freestyle_train_station INFO: 	guiHandleEvent caught id =	menu.construction	name =	visibilityChange
+                the results are the same, they only fire after closing the menu
+                22997 is the conId of my station construction
+            ]]
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
             -- logger.print('guiHandleEvent caught id =', id, 'name =', name)
             local isHideDistance = true
-            if (name == 'builder.proposalCreate' or name == 'builder.apply' or name == 'select') then -- for performance
+            if (name == 'builder.proposalCreate' or name == 'builder.apply' or name == 'select' or name == 'destroy') then -- for performance
                 xpcall(
                     function()
                         if name == 'builder.proposalCreate' then
@@ -2695,7 +2972,7 @@ function data()
                             -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
                             if id == 'bulldozer' then
                                 for _, conId in pairs(args.proposal.toRemove) do
-                                    logger.print('about to bulldoze construction', conId or 'NIL')
+                                    logger.print('about to bulldoze construction ' .. (conId or 'NIL') .. ' or one of its modules')
                                     if edgeUtils.isValidAndExistingId(conId) then
                                         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                                         if con ~= nil and type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName then
@@ -2837,6 +3114,23 @@ function data()
                                     return
                                 end
                             end
+                        elseif name == 'destroy' and type(id) == 'string' and stringUtils.stringStartsWith(id, 'temp.addModuleComp.params.entity_') then
+                            -- added or removed a module: force snappy street edges
+                            local conId = tonumber(id:sub(34), 10)
+                            if not(edgeUtils.isValidAndExistingId(conId)) then return end
+
+                            local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                            if con == nil or con.fileName ~= _constants.stationConFileName then return end
+
+                            logger.print('about to send command BUILD_SNAPPY_STREET_EDGES_REQUESTED, conId = ' .. conId)
+                            api.cmd.sendCommand(
+                                api.cmd.make.sendScriptEvent(
+                                    string.sub(debug.getinfo(1, 'S').source, 1),
+                                    _eventId,
+                                    _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED,
+                                    { stationConstructionId = conId }
+                                )
+                            )
                         end
                     end,
                     logger.xpErrorHandler

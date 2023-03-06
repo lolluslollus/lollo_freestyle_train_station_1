@@ -46,25 +46,35 @@ function data()
 				tag = tag
 			}
 
-			-- add link to platform
+			local _laneZ = result.laneZs[nTerminal]
+			local _isCargoTerminal = params.terminals[nTerminal].isCargo
+
+			-- add link from platform border into track crossing
 			local trackCrossingPos = transfUtils.getPositionRaisedBy(transfUtils.transf2Position(slotTransf), _constants.trackCrossingZ)
 			if not(trackCrossingPos) then
-				logger.warn('trackCrossingPos is NIL')
+				logger.warn('trackCrossingTwoStairs: trackCrossingPos is NIL')
 				return
 			end
-			local crossConnectorPos = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1]
+			local platformBorderPos = transfUtils.getPositionRaisedBy(
+				params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
+				_laneZ
+			)
 			result.models[#result.models+1] = {
 				id = _constants.passengerLaneModelId,
 				transf = transfUtils.get1MLaneTransf(
-					trackCrossingPos,
-					transfUtils.getPositionRaisedBy(crossConnectorPos, result.laneZs[nTerminal])
+					platformBorderPos,
+					trackCrossingPos
 				)
 			}
-			-- add link toward opposite platform
+
+			-- add link from track crossing to opposite platform border,
+			-- where its cross connector would be, if they were perfectly regular
+			-- and the opposite platform was facing mine (impossible coz two platforms cannot share the same track)
+			-- And with cargo? LOLLO TODO check
 			local oppositeCrossConnectorPos = {
-				trackCrossingPos[1] - crossConnectorPos[1] + trackCrossingPos[1],
-				trackCrossingPos[2] - crossConnectorPos[2] + trackCrossingPos[2],
-				trackCrossingPos[3] + result.laneZs[nTerminal] - _constants.trackCrossingZ,
+				trackCrossingPos[1] - platformBorderPos[1] + trackCrossingPos[1],
+				trackCrossingPos[2] - platformBorderPos[2] + trackCrossingPos[2],
+				trackCrossingPos[3] + _laneZ - _constants.trackCrossingZ,
 			}
 			result.models[#result.models+1] = {
 				id = _constants.passengerLaneModelId,
@@ -74,18 +84,80 @@ function data()
 				)
 			}
 
-			if result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal] == nil then
-				result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal] = {}
+			-- mark positions along the border of the opposite platform, so they can be joined later
+			if not(_isCargoTerminal) then
+				if result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal] == nil then
+					result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal] = {}
+				end
+				table.insert(
+					result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal],
+					{
+						t = nTerminal,
+						-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
+						pos = oppositeCrossConnectorPos,
+						isProperLink = true, -- this is to avoid duplicate edges
+					}
+				)
 			end
-			table.insert(
-				result.terminateConstructionHookInfo.trackCrossingOppositePositions[nTerminal],
-				{
-					t = nTerminal,
-					-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
-					pos = oppositeCrossConnectorPos,
-					isProperLink = true, -- this is to avoid duplicate edges
+--[[
+			-- only for cargo: link centre platforms to platform border
+			local platformCentrePos
+			if _isCargoTerminal then
+				platformCentrePos = transfUtils.getPositionRaisedBy(
+					params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[2][1],
+					_laneZ
+				)
+				result.models[#result.models+1] = {
+					id = _constants.passengerLaneModelId,
+					transf = transfUtils.get1MLaneTransf(
+						platformCentrePos,
+						platformBorderPos
+					)
 				}
-			)
+			end
+]]
+			if logger.isExtendedLog() then
+--[[
+				if platformCentrePos then
+					result.models[#result.models+1] = {
+						id = 'lollo_freestyle_train_station/icon/red.mdl',
+						transf = {
+							1, 0, 0, 0,
+							0, 1, 0, 0,
+							0, 0, nTerminal % 2 + 1, 0,
+							platformCentrePos[1], platformCentrePos[2], platformCentrePos[3], 1
+						}
+					}
+				end
+]]
+				result.models[#result.models+1] = {
+					id = 'lollo_freestyle_train_station/icon/orange.mdl',
+					transf = {
+						1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, nTerminal % 2 + 1, 0,
+						platformBorderPos[1], platformBorderPos[2], platformBorderPos[3], 1
+					}
+				}
+				result.models[#result.models+1] = {
+					id = 'lollo_freestyle_train_station/icon/yellow.mdl',
+					transf = {
+						1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, nTerminal % 2 + 1, 0,
+						trackCrossingPos[1], trackCrossingPos[2], trackCrossingPos[3], 1
+					}
+				}
+				result.models[#result.models+1] = {
+					id = 'lollo_freestyle_train_station/icon/blue.mdl',
+					transf = {
+						1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, nTerminal % 2 + 1, 0,
+						oppositeCrossConnectorPos[1], oppositeCrossConnectorPos[2], oppositeCrossConnectorPos[3], 1
+					}
+				}
+			end
 		end,
 
 		getModelsFn = function(params)
