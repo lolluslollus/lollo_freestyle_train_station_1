@@ -760,6 +760,26 @@ privateFuncs.flatAreas = {
     end,
 }
 privateFuncs.openStairs = {
+    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix)
+        local isCargoTerminal = params.terminals[nTerminal].isCargo
+        local perronModelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
+        if (isCargoTerminal) then
+            perronModelId = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl'
+        elseif eraPrefix == constants.eras.era_b.prefix then
+            perronModelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
+        elseif eraPrefix == constants.eras.era_a.prefix then
+            perronModelId = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl'
+        end
+        result.models[#result.models + 1] = {
+            id = perronModelId,
+            slotId = slotId,
+            -- transf = transfUtils.getTransf_Shifted(slotTransf, {0.2, 0.8, 0}),
+            transf = transfUtils.getTransf_Shifted(transfUtils.getTransf_Scaled(slotTransf, {0.667, 0.667, 0.667}), {0.3, 1.3, 0}),
+            tag = tag
+        }
+        -- the model index must be in base 0 !
+        result.labelText[#result.models - 1] = { tostring(nTerminal), "↑" }
+    end,
     getExitModelTransf = function(slotTransf, slotId, params)
         local variant = privateFuncs.getVariant(params, slotId)
         local tilt = privateFuncs.getFromVariant_BridgeTilt(variant)
@@ -2193,7 +2213,144 @@ return {
         end,
     },
     openStairs = {
-        exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
+--[[
+        LOLLO NOTE
+        I wish I could connect any stairs or lifts to whatever I like, drawing a pedestrian bridge between their "edge exits".
+        Instead, I cannot connect opposite lifts or stairs if they are too close,
+        eg if they are on opposite 5m platforms separated by one single track.
+        checked the bridge colliders - useless
+        tried disabling the new experimental flag "deferredProposal" - useless
+        tried shifting the edges all the way up to 16m - useless
+        Collisions always appear when the lifts are too close,
+        they probably have to do with the edge mechanics.
+        If the lifts / stairs are far enough, I can lay all sorts of bridges,
+        even a big stock bridge, so the problem is not the bridge itself.
+        For now, we live with this.
+]]
+        -- LOLLO OBSOLETE keep it for compatibility with older versions
+        openLifts_v1_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+			local modelId = nil
+			if eraPrefix == constants.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/open_lifts/era_a_open_lift_8m.mdl'
+			elseif eraPrefix == constants.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/open_lifts/era_b_open_lift_8m.mdl'
+			else modelId = 'lollo_freestyle_train_station/open_lifts/era_c_open_lift_8m.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitInnerSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+					slotTransf,
+					{0, -1, constants.openStairsUpZ}
+				),
+				type = constants.openStairsExitModuleType,
+			})
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitForwardSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_Shifted(
+					slotTransf,
+					{1, 0, constants.openStairsUpZ}
+				),
+				type = constants.openStairsExitModuleType,
+			})
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitOuterSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+					slotTransf,
+					{0, 1, constants.openStairsUpZ}
+				),
+				type = constants.openStairsExitModuleType,
+			})
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitBackwardSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_ZRotated180_Shifted(
+					slotTransf,
+					{-1, 0, constants.openStairsUpZ}
+				),
+				type = constants.openStairsExitModuleType,
+			})
+		end,
+        openLifts_v2_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+			local modelId = nil
+			if eraPrefix == constants.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/open_lifts/era_a_open_lift_8m.mdl'
+			elseif eraPrefix == constants.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/open_lifts/era_b_open_lift_8m.mdl'
+			else modelId = 'lollo_freestyle_train_station/open_lifts/era_c_open_lift_8m.mdl'
+			end
+
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+			result.models[#result.models+1] = {
+				id = 'lollo_freestyle_train_station/passenger_lane_open_lift_top.mdl',
+				slotId = slotId,
+				transf = slotTransf,
+				-- tag = tag
+			}
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitInnerSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+					slotTransf,
+					{0, -1, constants.openStairsUpZ}
+				),
+				type = constants.openStairsExitModuleType,
+			})
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitForwardSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_Shifted(
+					slotTransf,
+					{2.5, 0, constants.openStairsUpZ}
+				),
+				type = constants.openStairsExitModuleType,
+			})
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitOuterSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+					slotTransf,
+					{0, 1, constants.openStairsUpZ}
+				),
+				type = constants.openStairsExitModuleType,
+			})
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitBackwardSlotId),
+				shape = 1,
+				spacing = {-1, 3, 0.5, 0.5},
+				transf = transfUtils.getTransf_ZRotated180_Shifted(
+					slotTransf,
+					{-2.5, 0, constants.openStairsUpZ}
+				),
+				type = constants.openStairsExitModuleType,
+			})
+		end,
+        -- LOLLO OBSOLETE keep it for compatibility with older versions
+        stairsExitWithEdgeModule_v1_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
@@ -2238,6 +2395,49 @@ return {
 					},
 					snapNodes = isSnap and { 1 } or {},
 					tag2nodes = {},
+					type = 'STREET'
+				}
+			)
+		end,
+        stairsExitWithEdgeModule_v2_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+            privateFuncs.openStairs.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix)
+            local transf = privateFuncs.openStairs.getExitModelTransf(slotTransf, slotId, params)
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/passenger_lane_stairs_edge.mdl',
+				slotId = slotId,
+				transf = transf,
+				-- tag = tag
+			}
+
+			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
+			table.insert(
+				result.edgeLists,
+				{
+					alignTerrain = false, -- only align on ground and in tunnels
+					edges = transfUtils.getPosTanX2Transformed(
+						{
+							{ { -0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+						},
+						transf
+					),
+					edgeType = 'BRIDGE',
+					edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
+					freeNodes = { 1 },
+					params = {
+						hasBus = true,
+						tramTrackType  = 'NO',
+						type = _autoBridgePathsRefData.streetTypeName_noBridge,
+					},
+					snapNodes = isSnap and { 1 } or {},
+					tag2nodes = {},
+                    -- tag2nodes = {
+                    --     [tag] = { 1, 0 } -- list of base 0 indexes of nodes
+                    -- },
 					type = 'STREET'
 				}
 			)

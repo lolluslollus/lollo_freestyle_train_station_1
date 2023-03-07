@@ -249,9 +249,9 @@ utils.getData4CementOBSOLETE = function(isSides)
 end
 
 utils.getData4PedestrianBridge = function(eraPrefix, isSides)
-    local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
+    -- local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_basic/' .. eraPrefix
-    local stockDir = 'bridge/cement/'
+    -- local stockDir = 'bridge/cement/'
 
     -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
     -- and a list of lanes and offsets,
@@ -724,7 +724,7 @@ utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix, isWithEdge)
 		}
 	end
 
-	local laneListsWithEdge = {
+    local laneListsWithEdge = {
 		{
 			linkable = false,
 			nodes = {
@@ -883,6 +883,7 @@ utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, -0.3, -0.25, 1, },
 			type = 'BOX',
 		},
+        -- collider = mdlHelpers.getVoidCollider(),
 		lods = {
 			{
 				node = {
@@ -950,6 +951,7 @@ utils.getModel4Basic_rep_rep = function(eraPrefix)
 			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, -0.25, 1, },
 			type = 'BOX',
 		},
+        -- collider = mdlHelpers.getVoidCollider(),
 		lods = {
 			{
 				node = {

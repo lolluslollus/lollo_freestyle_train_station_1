@@ -56,8 +56,7 @@ end
 public.getData4Era = function(eraPrefix)
     if eraPrefix == constants.eras.era_a.prefix then return public.eraA
     elseif eraPrefix == constants.eras.era_b.prefix then return public.eraB
-    elseif eraPrefix == constants.eras.era_c.prefix then return public.eraC
-    else return nil
+    else return public.eraC
     end
 end
 

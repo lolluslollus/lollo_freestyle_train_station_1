@@ -1,12 +1,12 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 
-
+-- LOLLO OBSOLETE keep for compatibility with older releases
 function data()
 	return {
 		availability = {
-			yearFrom = 0,
-			yearTo = 0
+			yearFrom = -1,
+			yearTo = -1
 		},
 		category = {
 			categories = { "passenger-road-access-stairs", },
@@ -25,7 +25,7 @@ function data()
 		},
 		type = _constants.openStairsExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-			return moduleHelpers.openStairs.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true)
+			return moduleHelpers.openStairs.stairsExitWithEdgeModule_v1_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true)
 		end,
 
 		getModelsFn = function(params)
