@@ -330,6 +330,23 @@ local utils = {
             transf[13], transf[14], transf[15], transf[16]
         }
     end,
+    getTransf_Scaled_Shifted = function(transf, scales123, shifts123)
+        if type(transf) ~= 'table' then return transf end
+        local x, y, z = 1, 1, 1
+        if type(scales123) == 'table' then x, y, z = table.unpack(scales123) end
+        local xx, yy, zz = 0, 0, 0
+        if type(shifts123) == 'table' then xx, yy, zz = table.unpack(shifts123) end
+
+        return {
+            transf[1] * x, transf[2] * x, transf[3] * x, transf[4] * x,
+            transf[5] * y, transf[6] * y, transf[7] * y, transf[8] * y,
+            transf[9] * z, transf[10] * z, transf[11] * z, transf[12] * z,
+            transf[1] * xx + transf[5] * yy + transf[9]  * zz + transf[13],
+            transf[2] * xx + transf[6] * yy + transf[10] * zz + transf[14],
+            transf[3] * xx + transf[7] * yy + transf[11] * zz + transf[15],
+            transf[4] * xx + transf[8] * yy + transf[12] * zz + transf[16],
+        }
+    end,
     getTransf_XSkewedOnZ = function(transf, skew)
         local m2 = {
             1, 0, skew, 0,

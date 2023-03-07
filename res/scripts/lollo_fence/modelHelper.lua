@@ -3,6 +3,7 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local privateValues = {
     maxLength = 200,
     yShiftMaxIndex = 24,
+    yShiftFineMaxIndex = 5,
     zDeltaMaxIndex = 64,
     zRotationMaxIndex = 64,
 }
@@ -16,6 +17,7 @@ privateValues.defaults = {
     lolloFenceAssets_wallBehindInTunnels = 0,
     lolloFenceAssets_wallBehindOnBridges = 0,
     lolloFenceAssets_yShift = privateValues.yShiftMaxIndex + 5,
+    lolloFenceAssets_yShiftFine = privateValues.yShiftFineMaxIndex,
     lolloFenceAssets_zDelta = privateValues.zDeltaMaxIndex,
     lolloFenceAssets_zRotation = privateValues.zRotationMaxIndex,
 }
@@ -38,6 +40,20 @@ local privateFuncs = {
         local results = {}
         for i = -privateValues.yShiftMaxIndex, privateValues.yShiftMaxIndex, 1 do
             results[#results+1] = ("%.3g"):format(i / 2)
+        end
+        return results
+    end,
+    getYShiftFineActualValues = function()
+        local results = {}
+        for i = -privateValues.yShiftFineMaxIndex, privateValues.yShiftFineMaxIndex, 1 do
+            results[#results+1] = i * 0.1
+        end
+        return results
+    end,
+    getYShiftFineDisplayValues = function()
+        local results = {}
+        for i = -privateValues.yShiftFineMaxIndex, privateValues.yShiftFineMaxIndex, 1 do
+            results[#results+1] = ("%.3g"):format(i * 0.1)
         end
         return results
     end,
@@ -252,6 +268,13 @@ return {
                 uiType = 'CHECKBOX',
                 values = {_('NO'), _('YES')}
             },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_yShiftFine,
+                key = 'lolloFenceAssets_yShiftFine',
+                name = _('YShift'),
+                uiType = 'SLIDER',
+                values = privateFuncs.getYShiftFineDisplayValues(),
+            },
             -- there is no way yet to accurately find out if an edge is frozen:
             -- I often add or remove one metre, unless I rewrite getCentralEdgePositions_OnlyOuterBounds
             -- {
@@ -285,6 +308,9 @@ return {
     end,
     getYShiftActualValues = function()
         return privateFuncs.getYShiftActualValues()
+    end,
+    getYShiftFineActualValues = function()
+        return privateFuncs.getYShiftFineActualValues()
     end,
     getZDeltaActualValues = function()
         return privateFuncs.getZDeltaActualValues()

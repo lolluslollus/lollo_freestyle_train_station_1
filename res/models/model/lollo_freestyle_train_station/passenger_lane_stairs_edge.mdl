@@ -1,0 +1,76 @@
+local mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = mdlHelpers.getVoidBoundingInfo(),
+        collider = mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    -- name = 'lod0Children',
+                    -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100,
+            },
+        },
+        metadata = {
+            transportNetworkProvider = {
+                -- bridge exits and free open stairs bridges are uncompressed
+                -- their x == 0 end is atop the stairs (free stairs or station stairs), their x > 0 end joins up with the outer world
+                laneLists = {
+                    {
+                        linkable = false,
+                        nodes = {
+                            -- the lane starts where the model starts
+                            {
+                                { -1.0, 0, 0 },
+                                { -0.2, 0, 0 }, -- _xFactorTN >= 4, by construction
+                                1.5,
+                            },
+                            {
+                                { -0.8, 0, 0 },
+                                { -0.2, 0, 0 },
+                                1.5,
+                            },
+                        },
+                        transportModes = { 'CARGO', 'PERSON', },
+                        speedLimit = 20,
+                    },
+                    {
+                        linkable = true,
+                        nodes = {
+                            -- two lanes to match the edge pavement
+                            {
+                                { -0.8, 0, 0 },
+                                { 0.3, 0.3, 0 },
+                                1.5,
+                            },
+                            {
+                                { -0.5, 0.3, 0 },
+                                { 0.3, 0.3, 0 },
+                                1.5,
+                            },
+                            {
+                                { -0.8, 0, 0 },
+                                { 0.3, -0.3, 0 },
+                                1.5,
+                            },
+                            {
+                                { -0.5, -0.3, 0 },
+                                { 0.3, -0.3, 0 },
+                                1.5,
+                            },
+                        },
+                        transportModes = { 'CARGO', 'PERSON', },
+                        speedLimit = 20,
+                    }
+                },
+                runways = { },
+                terminals = { },
+            },
+        },
+        version = 1,
+    }
+end

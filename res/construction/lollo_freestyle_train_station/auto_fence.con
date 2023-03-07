@@ -5,15 +5,15 @@ function data()
     local logger = require('lollo_freestyle_train_station.logger')
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
-    local function _addGround(transf, result, wallBehindModelId)
+    local function _addGround(transf, yShift, result, wallBehindModelId)
         local _faceTransformed = wallBehindModelId == nil
             and transfUtils.getFaceTransformed_FAST(
                 transf,
                 {
                     {-0.5, -0.2, 0, 1.0},
                     {0.5, -0.2, 0, 1.0},
-                    {0.5, 0.5, 0, 1.0},
-                    {-0.5, 0.5, 0, 1.0},
+                    {0.5, 0.5 + yShift, 0, 1.0},
+                    {-0.5, 0.5 + yShift, 0, 1.0},
                     -- {x, positive backwards, z, 1}
                 }
             )
@@ -22,8 +22,8 @@ function data()
                 {
                     {-0.5, -0.2, 0, 1.0},
                     {0.5, -0.2, 0, 1.0},
-                    {0.5, 1.0, 0, 1.0},
-                    {-0.5, 1.0, 0, 1.0},
+                    {0.5, 1.0 + yShift, 0, 1.0},
+                    {-0.5, 1.0 + yShift, 0, 1.0},
                     -- {x, positive backwards, z, 1}
                 }
             )
@@ -52,25 +52,32 @@ function data()
         )
     end
 
-    local function _addWall(transf, result, zShift, wallMainModelId, wallBaseModelId)
+    local function _addWall(transf, result, yShift, zShift, wallMainModelId, wallBaseModelId)
         if wallBaseModelId == nil then
             if wallMainModelId ~= nil then
-                table.insert(
-                    result.models,
-                    {
-                        id = wallMainModelId,
-                        transf = transf
-                    }
+                xpcall(
+                    function()
+                        table.insert(
+                            result.models,
+                            {
+                                id = wallMainModelId,
+                                transf = transfUtils.getTransf_YShifted(transf, yShift)
+                            }
+                        )
+                    end,
+                    function(err)
+                        print(err)
+                    end
                 )
             end
         else
-            local _transfZShifted = transfUtils.getTransf_ZShifted(transf, zShift)
+            local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
             if wallMainModelId ~= nil then
                 table.insert(
                     result.models,
                     {
                         id = wallMainModelId,
-                        transf = _transfZShifted
+                        transf = _transfShifted
                     }
                 )
             end
@@ -78,21 +85,21 @@ function data()
                 result.models,
                 {
                     id = wallBaseModelId,
-                    transf = _transfZShifted
+                    transf = _transfShifted
                 }
             )
         end
     end
 
-    local function _addWallBehind(transf, result, zShift, wallBehindModelId, wallBehindBaseModelId)
+    local function _addWallBehind(transf, result, yShift, zShift, wallBehindModelId, wallBehindBaseModelId)
         if wallBehindModelId == nil then return end
 
-        local _wallBehindTransf_ZShifted = transfUtils.getTransf_ZShifted(transf, zShift)
+        local _wallBehindTransf_Shifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
         table.insert(
             result.models,
             {
                 id = wallBehindModelId,
-                transf = _wallBehindTransf_ZShifted
+                transf = _wallBehindTransf_Shifted
             }
         )
         if wallBehindBaseModelId ~= nil then
@@ -100,7 +107,7 @@ function data()
                 result.models,
                 {
                     id = wallBehindBaseModelId,
-                    transf = _wallBehindTransf_ZShifted
+                    transf = _wallBehindTransf_Shifted
                 }
             )
         end
@@ -142,6 +149,7 @@ function data()
                 params.lolloFenceAssets_wallBehindOnBridges = params.lolloFenceAssets_wallBehindOnBridges or defaults.lolloFenceAssets_wallBehindOnBridges
                 params.lolloFenceAssets_wallBehindInTunnels = params.lolloFenceAssets_wallBehindInTunnels or defaults.lolloFenceAssets_wallBehindInTunnels
                 params.lolloFenceAssets_wallBehindModel = params.lolloFenceAssets_wallBehindModel or defaults.lolloFenceAssets_wallBehindModel
+                params.lolloFenceAssets_yShiftFine = params.lolloFenceAssets_yShiftFine or defaults.lolloFenceAssets_yShiftFine
                 params.transfs = params.transfs or {} -- obsolete, it was an early release, newer releases have transfs_ground instead
                 params.transfs_ground = params.transfs_ground or {}
                 params.transfs_wallBehind = params.transfs_wallBehind or {}
@@ -228,22 +236,25 @@ function data()
             logger.print('wallBaseModelId =', wallBaseModelId or 'NIL')
             logger.print('#params.transfs =', #params.transfs)
 
+            local _yStart = fenceModelHelper.getYShiftFineActualValues()[params.lolloFenceAssets_yShiftFine + 1]
             local _zStart = (wallBaseModelId == nil) and 0 or constants.platformHeight
+            logger.print('_yStart =', _yStart or 'NIL')
+            logger.print('_zStart =', _zStart or 'NIL')
             -- the wall is 1.4m tall, constants.platformHeight is 1.2m, so we sink all by 20cm. This is level with freestyle stations and looks good.
             for _, transf in pairs(params.transfs) do -- compatibility with early releases, newer releases have no transfs
-                _addWall(transf, result, _zStart, wallMainModelId, wallBaseModelId)
+                _addWall(transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
             end
             for _, transfData in pairs(params.transfs_ground) do
-                _addWall(transfData.transf, result, _zStart, wallMainModelId, wallBaseModelId)
+                _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
                 if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then
-                    _addGround(transfData.transf, result, wallBehindModelId)
+                    _addGround(transfData.transf, _yStart, result, wallBehindModelId)
                 end
             end
             for _, transfData in pairs(params.transfs_wallBehind) do
                 if transfData.groundBridgeTunnel_012 == 0
                 or (transfData.groundBridgeTunnel_012 == 1 and isWallBehindOnBridges)
                 or (transfData.groundBridgeTunnel_012 == 2 and isWallBehindInTunnels) then
-                    _addWallBehind(transfData.transf, result, _zStart, wallBehindModelId, wallBehindBaseModelId)
+                    _addWallBehind(transfData.transf, result, _yStart,_zStart, wallBehindModelId, wallBehindBaseModelId)
                 end
             end
 
