@@ -937,15 +937,15 @@ function data()
 
 					for i = 2, #params.terminals[t].centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 						local crossConnectorPosTanX2 = params.terminals[t].crossConnectorsRelative[i].posTanX2
-						local crossConnectorTransf = transfUtils.getTransf_ZShifted(
-							transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
-							_laneZ
-						)
 						result.models[#result.models+1] = {
 							id = _constants.passengerLaneModelId,
-							transf = crossConnectorTransf
+							transf = transfUtils.getTransf_ZShifted(
+								transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
+								_laneZ
+							)
 						}
 						-- if there are flat areas, they will add their own; sloped areas alone won't.
+						-- LOLLO TODO unclear comment, check this
 						if not(result.getOccupiedInfo4SlopedAreas(t, i).id) then
 							if result.terminateConstructionHookInfo.autoStitchablePositions[t] == nil then result.terminateConstructionHookInfo.autoStitchablePositions[t] = {} end
 							local cpl = params.terminals[t].centrePlatformsRelative[i]
@@ -1757,6 +1757,7 @@ function data()
 
 					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, isCheck4Duplicates)
 						-- link platforms across terminals, on the ground, if they are close enough
+						local distanceX, distanceY, distanceZ = 0.0, 0.0, 0.0
 						local maxT = #params.terminals
 						for t = 1, maxT do
 							local positionsInT = positions[t]
@@ -1768,16 +1769,25 @@ function data()
 											for ii = 1, #positionsInTT do
 												if positionsInT[i].pos[1] ~= positionsInTT[ii].pos[1] or positionsInT[i].pos[2] ~= positionsInTT[ii].pos[2] or positionsInT[i].pos[3] ~= positionsInTT[ii].pos[3] then
 													if not(isCheck4Duplicates) or positionsInT[i].isProperLink or positionsInTT[ii].isProperLink then
-														local linkLength = transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos)
-														-- prevent very short links, they come from opposite flush exits or other things that we cannot check efficiently
-														if linkLength > _constants.minLinkLength and (maxLinkLength == nil or linkLength < maxLinkLength) then
-															result.models[#result.models+1] = {
-																id = modelId,
-																transf = transfUtils.get1MLaneTransf(
-																	positionsInT[i].pos,
-																	positionsInTT[ii].pos
-																)
-															}
+														distanceX = math.abs(positionsInT[i].pos[1] - positionsInTT[ii].pos[1])
+														if distanceX <= maxLinkLength then
+															distanceY = math.abs(positionsInT[i].pos[2] - positionsInTT[ii].pos[2])
+															if distanceY <= maxLinkLength then
+																-- for performance, LOLLO TODO see if it really helps
+																distanceZ = math.abs(positionsInT[i].pos[3] - positionsInTT[ii].pos[3])
+																-- local linkLength = transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos)
+																local linkLength = math.sqrt(distanceX*distanceX + distanceY*distanceY + distanceZ*distanceZ)
+																-- prevent very short links, they come from opposite flush exits or other things that we cannot check efficiently
+																if linkLength > _constants.minLinkLength and linkLength < maxLinkLength then
+																	result.models[#result.models+1] = {
+																		id = modelId,
+																		transf = transfUtils.get1MLaneTransf(
+																			positionsInT[i].pos,
+																			positionsInTT[ii].pos
+																		)
+																	}
+																end
+															end
 														end
 													end
 												end

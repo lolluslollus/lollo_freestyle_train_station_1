@@ -53,7 +53,7 @@ function data()
 			-- 	transf = transfUtils.getTransf_ZShifted(zAdjustedTransf, nTerminal),
 			-- 	tag = tag
 			-- }
-
+-- LOLLO TODO why do I need this? Why not the other cargo flat areas but this?
 			table.insert(
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal],
 				{
