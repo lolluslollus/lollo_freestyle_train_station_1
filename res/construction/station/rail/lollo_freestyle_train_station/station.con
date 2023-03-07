@@ -886,8 +886,8 @@ function data()
 					-- if isCargoTerminal then return end
 					-- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 					-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
-					local _iiMax = #params.terminals[t].centrePlatformsFineRelative - 1
-					local _iiMin = 2
+					local _iiMax = #params.terminals[t].centrePlatformsFineRelative - 2 -- do not go past the station ends
+					local _iiMin = 3 -- idem
 					for ii = _iiMin, _iiMax do
 						local cpf = params.terminals[t].centrePlatformsFineRelative[ii]
 						local cpl = params.terminals[t].centrePlatformsRelative[cpf.leadingIndex]
