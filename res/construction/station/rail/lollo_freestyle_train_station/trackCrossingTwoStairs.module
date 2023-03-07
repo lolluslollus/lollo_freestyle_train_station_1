@@ -50,20 +50,39 @@ function data()
 			local _isCargoTerminal = params.terminals[nTerminal].isCargo
 
 			-- add link from platform border into track crossing
-			local trackCrossingPos = transfUtils.getPositionRaisedBy(transfUtils.transf2Position(slotTransf), _constants.trackCrossingZ)
-			if not(trackCrossingPos) then
-				logger.warn('trackCrossingTwoStairs: trackCrossingPos is NIL')
-				return
-			end
 			local platformBorderPos = transfUtils.getPositionRaisedBy(
 				params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
 				_laneZ
+			)
+			-- place this off the track centre so it won't overlap the track node (it happened!)
+			local trackCrossingPos1 = transfUtils.getPositionRaisedBy(
+				transfUtils.getExtrapolatedPosX2Continuation(
+					params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
+					transfUtils.transf2Position(slotTransf),
+					-1
+				),
+				_constants.trackCrossingZ
+			)
+			local trackCrossingPos2 = transfUtils.getPositionRaisedBy(
+				transfUtils.getExtrapolatedPosX2Continuation(
+					params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
+					transfUtils.transf2Position(slotTransf),
+					1
+				),
+				_constants.trackCrossingZ
 			)
 			result.models[#result.models+1] = {
 				id = _constants.passengerLaneModelId,
 				transf = transfUtils.get1MLaneTransf(
 					platformBorderPos,
-					trackCrossingPos
+					trackCrossingPos1
+				)
+			}
+			result.models[#result.models+1] = {
+				id = _constants.passengerLaneModelId,
+				transf = transfUtils.get1MLaneTransf(
+					trackCrossingPos1,
+					trackCrossingPos2
 				)
 			}
 
@@ -71,15 +90,20 @@ function data()
 			-- where its cross connector would be, if they were perfectly regular
 			-- and the opposite platform was facing mine (impossible coz two platforms cannot share the same track)
 			-- And with cargo? LOLLO TODO check
+			local trackCentrePos = transfUtils.getPositionRaisedBy(transfUtils.transf2Position(slotTransf), _constants.trackCrossingZ)
+			if not(trackCentrePos) then
+				logger.warn('trackCrossingTwoStairs: trackCentrePos is NIL')
+				return
+			end
 			local oppositeCrossConnectorPos = {
-				trackCrossingPos[1] - platformBorderPos[1] + trackCrossingPos[1],
-				trackCrossingPos[2] - platformBorderPos[2] + trackCrossingPos[2],
-				trackCrossingPos[3] + _laneZ - _constants.trackCrossingZ,
+				trackCentrePos[1] - platformBorderPos[1] + trackCentrePos[1],
+				trackCentrePos[2] - platformBorderPos[2] + trackCentrePos[2],
+				trackCentrePos[3] + _laneZ - _constants.trackCrossingZ,
 			}
 			result.models[#result.models+1] = {
 				id = _constants.passengerLaneModelId,
 				transf = transfUtils.get1MLaneTransf(
-					trackCrossingPos,
+					trackCrossingPos2,
 					oppositeCrossConnectorPos
 				)
 			}
@@ -145,11 +169,20 @@ function data()
 						1, 0, 0, 0,
 						0, 1, 0, 0,
 						0, 0, nTerminal % 2 + 1, 0,
-						trackCrossingPos[1], trackCrossingPos[2], trackCrossingPos[3], 1
+						trackCrossingPos1[1], trackCrossingPos1[2], trackCrossingPos1[3], 1
 					}
 				}
 				result.models[#result.models+1] = {
 					id = 'lollo_freestyle_train_station/icon/blue.mdl',
+					transf = {
+						1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, nTerminal % 2 + 1, 0,
+						trackCrossingPos2[1], trackCrossingPos2[2], trackCrossingPos2[3], 1
+					}
+				}
+				result.models[#result.models+1] = {
+					id = 'lollo_freestyle_train_station/icon/lilac.mdl',
 					transf = {
 						1, 0, 0, 0,
 						0, 1, 0, 0,
