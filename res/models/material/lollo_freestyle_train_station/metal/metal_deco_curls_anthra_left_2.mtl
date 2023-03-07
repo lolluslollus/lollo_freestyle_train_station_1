@@ -30,7 +30,6 @@ function data()
             },
             map_normal = {
                 fileName = "lollo_freestyle_train_station/metal_deco_curls_2/left-normal.tga",
-                -- fileName = "lollo_freestyle_train_station/metal_deco_curls_2/left-normal-2.tga",
                 redGreen = true,
                 type = "TWOD",
                 wrapS = "REPEAT",
