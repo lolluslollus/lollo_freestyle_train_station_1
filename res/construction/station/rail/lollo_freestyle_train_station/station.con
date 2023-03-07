@@ -985,7 +985,7 @@ function data()
 							or false
 						local openStairsUpRightModule = params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId)]
 						local isOpenStairsUpRight = openStairsUpRightModule ~= nil
-						local isNextOpenStairsUpRight = i > _iMin -- LOLLO TODO check this, it was i > 2
+						local isNextOpenStairsUpRight = i > _iMin
 							and params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
 							or false
 						local underpassModule = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)]

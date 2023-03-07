@@ -1846,15 +1846,11 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         end
     end
 
--- LOLLO TODO you remove nodes that have entities attached
--- the error is 
--- Assertion `!ContainsEntity(m_proposal->removedNodes, entity)' failed
--- it happens when building a bridge between two platforms at LeftRightThin,
--- these platforms being separated by a piece of grass with a bridge above connecting them.
--- There, I proposed removing two nodes and adding two edges, which need them.
--- And why add two edges anyway?
--- The error is fixed, but check it more
 --[[
+    Assertion `!ContainsEntity(m_proposal->removedNodes, entity)' failed
+    used to happen when building a bridge between two platforms at LeftRightThin,
+    these platforms being separated by a piece of grass with a bridge above connecting them.
+    Two different platforms shared a neighbouring edge.
     In this case, we'll have:
     _getStationStreetEndEntities results =
         {

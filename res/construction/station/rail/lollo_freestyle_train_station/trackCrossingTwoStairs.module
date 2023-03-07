@@ -89,7 +89,7 @@ function data()
 			-- add link from track crossing to opposite platform border,
 			-- where its cross connector would be, if they were perfectly regular
 			-- and the opposite platform was facing mine (impossible coz two platforms cannot share the same track)
-			-- And with cargo? LOLLO TODO check
+			-- With cargo, at present, we cannot get a full connection between far away station sides.
 			local trackCentrePos = transfUtils.getPositionRaisedBy(transfUtils.transf2Position(slotTransf), _constants.trackCrossingZ)
 			if not(trackCentrePos) then
 				logger.warn('trackCrossingTwoStairs: trackCentrePos is NIL')
