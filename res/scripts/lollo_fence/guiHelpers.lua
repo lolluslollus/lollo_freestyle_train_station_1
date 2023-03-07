@@ -3,7 +3,7 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
-local _extraHeight4Title = 40
+local _extraHeight4Title = 60
 local _extraHeight4Param = 45 -- half the height of module icons, which we reuse here
 local _conConfigLayoutIdPrefix = 'lollo_fence_con_config_layout_'
 
@@ -81,38 +81,29 @@ local _getConstructionConfigLayout = function(conId, paramsMetadataSorted, param
             )
             layout:addItem(comboBox)
         elseif paramMetadata.uiType == 'SLIDER' then
-            -- logger.print('paramMetadata =') logger.debugPrint(paramMetadata)
-            local slider = api.gui.comp.Slider.new(true)
+            logger.print('paramMetadata =') logger.debugPrint(paramMetadata)
+            local sliderValueView = api.gui.comp.TextView.new(tostring(paramMetadata.values[_valueIndexBase0 + 1]))
+            sliderValueView:setGravity(0.5, 0) -- center horizontally
+            local slider = api.gui.comp.Slider.new(true) -- true means horizontal
             slider:setGravity(0.5, 0) -- center horizontally
-            local max = tonumber(paramMetadata.values[#paramMetadata.values], 10)
-            local min = tonumber(paramMetadata.values[1], 10)
-            local step = #paramMetadata.values > 1 and ((max-min) / (#paramMetadata.values - 1)) or 1
-            -- logger.print('slider.min, max, step =', min, max, step, type(min), type(max), type(step))
-            slider:setMaximum(max)
-            slider:setMinimum(min)
-            slider:setPageStep(step)
-            slider:setStep(step)
-
-            -- logger.print('#values, first value = ', #paramMetadata.values, paramMetadata.values[1])
-            -- logger.print('first slider:getValue() =', slider:getValue(), type(slider:getValue()))
-            if #paramMetadata.values > _valueIndexBase0 -- a simple validation
-            and 0 <= _valueIndexBase0 then
-                slider:setValue(tonumber(paramMetadata.values[_valueIndexBase0 + 1], 10), false)
-                -- logger.print('second slider:getValue() =', slider:getValue(), type(slider:getValue()))
-            end
+            slider:setMaximum(math.max(#paramMetadata.values -1, 1))
+            slider:setMinimum(0)
+            slider:setStep(1)
+            slider:setValue(_valueIndexBase0, false)
             slider:onValueChanged(
-                function(newValue)
-                    local newValueIndexBase0 = math.floor(((newValue or 0) - min) / step)
-                    -- logger.print('slider:onValueChanged firing, newValue =') logger.debugPrint(newValue)
-                    -- logger.print('third slider:getValue() =', slider:getValue(), type(slider:getValue()))
-                    -- logger.print('slider:getStep() =', slider:getStep(), type(slider:getStep()))
-                    -- logger.print('slider:getPageStep() =', slider:getStep(), type(slider:getPageStep()))
-                    -- logger.print('newValueIndexBase0 =', newValueIndexBase0)
+                function(newValueIndexBase0)
+                    logger.print('slider emitted newValue =', newValueIndexBase0)
+                    sliderValueView:setText(tostring(paramMetadata.values[newValueIndexBase0 + 1]))
                     onParamValueChanged(conId, paramsMetadataSorted, paramKey, newValueIndexBase0)
                 end
             )
             slider:setMinimumSize(api.gui.util.Size.new(360, 40))
-            layout:addItem(slider)
+
+            local sliderLayout = api.gui.layout.BoxLayout.new('VERTICAL')
+            sliderLayout:addItem(slider)
+            sliderLayout:addItem(sliderValueView)
+
+            layout:addItem(sliderLayout)
         else -- BUTTON or anything else
             -- logger.print('button clicked')
             local buttonRowLayout = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
