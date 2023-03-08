@@ -1,12 +1,12 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 
-
+-- LOLLO OBSOLETE this is dangerous, leave it out
 function data()
 	return {
 		availability = {
-			yearFrom = 0,
-			yearTo = 0
+			yearFrom = -1,
+			yearTo = -1
 		},
 		category = {
 			categories = { "passenger-road-access", },
