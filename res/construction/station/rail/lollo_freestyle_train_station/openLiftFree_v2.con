@@ -1,15 +1,16 @@
 function data()
-    -- LOLLO OBSOLETE we keep this for compatibility with older games
+    local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
+    local logger = require('lollo_freestyle_train_station.logger')
     local _openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
 
     local function _myErrorHandler(err)
-        print('lollo openLiftFree.con ERROR: ', err)
+        print('lollo openLiftFree_v2.con ERROR: ', err)
     end
 
-    local _paramValues = _openLiftOpenStairsHelpers.paramValues.lift_v1
-    local _paramReaders = _openLiftOpenStairsHelpers.paramReaders.lift_v1
+    local _paramValues = _openLiftOpenStairsHelpers.paramValues.lift_v2
+    local _paramReaders = _openLiftOpenStairsHelpers.paramReaders.lift_v2
 
 	return {
         type = 'ASSET_DEFAULT',
@@ -19,58 +20,28 @@ function data()
             icon = 'ui/construction/station/rail/lollo_freestyle_train_station/openLiftFree.tga'
 		},
 		availability = {
-			yearFrom = -1,
-			yearTo = -1,
+			yearFrom = 0,
+			yearTo = 0,
 		},
         categories = { 'stairs' },
 		order = 999,
 		autoRemovable = false,
         -- buildMode = 'MULTI',
 		skipCollision = false, -- true,
-		params = {
-            {
-                key = 'lift_height',
-                name = _('BridgeHeight'),
-                values = _paramValues.lift_height,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'era_prefix',
-                name = _('Era'),
-                values = _paramValues.era_prefix,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'lift_bridge_mode', -- do not rename this param or chenga its values
-                name = _('BridgeMode'),
-                values = _paramValues.lift_bridge_mode,
-                uiType = 'BUTTON',
-                defaultIndex = 2,
-            },
-            {
-                key = 'bridge_chunk_y_angle',
-                name = _('BridgeYAngle'),
-                values = _paramValues.bridge_chunk_y_angle,
-                uiType = 'SLIDER',
-                defaultIndex = _paramValues.bridge_chunk_y_angle_DefaultIndex,
-            },
-            {
-                key = 'lift_base_mode', -- do not rename this param or chenga its values
-                name = _('BaseMode'),
-                values = _paramValues.lift_base_mode,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-        },
+        params = _openLiftOpenStairsHelpers.getOpenLiftParamsMetadata(),
 		updateFn = function(params)
-            print('openLiftFree.updateFn firing, params = ') debugPrint(params)
-            local _bridgeMode = _paramReaders.getBridgeMode(params)
+            logger.print('openLiftFree_v2.updateFn firing, params = ') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}))
+            local _face = {
+                {-2.2, -3.7, 0, 1}, {-2.2, 3.7, 0, 1}, {2.2, 3.7, 0, 1}, {2.2, -3.7, 0, 1}
+            }
             local _baseMode = _paramReaders.getBaseMode(params)
+            local _bridgeChunkLengthNorth = _paramReaders.getBridgeChunkLengthNorth(params)
+            local _bridgeChunkLengthSouth = _paramReaders.getBridgeChunkLengthSouth(params)
+            -- When you connect two bridges and fiddle around, one will snap and the other not.
+            -- This forces both to snap
+            local _isSnapTop = (_bridgeChunkLengthNorth == 1 or _bridgeChunkLengthNorth == 3 or _bridgeChunkLengthSouth == 1 or _bridgeChunkLengthSouth == 3)
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _height = _paramReaders.getHeight(params)
-            local _sinYAngle = _paramReaders.getSinYAngle(params)
             local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
             local _groundFacesFillKey = _constants[_era_prefix .. 'groundFacesFillKey']
 
@@ -80,9 +51,7 @@ function data()
                 edgeLists = {},
                 groundFaces = {
                     {
-                        face = {
-                            {-2, -3.2, 0, 1}, {-2, 3.2, 0, 1}, {2, 3.2, 0, 1}, {2, -3.2, 0, 1}
-                        },
+                        face = _face,
                         loop = true,
                         modes = {
                             {
@@ -103,18 +72,11 @@ function data()
                     --     }
                     -- }
                 },
-                labelText = {
-                    [0] = { _('OutdatedConstruction'), _('OutdatedConstruction') }
-                },
                 models = {
                     -- {
                     --     id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
                     --     transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
                     -- },
-                    {
-                        id = _constants.yellowMessageModelFileName,
-                        transf = _constants.idTransf
-                    },
                     {
                         id = (_baseMode == -1
                             and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp.mdl'
@@ -122,7 +84,7 @@ function data()
                         transf = _constants.idTransf,
                     },
                     {
-                        id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_to_top_1m.mdl',
+                        id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_to_top_1m_v2.mdl',
                         transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, _height, 0,  0, 0, 0, 1},
                     },
                 },
@@ -130,16 +92,12 @@ function data()
                     {
                         type = 'EQUAL',
                         optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
-                        slopeLow = 9.6,
                         slopeHigh = 9.9,
-                        faces = { {
-                            {-2, -3.2, 0}, {-2, 3.2, 0}, {2, 3.2, 0}, {2, -3.2, 0},
-                            -- {2, -3.2, 0}, {2, 3.2, 0}, {-2, 3.2, 0}, {-2, -3.2, 0},
-                        } },
+                        slopeLow = 9.6,
+                        faces = { _face },
                     },
                 },
             }
-            if true then return result end
 
             local _addBase = function()
                 local _bridgeLen = 0.9
@@ -220,86 +178,6 @@ function data()
                 end
             end
 
-            local _addBridge = function()
-                local _bridgeLen = 0.9
-                local _zShift = _bridgeLen * _sinYAngle
-                local edges1 = {
-                    { { -_bridgeLen, 0, _height + _zShift}, { _bridgeLen, 0, -_zShift } },  -- node 0 pos, tan
-                    { { 0, 0, _height }, { _bridgeLen, 0, -_zShift } },  -- node 1 pos, tan
-                }
-                local edges2 = {
-                    { { 0, 0, _height }, { _bridgeLen, 0, _zShift } },  -- node 0 pos, tan
-                    { { _bridgeLen, 0, _height  + _zShift}, { _bridgeLen, 0, _zShift } },  -- node 1 pos, tan
-                }
-                if _bridgeMode == 0 or _bridgeMode == 1 then -- edge or snappy edge
-                    table.insert(
-                        result.edgeLists,
-                        {
-                            alignTerrain = false,
-                            edges = edges1,
-                            freeNodes = { 0 },
-                            params = {
-                                tramTrackType  = 'NO',
-                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
-                            },
-                            snapNodes = _bridgeMode == 0 and { } or { 0 },
-                            -- tag2nodes = {},
-                            type = 'STREET'
-                        }
-                    )
-                    table.insert(
-                        result.edgeLists,
-                        {
-                            alignTerrain = false,
-                            edges = edges2,
-                            freeNodes = { 1 },
-                            params = {
-                                tramTrackType  = 'NO',
-                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
-                            },
-                            snapNodes = _bridgeMode == 0 and { } or { 1 },
-                            -- tag2nodes = {},
-                            type = 'STREET'
-                        }
-                    )
-                elseif _bridgeMode == 2 or _bridgeMode == 3 then -- bridge or snappy bridge
-                    table.insert(
-                        result.edgeLists,
-                        {
-                            alignTerrain = false,
-                            edges = edges1,
-                            edgeType = 'BRIDGE',
-                            edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
-                            freeNodes = { 0 },
-                            params = {
-                                tramTrackType  = 'NO',
-                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
-                            },
-                            snapNodes = _bridgeMode == 2 and { } or { 0 },
-                            -- tag2nodes = {},
-                            type = 'STREET'
-                        }
-                    )
-                    table.insert(
-                        result.edgeLists,
-                        {
-                            alignTerrain = false,
-                            edges = edges2,
-                            edgeType = 'BRIDGE',
-                            edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
-                            freeNodes = { 1 },
-                            params = {
-                                tramTrackType  = 'NO',
-                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
-                            },
-                            snapNodes = _bridgeMode == 2 and { } or { 1 },
-                            -- tag2nodes = {},
-                            type = 'STREET'
-                        }
-                    )
-                end
-            end
-
             local _addModels = function()
                 local _bodyHeight = 2 -- comes from the meshes
                 local _bottomHeight = 6 -- comes from the meshes
@@ -330,11 +208,64 @@ function data()
                 end
             end
 
+            local _addTop = function(isNorth, bridgeChunkLength)
+                logger.print('isNorth, bridgeChunkLength, _height =', isNorth, bridgeChunkLength, _height)
+                if bridgeChunkLength == -1 then return end
+
+                local _topLanesModelId = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/top_unlinkable_fork.mdl'
+                -- local _topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_'.. _height ..'m.mdl'
+                if isNorth then
+                    result.models[#result.models+1] = {
+                        id = _topLanesModelId,
+                        transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
+                    }
+                else
+                    result.models[#result.models+1] = {
+                        id = _topLanesModelId,
+                        transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
+                    }
+                end
+
+                local edges
+                local _zShift = 0
+                if isNorth then
+                    edges = {
+                        { { 0.3, 0, _height }, { 1, 0, _zShift } },  -- node 0 pos, tan
+                        { { 1.3, 0, _height + _zShift}, { 1, 0, _zShift } },  -- node 1 pos, tan
+                    }
+                else
+                    edges = {
+                        { { -0.3, 0, _height }, { -1, 0, _zShift } },  -- node 0 pos, tan
+                        { { -1.3, 0, _height + _zShift}, { -1, 0, _zShift } },  -- node 1 pos, tan
+                    }
+                end
+
+                table.insert(
+                    result.edgeLists,
+                    {
+                        alignTerrain = false, -- only align on ground and in tunnels
+                        edges = edges,
+                        edgeType = 'BRIDGE',
+                        -- edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
+                        edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
+                        freeNodes = { 1 },
+                        params = {
+                            tramTrackType  = 'NO',
+                            type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                        },
+                        snapNodes = (_isSnapTop or bridgeChunkLength ~= 2) and { 1 } or { },
+                        -- tag2nodes = {},
+                        type = 'STREET'
+                    }
+                )
+            end
+
             xpcall(
                 function()
                     _addBase()
-                    _addBridge()
                     _addModels()
+                    _addTop(true, _bridgeChunkLengthNorth)
+                    _addTop(false, _bridgeChunkLengthSouth)
                 end,
                 _myErrorHandler
             )
