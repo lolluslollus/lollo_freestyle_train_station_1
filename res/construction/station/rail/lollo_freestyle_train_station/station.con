@@ -167,17 +167,6 @@ function data()
 						message = nil,
 						skipCollisionCheck = true,
 					},
-					-- LOLLO NOTE these affect the tabs that appear in the modules menu, so we set them dynamically
-					-- [_constants.axialFlushCargoExitModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil,
-					-- 	skipCollisionCheck = true,
-					-- },
-					-- [_constants.axialFlushPassengerExitModuleType] = {
-					-- 	maxModules = -1,
-					-- 	message = nil,
-					-- 	skipCollisionCheck = true,
-					-- },
 				},
                 slots = {},
 				stations = {},
@@ -601,7 +590,6 @@ function data()
 				_addFlatAreas()
 
 				local function _addAxialExits()
-					local isAddedCargo, isAddedPassengers = false, false
 					local ii_s = {1, #params.terminals[t].centrePlatformsFineRelative}
 					for _, ii in pairs(ii_s) do
 						local cpf = params.terminals[t].centrePlatformsFineRelative[ii]
@@ -634,17 +622,12 @@ function data()
 						table.insert(result.slots, {
 							-- height = 0,
 							id = flushExitId,
-							spacing = {1, 1, 1, 1},
+							spacing = {1, -0.5, 1, 1},
 							transf = myTransf,
 							type = isCargoTerminal and _constants.axialFlushCargoExitModuleType or _constants.axialFlushPassengerExitModuleType,
 						})
 						if params.modules[flushExitId] ~= nil then
 							_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
-							if isCargoTerminal then
-								isAddedCargo = true
-							else
-								isAddedPassengers = true
-							end
 						end
 
 						if not(isCargoTerminal) then -- edges only for passengers
@@ -674,21 +657,6 @@ function data()
 								_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
 							end
 						end
-					end
-					-- LOLLO NOTE we add these here, only if required, because they affect the tabs that appear in the modules menu.
-					if isAddedCargo then
-						result.slotConfig[_constants.axialFlushCargoExitModuleType] = {
-							maxModules = -1,
-							message = nil,
-							skipCollisionCheck = true,
-						}
-					end
-					if isAddedPassengers then
-						result.slotConfig[_constants.axialFlushPassengerExitModuleType] = {
-							maxModules = -1,
-							message = nil,
-							skipCollisionCheck = true,
-						}
 					end
 				end
 				_addAxialExits()
@@ -944,8 +912,8 @@ function data()
 								_laneZ
 							)
 						}
-						-- if there are flat areas, they will add their own; sloped areas alone won't.
-						-- LOLLO TODO unclear comment, check this
+						-- Simple flat areas (like smooth stairs or flush exits) will add their own positions outside, on top of these.
+						-- With sloped areas (aka extensions), if the player wants to stitch platforms together, they must set their own flush exits.
 						if not(result.getOccupiedInfo4SlopedAreas(t, i).id) then
 							if result.terminateConstructionHookInfo.autoStitchablePositions[t] == nil then result.terminateConstructionHookInfo.autoStitchablePositions[t] = {} end
 							local cpl = params.terminals[t].centrePlatformsRelative[i]
@@ -1799,7 +1767,7 @@ function data()
 						end
 					end
 					_linkNearbyPassengerPlatforms(
-						7.1, -- must be between (two half platform widths) * sqrt(2) and (two narrow half platform widths + track width)
+						7.1, -- must be >= (two half platform widths) * sqrt(2) and < (two narrow half platform widths + track width)
 						result.terminateConstructionHookInfo.autoStitchablePositions,
 						_constants.passengerLaneModelId
 					)

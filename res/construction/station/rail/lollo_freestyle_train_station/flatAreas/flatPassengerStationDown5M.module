@@ -67,7 +67,7 @@ return {
 			transf = buildingTransf,
 			tag = tag
 		}
-		moduleHelpers.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+		moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 		-- add some deco
 		if eraPrefix ~= moduleHelpers.eras.era_a.prefix then

@@ -6,12 +6,12 @@ local modulesutil = require 'modulesutil'
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require 'transf'
 
-
+-- LOLLO OBSOLETE we don't need this
 function data()
 	return {
 		availability = {
-			yearFrom = 0,
-			yearTo = 0
+			yearFrom = -1,
+			yearTo = -1
 		},
 		category = {
 			categories = { 'cargo-road-access', },
@@ -40,28 +40,7 @@ function data()
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
 			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addCargoLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
-				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}
-			end
-
-			-- result.models[#result.models + 1] = {
-			-- 	id = 'lollo_freestyle_train_station/icon/blue.mdl',
-			-- 	slotId = slotId,
-			-- 	transf = transfUtils.getTransf_ZShifted(zAdjustedTransf, nTerminal),
-			-- 	tag = tag
-			-- }
--- LOLLO TODO why do I need this? Why not the other cargo flat areas but this?
-			table.insert(
-				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal],
-				{
-					t = nTerminal,
-					-- lanePosTanX2 = cpl.posTanX2,
-					pos = transfUtils.transf2Position(zAdjustedTransf),
-				}
-			)
+			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 		end,
 
 		getModelsFn = function(params)
