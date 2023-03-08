@@ -418,28 +418,8 @@ function data()
                         slopeHigh = 9.9,
                         faces = _bridgeFaces,
                     }}
-                    -- print('terrainFaces before transf =') debugPrint(terrainFaces)
                     _modulesutilUG.TransformAlignmentFaces(transf, terrainFaces)
-                    -- print('terrainFaces after transf =') debugPrint(terrainFaces)
                     table.insert(result.terrainAlignmentLists, terrainFaces[1])
-
-                    -- local bridgeFaces = {
-                    --     {_bridgeChunkLength, -_yHalfSize, _faceDZ, 1},
-                    --     {_bridgeChunkLength, _yHalfSize, _faceDZ, 1},
-                    --     {0, _yHalfSize, _faceDZ, 1},
-                    --     {0, -_yHalfSize, _faceDZ, 1}
-                    -- }
-                    -- _modulesutilUG.TransformFaces(transf, bridgeFaces)
-                    -- table.insert(
-                    --     result.terrainAlignmentLists,
-                    --     {
-                    --         type = 'LESS',
-                    --         optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
-                    --         slopeLow = 9.6,
-                    --         slopeHigh = 9.9,
-                    --         faces = bridgeFaces,
-                    --     }
-                    -- )
                 end
             end
 

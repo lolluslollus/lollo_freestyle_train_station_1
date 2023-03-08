@@ -73,7 +73,6 @@ return {
 			-- sign near the track
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.2 or -platformWidth * 0.5 + 0.2
 			-- sign 4.8 m from the track
-			-- local yShift = isTrackOnPlatformLeft and (platformWidth - 9.6) * 0.5 or (platformWidth - 9.6) * -0.5
 			local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
 			local stationSignModelId = era == moduleHelpers.eras.era_c.prefix
 				and 'lollo_freestyle_train_station/asset/era_c_cargo_station_sign.mdl'

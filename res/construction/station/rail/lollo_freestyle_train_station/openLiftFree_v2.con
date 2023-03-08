@@ -31,7 +31,9 @@ function data()
         params = _openLiftOpenStairsHelpers.getOpenLiftParamsMetadata(),
 		updateFn = function(params)
             logger.print('openLiftFree_v2.updateFn firing, params = ') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}))
-            -- local _bridgeMode = _paramReaders.getBridgeMode(params)
+            local _face = {
+                {-2.2, -3.7, 0, 1}, {-2.2, 3.7, 0, 1}, {2.2, 3.7, 0, 1}, {2.2, -3.7, 0, 1}
+            }
             local _baseMode = _paramReaders.getBaseMode(params)
             local _bridgeChunkLengthNorth = _paramReaders.getBridgeChunkLengthNorth(params)
             local _bridgeChunkLengthSouth = _paramReaders.getBridgeChunkLengthSouth(params)
@@ -40,7 +42,6 @@ function data()
             local _isSnapTop = (_bridgeChunkLengthNorth == 1 or _bridgeChunkLengthNorth == 3 or _bridgeChunkLengthSouth == 1 or _bridgeChunkLengthSouth == 3)
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _height = _paramReaders.getHeight(params)
-            -- local _sinYAngle = _paramReaders.getSinYAngle(params)
             local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
             local _groundFacesFillKey = _constants[_era_prefix .. 'groundFacesFillKey']
 
@@ -50,9 +51,7 @@ function data()
                 edgeLists = {},
                 groundFaces = {
                     {
-                        face = {
-                            {-2, -3.2, 0, 1}, {-2, 3.2, 0, 1}, {2, 3.2, 0, 1}, {2, -3.2, 0, 1}
-                        },
+                        face = _face,
                         loop = true,
                         modes = {
                             {
@@ -93,12 +92,9 @@ function data()
                     {
                         type = 'EQUAL',
                         optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
-                        slopeLow = 9.6,
                         slopeHigh = 9.9,
-                        faces = { {
-                            {-2, -3.2, 0}, {-2, 3.2, 0}, {2, 3.2, 0}, {2, -3.2, 0},
-                            -- {2, -3.2, 0}, {2, 3.2, 0}, {-2, 3.2, 0}, {-2, -3.2, 0},
-                        } },
+                        slopeLow = 9.6,
+                        faces = { _face },
                     },
                 },
             }
@@ -262,26 +258,6 @@ function data()
                         type = 'STREET'
                     }
                 )
---[[
-                -- adjust the terrain so it does not cover the bridge
-                local _zed = _height - 1
-                local _yHalfSize = 1
-                local _faces = {{
-                    { -_yHalfSize, _bridgeStartY, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
-                    { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, _bridgeStartY, _zed},
-                }}
-                logger.print('bridge faces =') logger.debugPrint(_faces)
-                table.insert(
-                    result.terrainAlignmentLists,
-                    {
-                        type = 'LESS',
-                        optional = true,
-                        slopeLow = 9.6,
-                        slopeHigh = 9.9,
-                        faces =  _faces
-                    }
-                )
-]]
             end
 
             xpcall(
