@@ -353,21 +353,21 @@ function data()
                                 return
                             end
 
-                            guiHelpers.addConConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenLiftParamsMetadataSorted, con.params)
+                            guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenLiftParamsMetadataSorted, con.params)
                         elseif con.fileName == _eventProperties.openStairsBuilt.conName then
                             if not(_guiData.conOpenStairsParamsMetadataSorted) then
                                 logger.print('_guiData.conOpenStairsParamsMetadataSorted is not available')
                                 return
                             end
 
-                            guiHelpers.addConConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenStairsParamsMetadataSorted, con.params)
+                            guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenStairsParamsMetadataSorted, con.params)
                         elseif con.fileName == _eventProperties.openTwinStairsBuilt.conName then
                             if not(_guiData.conOpenTwinStairsParamsMetadataSorted) then
                                 logger.print('_guiData.conOpenTwinStairsParamsMetadataSorted is not available')
                                 return
                             end
 
-                            guiHelpers.addConConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenTwinStairsParamsMetadataSorted, con.params)
+                            guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenTwinStairsParamsMetadataSorted, con.params)
                         end
                     end,
                     logger.xpErrorHandler

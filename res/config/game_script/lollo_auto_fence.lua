@@ -757,7 +757,7 @@ function data()
                         if not(con) or con.fileName ~= _constants.autoFenceConFileName then return end
 
                         logger.print('selected one of my fences, it has conId =', conId, 'and con.fileName =', con.fileName)
-                        guiHelpers.addConConfigToWindow(
+                        guiHelpers.addEntityConfigToWindow(
                             conId,
                             _guiActions.handleParamValueChanged,
                             modelHelper.getChangeableParamsMetadata(),
@@ -772,7 +772,7 @@ function data()
                         --         con.params[paramMetadata.key]
                         --     )
                         -- end
-                        -- guiHelpers.addConConfigToWindow(
+                        -- guiHelpers.addEntityConfigToWindow(
                         --     conId,
                         --     _guiActions.handleParamValueChanged,
                         --     paramsMetadata,
