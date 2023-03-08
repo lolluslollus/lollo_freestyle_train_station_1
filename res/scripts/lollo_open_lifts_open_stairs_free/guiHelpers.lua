@@ -11,7 +11,7 @@ local instance = guiConfigWindow.new(
         goThere = _('GoThere'), -- cannot put this directly inside the loop for some reason
         warningWindowTitle = _('WarningWindowTitle'),
     },
-    60,
+    100,
     45, -- half the height of module icons, which we reuse here
     40,
     40

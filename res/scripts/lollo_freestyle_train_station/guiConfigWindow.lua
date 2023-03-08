@@ -220,6 +220,9 @@ local public = {
         local size = api.gui.util.Size.new(math.max(rect.w, minSize.w), math.max(rect.h, minSize.h) + extraHeight)
         window:setSize(size)
         window:setResizable(true)
+
+        -- window:setAttached(false)
+        window:setPinned(false)
     end,
     isShowingWarning = privateData.isShowingWarning,
     ---@param text string

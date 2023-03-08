@@ -1287,7 +1287,7 @@ local _actions = {
         or not(oldCon.params)
         then return false end
 
-        local paramsBak = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
+        local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
         return xpcall(
             function()
                 -- UG TODO there is no such thing in the new api,
@@ -1299,7 +1299,7 @@ local _actions = {
                 local upgradedConId = game.interface.upgradeConstruction(
                     oldConId,
                     oldCon.fileName,
-                    paramsBak
+                    paramsBak_NoSeed
                 )
                 logger.print('tryUpgradeStationOrStairsOrLiftConstruction succeeded, upgradedConId =') logger.debugPrint(upgradedConId)
                 -- return true
@@ -1313,7 +1313,7 @@ local _actions = {
         )
     end,
 
-    upgradeStationConstruction = function(oldConId)
+    upgradeStationConstructionUNUSED = function(oldConId)
         logger.print('upgradeStationConstruction starting, oldConId =', oldConId)
         if not(edgeUtils.isValidAndExistingId(oldConId)) then return end
 
@@ -1324,7 +1324,7 @@ local _actions = {
         or not(oldCon.params)
         then return end
 
-        local paramsBak = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
+        local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
         xpcall(
             function()
                 -- UG TODO there is no such thing in the new api,
@@ -1336,7 +1336,7 @@ local _actions = {
                 local upgradedConId = game.interface.upgradeConstruction(
                     oldConId,
                     oldCon.fileName,
-                    paramsBak
+                    paramsBak_NoSeed
                 )
                 logger.print('upgradeStationConstruction succeeded') logger.debugPrint(upgradedConId)
             end,
@@ -2258,7 +2258,6 @@ function data()
                     elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
                         _actions.bulldozeCon(args.platformMarkerConstructionEntityId)
                     elseif name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
-                        -- game.interface.bulldoze(args.waypointId) -- dumps
                         _actions.replaceEdgeWithSameRemovingObject(args.waypointId)
                     elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.trackWaypoint1Id))
