@@ -693,7 +693,7 @@ privateFuncs.edges = {
     end,
 }
 privateFuncs.flatAreas = {
-    addCargoLaneToStreet = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+    addCargoLaneToSelf = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 
         local position123 = nil
@@ -740,7 +740,7 @@ privateFuncs.flatAreas = {
         -- the model index must be in base 0 !
         result.labelText[#result.models - 1] = { tostring(nTerminal), "↑" }
     end,
-    addPassengerLaneToStreet = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+    addPassengerLaneToSelf = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
         local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
         local lane2AreaTransf = transfUtils.get1MLaneTransf(
             transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
@@ -1860,7 +1860,8 @@ return {
 			if not nTerminal or not baseId then return end
 
 			privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-
+--[[
+            This is dangerous coz it adds nodes outside the station, where we have no control, and this could cause crashes.
             local laneZ = result.laneZs[nTerminal]
             local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[(nTrackEdge == 1 and 1 or #params.terminals[nTerminal].centrePlatformsFineRelative)]
 			local pos1 = (nTrackEdge == 1)
@@ -1901,6 +1902,7 @@ return {
 				transf = adjustedTransf,
 				tag = tag
 			}
+]]
         end,
         getMNAdjustedTransf = function(params, slotId, slotTransf)
             return privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
@@ -1997,11 +1999,11 @@ return {
                 transf = arrowModelTransf,
             }
         end,
-        addCargoLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            return privateFuncs.flatAreas.addCargoLaneToStreet(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        addCargoLaneToSelf = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            return privateFuncs.flatAreas.addCargoLaneToSelf(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
         end,
-        addPassengerLaneToStreet = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            return privateFuncs.flatAreas.addPassengerLaneToStreet(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        addPassengerLaneToSelf = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            return privateFuncs.flatAreas.addPassengerLaneToSelf(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
         end,
 
         exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
@@ -2028,7 +2030,7 @@ return {
 			}
 
 			-- this connects the platform to its outer edge (ie border)
-			privateFuncs.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			privateFuncs.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
 			table.insert(

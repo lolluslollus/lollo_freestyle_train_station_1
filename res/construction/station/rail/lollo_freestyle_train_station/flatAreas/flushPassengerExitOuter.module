@@ -40,9 +40,8 @@ function data()
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
 			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addPassengerLaneToStreet(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}
 			end
@@ -54,6 +53,7 @@ function data()
 			-- 	tag = tag
 			-- }
 
+			-- local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			table.insert(
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal],
 				{

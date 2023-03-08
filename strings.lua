@@ -53,6 +53,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Platforms do not connect automatically to adjacent roads, you must add an exit or a station.
 - Minor version 1.99 (13th February 2023) makes existing walls invisible until you build a new one.
 - Walls around tracks are only available on terminals built with version 1.99 or newer.
+- Minor version 1.115 removed links from flush exits at the end of platforms, to avoid crashes.
 
 [h1]Known issues:[/h1]
 - Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
@@ -85,13 +86,13 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["AxialPassengerStairsDownSteepName"] = "Exit with steep passenger stairs down",
 			["AxialPassengerStairsDownSteepDesc"] = "Steep passenger stairs leading outside and down, 2 m. It connects automatically to nearby platforms or exits. Tilt with <m> and <n>.",
 			["AxialFlushCargoExitName"] = "Flush cargo exit, platform end",
-			["AxialFlushCargoExitDesc"] = "Flush cargo exit at a platform end. It can connect to nearby similar exits, roads, stairs and lift assets. Tilt with <m> and <n>.",
+			["AxialFlushCargoExitDesc"] = "Flush cargo exit at a platform end. Its only job is to cut the wall short, if there is one. Tilt with <m> and <n>.",
 			["AxialPassengerStairsEdgeName"] = "Entrance to platform end with auto bridge",
 			["AxialPassengerStairsEdgeDesc"] = "Connects a platform end to the road network. Link it to \"stairs\" assets, bridges or paths as required. Tilt with <m> and <n>.",
 			["AxialPassengerStairsSnappyEdgeName"] = "Entrance to platform end with snappy auto bridge",
 			["AxialPassengerStairsSnappyEdgeDesc"] = "Connects a platform end to the road network; it looks pretty but it can cause collisions. Link it to \"stairs\" assets, bridges or paths as required. Tilt with <m> and <n>.",
 			["AxialFlushPassengerExitName"] = "Flush passenger exit, platform end",
-			["AxialFlushPassengerExitDesc"] = "Flush passenger exit at the platform end. It can connect to nearby similar exits, roads, stairs and lift assets. Tilt with <m> and <n>.",
+			["AxialFlushPassengerExitDesc"] = "Flush passenger exit at the platform end. Its only job is to cut the wall short, if there is one. Tilt with <m> and <n>.",
 			["CargoStationSquarePlainName"] = "Plain station square",
 			["CargoStationSquarePlainDesc"] = "Plain square between cargo stations and the road. Repaint its ground with <shift> and a paint tool.",
 			["CargoShelfIronName"] = "Cargo shelf",
@@ -121,7 +122,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FlatPassengerStairsUpSteepName"] = "Exit with steep passenger stairs up",
 			["FlatPassengerStairsUpSteepDesc"] = "Steep passenger stairs leading outside and up, 2 m. It connects automatically to nearby platforms or exits. Adjust their height with <m> and <n>.",
 			["FlushCargoExitOuterName"] = "Flush cargo exit along the platform",
-			["FlushCargoExitOuterDesc"] = "Flush cargo exit along the platform or the extension border, whichever is farther. It connects automatically to nearby platforms or exits. Adjust its height with <m> and <n>.",
+			["FlushCargoExitOuterDesc"] = "Flush cargo exit along the platform or the extension border, whichever is farther. Useless. Adjust its height with <m> and <n>.",
 			["FlushPassengerExitAdjustableName"] = "Flush passenger exit with adjustable distance",
 			["FlushPassengerExitAdjustableDesc"] = "Flush passenger exit, to make flexible connections across extensions. Adjust it between platform edge and extension edge with <m> and <n>. It connects automatically to nearby platforms or exits.",
 			["FlushPassengerExitOuterName"] = "Flush passenger exit along the platform",
@@ -521,6 +522,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Bahnsteige verbinden sich nicht mehr automatisch mit angrenzenden Straßen, Sie müssen eine Ausfahrt oder einen Bahnhof hinzufügen.
 - Minor Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis Sie eine neue bauen.
 - Mauern um Gleise sind nur auf Terminals verfügbar, die mit Version 1.99 oder neuer gebaut wurden.
+- Mit der Minor-Version 1.115 werden bündige Ausgänge an den Bahnsteigenden nicht mehr verbunden, um Abstürze zu vermeiden.
 
 [h1]Bekannte Probleme:[/h1]
 - Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
@@ -553,13 +555,13 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["AxialPassengerStairsDownSteepName"] = "Ausgang mit steiler Personentreppe nach unten",
 			["AxialPassengerStairsDownSteepDesc"] = "Steile Passagiertreppe, die nach außen und nach unten führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Kippt mit <m> und <n>.",
 			["AxialFlushCargoExitName"] = "Bündiger Frachtausgang, Bahnsteigende",
-			["AxialFlushCargoExitDesc"] = "Bündiger Frachtausgang an einem Bahnsteigende. Er kann mit ähnlichen Ausgängen, Straßen, Treppen und Aufzügen in der Nähe verbunden werden. Kippt mit <m> und <n>.",
+			["AxialFlushCargoExitDesc"] = "Bündiger Frachtausgang an einem Bahnsteigende. Es unterbricht lediglich Wände oder Zäune, wenn verfügbar. Kippt mit <m> und <n>.",
 			["AxialPassengerStairsEdgeName"] = "Eingang zum Bahnsteigende mit Auto-Brücke",
 			["AxialPassengerStairsEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz. Verbinde es je nach Bedarf mit Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
 			["AxialPassengerStairsSnappyEdgeName"] = "Eingang zum Bahnsteigende mit Snappy-Autobrücke",
 			["AxialPassengerStairsSnappyEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verbinde es je nach Bedarf mit Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
 			["AxialFlushPassengerExitName"] = "Bündiger Passagierausgang, Bahnsteigende",
-			["AxialFlushPassengerExitDesc"] = "Bündiger Passagierausstieg am Bahnsteigende. Er kann mit ähnlichen Ausgängen, Straßen, Treppen und Aufzügen in der Nähe verbunden werden. Kippt mit <m> und <n>.",
+			["AxialFlushPassengerExitDesc"] = "Bündiger Passagierausstieg am Bahnsteigende. Es unterbricht lediglich Wände oder Zäune, wenn verfügbar. Kippt mit <m> und <n>.",
 			["CargoStationSquarePlainName"] = "Einfacher Bahnhofsplatz",
 			["CargoStationSquarePlainDesc"] = "Einfacher Platz zwischen den Frachtstationen und der Straße. Male den Boden mit <shift> und einem Malwerkzeug neu an.",
 			["CargoShelfIronName"] = "Frachtregal",
@@ -589,7 +591,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["FlatPassengerStairsUpSteepName"] = "Ausgang mit steiler Personentreppe nach oben",
 			["FlatPassengerStairsUpSteepDesc"] = "Steile Passagiertreppe, die nach außen und nach oben führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stellen Sie ihre Höhe mit <m> und <n> ein.",
 			["FlushCargoExitOuterName"] = "Bündiger Frachtausgang entlang des Bahnsteigs",
-			["FlushCargoExitOuterDesc"] = "Bündiger Frachtausgang entlang der Bahnsteig oder der Erweiterungsgrenze, je nachdem, was weiter entfernt ist. Er verbindet sich automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stelle seine Höhe mit <m> und <n> ein.",
+			["FlushCargoExitOuterDesc"] = "Bündiger Frachtausgang entlang der Bahnsteig, unnützlich. Stelle seine Höhe mit <m> und <n> ein.",
 			["FlushPassengerExitAdjustableName"] = "Bündiger Passagierausgang mit einstellbarem Abstand",
 			["FlushPassengerExitAdjustableDesc"] = "Bündiger Passagierausstieg, um flexible Verbindungen über Erweiterungen hinweg herzustellen. Mit <m> und <n> kann der Abstand zwischen Bahnsteigkante und Erweiterungskante eingestellt werden. Er verbindet sich automatisch mit benachbarten Bahnsteigen oder Ausgängen.",
 			["FlushPassengerExitOuterName"] = "Bündiger Passagierausstieg entlang des Bahnsteigs",
