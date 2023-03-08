@@ -1741,8 +1741,8 @@ function data()
 														if distanceX <= maxLinkLength then
 															distanceY = math.abs(positionsInT[i].pos[2] - positionsInTT[ii].pos[2])
 															if distanceY <= maxLinkLength then
-																-- for performance, LOLLO TODO see if it really helps
 																distanceZ = math.abs(positionsInT[i].pos[3] - positionsInTT[ii].pos[3])
+																-- this is slower
 																-- local linkLength = transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos)
 																local linkLength = math.sqrt(distanceX*distanceX + distanceY*distanceY + distanceZ*distanceZ)
 																-- prevent very short links, they come from opposite flush exits or other things that we cannot check efficiently
