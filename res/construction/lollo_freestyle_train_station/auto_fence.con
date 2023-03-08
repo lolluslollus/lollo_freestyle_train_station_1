@@ -227,6 +227,17 @@ function data()
                 }}
                 return result
             end
+            -- warn about outdated version
+            if not(params.transfs_ground) or not(params.transfs_wallBehind) or #params.transfs_ground == 0 or  #params.transfs_wallBehind == 0 then
+                result.labelText = {
+                    [0] = { _('OutdatedConstruction'), _('OutdatedConstruction') }
+                }
+                result.models = {{
+                    id = constants.yellowMessageModelFileName,
+                    transf = constants.idTransf
+                }}
+                return result
+            end
 
             local isWallBehindInTunnels = params.lolloFenceAssets_wallBehindInTunnels == 1
             local isWallBehindOnBridges = params.lolloFenceAssets_wallBehindOnBridges == 1
@@ -241,9 +252,9 @@ function data()
             logger.print('_yStart =', _yStart or 'NIL')
             logger.print('_zStart =', _zStart or 'NIL')
             -- the wall is 1.4m tall, constants.platformHeight is 1.2m, so we sink all by 20cm. This is level with freestyle stations and looks good.
-            for _, transf in pairs(params.transfs) do -- compatibility with early releases, newer releases have no transfs
-                _addWall(transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
-            end
+            -- for _, transf in pairs(params.transfs) do -- compatibility with early releases, newer releases have no transfs
+            --     _addWall(transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
+            -- end
             for _, transfData in pairs(params.transfs_ground) do
                 _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
                 if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then

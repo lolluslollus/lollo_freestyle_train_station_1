@@ -14,12 +14,19 @@ local _paramHelpers = {
         end
         return results
     end,
-    lift = {
+    lift_v1 = {
         heights = _liftHeights,
         eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
         bridgeModes = {0, 1, 2, 3},
         maxBridgeChunkYAngleDeg = 15,
         bridgeChunkYAngleStep = 1,
+        baseModes = {-1, 0, 1, 2, 3,},
+    },
+    lift_v2 = {
+        heights = _liftHeights,
+        eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
+        bridgeChunkLengthsNorth = {-1, --[[ 0, 1, ]] 2, 3},
+        bridgeChunkLengthsSouth = {-1, --[[ 0, 1, ]] 2, 3},
         baseModes = {-1, 0, 1, 2, 3,},
     },
     stairs = {
@@ -41,22 +48,39 @@ local _paramHelpers = {
 
 local public = {
     paramReaders = {
-        lift = {
+        lift_v1 = {
             getHeight = function(params)
-                return _paramHelpers.lift.heights[params.lift_height + 1] or 8
+                return _paramHelpers.lift_v1.heights[params.lift_height + 1] or 8
             end,
             getEraPrefix = function(params)
-                return _paramHelpers.lift.eraPrefixes[params.era_prefix + 1] or _paramHelpers.lift.eraPrefixes[1]
+                return _paramHelpers.lift_v1.eraPrefixes[params.era_prefix + 1] or _paramHelpers.lift_v1.eraPrefixes[1]
             end,
             getBridgeMode = function(params)
-                return _paramHelpers.lift.bridgeModes[params.lift_bridge_mode + 1] or 2
+                return _paramHelpers.lift_v1.bridgeModes[params.lift_bridge_mode + 1] or 2
             end,
             getSinYAngle = function(params)
-                local yAngleDeg = (math.floor(params.bridge_chunk_y_angle * _paramHelpers.lift.bridgeChunkYAngleStep) - _paramHelpers.lift.maxBridgeChunkYAngleDeg) or 0
+                local yAngleDeg = (math.floor(params.bridge_chunk_y_angle * _paramHelpers.lift_v1.bridgeChunkYAngleStep) - _paramHelpers.lift_v1.maxBridgeChunkYAngleDeg) or 0
                 return math.sin(yAngleDeg * math.pi / 180)
             end,
             getBaseMode = function(params)
-                return _paramHelpers.lift.baseModes[params.lift_base_mode + 1] or -1
+                return _paramHelpers.lift_v1.baseModes[params.lift_base_mode + 1] or -1
+            end,
+        },
+        lift_v2 = {
+            getHeight = function(params)
+                return _paramHelpers.lift_v2.heights[params.lift_height + 1] or 8
+            end,
+            getEraPrefix = function(params)
+                return _paramHelpers.lift_v2.eraPrefixes[params.era_prefix + 1] or _paramHelpers.lift_v2.eraPrefixes[1]
+            end,
+            getBridgeChunkLengthNorth = function(params)
+                return _paramHelpers.twinStairs.bridgeChunkLengthsNorth[params.bridge_chunk_length_north + 1] or -1
+            end,
+            getBridgeChunkLengthSouth = function(params)
+                return _paramHelpers.twinStairs.bridgeChunkLengthsSouth[params.bridge_chunk_length_south + 1] or -1
+            end,
+            getBaseMode = function(params)
+                return _paramHelpers.lift_v2.baseModes[params.lift_base_mode + 1] or -1
             end,
         },
         stairs = {
@@ -108,13 +132,20 @@ local public = {
         },
     },
     paramValues = {
-        lift = {
-            bridge_chunk_y_angle = _paramHelpers.getSliderValues(_paramHelpers.lift.maxBridgeChunkYAngleDeg, _paramHelpers.lift.bridgeChunkYAngleStep),
-            bridge_chunk_y_angle_DefaultIndex = math.floor(_paramHelpers.lift.maxBridgeChunkYAngleDeg / _paramHelpers.lift.bridgeChunkYAngleStep),
+        lift_v1 = {
+            bridge_chunk_y_angle = _paramHelpers.getSliderValues(_paramHelpers.lift_v1.maxBridgeChunkYAngleDeg, _paramHelpers.lift_v1.bridgeChunkYAngleStep),
+            bridge_chunk_y_angle_DefaultIndex = math.floor(_paramHelpers.lift_v1.maxBridgeChunkYAngleDeg / _paramHelpers.lift_v1.bridgeChunkYAngleStep),
             era_prefix = {'A', 'B', 'C'},
             lift_base_mode = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
             lift_bridge_mode = {_('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
-            lift_height = _arrayUtils.map(_paramHelpers.lift.heights, function(int) return tostring(int) .. 'm' end)
+            lift_height = _arrayUtils.map(_paramHelpers.lift_v1.heights, function(int) return tostring(int) .. 'm' end)
+        },
+        lift_v2 = {
+            bridge_chunk_length_north = {'0', --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_length_south = {'0', --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            era_prefix = {'A', 'B', 'C'},
+            lift_base_mode = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            lift_height = _arrayUtils.map(_paramHelpers.lift_v2.heights, function(int) return tostring(int) .. 'm' end)
         },
         stairs = {
             bridge_chunk_length = {_('NoRailing0'), '0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
@@ -138,50 +169,206 @@ local public = {
             terrain_alignment_type = {'EQUAL', 'LESS', 'GREATER'},
         },
     },
-    autoSnapHelper = {
-        lift = {
-            getBaseNewValue4Snappy = function(params)
-                if not(params) then return false end
-
-                if params.lift_base_mode == 1 then return {name = 'lift_base_mode', value = 2}
-                elseif params.lift_base_mode == 3 then return {name = 'lift_base_mode', value = 4}
-                end
-
-                return false
-            end,
-            getBridgeNewValue4Snappy = function(params)
-                if not(params) then return false end
-
-                if params.lift_bridge_mode == 0 then return {name = 'lift_bridge_mode', value = 1}
-                elseif params.lift_bridge_mode == 2 then return {name = 'lift_bridge_mode', value = 3}
-                end
-
-                return false
-            end,
-        },
-        stairs = {
-            getBaseNewValue4Snappy = function(params)
-                if not(params) then return false end
-
-                if params.stairs_base == 2 then return {name = 'stairs_base', value = 3}
-                elseif params.stairs_base == 4 then return {name = 'stairs_base', value = 5}
-                end
-
-                return false
-            end,
-            getBridgeNewValue4Snappy = function(params)
-                if not(params) then return false end
-
-                if params.bridge_chunk_length == 7 then return {name = 'bridge_chunk_length', value = 8}
-                elseif params.bridge_chunk_length == 9 then return {name = 'bridge_chunk_length', value = 10}
-                end
-
-                return false
-            end,
-        },
-    },
 }
 
-public.autoSnapHelper.twinStairs = public.autoSnapHelper.stairs
+public.getOpenLiftParamsMetadata = function()
+    --[[
+        LOLLO NOTE
+        In postRunFn, api.res.streetTypeRep.getAll() only returns street types,
+        which are available in the present game.
+        In other lua states, eg in game_script, it returns all street types, which have ever been present in the game,
+        including those from inactive mods.
+        This is why we read the data from the table that we set in postRunFn, and not from the api.
+    ]]
+    local _paramValues = public.paramValues.lift_v2
+    local metadata_sorted = {
+        {
+            key = 'lift_height',
+            name = _('BridgeHeight'),
+            values = _paramValues.lift_height,
+        },
+        {
+            key = 'era_prefix',
+            name = _('Era'),
+            values = _paramValues.era_prefix,
+        },
+        {
+            key = 'bridge_chunk_length_north', -- do not rename this param or chenge its values
+            name = _('TopPlatformNorthLength'),
+            tooltip = _('TopPlatformNorthLengthTooltip'),
+            values = _paramValues.bridge_chunk_length_north,
+        },
+        {
+            key = 'bridge_chunk_length_south', -- do not rename this param or chenge its values
+            name = _('TopPlatformSouthLength'),
+            tooltip = _('TopPlatformNorthLengthTooltip'),
+            values = _paramValues.bridge_chunk_length_south,
+        },
+        -- {
+        --     key = 'lift_bridge_mode', -- do not rename this param or change its values
+        --     name = _('BridgeMode'),
+        --     values = _paramValues.lift_bridge_mode,
+        --     defaultIndex = 2,
+        -- },
+        -- {
+        --     key = 'bridge_chunk_y_angle',
+        --     name = _('BridgeYAngle'),
+        --     values = _paramValues.bridge_chunk_y_angle,
+        --     defaultIndex = _paramValues.bridge_chunk_y_angle_DefaultIndex,
+        -- },
+        {
+            key = 'lift_base_mode', -- do not rename this param or chenga its values
+            name = _('BaseMode'),
+            values = _paramValues.lift_base_mode,
+        },
+    }
+    -- add defaultIndex wherever not present
+    for _, record in pairs(metadata_sorted) do
+        record.defaultIndex = record.defaultIndex or 0
+    end
+    local metadata_indexed = {}
+    for _, record in pairs(metadata_sorted) do
+        metadata_indexed[record.key] = record
+    end
+    -- logger.print('metadata_sorted =') logger.debugPrint(metadata_sorted)
+    -- logger.print('metadata_indexed =') logger.debugPrint(metadata_indexed)
+    return metadata_sorted, metadata_indexed
+end
+
+public.getOpenStairsParamsMetadata = function()
+    --[[
+        LOLLO NOTE
+        In postRunFn, api.res.streetTypeRep.getAll() only returns street types,
+        which are available in the present game.
+        In other lua states, eg in game_script, it returns all street types, which have ever been present in the game,
+        including those from inactive mods.
+        This is why we read the data from the table that we set in postRunFn, and not from the api.
+    ]]
+    local _paramValues = public.paramValues.stairs
+    local metadata_sorted = {
+        {
+            key = 'stairs_height',
+            name = _('OpenStairsFreeHeight'),
+            values = _paramValues.stairs_height,
+            defaultIndex = 1,
+        },
+        {
+            key = 'era_prefix',
+            name = _('Era'),
+            values = _paramValues.era_prefix,
+        },
+        {
+            key = 'bridge_chunk_length', -- do not rename this param or chenga its values
+            name = _('TopPlatformLength'),
+            tooltip = _('TopPlatformLengthTooltip'),
+            values = _paramValues.bridge_chunk_length,
+        },
+        {
+            key = 'bridge_chunk_z_angle',
+            name = _('BridgeZAngle'),
+            values = _paramValues.bridge_chunk_z_angle,
+            uiType = 'SLIDER',
+            defaultIndex = _paramValues.bridge_chunk_z_angle_DefaultIndex,
+        },
+        {
+            key = 'bridge_chunk_y_angle',
+            name = _('BridgeYAngle'),
+            values = _paramValues.bridge_chunk_y_angle,
+            uiType = 'SLIDER',
+            defaultIndex = _paramValues.bridge_chunk_y_angle_DefaultIndex,
+        },
+        {
+            key = 'stairs_base', -- do not rename this param or chenga its values
+            name = _('StairsBase'),
+            tooltip = _('StairsBaseTooltip'),
+            values = _paramValues.stairs_base,
+        },
+        {
+            key = 'terrain_alignment_type',
+            name = _('TerrainAlignmentType'),
+            values = _paramValues.terrain_alignment_type,
+        },
+        {
+            key = 'flat_sloped_terrain',
+            name = _('FlatSlopedTerrain'),
+            values = _paramValues.flat_sloped_terrain,
+        },
+    }
+    -- add defaultIndex wherever not present
+    for _, record in pairs(metadata_sorted) do
+        record.defaultIndex = record.defaultIndex or 0
+    end
+    local metadata_indexed = {}
+    for _, record in pairs(metadata_sorted) do
+        metadata_indexed[record.key] = record
+    end
+    -- logger.print('metadata_sorted =') logger.debugPrint(metadata_sorted)
+    -- logger.print('metadata_indexed =') logger.debugPrint(metadata_indexed)
+    return metadata_sorted, metadata_indexed
+end
+
+public.getOpenTwinStairsParamsMetadata = function()
+    --[[
+        LOLLO NOTE
+        In postRunFn, api.res.streetTypeRep.getAll() only returns street types,
+        which are available in the present game.
+        In other lua states, eg in game_script, it returns all street types, which have ever been present in the game,
+        including those from inactive mods.
+        This is why we read the data from the table that we set in postRunFn, and not from the api.
+    ]]
+    local _paramValues = public.paramValues.twinStairs
+    local metadata_sorted = {
+        {
+            key = 'stairs_height',
+            name = _('OpenStairsFreeHeight'),
+            values = _paramValues.stairs_height,
+            defaultIndex = 1,
+        },
+        {
+            key = 'era_prefix',
+            name = _('Era'),
+            values = _paramValues.era_prefix,
+        },
+        {
+            key = 'bridge_chunk_length_north', -- do not rename this param or chenga its values
+            name = _('TopPlatformNorthLength'),
+            tooltip = _('TopPlatformNorthLengthTooltip'),
+            values = _paramValues.bridge_chunk_length_north,
+        },
+        {
+            key = 'bridge_chunk_length_south', -- do not rename this param or chenga its values
+            name = _('TopPlatformSouthLength'),
+            tooltip = _('TopPlatformNorthLengthTooltip'),
+            values = _paramValues.bridge_chunk_length_south,
+        },
+        {
+            key = 'stairs_base', -- do not rename this param or chenga its values
+            name = _('StairsBase'),
+            tooltip = _('StairsBaseTooltip'),
+            values = _paramValues.stairs_base,
+        },
+        {
+            key = 'terrain_alignment_type',
+            name = _('TerrainAlignmentType'),
+            values = _paramValues.terrain_alignment_type,
+        },
+        {
+            key = 'flat_sloped_terrain',
+            name = _('FlatSlopedTerrain'),
+            values = _paramValues.flat_sloped_terrain,
+        },
+    }
+    -- add defaultIndex wherever not present
+    for _, record in pairs(metadata_sorted) do
+        record.defaultIndex = record.defaultIndex or 0
+    end
+    local metadata_indexed = {}
+    for _, record in pairs(metadata_sorted) do
+        metadata_indexed[record.key] = record
+    end
+    -- logger.print('metadata_sorted =') logger.debugPrint(metadata_sorted)
+    -- logger.print('metadata_indexed =') logger.debugPrint(metadata_indexed)
+    return metadata_sorted, metadata_indexed
+end
 
 return public

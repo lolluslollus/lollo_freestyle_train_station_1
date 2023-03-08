@@ -2,7 +2,6 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local guiHelpers = require('lollo_open_lifts_open_stairs_free.guiHelpers')
 local logger = require('lollo_freestyle_train_station.logger')
-local moduleHelpers = require('lollo_open_lifts_open_stairs_free.moduleHelpers')
 local openStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local transfUtilsUG = require('transf')
@@ -12,7 +11,8 @@ local _eventId = '__lolloOpenLiftOpenStairsFree__'
 local _eventProperties = {
     conBuilt = {eventName = 'conBuilt'},
     conParamsUpdated = {eventName = 'conParamsUpdated'},
-    openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree.con', eventName = 'openLiftBuilt' },
+    -- openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree.con', eventName = 'openLiftBuilt' },
+    openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con', eventName = 'openLiftBuilt' },
     openStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openStairsFree.con', eventName = 'openStairsBuilt' },
     openTwinStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con', eventName = 'openTwinStairsBuilt' },
 }
@@ -246,9 +246,9 @@ function data()
         end,
         guiInit = function()
             -- logger.print('guiInit starting')
-            _guiData.conOpenLiftParamsMetadataSorted = moduleHelpers.getOpenLiftParamsMetadata()
-            _guiData.conOpenStairsParamsMetadataSorted = moduleHelpers.getOpenStairsParamsMetadata()
-            _guiData.conOpenTwinStairsParamsMetadataSorted = moduleHelpers.getOpenTwinStairsParamsMetadata()
+            _guiData.conOpenLiftParamsMetadataSorted = openStairsHelpers.getOpenLiftParamsMetadata()
+            _guiData.conOpenStairsParamsMetadataSorted = openStairsHelpers.getOpenStairsParamsMetadata()
+            _guiData.conOpenTwinStairsParamsMetadataSorted = openStairsHelpers.getOpenTwinStairsParamsMetadata()
             -- logger.print('guiInit ending')
         end,
         handleEvent = function(src, id, name, args)

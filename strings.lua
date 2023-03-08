@@ -53,7 +53,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Platforms do not connect automatically to adjacent roads, you must add an exit or a station.
 - Minor version 1.99 (13th February 2023) makes existing walls invisible until you build a new one.
 - Walls around tracks are only available on terminals built with version 1.99 or newer.
-- Minor version 1.115 removed links from flush exits at the end of platforms, to avoid crashes.
+- Minor version 1.115 removed links from flush exits at the end of platforms, to avoid crashes. It also replaced older lift assets with new ones.
 
 [h1]Known issues:[/h1]
 - Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
@@ -459,6 +459,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FenceAssetsName"] = "Walls and fences",
 			["FenceAssetsDesc"] = "Walls and fences to match freestyle stations. Adjust them with the Construction Mover.",
 			["fenceModelName"] = "Wall top",
+			["OutdatedConstruction"] = "This construction is outdated, destroy it and rebuild it",
 			["wallEraPrefix_0IsNoWall"] = "Wall bottom era",
 			["NoWall"] = "No wall bottom",
 			["Length"] = "Length m",
@@ -522,7 +523,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Bahnsteige verbinden sich nicht mehr automatisch mit angrenzenden Straßen, Sie müssen eine Ausfahrt oder einen Bahnhof hinzufügen.
 - Minor Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis Sie eine neue bauen.
 - Mauern um Gleise sind nur auf Terminals verfügbar, die mit Version 1.99 oder neuer gebaut wurden.
-- Mit der Minor-Version 1.115 werden bündige Ausgänge an den Bahnsteigenden nicht mehr verbunden, um Abstürze zu vermeiden.
+- Mit der Minor-Version 1.115 werden bündige Ausgänge an den Bahnsteigenden nicht mehr verbunden, um Abstürze zu vermeiden. Ältere Aufzug-Assets wurden auch ersetzt.
 
 [h1]Bekannte Probleme:[/h1]
 - Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
@@ -929,6 +930,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["FenceAssetsName"] = "Mauern und Zäune",
 			["FenceAssetsDesc"] = "Mauern und Zäune, die zu den Freestyle-Bahnhöfen passen. Passen Sie sie mit dem \"Construction Mover\" an.",
 			["fenceModelName"] = "Mauer oben",
+			["OutdatedConstruction"] = "Diese Konstruktion is obsolet, zerstöre sie und baue sie erneut",
 			["wallEraPrefix_0IsNoWall"] = "Wand unten Epoche",
 			["NoWall"] = "Keine Wand unten",
 			["Length"] = "Länge m",
