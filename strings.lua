@@ -867,7 +867,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["WaypointsTooCloseToStation"] = "Zu nahe an einem bestehenden Bahnhof oder Depot. Schneiden Sie das Gleis mit dem Gleisteiler, wenn Sie näher herankommen müssen. Die Bahnsteigköpfe verbinden sich automatisch, wenn sie näher als 7 Meter sind",
 			["WaypointsTooFar"] = "Zu weit von seinem Zwilling entfernt",
 			["WaypointsWrong"] = "Platziere zwei Marker auf demselben Bahnsteig und zwei auf demselben Gleis",
-			["WrongTrack"] = "Bahnsteig und / oder Gleis sind unsauber, verlegen Sie sie neu.",
+			["WrongTrack"] = "Bahnsteig und / oder Gleis sind nicht sauber, verlegen Sie sie neu.",
 
 			-- lose offene Treppen und lose Aufzüge
 			["BaseMode"] = "Basismodus",
