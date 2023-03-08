@@ -187,10 +187,6 @@ local public = {
         local newLayout = privateFuncs.getConstructionConfigLayout(entityId, conParamsMetadata, conParams, handleParamValueChanged, true, onBulldozeClicked)
         local parentLayout = windowContent:getName() == 'ConstructionContent' and windowContent:getLayout() or windowContent
         local configureButtonIndex = windowContent:getName() == 'ConstructionContent' and 0 or 1
-        -- if windowContent:getName() == 'ConstructionContent' then
-        --     windowLayout:getLayout():getItem(0):setVisible(false, false) -- hide the "configure' button" without emitting a signal
-        --     windowLayout:getLayout():addItem(newLayout)
-        -- end
         parentLayout:getItem(configureButtonIndex):setVisible(false, false) -- hide the "configure' button" without emitting a signal
 
         for i = 0, parentLayout:getNumItems() - 1, 1 do
