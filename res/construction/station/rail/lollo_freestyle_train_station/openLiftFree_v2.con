@@ -3,7 +3,7 @@ function data()
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
     local logger = require('lollo_freestyle_train_station.logger')
-    local _openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
+    local _openLiftOpenStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
 
     local function _myErrorHandler(err)
         print('lollo openLiftFree_v2.con ERROR: ', err)
@@ -34,12 +34,18 @@ function data()
             local _face = {
                 {-2.2, -3.7, 0, 1}, {-2.2, 3.7, 0, 1}, {2.2, 3.7, 0, 1}, {2.2, -3.7, 0, 1}
             }
-            local _baseMode = _paramReaders.getBaseMode(params)
-            local _bridgeChunkLengthNorth = _paramReaders.getBridgeChunkLengthNorth(params)
-            local _bridgeChunkLengthSouth = _paramReaders.getBridgeChunkLengthSouth(params)
+            local _baseModeEast = _paramReaders.getBaseTowardEast(params)
+            local _baseModeWest = _paramReaders.getBaseTowardWest(params)
+            local _bridgeChunkNorth = _paramReaders.getBridgeChunkLengthNorth(params)
+            local _bridgeChunkEast = _paramReaders.getBridgeChunkLengthEast(params)
+            local _bridgeChunkSouth = _paramReaders.getBridgeChunkLengthSouth(params)
+            local _bridgeChunkWest = _paramReaders.getBridgeChunkLengthWest(params)
             -- When you connect two bridges and fiddle around, one will snap and the other not.
             -- This forces both to snap
-            local _isSnapTop = (_bridgeChunkLengthNorth == 1 or _bridgeChunkLengthNorth == 3 or _bridgeChunkLengthSouth == 1 or _bridgeChunkLengthSouth == 3)
+            local _isSnapTop = (
+                _bridgeChunkNorth == 1 or _bridgeChunkNorth == 3 or _bridgeChunkEast == 1 or _bridgeChunkEast == 3
+                or _bridgeChunkSouth == 1 or _bridgeChunkSouth == 3 or _bridgeChunkWest == 1 or _bridgeChunkWest == 3
+            )
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _height = _paramReaders.getHeight(params)
             local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
@@ -78,12 +84,6 @@ function data()
                     --     transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
                     -- },
                     {
-                        id = (_baseMode == -1
-                            and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp.mdl'
-                            or 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_edges.mdl'),
-                        transf = _constants.idTransf,
-                    },
-                    {
                         id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_to_top_1m_v2.mdl',
                         transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, _height, 0,  0, 0, 0, 1},
                     },
@@ -99,78 +99,85 @@ function data()
                 },
             }
 
-            local _addBase = function()
-                local _bridgeLen = 0.9
-                local edges1 = {
-                    { { 0, -_bridgeLen -1.5, 0 }, { 0, _bridgeLen, 0 } },  -- node 0 pos, tan
-                    { { 0, -1.5, 0 }, { 0, _bridgeLen, 0 } },  -- node 1 pos, tan
-                }
-                local edges2 = {
-                    { { 0, 1.5, 0 }, { 0, _bridgeLen, 0 } },  -- node 0 pos, tan
-                    { { 0, 1.5 + _bridgeLen, 0 }, { 0, _bridgeLen, 0 } },  -- node 1 pos, tan
-                }
-                if _baseMode == 0 or _baseMode == 1 then -- edge or snappy edge
+            local _addBase = function(isEast)
+                logger.print('### isEast =', isEast)
+                logger.print('_baseModeEast =', _baseModeEast)
+                logger.print('_baseModeWest =', _baseModeWest)
+                if isEast then
+                    result.models[#result.models+1] = {
+                        id = (_baseModeEast == -1
+                            and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp_v2.mdl'
+                            or 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_edges_v2.mdl'),
+                        transf = _constants.idTransf,
+                    }
+                else
+                    result.models[#result.models+1] = {
+                        id = (_baseModeWest == -1
+                            and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp_v2.mdl'
+                            or 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_edges_v2.mdl'),
+                        transf = {
+                            -1, 0, 0, 0,
+                            0, -1, 0, 0,
+                            0, 0, 1, 0,
+                            0, 0, 0, 1
+                        },
+                    }
+                end
+
+                local baseMode = isEast and _baseModeEast or _baseModeWest
+                if baseMode < 0 then return end
+
+                local isBridge = baseMode >= 2
+                local isSnap = baseMode % 2 ~= 0
+                logger.print('baseMode =', baseMode)
+                logger.print('isBridge =', isBridge)
+                logger.print('isSnap =', isSnap)
+                local edges
+                if isEast then
+                    edges = {
+                        { { 0, -1.6, 0 }, { 0, -1, 0 } },  -- node 0 pos, tan
+                        { { 0, -2.6, 0 }, { 0, -1, 0 } },  -- node 1 pos, tan
+                    }
+                else
+                    edges = {
+                        { { 0, 1.6, 0 }, { 0, 1, 0 } },  -- node 0 pos, tan
+                        { { 0, 2.6, 0 }, { 0, 1, 0 } },  -- node 1 pos, tan
+                    }
+                end
+
+                if isBridge then
                     table.insert(
                         result.edgeLists,
                         {
-                            alignTerrain = true,
-                            edges = edges1,
-                            freeNodes = { 0 },
+                            alignTerrain = false,
+                            edges = edges,
+                            edgeType = 'BRIDGE',
+                            edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
+                            -- edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
+                            freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                                -- type = _autoBridgePathsRefData.streetTypeName_withBridge,
                             },
-                            snapNodes = _baseMode == 0 and { } or { 0 },
+                            snapNodes = isSnap and { 1 } or { },
                             -- tag2nodes = {},
                             type = 'STREET'
                         }
                     )
+                else
                     table.insert(
                         result.edgeLists,
                         {
                             alignTerrain = true,
-                            edges = edges2,
+                            -- alignTerrain = false,
+                            edges = edges,
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
-                            snapNodes = _baseMode == 0 and { } or { 1 },
-                            -- tag2nodes = {},
-                            type = 'STREET'
-                        }
-                    )
-                elseif _baseMode == 2 or _baseMode == 3 then -- bridge or snappy bridge
-                    table.insert(
-                        result.edgeLists,
-                        {
-                            alignTerrain = false,
-                            edges = edges1,
-                            edgeType = 'BRIDGE',
-                            edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
-                            freeNodes = { 0 },
-                            params = {
-                                tramTrackType  = 'NO',
-                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
-                            },
-                            snapNodes = _baseMode == 2 and { } or { 0 },
-                            -- tag2nodes = {},
-                            type = 'STREET'
-                        }
-                    )
-                    table.insert(
-                        result.edgeLists,
-                        {
-                            alignTerrain = false,
-                            edges = edges2,
-                            edgeType = 'BRIDGE',
-                            edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
-                            freeNodes = { 1 },
-                            params = {
-                                tramTrackType  = 'NO',
-                                type = _autoBridgePathsRefData.streetTypeName_noBridge,
-                            },
-                            snapNodes = _baseMode == 2 and { } or { 1 },
+                            snapNodes = isSnap and { 1 } or { },
                             -- tag2nodes = {},
                             type = 'STREET'
                         }
@@ -208,35 +215,53 @@ function data()
                 end
             end
 
-            local _addTop = function(isNorth, bridgeChunkLength)
-                logger.print('isNorth, bridgeChunkLength, _height =', isNorth, bridgeChunkLength, _height)
-                if bridgeChunkLength == -1 then return end
+            local _addTop = function(direction, bridgeChunk)
+                logger.print('direction, bridgeChunk, _height =', direction, bridgeChunk, _height)
+                if bridgeChunk == -1 then return end
 
-                local _topLanesModelId = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/top_unlinkable_fork.mdl'
-                -- local _topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_'.. _height ..'m.mdl'
-                if isNorth then
+                if direction == 'N' then
                     result.models[#result.models+1] = {
-                        id = _topLanesModelId,
+                        id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/top_unlinkable_fork.mdl',
                         transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
                     }
-                else
+                elseif direction == 'E' then
                     result.models[#result.models+1] = {
-                        id = _topLanesModelId,
+                        id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/top_unlinkable_fork_with_handle.mdl',
+                        transf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
+                    }
+                elseif direction == 'S' then
+                    result.models[#result.models+1] = {
+                        id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/top_unlinkable_fork.mdl',
                         transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
+                    }
+                elseif direction == 'W' then
+                    result.models[#result.models+1] = {
+                        id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/top_unlinkable_fork_with_handle.mdl',
+                        transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
                     }
                 end
 
                 local edges
                 local _zShift = 0
-                if isNorth then
+                if direction == 'N' then
                     edges = {
                         { { 0.3, 0, _height }, { 1, 0, _zShift } },  -- node 0 pos, tan
                         { { 1.3, 0, _height + _zShift}, { 1, 0, _zShift } },  -- node 1 pos, tan
                     }
-                else
+                elseif direction == 'E' then
+                    edges = {
+                        { { 0, -1.3, _height }, { 0, -1.4, _zShift } },  -- node 0 pos, tan
+                        { { 0, -2.7, _height + _zShift}, { 0, -1.4, _zShift } },  -- node 1 pos, tan
+                    }
+                elseif direction == 'S' then
                     edges = {
                         { { -0.3, 0, _height }, { -1, 0, _zShift } },  -- node 0 pos, tan
                         { { -1.3, 0, _height + _zShift}, { -1, 0, _zShift } },  -- node 1 pos, tan
+                    }
+                elseif direction == 'W' then
+                    edges = {
+                        { { 0, 1.3, _height }, { 0, 1.4, _zShift } },  -- node 0 pos, tan
+                        { { 0, 2.7, _height + _zShift}, { 0, 1.4, _zShift } },  -- node 1 pos, tan
                     }
                 end
 
@@ -253,7 +278,7 @@ function data()
                             tramTrackType  = 'NO',
                             type = _autoBridgePathsRefData.streetTypeName_noBridge,
                         },
-                        snapNodes = (_isSnapTop or bridgeChunkLength ~= 2) and { 1 } or { },
+                        snapNodes = (_isSnapTop or bridgeChunk ~= 2) and { 1 } or { },
                         -- tag2nodes = {},
                         type = 'STREET'
                     }
@@ -262,10 +287,13 @@ function data()
 
             xpcall(
                 function()
-                    _addBase()
+                    _addBase(true)
+                    _addBase(false)
                     _addModels()
-                    _addTop(true, _bridgeChunkLengthNorth)
-                    _addTop(false, _bridgeChunkLengthSouth)
+                    _addTop('N', _bridgeChunkNorth)
+                    _addTop('E', _bridgeChunkEast)
+                    _addTop('S', _bridgeChunkSouth)
+                    _addTop('W', _bridgeChunkWest)
                 end,
                 _myErrorHandler
             )

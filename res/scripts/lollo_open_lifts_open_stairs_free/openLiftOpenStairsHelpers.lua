@@ -23,11 +23,10 @@ local _paramHelpers = {
         baseModes = {-1, 0, 1, 2, 3,},
     },
     lift_v2 = {
+        bridgeChunkLengths = {-1, --[[ 0, 1, ]] 2, 3},
         heights = _liftHeights,
         eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
-        bridgeChunkLengthsNorth = {-1, --[[ 0, 1, ]] 2, 3},
-        bridgeChunkLengthsSouth = {-1, --[[ 0, 1, ]] 2, 3},
-        baseModes = {-1, 0, 1, 2, 3,},
+        baseModes = {-1, 0, 1, --[[2, 3,]]},
     },
     stairs = {
         heights = {2, 4, 6, 8, 10},
@@ -41,8 +40,7 @@ local _paramHelpers = {
         terrainAlignmentTypes = {'EQUAL', 'LESS', 'GREATER'},
     },
     twinStairs = {
-        bridgeChunkLengthsNorth = {-1, --[[ 0, 1, ]] 2, 3},
-        bridgeChunkLengthsSouth = {-1, --[[ 0, 1, ]] 2, 3},
+        bridgeChunkLengths = {-1, --[[ 0, 1, ]] 2, 3},
     },
 }
 
@@ -74,13 +72,22 @@ local public = {
                 return _paramHelpers.lift_v2.eraPrefixes[params.era_prefix + 1] or _paramHelpers.lift_v2.eraPrefixes[1]
             end,
             getBridgeChunkLengthNorth = function(params)
-                return _paramHelpers.twinStairs.bridgeChunkLengthsNorth[params.bridge_chunk_length_north + 1] or -1
+                return _paramHelpers.lift_v2.bridgeChunkLengths[params.bridge_chunk_north + 1] or -1
+            end,
+            getBridgeChunkLengthEast = function(params)
+                return _paramHelpers.lift_v2.bridgeChunkLengths[params.bridge_chunk_east + 1] or -1
             end,
             getBridgeChunkLengthSouth = function(params)
-                return _paramHelpers.twinStairs.bridgeChunkLengthsSouth[params.bridge_chunk_length_south + 1] or -1
+                return _paramHelpers.lift_v2.bridgeChunkLengths[params.bridge_chunk_south + 1] or -1
             end,
-            getBaseMode = function(params)
-                return _paramHelpers.lift_v2.baseModes[params.lift_base_mode + 1] or -1
+            getBridgeChunkLengthWest = function(params)
+                return _paramHelpers.lift_v2.bridgeChunkLengths[params.bridge_chunk_west + 1] or -1
+            end,
+            getBaseTowardEast = function(params)
+                return _paramHelpers.lift_v2.baseModes[params.lift_base_mode_east + 1] or -1
+            end,
+            getBaseTowardWest = function(params)
+                return _paramHelpers.lift_v2.baseModes[params.lift_base_mode_west + 1] or -1
             end,
         },
         stairs = {
@@ -110,7 +117,7 @@ local public = {
                 return _paramHelpers.stairs.stairsBases[params.stairs_base + 1] or -1
             end,
         },
-        twinStairs = {
+        twinStairs_v1 = {
             getHeight = function(params)
                 return _paramHelpers.stairs.heights[params.stairs_height + 1] or 8
             end,
@@ -118,16 +125,39 @@ local public = {
                 return _paramHelpers.stairs.eraPrefixes[params.era_prefix + 1] or _paramHelpers.stairs.eraPrefixes[1]
             end,
             getBridgeChunkLengthNorth = function(params)
-                return _paramHelpers.twinStairs.bridgeChunkLengthsNorth[params.bridge_chunk_length_north + 1] or -1
+                return _paramHelpers.twinStairs.bridgeChunkLengths[params.bridge_chunk_length_north + 1] or -1
             end,
             getBridgeChunkLengthSouth = function(params)
-                return _paramHelpers.twinStairs.bridgeChunkLengthsSouth[params.bridge_chunk_length_south + 1] or -1
+                return _paramHelpers.twinStairs.bridgeChunkLengths[params.bridge_chunk_length_south + 1] or -1
             end,
             getTerrainAlignmentType = function(params)
                 return _paramHelpers.stairs.terrainAlignmentTypes[params.terrain_alignment_type + 1] or _paramHelpers.stairs.terrainAlignmentTypes[1]
             end,
             getStairsBase = function(params)
                 return _paramHelpers.stairs.stairsBases[params.stairs_base + 1] or -1
+            end,
+        },
+        twinStairs_v2 = {
+            getHeight = function(params)
+                return _paramHelpers.stairs.heights[params.stairs_height + 1] or 8
+            end,
+            getEraPrefix = function(params)
+                return _paramHelpers.stairs.eraPrefixes[params.era_prefix + 1] or _paramHelpers.stairs.eraPrefixes[1]
+            end,
+            getBridgeChunkLengthNorth = function(params)
+                return _paramHelpers.twinStairs.bridgeChunkLengths[params.bridge_chunk_length_north + 1] or -1
+            end,
+            getBridgeChunkLengthSouth = function(params)
+                return _paramHelpers.twinStairs.bridgeChunkLengths[params.bridge_chunk_length_south + 1] or -1
+            end,
+            getTerrainAlignmentType = function(params)
+                return _paramHelpers.stairs.terrainAlignmentTypes[params.terrain_alignment_type + 1] or _paramHelpers.stairs.terrainAlignmentTypes[1]
+            end,
+            getStairsBaseEast = function(params)
+                return _paramHelpers.stairs.stairsBases[params.stairs_base_east + 1] or -1
+            end,
+            getStairsBaseWest = function(params)
+                return _paramHelpers.stairs.stairsBases[params.stairs_base_west + 1] or -1
             end,
         },
     },
@@ -141,10 +171,13 @@ local public = {
             lift_height = _arrayUtils.map(_paramHelpers.lift_v1.heights, function(int) return tostring(int) .. 'm' end)
         },
         lift_v2 = {
-            bridge_chunk_length_north = {'0', --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
-            bridge_chunk_length_south = {'0', --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_north = {_('None'), --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_east = {_('None'), --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_south = {_('None'), --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_west = {_('None'), --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
             era_prefix = {'A', 'B', 'C'},
-            lift_base_mode = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            lift_base_mode_east = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), --[[_('EdgeWithBridge'), _('SnappyEdgeWithBridge')]]},
+            lift_base_mode_west = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), --[[_('EdgeWithBridge'), _('SnappyEdgeWithBridge')]]},
             lift_height = _arrayUtils.map(_paramHelpers.lift_v2.heights, function(int) return tostring(int) .. 'm' end)
         },
         stairs = {
@@ -159,12 +192,22 @@ local public = {
             stairs_height = _arrayUtils.map(_paramHelpers.stairs.heights, function(int) return tostring(int) .. 'm' end),
             terrain_alignment_type = {'EQUAL', 'LESS', 'GREATER'},
         },
-        twinStairs = {
+        twinStairs_v1 = {
             bridge_chunk_length_north = {'0', --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
             bridge_chunk_length_south = {'0', --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
             era_prefix = {'A', 'B', 'C'},
             flat_sloped_terrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
             stairs_base = {_('NO'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'), _('ModelRaised'),},
+            stairs_height = _arrayUtils.map(_paramHelpers.stairs.heights, function(int) return tostring(int) .. 'm' end),
+            terrain_alignment_type = {'EQUAL', 'LESS', 'GREATER'},
+        },
+        twinStairs_v2 = {
+            bridge_chunk_length_north = {_('None'), --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            bridge_chunk_length_south = {_('None'), --[[ _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), ]] _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
+            era_prefix = {'A', 'B', 'C'},
+            flat_sloped_terrain = {_('TerrainAlignmentTypeFlat'), _('TerrainAlignmentTypeSloped')},
+            stairs_base_east = {_('None'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'), _('ModelRaised'),},
+            stairs_base_west = {_('None'), _('Model'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge'), _('ModelRaised'),},
             stairs_height = _arrayUtils.map(_paramHelpers.stairs.heights, function(int) return tostring(int) .. 'm' end),
             terrain_alignment_type = {'EQUAL', 'LESS', 'GREATER'},
         },
@@ -193,33 +236,39 @@ public.getOpenLiftParamsMetadata = function()
             values = _paramValues.era_prefix,
         },
         {
-            key = 'bridge_chunk_length_north', -- do not rename this param or chenge its values
+            key = 'bridge_chunk_north', -- do not rename this param or chenge its values
             name = _('TopPlatformNorthLength'),
-            tooltip = _('TopPlatformNorthLengthTooltip'),
-            values = _paramValues.bridge_chunk_length_north,
+            tooltip = _('TopPlatformLengthTooltip_Lift'),
+            values = _paramValues.bridge_chunk_north,
         },
         {
-            key = 'bridge_chunk_length_south', -- do not rename this param or chenge its values
+            key = 'bridge_chunk_east', -- do not rename this param or chenge its values
+            name = _('TopPlatformEastLength'),
+            tooltip = _('TopPlatformLengthTooltip_Lift'),
+            values = _paramValues.bridge_chunk_east,
+        },
+        {
+            key = 'bridge_chunk_south', -- do not rename this param or chenge its values
             name = _('TopPlatformSouthLength'),
-            tooltip = _('TopPlatformNorthLengthTooltip'),
-            values = _paramValues.bridge_chunk_length_south,
+            tooltip = _('TopPlatformLengthTooltip_Lift'),
+            values = _paramValues.bridge_chunk_south,
         },
-        -- {
-        --     key = 'lift_bridge_mode', -- do not rename this param or change its values
-        --     name = _('BridgeMode'),
-        --     values = _paramValues.lift_bridge_mode,
-        --     defaultIndex = 2,
-        -- },
-        -- {
-        --     key = 'bridge_chunk_y_angle',
-        --     name = _('BridgeYAngle'),
-        --     values = _paramValues.bridge_chunk_y_angle,
-        --     defaultIndex = _paramValues.bridge_chunk_y_angle_DefaultIndex,
-        -- },
         {
-            key = 'lift_base_mode', -- do not rename this param or chenga its values
-            name = _('BaseMode'),
-            values = _paramValues.lift_base_mode,
+            key = 'bridge_chunk_west', -- do not rename this param or chenge its values
+            name = _('TopPlatformWestLength'),
+            tooltip = _('TopPlatformLengthTooltip_Lift'),
+            values = _paramValues.bridge_chunk_west,
+        },
+        {
+            key = 'lift_base_mode_east', -- do not rename this param or chenga its values
+            name = _('BaseTowardEast'),
+            tooltip = _('BaseTooltip_Lift'),
+            values = _paramValues.lift_base_mode_east,
+        },        {
+            key = 'lift_base_mode_west', -- do not rename this param or chenga its values
+            name = _('BaseTowardWest'),
+            tooltip = _('BaseTooltip_Lift'),
+            values = _paramValues.lift_base_mode_west,
         },
     }
     -- add defaultIndex wherever not present
@@ -260,7 +309,7 @@ public.getOpenStairsParamsMetadata = function()
         {
             key = 'bridge_chunk_length', -- do not rename this param or chenga its values
             name = _('TopPlatformLength'),
-            tooltip = _('TopPlatformLengthTooltip'),
+            tooltip = _('TopPlatformLengthTooltip_Stairs'),
             values = _paramValues.bridge_chunk_length,
         },
         {
@@ -280,7 +329,7 @@ public.getOpenStairsParamsMetadata = function()
         {
             key = 'stairs_base', -- do not rename this param or chenga its values
             name = _('StairsBase'),
-            tooltip = _('StairsBaseTooltip'),
+            tooltip = _('BaseTooltip_Stairs'),
             values = _paramValues.stairs_base,
         },
         {
@@ -316,7 +365,7 @@ public.getOpenTwinStairsParamsMetadata = function()
         including those from inactive mods.
         This is why we read the data from the table that we set in postRunFn, and not from the api.
     ]]
-    local _paramValues = public.paramValues.twinStairs
+    local _paramValues = public.paramValues.twinStairs_v2
     local metadata_sorted = {
         {
             key = 'stairs_height',
@@ -332,20 +381,26 @@ public.getOpenTwinStairsParamsMetadata = function()
         {
             key = 'bridge_chunk_length_north', -- do not rename this param or chenga its values
             name = _('TopPlatformNorthLength'),
-            tooltip = _('TopPlatformNorthLengthTooltip'),
+            tooltip = _('TopPlatformLengthTooltip_TwinStairs'),
             values = _paramValues.bridge_chunk_length_north,
         },
         {
             key = 'bridge_chunk_length_south', -- do not rename this param or chenga its values
             name = _('TopPlatformSouthLength'),
-            tooltip = _('TopPlatformNorthLengthTooltip'),
+            tooltip = _('TopPlatformLengthTooltip_TwinStairs'),
             values = _paramValues.bridge_chunk_length_south,
         },
         {
-            key = 'stairs_base', -- do not rename this param or chenga its values
-            name = _('StairsBase'),
-            tooltip = _('StairsBaseTooltip'),
-            values = _paramValues.stairs_base,
+            key = 'stairs_base_east', -- do not rename this param or chenga its values
+            name = _('StairsBaseEast'),
+            tooltip = _('BaseTooltip_TwinStairs'),
+            values = _paramValues.stairs_base_east,
+        },
+        {
+            key = 'stairs_base_west', -- do not rename this param or chenga its values
+            name = _('StairsBaseWest'),
+            tooltip = _('BaseTooltip_TwinStairs'),
+            values = _paramValues.stairs_base_west,
         },
         {
             key = 'terrain_alignment_type',

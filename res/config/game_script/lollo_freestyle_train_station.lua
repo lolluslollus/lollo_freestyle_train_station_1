@@ -1281,7 +1281,8 @@ local _actions = {
                 -- 'station/rail/lollo_freestyle_train_station/openLiftFree.con',
                 'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con',
                 'station/rail/lollo_freestyle_train_station/openStairsFree.con',
-                'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con',
+                -- 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con',
+                'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con',
             },
             oldCon.fileName
         ))

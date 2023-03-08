@@ -3,7 +3,7 @@ local autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgeP
 local constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
 local modulesutil = require 'modulesutil'
-local openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
+local openLiftOpenStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
@@ -69,6 +69,7 @@ local privateFuncs = {
         local _maxRadAbs = 0.36
         if tilt > _maxRadAbs then tilt = _maxRadAbs elseif tilt < -_maxRadAbs then tilt = -_maxRadAbs end
         -- logger.print('getFromVariant_BridgeTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
+        -- LOLLO TODO in a future major release, return -tilt instead of tilt
         return tilt, -_maxRadAbs, _maxRadAbs
     end,
     ---@param variant integer
@@ -83,6 +84,7 @@ local privateFuncs = {
     ---@param variant integer
     ---@return integer, integer, integer
     getFromVariant_LiftHeight = function(variant)
+        -- LOLLO TODO in a future major release, return 10 instead of -10, 5 instead of -5 etc
         local deltaZ = 0
         if variant <= -2 then
             deltaZ = -10
@@ -783,7 +785,6 @@ privateFuncs.openStairs = {
     getExitModelTransf = function(slotTransf, slotId, params)
         local variant = privateFuncs.getVariant(params, slotId)
         local tilt = privateFuncs.getFromVariant_BridgeTilt(variant)
-        -- return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
         return transfUtils.getTransf_YRotated(slotTransf, tilt)
     end,
     getPedestrianBridgeModelId = function(length, eraPrefix, isWithEdge)

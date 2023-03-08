@@ -4,7 +4,7 @@ function data()
     local _constants = require('lollo_freestyle_train_station.constants')
     local logger = require('lollo_freestyle_train_station.logger')
     local _modulesutilUG = require('modulesutil')
-    local _openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
+    local _openLiftOpenStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
@@ -30,66 +30,7 @@ function data()
 		autoRemovable = false,
         -- buildMode = 'MULTI',
 		skipCollision = false, -- true,
-		params = {
-            {
-                key = 'stairs_height',
-                name = _('OpenStairsFreeHeight'),
-                values = _paramValues.stairs_height,
-                uiType = 'BUTTON',
-                defaultIndex = 1,
-            },
-            {
-                key = 'era_prefix',
-                name = _('Era'),
-                values = _paramValues.era_prefix,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'bridge_chunk_length', -- do not rename this param or chenga its values
-                name = _('TopPlatformLength'),
-                tooltip = _('TopPlatformLengthTooltip'),
-                values = _paramValues.bridge_chunk_length,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'bridge_chunk_z_angle',
-                name = _('BridgeZAngle'),
-                values = _paramValues.bridge_chunk_z_angle,
-                uiType = 'SLIDER',
-                defaultIndex = _paramValues.bridge_chunk_z_angle_DefaultIndex,
-            },
-            {
-                key = 'bridge_chunk_y_angle',
-                name = _('BridgeYAngle'),
-                values = _paramValues.bridge_chunk_y_angle,
-                uiType = 'SLIDER',
-                defaultIndex = _paramValues.bridge_chunk_y_angle_DefaultIndex,
-            },
-            {
-                key = 'stairs_base', -- do not rename this param or chenga its values
-                name = _('StairsBase'),
-                tooltip = _('StairsBaseTooltip'),
-                values = _paramValues.stairs_base,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'terrain_alignment_type',
-                name = _('TerrainAlignmentType'),
-                values = _paramValues.terrain_alignment_type,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'flat_sloped_terrain',
-                name = _('FlatSlopedTerrain'),
-                values = _paramValues.flat_sloped_terrain,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-        },
+        params = _openLiftOpenStairsHelpers.getOpenStairsParamsMetadata(),
 		updateFn = function(params)
             logger.print('openStairsFree.updateFn firing, params =') logger.debugPrint(_arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
             local _height = _paramReaders.getHeight(params)
@@ -183,8 +124,6 @@ function data()
                 },
                 models = {
                     {
-                        -- id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
-                        -- id = 'lollo_freestyle_train_station/empty.mdl',
                         id = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. (_bridgeChunkLength == -2 and 'open_stairs_no_top_railing_' or 'open_stairs_').. _height ..'m.mdl',
                         transf = _constants.idTransf,
                     },

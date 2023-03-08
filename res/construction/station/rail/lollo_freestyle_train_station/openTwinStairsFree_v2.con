@@ -1,5 +1,4 @@
 function data()
-    -- LOLLO OBSOLETE we keep this for compatibility with older games
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
     local logger = require('lollo_freestyle_train_station.logger')
@@ -9,11 +8,11 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo openTwinStairsFree.con ERROR: ', err)
+        print('lollo openTwinStairsFree_v2.con ERROR: ', err)
     end
 
-    local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs_v1
-    local _paramReaders = _openLiftOpenStairsHelpers.paramReaders.twinStairs_v1
+    local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs_v2
+    local _paramReaders = _openLiftOpenStairsHelpers.paramReaders.twinStairs_v2
 
 	return {
         type = 'ASSET_DEFAULT',
@@ -23,68 +22,15 @@ function data()
             icon = 'ui/construction/station/rail/lollo_freestyle_train_station/openTwinStairsFree.tga',
 		},
 		availability = {
-			yearFrom = -1,
-			yearTo = -1,
+			yearFrom = 0,
+			yearTo = 0,
 		},
         categories = { 'stairs' },
 		order = 999,
 		autoRemovable = false,
         -- buildMode = 'MULTI',
 		skipCollision = false, -- true,
-        params = {
-            {
-                key = 'stairs_height',
-                name = _('OpenStairsFreeHeight'),
-                values = _paramValues.stairs_height,
-                uiType = 'BUTTON',
-                defaultIndex = 1,
-            },
-            {
-                key = 'era_prefix',
-                name = _('Era'),
-                values = _paramValues.era_prefix,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'bridge_chunk_length_north', -- do not rename this param or chenga its values
-                name = _('TopPlatformNorthLength'),
-                tooltip = _('TopPlatformNorthLengthTooltip'),
-                values = _paramValues.bridge_chunk_length_north,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'bridge_chunk_length_south', -- do not rename this param or chenga its values
-                name = _('TopPlatformSouthLength'),
-                tooltip = _('TopPlatformNorthLengthTooltip'),
-                values = _paramValues.bridge_chunk_length_south,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'stairs_base', -- do not rename this param or chenga its values
-                name = _('StairsBase'),
-                tooltip = _('BaseTooltip_TwinStairs'),
-                values = _paramValues.stairs_base,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'terrain_alignment_type',
-                name = _('TerrainAlignmentType'),
-                values = _paramValues.terrain_alignment_type,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-            {
-                key = 'flat_sloped_terrain',
-                name = _('FlatSlopedTerrain'),
-                values = _paramValues.flat_sloped_terrain,
-                uiType = 'BUTTON',
-                defaultIndex = 0,
-            },
-        },
+        params = _openLiftOpenStairsHelpers.getOpenTwinStairsParamsMetadata(),
 		updateFn = function(params)
             local _height = _paramReaders.getHeight(params)
             local _bridgeChunkLengthNorth = _paramReaders.getBridgeChunkLengthNorth(params)
@@ -92,52 +38,62 @@ function data()
             -- When you connect two bridges and fiddle around, one will snap and the other not.
             -- This forces both to snap
             local _isSnapTop = (_bridgeChunkLengthNorth == 1 or _bridgeChunkLengthNorth == 3 or _bridgeChunkLengthSouth == 1 or _bridgeChunkLengthSouth == 3)
-            local _stairsBase = _paramReaders.getStairsBase(params)
+            local _stairsBaseEast = _paramReaders.getStairsBaseEast(params)
+            local _stairsBaseWest = _paramReaders.getStairsBaseWest(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
 
             local _yHalfSize = 1
 
-            local baseLanesModelId = ''
-            if _stairsBase == -1 then -- no base
-                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_'.. _height ..'m.mdl'
-            elseif _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
-                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_'.. _height ..'m.mdl'
+            local baseLanesEastModelId = ''
+            if _stairsBaseEast == -1 then -- no base
+                baseLanesEastModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_'.. _height ..'m.mdl'
+            elseif _stairsBaseEast == 0 or _stairsBaseEast == 1 or _stairsBaseEast == 2 or _stairsBaseEast == 3 then -- edge or snappy edge
+                baseLanesEastModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_'.. _height ..'m.mdl'
             else -- model
-                baseLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_'.. _height ..'m.mdl'
+                baseLanesEastModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_'.. _height ..'m.mdl'
+            end
+            local baseLanesWestModelId = ''
+            if _stairsBaseWest == -1 then -- no base
+                baseLanesWestModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_short_'.. _height ..'m.mdl'
+            elseif _stairsBaseWest == 0 or _stairsBaseWest == 1 or _stairsBaseWest == 2 or _stairsBaseWest == 3 then -- edge or snappy edge
+                baseLanesWestModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_fork_'.. _height ..'m.mdl'
+            else -- model
+                baseLanesWestModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_base_expanded_'.. _height ..'m.mdl'
             end
 
-            local _baseFaceZ = _stairsBase == 98 and -0.6 or 0
+            local _baseFaceZEast = _stairsBaseEast == 98 and -0.6 or 0
+            local _baseFaceZWest = _stairsBaseWest == 98 and -0.6 or 0
             local flatFaces = {}
             if _height == 2 then
                 flatFaces = { {
-                    {4, -_yHalfSize, _baseFaceZ}, {4, _yHalfSize, _baseFaceZ}, {-4, _yHalfSize, _baseFaceZ}, {-4, -_yHalfSize, _baseFaceZ}
+                    {4, -_yHalfSize, _baseFaceZEast}, {4, _yHalfSize, _baseFaceZEast}, {-4, _yHalfSize, _baseFaceZWest}, {-4, -_yHalfSize, _baseFaceZWest}
                 } }
             elseif _height == 4 then
                 flatFaces = { {
-                    {6, -_yHalfSize, _baseFaceZ}, {6, _yHalfSize, _baseFaceZ}, {-6, _yHalfSize, _baseFaceZ}, {-6, -_yHalfSize, _baseFaceZ}
+                    {6, -_yHalfSize, _baseFaceZEast}, {6, _yHalfSize, _baseFaceZEast}, {-6, _yHalfSize, _baseFaceZWest}, {-6, -_yHalfSize, _baseFaceZWest}
                 } }
             elseif _height == 6 then
                 flatFaces = { {
-                    {8.5, -_yHalfSize, _baseFaceZ}, {8.5, _yHalfSize, _baseFaceZ}, {-8.5, _yHalfSize, _baseFaceZ}, {-8.5, -_yHalfSize, _baseFaceZ}
+                    {8.5, -_yHalfSize, _baseFaceZEast}, {8.5, _yHalfSize, _baseFaceZEast}, {-8.5, _yHalfSize, _baseFaceZWest}, {-8.5, -_yHalfSize, _baseFaceZWest}
                 } }
             elseif _height == 8 then
                 flatFaces = { {
-                    {10.5, -_yHalfSize, _baseFaceZ}, {10.5, _yHalfSize, _baseFaceZ}, {-10.5, _yHalfSize, _baseFaceZ}, {-10.5, -_yHalfSize, _baseFaceZ}
+                    {10.5, -_yHalfSize, _baseFaceZEast}, {10.5, _yHalfSize, _baseFaceZEast}, {-10.5, _yHalfSize, _baseFaceZWest}, {-10.5, -_yHalfSize, _baseFaceZWest}
                 } }
             elseif _height == 10 then
                 flatFaces = { {
-                    {12.5, -_yHalfSize, _baseFaceZ}, {12.5, _yHalfSize, _baseFaceZ}, {-12.5, _yHalfSize, _baseFaceZ}, {-12.5, -_yHalfSize, _baseFaceZ}
+                    {12.5, -_yHalfSize, _baseFaceZEast}, {12.5, _yHalfSize, _baseFaceZEast}, {-12.5, _yHalfSize, _baseFaceZWest}, {-12.5, -_yHalfSize, _baseFaceZWest}
                 } }
             end
             local slopedFaces = {}
             if _height == 2 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 1}, {-2, _yHalfSize, 1}, {-4, _yHalfSize, -0.5 + _baseFaceZ}, {-4, -_yHalfSize, -0.5 + _baseFaceZ},
+                        {-2, -_yHalfSize, 1}, {-2, _yHalfSize, 1}, {-4, _yHalfSize, -0.5 + _baseFaceZWest}, {-4, -_yHalfSize, -0.5 + _baseFaceZWest},
                     },
                     {
-                        {4, -_yHalfSize, -0.5 + _baseFaceZ}, {4, _yHalfSize, -0.5 + _baseFaceZ}, {2, _yHalfSize, 1}, {2, -_yHalfSize, 1},
+                        {4, -_yHalfSize, -0.5 + _baseFaceZEast}, {4, _yHalfSize, -0.5 + _baseFaceZEast}, {2, _yHalfSize, 1}, {2, -_yHalfSize, 1},
                     },
                     {
                         {2, -_yHalfSize, 1}, {2, _yHalfSize, 1}, {-2, _yHalfSize, 1}, {-2, -_yHalfSize, 1},
@@ -146,10 +102,10 @@ function data()
             elseif _height == 4 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 3}, {-2, _yHalfSize, 3}, {-6, _yHalfSize, -0.5 + _baseFaceZ}, {-6, -_yHalfSize, -0.5 + _baseFaceZ},
+                        {-2, -_yHalfSize, 3}, {-2, _yHalfSize, 3}, {-6, _yHalfSize, -0.5 + _baseFaceZWest}, {-6, -_yHalfSize, -0.5 + _baseFaceZWest},
                     },
                     {
-                        {6, -_yHalfSize, -0.5 + _baseFaceZ}, {6, _yHalfSize, -0.5 + _baseFaceZ}, {2, _yHalfSize, 3}, {2, -_yHalfSize, 3},
+                        {6, -_yHalfSize, -0.5 + _baseFaceZEast}, {6, _yHalfSize, -0.5 + _baseFaceZEast}, {2, _yHalfSize, 3}, {2, -_yHalfSize, 3},
                     },
                     {
                         {2, -_yHalfSize, 3}, {2, _yHalfSize, 3}, {-2, _yHalfSize, 3}, {-2, -_yHalfSize, 3},
@@ -158,10 +114,10 @@ function data()
             elseif _height == 6 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 5}, {-2, _yHalfSize, 5}, {-8.5, _yHalfSize, -0.5 + _baseFaceZ}, {-8.5, -_yHalfSize, -0.5 + _baseFaceZ},
+                        {-2, -_yHalfSize, 5}, {-2, _yHalfSize, 5}, {-8.5, _yHalfSize, -0.5 + _baseFaceZWest}, {-8.5, -_yHalfSize, -0.5 + _baseFaceZWest},
                     },
                     {
-                        {8.5, -_yHalfSize, -0.5 + _baseFaceZ}, {8.5, _yHalfSize, -0.5 + _baseFaceZ}, {2, _yHalfSize, 5}, {2, -_yHalfSize, 5},
+                        {8.5, -_yHalfSize, -0.5 + _baseFaceZEast}, {8.5, _yHalfSize, -0.5 + _baseFaceZEast}, {2, _yHalfSize, 5}, {2, -_yHalfSize, 5},
                     },
                     {
                         {2, -_yHalfSize, 5}, {2, _yHalfSize, 5}, {-2, _yHalfSize, 5}, {-2, -_yHalfSize, 5},
@@ -170,10 +126,10 @@ function data()
             elseif _height == 8 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 7}, {-2, _yHalfSize, 7}, {-10.5, _yHalfSize, -0.5 + _baseFaceZ}, {-10.5, -_yHalfSize, -0.5 + _baseFaceZ},
+                        {-2, -_yHalfSize, 7}, {-2, _yHalfSize, 7}, {-10.5, _yHalfSize, -0.5 + _baseFaceZWest}, {-10.5, -_yHalfSize, -0.5 + _baseFaceZWest},
                     },
                     {
-                        {10.5, -_yHalfSize, -0.5 + _baseFaceZ}, {10.5, _yHalfSize, -0.5 + _baseFaceZ},  {2, _yHalfSize, 7}, {2, -_yHalfSize, 7},
+                        {10.5, -_yHalfSize, -0.5 + _baseFaceZEast}, {10.5, _yHalfSize, -0.5 + _baseFaceZEast},  {2, _yHalfSize, 7}, {2, -_yHalfSize, 7},
                     },
                     {
                         {2, -_yHalfSize, 7}, {2, _yHalfSize, 7}, {-2, _yHalfSize, 7}, {-2, -_yHalfSize, 7},
@@ -182,10 +138,10 @@ function data()
             elseif _height == 10 then
                 slopedFaces = {
                     {
-                        {-2, -_yHalfSize, 9}, {-2, _yHalfSize, 9}, {-12.5, _yHalfSize, -0.5 + _baseFaceZ}, {-12.5, -_yHalfSize, -0.5 + _baseFaceZ},
+                        {-2, -_yHalfSize, 9}, {-2, _yHalfSize, 9}, {-12.5, _yHalfSize, -0.5 + _baseFaceZWest}, {-12.5, -_yHalfSize, -0.5 + _baseFaceZWest},
                     },
                     {
-                        {12.5, -_yHalfSize, -0.5 + _baseFaceZ}, {12.5, _yHalfSize, -0.5 + _baseFaceZ}, {2, _yHalfSize, 9}, {2, -_yHalfSize, 9},
+                        {12.5, -_yHalfSize, -0.5 + _baseFaceZEast}, {12.5, _yHalfSize, -0.5 + _baseFaceZEast}, {2, _yHalfSize, 9}, {2, -_yHalfSize, 9},
                     },
                     {
                         {2, -_yHalfSize, 9}, {2, _yHalfSize, 9}, {-2, _yHalfSize, 9}, {-2, -_yHalfSize, 9},
@@ -193,8 +149,8 @@ function data()
                 }
             end
 
-            local _leftTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.80, 0, 0, 1}
-            local _rightTransf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0.80, 0, 0, 1}
+            local _westTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.80, 0, 0, 1}
+            local _eastTransf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0.80, 0, 0, 1}
             local result = {
                 colliders = {
                     {
@@ -208,37 +164,34 @@ function data()
                 cost = 0,
                 edgeLists = {},
                 groundFaces = {},
-                labelText = {
-                    [0] = { _('OutdatedConstruction'), _('OutdatedConstruction') }
-                },
                 models = {
                     {
-                        id = _constants.yellowMessageModelFileName,
-                        transf = _constants.idTransf
+                        id = baseLanesEastModelId,
+                        transf = _eastTransf,
+                    },
+                    {
+                        id = baseLanesWestModelId,
+                        transf = _westTransf,
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
+                        transf = _eastTransf,
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
+                        transf = _westTransf,
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/passenger_lane.mdl',
+                        transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/passenger_lane.mdl',
+                        transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
                     },
                     -- {
-                    --     id = baseLanesModelId,
-                    --     transf = _leftTransf,
-                    -- },
-                    -- {
-                    --     id = baseLanesModelId,
-                    --     transf = _rightTransf,
-                    -- },
-                    -- {
-                    --     id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
-                    --     transf = _leftTransf,
-                    -- },
-                    -- {
-                    --     id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
-                    --     transf = _rightTransf,
-                    -- },
-                    -- {
-                    --     id = 'lollo_freestyle_train_station/passenger_lane.mdl',
-                    --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
-                    -- },
-                    -- {
-                    --     id = 'lollo_freestyle_train_station/passenger_lane.mdl',
-                    --     transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _height, 1},
+                    --     id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
+                    --     transf = _constants.idTransf,
                     -- },
                 },
                 terrainAlignmentLists = {
@@ -251,12 +204,15 @@ function data()
                     },
                 },
             }
-            if true then return result end
 
-            local _addBase = function(isLeft, leftOrRightTransf)
-                if _stairsBase == -1 then
+            -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
+
+            local _addBase = function(isEast, leftOrRightTransf)
+                local stairsBase = isEast and _stairsBaseEast or _stairsBaseWest
+                logger.print('stairsBase =', stairsBase)
+                if stairsBase == -1 then
                     -- do nothing
-                elseif _stairsBase == 0 or _stairsBase == 1 or _stairsBase == 2 or _stairsBase == 3 then -- edge or snappy edge
+                elseif stairsBase == 0 or stairsBase == 1 or stairsBase == 2 or stairsBase == 3 then -- edge or snappy edge
                     local _baseLen = 1
                     local edgeX0 = 0
                     if _height == 2 then
@@ -280,23 +236,23 @@ function data()
                     table.insert(
                         result.edgeLists,
                         {
-                            alignTerrain = (_stairsBase == 0 or _stairsBase == 1) and true or false, -- only align on ground and in tunnels
+                            alignTerrain = (stairsBase == 0 or stairsBase == 1) and true or false, -- only align on ground and in tunnels
                             edges = _edgesAfterTransf,
-                            edgeType = (_stairsBase == 2 or _stairsBase == 3) and 'BRIDGE' or nil,
-                            edgeTypeName = (_stairsBase == 2 or _stairsBase == 3) and _autoBridgePathsRefData.bridgeTypeName_withRailing or nil,
+                            edgeType = (stairsBase == 2 or stairsBase == 3) and 'BRIDGE' or nil,
+                            edgeTypeName = (stairsBase == 2 or stairsBase == 3) and _autoBridgePathsRefData.bridgeTypeName_withRailing or nil,
                             freeNodes = { 1 },
                             params = {
                                 tramTrackType  = 'NO',
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
-                            snapNodes = (_stairsBase == 1 or _stairsBase == 3) and { 1 } or { },
+                            snapNodes = (stairsBase == 1 or stairsBase == 3) and { 1 } or { },
                             -- tag2nodes = {},
                             type = 'STREET'
                         }
                     )
 
                     -- adjust the terrain so it does not cover the bridge
-                    if (_stairsBase == 2 or _stairsBase == 3) then
+                    if (stairsBase == 2 or stairsBase == 3) then
                         local facesBeforeTransf =  {{
                             { edgeX0 -_baseLen, -_yHalfSize, 0, 1 }, { edgeX0 -_baseLen, _yHalfSize, 0, 1 },
                             { edgeX0, _yHalfSize, 0, 1 }, { edgeX0, -_yHalfSize, 0, 1 },
@@ -326,26 +282,27 @@ function data()
                         }
                     )
 
+                    local baseFaceZ = isEast and _baseFaceZEast or _baseFaceZWest
                     local facesBeforeTransf = {}
                     if _height == 2 then
                         facesBeforeTransf = { {
-                            {-4, -_yHalfSize, _baseFaceZ}, {-4, _yHalfSize, _baseFaceZ}, {-5.5, _yHalfSize, _baseFaceZ}, {-5.5, -_yHalfSize, _baseFaceZ}
+                            {-4, -_yHalfSize, baseFaceZ}, {-4, _yHalfSize, baseFaceZ}, {-5.5, _yHalfSize, baseFaceZ}, {-5.5, -_yHalfSize, baseFaceZ}
                         } }
                     elseif _height == 4 then
                         facesBeforeTransf = { {
-                            {-6, -_yHalfSize, _baseFaceZ}, {-6, _yHalfSize, _baseFaceZ}, {-7.5, _yHalfSize, _baseFaceZ}, {-7.5, -_yHalfSize, _baseFaceZ}
+                            {-6, -_yHalfSize, baseFaceZ}, {-6, _yHalfSize, baseFaceZ}, {-7.5, _yHalfSize, baseFaceZ}, {-7.5, -_yHalfSize, baseFaceZ}
                         } }
                     elseif _height == 6 then
                         facesBeforeTransf = { {
-                            {-8.5, -_yHalfSize, _baseFaceZ}, {-8.5, _yHalfSize, _baseFaceZ}, {-10, _yHalfSize, _baseFaceZ}, {-10, -_yHalfSize, _baseFaceZ}
+                            {-8.5, -_yHalfSize, baseFaceZ}, {-8.5, _yHalfSize, baseFaceZ}, {-10, _yHalfSize, baseFaceZ}, {-10, -_yHalfSize, baseFaceZ}
                         } }
                     elseif _height == 8 then
                         facesBeforeTransf = { {
-                            {-10.5, -_yHalfSize, _baseFaceZ}, {-10.5, _yHalfSize, _baseFaceZ}, {-12, _yHalfSize, _baseFaceZ}, {-12, -_yHalfSize, _baseFaceZ}
+                            {-10.5, -_yHalfSize, baseFaceZ}, {-10.5, _yHalfSize, baseFaceZ}, {-12, _yHalfSize, baseFaceZ}, {-12, -_yHalfSize, baseFaceZ}
                         } }
                     elseif _height == 10 then
                         facesBeforeTransf = { {
-                            {-12.5, -_yHalfSize, _baseFaceZ}, {-12.5, _yHalfSize, _baseFaceZ}, {-14, _yHalfSize, _baseFaceZ}, {-14, -_yHalfSize, _baseFaceZ}
+                            {-12.5, -_yHalfSize, baseFaceZ}, {-12.5, _yHalfSize, baseFaceZ}, {-14, _yHalfSize, baseFaceZ}, {-14, -_yHalfSize, baseFaceZ}
                         } }
                     end
 
@@ -468,10 +425,10 @@ function data()
 
             xpcall(
                 function()
-                    _addBase(true, _leftTransf)
-                    _addBase(false, _rightTransf)
-                    _addTop(true, _leftTransf, _bridgeChunkLengthNorth)
-                    _addTop(false, _rightTransf, _bridgeChunkLengthSouth)
+                    _addBase(true, _eastTransf)
+                    _addBase(false, _westTransf)
+                    _addTop(true, _eastTransf, _bridgeChunkLengthNorth)
+                    _addTop(false, _westTransf, _bridgeChunkLengthSouth)
                 end,
                 _myErrorHandler
             )

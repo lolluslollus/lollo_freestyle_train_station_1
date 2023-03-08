@@ -2,7 +2,7 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local guiHelpers = require('lollo_open_lifts_open_stairs_free.guiHelpers')
 local logger = require('lollo_freestyle_train_station.logger')
-local openStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
+local openStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local transfUtilsUG = require('transf')
 
@@ -14,7 +14,8 @@ local _eventProperties = {
     -- openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree.con', eventName = 'openLiftBuilt' },
     openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con', eventName = 'openLiftBuilt' },
     openStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openStairsFree.con', eventName = 'openStairsBuilt' },
-    openTwinStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con', eventName = 'openTwinStairsBuilt' },
+    -- openTwinStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con', eventName = 'openTwinStairsBuilt' },
+    openTwinStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con', eventName = 'openTwinStairsBuilt' },
 }
 
 -- only accessible in the UI thread

@@ -2,7 +2,7 @@ function data()
     -- LOLLO OBSOLETE we keep this for compatibility with older games
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
-    local _openLiftOpenStairsHelpers = require('lollo_freestyle_train_station.openLiftOpenStairsHelpers')
+    local _openLiftOpenStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
 
     local function _myErrorHandler(err)
         print('lollo openLiftFree.con ERROR: ', err)
@@ -91,40 +91,25 @@ function data()
                             },
                         },
                     },
-                    -- {
-                    --     face = faces[1],
-                    --     loop = true,
-                    --     modes = {
-                    --         {
-                    --             -- key = 'lollo_freestyle_train_station/hole.lua',
-                    --             key = 'hole.lua',
-                    --             type = 'FILL',
-                    --         },
-                    --     }
-                    -- }
                 },
                 labelText = {
                     [0] = { _('OutdatedConstruction'), _('OutdatedConstruction') }
                 },
                 models = {
-                    -- {
-                    --     id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
-                    --     transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1},
-                    -- },
                     {
                         id = _constants.yellowMessageModelFileName,
                         transf = _constants.idTransf
                     },
-                    {
-                        id = (_baseMode == -1
-                            and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp.mdl'
-                            or 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_edges.mdl'),
-                        transf = _constants.idTransf,
-                    },
-                    {
-                        id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_to_top_1m.mdl',
-                        transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, _height, 0,  0, 0, 0, 1},
-                    },
+                    -- {
+                    --     id = (_baseMode == -1
+                    --         and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp.mdl'
+                    --         or 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_edges.mdl'),
+                    --     transf = _constants.idTransf,
+                    -- },
+                    -- {
+                    --     id = 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_to_top_1m.mdl',
+                    --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, _height, 0,  0, 0, 0, 1},
+                    -- },
                 },
                 terrainAlignmentLists = {
                     {

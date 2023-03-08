@@ -53,7 +53,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Platforms do not connect automatically to adjacent roads, you must add an exit or a station.
 - Minor version 1.99 (13th February 2023) makes existing walls invisible until you build a new one.
 - Walls around tracks are only available on terminals built with version 1.99 or newer.
-- Minor version 1.115 removed links from flush exits at the end of platforms, to avoid crashes. It also replaced older lift assets with new ones.
+- Minor version 1.115 removed links from flush exits at the end of platforms, to avoid crashes. It also replaced older lift and twin stairs (assets) with new ones.
 
 [h1]Known issues:[/h1]
 - Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
@@ -367,7 +367,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["BuildInProgress"] = "Building terminal...",
 			["BuildMoreWaypoints"] = "Plop two track markers and two platform markers to build a freestyle station",
 			["BuildSnappyTracksFailed"] = "Fix the station connections to the adjacent tracks, the game cannot do it for you this time",
-			["ConConfigWindowTitle"] = "Configuration",
+			["ConConfigWindowTitle"] = "Settings",
 			["DifferentPlatformWidths"] = "Avoid different track widths with cargo stations",
 			["GoBack"] = "Go back",
 			["GoThere"] = "Go there",
@@ -400,6 +400,11 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 
 			-- free open stairs and free lifts
 			["BaseMode"] = "Base Mode",
+			["BaseTooltip_Lift"] = "It might be easier to select \"Auto Path\" first and change it to \"Snappy Path\" once done. Only make the links you really need, and make them snappy when you are done, or the connections may break. Check the connections with <AltGr> + <L>.",
+			["BaseTooltip_Stairs"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" first and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
+			["BaseTooltip_TwinStairs"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" first and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Only make the links you really need, and make them snappy when you are done, or the connections may break. Check the connections with <AltGr> + <L>.",
+			["BaseTowardEast"] = "Base Platform East",
+			["BaseTowardWest"] = "Base Platform West",
 			["BridgeHeight"] = "Bridge Height",
 			["BridgeMode"] = "Bridge Mode",
 			["BridgeYAngle"] = "Bridge Tilt",
@@ -411,6 +416,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FlatSlopedTerrain"] = "Terrain Incline",
 			["Model"] = "Platform",
 			["ModelRaised"] = "Raised Platform",
+			["NO"] = "No",
+			["None"] = "None",
 			["NoRailing0"] = "0 - No Railing",
 			["OpenTwinStairsFreeName"] = "Twin Stairs",
 			["OpenTwinStairsFreeDesc"] = "Twin stairs matching the freestyle stations, collision tolerant; use fences or similar mods to fine-tune collisions. Combine this to pedestrian bridges or paths. Place it accurately with the construction mover.",
@@ -426,15 +433,17 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["SnappyEdgeWithNoBridge"] = "Snappy Path",
 			["Stairs"] = "Stairs, lifts, underground entrances, assets for the Freestyle Train Station",
 			["StairsBase"] = "Expand Base",
-			["StairsBaseTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
 			["TerrainAlignmentType"] = "Terrain Alignment",
 			["TerrainAlignmentTypeFlat"] = "Flat",
 			["TerrainAlignmentTypeSloped"] = "Sloped",
 			["TopPlatformLength"] = "Top Platform Length",
-			["TopPlatformLengthTooltip"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" when building or changing properties and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
-			["TopPlatformNorthLength"] = "Top Platform One",
-			["TopPlatformSouthLength"] = "Top Platform Two",
-			["TopPlatformNorthLengthTooltip"] = "It might be easier to select \"Auto Bridge\" when building or changing properties and change it to \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_Lift"] = "It might be easier to select \"Auto Bridge\" first and change it to \"Snappy Bridge\" once done. Only make the links you really need, and make them snappy when you are done, or the connections may break. Check the connections with <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_Stairs"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" first and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_TwinStairs"] = "It might be easier to select \"Auto Bridge\" first and change it to \"Snappy Bridge\" once done. Only make the links you really need, and make them snappy when you are done, or the connections may break. Check the connections with <AltGr> + <L>.",
+			["TopPlatformNorthLength"] = "Top Platform North",
+			["TopPlatformEastLength"] = "Top Platform East",
+			["TopPlatformSouthLength"] = "Top Platform South",
+			["TopPlatformWestLength"] = "Top Platform West",
 
 			-- track splitter
 			["TrackSplitterName"] = "Track splitter",
@@ -523,7 +532,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Bahnsteige verbinden sich nicht mehr automatisch mit angrenzenden Straßen, Sie müssen eine Ausfahrt oder einen Bahnhof hinzufügen.
 - Minor Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis Sie eine neue bauen.
 - Mauern um Gleise sind nur auf Terminals verfügbar, die mit Version 1.99 oder neuer gebaut wurden.
-- Mit der Minor-Version 1.115 werden bündige Ausgänge an den Bahnsteigenden nicht mehr verbunden, um Abstürze zu vermeiden. Ältere Aufzug-Assets wurden auch ersetzt.
+- Mit der Minor-Version 1.115 werden bündige Ausgänge an den Bahnsteigenden nicht mehr verbunden, um Abstürze zu vermeiden. Ältere Aufzug- und Zwillingstreppen-Assets wurden auch ersetzt.
 
 [h1]Bekannte Probleme:[/h1]
 - Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
@@ -837,7 +846,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["BuildInProgress"] = "Bau eines Bahnsteigs...",
 			["BuildMoreWaypoints"] = "Setze zwei Gleismarker und zwei Bahnsteigmarker ein, um einen Freestyle-Bahnhof zu bauen",
 			["BuildSnappyTracksFailed"] = "Repariere die Bahnhofsverbindungen zu den angrenzenden Gleisen, das Spiel kann es diesmal nicht für dich tun",
-			["ConConfigWindowTitle"] = "Konfiguration",
+			["ConConfigWindowTitle"] = "Einstellungen",
 			["DifferentPlatformWidths"] = "Vermeide unterschiedliche Gleisbreiten bei Frachtbahnhöfen",
 			["GoBack"] = "Zurückgehen",
 			["GoThere"] = "Dorthin gehen",
@@ -871,6 +880,11 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 
 			-- lose offene Treppen und lose Aufzüge
 			["BaseMode"] = "Basismodus",
+			["BaseTooltip_Lift"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" auszuwählen und danach in \"Snappy-Pfad\" zu ändern. Machen Sie nur die Verbindungen die Sie brauchen, und machen Sie sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["BaseTooltip_Stairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["BaseTooltip_TwinStairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Machen Sie nur die Verbindungen die Sie brauchen, und machen Sie sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["BaseTowardEast"] = "Basis nach Osten",
+			["BaseTowardWest"] = "Basis nach Westen",
 			["BridgeHeight"] = "Brückenhöhe",
 			["BridgeMode"] = "Brückenmodus",
 			["BridgeYAngle"] = "Neigung der Brücke",
@@ -882,6 +896,8 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["FlatSlopedTerrain"] = "Gefälle des Geländes",
 			["Model"] = "Bahnsteig",
 			["ModelRaised"] = "Erhöhte Bahnsteig",
+			["NO"] = "Nein",
+			["None"] = "Keines",
 			["NoRailing0"] = "0 - Kein Geländer",
 			["OpenTwinStairsFreeName"] = "Zwillingstreppe",
 			["OpenTwinStairsFreeDesc"] = "Zwillingstreppe, passend zu den Freestyle-Bahnhöfen, kollisionstolerant; verwende Zäune oder ähnliche Mods, um Kollisionen abzustimmen. Kombiniere dies mit Fußgängerbrücken oder -wegen. Platziere sie genau mit dem \"Construction Mover\".",
@@ -897,15 +913,17 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["SnappyEdgeWithNoBridge"] = "Snappy-Pfad",
 			["Stairs"] = "Treppen, Aufzüge, unterirdische Eingänge, Assets für den Freestyle-Bahnhof",
 			["StairsBase"] = "Basis ausbauen",
-			["StairsBaseTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
 			["TerrainAlignmentType"] = "Terrainausrichtung",
 			["TerrainAlignmentTypeFlat"] = "Flach",
 			["TerrainAlignmentTypeSloped"] = "Abgeschrägt",
 			["TopPlatformLength"] = "Obere Bahnsteiglänge",
-			["TopPlatformLengthTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
-			["TopPlatformNorthLength"] = "Obere Bahnsteig Eins",
-			["TopPlatformSouthLength"] = "Oberste Bahnsteig Zwei",
-			["TopPlatformNorthLengthTooltip"] = "Es könnte einfacher sein, beim Erstellen oder Ändern von Eigenschaften die Option \"Automatische Brücke\" auszuwählen und sie nach Abschluss in \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_Lift"] = "Es könnte einfacher sein, zuerst die Option \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Brücke\" zu ändern. Machen Sie nur die Verbindungen die Sie brauchen, und machen Sie sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_Stairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_TwinStairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Brücke\" zu ändern. Machen Sie nur die Verbindungen die Sie brauchen, und machen Sie sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["TopPlatformNorthLength"] = "Oberster Steg nach Norden",
+			["TopPlatformEastLength"] = "Oberster Steg nach Osten",
+			["TopPlatformSouthLength"] = "Oberster Steg nach Süden",
+			["TopPlatformWestLength"] = "Oberster Steg nach Westen",
 
 			-- Gleisteiler
 			["TrackSplitterName"] = "Gleisteiler",
