@@ -103,16 +103,18 @@ function data()
                 logger.print('### isEast =', isEast)
                 logger.print('_baseModeEast =', _baseModeEast)
                 logger.print('_baseModeWest =', _baseModeWest)
+                local baseMode = isEast and _baseModeEast or _baseModeWest
+                logger.print('baseMode =', baseMode)
                 if isEast then
                     result.models[#result.models+1] = {
-                        id = (_baseModeEast == -1
+                        id = (baseMode == -1
                             and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp_v2.mdl'
                             or 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_edges_v2.mdl'),
                         transf = _constants.idTransf,
                     }
                 else
                     result.models[#result.models+1] = {
-                        id = (_baseModeWest == -1
+                        id = (baseMode == -1
                             and 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_tp_v2.mdl'
                             or 'lollo_freestyle_train_station/open_lift_free_passenger_lanes/bottom_for_edges_v2.mdl'),
                         transf = {
@@ -124,24 +126,22 @@ function data()
                     }
                 end
 
-                local baseMode = isEast and _baseModeEast or _baseModeWest
                 if baseMode < 0 then return end
 
                 local isBridge = baseMode >= 2
                 local isSnap = baseMode % 2 ~= 0
-                logger.print('baseMode =', baseMode)
                 logger.print('isBridge =', isBridge)
                 logger.print('isSnap =', isSnap)
                 local edges
                 if isEast then
                     edges = {
-                        { { 0, -1.6, 0 }, { 0, -1, 0 } },  -- node 0 pos, tan
-                        { { 0, -2.6, 0 }, { 0, -1, 0 } },  -- node 1 pos, tan
+                        { { 0, -1.5, 0 }, { 0, -1.1, 0 } },  -- node 0 pos, tan
+                        { { 0, -2.6, 0 }, { 0, -1.1, 0 } },  -- node 1 pos, tan
                     }
                 else
                     edges = {
-                        { { 0, 1.6, 0 }, { 0, 1, 0 } },  -- node 0 pos, tan
-                        { { 0, 2.6, 0 }, { 0, 1, 0 } },  -- node 1 pos, tan
+                        { { 0, 1.5, 0 }, { 0, 1.1, 0 } },  -- node 0 pos, tan
+                        { { 0, 2.6, 0 }, { 0, 1.1, 0 } },  -- node 1 pos, tan
                     }
                 end
 
