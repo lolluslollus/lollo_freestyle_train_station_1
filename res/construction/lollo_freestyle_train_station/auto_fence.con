@@ -193,6 +193,7 @@ function data()
             }
 
             local wallMainModelId = fenceModelHelper.getModels()[params.lolloFenceAssets_model + 1].fileName
+            local wallMainModelId_Tunnel = fenceModelHelper.getModels(true)[params.lolloFenceAssets_model + 1].fileName
 
             local wallBaseModelId = nil
             if params.lolloFenceAssets_wallEraPrefix == 1 then
@@ -256,7 +257,11 @@ function data()
             --     _addWall(transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
             -- end
             for _, transfData in pairs(params.transfs_ground) do
-                _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
+                if transfData.groundBridgeTunnel_012 == 2 then -- tunnel
+                    _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId_Tunnel, wallBaseModelId)
+                else
+                    _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
+                end
                 if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then
                     _addGround(transfData.transf, _yStart, result, wallBehindModelId)
                 end

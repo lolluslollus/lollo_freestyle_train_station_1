@@ -131,6 +131,7 @@ function data()
             local _initParams = function()
                 local defaults = fenceModelHelper.getDefaultIndexes()
                 params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
+                params.lolloFenceAssets_isWallTall = params.lolloFenceAssets_isWallTall or defaults.lolloFenceAssets_isWallTall
                 params.lolloFenceAssets_length = params.lolloFenceAssets_length or defaults.lolloFenceAssets_length
                 params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.lolloFenceAssets_model
                 params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.lolloFenceAssets_wallEraPrefix
@@ -233,7 +234,7 @@ function data()
 
             local function _addModels()
                 local isDoTerrain = params.lolloFenceAssets_doTerrain == 1
-                local wallMainModelId = fenceModelHelper.getModels()[params.lolloFenceAssets_model + 1].fileName
+                local wallMainModelId = fenceModelHelper.getModels(params.lolloFenceAssets_isWallTall == 1)[params.lolloFenceAssets_model + 1].fileName
                 local wallBaseModelId = _getWallBaseModelId()
                 local wallBehindBaseModelId = _getWallBehindBaseModelId()
                 local wallBehindModelId = fenceModelHelper.getWallBehindModels()[params.lolloFenceAssets_wallBehindModel + 1].fileName
