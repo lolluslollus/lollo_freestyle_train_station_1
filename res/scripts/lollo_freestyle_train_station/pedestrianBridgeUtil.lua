@@ -5,14 +5,17 @@ local constants = require('lollo_freestyle_train_station.constants')
 
 local _lod0_skinMaterials_era_a_rep = {
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
-	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
+    'lollo_freestyle_train_station/metal/rough_copper_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/square_cobbles_skinned.mtl',
 }
 local _lod0_skinMaterials_era_a_side = {
-	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/square_cobbles_skinned.mtl',
+    'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
 local _lod0_skinMaterials_era_a_side_no_railing = {
+    'lollo_freestyle_train_station/square_cobbles_skinned.mtl',
 	'lollo_freestyle_train_station/square_cobbles_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
@@ -22,14 +25,17 @@ local _lod1_materials_era_a = {
 
 local _lod0_skinMaterials_era_b_rep = {
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
-	'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
+    'lollo_freestyle_train_station/metal/rough_copper_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/square_cobbles_large_skinned.mtl',
 }
 local _lod0_skinMaterials_era_b_side = {
+    'lollo_freestyle_train_station/square_cobbles_large_skinned.mtl',
 	'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
 local _lod0_skinMaterials_era_b_side_no_railing = {
+    'lollo_freestyle_train_station/square_cobbles_large_skinned.mtl',
 	'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 }
@@ -39,14 +45,17 @@ local _lod1_materials_era_b = {
 
 local _lod0_skinMaterials_era_c_rep = {
 	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
-	'lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl',
+    'lollo_freestyle_train_station/metal/rough_iron_low_prio_skinned.mtl',
+	'lollo_freestyle_train_station/station_concrete_1_skinned.mtl',
 }
 local _lod0_skinMaterials_era_c_side = {
+    'lollo_freestyle_train_station/station_concrete_1_skinned.mtl',
 	'lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
 }
 local _lod0_skinMaterials_era_c_side_no_railing = {
+    'lollo_freestyle_train_station/station_concrete_1_skinned.mtl',
 	'lollo_freestyle_train_station/station_concrete_1_low_prio_skinned.mtl',
 	'lollo_freestyle_train_station/metal/rough_iron_skinned.mtl',
 }
@@ -120,9 +129,7 @@ local utils = {
     end,
 }
 utils.getData4CementOBSOLETE = function(isSides)
-    local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_cement/'
-    local stockDir = 'bridge/cement/'
 
     -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
     -- and a list of lanes and offsets,
@@ -173,9 +180,6 @@ utils.getData4CementOBSOLETE = function(isSides)
         }
 
     local config = {
-        -- pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
-        -- pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
-        -- pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
 		pillarBase = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
         pillarRepeat = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
         pillarTop = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
@@ -249,9 +253,7 @@ utils.getData4CementOBSOLETE = function(isSides)
 end
 
 utils.getData4PedestrianBridge = function(eraPrefix, isSides)
-    -- local pillarDir = 'bridge/lollo_freestyle_train_station/cement_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_basic/' .. eraPrefix
-    -- local stockDir = 'bridge/cement/'
 
     -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
     -- and a list of lanes and offsets,
@@ -302,9 +304,6 @@ utils.getData4PedestrianBridge = function(eraPrefix, isSides)
         }
 
     local config = {
-        -- pillarBase = { stockDir .. 'pillar_btm_side.mdl', pillarDir .. 'pillar_btm_rep.mdl', stockDir .. 'pillar_btm_side2.mdl' },
-        -- pillarRepeat = { stockDir .. 'pillar_rep_side.mdl', pillarDir .. 'pillar_rep_rep.mdl', stockDir .. 'pillar_rep_side2.mdl' },
-        -- pillarTop = { stockDir .. 'pillar_top_side.mdl', pillarDir .. 'pillar_top_rep.mdl', stockDir .. 'pillar_top_side2.mdl' },
 		pillarBase = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
         pillarRepeat = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
         pillarTop = { 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl', 'lollo_freestyle_train_station/empty.mdl' },
@@ -609,7 +608,7 @@ utils.getData4CementGlassBridge = function(name, config, pillarMinDist, pillarMa
     }
 end
 
-utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix, isWithEdge)
+utils.getModel4StationBridge = function(nSegments, isCompressed, eraPrefix, isWithEdge)
     if (not(nSegments) or nSegments < 1) then nSegments = 1 end
 
     local _2nSegments = 2 * nSegments
@@ -629,11 +628,11 @@ utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix, isWithEdge)
 					children = {
 						{
 							name = 'cement_bridge_bone_2m_start',
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 						},
 						{
 							name = 'cement_bridge_bone_2m_end',
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0, 0, 1, },
 						},
 					},
 					name = 'container_2m',
@@ -689,7 +688,10 @@ utils.getModel4Basic = function(nSegments, isCompressed, eraPrefix, isWithEdge)
 						or _lod0_skinMaterials_side,
 				},
 			},
-			transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, i, 0.5, 0, 1, },
+            -- this transf looks wrong but it looks better than the right one
+            transf = { 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, i, 0.5, 0, 1, },
+            -- while it should be like this, but it looks worse
+			-- transf = { -1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0, i+2, 0.5, 0, 1, },
 		}
 	end
 
@@ -904,8 +906,8 @@ utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 								and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh'
 								or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh',
 							skinMaterials = isSide
-								and _lod0_skinMaterials_side
-								or _lod0_skinMaterials_side_no_railing,
+                                and _lod0_skinMaterials_side
+                                or _lod0_skinMaterials_side_no_railing,
 						},
 					},
 					-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -0.5, 0, 1, },
@@ -948,7 +950,7 @@ utils.getModel4Basic_rep_rep = function(eraPrefix)
 			params = {
 				halfExtents = { 1, 0.25, 0.25, },
 			},
-			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 1, -0.25, 1, },
+			transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  1, 0.25, -0.25, 1, },
 			type = 'BOX',
 		},
         -- collider = mdlHelpers.getVoidCollider(),

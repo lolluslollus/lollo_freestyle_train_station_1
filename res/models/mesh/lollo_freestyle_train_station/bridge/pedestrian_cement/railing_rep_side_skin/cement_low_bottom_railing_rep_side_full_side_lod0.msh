@@ -1,36 +1,66 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, 0, }, 
+		{
+			0, 0, 0, 0, 
+		}, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				jointWeights = {
-					count = 96,
-					offset = 1492,
-				},
-				normal = {
-					count = 96,
-					offset = 1684,
-				},
-				position = {
-					count = 96,
+					count = 48,
 					offset = 1396,
 				},
+				normal = {
+					count = 48,
+					offset = 1444,
+				},
+				position = {
+					count = 48,
+					offset = 1300,
+				},
 				tangent = {
-					count = 96,
-					offset = 1588,
+					count = 48,
+					offset = 1348,
 				},
 				uv0 = {
-					count = 96,
-					offset = 1300,
+					count = 48,
+					offset = 1492,
 				},
 			},
 			materials = {
-				"TOP.mtl",
+				"TOP.mtl", 
 			},
-		}, {
+		},
+		{
+			indices = {
+				jointWeights = {
+					count = 48,
+					offset = 1636,
+				},
+				normal = {
+					count = 48,
+					offset = 1684,
+				},
+				position = {
+					count = 48,
+					offset = 1540,
+				},
+				tangent = {
+					count = 48,
+					offset = 1588,
+				},
+				uv0 = {
+					count = 48,
+					offset = 1732,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/TOP_LOW_PRIO.mtl", 
+			},
+		},
+		{
 			indices = {
 				jointWeights = {
 					count = 624,
@@ -38,25 +68,26 @@ return {
 				},
 				normal = {
 					count = 624,
-					offset = 4276,
+					offset = 3652,
 				},
 				position = {
 					count = 624,
-					offset = 2404,
+					offset = 1780,
 				},
 				tangent = {
 					count = 624,
-					offset = 3652,
+					offset = 2404,
 				},
 				uv0 = {
 					count = 624,
-					offset = 1780,
+					offset = 4276,
 				},
 			},
 			materials = {
-				"IRON.mtl",
+				"IRON.mtl", 
 			},
-		}, {
+		},
+		{
 			indices = {
 				jointWeights = {
 					count = 72,
@@ -64,23 +95,23 @@ return {
 				},
 				normal = {
 					count = 72,
-					offset = 5188,
+					offset = 5116,
 				},
 				position = {
 					count = 72,
-					offset = 4972,
+					offset = 4900,
 				},
 				tangent = {
 					count = 72,
-					offset = 5116,
+					offset = 4972,
 				},
 				uv0 = {
 					count = 72,
-					offset = 4900,
+					offset = 5188,
 				},
 			},
 			materials = {
-				"BOTTOM.mtl",
+				"BOTTOM.mtl", 
 			},
 		}, 
 	},
@@ -88,27 +119,27 @@ return {
 		jointWeights = {
 			count = 32,
 			numComp = 4,
-			offset = 1120,
+			offset = 664,
 		},
 		normal = {
 			count = 84,
 			numComp = 3,
-			offset = 1216,
+			offset = 696,
 		},
 		position = {
 			count = 600,
 			numComp = 3,
-			offset = 520,
+			offset = 0,
 		},
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 1152,
+			offset = 600,
 		},
 		uv0 = {
 			count = 520,
 			numComp = 2,
-			offset = 0,
+			offset = 780,
 		},
 	},
 }

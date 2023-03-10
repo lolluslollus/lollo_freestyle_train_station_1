@@ -1,34 +1,60 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				jointWeights = {
-					count = 96,
-					offset = 648,
-				},
-				normal = {
-					count = 96,
-					offset = 840,
-				},
-				position = {
-					count = 96,
+					count = 48,
 					offset = 552,
 				},
+				normal = {
+					count = 48,
+					offset = 600,
+				},
+				position = {
+					count = 48,
+					offset = 456,
+				},
 				tangent = {
-					count = 96,
-					offset = 744,
+					count = 48,
+					offset = 504,
 				},
 				uv0 = {
-					count = 96,
-					offset = 456,
+					count = 48,
+					offset = 648,
 				},
 			},
 			materials = {
-				"TOP.mtl",
+				"TOP.mtl", 
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 48,
+					offset = 792,
+				},
+				normal = {
+					count = 48,
+					offset = 840,
+				},
+				position = {
+					count = 48,
+					offset = 696,
+				},
+				tangent = {
+					count = 48,
+					offset = 744,
+				},
+				uv0 = {
+					count = 48,
+					offset = 888,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/TOP_LOW_PRIO.mtl", 
 			},
 		}, {
 			indices = {
@@ -38,23 +64,23 @@ return {
 				},
 				normal = {
 					count = 72,
-					offset = 1224,
+					offset = 1152,
 				},
 				position = {
 					count = 72,
-					offset = 1008,
+					offset = 936,
 				},
 				tangent = {
 					count = 72,
-					offset = 1152,
+					offset = 1008,
 				},
 				uv0 = {
 					count = 72,
-					offset = 936,
+					offset = 1224,
 				},
 			},
 			materials = {
-				"BOTTOM.mtl",
+				"BOTTOM.mtl", 
 			},
 		}, 
 	},
@@ -62,27 +88,27 @@ return {
 		jointWeights = {
 			count = 32,
 			numComp = 4,
-			offset = 288,
+			offset = 184,
 		},
 		normal = {
 			count = 72,
 			numComp = 3,
-			offset = 384,
+			offset = 216,
 		},
 		position = {
 			count = 120,
 			numComp = 3,
-			offset = 168,
+			offset = 0,
 		},
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 320,
+			offset = 120,
 		},
 		uv0 = {
 			count = 168,
 			numComp = 2,
-			offset = 0,
+			offset = 288,
 		},
 	},
 }

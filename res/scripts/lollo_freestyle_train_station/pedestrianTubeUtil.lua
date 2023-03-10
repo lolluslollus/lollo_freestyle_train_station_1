@@ -80,7 +80,7 @@ local function getDynamicProps(eraPrefix)
 end
 
 local utils = {
-	getModel4Basic = function(nSegments, isCompressed, eraPrefix)
+	getModel4StationBridge = function(nSegments, isCompressed, eraPrefix)
 		if (not(nSegments) or nSegments < 1) then nSegments = 1 end
 
 		local _2nSegments = 2 * nSegments
