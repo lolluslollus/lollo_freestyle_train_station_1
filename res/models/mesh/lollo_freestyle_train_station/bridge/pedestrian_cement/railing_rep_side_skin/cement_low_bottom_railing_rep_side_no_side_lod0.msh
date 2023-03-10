@@ -8,23 +8,23 @@ return {
 			indices = {
 				jointWeights = {
 					count = 48,
-					offset = 552,
+					offset = 612,
 				},
 				normal = {
 					count = 48,
-					offset = 600,
+					offset = 564,
 				},
 				position = {
 					count = 48,
-					offset = 456,
+					offset = 516,
 				},
 				tangent = {
 					count = 48,
-					offset = 504,
+					offset = 708,
 				},
 				uv0 = {
 					count = 48,
-					offset = 648,
+					offset = 660,
 				},
 			},
 			materials = {
@@ -34,23 +34,23 @@ return {
 			indices = {
 				jointWeights = {
 					count = 48,
-					offset = 792,
+					offset = 852,
 				},
 				normal = {
 					count = 48,
-					offset = 840,
+					offset = 804,
 				},
 				position = {
 					count = 48,
-					offset = 696,
+					offset = 756,
 				},
 				tangent = {
 					count = 48,
-					offset = 744,
+					offset = 948,
 				},
 				uv0 = {
 					count = 48,
-					offset = 888,
+					offset = 900,
 				},
 			},
 			materials = {
@@ -59,24 +59,24 @@ return {
 		}, {
 			indices = {
 				jointWeights = {
-					count = 72,
-					offset = 1080,
+					count = 96,
+					offset = 1188,
 				},
 				normal = {
-					count = 72,
-					offset = 1152,
+					count = 96,
+					offset = 1092,
 				},
 				position = {
-					count = 72,
-					offset = 936,
+					count = 96,
+					offset = 996,
 				},
 				tangent = {
-					count = 72,
-					offset = 1008,
+					count = 96,
+					offset = 1380,
 				},
 				uv0 = {
-					count = 72,
-					offset = 1224,
+					count = 96,
+					offset = 1284,
 				},
 			},
 			materials = {
@@ -88,27 +88,27 @@ return {
 		jointWeights = {
 			count = 32,
 			numComp = 4,
-			offset = 184,
+			offset = 228,
 		},
 		normal = {
-			count = 72,
+			count = 84,
 			numComp = 3,
-			offset = 216,
+			offset = 144,
 		},
 		position = {
-			count = 120,
+			count = 144,
 			numComp = 3,
 			offset = 0,
 		},
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 120,
+			offset = 452,
 		},
 		uv0 = {
-			count = 168,
+			count = 192,
 			numComp = 2,
-			offset = 288,
+			offset = 260,
 		},
 	},
 }
