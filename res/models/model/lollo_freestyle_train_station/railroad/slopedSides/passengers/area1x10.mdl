@@ -1,5 +1,4 @@
 function data()
-    local _constants = require('lollo_freestyle_train_station.constants')
     local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
     return {
         boundingInfo = {
@@ -18,21 +17,15 @@ function data()
         lods = {
             {
                 node = {
-                    children = {
-                        {
-                            materials = {
-                                "lollo_freestyle_train_station/era_c_station_tiles_1.mtl",
-                                "lollo_freestyle_train_station/station_concrete_1.mtl",
-                                "lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl",
-                                "lollo_freestyle_train_station/station_concrete_1_z.mtl",
-                                "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
-                            },
-                            mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_c_platform_ext_1x10m.msh',
-                            transf = {0, 1, 0, 0,  -_mdlHelpers.getSlopedPlatformStretchFactor(1, 10), 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
-                        },
+                    materials = {
+                        "lollo_freestyle_train_station/era_c_station_tiles_1.mtl",
+                        "lollo_freestyle_train_station/station_concrete_1.mtl",
+                        "lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl",
+                        "lollo_freestyle_train_station/station_concrete_1_z.mtl",
+                        "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
                     },
-                    name = 'RootNode',
-                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                    mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_c_platform_ext_1x10m.msh',
+                    transf = {0, 1, 0, 0,  -_mdlHelpers.getSlopedPlatformStretchFactor(1, 10), 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                 },
                 static = false,
                 visibleFrom = 0,
