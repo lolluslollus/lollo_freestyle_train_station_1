@@ -8,23 +8,23 @@ return {
 			indices = {
 				jointWeights = {
 					count = 288,
-					offset = 1912,
+					offset = 2200,
 				},
 				normal = {
 					count = 288,
-					offset = 1048,
+					offset = 1336,
 				},
 				position = {
 					count = 288,
-					offset = 2200,
+					offset = 1912,
 				},
 				tangent = {
 					count = 288,
-					offset = 1336,
+					offset = 1624,
 				},
 				uv0 = {
 					count = 288,
-					offset = 1624,
+					offset = 2488,
 				},
 			},
 			materials = {
@@ -34,9 +34,9 @@ return {
 	},
 	vertexAttr = {
 		jointWeights = {
-			count = 32,
+			count = 320,
 			numComp = 4,
-			offset = 704,
+			offset = 776,
 		},
 		normal = {
 			count = 144,
@@ -46,7 +46,7 @@ return {
 		position = {
 			count = 312,
 			numComp = 3,
-			offset = 736,
+			offset = 464,
 		},
 		tangent = {
 			count = 320,
@@ -56,7 +56,7 @@ return {
 		uv0 = {
 			count = 240,
 			numComp = 2,
-			offset = 464,
+			offset = 1096,
 		},
 	},
 }

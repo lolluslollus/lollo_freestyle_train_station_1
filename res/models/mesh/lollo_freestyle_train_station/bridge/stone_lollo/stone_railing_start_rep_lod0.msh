@@ -20,11 +20,11 @@ return {
 				},
 				tangent = {
 					count = 288,
-					offset = 1016,
+					offset = 1592,
 				},
 				uv0 = {
 					count = 288,
-					offset = 1592,
+					offset = 2456,
 				},
 			},
 			materials = {
@@ -34,29 +34,29 @@ return {
 	},
 	vertexAttr = {
 		jointWeights = {
-			count = 32,
+			count = 320,
 			numComp = 4,
-			offset = 984,
+			offset = 744,
 		},
 		normal = {
 			count = 144,
 			numComp = 3,
-			offset = 288,
+			offset = 0,
 		},
 		position = {
 			count = 312,
 			numComp = 3,
-			offset = 672,
+			offset = 432,
 		},
 		tangent = {
 			count = 288,
 			numComp = 4,
-			offset = 0,
+			offset = 144,
 		},
 		uv0 = {
 			count = 240,
 			numComp = 2,
-			offset = 432,
+			offset = 1064,
 		},
 	},
 }

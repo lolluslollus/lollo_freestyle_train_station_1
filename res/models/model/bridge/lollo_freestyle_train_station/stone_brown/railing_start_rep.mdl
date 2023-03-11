@@ -1,89 +1,92 @@
 function data()
-return {
-	boundingInfo = {
-		-- bbMax = { 6, 4, 0, },
-		-- bbMax = { 6, 0.5, 0, },
-		bbMax = { 6, 2, 0, },
-		bbMin = { 0, 0, -7, },
-	},
-	collider = {
-		params = {
-			halfExtents = { 3, 2, 3.5000002384186, },
+	return {
+		boundingInfo = {
+			-- bbMax = { 6, 4, 0, },
+			bbMax = { 6, 2, 0, },
+			bbMin = { 0, 0, -7, },
 		},
-		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-		type = "BOX",
-	},
-	lods = {
-		{
-			node = {
-				children = {
-					{
-						children = {
-							{
-								name = "stone_bridge_bone_6m_start",
-								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, },
+		collider = {
+			params = {
+				halfExtents = { 3, 2, 3.5000002384186, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{
+				node = {
+					children = {
+						{
+							children = {
+								{
+									name = "stone_bridge_bone_6m_start",
+									-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, },
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+								},
+								{
+									name = "stone_bridge_bone_6m_1",
+									-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 1, 0, 1, },
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 0, 1, },
+								},
+								{
+									name = "stone_bridge_bone_6m_end",
+									-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, 1, 0, 1, },
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, 2, 0, 1, },
+								},
 							},
-							-- {
-							-- 	name = "stone_bridge_bone_6m_1",
-							-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 2, 0, 1, },
-							-- },
-							{
-								name = "stone_bridge_bone_6m_end",
-								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 6, 1, 0, 1, },
-							},
+							name = "container_6m",
+							skin = "bridge/stone/railing_start_rep/stone_railing_start_rep_lod0.msh",
+							-- skin = "lollo_freestyle_train_station/bridge/stone_lollo/stone_railing_start_rep_lod0.msh",
+							skinMaterials = { "lollo_freestyle_train_station/bridge/stone_brown_skinned.mtl", },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 						},
-						name = "container_6m",
-						skin = "lollo_freestyle_train_station/bridge/stone_lollo/stone_railing_start_rep_lod0.msh",
-						skinMaterials = { "lollo_freestyle_train_station/bridge/stone_brown_skinned.mtl", },
-						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 				},
-				name = "RootNode",
-				-- transf = { 1, 0, 0, 0, 0, 0.125, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				static = false,
+				visibleFrom = 0,
+				visibleTo = 200,
 			},
-			static = false,
-			visibleFrom = 0,
-			visibleTo = 200,
-		},
-		{
-			node = {
-				children = {
-					{
-						materials = { "lollo_freestyle_train_station/bridge/stone_brown.mtl", },
-						mesh = "bridge/stone/railing_start_rep/stone_railing_start_rep_lod1.msh",
-						name = "stone_railing_start_rep",
-						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+			{
+				node = {
+					children = {
+						{
+							materials = { "lollo_freestyle_train_station/bridge/stone_brown.mtl", },
+							mesh = "bridge/stone/railing_start_rep/stone_railing_start_rep_lod1.msh",
+							name = "stone_railing_start_rep",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+						},
 					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 				},
-				name = "RootNode",
-				-- transf = { 1, 0, 0, 0, 0, 0.125, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-				transf = { 1, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				static = false,
+				visibleFrom = 200,
+				visibleTo = 500,
 			},
-			static = false,
-			visibleFrom = 200,
-			visibleTo = 500,
-		},
-		{
-			node = {
-				children = {
-					{
-						materials = { "lollo_freestyle_train_station/bridge/stone_brown.mtl", },
-						mesh = "bridge/stone/railing_start_rep/stone_railing_start_rep_lod2.msh",
-						name = "stone_railing_start_rep",
-						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+			{
+				node = {
+					children = {
+						{
+							materials = { "lollo_freestyle_train_station/bridge/stone_brown.mtl", },
+							mesh = "bridge/stone/railing_start_rep/stone_railing_start_rep_lod2.msh",
+							name = "stone_railing_start_rep",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 2, 0, 1, },
+						},
 					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
 				},
-				name = "RootNode",
-				-- transf = { 1, 0, 0, 0, 0, 0.125, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-				transf = { 1, 0, 0, 0, 0, 0.5, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				static = false,
+				visibleFrom = 500,
+				visibleTo = 2500,
 			},
-			static = false,
-			visibleFrom = 500,
-			visibleTo = 2500,
 		},
-	},
-	metadata = { },
-	version = 1,
-}
-end
+		metadata = { },
+		version = 1,
+	}
+	end
