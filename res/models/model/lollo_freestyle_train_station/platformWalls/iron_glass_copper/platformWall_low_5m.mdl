@@ -18,6 +18,7 @@ function data()
                         },
                     },
                     name = 'lollo_wall_low',
+                    -- LOLLO TODO try this skin in model editor, I am not sure it works well
                     skin = 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/wall_skinned_low_5m_lod0.msh',
                     skinMaterials = {
                         'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
