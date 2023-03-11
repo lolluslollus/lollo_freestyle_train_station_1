@@ -17,6 +17,19 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
+                visibleTo = 200,
+            },
+            {
+                node = {
+                    materials = {
+                        -- "lollo_freestyle_train_station/glass_transparent_rough.mtl",
+                        'lollo_freestyle_train_station/glass_half_transparent_rough.mtl',
+                    },
+                    mesh = 'lollo_freestyle_train_station/roofs/metal_glass/roof_5m_lod1.msh',
+                    transf = {1.0, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 200,
                 visibleTo = 1000,
             },
         },
