@@ -870,7 +870,7 @@ utils.getModel4StationBridge = function(nSegments, isCompressed, eraPrefix, isWi
 	}
 end
 
-utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
+utils.getPedestrianBridge_model_rep_side = function(eraPrefix, isSide)
 	local _lod0_skinMaterials_rep, _lod0_skinMaterials_side, _lod0_skinMaterials_side_no_railing, _lod1_materials = getDynamicProps(eraPrefix)
 
 	return {
@@ -938,7 +938,7 @@ utils.getModel4Basic_rep_side = function(eraPrefix, isSide)
 	}
 end
 
-utils.getModel4Basic_rep_rep = function(eraPrefix)
+utils.getPedestrianBridge_model_rep_rep = function(eraPrefix)
 	local _lod0_skinMaterials_rep, _lod0_skinMaterials_side, _lod0_skinMaterials_side_no_railing, _lod1_materials = getDynamicProps(eraPrefix)
 
 	return {
@@ -959,6 +959,7 @@ utils.getModel4Basic_rep_rep = function(eraPrefix)
 				node = {
 					children = {
 						{
+                            -- LOLLO TODO try the following transfs with [14] = 0
 							children = {
 								{
 									name = 'cement_bridge_bone_2m_start',
