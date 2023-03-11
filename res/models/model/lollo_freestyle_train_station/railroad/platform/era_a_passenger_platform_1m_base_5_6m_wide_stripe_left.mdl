@@ -7,26 +7,15 @@ function data()
         lods = {
             {
                 node = {
-                    children = {
-                        {
-                            materials = {
-                                "lollo_freestyle_train_station/era_a_station_tiles_1.mtl",
-                                'lollo_freestyle_train_station/square_cobbles.mtl',
-                                "lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl",
-                                'lollo_freestyle_train_station/square_cobbles_z.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
-                            },
-                            mesh = "lollo_freestyle_train_station/railroad/platform/platform_1m_long_5_6m_wide_1_2m_high_z.msh",
-                            transf = { _mdlHelpers.getPlatformStretchFactor(1, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
-                        },
-                        -- {
-                        --     materials = {'lollo_freestyle_train_station/icon/yellow.mtl'},
-                        --     mesh = 'asset/icon/lod_0_icon_pointer.msh',
-                        --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 0.3, 0,  0, 0, 1.2, 1}
-                        -- },
+                    materials = {
+                        "lollo_freestyle_train_station/era_a_station_tiles_1.mtl",
+                        'lollo_freestyle_train_station/square_cobbles.mtl',
+                        "lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl",
+                        'lollo_freestyle_train_station/square_cobbles_z.mtl',
+                        'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
                     },
-                    name = "RootNode",
-                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                    mesh = "lollo_freestyle_train_station/railroad/platform/platform_1m_long_5_6m_wide_1_2m_high_z.msh",
+                    transf = { _mdlHelpers.getPlatformStretchFactor(1, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                 },
                 static = false,
                 visibleFrom = 0,
