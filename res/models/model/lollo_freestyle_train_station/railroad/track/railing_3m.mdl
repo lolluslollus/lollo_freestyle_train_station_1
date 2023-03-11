@@ -14,17 +14,11 @@ function data()
         lods = {
             {
                 node = {
-                    children = {
-                        {
-                            materials = { "station/air/asset/asset_tf2/asset_transparent.mtl", },
-                            mesh = "station/air/asset/handrail_3m/handrail_3m_lod0.msh",
-                            name = "handrail_3m",
-                            -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-                            transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1, },
-                        },
-                    },
-                    name = "RootNode",
-                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                    materials = { "station/air/asset/asset_tf2/asset_transparent.mtl", },
+                    mesh = "station/air/asset/handrail_3m/handrail_3m_lod0.msh",
+                    name = "handrail_3m",
+                    -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                    transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1, },
                 },
                 static = false,
                 visibleFrom = 0,
