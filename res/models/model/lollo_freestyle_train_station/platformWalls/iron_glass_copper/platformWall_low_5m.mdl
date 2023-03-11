@@ -7,27 +7,27 @@ function data()
         lods = {
             {
                 node = {
-                    children = {
-                        {
-                            name = 'lollo_wall_low_bone_1m_start',
-                            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -0.5, -0.5, 0, 1, },
-                        },
-                        {
-                            name = 'lollo_wall_low_bone_1m_end',
-                            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, -0.5, 0, 1, },
-                        },
-                    },
-                    name = 'lollo_wall_low',
-                    -- LOLLO TODO try this skin in model editor, I am not sure it works well
-                    skin = 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/wall_skinned_low_5m_lod0.msh',
-                    skinMaterials = {
-                        'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
-                        'lollo_freestyle_train_station/metal/copper_glass_diamonds_001_skinned.mtl'
+                    mesh = 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/wall_low_5m_lod0.msh',
+                    materials = {
+                        'lollo_freestyle_train_station/metal/rough_copper.mtl',
+                        'lollo_freestyle_train_station/metal/copper_glass_diamonds_001.mtl'
                     },
                     -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                 },
                 static = false,
                 visibleFrom = 0,
+                visibleTo = 200,
+            },
+            {
+                node = {
+                    mesh = 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/wall_low_5m_lod1.msh',
+                    materials = {
+                        'lollo_freestyle_train_station/metal/copper_glass_diamonds_001.mtl'
+                    },
+                    -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 200,
                 visibleTo = 1000,
             },
         },
