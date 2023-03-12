@@ -99,6 +99,7 @@ function data()
                 and not(_stringUtils.stringContains(trackFileName, 'ballast_standard'))
                 and not(_stringUtils.stringContains(trackFileName, 'mus_mock'))
                 and not(_stringUtils.stringContains(trackFileName, 'Seilbahn_Gleis'))
+                and not(_stringUtils.stringContains(trackFileName, 'wk_track_dummy'))
                 then
                     -- local track = api.res.trackTypeRep.get(api.res.trackTypeRep.find(trackFileName))
                     local track = api.res.trackTypeRep.get(trackTypeIndex)
