@@ -597,8 +597,10 @@ privateFuncs.edges = {
                 snapNodes = {},
                 tag2nodes = tag2nodes,
                 type = 'TRACK'
+                -- nTerminal = t, -- won't work
+                -- nTrackEdge = i, -- won't work
             }
-    
+
             if i == 1 then
                 -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
                 newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
@@ -607,11 +609,15 @@ privateFuncs.edges = {
                 -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
                 newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
             end
-    
+
             -- LOLLO NOTE the edges won't snap to the neighbours
             -- unless you rebuild those neighbours, by hand or by script,
             -- and make them snap to the station own nodes.
             result.edgeLists[#result.edgeLists+1] = newEdgeList
+
+            if not(result.trackEdgeListsIndexes) then result.trackEdgeListsIndexes = {} end
+            if not(result.trackEdgeListsIndexes[t]) then result.trackEdgeListsIndexes[t] = {} end
+            result.trackEdgeListsIndexes[t][i] = #result.edgeLists
         end
     end,
     _addPlatformEdges = function(result, tag2nodes, params, t)
@@ -677,6 +683,10 @@ privateFuncs.edges = {
             end
 
             result.edgeLists[#result.edgeLists+1] = newEdgeList
+
+            if not(result.platformEdgeListsIndexes) then result.platformEdgeListsIndexes = {} end
+            if not(result.platformEdgeListsIndexes[t]) then result.platformEdgeListsIndexes[t] = {} end
+            result.platformEdgeListsIndexes[t][i] = #result.edgeLists
         end
     end,
     _getNNodesInTerminalsSoFar = function(params, t)
@@ -1771,6 +1781,134 @@ return {
     
             -- logger.print('moduleHelpers.edges.addEdges ending for terminal', t, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
         end,
+        dynamicBridgeTypes_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+            -- local sampleUpdateScriptParams = {
+            --     bridgeFileName = "stone.lua",
+            -- }
+			logger.print('dynamicBridgeTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+            if updateScriptParams == nil then return end
+
+			local nTerminal, _, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+            if not(result.platformEdgeListsIndexes) or not(result.platformEdgeListsIndexes[nTerminal]) then return end
+            if not(result.trackEdgeListsIndexes) or not(result.trackEdgeListsIndexes[nTerminal]) then return end
+
+            local _edgeType = not(stringUtils.isNullOrEmptyString(updateScriptParams.bridgeFileName)) and 'BRIDGE' or nil
+            local _updateEdge = function(edgeListsIndex)
+                if edgeListsIndex == nil then return end
+                if result.edgeLists[edgeListsIndex].edgeType ~= 'BRIDGE' then return end
+                -- redundant code to force no bridges if it must be
+                result.edgeLists[edgeListsIndex].edgeType = _edgeType
+                if _edgeType == nil then
+                    result.edgeLists[edgeListsIndex].alignTerrain = true
+                else
+                    result.edgeLists[edgeListsIndex].edgeTypeName = updateScriptParams.bridgeFileName
+                end
+            end
+
+            for telIndex, edgeListsIndex in pairs(result.platformEdgeListsIndexes[nTerminal]) do
+				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+                _updateEdge(edgeListsIndex)
+			end
+			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
+				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+                _updateEdge(edgeListsIndex)
+				--[[
+				if telIndex ~= nil then
+					local tel = params.terminals[nTerminal].trackEdgeLists[telIndex]
+					print('tel =')
+					debugPrint(params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
+					if tel ~= nil then
+						params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName = 'high_speed.lua'
+						print('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
+					end
+				end
+				]]
+			end
+		end,
+        dynamicTrackTypes_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+            -- local sampleUpdateScriptParams = {
+            --     catenary = false,
+            --     trackType = "tgr_thirdRail.lua",
+            -- }
+			logger.print('dynamicTrackTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+            if updateScriptParams == nil or updateScriptParams.trackType == nil or updateScriptParams.catenary == nil then return end
+
+			local nTerminal, _, baseId = result.demangleId(slotId)
+			-- tag = "__module_62010000" if nTerminal is 1
+			-- tag = "__module_62020000" if nTerminal is 2
+			-- etc
+			if not nTerminal or not baseId then return end
+
+            if not(result.trackEdgeListsIndexes) or not(result.trackEdgeListsIndexes[nTerminal]) then return end
+
+			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
+				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				if edgeListsIndex ~= nil then
+                    result.edgeLists[edgeListsIndex].params.catenary = updateScriptParams.catenary -- true
+					result.edgeLists[edgeListsIndex].params.type = updateScriptParams.trackType -- 'high_speed.lua'
+					-- logger.print('high speed module updated a track') logger.debugPrint(result.edgeLists[edgeListsIndex])
+				end
+				--[[
+				if telIndex ~= nil then
+					local tel = params.terminals[nTerminal].trackEdgeLists[telIndex]
+					print('tel =')
+					debugPrint(params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
+					if tel ~= nil then
+						params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName = 'high_speed.lua'
+						print('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
+					end
+				end
+				]]
+			end
+		end,
+        dynamicTunnelTypes_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+            -- local sampleUpdateScriptParams = {
+            --     tunnelFileName = "tunnel.lua",
+            -- }
+			logger.print('dynamicTunnelTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+            if updateScriptParams == nil then return end
+
+			local nTerminal, _, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+            if not(result.platformEdgeListsIndexes) or not(result.platformEdgeListsIndexes[nTerminal]) then return end
+            if not(result.trackEdgeListsIndexes) or not(result.trackEdgeListsIndexes[nTerminal]) then return end
+
+            local _edgeType = not(stringUtils.isNullOrEmptyString(updateScriptParams.tunnelFileName)) and 'TUNNEL' or nil
+            local _updateEdge = function(edgeListsIndex)
+                if edgeListsIndex == nil then return end
+                if result.edgeLists[edgeListsIndex].edgeType ~= 'TUNNEL' then return end
+                -- redundant code to force no tunnels if it must be
+                result.edgeLists[edgeListsIndex].edgeType = _edgeType
+                if _edgeType == nil then
+                    result.edgeLists[edgeListsIndex].alignTerrain = true
+                else
+                    result.edgeLists[edgeListsIndex].edgeTypeName = updateScriptParams.tunnelFileName
+                end
+            end
+
+            for telIndex, edgeListsIndex in pairs(result.platformEdgeListsIndexes[nTerminal]) do
+				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+                _updateEdge(edgeListsIndex)
+			end
+			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
+				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+                _updateEdge(edgeListsIndex)
+				--[[
+				if telIndex ~= nil then
+					local tel = params.terminals[nTerminal].trackEdgeLists[telIndex]
+					print('tel =')
+					debugPrint(params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
+					if tel ~= nil then
+						params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName = 'high_speed.lua'
+						print('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
+					end
+				end
+				]]
+			end
+		end,
     },
     extraStationCapacity = {
         getStationPoolCapacities = function(modules, result)

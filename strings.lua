@@ -163,6 +163,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FlatPassengerStationLargeDesc"] = "Ornate passenger station with underpass inside. Adjust its height with <m> and <n>.",
 			["LookUndergroundName"] = "Look Underground",
 			["LookUndergroundDesc"] = "Hover or build this to look underground, remove it when done.",
+			["NoBridge"] = "No bridge",
 			["OpenLiftName"] = "Lift up for overground platforms",
 			["OpenLiftDesc"] = "Connects overground passenger platforms to their siblings, to nearby bridge underpasses or, if you add an exit and a pedestrian bridge, to the road network.",
 			["OpenLift_NoAutoLinkName"] = "Lift up for overground platforms, only manual link",
@@ -346,6 +347,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["NewStationName"] = "New Station",
 
 			-- categories
+			["bridge-type"] = "Bridge type",
 			["cargo-platform-extensions"] = "Cargo extensions",
 			["cargo-platform-tracks"] = "Cargo platforms to be laid as tracks",
 			["cargo-road-access"] = "Cargo side -> road",
@@ -360,7 +362,9 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["platform-deco"] = "Platform Deco",
 			["track-crossings"] = "Track crossings",
 			["track-deco"] = "Track Deco",
+			["track-type"] = "Track Type",
 			["train-tracks"] = "Train tracks",
+			["tunnel-type"] = "Tunnel type",
 			["waypoints-for-freestyle-station"] = "Waypoints For Freestyle Stations",
 
 			-- messages
@@ -643,6 +647,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["FlatPassengerStationLargeDesc"] = "Verzierter Personenbahnhof mit Unterführung im Inneren. Passen Sie seine Höhe mit <m> und <n> an.",
 			["LookUndergroundName"] = "Unterirdisch aussehen",
 			["LookUndergroundDesc"] = "Schwebe oder baue dies, um unterirdisch reinzugucken, entferne es, wenn du fertig bist",
+			["NoBridge"] = "Keine Brücke",
 			["OpenLiftName"] = "Aufzug nach oben für Freiluftbahnsteige",
 			["OpenLiftDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
 			["OpenLift_NoAutoLinkName"] = "Aufzug nach oben für Freiluftbahnsteige, nur manuell",
@@ -826,6 +831,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["NewStationName"] = "Neuer Bahnhof",
 
 			-- Kategorien
+			["bridge-type"] = "Brückensorte",
 			["cargo-platform-extensions"] = "Frachterweiterungen",
 			["cargo-platform-tracks"] = "Frachtplattformen, die als Gleise zu verlegen sind",
 			["cargo-road-access"] = "Fracht Seite -> Straße",
@@ -841,6 +847,8 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["track-crossings"] = "Gleiswege",
 			["track-deco"] = "Gleis-Deko",
 			["train-tracks"] = "Bahngleise",
+			["track-type"] = "GleisTyp",
+			["tunnel-type"] = "Tunneltyp",
 			["waypoints-for-freestyle-station"] = "Marker für Freestyle-Bahnhöfe",
 
 			-- Meldungen

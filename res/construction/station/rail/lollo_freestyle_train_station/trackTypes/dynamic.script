@@ -1,0 +1,14 @@
+-- local logger = require('lollo_freestyle_train_station.logger')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+
+
+function data()
+	return {
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			moduleHelpers.edges.dynamicTrackTypes_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+		end,
+		getModelsFn = function(params, updateScriptParams)
+			return {}
+		end
+	}
+end

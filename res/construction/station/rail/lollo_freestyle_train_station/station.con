@@ -91,6 +91,8 @@ function data()
                     --         0, 0, 0, 1},
 					-- },
                 },
+				platformEdgeListsIndexes = {},
+				trackEdgeListsIndexes = {},
                 slotConfig = {
 					-- LOLLO NOTE these guys skip the collision check between the spacing rectangle
 					-- of the module being placed and the spacing rectangles of the already built modules.
@@ -163,6 +165,11 @@ function data()
 						skipCollisionCheck = true,
 					},
 					[_constants.trackWallModuleType] = {
+						maxModules = -1,
+						message = nil,
+						skipCollisionCheck = true,
+					},
+					[_constants.trackTypeModuleType] = {
 						maxModules = -1,
 						message = nil,
 						skipCollisionCheck = true,
@@ -569,9 +576,14 @@ function data()
 									and (not(result.getOccupiedInfo4FlatAreas(t, i))
 									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.platformLiftSlotId) then
 										local xyZoomFactor = isTrackOnPlatformLeft and 1 or -1
-										local myTransf_xy = transfUtilsUG.mul(
+										-- local myTransf_xy = transfUtilsUG.mul(
+										-- 	moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
+										-- 	{ xyZoomFactor, 0, 0, 0,  0, xyZoomFactor, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+										-- )
+										local myTransf_xy = transfUtils.getTransf_Scaled_Shifted(
 											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
-											{ xyZoomFactor, 0, 0, 0,  0, xyZoomFactor, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+											{xyZoomFactor, xyZoomFactor, 1},
+											{0, 0, _laneZ}
 										)
 										local myId = result.mangleId(t, i, _constants.idBases.platformLiftSlotId)
 										table.insert(result.slots, {
@@ -1185,7 +1197,7 @@ function data()
 				end
 				_addWaitingAreas()
 
-				local _addTerminalSlot = function()
+				local _addCentreTrackSlots = function()
 					local i = params.terminals[t].trackEdgeListMidIndex
 					local tel = params.terminals[t].trackEdgeLists[i]
 					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf)
@@ -1217,6 +1229,7 @@ function data()
 						transf = myTransf,
 						type = _constants.trackSpeedModuleType
 					})
+					-- platform era
 					table.insert(result.slots, {
 						-- height = 0,
 						id = result.mangleId(t, 0, _constants.idBases.platformEraASlotId),
@@ -1238,8 +1251,81 @@ function data()
 						transf = myTransf,
 						type = _constants.era_c_platformModuleType
 					})
+					-- track, bridge and tunnel type
+					-- I want the blue square to be available even if there is already one of these modules,
+					-- so I place two in the same place
+					-- and remove the old module in preProcessFn
+					local trackTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.trackTypeSlotId)
+					local trackTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.trackTypeSlotId)
+					table.insert(result.slots, {
+						id = trackTypeSlotId0,
+						shape = 3,
+						-- spacing = {1, 1, 1, 1},
+						spacing = {0, 0, 0, 0},
+						-- raise to avoid collisions, this is not critical anyway.
+						transf = transfUtils.getTransf_ZShifted(myTransf, 1),
+						type = _constants.trackTypeModuleType,
+					})
+					if params.modules[trackTypeSlotId0] ~= nil or params.modules[trackTypeSlotId1] ~= nil then
+						table.insert(result.slots, {
+							id = trackTypeSlotId1,
+							shape = 3,
+							-- spacing = {1, 1, 1, 1},
+							spacing = {0, 0, 0, 0},
+							-- raise to avoid collisions, this is not critical anyway.
+							transf = transfUtils.getTransf_ZShifted(myTransf, 1),
+							type = _constants.trackTypeModuleType,
+						})
+					end
+
+					local bridgeTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.bridgeTypeSlotId)
+					local bridgeTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.bridgeTypeSlotId)
+					table.insert(result.slots, {
+						id = bridgeTypeSlotId0,
+						shape = 2,
+						-- spacing = {1, 1, 1, 1},
+						spacing = {0, 0, 0, 0},
+						-- raise to avoid collisions, this is not critical anyway.
+						transf = transfUtils.getTransf_ZShifted(myTransf, 2),
+						type = _constants.bridgeTypeModuleType,
+					})
+					if params.modules[bridgeTypeSlotId0] ~= nil or params.modules[bridgeTypeSlotId1] ~= nil then
+						table.insert(result.slots, {
+							id = bridgeTypeSlotId1,
+							shape = 2,
+							-- spacing = {1, 1, 1, 1},
+							spacing = {0, 0, 0, 0},
+							-- raise to avoid collisions, this is not critical anyway.
+							transf = transfUtils.getTransf_ZShifted(myTransf, 2),
+							type = _constants.bridgeTypeModuleType,
+						})
+					end
+
+					local tunnelTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.tunnelTypeSlotId)
+					local tunnelTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.tunnelTypeSlotId)
+					table.insert(result.slots, {
+						id = tunnelTypeSlotId0,
+						shape = 2,
+						-- spacing = {1, 1, 1, 1},
+						spacing = {0, 0, 0, 0},
+						-- raise to avoid collisions, this is not critical anyway.
+						transf = transfUtils.getTransf_ZShifted(myTransf, 3),
+						type = _constants.tunnelTypeModuleType,
+					})
+					if params.modules[tunnelTypeSlotId0] ~= nil or params.modules[tunnelTypeSlotId1] ~= nil then
+						table.insert(result.slots, {
+							id = tunnelTypeSlotId1,
+							shape = 2,
+							-- spacing = {1, 1, 1, 1},
+							spacing = {0, 0, 0, 0},
+							-- raise to avoid collisions, this is not critical anyway.
+							transf = transfUtils.getTransf_ZShifted(myTransf, 3),
+							type = _constants.tunnelTypeModuleType
+						})
+					end
 				end
-				_addTerminalSlot()
+				_addCentreTrackSlots()
+
 			end -- loop over terminals
 -- local timeMsec1 = os.clock() * 1000
 -- print('loop over terminals took ' .. (timeMsec1 - timeMsec0) .. ' mSec') -- about 35 ms with a large station
@@ -2132,30 +2218,38 @@ function data()
 			end
 ]]
 
+			local nTerminalNew, _, baseIdNew = slotHelpers.demangleId(change.slotId)
 			if change.added then
-				-- remove the older platform era modules whenever one is added, in each terminal
-				local nTerminalNew, _, baseIdNew = slotHelpers.demangleId(change.slotId)
+				-- remove the older platform era modules, or the older track / bridge / tunnel type modules,
+				-- whenever one of them is added, in the terminal where the addition took place
 				if baseIdNew == _constants.idBases.platformEraASlotId
 				or baseIdNew == _constants.idBases.platformEraBSlotId
 				or baseIdNew == _constants.idBases.platformEraCSlotId
+				or baseIdNew == _constants.idBases.tunnelTypeSlotId
+				or baseIdNew == _constants.idBases.trackTypeSlotId
+				or baseIdNew == _constants.idBases.bridgeTypeSlotId
 				then
 					for slotIdOld, _ in pairs(modules) do
 						local nTerminalOld, _, baseIdOld = slotHelpers.demangleId(slotIdOld)
 						if nTerminalOld == nTerminalNew
 						and (baseIdOld == _constants.idBases.platformEraASlotId
 							or baseIdOld == _constants.idBases.platformEraBSlotId
-							or baseIdOld == _constants.idBases.platformEraCSlotId)
+							or baseIdOld == _constants.idBases.platformEraCSlotId
+							or baseIdOld == _constants.idBases.tunnelTypeSlotId
+							or baseIdOld == _constants.idBases.trackTypeSlotId
+							or baseIdOld == _constants.idBases.bridgeTypeSlotId)
 						then
 							modules[slotIdOld] = nil
+							break
 						end
 					end
 				end
+				-- go ahead
 				modules[change.slotId] = change.module
 			else -- removing
 				-- bar removal of modules for upgrading tracks...
-				local nTerminal, _, baseId = slotHelpers.demangleId(change.slotId)
-				if baseId == _constants.idBases.trackElectrificationSlotId or baseId == _constants.idBases.trackSpeedSlotId then
-					local terminalSlotId = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.terminalSlotId)
+				if baseIdNew == _constants.idBases.trackElectrificationSlotId or baseIdNew == _constants.idBases.trackSpeedSlotId then
+					local terminalSlotId = slotHelpers.mangleId(nTerminalNew, 0, _constants.idBases.terminalSlotId)
 					-- ... if their terminal is present
 					if modules[terminalSlotId] ~= nil then
 						-- logger.print('barring removal of modules for upgrading tracks')

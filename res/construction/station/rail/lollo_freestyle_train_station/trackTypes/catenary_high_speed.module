@@ -1,0 +1,36 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local logger = require('lollo_freestyle_train_station.logger')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = 1925,
+			yearTo = 0
+		},
+		category = {
+			categories = { "track-type", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("High-speed tracks with catenary"),
+			description = _("Specialized tracks with catenary for higher speeds."),
+			icon = "ui/construction/station/rail/modular_station/high_speed_catenary.tga"
+		},
+		metadata = { },
+		order = {
+			value = 4,
+		},
+		type = _constants.trackTypeModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			moduleHelpers.edges.dynamicTrackTypes_updateFn(result, slotTransf, tag, slotId, addModelFn, params, {catenary = true, trackType = 'high_speed.lua'})
+		end,
+
+		getModelsFn = function(params)
+			return {}
+		end
+	}
+end
