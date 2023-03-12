@@ -1004,8 +1004,8 @@ local _actions = {
         local distance1 = nodeBetween.refDistance1
         logger.print('distance0 =') logger.debugPrint(distance0)
         logger.print('distance1 =') logger.debugPrint(distance1)
-        local isNode0EndOfLine = #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node0})) == 1
-        local isNode1EndOfLine = #(edgeUtils.getConnectedEdgeIds({oldBaseEdge.node1})) == 1
+        local isNode0EndOfLine = #(edgeUtils.track.getConnectedEdgeIds({oldBaseEdge.node0})) == 1
+        local isNode1EndOfLine = #(edgeUtils.track.getConnectedEdgeIds({oldBaseEdge.node1})) == 1
         logger.print('isNode0EndOfLine =') logger.debugPrint(isNode0EndOfLine)
         logger.print('isNode1EndOfLine =') logger.debugPrint(isNode1EndOfLine)
 
@@ -1542,7 +1542,7 @@ local _guiActions = {
                 -- and the construction is a station, freestyle or otherwise
                 if con ~= nil then
                     if (type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName) then
-                        local stationEndEntities = stationHelpers.getStationEndEntities(conId)
+                        local stationEndEntities = stationHelpers.getStationTrackEndEntities(conId)
                         -- logger.print('stationEndEntities =') logger.debugPrint(stationEndEntities)
                         -- if any end nodes are too close to my waypoint
                         if stationEndEntities == nil then
@@ -1770,7 +1770,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     if type(t) ~= 'number' or type(tMax) ~= 'number' then logger.warn('buildSnappyPlatforms received wrong t or tMax') logger.warningDebugPrint(t) logger.warningDebugPrint(tMax) return end
     if t > tMax then logger.print('tMax reached, leaving') return end
 
-    local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
+    local endEntities4T = stationHelpers.getStationTrackEndEntities4T(stationConstructionId, t)
     logger.print('endEntities4T ' .. (t or 'NIL') .. ' =') logger.debugPrint(endEntities4T)
     if endEntities4T == nil then return end
 
@@ -2122,7 +2122,7 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     end
     if t > tMax then logger.print('tMax reached, leaving') return end
 
-    local endEntities4T = stationHelpers.getStationEndEntities4T(stationConstructionId, t)
+    local endEntities4T = stationHelpers.getStationTrackEndEntities4T(stationConstructionId, t)
     logger.print('endEntities4T =') logger.debugPrint(endEntities4T)
     if endEntities4T == nil then return end
 

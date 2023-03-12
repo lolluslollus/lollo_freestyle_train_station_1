@@ -792,6 +792,18 @@ helper.getEdgeObjectsIdsWithModelId2 = function(edgeObjectIds, refModelId)
     return results
 end
 
+helper.isNodeStreet = function(nodeId)
+    if not(helper.isValidAndExistingId(nodeId)) then return false end
+
+    return (#api.engine.system.streetSystem.getNode2StreetEdgeMap()[nodeId] > 0)
+end
+
+helper.isNodeTrack = function(nodeId)
+    if not(helper.isValidAndExistingId(nodeId)) then return false end
+
+    return (#api.engine.system.streetSystem.getNode2TrackEdgeMap()[nodeId] > 0)
+end
+
 helper.getNodeIdsBetweenEdgeIds = function(edgeIds, isIncludeExclusiveOuterNodes)
     if type(edgeIds) ~= 'table' then return {} end
 
@@ -893,6 +905,9 @@ helper.getObjectTransf = function(objectId)
     return result
 end
 
+---this func has specialised siblings for street and track
+---@param nodeIds table<integer>
+---@return table<integer>
 helper.getConnectedEdgeIds = function(nodeIds)
     -- print('getConnectedEdgeIds starting')
     if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
@@ -991,6 +1006,33 @@ helper.isXYZSame_onlyXY = function(xy1, xy2)
 end
 
 helper.street = {
+    ---this func has specialised siblings for generic and track
+    ---@param nodeIds table<integer>
+    ---@return table<integer>
+    getConnectedEdgeIds = function(nodeIds)
+        -- print('getConnectedEdgeIds starting')
+        if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
+
+        local _map = api.engine.system.streetSystem.getNode2StreetEdgeMap()
+        local results = {}
+
+        for _, nodeId in pairs(nodeIds) do
+            if helper.isValidAndExistingId(nodeId) then
+                local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
+                if connectedEdgeIdsUserdata ~= nil then
+                    for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
+                        -- getNode2TrackEdgeMap returns the same as getNode2SegmentMap, so we check it ourselves
+                        if helper.isValidAndExistingId(edgeId) and api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET) ~= nil then
+                            arrayUtils.addUnique(results, edgeId)
+                        end
+                    end
+                end
+            end
+        end
+
+        -- print('getConnectedEdgeIds is about to return') debugPrint(results)
+        return results
+    end,
     getNearestEdgeId = function(transf, minZ, maxZ)
         if type(transf) ~= 'table' then return nil end
 
@@ -1120,6 +1162,9 @@ local _getTrackEdgeIdsBetweenEdgeIds = function(edge1Id, edge2Id, maxDistance, i
     return {}
 end
 helper.track = {
+    ---this func has specialised siblings for street and generic
+    ---@param nodeIds table<integer>
+    ---@return table<integer>
     getConnectedEdgeIds = function(nodeIds)
         -- print('getConnectedEdgeIds starting')
         if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
@@ -1133,7 +1178,7 @@ helper.track = {
                 if connectedEdgeIdsUserdata ~= nil then
                     for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
                         -- getNode2TrackEdgeMap returns the same as getNode2SegmentMap, so we check it ourselves
-                        if api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK) ~= nil then
+                        if helper.isValidAndExistingId(edgeId) and api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK) ~= nil then
                             arrayUtils.addUnique(results, edgeId)
                         end
                     end
@@ -1218,7 +1263,9 @@ helper.track = {
             -- print('boundingVolume =') debugPrint(boundingVolume)
             if not(entity) then return end
 
-            if not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE)) then return end
+            if not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE))
+            or not(api.engine.getComponent(entity, api.type.ComponentType.BASE_EDGE_TRACK))
+            then return end
             -- print('the entity is a BASE_EDGE')
 
             baseEdgeIds[#baseEdgeIds+1] = entity
