@@ -73,7 +73,6 @@ local function getDynamicProps(eraPrefix)
 	end
 end
 
-
 local function getDynamicProps_Tube(eraPrefix)
 	local _lod0_skinMaterials_era_a_rep = {
 		'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
