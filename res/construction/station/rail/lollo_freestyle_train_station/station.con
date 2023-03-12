@@ -2217,7 +2217,23 @@ function data()
 				end
 			end
 ]]
-
+			---comment
+			---@param nTerminalNew boolean|number
+			---@param baseIdNew_s table
+			local _removePredecessorOfLast = function(nTerminalNew, baseIdNew_s)
+				if not(nTerminalNew) then return end
+				for slotIdOld, _ in pairs(modules) do
+					local nTerminalOld, _, baseIdOld = slotHelpers.demangleId(slotIdOld)
+					if nTerminalOld == nTerminalNew then
+						for _, baseIdNew in pairs(baseIdNew_s) do
+							if baseIdOld == baseIdNew then
+								modules[slotIdOld] = nil
+								break
+							end
+						end
+					end
+				end
+			end
 			local nTerminalNew, _, baseIdNew = slotHelpers.demangleId(change.slotId)
 			if change.added then
 				-- remove the older platform era modules, or the older track / bridge / tunnel type modules,
@@ -2225,24 +2241,17 @@ function data()
 				if baseIdNew == _constants.idBases.platformEraASlotId
 				or baseIdNew == _constants.idBases.platformEraBSlotId
 				or baseIdNew == _constants.idBases.platformEraCSlotId
-				or baseIdNew == _constants.idBases.tunnelTypeSlotId
-				or baseIdNew == _constants.idBases.trackTypeSlotId
-				or baseIdNew == _constants.idBases.bridgeTypeSlotId
 				then
-					for slotIdOld, _ in pairs(modules) do
-						local nTerminalOld, _, baseIdOld = slotHelpers.demangleId(slotIdOld)
-						if nTerminalOld == nTerminalNew
-						and (baseIdOld == _constants.idBases.platformEraASlotId
-							or baseIdOld == _constants.idBases.platformEraBSlotId
-							or baseIdOld == _constants.idBases.platformEraCSlotId
-							or baseIdOld == _constants.idBases.tunnelTypeSlotId
-							or baseIdOld == _constants.idBases.trackTypeSlotId
-							or baseIdOld == _constants.idBases.bridgeTypeSlotId)
-						then
-							modules[slotIdOld] = nil
-							break
-						end
-					end
+					_removePredecessorOfLast(nTerminalNew, {_constants.idBases.platformEraASlotId, _constants.idBases.platformEraBSlotId, _constants.idBases.platformEraCSlotId})
+				elseif baseIdNew == _constants.idBases.bridgeTypeSlotId
+				then
+					_removePredecessorOfLast(nTerminalNew, {_constants.idBases.bridgeTypeSlotId})
+				elseif baseIdNew == _constants.idBases.trackTypeSlotId
+				then
+					_removePredecessorOfLast(nTerminalNew, {_constants.idBases.trackTypeSlotId})
+				elseif baseIdNew == _constants.idBases.tunnelTypeSlotId
+				then
+					_removePredecessorOfLast(nTerminalNew, {_constants.idBases.tunnelTypeSlotId})
 				end
 				-- go ahead
 				modules[change.slotId] = change.module
