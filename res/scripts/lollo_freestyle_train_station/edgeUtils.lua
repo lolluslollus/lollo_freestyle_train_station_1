@@ -15,22 +15,6 @@ helper.isValidAndExistingId = function(id)
     return helper.isValidId(id) and api.engine.entityExists(id)
 end
 
-helper.getVectorLength = function(xyz)
-    return transfUtils.getVectorLength(xyz)
-end
-
-helper.getVectorNormalised = function(xyz, targetLength)
-    return transfUtils.getVectorNormalised(xyz, targetLength)
-end
-
-helper.getPositionsDistance = function(pos0, pos1)
-    return transfUtils.getPositionsDistance(pos0, pos1)
-end
-
-helper.getPositionsMiddle = function(pos0, pos1)
-    return transfUtils.getPositionsMiddle(pos0, pos1)
-end
-
 -- do not use this, it calls the old game.interface, which can freeze the game
 -- helper.getNearbyEntitiesOLD = function(transf)
 --     if type(transf) ~= 'table' then return {} end
@@ -539,7 +523,7 @@ local _getNodeBetween = function(pos0, pos1, tan0, tan1, shift0To1, length, isEx
     end
 ]]
 --[[
-    if not(helper.isNumVeryClose(testX, pos1.x, 3)) then
+    if not(transfUtils.isNumVeryClose(testX, pos1.x, 3)) then
         if isExtendedLog then
             print('getNodeBetween WARNING: Xs are not close enough:', testX, pos1.x)
         end
@@ -554,7 +538,7 @@ local _getNodeBetween = function(pos0, pos1, tan0, tan1, shift0To1, length, isEx
     -- local cY = (pos1.y - aY) / length / length - bY / length - dY * length
 
     local testY = aY + bY * length + cY * length * length + dY * length * length * length
-    if not(helper.isNumVeryClose(testY, pos1.y, 3)) then
+    if not(transfUtils.isNumVeryClose(testY, pos1.y, 3)) then
         if isExtendedLog then
             print('getNodeBetween WARNING: Ys are not close enough:', testY, pos1.y)
         end
@@ -569,7 +553,7 @@ local _getNodeBetween = function(pos0, pos1, tan0, tan1, shift0To1, length, isEx
     -- local cZ = (pos1.z - aZ) / length / length - bZ / length - dZ * length
 
     local testZ = aZ + bZ * length + cZ * length * length + dZ * length * length * length
-    if not(helper.isNumVeryClose(testZ, pos1.z, 3)) then
+    if not(transfUtils.isNumVeryClose(testZ, pos1.z, 3)) then
         if isExtendedLog then
             print('getNodeBetween WARNING: Zs are not close enough:', testZ, pos1.z)
         end
@@ -845,35 +829,6 @@ helper.getObjectTransf = function(objectId)
     end
 
     return result
-end
-
-helper.isNumVeryClose = function(num1, num2, significantFigures)
-    return transfUtils.isNumVeryClose(num1, num2, significantFigures)
-end
-
-helper.isXYZVeryClose = function(xyz1, xyz2, significantFigures)
-    return transfUtils.isXYZVeryClose(xyz1, xyz2, significantFigures)
-end
-
-helper.isXYZCloserThan = function(xyz1, xyz2, comp)
-    if (type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata')
-    or (type(xyz2) ~= 'table' and type(xyz2) ~= 'userdata')
-    or (type(comp) ~= 'number')
-    then return false end
-
-    local X1 = xyz1.x or xyz1[1]
-    local Y1 = xyz1.y or xyz1[2]
-    local Z1 = xyz1.z or xyz1[3]
-    local X2 = xyz2.x or xyz2[1]
-    local Y2 = xyz2.y or xyz2[2]
-    local Z2 = xyz2.z or xyz2[3]
-
-    if type(X1) ~= 'number' or type(Y1) ~= 'number' or type(Z1) ~= 'number' then return false end
-    if type(X2) ~= 'number' or type(Y2) ~= 'number' or type(Z2) ~= 'number' then return false end
-
-    return transfUtils.isNumsCloserThan(X1, X2, comp)
-    and transfUtils.isNumsCloserThan(Y1, Y2, comp)
-    and transfUtils.isNumsCloserThan(Z1, Z2, comp)
 end
 
 helper.isXYZSame = function(xyz1, xyz2)

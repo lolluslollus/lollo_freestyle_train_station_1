@@ -1391,10 +1391,36 @@ utils.isXYZVeryClose = function(xyz1, xyz2, significantFigures)
     and utils.isNumVeryClose(Z1, Z2, significantFigures)
 end
 
+local _isNumsCloserThan = function(num1, num2, comp)
+    return math.abs(num1-num2) < math.abs(comp)
+end
+
 utils.isNumsCloserThan = function(num1, num2, comp)
     if type(num1) ~= 'number' or type(num2) ~= 'number' or type(comp) ~= 'number' then return false end
 
-    return math.abs(num1-num2) < math.abs(comp)
+    return _isNumsCloserThan(num1, num2, comp)
+end
+
+
+utils.isXYZCloserThan = function(xyz1, xyz2, comp)
+    if (type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata')
+    or (type(xyz2) ~= 'table' and type(xyz2) ~= 'userdata')
+    or (type(comp) ~= 'number')
+    then return false end
+
+    local X1 = xyz1.x or xyz1[1]
+    local Y1 = xyz1.y or xyz1[2]
+    local Z1 = xyz1.z or xyz1[3]
+    local X2 = xyz2.x or xyz2[1]
+    local Y2 = xyz2.y or xyz2[2]
+    local Z2 = xyz2.z or xyz2[3]
+
+    if type(X1) ~= 'number' or type(Y1) ~= 'number' or type(Z1) ~= 'number' then return false end
+    if type(X2) ~= 'number' or type(Y2) ~= 'number' or type(Z2) ~= 'number' then return false end
+
+    return _isNumsCloserThan(X1, X2, comp)
+    and _isNumsCloserThan(Y1, Y2, comp)
+    and _isNumsCloserThan(Z1, Z2, comp)
 end
 
 utils.isXYZSame = function(xyz1, xyz2)
