@@ -518,7 +518,7 @@ local _guiActions = {
 ]]
 --[[
         -- make sure there are no crossings between the waypoints
-        local nodesBetweenWps = edgeUtils.getNodeIdsBetweenNeighbourEdgeIds(contiguousEdgeIds, false)
+        local nodesBetweenWps = edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalEnds(contiguousEdgeIds, false)
         logger.print('nodesBetweenWps =') logger.debugPrint(nodesBetweenWps)
         local _map = api.engine.system.streetSystem.getNode2SegmentMap()
         for __, nodeId in pairs(nodesBetweenWps) do

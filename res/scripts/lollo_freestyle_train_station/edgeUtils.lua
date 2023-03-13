@@ -804,64 +804,6 @@ helper.isNodeTrack = function(nodeId)
     return (#api.engine.system.streetSystem.getNode2TrackEdgeMap()[nodeId] > 0)
 end
 
-helper.getNodeIdsBetweenEdgeIds = function(edgeIds, isIncludeExclusiveOuterNodes)
-    if type(edgeIds) ~= 'table' then return {} end
-
-    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
-    local allNodeIds = {}
-    local sharedNodeIds = {}
-    for _, edgeId in pairs(edgeIds) do
-        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-        if baseEdge ~= nil then
-            local nEdgesAttached2Node0 = _map[baseEdge.node0]
-            if nEdgesAttached2Node0 == nil then nEdgesAttached2Node0 = 2 else nEdgesAttached2Node0 = #_map[baseEdge.node0] end
-            if (nEdgesAttached2Node0 == 1 and isIncludeExclusiveOuterNodes) or arrayUtils.arrayHasValue(allNodeIds, baseEdge.node0) then
-                arrayUtils.addUnique(sharedNodeIds, baseEdge.node0)
-            end
-            local nEdgesAttached2Node1 = _map[baseEdge.node1]
-            if nEdgesAttached2Node1 == nil then nEdgesAttached2Node1 = 2 else nEdgesAttached2Node1 = #_map[baseEdge.node1] end
-            if (nEdgesAttached2Node1 == 1 and isIncludeExclusiveOuterNodes) or arrayUtils.arrayHasValue(allNodeIds, baseEdge.node1) then
-                arrayUtils.addUnique(sharedNodeIds, baseEdge.node1)
-            end
-            allNodeIds[#allNodeIds+1] = baseEdge.node0
-            allNodeIds[#allNodeIds+1] = baseEdge.node1
-        end
-    end
-
-    return sharedNodeIds
-end
-
-helper.getNodeIdsBetweenNeighbourEdgeIds = function(edgeIds, isIncludeExclusiveOuterNodes)
-    if type(edgeIds) ~= 'table' then return {} end
-
-    local nodesBetweenEdges = {} -- nodeId, counter
-    for _, edgeId in pairs(edgeIds) do -- don't use _ here, we call it below to translate the message!
-        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-        if baseEdge then
-            if nodesBetweenEdges[baseEdge.node0] then
-                nodesBetweenEdges[baseEdge.node0] = nodesBetweenEdges[baseEdge.node0] + 1
-            else
-                nodesBetweenEdges[baseEdge.node0] = 1
-            end
-            if nodesBetweenEdges[baseEdge.node1] then
-                nodesBetweenEdges[baseEdge.node1] = nodesBetweenEdges[baseEdge.node1] + 1
-            else
-                nodesBetweenEdges[baseEdge.node1] = 1
-            end
-        end
-    end
-
-    local results = {}
-    for nodeId, count in pairs(nodesBetweenEdges) do
-        if count > 1 or isIncludeExclusiveOuterNodes then
-            results[#results+1] = nodeId
-        end
-    end
-
-    -- print('getNodeIdsBetweenEdgeIds about to return') debugPrint(results)
-    return results
-end
-
 helper.getObjectPosition = function(objectId)
     if not(helper.isValidAndExistingId(objectId)) then return nil end
 
@@ -903,61 +845,6 @@ helper.getObjectTransf = function(objectId)
     end
 
     return result
-end
-
----this func has specialised siblings for street and track
----@param nodeIds table<integer>
----@return table<integer>
-helper.getConnectedEdgeIds = function(nodeIds)
-    -- print('getConnectedEdgeIds starting')
-    if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
-
-    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
-    local results = {}
-
-    for _, nodeId in pairs(nodeIds) do
-        if helper.isValidAndExistingId(nodeId) then
-            local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
-            if connectedEdgeIdsUserdata ~= nil then
-                for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
-                    if helper.isValidAndExistingId(edgeId) then
-                        arrayUtils.addUnique(results, edgeId)
-                    end
-                end
-            end
-        end
-    end
-
-    -- print('getConnectedEdgeIds is about to return') debugPrint(results)
-    return results
-end
-
-helper.getEdgeIdsConnectedToEdgeId = function(edgeId)
-    -- print('getEdgeIdsConnectedToEdgeId starting')
-    if not(helper.isValidAndExistingId(edgeId)) then return {} end
-    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-    if baseEdge == nil then return {} end
-
-    local nodeIds = { baseEdge.node0, baseEdge.node1 }
-
-    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
-    local results = {}
-
-    for _, nodeId in pairs(nodeIds) do
-        if helper.isValidAndExistingId(nodeId) then
-            local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
-            if connectedEdgeIdsUserdata ~= nil then
-                for _, connectedEdgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
-                    if connectedEdgeId ~= edgeId and helper.isValidAndExistingId(connectedEdgeId) then
-                        arrayUtils.addUnique(results, connectedEdgeId)
-                    end
-                end
-            end
-        end
-    end
-
-    -- print('getEdgeIdsConnectedToEdgeId is about to return') debugPrint(results)
-    return results
 end
 
 helper.isNumVeryClose = function(num1, num2, significantFigures)
@@ -1003,6 +890,59 @@ helper.isXYZSame_onlyXY = function(xy1, xy2)
     then return nil end
 
     return xy1.x == xy2.x and xy1.y == xy2.y
+end
+
+---this func has specialised siblings for street and track
+---@param nodeIds table<integer>
+---@return table<integer>
+helper.getConnectedEdgeIds = function(nodeIds)
+    -- print('getConnectedEdgeIds starting')
+    if type(nodeIds) ~= 'table' or #nodeIds < 1 then return {} end
+
+    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local results = {}
+
+    for _, nodeId in pairs(nodeIds) do
+        if helper.isValidAndExistingId(nodeId) then
+            local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
+            if connectedEdgeIdsUserdata ~= nil then
+                for _, edgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
+                    if helper.isValidAndExistingId(edgeId) then
+                        arrayUtils.addUnique(results, edgeId)
+                    end
+                end
+            end
+        end
+    end
+
+    -- print('getConnectedEdgeIds is about to return') debugPrint(results)
+    return results
+end
+
+helper.getEdgeIdsConnectedToEdgeId = function(edgeId)
+    -- print('getEdgeIdsConnectedToEdgeId starting')
+    if not(helper.isValidAndExistingId(edgeId)) then return {} end
+    local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    if baseEdge == nil then return {} end
+
+    local _map = api.engine.system.streetSystem.getNode2SegmentMap()
+    local results = {}
+
+    for _, nodeId in pairs({ baseEdge.node0, baseEdge.node1 }) do
+        if helper.isValidAndExistingId(nodeId) then
+            local connectedEdgeIdsUserdata = _map[nodeId] -- userdata
+            if connectedEdgeIdsUserdata ~= nil then
+                for _, connectedEdgeId in pairs(connectedEdgeIdsUserdata) do -- cannot use connectedEdgeIdsUserdata[index] here
+                    if connectedEdgeId ~= edgeId and helper.isValidAndExistingId(connectedEdgeId) then
+                        arrayUtils.addUnique(results, connectedEdgeId)
+                    end
+                end
+            end
+        end
+    end
+
+    -- print('getEdgeIdsConnectedToEdgeId is about to return') debugPrint(results)
+    return results
 end
 
 helper.street = {
@@ -1189,7 +1129,7 @@ helper.track = {
         -- print('getConnectedEdgeIds is about to return') debugPrint(results)
         return results
     end,
-    getContiguousEdges = function(edgeId, acceptedTrackTypes)
+    getContiguousEdges_UNUSED_BUT_KEEP_IT_FOR_NOW = function(edgeId, acceptedTrackTypes)
         local _calcContiguousEdges = function(firstEdgeId, firstNodeId, map, isInsertFirst, results)
             local refEdgeId = firstEdgeId
             local refNodeId = firstNodeId
@@ -1345,6 +1285,75 @@ helper.track = {
             print('track.getNearestEdgeIdStrict falling back, could not find an edge covering the position')
             return baseEdgeIds[1] -- fallback
         end
+    end,
+    ---Receives an unsorted list of edge ids and returns an unsorted list of node ids.
+    ---It can include the outer nodes that are dead ends.
+    ---It requires at least two edgeIds.
+    ---@param edgeIds table<integer>
+    ---@param isIncludeOuterEndNodes? boolean
+    ---@return table<integer>
+    getNodeIdsBetweenEdgeIds_optionalDeadEnds = function(edgeIds, isIncludeOuterEndNodes)
+        if type(edgeIds) ~= 'table' then return {} end
+
+        local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
+        local allNodeIds_indexed = {}
+        local sharedNodeIds_indexed = {}
+        for _, edgeId in pairs(edgeIds) do
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+            if baseEdge ~= nil and api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK) ~= nil then
+                local nEdgesAttached2Node0 = _map[baseEdge.node0]
+                if nEdgesAttached2Node0 == nil then nEdgesAttached2Node0 = 0 else nEdgesAttached2Node0 = #_map[baseEdge.node0] end
+                if (nEdgesAttached2Node0 == 1 and isIncludeOuterEndNodes) or allNodeIds_indexed[baseEdge.node0] then
+                    sharedNodeIds_indexed[baseEdge.node0] = true
+                end
+                local nEdgesAttached2Node1 = _map[baseEdge.node1]
+                if nEdgesAttached2Node1 == nil then nEdgesAttached2Node1 = 0 else nEdgesAttached2Node1 = #_map[baseEdge.node1] end
+                if (nEdgesAttached2Node1 == 1 and isIncludeOuterEndNodes) or allNodeIds_indexed[baseEdge.node1] then
+                    sharedNodeIds_indexed[baseEdge.node1] = true
+                end
+                allNodeIds_indexed[baseEdge.node0] = true
+                allNodeIds_indexed[baseEdge.node1] = true
+            end
+        end
+
+        local results = {}
+        for nodeId, _ in pairs(sharedNodeIds_indexed) do
+            results[#results+1] = nodeId
+        end
+        return results
+    end,
+    ---Receives an unsorted list of edge ids and returns an unsorted list of node ids.
+    ---It can include the outer nodes.
+    ---@param edgeIds table<integer>
+    ---@param isIncludeOuterNodes? boolean
+    ---@return table<integer>
+    getNodeIdsBetweenEdgeIds_optionalEnds = function(edgeIds, isIncludeOuterNodes)
+        if type(edgeIds) ~= 'table' then return {} end
+
+        local nodesBetweenEdges_indexed = {} -- nodeId, counter
+        for _, edgeId in pairs(edgeIds) do -- don't use _ here, we call it below to translate the message!
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+            if baseEdge and api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK) ~= nil then
+                if nodesBetweenEdges_indexed[baseEdge.node0] then
+                    nodesBetweenEdges_indexed[baseEdge.node0] = nodesBetweenEdges_indexed[baseEdge.node0] + 1
+                else
+                    nodesBetweenEdges_indexed[baseEdge.node0] = 1
+                end
+                if nodesBetweenEdges_indexed[baseEdge.node1] then
+                    nodesBetweenEdges_indexed[baseEdge.node1] = nodesBetweenEdges_indexed[baseEdge.node1] + 1
+                else
+                    nodesBetweenEdges_indexed[baseEdge.node1] = 1
+                end
+            end
+        end
+
+        local results = {}
+        for nodeId, count in pairs(nodesBetweenEdges_indexed) do
+            if count > 1 or isIncludeOuterNodes then
+                results[#results+1] = nodeId
+            end
+        end
+        return results
     end,
     getTrackEdgeIdsBetweenNodeIds = function(_node1Id, _node2Id, maxDistance, isExtendedLog)
         if isExtendedLog then

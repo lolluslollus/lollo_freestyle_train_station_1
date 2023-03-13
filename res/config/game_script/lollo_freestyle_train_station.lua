@@ -865,8 +865,8 @@ local _actions = {
         -- logger.debugPrint(proposal.streetProposal.edgeObjectsToRemove)
 
         local sharedNodeIds = {}
-        arrayUtils.concatValues(sharedNodeIds, edgeUtils.getNodeIdsBetweenEdgeIds(trackEdgeIds, true))
-        arrayUtils.concatValues(sharedNodeIds, edgeUtils.getNodeIdsBetweenEdgeIds(platformEdgeIds, true))
+        arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
+        arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
@@ -1674,7 +1674,7 @@ local _guiActions = {
         end
         logger.print('contiguousEdgeIds =') logger.debugPrint(contiguousEdgeIds)
         -- make sure there are no crossings between the waypoints
-        local nodesBetweenWps = edgeUtils.getNodeIdsBetweenNeighbourEdgeIds(contiguousEdgeIds, false)
+        local nodesBetweenWps = edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalEnds(contiguousEdgeIds, false)
         logger.print('nodesBetweenWps =') logger.debugPrint(nodesBetweenWps)
         local _map = api.engine.system.streetSystem.getNode2SegmentMap()
         for __, nodeId in pairs(nodesBetweenWps) do
