@@ -384,37 +384,44 @@ utils.getData4PedestrianBridge = function(eraPrefix, isSides)
         -- All in all, we choose junctions with no holes
         -- and put up with segments in stupidly narrow bends.
         materialsToReplace = {
-            -- streetPaving = {
-            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            -- },
-            -- streetLane = { -- this is the most conspicuous
-            --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            -- },
+            streetPaving = {
+                -- name = 'lollo_freestyle_train_station/icon/lilac.mtl',
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+                size = { 1, 1 },
+            },
+            streetLane = { -- this is the most conspicuous
+                -- name = 'lollo_freestyle_train_station/icon/yellow.mtl',
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+                size = { 1, 1 },
+            },
             -- crossingLane = {
             --     name = 'lollo_freestyle_train_station/totally_transparent.mtl'
             -- },
-            -- sidewalkPaving = { -- this fills small gaps at junctions but also draws tangent stripes outside sharp bends
-            --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     -- name = 'lollo_freestyle_train_station/icon/green.mtl'
-            --     -- name = 'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl'
-            --     name = 'street/country_new_medium_paving.mtl',
-            --     size = { 2, 2 },
-            -- },
+            sidewalkPaving = { -- this fills small gaps at junctions but also draws tangent stripes outside sharp bends
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+                -- name = 'lollo_freestyle_train_station/icon/green.mtl',
+                -- name = 'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl'
+                -- name = 'street/country_new_medium_paving.mtl',
+                -- size = { 2, 2 },
+                size = { 1, 1 },
+            },
             -- sidewalkCurb = { -- useless
             --     -- size = { 3, 0.6 },
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
             --     name = 'lollo_freestyle_train_station/icon/yellow.mtl'
             -- },
-            -- sidewalkBorderInner = {
-            --     size = { 2, 0.8 },
-            --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     name = 'lollo_freestyle_train_station/icon/blue.mtl'
-            -- },
-            -- sidewalkLane = {
-            --     size = { 2, 0.8 },
-            --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl'
-            --     name = 'lollo_freestyle_train_station/icon/red.mtl'
-            -- },
+            sidewalkBorderInner = {
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+                -- name = 'lollo_freestyle_train_station/icon/blue.mtl'
+                -- size = { 2, 0.8 },
+                size = { 1, 1 },
+            },
+            sidewalkLane = {
+                name = 'lollo_freestyle_train_station/totally_transparent.mtl',
+                -- name = 'lollo_freestyle_train_station/icon/red.mtl'
+                -- size = { 2, 0.8 },
+                size = { 1, 1 },
+            },
         },
         noParallelStripSubdivision = true,
         -- updateFn = updateFn,
@@ -672,14 +679,22 @@ utils.getModel4StationBridge = function(nSegments, isCompressed, eraPrefix, isWi
 			children = {
 				{
 					children = {
-						{
-							name = 'cement_bridge_bone_2m_start',
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-						},
-						{
-							name = 'cement_bridge_bone_2m_end',
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0, 0, 1, },
-						},
+						-- {
+						-- 	name = 'cement_bridge_bone_2m_start',
+						-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						-- },
+						-- {
+						-- 	name = 'cement_bridge_bone_2m_end',
+						-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0, 0, 1, },
+						-- },
+                        {
+                            name = 'cement_bridge_bone_2m_start',
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.25, 0, 1, },
+                        },
+                        {
+                            name = 'cement_bridge_bone_2m_end',
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.25, 0, 1, },
+                        },
 					},
 					name = 'container_2m',
 					skin = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_rep_skin/cement_low_bottom_railing_rep_rep_lod0.msh',
@@ -692,13 +707,21 @@ utils.getModel4StationBridge = function(nSegments, isCompressed, eraPrefix, isWi
 			children = {
 				{
 					children = {
-						{
+						-- {
+						-- 	name = 'cement_bridge_bone_2m_start_side1',
+						-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+						-- },
+						-- {
+						-- 	name = 'cement_bridge_bone_2m_end_side1',
+						-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+						-- },
+                        {
 							name = 'cement_bridge_bone_2m_start_side1',
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, },
 						},
 						{
 							name = 'cement_bridge_bone_2m_end_side1',
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 1, 0, 1, },
 						},
 					},
 					name = 'container_2m_side1',
@@ -716,13 +739,21 @@ utils.getModel4StationBridge = function(nSegments, isCompressed, eraPrefix, isWi
 			children = {
 				{
 					children = {
-						{
+						-- {
+						-- 	name = 'cement_bridge_bone_2m_start_side2',
+						-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+						-- },
+						-- {
+						-- 	name = 'cement_bridge_bone_2m_end_side2',
+						-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+						-- },
+                        {
 							name = 'cement_bridge_bone_2m_start_side2',
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, },
 						},
 						{
 							name = 'cement_bridge_bone_2m_end_side2',
-							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 1, 0, 1, },
 						},
 					},
 					name = 'container_2m_side2',
@@ -935,13 +966,21 @@ utils.getModel4StationTube = function(nSegments, isCompressed, eraPrefix)
             children = {
                 {
                     children = {
+                        --     {
+                        --         name = 'cement_bridge_bone_2m_start',
+                        --         transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+                        --     },
+                        --     {
+                        --         name = 'cement_bridge_bone_2m_end',
+                        --         transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+                        --     },
                         {
                             name = 'cement_bridge_bone_2m_start',
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.25, 0, 1, },
                         },
                         {
                             name = 'cement_bridge_bone_2m_end',
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.25, 0, 1, },
                         },
                     },
                     name = 'container_2m',
@@ -955,13 +994,21 @@ utils.getModel4StationTube = function(nSegments, isCompressed, eraPrefix)
             children = {
                 {
                     children = {
+                        -- {
+                        --     name = 'cement_bridge_bone_2m_start_side1',
+                        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+                        -- },
+                        -- {
+                        --     name = 'cement_bridge_bone_2m_end_side1',
+                        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+                        -- },
                         {
                             name = 'cement_bridge_bone_2m_start_side1',
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, },
                         },
                         {
                             name = 'cement_bridge_bone_2m_end_side1',
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 1, 0, 1, },
                         },
                     },
                     name = 'container_2m_side1',
@@ -979,13 +1026,21 @@ utils.getModel4StationTube = function(nSegments, isCompressed, eraPrefix)
             children = {
                 {
                     children = {
+                        -- {
+                        --     name = 'cement_bridge_bone_2m_start_side2',
+                        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+                        -- },
+                        -- {
+                        --     name = 'cement_bridge_bone_2m_end_side2',
+                        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+                        -- },
                         {
                             name = 'cement_bridge_bone_2m_start_side2',
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, },
                         },
                         {
                             name = 'cement_bridge_bone_2m_end_side2',
-                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 1, 0, 1, },
                         },
                     },
                     name = 'container_2m_side2',
@@ -1150,13 +1205,21 @@ utils.getPedestrianBridge_model_rep_side = function(eraPrefix, isSide)
 					children = {
 						{
 							children = {
-								{
+								-- {
+								-- 	name = 'cement_bridge_bone_2m_start_side1',
+								-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+								-- },
+								-- {
+								-- 	name = 'cement_bridge_bone_2m_end_side1',
+								-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+								-- },
+                                {
 									name = 'cement_bridge_bone_2m_start_side1',
-									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, },
 								},
 								{
 									name = 'cement_bridge_bone_2m_end_side1',
-									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 1, 0, 1, },
 								},
 							},
 							name = 'container_2m_side1',
@@ -1217,15 +1280,22 @@ utils.getPedestrianBridge_model_rep_rep = function(eraPrefix)
 				node = {
 					children = {
 						{
-                            -- LOLLO TODO try the following transfs with [14] = 0
 							children = {
-								{
+								-- {
+								-- 	name = 'cement_bridge_bone_2m_start',
+								-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+								-- },
+								-- {
+								-- 	name = 'cement_bridge_bone_2m_end',
+								-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+								-- },
+                                {
 									name = 'cement_bridge_bone_2m_start',
-									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.66667, 0, 1, },
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0.25, 0, 1, },
 								},
 								{
 									name = 'cement_bridge_bone_2m_end',
-									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.66667, 0, 1, },
+									transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 2, 0.25, 0, 1, },
 								},
 							},
 							name = 'container_2m',
