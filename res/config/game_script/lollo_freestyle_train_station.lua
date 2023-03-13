@@ -1274,7 +1274,7 @@ local _actions = {
         if not(edgeUtils.isValidAndExistingId(oldConId)) then return false end
 
         local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
-        -- logger.print('oldCon =') logger.debugPrint(oldCon)
+        logger.print('oldCon.fileName =') logger.debugPrint(oldCon and oldCon.fileName or 'NIL')
         if not(oldCon)
         or not(arrayUtils.arrayHasValue(
             {
@@ -1885,10 +1885,10 @@ _actions.buildSnappyStreetEdges = function(stationConId)
             },
         }
 ]]
-    local isSuccess = true
-    local isAnyNodeAdjoiningAConstruction = false
+
     local neighbourConIds_indexed = {}
     local newSegmentEntity = 0
+
     local endEntities_GroupedBy_disjointNeighbourEdgeId = {}
     for _, endEntity in pairs(allEndEntities) do
         for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
@@ -1900,25 +1900,31 @@ _actions.buildSnappyStreetEdges = function(stationConId)
                     endEntity
                 )
             else
-                isSuccess = false
+                state.warningText = _('UnsnappedRoads')
                 logger.warn('invalid disjointNeighbourEdgeId in buildSnappyStreetEdges')
+                return
             end
         end
     end
-    if not(isSuccess) then
-        state.warningText = _('UnsnappedRoads')
-        return
+
+    for _, endEntity in pairs(allEndEntities) do
+        for _, conId in pairs(endEntity.neighbourConIds) do
+            if edgeUtils.isValidAndExistingId(conId) then
+                neighbourConIds_indexed[conId] = true
+            else
+                logger.warn('invalid disjointNeighbourEdgeId in buildSnappyStreetEdges')
+            end
+        end
     end
 
     for disjointNeighbourEdgeId, endEntities in pairs(endEntities_GroupedBy_disjointNeighbourEdgeId) do
         logger.print('endEntities =') logger.debugPrint(endEntities)
         logger.print('valid disjointNeighbourEdgeId in buildSnappyStreetEdges, going ahead')
-        for _, endEntity in pairs(endEntities) do
-            isAnyNodeAdjoiningAConstruction = isAnyNodeAdjoiningAConstruction or endEntity.isNodeAdjoiningAConstruction
-            for _, neighbourConId in pairs(endEntity.neighbourConIds) do
-                neighbourConIds_indexed[neighbourConId] = true
-            end
-        end
+        -- for _, endEntity in pairs(endEntities) do
+            -- for _, neighbourConId in pairs(endEntity.neighbourConIds) do
+            --     neighbourConIds_indexed[neighbourConId] = true
+            -- end
+        -- end
         local newSegment = api.type.SegmentAndEntity.new()
         newSegment.entity = newSegmentEntity - 1
 
@@ -1981,80 +1987,27 @@ _actions.buildSnappyStreetEdges = function(stationConId)
 
         newSegmentEntity = newSegmentEntity - 1
     end
---[[
-    for _, endEntity in pairs(allEndEntities) do
-        if not(isSuccess) then break end
 
-        isAnyNodeAdjoiningAConstruction = isAnyNodeAdjoiningAConstruction or endEntity.isNodeAdjoiningAConstruction
-        for _, neighbourConId in pairs(endEntity.neighbourConIds) do
-            neighbourConIds_indexed[neighbourConId] = true
-        end
-        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
-            if not(edgeUtils.isValidAndExistingId(edgeId)) then
-                logger.warn('invalid edgeId in buildSnappyStreetEdges')
-                isSuccess = false
-            else
-                logger.print('valid edgeId in buildSnappyStreetEdges, going ahead')
-                local newSegment = api.type.SegmentAndEntity.new()
-                local nNewEntities_ = nNewEntities - 1
-                newSegment.entity = nNewEntities_
-
-                local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                if baseEdge.node0 == endEntity.disjointNeighbourNodeId then
-                    newSegment.comp.node0 = endEntity.nodeId
-                    _addNodeToRemove(endEntity.disjointNeighbourNodeId)
-                    logger.print('twenty-one')
-                else
-                    newSegment.comp.node0 = baseEdge.node0
-                    logger.print('twenty-three')
-                end
-
-                if baseEdge.node1 == endEntity.disjointNeighbourNodeId then
-                    newSegment.comp.node1 = endEntity.nodeId
-                    _addNodeToRemove(endEntity.disjointNeighbourNodeId)
-                    logger.print('twenty-four')
-                else
-                    newSegment.comp.node1 = baseEdge.node1
-                    logger.print('twenty-six')
-                end
-
-                newSegment.comp.tangent0.x = baseEdge.tangent0.x
-                newSegment.comp.tangent0.y = baseEdge.tangent0.y
-                newSegment.comp.tangent0.z = baseEdge.tangent0.z
-                newSegment.comp.tangent1.x = baseEdge.tangent1.x
-                newSegment.comp.tangent1.y = baseEdge.tangent1.y
-                newSegment.comp.tangent1.z = baseEdge.tangent1.z
-                newSegment.comp.type = baseEdge.type
-                newSegment.comp.typeIndex = baseEdge.typeIndex
-                newSegment.comp.objects = baseEdge.objects
-                -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-                newSegment.type = _constants.streetEdgeType
-                local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
-                if baseEdgeStreet ~= nil then
-                    logger.print('edgeId', edgeId, 'is street')
-                    newSegment.streetEdge.streetType = baseEdgeStreet.streetType
-                    newSegment.streetEdge.hasBus = baseEdgeStreet.hasBus
-                    newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
-                    -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
-                    -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
-                end
-
-                proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
-                if not(arrayUtils.arrayHasValue(proposal.streetProposal.edgesToRemove, edgeId)) then
-                    proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
-                end
-
-                nNewEntities = nNewEntities_
-            end
-        end
-        logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
-    end
-]]
     logger.print('proposal =') logger.debugPrint(proposal)
-    logger.print('isAnyNodeAdjoiningAConstruction =') logger.debugPrint(isAnyNodeAdjoiningAConstruction)
     logger.print('neighbourConIds_indexed =') logger.debugPrint(neighbourConIds_indexed)
+
+    local _upgradeNeighbourCons = function()
+        -- cannot rebuild some of the edges coz they are be locked in a construction:
+        -- rebuild the station instead, or better: rebuild those adjoining constructions.
+        -- If they have snappy edges, they will resnap.
+        local isAnyUpgradeFailed = false
+        for neighbourConId, _ in pairs(neighbourConIds_indexed) do
+            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_actions.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
+        end
+        logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
+        if not(isAnyUpgradeFailed) then return end
+
+        state.warningText = _('UnsnappedRoads')
+    end
+
     if #proposal.streetProposal.edgesToAdd == 0 then
         logger.print('no street edges added')
+        _upgradeNeighbourCons()
         return
     end
 
@@ -2076,9 +2029,6 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
         function(result, success)
             logger.print('buildSnappyStreetEdges callback, success =', success)
-            -- cannot rebuild some of the edges coz they are be locked in a construction:
-            -- rebuild the station instead, or better: rebuild those adjoining constructions.
-            -- If they have snappy edges, they will resnap.
             --[[
                 LOLLO NOTE Snapping trouble with street edges:
                 1) if an edge is non-snappy and it is attached to a road, fine: 
@@ -2095,19 +2045,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
                 6) if an edge is snappy and it is attached to a snappy con, fine:
                 the station will resnap at once.
             ]]
-            local isAnyUpgradeFailed = false
-            for neighbourConId, _ in pairs(neighbourConIds_indexed) do
-                isAnyUpgradeFailed = isAnyUpgradeFailed or not(_actions.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
-            end
-            logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
-            if not(isAnyUpgradeFailed) then return end
-
-            state.warningText = _('UnsnappedRoads')
-            -- if isAnyUpgradeFailed then
-            --     -- if isAnyNodeAdjoiningAConstruction then
-            --         _actions.upgradeStationConstruction(stationConId)
-            --     -- end
-            -- end
+            _upgradeNeighbourCons()
         end
     )
 end

@@ -1118,20 +1118,22 @@ local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionX
     return nearestNodeId
 end
 
-local _getDisjointNeighbourEdgeIds = function(nodeId, frozenEdgeIds, isTrack)
+local _getDisjointNeighbourEdgeIdsAndConIds = function(nodeId, frozenEdgeIds, isTrack)
     local freeEdgeIds_indexed = {}
     local isAnyEdgeFrozenInAConstruction = false
     local neighbourConIds_indexed = {}
 
-    local connectedEdgeIds = isTrack and edgeUtils.track.getConnectedEdgeIds({nodeId}) or edgeUtils.street.getConnectedEdgeIds({nodeId})
+    local connectedEdgeIds = isTrack and edgeUtils.track.getConnectedEdgeIds({nodeId}) or edgeUtils.getConnectedEdgeIds({nodeId})
     for _, edgeId in pairs(connectedEdgeIds) do
+        -- for streets, I use the generic edge getter so I also get the edges in the adjoining constructions;
+        -- I make sure they are streets later
         if not(arrayUtils.arrayHasValue(frozenEdgeIds, edgeId)) then
             -- check that the edge is not frozen in another construction, such as nearby stairs with a snappy bridge
             local neighbourConId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
             if edgeUtils.isValidId(neighbourConId) then
                 isAnyEdgeFrozenInAConstruction = true
                 neighbourConIds_indexed[neighbourConId] = true
-            else
+            elseif isTrack or (api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET) ~= nil) then
                 freeEdgeIds_indexed[edgeId] = true
             end
         end
@@ -1205,7 +1207,7 @@ local _getStationStreetEndEntities = function(con, t)
 
     for _, endEntity in pairs(results) do
         endEntity.disjointNeighbourNodeId = _getDisjointNeighbourNodeId(endEntity.nodeId, endEntity.nodePosition, frozenNodeIds, false)
-        endEntity.disjointNeighbourEdgeIds, endEntity.isNodeAdjoiningAConstruction, endEntity.neighbourConIds = _getDisjointNeighbourEdgeIds(endEntity.disjointNeighbourNodeId, frozenEdgeIds, false)
+        endEntity.disjointNeighbourEdgeIds, endEntity.isNodeAdjoiningAConstruction, endEntity.neighbourConIds = _getDisjointNeighbourEdgeIdsAndConIds(endEntity.disjointNeighbourNodeId, frozenEdgeIds, false)
     end
 
     logger.print('_getStationStreetEndEntities results =') logger.debugPrint(results)
@@ -1403,10 +1405,10 @@ local _getStationTrackEndEntities4T = function(con, t)
     result.tracks.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node1Id, result.tracks.stationEndNodePositions.node1, frozenNodeIds, true)
     result.tracks.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node2Id, result.tracks.stationEndNodePositions.node2, frozenNodeIds, true)
 
-    result.platforms.disjointNeighbourEdgeIds.edge1Ids, result.platforms.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node1Id, frozenEdgeIds, true)
-    result.platforms.disjointNeighbourEdgeIds.edge2Ids, result.platforms.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction = _getDisjointNeighbourEdgeIds(result.platforms.disjointNeighbourNodeIds.node2Id, frozenEdgeIds, true)
-    result.tracks.disjointNeighbourEdgeIds.edge1Ids, result.tracks.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node1Id, frozenEdgeIds, true)
-    result.tracks.disjointNeighbourEdgeIds.edge2Ids, result.tracks.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction = _getDisjointNeighbourEdgeIds(result.tracks.disjointNeighbourNodeIds.node2Id, frozenEdgeIds, true)
+    result.platforms.disjointNeighbourEdgeIds.edge1Ids, result.platforms.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction = _getDisjointNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodeIds.node1Id, frozenEdgeIds, true)
+    result.platforms.disjointNeighbourEdgeIds.edge2Ids, result.platforms.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction = _getDisjointNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodeIds.node2Id, frozenEdgeIds, true)
+    result.tracks.disjointNeighbourEdgeIds.edge1Ids, result.tracks.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction = _getDisjointNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodeIds.node1Id, frozenEdgeIds, true)
+    result.tracks.disjointNeighbourEdgeIds.edge2Ids, result.tracks.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction = _getDisjointNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodeIds.node2Id, frozenEdgeIds, true)
 
     -- logger.print('_getStationTrackEndEntities4T result =') logger.debugPrint(result)
     return result
