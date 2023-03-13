@@ -1,5 +1,6 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
+local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
 local modulesutil = require 'modulesutil'
@@ -978,7 +979,7 @@ privateFuncs.slopedAreas = {
         -- => y1 * (x1 - x2) - (y1 - y2) * x1 + (y1 - y2) * xM > yM * (x1 - x2)
         -- => (y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1) > 0
     
-        local innerSign = transfUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
+        local innerSign = comparisonUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
     
         if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
         -- logger.print('terminal', nTerminal, 'innerSign =', innerSign)

@@ -1,4 +1,5 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local quadrangleUtils = require('lollo_freestyle_train_station.quadrangleUtils')
 -- local streetutil = require('streetutil')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -296,9 +297,9 @@ local _getEdgeLength_Street = function(edgeId, baseEdge, tn, isExtendedLog)
 
     local resultWithTN = dataTogether.length
 
-    if (not(helper.isXYZSame_onlyXY(pos0, dataTogether.pos0)) or not(helper.isXYZSame_onlyXY(pos1, dataTogether.pos1)))
+    if (not(comparisonUtils.isXYZsSame_onlyXY(pos0, dataTogether.pos0)) or not(comparisonUtils.isXYZsSame_onlyXY(pos1, dataTogether.pos1)))
     then
-        if (not(transfUtils.isXYVeryClose_FAST(pos0, dataTogether.pos0, 4)) or not(transfUtils.isXYVeryClose_FAST(pos1, dataTogether.pos1, 4)))
+        if (not(comparisonUtils.isXYsVeryClose_FAST(pos0, dataTogether.pos0, 4)) or not(comparisonUtils.isXYsVeryClose_FAST(pos1, dataTogether.pos1, 4)))
         then
             if isExtendedLog then
                 print('WARNING: edgeUtils.getEdgeLength found that tn and baseEdge mismatch, edgeId =', edgeId)
@@ -366,9 +367,9 @@ local _getEdgeLength_Track = function(edgeId, baseEdge, tn, isExtendedLog)
         end
     end
 
-    if not(helper.isXYZSame_onlyXY(pos0, geometry0.params.pos[1])) or not(helper.isXYZSame_onlyXY(pos1, geometry1.params.pos[2]))
+    if not(comparisonUtils.isXYZsSame_onlyXY(pos0, geometry0.params.pos[1])) or not(comparisonUtils.isXYZsSame_onlyXY(pos1, geometry1.params.pos[2]))
     then
-        if not(transfUtils.isXYVeryClose_FAST(pos0, geometry0.params.pos[1], 4)) or not(transfUtils.isXYVeryClose_FAST(pos1, geometry1.params.pos[2], 4))
+        if not(comparisonUtils.isXYsVeryClose_FAST(pos0, geometry0.params.pos[1], 4)) or not(comparisonUtils.isXYsVeryClose_FAST(pos1, geometry1.params.pos[2], 4))
         then
             if isExtendedLog then
                 print('WARNING: edgeUtils.getEdgeLength found that tn and baseEdge mismatch, edgeId =', edgeId)
@@ -523,7 +524,7 @@ local _getNodeBetween = function(pos0, pos1, tan0, tan1, shift0To1, length, isEx
     end
 ]]
 --[[
-    if not(transfUtils.isNumVeryClose(testX, pos1.x, 3)) then
+    if not(comparisonUtils.isNumsVeryClose(testX, pos1.x, 3)) then
         if isExtendedLog then
             print('getNodeBetween WARNING: Xs are not close enough:', testX, pos1.x)
         end
@@ -538,7 +539,7 @@ local _getNodeBetween = function(pos0, pos1, tan0, tan1, shift0To1, length, isEx
     -- local cY = (pos1.y - aY) / length / length - bY / length - dY * length
 
     local testY = aY + bY * length + cY * length * length + dY * length * length * length
-    if not(transfUtils.isNumVeryClose(testY, pos1.y, 3)) then
+    if not(comparisonUtils.isNumsVeryClose(testY, pos1.y, 3)) then
         if isExtendedLog then
             print('getNodeBetween WARNING: Ys are not close enough:', testY, pos1.y)
         end
@@ -553,7 +554,7 @@ local _getNodeBetween = function(pos0, pos1, tan0, tan1, shift0To1, length, isEx
     -- local cZ = (pos1.z - aZ) / length / length - bZ / length - dZ * length
 
     local testZ = aZ + bZ * length + cZ * length * length + dZ * length * length * length
-    if not(transfUtils.isNumVeryClose(testZ, pos1.z, 3)) then
+    if not(comparisonUtils.isNumsVeryClose(testZ, pos1.z, 3)) then
         if isExtendedLog then
             print('getNodeBetween WARNING: Zs are not close enough:', testZ, pos1.z)
         end
@@ -829,22 +830,6 @@ helper.getObjectTransf = function(objectId)
     end
 
     return result
-end
-
-helper.isXYZSame = function(xyz1, xyz2)
-    if (type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata')
-    or (type(xyz2) ~= 'table' and type(xyz2) ~= 'userdata')
-    then return nil end
-
-    return xyz1.x == xyz2.x and xyz1.y == xyz2.y and xyz1.z == xyz2.z
-end
-
-helper.isXYZSame_onlyXY = function(xy1, xy2)
-    if (type(xy1) ~= 'table' and type(xy1) ~= 'userdata')
-    or (type(xy2) ~= 'table' and type(xy2) ~= 'userdata')
-    then return nil end
-
-    return xy1.x == xy2.x and xy1.y == xy2.y
 end
 
 ---this func has specialised siblings for street and track

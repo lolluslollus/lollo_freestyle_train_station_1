@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local guiHelpers = require('lollo_fence.guiHelpers')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
@@ -636,13 +637,13 @@ function data()
                         )
                         if #trackEdgeIdsBetweenEdgeIds > 0 then
                             local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds)
-                            if transfUtils.isXYZSame(
+                            if comparisonUtils.is123sSame(
                                 trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1],
                                 args.edge2Node1Pos
                             )
                             then
                                 logger.print('isWaypoint2ArrowAgainstTrackDirection does not need reversing')
-                            elseif transfUtils.isXYZSame(
+                            elseif comparisonUtils.is123sSame(
                                 trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[1][1],
                                 args.edge2Node1Pos
                             ) then

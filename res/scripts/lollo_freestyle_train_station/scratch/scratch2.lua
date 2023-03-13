@@ -83,7 +83,7 @@ local bb = ("%.3g"):format(234235534)
 --local ccc = ("%.3g"):format(nil) -- error
 --local ddd = ("%.3g"):format('sqq') -- error
 
-local isNumVeryClose = function(num1, num2, significantFigures)
+local isNumsVeryClose = function(num1, num2, significantFigures)
     if type(num1) ~= 'number' or type(num2) ~= 'number' then return false end
 
     if not(significantFigures) then significantFigures = 5
@@ -105,12 +105,12 @@ local isNumVeryClose = function(num1, num2, significantFigures)
         or (_formatString):format(num1 * 1.1) == (_formatString):format(num2 * 1.1)
 end
 
-local test0 = isNumVeryClose(0.999999, 1.0000001, 3) -- true
-local test1 = isNumVeryClose(0.99999, 1.00001, 3) -- true
-local test2 = isNumVeryClose(0.9999, 1.0001, 3) -- true
-local test3 = isNumVeryClose(0.999, 1.000, 3) -- true
-local test4 = isNumVeryClose(0.999, 1.001, 3) -- true
-local test5 = isNumVeryClose(0.99, 1.0000, 3) -- false
+local test0 = isNumsVeryClose(0.999999, 1.0000001, 3) -- true
+local test1 = isNumsVeryClose(0.99999, 1.00001, 3) -- true
+local test2 = isNumsVeryClose(0.9999, 1.0001, 3) -- true
+local test3 = isNumsVeryClose(0.999, 1.000, 3) -- true
+local test4 = isNumsVeryClose(0.999, 1.001, 3) -- true
+local test5 = isNumsVeryClose(0.99, 1.0000, 3) -- false
 
 local b0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {1, 0}) -- 0.707
 local b1 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {0, 1}) -- 0.707

@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local guiHelpers = require('lollo_freestyle_train_station.guiHelpers')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
@@ -702,24 +703,24 @@ local _actions = {
             local _addNode = function(position)
                 -- logger.print('adding node, position =') logger.debugPrint(position)
                 if _baseNode1 ~= nil
-                and transfUtils.isNumVeryClose(position[1], _baseNode1.position.x, _significantFigures4LocateNode)
-                and transfUtils.isNumVeryClose(position[2], _baseNode1.position.y, _significantFigures4LocateNode)
-                and transfUtils.isNumVeryClose(position[3], _baseNode1.position.z, _significantFigures4LocateNode)
+                and comparisonUtils.isNumsVeryClose(position[1], _baseNode1.position.x, _significantFigures4LocateNode)
+                and comparisonUtils.isNumsVeryClose(position[2], _baseNode1.position.y, _significantFigures4LocateNode)
+                and comparisonUtils.isNumsVeryClose(position[3], _baseNode1.position.z, _significantFigures4LocateNode)
                 then
                     -- logger.print('_baseNode1 matches')
                     return neighbourNodeIds_plOrTr.node1
                 elseif _baseNode2 ~= nil
-                and transfUtils.isNumVeryClose(position[1], _baseNode2.position.x, _significantFigures4LocateNode)
-                and transfUtils.isNumVeryClose(position[2], _baseNode2.position.y, _significantFigures4LocateNode)
-                and transfUtils.isNumVeryClose(position[3], _baseNode2.position.z, _significantFigures4LocateNode)
+                and comparisonUtils.isNumsVeryClose(position[1], _baseNode2.position.x, _significantFigures4LocateNode)
+                and comparisonUtils.isNumsVeryClose(position[2], _baseNode2.position.y, _significantFigures4LocateNode)
+                and comparisonUtils.isNumsVeryClose(position[3], _baseNode2.position.z, _significantFigures4LocateNode)
                 then
                     -- logger.print('_baseNode2 matches')
                     return neighbourNodeIds_plOrTr.node2
                 else
                     for _, newNode in pairs(newNodes) do
-                        if transfUtils.isNumVeryClose(position[1], newNode.position[1], _significantFigures4LocateNode)
-                        and transfUtils.isNumVeryClose(position[2], newNode.position[2], _significantFigures4LocateNode)
-                        and transfUtils.isNumVeryClose(position[3], newNode.position[3], _significantFigures4LocateNode)
+                        if comparisonUtils.isNumsVeryClose(position[1], newNode.position[1], _significantFigures4LocateNode)
+                        and comparisonUtils.isNumsVeryClose(position[2], newNode.position[2], _significantFigures4LocateNode)
+                        and comparisonUtils.isNumsVeryClose(position[3], newNode.position[3], _significantFigures4LocateNode)
                         then
                             -- logger.print('reusing a new node')
                             return newNode.id
@@ -986,12 +987,12 @@ local _actions = {
         -- logger.print('node0 =') logger.debugPrint(node0)
         -- logger.print('node1 =') logger.debugPrint(node1)
 
-        if not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position)) and not(edgeUtils.isXYZSame(nodeBetween.refPosition0, node1.position)) then
+        if not(comparisonUtils.isXYZsSame(nodeBetween.refPosition0, node0.position)) and not(comparisonUtils.isXYZsSame(nodeBetween.refPosition0, node1.position)) then
             logger.err('splitEdge cannot find the nodes')
             return
         end
 
-        if edgeUtils.isXYZSame(nodeBetween.refPosition0, node0.position) then
+        if comparisonUtils.isXYZsSame(nodeBetween.refPosition0, node0.position) then
             logger.print('nodeBetween is orientated like my edge')
         else
             logger.print('nodeBetween is not orientated like my edge')

@@ -1,5 +1,6 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
@@ -538,8 +539,8 @@ local helpers = {
             end
         else
             local _lastRefEdgePosition = arrayUtils.cloneDeepOmittingFields(previousRefEdge.posTanX2[2][1])
-            -- if transfUtils.isXYZVeryClose(_lastRefEdgePosition, results[#results].posTanX2[2][1], 5) then
-            if transfUtils.isXYZCloserThan(_lastRefEdgePosition, results[#results].posTanX2[2][1], stepLength * 0.01) then
+            -- if comparisonUtils.isVec3sVeryClose(_lastRefEdgePosition, results[#results].posTanX2[2][1], 5) then
+            if comparisonUtils.isVec3sCloserThan(_lastRefEdgePosition, results[#results].posTanX2[2][1], stepLength * 0.01) then
                 logger.print('these position vectors are very close:') logger.debugPrint(_lastRefEdgePosition) logger.debugPrint(results[#results].posTanX2[2][1])
                 results[#results].posTanX2[2][1] = _lastRefEdgePosition
             -- ...otherwise, we make a new edge to reach to the original edge end
@@ -1246,13 +1247,13 @@ local _getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
                             if baseEdge.node0 == nodeId then
                                 local otherBaseNode = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                                 -- logger.print('baseEdge.node0 == nodeId, otherBaseNode =') logger.debugPrint(otherBaseNode)
-                                if otherBaseNode and otherBaseNode.position and transfUtils.isXYZVeryClose(otherBaseNode.position, otherEdgeNodePosition, 4) then
+                                if otherBaseNode and otherBaseNode.position and comparisonUtils.isVec3sVeryClose(otherBaseNode.position, otherEdgeNodePosition, 4) then
                                     return nodeId
                                 end
                             elseif baseEdge.node1 == nodeId then
                                 local otherBaseNode = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
                                 -- logger.print('baseEdge.node1 == nodeId, otherBaseNode =') logger.debugPrint(otherBaseNode)
-                                if otherBaseNode and otherBaseNode.position and transfUtils.isXYZVeryClose(otherBaseNode.position, otherEdgeNodePosition, 4) then
+                                if otherBaseNode and otherBaseNode.position and comparisonUtils.isVec3sVeryClose(otherBaseNode.position, otherEdgeNodePosition, 4) then
                                     return nodeId
                                 end
                             end
