@@ -924,7 +924,7 @@ local helpers = {
             local shortestDistance = 9999.9
             local nearestNodeId = nil
             for _, nodeId in pairs(nodeIds) do
-                -- only take track nodes
+                -- only take track nodes with at least one edge attached
                 if edgeUtils.isValidAndExistingId(nodeId) and #_map[nodeId] > 0 then
                     local nodePosition = api.engine.getComponent(nodeId, api.type.ComponentType.BASE_NODE).position
                     local distance = transfUtils.getPositionsDistance(refPosition, nodePosition)
@@ -932,7 +932,7 @@ local helpers = {
                         shortestDistance = distance
                         nearestNodeId = nodeId
                     elseif distance == shortestDistance then
-                        -- LOLLO TODO what if it finds two nodes at the same distance? It's academical, but how do I make sure it will take the best one?
+                        -- LOLLO TODO what if there are multiple nodes in the same position? It's academic, but how do I make sure it will take the best one?
                         logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got two nodes at') logger.warningDebugPrint(refPosition)
                     end
                 end
@@ -1104,11 +1104,12 @@ local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionX
         if edgeUtils.isValidAndExistingId(nearbyNodeId)
         and nearbyNodeId ~= stationNodeId
         and not(arrayUtils.arrayHasValue(frozenNodeIds, nearbyNodeId))
-        and #_map[nearbyNodeId] > 0 -- check if it is a street or track node, depending on isTrack
+        -- only take street or track nodes, depending on isTrack, and with at least one edge attached
+        and #_map[nearbyNodeId] > 0
         then
             local node = api.engine.getComponent(nearbyNodeId, api.type.ComponentType.BASE_NODE)
             local distance = transfUtils.getPositionsDistance(stationNodePositionXYZ, node.position)
-            -- LOLLO TODO what if there are multiple nodes in the same position? Academical but possible.
+            -- LOLLO TODO what if there are multiple nodes in the same position? It's academic, but how do I make sure it will take the best one?
             if distance and distance < shortestDistance then
                 shortestDistance = distance
                 nearestNodeId = nearbyNodeId
