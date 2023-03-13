@@ -45,7 +45,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Use the track constructions "Track splitter" to do precision work.
 - Upgrading tracks does all tracks at once.
 - If you have too many track types, use the categories in the menu to make life easier.
-- After a while, the area surrounding your station will have developped and might throw collision errors whenever you try to config the station. Patiently look for the guilty street, building or asset and remove it. Snappy passenger connections may be at fault: try to replace them with non-snappy ones. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
+- After a while, the area surrounding your station will have developped and might throw collision errors whenever you try to config the station. Patiently look for the guilty street, building or asset and remove it. Snappy passenger connections (now obsolete) may be at fault: try to replace them with non-snappy ones. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
 
 [h1]Note:[/h1]
 - Underground stations are now in the assets.
@@ -529,7 +529,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Verwenden Sie den Gleisbau-"Gleisteiler", um Präzisionsarbeit zu leisten.
 - Beim Aufrüsten von Gleisen werden alle Gleise auf einmal ausgebaut.
 - Wenn Sie zu viele Streckentypen haben, nutzen Sie die Kategorien im Menü, um sich das Leben leichter zu machen.
-- Nach einer Weile wird sich das Gebiet um Ihren Bahnhof herum entwickelt haben und möglicherweise Kollisionsfehler verursachen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Suchen Sie geduldig nach der schuldigen Straße, dem Gebäude oder der Anlage und entfernen Sie sie. Biegsame Straßennetzverbindungen können schuld sein: ersetzen Sie sie mit Unbiegsamen. Im schlimmsten Fall können Sie die Mod "build with collision" verwenden, um kollidierende Bahnhofsmodule zu entfernen.
+- Nach einer Weile wird sich das Gebiet um Ihren Bahnhof herum entwickelt haben und möglicherweise Kollisionsfehler verursachen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Suchen Sie geduldig nach der schuldigen Straße, dem Gebäude oder der Anlage und entfernen Sie sie. Biegsame Straßennetzverbindungen (jetzt obsolet) können schuld sein: ersetzen Sie sie mit Unbiegsamen. Im schlimmsten Fall können Sie die Mod "build with collision" verwenden, um kollidierende Bahnhofsmodule zu entfernen.
 
 [h1]Anmerkung:[/h1]
 - U-Bahnhöfe sind jetzt in den Assets enthalten.
