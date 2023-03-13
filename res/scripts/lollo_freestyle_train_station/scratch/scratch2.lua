@@ -1,5 +1,7 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
+print('scratch2 starting')
+
 local tab1 = {1, 2, 3, 4, 5}
 local item = tab1[nil]
 local isItemNil = not(item)

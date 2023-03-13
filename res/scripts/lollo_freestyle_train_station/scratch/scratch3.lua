@@ -1,5 +1,7 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
+print('scratch3 starting')
+
 local dumb = ({2, 3, 4} == 'LOLLO') -- false, no errors
 dumb = (nil == nil) -- true
 local abaBool = true

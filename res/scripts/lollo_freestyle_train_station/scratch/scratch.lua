@@ -1,5 +1,7 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
+print('scratch starting')
+
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local aaa = { 1, 2, 3, 4}

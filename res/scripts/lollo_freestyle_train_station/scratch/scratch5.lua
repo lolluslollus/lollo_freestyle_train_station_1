@@ -1,5 +1,7 @@
 package.path = package.path .. ';res/scripts/?.lua'
 
+print('scratch5 starting')
+
 local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
