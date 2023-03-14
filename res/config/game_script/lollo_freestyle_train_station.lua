@@ -365,7 +365,7 @@ local _actions = {
     end,
 
     buildStation = function(successEventName, args)
-        local conTransf = args.platformWaypointTransf
+        local conTransf = args.platformWaypointMidTransf
 
         logger.print('buildStation starting, args =')
         local oldCon = edgeUtils.isValidAndExistingId(args.join2StationConId)
@@ -1390,7 +1390,7 @@ local _guiActions = {
 
         local eventArgs = {
             isCargo = isCargo,
-            platformWaypointTransf = platformWaypointMidTransf,
+            platformWaypointMidTransf = platformWaypointMidTransf,
             platformWaypoint1Id = platformWaypointIds[1],
             platformWaypoint2Id = platformWaypointIds[2],
             trackWaypoint1Id = distance11 < distance12 and trackWaypointIds[1] or trackWaypointIds[2],
@@ -1398,6 +1398,7 @@ local _guiActions = {
         }
 
         local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
+        logger.print('handleValidWaypointBuilt found #nearbyFreestyleStations = ' .. #nearbyFreestyleStations)
         if #nearbyFreestyleStations > 0 then
             guiHelpers.showNearbyStationPicker(
                 isCargo,
@@ -2205,7 +2206,9 @@ function data()
                         then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.trackWaypoint1Id)
-                        if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
+                        if not(edgeUtils.isValidAndExistingId(edgeId))
+                        or not(api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK))
+                        then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint1Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, logger.isExtendedLog())
@@ -2224,7 +2227,9 @@ function data()
                         then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.trackWaypoint2Id)
-                        if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
+                        if not(edgeUtils.isValidAndExistingId(edgeId))
+                        or not(api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK))
+                        then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.trackWaypoint2Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, logger.isExtendedLog())
@@ -2243,7 +2248,9 @@ function data()
                         then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.platformWaypoint1Id)
-                        if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
+                        if not(edgeUtils.isValidAndExistingId(edgeId))
+                        or not(api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK))
+                        then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint1Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, false)
@@ -2262,7 +2269,9 @@ function data()
                         then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.platformWaypoint2Id)
-                        if not(edgeUtils.isValidAndExistingId(edgeId)) then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
+                        if not(edgeUtils.isValidAndExistingId(edgeId))
+                        or not(api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK))
+                        then state.warningText = _('WaypointsWrong') _utils.sendHideProgress() return end
 
                         local waypointPosition = edgeUtils.getObjectPosition(args.platformWaypoint2Id)
                         local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, false)
@@ -2381,7 +2390,10 @@ function data()
                                 -- these should be identical, but they are not really so, so we average them
                                 -- local length = (transfUtils.getVectorLength(tel.posTanX2[1][2]) + transfUtils.getVectorLength(tel.posTanX2[2][2])) * 0.5
                                 local length = edgeUtils.getEdgeLength(tel.edgeId, logger.isExtendedLog())
-                                if not(length) then return -1, nil, nil end
+                                if not(length) then
+                                    logger.warn('cannot get edge length, trackEdgeList index = ' .. i)
+                                    return -1, nil, nil
+                                end
                                 trackLengths[i] = length
                                 totalLength = totalLength + length
                             end
@@ -2417,9 +2429,14 @@ function data()
                                     print('trackLengths =') debugPrint(trackLengths)
                                     print('halfTotalLength =') debugPrint(halfTotalLength)
                                     print('lengthSoFar =') debugPrint(lengthSoFar)
+                                    return -1, _, _
                                 end
+
                                 local midEdgeId = trackEdgeIdsBetweenNodeIds[iAcrossMidLength]
-                                if not(edgeUtils.isValidAndExistingId(midEdgeId)) then return -1, _, _ end
+                                if not(edgeUtils.isValidAndExistingId(midEdgeId)) then
+                                    logger.warn('invalid midEdgeId =') logger.debugPrint(midEdgeId)
+                                    return -1, _, _
+                                end
 
                                 logger.print('midEdgeId =') logger.debugPrint(midEdgeId)
                                 local position0 = transfUtils.oneTwoThree2XYZ(eventArgs.trackEdgeList[iAcrossMidLength].posTanX2[1][1])
@@ -2433,11 +2450,12 @@ function data()
                                 logger.print('(halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength] =') logger.debugPrint((halfTotalLength - lengthSoFar) / trackLengths[iAcrossMidLength])
 
                                 local edgeLength = edgeUtils.getEdgeLength(eventArgs.trackEdgeList[iAcrossMidLength].edgeId, logger.isExtendedLog())
+                                logger.print('mid edge length =') logger.debugPrint(edgeLength)
                                 if not(edgeLength) then
-                                    state.warningText = _('WrongTrack')
-                                    _utils.sendHideProgress()
+                                    logger.warn('cannot get mid edge length')
                                     return -1, nil, nil
                                 end
+
                                 local nodeBetween = edgeUtils.getNodeBetween(
                                     position0,
                                     position1,
@@ -2447,10 +2465,9 @@ function data()
                                     edgeLength,
                                     logger.isExtendedLog()
                                 )
-                                logger.print('nodeBetween 2223 =') logger.debugPrint(nodeBetween)
+                                logger.print('nodeBetween around track mid =') logger.debugPrint(nodeBetween)
                                 if nodeBetween == nil then
-                                    state.warningText = _('WrongTrack')
-                                    _utils.sendHideProgress()
+                                    logger.warn('cannot get nodeBetween around track mid')
                                     return -1, nil, nil
                                 end
                                 -- LOLLO NOTE it seems fixed, but keep checking it:
@@ -2482,6 +2499,8 @@ function data()
                                 logger.err('cannot find the centre of the track and cannot split it')
                                 logger.err('midEdgeId =', midEdgeId or 'NIL')
                                 logger.err('nodeBetween =') logger.errorDebugPrint(nodeBetween)
+                                state.warningText = _('WrongTrack')
+                                _utils.sendHideProgress()
                             end
                             return
                         end
@@ -2737,7 +2756,7 @@ function data()
                         end
                         local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
                         if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
-                            logger.err('construction', args.stationConstructionId, 'is not a freestyle station')
+                            logger.err('construction', args.stationConstructionId, 'is not a freestyle station, I cannot build its snappy neighbours')
                             return
                         end
                         _actions.buildSnappyPlatforms(args.stationConstructionId, 1, #con.params.terminals)

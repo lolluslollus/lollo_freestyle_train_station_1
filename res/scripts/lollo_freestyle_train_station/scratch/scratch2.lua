@@ -2,6 +2,11 @@ package.path = package.path .. ';res/scripts/?.lua'
 
 print('scratch2 starting')
 
+local function get__()
+    return -1, _, _
+end
+local a, b, c = get__()
+
 local tab1 = {1, 2, 3, 4, 5}
 local item = tab1[nil]
 local isItemNil = not(item)
