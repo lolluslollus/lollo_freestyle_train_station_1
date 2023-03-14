@@ -44,7 +44,7 @@ return {
 			wrapT = "REPEAT",
 		},
 		normal_scale = {
-			normalScale = 4,
+			normalScale = 8,
 		},
 		operation_1 = {
 			mode = "TEXCOORD",
