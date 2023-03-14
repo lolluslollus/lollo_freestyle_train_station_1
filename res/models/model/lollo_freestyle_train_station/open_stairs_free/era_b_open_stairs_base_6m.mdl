@@ -11,7 +11,7 @@ function data()
                     children = {
                         {
                             materials = {
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/open_stairs/open-stairs-up-half-6m-base.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}

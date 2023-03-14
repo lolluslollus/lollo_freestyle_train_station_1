@@ -19,7 +19,7 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/era_b_station_tiles_1.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/passenger_platform_area_10x5m.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}

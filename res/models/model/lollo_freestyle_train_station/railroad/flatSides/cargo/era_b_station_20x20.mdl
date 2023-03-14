@@ -25,7 +25,7 @@ function data()
                                 'station/rail/cargo/cargo_station_windows_and_doors_1.mtl',
                                 'station/rail/cargo/cargo_station_borders_1.mtl',
                                 'station/rail/cargo/cargo_station_borders_2.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl', -- pavement edge
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl', -- pavement edge
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_20x20/station_20x20_lod0.msh',
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -49,7 +49,7 @@ function data()
                                 'station/rail/cargo/cargo_station_windows_and_doors_1.mtl',
                                 'station/rail/cargo/cargo_station_borders_1.mtl',
                                 'station/rail/cargo/cargo_station_borders_2.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl', -- pavement edge
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl', -- pavement edge
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_20x20/station_20x20_lod1.msh',
                             name = 'station_3',

@@ -12,10 +12,12 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
+                                -- 'lollo_freestyle_train_station/square_marble_tiles.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
                                 'lollo_freestyle_train_station/metal/rough_copper.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large_z.mtl'
+                                -- 'lollo_freestyle_train_station/square_marble_tiles.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles_z.mtl'
                             },
                             mesh = 'lollo_freestyle_train_station/open_stairs/open-stairs-up-half-2m-top-railing.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
@@ -34,9 +36,11 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/wall_marble_1.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large_z.mtl'
+                                -- 'lollo_freestyle_train_station/square_marble_tiles.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
+                                -- 'lollo_freestyle_train_station/square_marble_tiles.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles_z.mtl'
                             },
                             mesh = 'lollo_freestyle_train_station/open_stairs/open-stairs-up-half-2m-no-railing.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}

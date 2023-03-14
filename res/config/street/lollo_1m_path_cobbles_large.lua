@@ -29,11 +29,11 @@ function data()
             --     size = { 16.0, 0.2 }
             -- },
             sidewalkPaving = {
-                name = "lollo_freestyle_train_station/square_cobbles_large_z.mtl",
+                name = "lollo_freestyle_train_station/square_marble_tiles_z.mtl",
                 size = { 2.0, 2.0 }
             },
             streetPaving = {
-                name = "lollo_freestyle_train_station/square_cobbles_large_z.mtl",
+                name = "lollo_freestyle_train_station/square_marble_tiles_z.mtl",
                 size = { 2.0, 2.0 }
             },
         },

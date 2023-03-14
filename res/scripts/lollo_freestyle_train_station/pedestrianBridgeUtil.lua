@@ -28,21 +28,21 @@ local function getDynamicProps(eraPrefix)
     local _lod0_skinMaterials_era_b_rep = {
         'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
         'lollo_freestyle_train_station/metal/rough_copper_low_prio_skinned.mtl',
-        'lollo_freestyle_train_station/square_cobbles_large_skinned.mtl',
+        'lollo_freestyle_train_station/square_marble_tiles_skinned.mtl',
     }
     local _lod0_skinMaterials_era_b_side = {
-        'lollo_freestyle_train_station/square_cobbles_large_skinned.mtl',
-        'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
+        'lollo_freestyle_train_station/square_marble_tiles_skinned.mtl',
+        'lollo_freestyle_train_station/square_marble_tiles_low_prio_skinned.mtl',
         'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
         'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
     }
     local _lod0_skinMaterials_era_b_side_no_railing = {
-        'lollo_freestyle_train_station/square_cobbles_large_skinned.mtl',
-        'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
+        'lollo_freestyle_train_station/square_marble_tiles_skinned.mtl',
+        'lollo_freestyle_train_station/square_marble_tiles_low_prio_skinned.mtl',
         'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
     }
     local _lod1_materials_era_b = {
-        'lollo_freestyle_train_station/square_cobbles_large.mtl',
+        'lollo_freestyle_train_station/square_marble_tiles.mtl',
     }
 
     local _lod0_skinMaterials_era_c_rep = {
@@ -93,19 +93,19 @@ local function getDynamicProps_Tube(eraPrefix)
 
 	local _lod0_skinMaterials_era_b_rep = {
 		'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
-		'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
+		'lollo_freestyle_train_station/square_marble_tiles_low_prio_skinned.mtl',
 	}
 	local _lod0_skinMaterials_era_b_side = {
-		'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
+		'lollo_freestyle_train_station/square_marble_tiles_low_prio_skinned.mtl',
 		'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 		'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 	}
 	local _lod0_skinMaterials_era_b_side_no_railing = {
-		'lollo_freestyle_train_station/square_cobbles_large_low_prio_skinned.mtl',
+		'lollo_freestyle_train_station/square_marble_tiles_low_prio_skinned.mtl',
 		'lollo_freestyle_train_station/metal/rough_copper_skinned.mtl',
 	}
 	local _lod1_materials_era_b = {
-		'lollo_freestyle_train_station/square_cobbles_large.mtl',
+		'lollo_freestyle_train_station/square_marble_tiles.mtl',
 	}
 
 	local _lod0_skinMaterials_era_c_rep = {
@@ -538,7 +538,7 @@ utils.getData4StoneLolloBridge = function(name, dir, isSides)
                 -- name = 'lollo_freestyle_train_station/totally_transparent.mtl',
                 -- size = { 1.0, 1.0 },
                 -- name = 'lollo_freestyle_train_station/icon/green.mtl'
-                -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+                -- name = 'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
                 -- size = {4.0, 4.0},
                 name = "street/old_medium_sidewalk.mtl",
                 size = {5.0,5.0},
@@ -553,7 +553,7 @@ utils.getData4StoneLolloBridge = function(name, dir, isSides)
                 name = 'lollo_freestyle_train_station/totally_transparent.mtl',
                 size = {5.0,5.0},
                 -- name = 'lollo_freestyle_train_station/icon/blue.mtl'
-                -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+                -- name = 'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
                 -- size = {4.0, 4.0}
             },
             -- sidewalkLane = {
@@ -632,7 +632,7 @@ utils.getData4CementGlassBridge = function(name, config, pillarMinDist, pillarMa
             --     -- name = 'lollo_freestyle_train_station/totally_transparent.mtl',
             --     -- size = { 1.0, 1.0 },
             --     -- name = 'lollo_freestyle_train_station/icon/green.mtl'
-            --     -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+            --     -- name = 'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
             --     -- size = {4.0, 4.0},
             --     name = "street/old_medium_sidewalk.mtl",
             --     size = {5.0,5.0},
@@ -647,7 +647,7 @@ utils.getData4CementGlassBridge = function(name, config, pillarMinDist, pillarMa
             --     name = 'lollo_freestyle_train_station/totally_transparent.mtl',
             --     size = {5.0,5.0},
             --     -- name = 'lollo_freestyle_train_station/icon/blue.mtl'
-            --     -- name = 'lollo_freestyle_train_station/square_cobbles_large_z.mtl',
+            --     -- name = 'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
             --     -- size = {4.0, 4.0}
             -- },
             -- sidewalkLane = {

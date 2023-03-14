@@ -20,7 +20,7 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/station_concrete_3.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
                                 'lollo_freestyle_train_station/station_concrete_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_platform_area_8x5m_lod0.msh',
@@ -40,7 +40,7 @@ function data()
                         {
                             materials = {
                                 'lollo_freestyle_train_station/station_concrete_3.mtl',
-                                'lollo_freestyle_train_station/square_cobbles_large.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
                                 -- 'lollo_freestyle_train_station/station_concrete_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_platform_area_8x5m_lod1.msh',

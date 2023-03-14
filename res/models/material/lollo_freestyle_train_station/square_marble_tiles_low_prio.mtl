@@ -1,0 +1,73 @@
+function data()
+return {
+	order = 0,
+	params = {
+		albedo_scale = {
+			albedoScale = { 0.75, 0.75, 0.75, },
+		},
+		fade_out_range = {
+			fadeOutEndDist = 20000,
+			fadeOutStartDist = 10000,
+		},
+		map_albedo = {
+			-- fileName = "models/station/rail/era_a/trainstation_1850_borders_001_albedo.dds",
+			fileName = "lollo_freestyle_train_station/square_marble_tiles_albedo_bc1.dds",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_metal_gloss_ao = {
+			-- fileName = "models/station/rail/era_a/trainstation_1850_borders_001_metal_gloss_ao.dds",
+			fileName = "lollo_freestyle_train_station/square_marble_tiles_metal_gloss_ao_bc1.dds",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_normal = {
+			-- fileName = "models/station/rail/era_a/trainstation_1850_borders_001_normal.dds",
+			fileName = "lollo_freestyle_train_station/square_marble_tiles_normal_bc5.dds",
+			redGreen = true,
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_1 = {
+			fileName = "buildings/overlay.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_2 = {
+			fileName = "buildings/dirtmap.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		normal_scale = {
+			normalScale = 1,
+		},
+		operation_1 = {
+			mode = "TEXCOORD",
+			op = "LINEAR_BURN",
+			opacity = 0.15000000596046,
+			scale = { 0.059999998658895, 0.059999998658895, },
+		},
+		operation_2 = {
+			mode = "TEXCOORD",
+			op = "MULTIPLICATION",
+			opacity = 0.34999999403954,
+			scale = { 0.10000000149012, 0.10000000149012, },
+		},
+		polygon_offset = {
+			factor = 1,
+			forceDepthWrite = true,
+			units = 1,
+		},
+		two_sided = {
+			flipNormal = false,
+			twoSided = false,
+		},
+	},
+	type = "PHYSICAL_NRML_MAP_OP",
+}
+end
