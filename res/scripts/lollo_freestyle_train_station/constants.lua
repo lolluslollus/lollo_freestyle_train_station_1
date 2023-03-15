@@ -74,6 +74,7 @@ local constants = {
     splitterZShift = 0,
     splitterZToleranceM = 1, -- must be positive
 
+    ---@alias eraPrefix 'era_a_'|'era_b_'|'era_c_'
     eras = {
         era_a = { prefix = 'era_a_', startYear = 1850 },
         era_b = { prefix = 'era_b_', startYear = 1920 },
