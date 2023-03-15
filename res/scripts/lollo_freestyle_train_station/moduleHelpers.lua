@@ -99,6 +99,11 @@ local privateFuncs = {
         -- logger.print('getFromVariant_LiftHeight returning', deltaZ, -10, 10)
         return deltaZ, -10, 10
     end,
+    ---get era prefix of current terminal bit and overwrite it with the era module if present
+    ---@param params table
+    ---@param nTerminal integer
+    ---@param nTrackEdge integer
+    ---@return eraPrefix
     getEraPrefix = function(params, nTerminal, nTrackEdge)
         local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge] or params.terminals[nTerminal].centrePlatformsRelative[1]
         local result = cpl.era or constants.eras.era_c.prefix
@@ -1261,7 +1266,6 @@ return {
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
                     if cpf.type == 0 then -- ground
-                        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
                         local bracketModelId = bracket5ModelId
                         if platformWidth > 10 then bracketModelId = bracket20ModelId
@@ -1407,13 +1411,19 @@ return {
                 isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
                 isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
+
+            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
+            local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+            if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+            elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+            end
+
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
                     if isTunnelOk or cpf.type ~= 2 then -- ground or bridge
-                        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
                         local platformWidth = cpf.width
                         local isFreeFromOpenStairsAndTunnels = isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex] and cpf.type ~= 2
                         local roofModelId = isFreeFromOpenStairsAndTunnels
@@ -1470,10 +1480,6 @@ return {
                                     if math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0 then
                                         -- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.05 or -platformWidth * 0.5 + 0.05
                                         local yShift = -platformWidth * 0.5 + 0.20
-                                        local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                                        if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                                        elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
-                                        end
                                         result.models[#result.models + 1] = {
                                             id = perronNumberModelId,
                                             slotId = slotId,
@@ -1515,6 +1521,11 @@ return {
                 wallBehindModelId = privateFuncs.deco.getWallBehindModelId(wall_low_5m_ModelId)
             end
             local wallBehindBaseModelId = privateFuncs.deco.getWallBehindBaseModelId(params, nTerminal, _eraPrefix)
+
+            local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
+            if _eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
+            elseif _eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
+            end
 
             local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
 
@@ -1630,11 +1641,6 @@ return {
                                 }
 
                                 local yShift4PerronNumber = -cpf.width * 0.5 + 0.20
-                                local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
-                                local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, leadingIndex)
-                                if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
-                                elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
-                                end
                                 result.models[#result.models + 1] = {
                                     id = perronNumberModelId,
                                     slotId = slotId,
@@ -2643,11 +2649,11 @@ return {
                 local myModelId = ''
                 if isCargo then
                     if width < 10 then
-                        myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_5m_wide.mdl'
+                        myModelId = 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_5m_wide.mdl'
                     elseif width < 20 then
-                        myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_10m_wide.mdl'
+                        myModelId = 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_10m_wide.mdl'
                     else
-                        myModelId = 'lollo_freestyle_train_station/railroad/platform/era_c_cargo_platform_1m_base_20m_wide.mdl'
+                        myModelId = 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_20m_wide.mdl'
                     end
                 else
                     local isUnderpass = params.modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.underpassSlotId)] ~= nil
@@ -2656,44 +2662,45 @@ return {
                     if isUnderpass then
                         if width < 5 then
                             myModelId = isTrackOnPlatformLeft
-                                and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
-                                or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
+                                and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
+                                or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
                         else
                             myModelId = isTrackOnPlatformLeft
-                                and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
-                                or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
+                                and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
+                                or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
                         end
                     else
                         if width < 5 then
                             myModelId = isTrackOnPlatformLeft
-                                and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
-                                or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
+                                and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
+                                or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
                         else
                             myModelId = isTrackOnPlatformLeft
-                                and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
-                                or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
+                                and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
+                                or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
                         end
                     end
                 end
-    
-                if eraPrefix == constants.eras.era_a.prefix then
-                    return myModelId:gsub(constants.eras.era_c.prefix, constants.eras.era_a.prefix)
-                elseif eraPrefix == constants.eras.era_b.prefix then
-                    return myModelId:gsub(constants.eras.era_c.prefix, constants.eras.era_b.prefix)
-                else
-                    return myModelId
-                end
+
+                return myModelId
+                -- if eraPrefix == constants.eras.era_a.prefix then
+                --     return myModelId:gsub(constants.eras.era_c.prefix, constants.eras.era_a.prefix)
+                -- elseif eraPrefix == constants.eras.era_b.prefix then
+                --     return myModelId:gsub(constants.eras.era_c.prefix, constants.eras.era_b.prefix)
+                -- else
+                --     return myModelId
+                -- end
             end
     
             local isCargoTerminal = params.terminals[nTerminal].isCargo
             local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
             -- local isFirstDone = false
             for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
                 local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
                 local cpfM1 = params.terminals[nTerminal].centrePlatformsFineRelative[ii-1] or {}
                 local cpfP1 = params.terminals[nTerminal].centrePlatformsFineRelative[ii+1] or {}
                 local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
-                local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, cpf.leadingIndex)
                 local myModelId = _getPlatformModelId(
                     isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix,
                     cpfM1.leadingIndex, cpf.leadingIndex, cpfP1.leadingIndex
