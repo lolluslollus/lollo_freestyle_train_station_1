@@ -7,6 +7,20 @@ local function get__()
 end
 local a, b, c = get__()
 
+---comment
+---@return table<{a: integer, b: integer}>
+local function a_b()
+    local result = {
+        {a = 1},
+        {a = 2}
+    }
+    for key, value in pairs(result) do
+        value.b = 7
+    end
+    return result
+end
+local a_b_result = a_b()
+
 local tab1 = {1, 2, 3, 4, 5}
 local item = tab1[nil]
 local isItemNil = not(item)

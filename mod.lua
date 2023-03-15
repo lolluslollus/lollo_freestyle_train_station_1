@@ -91,15 +91,44 @@ function data()
                 end
             end
 
-            -- This adds modules for modded tracks to the freestyle station
+            -- add dynamic modules for track, bridge and tunnel types
+            local _barredTrackFileNameBits = {
+                'ballast_standard',
+                'mus_mock',
+                'Seilbahn_Gleis',
+                'ust_mock',
+                'wk_track_dummy',
+            }
+            local _barredBridgeFileNameBits = {
+                'Seilbahn_Bruecke',
+            }
+            local _barredTunnelFileNameBits = {
+                'ust_void',
+            }
+            local _isStringContainsAny = function(str, list)
+                for _, item in pairs(list) do
+                    if _stringUtils.stringContains(str, item) then
+                        return true
+                    end
+                end
+                return false
+            end
+
+            local _isFitsRail = function(bridgeOrTunnel)
+                if not(bridgeOrTunnel) or not(bridgeOrTunnel.carriers) then return false end
+
+                for _, carrier in pairs(bridgeOrTunnel.carriers) do
+                    if carrier == api.type.enum.Carrier.RAIL then return true end
+                end
+                return false
+            end
+
+            -- Add modules for modded tracks to the freestyle station
             for trackTypeIndex, trackFileName in pairs(trackFileNames) do
                 if trackFileName ~= "standard.lua" and trackFileName ~= "high_speed.lua"
                 and type(trackTypeIndex) == 'number' and trackTypeIndex > -1 and api.res.trackTypeRep.isVisible(trackTypeIndex)
                 and type(trackFileName) == 'string'
-                and not(_stringUtils.stringContains(trackFileName, 'ballast_standard'))
-                and not(_stringUtils.stringContains(trackFileName, 'mus_mock'))
-                and not(_stringUtils.stringContains(trackFileName, 'Seilbahn_Gleis'))
-                and not(_stringUtils.stringContains(trackFileName, 'wk_track_dummy'))
+                and not(_isStringContainsAny(trackFileName, _barredTrackFileNameBits))
                 then
                     -- local track = api.res.trackTypeRep.get(api.res.trackTypeRep.find(trackFileName))
                     local track = api.res.trackTypeRep.get(trackTypeIndex)
@@ -150,21 +179,16 @@ function data()
                 end
             end
 
-            -- This adds modules for bridges to the freestyle station
-            local _getIsFitsRail = function(bridgeOrTunnel)
-                if not(bridgeOrTunnel) or not(bridgeOrTunnel.carriers) then return false end
-
-                for _, carrier in pairs(bridgeOrTunnel.carriers) do
-                    if carrier == api.type.enum.Carrier.RAIL then return true end
-                end
-                return false
-            end
+            -- Add modules for bridges (modded or not) to the freestyle station
             local bridgeFileNames = api.res.bridgeTypeRep.getAll()
             local bridgeCount = 1
             for bridgeTypeIndex, bridgeFileName in pairs(bridgeFileNames) do
-                if type(bridgeTypeIndex) == 'number' and bridgeTypeIndex > -1 and api.res.bridgeTypeRep.isVisible(bridgeTypeIndex) then
+                if type(bridgeTypeIndex) == 'number' and bridgeTypeIndex > -1 and api.res.bridgeTypeRep.isVisible(bridgeTypeIndex)
+                and type(bridgeFileName) == 'string'
+                and not(_isStringContainsAny(bridgeFileName, _barredBridgeFileNameBits))
+                then
                     local bridge = api.res.bridgeTypeRep.get(bridgeTypeIndex)
-                    if bridge ~= nil and bridge.name ~= nil and _getIsFitsRail(bridge) then
+                    if bridge ~= nil and bridge.name ~= nil and _isFitsRail(bridge) then
                         local module = api.type.ModuleDesc.new()
                         module.fileName = 'station/rail/lollo_freestyle_train_station/bridgeTypes/dynamic_' .. tostring(bridgeFileName) .. '.module'
 
@@ -235,13 +259,16 @@ function data()
                 api.res.moduleRep.add(module.fileName, module, true)
             end
 ]]
-            -- This adds modules for tunnels to the freestyle station
+            -- Add modules for tunnels (modded or not) to the freestyle station
             local tunnelFileNames = api.res.tunnelTypeRep.getAll()
             local tunnelCount = 1
             for tunnelTypeIndex, tunnelFileName in pairs(tunnelFileNames) do
-                if type(tunnelTypeIndex) == 'number' and tunnelTypeIndex > -1 and api.res.tunnelTypeRep.isVisible(tunnelTypeIndex) then
+                if type(tunnelTypeIndex) == 'number' and tunnelTypeIndex > -1 and api.res.tunnelTypeRep.isVisible(tunnelTypeIndex)
+                and type(tunnelFileName) == 'string'
+                and not(_isStringContainsAny(tunnelFileName, _barredTunnelFileNameBits))
+                then
                     local tunnel = api.res.tunnelTypeRep.get(tunnelTypeIndex)
-                    if tunnel ~= nil and tunnel.name ~= nil and _getIsFitsRail(tunnel) then
+                    if tunnel ~= nil and tunnel.name ~= nil and _isFitsRail(tunnel) then
                         local module = api.type.ModuleDesc.new()
                         module.fileName = 'station/rail/lollo_freestyle_train_station/tunnelTypes/dynamic_' .. tostring(tunnelFileName) .. '.module'
 
