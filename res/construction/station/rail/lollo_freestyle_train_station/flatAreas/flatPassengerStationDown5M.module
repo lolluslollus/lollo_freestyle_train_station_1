@@ -2,223 +2,211 @@ local _constants = require('lollo_freestyle_train_station.constants')
 -- local constructionutil = require "constructionutil"
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
-local transfUtilsUG = require "transf"
 
 
 function data()
-
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "passenger-road-access", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("FlatPassengerStationDown5MName"),
-		description = _("FlatPassengerStationDown5MDesc"),
-		icon = "ui/lollo_freestyle_train_station/flatPassengerStationDown5M.tga"
-	},
-	metadata = {
-		moreCapacity = {
-			cargo = 0,
-			passenger = 20
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
 		},
-	},
-	order = {
-		value = 33,
-	},
-	type = _constants.flatPassengerStation0MModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not nTrackEdge or not baseId then return end
+		category = {
+			categories = { "passenger-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("FlatPassengerStationDown5MName"),
+			description = _("FlatPassengerStationDown5MDesc"),
+			icon = "ui/lollo_freestyle_train_station/flatPassengerStationDown5M.tga"
+		},
+		metadata = {
+			moreCapacity = {
+				cargo = 0,
+				passenger = 20
+			},
+		},
+		order = {
+			value = 33,
+		},
+		type = _constants.flatPassengerStation0MModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
-		-- local buildingTransf = transfUtilsUG.mul(
-		-- 	zAdjustedTransf,
-		-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 5, 1 }
-		-- )
-		local buildingTransf = transfUtils.getTransf_ZRotatedP90_Shifted(
-			zAdjustedTransf,
-			{0, 0, 5}
-		)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local buildingTransf = transfUtils.getTransf_ZRotatedP90_Shifted(
+				zAdjustedTransf,
+				{0, 0, 5}
+			)
 
-		-- local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
-		local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
+			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
 
-		local stationModelId = nil
-		if eraPrefix == moduleHelpers.eras.era_a.prefix then
-			stationModelId = 'lollo_freestyle_train_station/lift/era_a_side_lifts_down_9_5_5.mdl'
-		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
-			stationModelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_down_9_5_5.mdl'
-		else
-			stationModelId = 'lollo_freestyle_train_station/lift/era_c_side_lifts_down_9_5_5.mdl'
-		end
-		result.models[#result.models + 1] = {
-			id = stationModelId,
-			slotId = slotId,
-			transf = buildingTransf,
-			tag = tag
-		}
-		moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-
-		-- add some deco
-		if eraPrefix ~= moduleHelpers.eras.era_a.prefix then
+			local stationModelId = nil
+			if eraPrefix == moduleHelpers.eras.era_a.prefix then
+				stationModelId = 'lollo_freestyle_train_station/lift/era_a_side_lifts_down_9_5_5.mdl'
+			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
+				stationModelId = 'lollo_freestyle_train_station/lift/era_b_side_lifts_down_9_5_5.mdl'
+			else
+				stationModelId = 'lollo_freestyle_train_station/lift/era_c_side_lifts_down_9_5_5.mdl'
+			end
 			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
+				id = stationModelId,
 				slotId = slotId,
-				-- transf = transfUtilsUG.mul(
-				-- 	buildingTransf,
-				-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  4.2, -2.8, 0, 1 }
-				-- ),
+				transf = buildingTransf,
+				tag = tag
+			}
+			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			-- add waiting area
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_side_lift.mdl',
+				slotId = slotId,
+				transf = transfUtils.getTransf_YShifted(buildingTransf, -0.4),
+				tag = slotHelpers.mangleModelTag(nTerminal, false),
+			}
+
+			-- add some deco
+			if eraPrefix ~= moduleHelpers.eras.era_a.prefix then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
+					slotId = slotId,
+					transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+						buildingTransf,
+						{4.2, -2.8, 0}
+					),
+					tag = tag
+				}
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/asset/partenze.mdl',
+					slotId = slotId,
+					transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+						buildingTransf,
+						{-4.2, -1.5, 0}
+					),
+					tag = tag
+				}
+			end
+
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
+				shape = 1,
+				spacing = {-1, 4, 4, 4},
 				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
 					buildingTransf,
-					{4.2, -2.8, 0}
+					{0, -4.75, 0}
 				),
-				tag = tag
+				type = _constants.passengerStationSquareModuleType,
+			})
+
+			local groundFace1 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
+				{-1, -5.2, 0 + _constants.platformSideBitsZ, 1},
+				{-1, 5.2, 0 + _constants.platformSideBitsZ, 1},
+				{2, 5.2, 0 + _constants.platformSideBitsZ, 1},
+				{2, -5.2, 0 + _constants.platformSideBitsZ, 1},
 			}
-			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/partenze.mdl',
-				slotId = slotId,
-				-- transf = transfUtilsUG.mul(
-				-- 	buildingTransf,
-				-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  -4.2, -1.5, 0, 1 }
-				-- ),
-				transf = transfUtils.getTransf_ZRotatedP90_Shifted(
-					buildingTransf,
-					{-4.2, -1.5, 0}
-				),
-				tag = tag
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace1)
+			local groundFace2 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
+				{2, -5.2, 0 + _constants.platformSideBitsZ, 1},
+				{2, 5.2, 0 + _constants.platformSideBitsZ, 1},
+				{3, 5.2, 5 + _constants.platformSideBitsZ, 1},
+				{3, -5.2, 5 + _constants.platformSideBitsZ, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace2)
+			local groundFace3 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
+				{3, -5.2, 5 + _constants.platformSideBitsZ, 1},
+				{3, 5.2, 5 + _constants.platformSideBitsZ, 1},
+				{8, 5.2, 5 + _constants.platformSideBitsZ, 1},
+				{8, -5.2, 5 + _constants.platformSideBitsZ, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace3)
+			table.insert(
+				result.groundFaces,
+				{
+					face = groundFace1,
+					modes = {
+						{
+							type = 'FILL',
+							key = myGroundFacesFillKey
+						},
+						{
+							type = 'STROKE_OUTER',
+							key = myGroundFacesFillKey
+						}
+					}
+				}
+			)
+			table.insert(
+				result.groundFaces,
+				{
+					face = groundFace2,
+					modes = {
+						{
+							type = 'FILL',
+							key = myGroundFacesFillKey
+						},
+						{
+							type = 'STROKE_OUTER',
+							key = myGroundFacesFillKey
+						}
+					}
+				}
+			)
+			table.insert(
+				result.groundFaces,
+				{
+					face = groundFace3,
+					modes = {
+						{
+							type = 'FILL',
+							key = myGroundFacesFillKey
+						},
+						{
+							type = 'STROKE_OUTER',
+							key = myGroundFacesFillKey
+						}
+					}
+				}
+			)
+
+			local terrainAlignmentList1 = {
+				faces = { groundFace1 },
+				optional = true,
+				slopeHigh = 9.9,
+				slopeLow = 9.6,
+				type = 'EQUAL',
+			}
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList1
+			local terrainAlignmentList2 = {
+				faces = { groundFace2 },
+				optional = true,
+				slopeHigh = 9.9,
+				slopeLow = 9.6,
+				type = 'EQUAL',
+			}
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList2
+			local terrainAlignmentList3 = {
+				faces = { groundFace3 },
+				optional = true,
+				slopeHigh = 9.9,
+				slopeLow = 9.6,
+				type = 'EQUAL',
+			}
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList3
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/lift/era_c_side_lifts_down_9_5_5.mdl',
+					transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
+				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
 			}
 		end
-
-		table.insert(result.slots, {
-			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
-			shape = 1,
-			spacing = {-1, 4, 4, 4},
-			-- transf = transfUtilsUG.mul(
-			-- 	buildingTransf,
-			-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, 0, 1 }
-			-- ),
-			transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-				buildingTransf,
-				{0, -4.75, 0}
-			),
-			type = _constants.passengerStationSquareModuleType,
-		})
-
-		local groundFace1 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
-			{-1, -5.2, 0 + _constants.platformSideBitsZ, 1},
-			{-1, 5.2, 0 + _constants.platformSideBitsZ, 1},
-			{2, 5.2, 0 + _constants.platformSideBitsZ, 1},
-			{2, -5.2, 0 + _constants.platformSideBitsZ, 1},
-		}
-		modulesutil.TransformFaces(zAdjustedTransf, groundFace1)
-		local groundFace2 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
-			{2, -5.2, 0 + _constants.platformSideBitsZ, 1},
-			{2, 5.2, 0 + _constants.platformSideBitsZ, 1},
-			{3, 5.2, 5 + _constants.platformSideBitsZ, 1},
-			{3, -5.2, 5 + _constants.platformSideBitsZ, 1},
-		}
-		modulesutil.TransformFaces(zAdjustedTransf, groundFace2)
-		local groundFace3 = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
-			{3, -5.2, 5 + _constants.platformSideBitsZ, 1},
-			{3, 5.2, 5 + _constants.platformSideBitsZ, 1},
-			{8, 5.2, 5 + _constants.platformSideBitsZ, 1},
-			{8, -5.2, 5 + _constants.platformSideBitsZ, 1},
-		}
-		modulesutil.TransformFaces(zAdjustedTransf, groundFace3)
-		table.insert(
-			result.groundFaces,
-			{
-				face = groundFace1,
-				modes = {
-					{
-						type = 'FILL',
-						key = myGroundFacesFillKey
-					},
-					{
-						type = 'STROKE_OUTER',
-						key = myGroundFacesFillKey
-					}
-				}
-			}
-		)
-		table.insert(
-			result.groundFaces,
-			{
-				face = groundFace2,
-				modes = {
-					{
-						type = 'FILL',
-						key = myGroundFacesFillKey
-					},
-					{
-						type = 'STROKE_OUTER',
-						key = myGroundFacesFillKey
-					}
-				}
-			}
-		)
-		table.insert(
-			result.groundFaces,
-			{
-				face = groundFace3,
-				modes = {
-					{
-						type = 'FILL',
-						key = myGroundFacesFillKey
-					},
-					{
-						type = 'STROKE_OUTER',
-						key = myGroundFacesFillKey
-					}
-				}
-			}
-		)
-
-		local terrainAlignmentList1 = {
-			faces = { groundFace1 },
-			optional = true,
-			slopeHigh = 9.9,
-			slopeLow = 9.6,
-			type = 'EQUAL',
-		}
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList1
-		local terrainAlignmentList2 = {
-			faces = { groundFace2 },
-			optional = true,
-			slopeHigh = 9.9,
-			slopeLow = 9.6,
-			type = 'EQUAL',
-		}
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList2
-		local terrainAlignmentList3 = {
-			faces = { groundFace3 },
-			optional = true,
-			slopeHigh = 9.9,
-			slopeLow = 9.6,
-			type = 'EQUAL',
-		}
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList3
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				id = 'lollo_freestyle_train_station/lift/era_c_side_lifts_down_9_5_5.mdl',
-				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
-			},
-			moduleHelpers.flatAreas.getPreviewIcon(params),
-		}
-	end
-}
-
+	}
 end

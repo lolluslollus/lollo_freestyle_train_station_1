@@ -129,7 +129,7 @@ function data()
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_30x8.mdl',
 				slotId = slotId,
-				transf = transfUtils.getTransf_YShifted(buildingTransf, -20),
+				transf = transfUtils.getTransf_Shifted(buildingTransf, {0, -10, _constants.stairsAndRampHeight + 0.8}),
 				tag = slotHelpers.mangleModelTag(nTerminal, false),
 			}
 --[[

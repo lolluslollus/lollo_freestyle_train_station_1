@@ -88,7 +88,7 @@ function data()
 			-- nSegments2Plus = 1,
 			moreCapacity = {
 				cargo = 0,
-				passenger = 20
+				passenger = 30
 			},
 		},
 		order = {
@@ -114,6 +114,12 @@ function data()
 				tag = tag
 			}
 			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_9x6.mdl',
+				slotId = slotId,
+				transf = transfUtils.getTransf_Scaled_Shifted(buildingTransf, {1.8, 1, 1}, {0, -3.2, _constants.stairsAndRampHeight + 0.8}),
+				tag = slotHelpers.mangleModelTag(nTerminal, false),
+			}
 --[[
 			if result.terminateConstructionHookInfo.underpassPositionsOnGround[nTerminal] == nil then
 				result.terminateConstructionHookInfo.underpassPositionsOnGround[nTerminal] = {}
