@@ -1,0 +1,194 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 12936,
+					offset = 83484,
+				},
+				position = {
+					count = 12936,
+					offset = 96420,
+				},
+				tangent = {
+					count = 12936,
+					offset = 70548,
+				},
+				uv0 = {
+					count = 12936,
+					offset = 109356,
+				},
+			},
+			materials = {
+				"one.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 288,
+					offset = 122580,
+				},
+				position = {
+					count = 288,
+					offset = 122868,
+				},
+				tangent = {
+					count = 288,
+					offset = 122292,
+				},
+				uv0 = {
+					count = 288,
+					offset = 123156,
+				},
+			},
+			materials = {
+				"two.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 17304,
+					offset = 140748,
+				},
+				position = {
+					count = 17304,
+					offset = 158052,
+				},
+				tangent = {
+					count = 17304,
+					offset = 123444,
+				},
+				uv0 = {
+					count = 17304,
+					offset = 175356,
+				},
+			},
+			materials = {
+				"three.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 744,
+					offset = 193404,
+				},
+				position = {
+					count = 744,
+					offset = 194148,
+				},
+				tangent = {
+					count = 744,
+					offset = 192660,
+				},
+				uv0 = {
+					count = 744,
+					offset = 194892,
+				},
+			},
+			materials = {
+				"four.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 5988,
+					offset = 201624,
+				},
+				position = {
+					count = 5988,
+					offset = 207612,
+				},
+				tangent = {
+					count = 5988,
+					offset = 195636,
+				},
+				uv0 = {
+					count = 5988,
+					offset = 213600,
+				},
+			},
+			materials = {
+				"five.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 1968,
+					offset = 221556,
+				},
+				position = {
+					count = 1968,
+					offset = 223524,
+				},
+				tangent = {
+					count = 1968,
+					offset = 219588,
+				},
+				uv0 = {
+					count = 1968,
+					offset = 225492,
+				},
+			},
+			materials = {
+				"six.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 3336,
+					offset = 230796,
+				},
+				position = {
+					count = 3336,
+					offset = 234132,
+				},
+				tangent = {
+					count = 3336,
+					offset = 227460,
+				},
+				uv0 = {
+					count = 3336,
+					offset = 237468,
+				},
+			},
+			materials = {
+				"seven.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 6132,
+			numComp = 3,
+			offset = 9552,
+		},
+		position = {
+			count = 29856,
+			numComp = 3,
+			offset = 15684,
+		},
+		tangent = {
+			count = 9552,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 25008,
+			numComp = 2,
+			offset = 45540,
+		},
+	},
+}
+end

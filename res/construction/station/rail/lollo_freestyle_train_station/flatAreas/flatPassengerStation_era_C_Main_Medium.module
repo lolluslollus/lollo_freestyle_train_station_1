@@ -1,0 +1,192 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local modulesutil = require "modulesutil"
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+
+
+function data()
+	local generatedData = {
+		["main"] = {
+			models = {
+				["station/rail/era_c/station_2_main.mdl"] = {
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000 },
+				},
+			},
+		},
+		["clock"] = {
+			models = {
+				["station/rail/asset/era_c_big_clock.mdl"] = {
+					{ 0.63000, 0.00000, 0.00000, 0.00000, 0.00000, 0.63000, 0.00000, 0.00000, 0.00000, 0.00000, 0.63000, 0.00000, 0.00520, -16.69716, 7.71253, 1.00000 },
+					{ -0.63000, -0.00000, 0.00000, 0.00000, 0.00000, -0.63000, 0.00000, 0.00000, 0.00000, 0.00000, 0.63000, 0.00000, 0.00520, -5.20716, 7.07253, 1.00000 },
+					{ -1.00000, -0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.01041, -5.62261, 7.29505, 1.00000 },
+				},
+			},
+		},
+		["assets"] = {
+			models = {
+				["asset/roof/era_b_lamp_b_02.mdl"] = {
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.25469, -5.20000, 4.39750, 1.00000 },
+					{ -1.00000, -0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 1.25469, -18.50000, 3.63750, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -6.25279, -5.20000, 4.39750, 1.00000 },
+					{ -1.00000, -0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -4.67500, -18.50000, 3.63750, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 6.25943, -5.20000, 4.39750, 1.00000 },
+					{ -1.00000, -0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 4.67500, -18.50000, 3.63750, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -1.25000, -5.20000, 4.39750, 1.00000 },
+					{ -1.00000, -0.00000, 0.00000, 0.00000, 0.00000, -1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -1.25000, -18.50000, 3.63750, 1.00000 },
+				},
+				["station/rail/asset/era_c_single_chair.mdl"] = {
+					{ -0.00000, -1.00000, 0.00000, 0.00000, 1.00000, -0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -6.24430, -4.60000, 0.80000, 1.00000 },
+					{ -0.00000, -1.00000, 0.00000, 0.00000, 1.00000, -0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 6.24430, -4.60000, 0.80000, 1.00000 },
+				},
+--[[
+				["station/rail/asset/era_c_street_pillar.mdl"] = {
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -10.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -8.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -6.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -4.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -2.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -3.00000, -18.80000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 2.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 3.00000, -18.80000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 4.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 6.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 8.00000, -22.51000, 0.00000, 1.00000 },
+					{ 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 10.00000, -22.51000, 0.00000, 1.00000 },
+				},
+]]
+				["station/rail/asset/era_c_trashcan.mdl"] = {
+					{ -0.00000, 1.00000, 0.00000, 0.00000, -1.00000, -0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, 3.76910, -4.50000, 0.80000, 1.00000 },
+					{ -0.00000, 1.00000, 0.00000, 0.00000, -1.00000, -0.00000, 0.00000, 0.00000, 0.00000, 0.00000, 1.00000, 0.00000, -3.76910, -4.50000, 0.80000, 1.00000 },
+				},
+			},
+		},
+	}
+	return {
+		availability = {
+			yearFrom = _constants.eras.era_c.startYear,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("Medium main building"),
+			description = _("Medium main building with street access for passenger stations. Provides capacity for 50 passengers."),
+			icon = "ui/construction/station/rail/modular_station/main_building_2_era_c.tga"
+		},
+		metadata = {
+			nEvenSegmentPairs = 1,
+			-- nSegments2Minus = 1,
+			-- nSegments2Plus = 1,
+			moreCapacity = {
+				cargo = 0,
+				passenger = 90
+			},
+		},
+		order = {
+			value = 44,
+		},
+		type = _constants.flatPassengerStation0MModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not nTrackEdge or not baseId then return end
+
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local buildingTransf = transfUtils.getTransf_ZRotated_Shifted(zAdjustedTransf, math.pi * 0.5, {-2.5, 0, -0.8})
+
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+
+			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
+
+			local modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_medium/lollo_main.mdl'
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = buildingTransf,
+				tag = tag
+			}
+			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+--[[
+			if result.terminateConstructionHookInfo.underpassPositionsOnGround[nTerminal] == nil then
+				result.terminateConstructionHookInfo.underpassPositionsOnGround[nTerminal] = {}
+			end
+			table.insert(
+				result.terminateConstructionHookInfo.underpassPositionsOnGround[nTerminal],
+				{
+					t = nTerminal,
+					lanePosTanX2 = cpl.posTanX2,
+					pos2Link = transfUtils.transf2Position(
+						transfUtils.getTransf_Shifted(
+							buildingTransf,
+							{9, -3.5, _constants.subwayPos2LinkZ}
+						)
+					)
+				}
+			)
+]]
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
+				shape = 1,
+				spacing = {-1, 4, 4, 4},
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+					buildingTransf,
+					{0, -20.7, 0}
+				),
+				type = _constants.passengerStationSquareModuleType,
+			})
+
+			local groundFace = {
+				{-1, -10.6, -0.8, 1},
+				{-1, 10.6, -0.8, 1},
+				{20.5, 10.6, -0.8, 1},
+				{20.5, -10.6, -0.8, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			table.insert(
+				result.groundFaces,
+				{
+					face = groundFace,
+					modes = {
+						{
+							type = 'FILL',
+							key = myGroundFacesFillKey
+						},
+						{
+							type = 'STROKE_OUTER',
+							key = myGroundFacesFillKey
+						}
+					}
+				}
+			)
+
+			local terrainAlignmentList = {
+				faces = { groundFace },
+				optional = true,
+				slopeHigh = _constants.slopeHigh,
+				slopeLow = _constants.slopeLow,
+				type = 'EQUAL',
+			}
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+
+			constructionutil.addModels(generatedData["clock"], result.models, buildingTransf, tag)
+			constructionutil.addModels(generatedData["assets"], result.models, buildingTransf, tag)
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_medium/lollo_main.mdl',
+					transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  20, 20, 0, 1 },
+				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
+			}
+		end
+	}
+end

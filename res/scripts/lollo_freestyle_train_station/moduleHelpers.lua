@@ -1544,8 +1544,11 @@ return {
             -- flat areas and deco are shifted by this amount, and it makes sense this way, so we must account for it
             local _deco2FlatAreaShiftInt = math.floor(constants.maxPassengerWaitingAreaEdgeLength / 2)
             local isFreeFromFlatAreas = {}
+            local isLookAhead = {}
             for i = _i1, _iMax + 1, 1 do -- look ahead one more bit because of the shift
-                isFreeFromFlatAreas[i] = not(result.getOccupiedInfo4FlatAreas(nTerminal, i))
+                local occupiedInfo4FlatAreas = result.getOccupiedInfo4FlatAreas(nTerminal, i)
+                isFreeFromFlatAreas[i] = occupiedInfo4FlatAreas == nil
+                isLookAhead[i] = occupiedInfo4FlatAreas == nil or not(occupiedInfo4FlatAreas.isEven)
             end
             -- logger.print('*** isFreeFromFlatAreas =') logger.debugPrint(isFreeFromFlatAreas)
             local _getWidthAbove_0m_BarePlatformWidth = function(cpf)
@@ -1561,9 +1564,18 @@ return {
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
                     if isTunnelOk or cpf.type ~= 2 then -- ground or bridge, tunnel only if allowed
-                        local cpfAheadByDeco2FlatAreaShift = params.terminals[nTerminal].centrePlatformsFineRelative[ii + _deco2FlatAreaShiftInt]
-                        -- no stations in this fine segment
-                        if not(cpfAheadByDeco2FlatAreaShift) or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex] then
+                        local isCanDraw = false -- are there stations or exits in this fine segment?
+                        if isLookAhead[cpf.leadingIndex] then
+                            local cpfAheadByDeco2FlatAreaShift = params.terminals[nTerminal].centrePlatformsFineRelative[ii + _deco2FlatAreaShiftInt]
+                            isCanDraw = not(cpfAheadByDeco2FlatAreaShift)
+                                or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex]
+                                or not(isLookAhead[cpfAheadByDeco2FlatAreaShift.leadingIndex])
+                            -- logger.print('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
+                        else
+                            isCanDraw = isFreeFromFlatAreas[cpf.leadingIndex]
+                            -- logger.print('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
+                        end
+                        if isCanDraw then
                             local widthAboveNil, slopedAreaWidth = _getWidthAbove_0m_BarePlatformWidth(cpf)
                             -- this would help if I take cpf.posTanX2, but then I'd get some ugly steps.
                             -- local yShift = _isTrackOnPlatformLeft and -cpf.width * 0.5 - slopedAreaWidth or cpf.width * 0.5 + slopedAreaWidth

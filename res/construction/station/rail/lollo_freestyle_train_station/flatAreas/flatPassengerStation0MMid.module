@@ -46,7 +46,7 @@ return {
 		-- )
 		local buildingTransf = transfUtils.getTransf_ZRotatedP90(zAdjustedTransf)
 
-		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+		-- local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
         local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 		local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']

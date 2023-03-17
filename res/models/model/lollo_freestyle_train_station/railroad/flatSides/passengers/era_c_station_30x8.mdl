@@ -40,14 +40,23 @@ function data()
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_passenger_station_30x5x8_lod0.msh',
                             name = 'era_c_station_30x8_lod0',
-                            transf = _constants.idTransf
+                            -- transf = _constants.idTransf
                         },
+                        {
+							materials = {
+								'lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl',
+								'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
+							},
+							mesh = 'lollo_freestyle_train_station/railroad/flatSides/passenger_station_30x5x8_perron_lod0.msh',
+							name = 'station_30x28_perron',
+							-- transf = _constants.idTransf
+						},
                         {
                             children = {
                                 {
                                     materials = { "station/rail/era_c/era_c_trainstation_assets.mtl", },
                                     mesh = 'lollo_freestyle_train_station/asset/era_c_single_station_name_lod0.msh',
-                                    transf = _constants.idTransf
+                                    -- transf = _constants.idTransf
                                 }
                             },
                             transf = {1.5, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -7.3, 4.05, 1}
@@ -143,6 +152,15 @@ function data()
                             transf = _constants.idTransf
                         },
                         {
+							materials = {
+								'lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl',
+								'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
+							},
+							mesh = 'lollo_freestyle_train_station/railroad/flatSides/passenger_station_30x5x8_perron_lod0.msh',
+							name = 'station_30x28_perron',
+							-- transf = _constants.idTransf
+						},
+                        {
                             children = {
                                 {
                                     materials = { "station/rail/era_c/era_c_trainstation_assets.mtl", },
@@ -204,6 +222,15 @@ function data()
                             name = 'era_c_station_30x8_lod2',
                             transf = _constants.idTransf
                         },
+                        {
+							materials = {
+								'lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl',
+								'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
+							},
+							mesh = 'lollo_freestyle_train_station/railroad/flatSides/passenger_station_30x5x8_perron_lod0.msh',
+							name = 'station_30x28_perron',
+							-- transf = _constants.idTransf
+						},
                     },
                     name = 'RootNode',
                     transf = _constants.idTransf

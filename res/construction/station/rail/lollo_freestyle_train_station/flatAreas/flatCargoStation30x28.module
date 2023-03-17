@@ -24,8 +24,8 @@ function data()
 			icon = "ui/lollo_freestyle_train_station/flatCargoStation30x28.tga"
 		},
 		metadata = {
-			isOccupyM1 = true,
-			isOccupyP1 = true,
+			nSegments2Minus = 1,
+			nSegments2Plus = 1,
 			moreCapacity = {
 				cargo = 180,
 				passenger = 0
@@ -44,7 +44,6 @@ function data()
 				5
 			)
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']

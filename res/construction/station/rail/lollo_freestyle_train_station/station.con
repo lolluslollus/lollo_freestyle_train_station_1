@@ -211,11 +211,49 @@ function data()
 					return occupiedInfo.crossConnectorsWithFlatAreas[t][i]
 				end
 			end
-			local _setOccupiedInfo4FlatAreas = function(t, i, newId)
+			local _setOccupiedInfo4FlatAreas = function(t, i, newId, isEven)
 				if occupiedInfo.crossConnectorsWithFlatAreas[t] == nil then
 					occupiedInfo.crossConnectorsWithFlatAreas[t] = {}
 				end
-				occupiedInfo.crossConnectorsWithFlatAreas[t][i] = newId
+				occupiedInfo.crossConnectorsWithFlatAreas[t][i] = {id = newId, isEven = not(not(isEven))}
+			end
+			local _setOccupiedInfo4LargeFlatAreas = function(t, i, myId, iMax)
+				local nEvenSegmentPairs = params.modules[myId].metadata.nEvenSegmentPairs or 0
+				_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea8x10SlotId, nEvenSegmentPairs ~= 0)
+				logger.print('occupying i = ' .. i .. ' on terminal ' .. t)
+				if nEvenSegmentPairs == 0 then
+					local nSegments2Minus = params.modules[myId].metadata.nSegments2Minus or 0
+					local nSegments2Plus = params.modules[myId].metadata.nSegments2Plus or 0
+					for k = 1, nSegments2Minus, 1 do
+						if (i-k) > 0 then
+							_setOccupiedInfo4FlatAreas(t, i-k, _constants.idBases.flatArea8x5SlotId)
+							logger.print('occupying Minus ' .. i-k .. ' on terminal ' .. t)
+						else
+							break
+						end
+					end
+					for k = 1, nSegments2Plus, 1 do
+						if (i+k) <= iMax then
+							_setOccupiedInfo4FlatAreas(t, i+k, _constants.idBases.flatArea8x5SlotId)
+							logger.print('occupying Plus ' .. i+k .. ' on terminal ' .. t)
+						else
+							break
+						end
+					end
+				else
+					for k = 1, nEvenSegmentPairs, 1 do
+						if (i-k) > 0 then
+							_setOccupiedInfo4FlatAreas(t, i-k, _constants.idBases.flatArea8x5SlotId, true)
+							logger.print('occupying for even area minus = ' .. i-k .. ' on terminal ' .. t)
+						end
+					end
+					for k = 1, nEvenSegmentPairs-1, 1 do
+						if (i+k) <= iMax then
+							_setOccupiedInfo4FlatAreas(t, i+k, _constants.idBases.flatArea8x5SlotId, true)
+							logger.print('occupying for even area plus = ' .. i+k .. ' on terminal ' .. t)
+						end
+					end
+				end
 			end
 			result.getOccupiedInfo4SlopedAreas = function(t, i)
 				if occupiedInfo.crossConnectorsWithSlopedAreas[t] == nil or occupiedInfo.crossConnectorsWithSlopedAreas[t][i] == nil then
@@ -411,7 +449,10 @@ function data()
 				_addSlopedAreas()
 
 				local function _addFlatAreas()
-					for i = 2, #params.terminals[t].centrePlatformsRelative -1 do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges
+					local nCentrePlatformsRelative = #params.terminals[t].centrePlatformsRelative
+					local _iMin = 2
+					local _iMax = nCentrePlatformsRelative -1
+					for i = _iMin, _iMax, 1 do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges
 						local cpl = params.terminals[t].centrePlatformsRelative[i]
 						-- local cplM1 = params.terminals[t].centrePlatformsRelative[i-1] or {type = cpl.type}
 						local cplP1 = params.terminals[t].centrePlatformsRelative[i+1] or {type = cpl.type}
@@ -496,13 +537,6 @@ function data()
 									})
 									if params.modules[myId] ~= nil then
 										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea8x5SlotId)
-										-- we don't use a dedicated module type for large stations to grant freedom of overlapping
-										if params.modules[myId].metadata.isOccupyM1 then
-											_setOccupiedInfo4FlatAreas(t, i-1, _constants.idBases.flatArea8x5SlotId)
-										end
-										if params.modules[myId].metadata.isOccupyP1 then
-											_setOccupiedInfo4FlatAreas(t, i+1, _constants.idBases.flatArea8x5SlotId)
-										end
 									end
 								end
 								if not(result.getOccupiedInfo4FlatAreas(t, i))
@@ -516,7 +550,7 @@ function data()
 										type = isCargoTerminal and _constants.flatCargoArea8x10ModuleType or _constants.flatPassengerArea8x10ModuleType,
 									})
 									if params.modules[myId] ~= nil then
-										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea8x10SlotId)
+										_setOccupiedInfo4LargeFlatAreas(t, i, myId, nCentrePlatformsRelative)
 									end
 								end
 								if not(isCargoTerminal) then
@@ -531,14 +565,7 @@ function data()
 											type = _constants.flatPassengerStation0MModuleType,
 										})
 										if params.modules[myId] ~= nil then
-											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation0MSlotId)
-											-- we don't use a dedicated module type for large stations to grant freedom of overlapping
-											if params.modules[myId].metadata.isOccupyM1 then
-												_setOccupiedInfo4FlatAreas(t, i-1, _constants.idBases.flatStation0MSlotId)
-											end
-											if params.modules[myId].metadata.isOccupyP1 then
-												_setOccupiedInfo4FlatAreas(t, i+1, _constants.idBases.flatStation0MSlotId)
-											end
+											_setOccupiedInfo4LargeFlatAreas(t, i, myId, nCentrePlatformsRelative)
 										end
 									end
 									if not(result.getOccupiedInfo4FlatAreas(t, i))

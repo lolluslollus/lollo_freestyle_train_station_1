@@ -44,6 +44,15 @@ function data()
                             transf = _constants.idTransf
                         },
                         {
+							materials = {
+								'lollo_freestyle_train_station/era_a_station_tiles_1_low_prio.mtl',
+								'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
+							},
+							mesh = 'lollo_freestyle_train_station/railroad/flatSides/passenger_station_30x5x8_perron_lod0.msh',
+							name = 'station_30x28_perron',
+							-- transf = _constants.idTransf
+						},
+                        {
                             children = {
                                 {
                                     materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
@@ -143,6 +152,15 @@ function data()
                             transf = _constants.idTransf
                         },
                         {
+							materials = {
+								'lollo_freestyle_train_station/era_a_station_tiles_1_low_prio.mtl',
+								'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
+							},
+							mesh = 'lollo_freestyle_train_station/railroad/flatSides/passenger_station_30x5x8_perron_lod0.msh',
+							name = 'station_30x28_perron',
+							-- transf = _constants.idTransf
+						},
+                        {
                             children = {
                                 {
                                     materials = { "station/rail/era_a/era_a_trainstation_assets.mtl", },
@@ -202,6 +220,15 @@ function data()
                             name = 'era_a_station_30x8_lod2',
                             transf = _constants.idTransf
                         },
+                        {
+							materials = {
+								'lollo_freestyle_train_station/era_a_station_tiles_1_low_prio.mtl',
+								'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
+							},
+							mesh = 'lollo_freestyle_train_station/railroad/flatSides/passenger_station_30x5x8_perron_lod0.msh',
+							name = 'station_30x28_perron',
+							-- transf = _constants.idTransf
+						},
                     },
                     name = 'RootNode',
                     transf = _constants.idTransf
