@@ -5,306 +5,267 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require 'modulesutil'
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
-local transfUtilsUG = require 'transf'
 
 
 function data()
-
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { 'passenger-road-access', },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _('PassengerSideLiftName'),
-		description = _('PassengerSideLiftDesc'),
-		icon = 'ui/lollo_freestyle_train_station/passengerSideLift.tga'
-	},
-	metadata = {
-		moreCapacity = {
-			cargo = 0,
-			passenger = 40
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
 		},
-	},
-	order = {
-		value = 42,
-	},
-	type = _constants.passengerSideLiftModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not nTrackEdge or not baseId then return end
+		category = {
+			categories = { 'passenger-road-access', },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _('PassengerSideLiftName'),
+			description = _('PassengerSideLiftDesc'),
+			icon = 'ui/lollo_freestyle_train_station/passengerSideLift.tga'
+		},
+		metadata = {
+			moreCapacity = {
+				cargo = 0,
+				passenger = 40
+			},
+		},
+		order = {
+			value = 42,
+		},
+		type = _constants.passengerSideLiftModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not nTrackEdge or not baseId then return end
 
-		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
-		-- in base_config.lua
-		-- Set it into the models so the game knows what module they belong to.
-		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
-		if not(buildingHeight) then return end
-		local buildingModelId = moduleHelpers.lifts.tryGetSideLiftModelId(params, nTerminal, nTrackEdge, eraPrefix, buildingHeight)
-		if not(buildingModelId) then return end
-		-- logger.print('buildingHeight, buildingModelId =', buildingHeight, buildingModelId)
+			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
+			-- in base_config.lua
+			-- Set it into the models so the game knows what module they belong to.
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
+			if not(buildingHeight) then return end
+			local buildingModelId = moduleHelpers.lifts.tryGetSideLiftModelId(params, nTerminal, nTrackEdge, eraPrefix, buildingHeight)
+			if not(buildingModelId) then return end
+			-- logger.print('buildingHeight, buildingModelId =', buildingHeight, buildingModelId)
 
-		-- add building
-		-- local buildingTransf = transfUtilsUG.mul(
-		-- 	slotTransf,
-		-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-		-- )
-		local buildingTransf = transfUtils.getTransf_ZRotatedP90(slotTransf)
-		result.models[#result.models + 1] = {
-			id = buildingModelId,
-			slotId = slotId,
-			transf = buildingTransf,
-			tag = tag
-		}
-
-		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-		if buildingHeight > 0 then
-			-- add waiting area
+			-- add building
+			local buildingTransf = transfUtils.getTransf_ZRotatedP90(slotTransf)
 			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_side_lift.mdl',
+				id = buildingModelId,
 				slotId = slotId,
 				transf = buildingTransf,
-				tag = slotHelpers.mangleModelTag(nTerminal, false),
+				tag = tag
 			}
 
-			-- add underpass bottom pos 2 link
-			local underpassBottomTransf = transfUtils.getTransf_ZShifted(slotTransf, _constants.underpassZ)
-			if result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] == nil then
-				result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] = {}
-			end
-			table.insert(
-				result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal],
-				{
-					t = nTerminal,
-					era = eraPrefix,
-					lanePosTanX2 = cpl.posTanX2,
-					pos2Link = transfUtils.transf2Position(underpassBottomTransf)
+			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			if buildingHeight > 0 then
+				-- add waiting area
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_side_lift.mdl',
+					slotId = slotId,
+					transf = buildingTransf,
+					tag = slotHelpers.mangleModelTag(nTerminal, false),
 				}
-			)
 
-			-- add lift bottom pos 2 link
-			if result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] == nil then
-				result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] = {}
-			end
-			table.insert(
-				result.terminateConstructionHookInfo.liftBottomPositions[nTerminal],
-				{
-					t = nTerminal,
-					lanePosTanX2 = cpl.posTanX2,
-					pos2Link = transfUtils.transf2Position(
-						-- transfUtilsUG.mul(
-						-- 	buildingTransf,
-						-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.0, -buildingHeight + _constants.underpassZ, 1}
-						-- )
-						transfUtils.getTransf_Shifted(
-							buildingTransf,
-							{0, -2.0, -buildingHeight + _constants.underpassZ}
+				-- add underpass bottom pos 2 link
+				local underpassBottomTransf = transfUtils.getTransf_ZShifted(slotTransf, _constants.underpassZ)
+				if result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] == nil then
+					result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal] = {}
+				end
+				table.insert(
+					result.terminateConstructionHookInfo.underpassPositionsOnBridge[nTerminal],
+					{
+						t = nTerminal,
+						era = eraPrefix,
+						lanePosTanX2 = cpl.posTanX2,
+						pos2Link = transfUtils.transf2Position(underpassBottomTransf)
+					}
+				)
+
+				-- add lift bottom pos 2 link
+				if result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] == nil then
+					result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] = {}
+				end
+				table.insert(
+					result.terminateConstructionHookInfo.liftBottomPositions[nTerminal],
+					{
+						t = nTerminal,
+						lanePosTanX2 = cpl.posTanX2,
+						pos2Link = transfUtils.transf2Position(
+							transfUtils.getTransf_Shifted(
+								buildingTransf,
+								{0, -2.0, -buildingHeight + _constants.underpassZ}
+							)
 						)
-					)
-				}
-			)
-		end
+					}
+				)
+			end
 
-		-- add lane to centre platform
-		local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
-		result.models[#result.models+1] = {
-			id = _constants.passengerLaneModelId,
-			transf = transfUtils.get1MLaneTransf(
-				transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
-				transfUtils.transf2Position(slotTransf)
-			)
-		}
+			-- add lane to centre platform
+			local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
+			result.models[#result.models+1] = {
+				id = _constants.passengerLaneModelId,
+				transf = transfUtils.get1MLaneTransf(
+					transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
+					transfUtils.transf2Position(slotTransf)
+				)
+			}
 
-		-- add station square slots
-		if buildingHeight > 0 then
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {-1, 4, 4, 4},
-				-- transf = transfUtilsUG.mul(
-				-- 	buildingTransf,
-				-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -buildingHeight, 1 }
-				-- ),
-				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-					buildingTransf,
-					{0, -4.75, -buildingHeight}
-				),
-				type = _constants.passengerStationSquareModuleType,
-			})
-			if buildingHeight > 5 then
+			-- add station square slots
+			if buildingHeight > 0 then
 				table.insert(result.slots, {
-					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareInnerSlotId),
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 					shape = 1,
 					spacing = {-1, 4, 4, 4},
-					-- transf = transfUtilsUG.mul(
-					-- 	buildingTransf,
-					-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0.75, -buildingHeight, 1 }
-					-- ),
-					transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+					transf = transfUtils.getTransf_ZRotatedM90_Shifted(
 						buildingTransf,
-						{0, 0.75, -buildingHeight}
+						{0, -4.75, -buildingHeight}
+					),
+					type = _constants.passengerStationSquareModuleType,
+				})
+				if buildingHeight > 5 then
+					table.insert(result.slots, {
+						id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareInnerSlotId),
+						shape = 1,
+						spacing = {-1, 4, 4, 4},
+						transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+							buildingTransf,
+							{0, 0.75, -buildingHeight}
+						),
+						type = _constants.passengerStationSquareModuleType,
+					})
+				end
+			else
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {-1, 4, 4, 4},
+					transf = transfUtils.getTransf_ZShifted(
+						transfUtils.getTransf_ZRotatedM90_Shifted(
+							buildingTransf,
+							{0, -4.75, -buildingHeight}
+						),
+						-result.laneZs[nTerminal]
 					),
 					type = _constants.passengerStationSquareModuleType,
 				})
 			end
-		else
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransf_ZShifted(
-					-- transfUtilsUG.mul(
-					-- 	buildingTransf,
-					-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -4.75, -buildingHeight, 1 }
-					-- ),
-					transfUtils.getTransf_ZRotatedM90_Shifted(
-						buildingTransf,
-						{0, -4.75, -buildingHeight}
-					),
-					-result.laneZs[nTerminal]
-				),
-				type = _constants.passengerStationSquareModuleType,
-			})
-		end
 
-		-- add some deco
-		local _clockY = -4.3
-		if eraPrefix == moduleHelpers.eras.era_a.prefix then
-			_clockY = -3.95
-		elseif eraPrefix == moduleHelpers.eras.era_b.prefix and buildingHeight >= 15 then
-			_clockY = -4.5
-		end
-		local clockModelId = eraPrefix == moduleHelpers.eras.era_c.prefix
-			and 'lollo_freestyle_train_station/asset/era_c_big_clock.mdl'
-			or 'station/rail/asset/era_a_big_clock.mdl'
-		if buildingHeight == 10 then
-			result.models[#result.models + 1] = {
-				id = clockModelId,
-				slotId = slotId,
-				-- transf = transfUtilsUG.mul(
-				-- 	buildingTransf,
-				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 3.8, 1 }
-				-- ),
-				transf = transfUtils.getTransf_Shifted(
-					buildingTransf,
-					{0, _clockY, - 3.8}
-				),
-				tag = tag
-			}
-		elseif buildingHeight >= 15 then
-			result.models[#result.models + 1] = {
-				id = clockModelId,
-				slotId = slotId,
-				-- transf = transfUtilsUG.mul(
-				-- 	buildingTransf,
-				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _clockY, - 5.8, 1 }
-				-- ),
-				transf = transfUtils.getTransf_Shifted(
-					buildingTransf,
-					{0, _clockY, - 5.8}
-				),
-				tag = tag
-			}
-		end
-
-		if eraPrefix == moduleHelpers.eras.era_c.prefix then
-			local _tableY = 0.8
+			-- add some deco
+			local _clockY = -4.3
+			if eraPrefix == moduleHelpers.eras.era_a.prefix then
+				_clockY = -3.95
+			elseif eraPrefix == moduleHelpers.eras.era_b.prefix and buildingHeight >= 15 then
+				_clockY = -4.5
+			end
+			local clockModelId = eraPrefix == moduleHelpers.eras.era_c.prefix
+				and 'lollo_freestyle_train_station/asset/era_c_big_clock.mdl'
+				or 'station/rail/asset/era_a_big_clock.mdl'
 			if buildingHeight == 10 then
 				result.models[#result.models + 1] = {
-					id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
+					id = clockModelId,
 					slotId = slotId,
-					-- transf = transfUtilsUG.mul(
-					-- 	buildingTransf,
-					-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 6.2 - buildingHeight, 1 }
-					-- ),
 					transf = transfUtils.getTransf_Shifted(
 						buildingTransf,
-						{0, _tableY, 6.2 - buildingHeight}
+						{0, _clockY, - 3.8}
 					),
 					tag = tag
 				}
 			elseif buildingHeight >= 15 then
 				result.models[#result.models + 1] = {
-					id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
+					id = clockModelId,
 					slotId = slotId,
-					-- transf = transfUtilsUG.mul(
-					-- 	buildingTransf,
-					-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, _tableY, 5.5 - buildingHeight, 1 }
-					-- ),
 					transf = transfUtils.getTransf_Shifted(
 						buildingTransf,
-						{0, _tableY, 5.5 - buildingHeight}
+						{0, _clockY, - 5.8}
 					),
 					tag = tag
 				}
 			end
-		end
 
-		if eraPrefix ~= moduleHelpers.eras.era_a.prefix and buildingHeight > 0 then
-			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
-				slotId = slotId,
-				transf = transfUtils.getTransf_Shifted(
-					buildingTransf,
-					{2.7, -3.3, 0}
-				),
-				tag = tag
-			}
-			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/asset/partenze.mdl',
-				slotId = slotId,
-				transf = transfUtils.getTransf_Shifted(
-					buildingTransf,
-					{-2.7, -3.3, 0}
-				),
-				tag = tag
-			}
-		end
+			if eraPrefix == moduleHelpers.eras.era_c.prefix then
+				local _tableY = 0.8
+				if buildingHeight == 10 then
+					result.models[#result.models + 1] = {
+						id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
+						slotId = slotId,
+						transf = transfUtils.getTransf_Shifted(
+							buildingTransf,
+							{0, _tableY, 6.2 - buildingHeight}
+						),
+						tag = tag
+					}
+				elseif buildingHeight >= 15 then
+					result.models[#result.models + 1] = {
+						id = 'lollo_freestyle_train_station/asset/tabellone_hanging.mdl',
+						slotId = slotId,
+						transf = transfUtils.getTransf_Shifted(
+							buildingTransf,
+							{0, _tableY, 5.5 - buildingHeight}
+						),
+						tag = tag
+					}
+				end
+			end
 
-		-- do terrain
-		local terrainZ = buildingHeight > 0 and -buildingHeight or -result.laneZs[nTerminal]
-		local groundFace = { -- the ground faces ignore z, the alignment lists don't
-			{-1, -5.2, terrainZ, 1},
-			{-1, 5.2, terrainZ, 1},
-			{6.0, 5.2, terrainZ, 1},
-			{6.0, -5.2, terrainZ, 1},
-		}
-		modulesutil.TransformFaces(slotTransf, groundFace)
-		table.insert(
-			result.groundFaces,
-			{
-				face = groundFace,
-				modes = {
-					{
-						type = 'FILL',
-						key = _constants.era_c_groundFacesFillKey
-					},
-					{
-						type = 'STROKE_OUTER',
-						key = _constants.era_c_groundFacesStrokeOuterKey
+			if eraPrefix ~= moduleHelpers.eras.era_a.prefix and buildingHeight > 0 then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/asset/arrivi.mdl',
+					slotId = slotId,
+					transf = transfUtils.getTransf_Shifted(
+						buildingTransf,
+						{2.7, -3.3, 0}
+					),
+					tag = tag
+				}
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/asset/partenze.mdl',
+					slotId = slotId,
+					transf = transfUtils.getTransf_Shifted(
+						buildingTransf,
+						{-2.7, -3.3, 0}
+					),
+					tag = tag
+				}
+			end
+
+			-- do terrain
+			local terrainZ = buildingHeight > 0 and -buildingHeight or -result.laneZs[nTerminal]
+			local groundFace = { -- the ground faces ignore z, the alignment lists don't
+				{-1, -5.2, terrainZ, 1},
+				{-1, 5.2, terrainZ, 1},
+				{6.0, 5.2, terrainZ, 1},
+				{6.0, -5.2, terrainZ, 1},
+			}
+			modulesutil.TransformFaces(slotTransf, groundFace)
+			table.insert(
+				result.groundFaces,
+				{
+					face = groundFace,
+					modes = {
+						{
+							type = 'FILL',
+							key = _constants.era_c_groundFacesFillKey
+						},
+						{
+							type = 'STROKE_OUTER',
+							key = _constants.era_c_groundFacesStrokeOuterKey
+						}
 					}
 				}
+			)
+			local terrainAlignmentList = {
+				faces = { groundFace },
+				optional = true,
+				slopeHigh = _constants.slopeHigh,
+				slopeLow = _constants.slopeLow,
+				type = 'EQUAL',
 			}
-		)
-		local terrainAlignmentList = {
-			faces = { groundFace },
-			optional = true,
-			slopeHigh = _constants.slopeHigh,
-			slopeLow = _constants.slopeLow,
-			type = 'EQUAL',
-		}
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-	end,
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+		end,
 
-	getModelsFn = function(params)
-		return moduleHelpers.lifts.getPreview(params, true)
-	end
-}
-
+		getModelsFn = function(params)
+			return moduleHelpers.lifts.getPreview(params, true)
+		end
+	}
 end

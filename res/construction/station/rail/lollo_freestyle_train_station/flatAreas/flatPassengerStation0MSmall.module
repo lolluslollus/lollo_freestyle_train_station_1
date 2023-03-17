@@ -4,131 +4,117 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 local modulesutil = require "modulesutil"
 local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
-local transfUtilsUG = require "transf"
 
 
 function data()
-
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "passenger-road-access", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("FlatPassengerStationSmallName"),
-		description = _("FlatPassengerStationSmallDesc"),
-		icon = "ui/lollo_freestyle_train_station/flatPassengerStationSmall.tga"
-	},
-	metadata = {
-		moreCapacity = {
-			cargo = 0,
-			passenger = 20
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
 		},
-	},
-	order = {
-		value = 34,
-	},
-	type = _constants.flatPassengerStation0MModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not nTrackEdge or not baseId then return end
+		category = {
+			categories = { "passenger-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("FlatPassengerStationSmallName"),
+			description = _("FlatPassengerStationSmallDesc"),
+			icon = "ui/lollo_freestyle_train_station/flatPassengerStationSmall.tga"
+		},
+		metadata = {
+			moreCapacity = {
+				cargo = 0,
+				passenger = 20
+			},
+		},
+		order = {
+			value = 34,
+		},
+		type = _constants.flatPassengerStation0MModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not nTrackEdge or not baseId then return end
 
-		local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
-		-- local buildingTransf = transfUtilsUG.mul(
-		-- 	zAdjustedTransf,
-		-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-		-- )
-		local buildingTransf = transfUtils.getTransf_ZRotatedP90(zAdjustedTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local buildingTransf = transfUtils.getTransf_ZRotatedP90(zAdjustedTransf)
 
-		-- local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-        local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
 
-		local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
+			local modelId = nil
+			if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_10x6.mdl'
+			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_10x6.mdl'
+			else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_10x6.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = buildingTransf,
+				tag = tag
+			}
+			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_9x6.mdl',
+				slotId = slotId,
+				transf = buildingTransf,
+				tag = slotHelpers.mangleModelTag(nTerminal, false),
+			}
 
-		local modelId = nil
-		if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_a_station_10x6.mdl'
-		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_b_station_10x6.mdl'
-		else modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_10x6.mdl'
-		end
-		result.models[#result.models + 1] = {
-			id = modelId,
-			slotId = slotId,
-			transf = buildingTransf,
-			tag = tag
-		}
-		moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-		result.models[#result.models + 1] = {
-			id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_9x6.mdl',
-			slotId = slotId,
-			transf = buildingTransf,
-			tag = slotHelpers.mangleModelTag(nTerminal, false),
-		}
+			table.insert(result.slots, {
+				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
+				shape = 1,
+				spacing = {-1, 4, 4, 4},
+				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+					buildingTransf,
+					{0, -6.25, -_constants.stairsAndRampHeight}
+				),
+				type = _constants.passengerStationSquareModuleType,
+			})
 
-		table.insert(result.slots, {
-			id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
-			shape = 1,
-			spacing = {-1, 4, 4, 4},
-			-- transf = transfUtilsUG.mul(
-			-- 	buildingTransf,
-			-- 	{ 0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  0, -6.25, -_constants.stairsAndRampHeight, 1 }
-			-- ),
-			transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-				buildingTransf,
-				{0, -6.25, -_constants.stairsAndRampHeight}
-			),
-			type = _constants.passengerStationSquareModuleType,
-		})
-
-		local groundFace = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
-			{-1, -6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-			{-1, 6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-			{6.5, 6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-			{6.5, -6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
-		}
-		modulesutil.TransformFaces(zAdjustedTransf, groundFace)
-		table.insert(
-			result.groundFaces,
-			{
-				face = groundFace,
-				modes = {
-					{
-						type = 'FILL',
-						key = myGroundFacesFillKey
-					},
-					{
-						type = 'STROKE_OUTER',
-						key = myGroundFacesFillKey
+			local groundFace = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
+				{-1, -6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+				{-1, 6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+				{6.5, 6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+				{6.5, -6.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},
+			}
+			modulesutil.TransformFaces(zAdjustedTransf, groundFace)
+			table.insert(
+				result.groundFaces,
+				{
+					face = groundFace,
+					modes = {
+						{
+							type = 'FILL',
+							key = myGroundFacesFillKey
+						},
+						{
+							type = 'STROKE_OUTER',
+							key = myGroundFacesFillKey
+						}
 					}
 				}
+			)
+
+			local terrainAlignmentList = {
+				faces = { groundFace },
+				optional = true,
+				slopeHigh = _constants.slopeHigh,
+				slopeLow = _constants.slopeLow,
+				type = 'EQUAL',
 			}
-		)
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+		end,
 
-		local terrainAlignmentList = {
-			faces = { groundFace },
-			optional = true,
-			slopeHigh = _constants.slopeHigh,
-			slopeLow = _constants.slopeLow,
-			type = 'EQUAL',
-		}
-		result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				-- id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_9x6.mdl',
-				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_10x6.mdl',
-				transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
-			},
-			moduleHelpers.flatAreas.getPreviewIcon(params),
-		}
-	end
-}
-
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_station_10x6.mdl',
+					transf = { 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 },
+				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
+			}
+		end
+	}
 end
