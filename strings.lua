@@ -45,7 +45,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Use the track constructions "Track splitter" to do precision work.
 - Upgrading tracks does all tracks at once.
 - If you have too many track types, use the categories in the menu to make life easier.
-- After a while, the area surrounding your station will have developped and might throw collision errors whenever you try to config the station. Patiently look for the guilty street, building or asset and remove it. Snappy passenger connections (now obsolete) may be at fault: try to replace them with non-snappy ones. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
+- After a while, the area surrounding your station will have developed and might throw collision errors whenever you try to config the station. Patiently look for the guilty street, building or asset and remove it. Snappy passenger connections (now obsolete) may be at fault: try to replace them with non-snappy ones. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
 
 [h1]Note:[/h1]
 - Underground stations are now in the assets.
@@ -831,7 +831,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["NewStationName"] = "Neuer Bahnhof",
 
 			-- Kategorien
-			["bridge-type"] = "Brückensorte",
+			["bridge-type"] = "BrückenTyp",
 			["cargo-platform-extensions"] = "Frachterweiterungen",
 			["cargo-platform-tracks"] = "Frachtplattformen, die als Gleise zu verlegen sind",
 			["cargo-road-access"] = "Fracht Seite -> Straße",
