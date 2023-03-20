@@ -831,7 +831,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["NewStationName"] = "Neuer Bahnhof",
 
 			-- Kategorien
-			["bridge-type"] = "BrückenTyp",
+			["bridge-type"] = "Brückentyp",
 			["cargo-platform-extensions"] = "Frachterweiterungen",
 			["cargo-platform-tracks"] = "Frachtplattformen, die als Gleise zu verlegen sind",
 			["cargo-road-access"] = "Fracht Seite -> Straße",
@@ -847,7 +847,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["track-crossings"] = "Gleiswege",
 			["track-deco"] = "Gleis-Deko",
 			["train-tracks"] = "Bahngleise",
-			["track-type"] = "GleisTyp",
+			["track-type"] = "Gleistyp",
 			["tunnel-type"] = "Tunneltyp",
 			["waypoints-for-freestyle-station"] = "Marker für Freestyle-Bahnhöfe",
 
