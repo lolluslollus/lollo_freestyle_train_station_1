@@ -368,6 +368,9 @@ local _actions = {
         local conTransf = args.platformWaypointMidTransf
 
         logger.print('buildStation starting, args =')
+        logger.print('build 35716 platformEdgeLists =') logger.debugPrint(args.platformEdgeList)
+        logger.print('build 35716 trackEdgeLists =') logger.debugPrint(args.trackEdgeList)
+
         local oldCon = edgeUtils.isValidAndExistingId(args.join2StationConId)
         and api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
         or nil
@@ -546,6 +549,7 @@ local _actions = {
                 logger.print('build station callback, success =', success)
                 -- logger.debugPrint(result)
                 if success then
+                    logger.print('build 35716 buildStation succeeded, result =') logger.debugPrint(result)
                     local stationConstructionId = result.resultEntities[1]
                     logger.print('buildStation succeeded, stationConstructionId = ', stationConstructionId)
                     _utils.tryRenameStationGroup(stationConstructionId)
@@ -872,7 +876,7 @@ local _actions = {
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
         -- logger.print('proposal.streetProposal.nodesToRemove =') logger.debugPrint(proposal.streetProposal.nodesToRemove)
-        -- logger.print('proposal =') logger.debugPrint(proposal)
+        logger.print('build 35716 removeTracks proposal =') logger.debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
