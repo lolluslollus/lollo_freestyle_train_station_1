@@ -577,7 +577,8 @@ privateFuncs.edges = {
         end
         logger.print('forceFast =', forceFast)
     
-        for i = 1, #params.terminals[t].trackEdgeLists do
+        local maxI = #params.terminals[t].trackEdgeLists
+        for i = 1, maxI do
             local tel = params.terminals[t].trackEdgeLists[i]
     
             local overriddenCatenary = tel.catenary
@@ -595,7 +596,7 @@ privateFuncs.edges = {
                 edges = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf),
                 edgeType = tel.edgeType,
                 edgeTypeName = tel.edgeTypeName,
-                -- freeNodes = {},
+                freeNodes = {},
                 params = {
                     catenary = overriddenCatenary,
                     type = overriddenTrackType,
@@ -611,7 +612,7 @@ privateFuncs.edges = {
                 -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
                 newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
             end
-            if i == #params.terminals[t].trackEdgeLists then
+            if i == maxI then
                 -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
                 newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
             end
@@ -627,7 +628,8 @@ privateFuncs.edges = {
         end
     end,
     _addPlatformEdges = function(result, tag2nodes, params, t)
-        for i = 1, #params.terminals[t].platformEdgeLists do
+        local maxI = #params.terminals[t].platformEdgeLists
+        for i = 1, maxI do
             local pel = params.terminals[t].platformEdgeLists[i]
 
             local newEdgeList = {
@@ -668,7 +670,7 @@ privateFuncs.edges = {
                 edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, params.inverseMainTransf),
                 edgeType = pel.edgeType,
                 edgeTypeName = pel.edgeTypeName,
-                -- freeNodes = {},
+                freeNodes = {},
                 params = {
                     -- type = pel.trackTypeName,
                     type = trackUtils.getInvisibleTwinFileName(pel.trackTypeName),
@@ -683,7 +685,7 @@ privateFuncs.edges = {
                 -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 0
                 newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 0
             end
-            if i == #params.terminals[t].platformEdgeLists then
+            if i == maxI then
                 -- newEdgeList.freeNodes[#newEdgeList.freeNodes+1] = 1
                 newEdgeList.snapNodes[#newEdgeList.snapNodes+1] = 1
             end
@@ -1788,7 +1790,6 @@ return {
             }
     
             for i = 1, #params.terminals[t].platformEdgeLists + #params.terminals[t].trackEdgeLists do
-            -- for i = 1, #params.terminals[t].trackEdgeLists do
                 for ii = 1, 2 do
                     tag2nodes[tag][#tag2nodes[tag]+1] = nNodesInTerminalSoFar
                     nNodesInTerminalSoFar = nNodesInTerminalSoFar + 1
