@@ -872,7 +872,7 @@ local _actions = {
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
         -- logger.print('proposal.streetProposal.nodesToRemove =') logger.debugPrint(proposal.streetProposal.nodesToRemove)
-        logger.print('removeTracks proposal =') logger.debugPrint(proposal)
+        logger.print('build 35716 removeTracks proposal =') logger.debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
