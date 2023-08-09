@@ -368,6 +368,9 @@ local _actions = {
         local conTransf = args.platformWaypointMidTransf
 
         logger.print('buildStation starting, args =')
+        logger.print('build 35716 platformEdgeLists =') logger.debugPrint(args.platformEdgeList)
+        logger.print('build 35716 trackEdgeLists =') logger.debugPrint(args.trackEdgeList)
+
         local oldCon = edgeUtils.isValidAndExistingId(args.join2StationConId)
         and api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
         or nil
