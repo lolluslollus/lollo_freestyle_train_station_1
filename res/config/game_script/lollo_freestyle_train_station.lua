@@ -549,6 +549,7 @@ local _actions = {
                 logger.print('build station callback, success =', success)
                 -- logger.debugPrint(result)
                 if success then
+                    logger.print('build 35716 buildStation succeeded, result =') logger.debugPrint(result)
                     local stationConstructionId = result.resultEntities[1]
                     logger.print('buildStation succeeded, stationConstructionId = ', stationConstructionId)
                     _utils.tryRenameStationGroup(stationConstructionId)

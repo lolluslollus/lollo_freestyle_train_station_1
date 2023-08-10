@@ -1,4 +1,5 @@
 -- station edges and nodes look good.
+-- renaming terminateConstructionHook does nothing (it's too late anyway, the error happens earlier)
 -- check out segmentsBefore and segmentTags
 
 user data folder: C:/Program Files (x86)/Steam/userdata/71590188/1066780/local/
