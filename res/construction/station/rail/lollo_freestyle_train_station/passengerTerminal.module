@@ -151,6 +151,12 @@ return {
 			'station/rail/asset/era_a_trashcan.mdl',
 			'lollo_freestyle_train_station/asset/era_a_two_chairs.mdl',
 		}
+		local era_a_belly_5m_modelId = 'lollo_freestyle_train_station/bridge_station/era_a_belly_5m_2m.mdl'
+		local era_a_belly_2_5m_modelId = 'lollo_freestyle_train_station/bridge_station/era_a_belly_2_5m_2m.mdl'
+		local era_b_belly_5m_modelId = 'lollo_freestyle_train_station/bridge_station/era_b_belly_5m_2m.mdl'
+		local era_b_belly_2_5m_modelId = 'lollo_freestyle_train_station/bridge_station/era_b_belly_2_5m_2m.mdl'
+		local era_c_belly_5m_modelId = 'lollo_freestyle_train_station/bridge_station/belly_5m_2m.mdl'
+		local era_c_belly_2_5m_modelId = 'lollo_freestyle_train_station/bridge_station/belly_2_5m_2m.mdl'
 
 		local _eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, 1)
 		local tunnelStationSignModelId = 'lollo_freestyle_train_station/subway/roof_edge_w_station_name_5m_2m.mdl'
@@ -173,6 +179,15 @@ return {
 		-- elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/asset/era_b_perron_number.mdl'
 		elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then numberSignModelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
 		end
+		local belly_5m_modelId = era_c_belly_5m_modelId
+		local belly_2_5m_modelId = era_c_belly_2_5m_modelId
+		if _eraPrefix == moduleHelpers.eras.era_a.prefix then
+			belly_5m_modelId = era_a_belly_5m_modelId
+			belly_2_5m_modelId = era_a_belly_2_5m_modelId
+		elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then
+			belly_5m_modelId = era_b_belly_5m_modelId
+			belly_2_5m_modelId = era_b_belly_2_5m_modelId
+		end
 
 		local cpfM1 = nil
 		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, 2 do
@@ -181,12 +196,12 @@ return {
 				-- local yShift = 0
 				-- local yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				local yShift = 0
-				local myModelId = 'lollo_freestyle_train_station/bridge_station/belly_5m_2m.mdl'
+				local myModelId = belly_5m_modelId
 				if cpf.width >= 5 then
 					-- yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				else
 					-- yShift = isTrackOnPlatformLeft and 1.37 or -1.37
-					myModelId = 'lollo_freestyle_train_station/bridge_station/belly_2_5m_2m.mdl'
+					myModelId = belly_2_5m_modelId
 				end
 				result.models[#result.models + 1] = {
 					id = myModelId,
