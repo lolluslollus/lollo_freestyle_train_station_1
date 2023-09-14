@@ -1825,7 +1825,7 @@ function data()
 						_linkAcross(shortSegmentsInBridgeBelly, 40.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
 
 						logger.print('shortSegmentsStairsOrLifts2Bridges =') logger.debugPrint(shortSegmentsStairsOrLifts2Bridges)
-						_linkAcross(shortSegmentsStairsOrLifts2Bridges, 25.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
+						_linkAcross(shortSegmentsStairsOrLifts2Bridges, 22.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
 
 						-- logger.print('shortSegmentsTunnelTops2LiftBottoms =') logger.debugPrint(shortSegmentsTunnelTops2LiftBottoms)
 						-- _linkAcross(shortSegmentsTunnelTops2LiftBottoms)
