@@ -63,6 +63,76 @@ local _utils = {
 
         return (baseNode0.position.z + baseNode1.position.z) / 2
     end,
+    ---gets adjacent tracks, (station) end nodes and lone nodes without station; expects a list with > 1 entries
+    ---@param trackEdgeList edgeIdsProperties
+    ---@return {edgeIds: table<integer>, edges: edgeIdsProperties, endNodeIds_wNeighbourEdge: table<integer>, loneNodeIds: table<integer>, loneNodes: nodeIdsProperties}
+    getAdjacentTracksAndLoneNodes = function(trackEdgeList)
+        ---@return table<integer>, integer | nil
+        local _getNeighbours = function(thisEdgeId, nextEdgeId)
+            local _baseEdge = api.engine.getComponent(thisEdgeId, api.type.ComponentType.BASE_EDGE)
+            if _baseEdge == nil then return {}, nil end
+
+            local endNodeId = _baseEdge.node0
+            local connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({endNodeId})
+            logger.print('thisEdgeId =', thisEdgeId, 'nextEdgeId', nextEdgeId, 'connectedEdgeIds =') logger.debugPrint(connectedEdgeIds)
+            if arrayUtils.arrayHasValue(connectedEdgeIds, nextEdgeId) then
+                endNodeId = _baseEdge.node1
+                connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({endNodeId})
+                if arrayUtils.arrayHasValue(connectedEdgeIds, nextEdgeId) then
+                    logger.err('getAdjacentTracks failed to retrieve adjacent edges, edgeId =', thisEdgeId)
+                    return {}, nil
+                end
+            end
+            local neighbourEdgeIds = {}
+            for _, edgeId in pairs(connectedEdgeIds) do
+                if edgeId ~= thisEdgeId then
+                    neighbourEdgeIds[edgeId] = true
+                end
+            end
+            return neighbourEdgeIds, (#connectedEdgeIds > 1) and endNodeId or nil
+        end
+
+        logger.print('getAdjacentTracksAndLoneNodes got trackEdgeList =') logger.debugPrint(trackEdgeList)
+        local numEdges = #trackEdgeList
+        if trackEdgeList[1].edgeId == trackEdgeList[numEdges].edgeId then
+            logger.err('trackEdgeList only contains one edge')
+            return {
+                edgeIds = {},
+                endNodeIds_wNeighbourEdge = {},
+                loneNodeIds = {},
+            }
+        end
+
+        local neighbourEdge1Ids_indexed, endNode1Id = _getNeighbours(trackEdgeList[1].edgeId, trackEdgeList[2].edgeId)
+        local neighbourEdgeNIds_indexed, endNodeNId = _getNeighbours(trackEdgeList[numEdges].edgeId, trackEdgeList[numEdges-1].edgeId)
+        arrayUtils.concatKeysValues(neighbourEdge1Ids_indexed, neighbourEdgeNIds_indexed)
+        logger.print('neighbourEdge1Ids_indexed =') logger.debugPrint(neighbourEdge1Ids_indexed)
+
+        local loneNodeIds_indexed = {}
+        for edgeId, _ in pairs(neighbourEdge1Ids_indexed) do
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+            for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
+                if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
+                    loneNodeIds_indexed[nodeId] = true
+                end
+            end
+        end
+
+        local edgeIds = {}
+        local endNodeIds = {}
+        local loneNodeIds = {}
+        for id, _ in pairs(loneNodeIds_indexed) do loneNodeIds[#loneNodeIds+1] = id end
+        for id, _ in pairs(neighbourEdge1Ids_indexed) do edgeIds[#edgeIds+1] = id end
+        if endNode1Id ~= nil then endNodeIds[#endNodeIds+1] = endNode1Id end
+        if endNodeNId ~= nil and endNodeNId ~= endNode1Id then endNodeIds[#endNodeIds+1] = endNodeNId end
+        return {
+            edgeIds = edgeIds,
+            edges = stationHelpers.getEdgeIdsProperties(edgeIds),
+            endNodeIds_wNeighbourEdge = endNodeIds,
+            loneNodeIds = loneNodeIds,
+            loneNodes = stationHelpers.getNodeIdsProperties(loneNodeIds)
+        }
+    end,
     sendAllowProgress = function()
         api.cmd.sendCommand(
             api.cmd.make.sendScriptEvent(
@@ -562,6 +632,7 @@ local _actions = {
                             _eventId,
                             successEventName,
                             {
+                                neighbours = args.neighbours,
                                 stationConstructionId = stationConstructionId
                             }
                         ))
@@ -845,11 +916,14 @@ local _actions = {
         logger.print('removeTracks starting')
         -- logger.print('successEventName =') logger.debugPrint(successEventName)
         -- logger.print('successEventArgs =') logger.debugPrint(successEventArgs)
+        logger.print('successEventArgs.neighbours =') logger.debugPrint(successEventArgs.neighbours)
         logger.print('platformEdgeIds =') logger.debugPrint(platformEdgeIds)
         logger.print('trackEdgeIds =') logger.debugPrint(trackEdgeIds)
         local allEdgeIds = {}
         arrayUtils.concatValues(allEdgeIds, trackEdgeIds)
         arrayUtils.concatValues(allEdgeIds, platformEdgeIds)
+        arrayUtils.concatValues(allEdgeIds, successEventArgs.neighbours.platforms.edgeIds)
+        arrayUtils.concatValues(allEdgeIds, successEventArgs.neighbours.tracks.edgeIds)
         logger.print('allEdgeIds =') logger.debugPrint(allEdgeIds)
 
         local proposal = api.type.SimpleProposal.new()
@@ -872,6 +946,10 @@ local _actions = {
         local sharedNodeIds = {}
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
+        arrayUtils.concatValues(sharedNodeIds, successEventArgs.neighbours.tracks.endNodeIds_wNeighbourEdge)
+        arrayUtils.concatValues(sharedNodeIds, successEventArgs.neighbours.platforms.endNodeIds_wNeighbourEdge)
+        arrayUtils.concatValues(sharedNodeIds, successEventArgs.neighbours.tracks.loneNodeIds)
+        arrayUtils.concatValues(sharedNodeIds, successEventArgs.neighbours.platforms.loneNodeIds)
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
@@ -2707,6 +2785,11 @@ function data()
                             logger.err('cannot set track props')
                             return
                         end
+
+                        eventArgs.neighbours = {
+                            tracks = _utils.getAdjacentTracksAndLoneNodes(eventArgs.trackEdgeList),
+                            platforms = _utils.getAdjacentTracksAndLoneNodes(eventArgs.platformEdgeList)
+                        }
 
                         _actions.removeTracks(
                             platformEdgeIdsBetweenNodeIds,

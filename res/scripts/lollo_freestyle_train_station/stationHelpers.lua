@@ -8,8 +8,10 @@ local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
-
+---@alias edgeIdsProperties table<{edgeId: integer, catenary: boolean, posTanX2: table, trackType: integer, trackTypeName: string, type: 0|1|2, edgeType: string, typeIndex: 0|1|2, edgeTypeName: string, width: number, era: eraPrefix}>
+---@alias nodeIdsProperties table<{nodeId: integer, position: {x: number, y: number, z: number}}>
 local helpers = {
+    ---@return edgeIdsProperties
     getEdgeIdsProperties = function(edgeIds)
         if type(edgeIds) ~= 'table' then return {} end
 
@@ -105,6 +107,30 @@ local helpers = {
                 era = trackUtils.getEraPrefix(baseEdgeTrack.trackType)
             }
             results[#results+1] = result
+        end
+
+        return results
+    end,
+    ---@return nodeIdsProperties
+    getNodeIdsProperties = function(nodeIds)
+        if type(nodeIds) ~= 'table' then return {} end
+
+        local results = {}
+        for i = 1, #nodeIds do
+            local nodeId = nodeIds[i]
+            if edgeUtils.isValidAndExistingId(nodeId) then
+                local baseNode = api.engine.getComponent(nodeId, api.type.ComponentType.BASE_NODE)
+                if baseNode ~= nil then
+                    results[#results+1] = {
+                        nodeId = nodeId,
+                        position = {
+                            x = baseNode.position.x,
+                            y = baseNode.position.y,
+                            z = baseNode.position.z,
+                        }
+                    }
+                end
+            end
         end
 
         return results
