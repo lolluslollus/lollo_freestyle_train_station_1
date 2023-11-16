@@ -65,22 +65,22 @@ local _utils = {
     end,
     ---gets adjacent tracks, (station) end nodes and lone nodes without station; expects a list with > 1 entries
     ---@param trackEdgeList edgeIdsProperties
-    ---@return {edgeIds: table<integer>, edges: edgeIdsProperties, endNodeIds_wNeighbourEdge: table<integer>, loneNodeIds: table<integer>, loneNodes: nodeIdsProperties}
-    getAdjacentTracksAndLoneNodes = function(trackEdgeList)
-        ---@return table<integer>, integer | nil
+    ---@return {edgeIds: table<integer>, edges: table<integer, {edgeProps: edgeIdsProperties, node0Props: nodeIdsProperties, node1Props: nodeIdsProperties}>, innerSharedNodeIds: table<integer>, outerLoneNodeIds: table<integer>}
+    getNeighbours = function(trackEdgeList)
+        ---@return table<integer>, integer | nil, boolean
         local _getNeighbours = function(thisEdgeId, nextEdgeId)
             local _baseEdge = api.engine.getComponent(thisEdgeId, api.type.ComponentType.BASE_EDGE)
-            if _baseEdge == nil then return {}, nil end
+            if _baseEdge == nil then return {}, nil, false end
 
-            local endNodeId = _baseEdge.node0
-            local connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({endNodeId})
+            local innerNodeId = _baseEdge.node0
+            local connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({innerNodeId})
             logger.print('thisEdgeId =', thisEdgeId, 'nextEdgeId', nextEdgeId, 'connectedEdgeIds =') logger.debugPrint(connectedEdgeIds)
             if arrayUtils.arrayHasValue(connectedEdgeIds, nextEdgeId) then
-                endNodeId = _baseEdge.node1
-                connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({endNodeId})
+                innerNodeId = _baseEdge.node1
+                connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({innerNodeId})
                 if arrayUtils.arrayHasValue(connectedEdgeIds, nextEdgeId) then
                     logger.err('getAdjacentTracks failed to retrieve adjacent edges, edgeId =', thisEdgeId)
-                    return {}, nil
+                    return {}, nil, false
                 end
             end
             local neighbourEdgeIds = {}
@@ -89,48 +89,59 @@ local _utils = {
                     neighbourEdgeIds[edgeId] = true
                 end
             end
-            return neighbourEdgeIds, (#connectedEdgeIds > 1) and endNodeId or nil
+            return neighbourEdgeIds, innerNodeId, #connectedEdgeIds > 1
         end
 
-        logger.print('getAdjacentTracksAndLoneNodes got trackEdgeList =') logger.debugPrint(trackEdgeList)
+        logger.print('_getNeighbours got trackEdgeList =') logger.debugPrint(trackEdgeList)
         local numEdges = #trackEdgeList
         if trackEdgeList[1].edgeId == trackEdgeList[numEdges].edgeId then
             logger.err('trackEdgeList only contains one edge')
             return {
                 edgeIds = {},
-                endNodeIds_wNeighbourEdge = {},
-                loneNodeIds = {},
+                edges = {},
+                innerSharedNodeIds = {},
+                outerLoneNodeIds = {},
             }
         end
 
-        local neighbourEdge1Ids_indexed, endNode1Id = _getNeighbours(trackEdgeList[1].edgeId, trackEdgeList[2].edgeId)
-        local neighbourEdgeNIds_indexed, endNodeNId = _getNeighbours(trackEdgeList[numEdges].edgeId, trackEdgeList[numEdges-1].edgeId)
+        local neighbourEdge1Ids_indexed, innerNode1Id, is1Shared = _getNeighbours(trackEdgeList[1].edgeId, trackEdgeList[2].edgeId)
+        local neighbourEdgeNIds_indexed, innerNodeNId, isNShared = _getNeighbours(trackEdgeList[numEdges].edgeId, trackEdgeList[numEdges-1].edgeId)
         arrayUtils.concatKeysValues(neighbourEdge1Ids_indexed, neighbourEdgeNIds_indexed)
         logger.print('neighbourEdge1Ids_indexed =') logger.debugPrint(neighbourEdge1Ids_indexed)
 
-        local loneNodeIds_indexed = {}
+        local edgeIds = {}
+        local edges = {}
+        local outerLoneNodeIds_indexed = {}
         for edgeId, _ in pairs(neighbourEdge1Ids_indexed) do
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
             for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
                 if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
-                    loneNodeIds_indexed[nodeId] = true
+                    outerLoneNodeIds_indexed[nodeId] = true
                 end
             end
+            edges[edgeId] = {
+                edgeProps = stationHelpers.getEdgeIdsProperties({edgeId}),
+                node0Props = stationHelpers.getNodeIdsProperties({baseEdge.node0}),
+                node1Props = stationHelpers.getNodeIdsProperties({baseEdge.node1})
+            }
+            edgeIds[#edgeIds+1] = edgeId
+        end
+        for edgeId, _ in pairs(neighbourEdge1Ids_indexed) do
+            edges[edgeId].isNode0ToBeAdded = outerLoneNodeIds_indexed[edges[edgeId].node0Props[1].nodeId]
+            edges[edgeId].isNode1ToBeAdded = outerLoneNodeIds_indexed[edges[edgeId].node1Props[1].nodeId]
         end
 
-        local edgeIds = {}
-        local endNodeIds = {}
-        local loneNodeIds = {}
-        for id, _ in pairs(loneNodeIds_indexed) do loneNodeIds[#loneNodeIds+1] = id end
-        for id, _ in pairs(neighbourEdge1Ids_indexed) do edgeIds[#edgeIds+1] = id end
-        if endNode1Id ~= nil then endNodeIds[#endNodeIds+1] = endNode1Id end
-        if endNodeNId ~= nil and endNodeNId ~= endNode1Id then endNodeIds[#endNodeIds+1] = endNodeNId end
+        local innerSharedNodeIds = {}
+        if innerNode1Id ~= nil and is1Shared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNode1Id end
+        if innerNodeNId ~= nil and innerNodeNId ~= innerNode1Id and isNShared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNodeNId end
+        local outerLoneNodeIds = {}
+        for id, _ in pairs(outerLoneNodeIds_indexed) do outerLoneNodeIds[#outerLoneNodeIds+1] = id end
+
         return {
             edgeIds = edgeIds,
-            edges = stationHelpers.getEdgeIdsProperties(edgeIds),
-            endNodeIds_wNeighbourEdge = endNodeIds,
-            loneNodeIds = loneNodeIds,
-            loneNodes = stationHelpers.getNodeIdsProperties(loneNodeIds)
+            edges = edges,
+            innerSharedNodeIds = innerSharedNodeIds,
+            outerLoneNodeIds = outerLoneNodeIds
         }
     end,
     sendAllowProgress = function()
@@ -437,7 +448,7 @@ local _actions = {
     buildStation = function(successEventName, args)
         local conTransf = args.platformWaypointMidTransf
 
-        logger.print('buildStation starting, args =')
+        logger.print('_buildStation starting, args =')
         logger.print('build 35716 platformEdgeLists =') logger.debugPrint(args.platformEdgeList)
         logger.print('build 35716 trackEdgeLists =') logger.debugPrint(args.trackEdgeList)
 
@@ -616,29 +627,136 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('build station callback, success =', success)
+                logger.print('_buildStation callback, success =', success)
                 -- logger.debugPrint(result)
                 if success then
-                    logger.print('build 35716 buildStation succeeded, result =') logger.debugPrint(result)
+                    logger.print('build 35716 _buildStation succeeded, result =') logger.debugPrint(result)
                     local stationConstructionId = result.resultEntities[1]
-                    logger.print('buildStation succeeded, stationConstructionId = ', stationConstructionId)
+                    logger.print('_buildStation succeeded, stationConstructionId = ', stationConstructionId)
                     _utils.tryRenameStationGroup(stationConstructionId)
                     if successEventName ~= nil then
                         -- logger.print('station proposal data = ', result.resultProposalData) -- userdata
                         -- logger.print('station entities = ', result.resultEntities) -- userdata
-                        logger.print('buildStation callback is about to send command')
+                        logger.print('_buildStation callback is about to send command')
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                             string.sub(debug.getinfo(1, 'S').source, 1),
                             _eventId,
                             successEventName,
                             {
-                                neighbours = args.neighbours,
+                                neighboursByT = args.neighboursByT,
+                                nTerminal = args.nTerminal,
                                 stationConstructionId = stationConstructionId
                             }
                         ))
                     end
                 else
-                    logger.warn('buildStation failed, result =') logger.warningDebugPrint(result)
+                    logger.warn('_buildStation failed, result =') logger.warningDebugPrint(result)
+                end
+            end
+        )
+    end,
+
+    rebuildNeighbours = function(successEventName, args)
+        logger.print('_rebuildNeighbours starting, args =') logger.debugPrint(args)
+        local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+
+        local _getNearbyNodeId = function(positionXYZ)
+            local _tolerance = 0.001
+            local nearbyNodeIds = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(positionXYZ),
+                _tolerance,
+                api.type.ComponentType.BASE_NODE,
+                positionXYZ.z - _tolerance,
+                positionXYZ.z + _tolerance
+            )
+            return nearbyNodeIds[1]
+        end
+
+        local proposal = api.type.SimpleProposal.new()
+        local nNewEntities = -1
+        local allEdges = {}
+        arrayUtils.concatKeysValues(allEdges, args.neighboursByT[args.nTerminal].platforms.edges)
+        arrayUtils.concatKeysValues(allEdges, args.neighboursByT[args.nTerminal].tracks.edges)
+        for _, edgeData in pairs(allEdges) do
+            local node0Id, node1Id = nil, nil
+            if edgeData.isNode0ToBeAdded then
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities
+                newNode.comp.position.x = edgeData.node0Props[1].position.x
+                newNode.comp.position.y = edgeData.node0Props[1].position.y
+                newNode.comp.position.z = edgeData.node0Props[1].position.z
+                node0Id = nNewEntities
+                nNewEntities = nNewEntities - 1
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+            else
+                node0Id = _getNearbyNodeId(edgeData.node0Props[1].position)
+                if node0Id == nil then
+                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node0Props[1].position)
+                end
+            end
+            if edgeData.isNode1ToBeAdded then
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities
+                newNode.comp.position.x = edgeData.node1Props[1].position.x
+                newNode.comp.position.y = edgeData.node1Props[1].position.y
+                newNode.comp.position.z = edgeData.node1Props[1].position.z
+                node1Id = nNewEntities
+                nNewEntities = nNewEntities - 1
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+            else
+                node1Id = _getNearbyNodeId(edgeData.node1Props[1].position)
+                if node1Id == nil then
+                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node1Props[1].position)
+                end
+            end
+
+            local newSegment = api.type.SegmentAndEntity.new()
+            newSegment.entity = nNewEntities
+            newSegment.comp.node0 = node0Id
+            newSegment.comp.node1 = node1Id
+            newSegment.comp.tangent0.x = edgeData.edgeProps[1].posTanX2[1][2][1]
+            newSegment.comp.tangent0.y = edgeData.edgeProps[1].posTanX2[1][2][2]
+            newSegment.comp.tangent0.z = edgeData.edgeProps[1].posTanX2[1][2][3]
+            newSegment.comp.tangent1.x = edgeData.edgeProps[1].posTanX2[2][2][1]
+            newSegment.comp.tangent1.y = edgeData.edgeProps[1].posTanX2[2][2][2]
+            newSegment.comp.tangent1.z = edgeData.edgeProps[1].posTanX2[2][2][3]
+            newSegment.comp.type = edgeData.edgeProps[1].type
+            newSegment.comp.typeIndex = edgeData.edgeProps[1].typeIndex
+            -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+            newSegment.type = _constants.railEdgeType
+            newSegment.trackEdge.trackType = edgeData.edgeProps[1].trackType
+            newSegment.trackEdge.catenary = edgeData.edgeProps[1].catenary
+            nNewEntities = nNewEntities - 1
+            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+        end
+
+        logger.print('_rebuildNeighbours made proposal =') logger.debugPrint(proposal)
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
+        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+            string.sub(debug.getinfo(1, 'S').source, 1),
+            _eventId,
+            successEventName,
+            args
+        ))
+        if true then return end -- LOLLO TODO remove after testing
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true),
+            function(result, success)
+                logger.print('LOLLO _rebuildNeighbours success = ', success)
+                -- logger.print('LOLLO result = ') logger.debugPrint(result)
+                if true then return end -- LOLLO TODO remove after testing
+                if success and successEventName ~= nil then
+                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                        string.sub(debug.getinfo(1, 'S').source, 1),
+                        _eventId,
+                        successEventName,
+                        args
+                    ))
                 end
             end
         )
@@ -912,18 +1030,20 @@ local _actions = {
         )
     end,
 
-    removeTracks = function(platformEdgeIds, trackEdgeIds, successEventName, successEventArgs)
-        logger.print('removeTracks starting')
+    removeTracks = function(platformEdgeIds, trackEdgeIds, successEventName, args)
+        logger.print('_removeTracks starting')
         -- logger.print('successEventName =') logger.debugPrint(successEventName)
-        -- logger.print('successEventArgs =') logger.debugPrint(successEventArgs)
-        logger.print('successEventArgs.neighbours =') logger.debugPrint(successEventArgs.neighbours)
+        logger.print('args =') logger.debugPrint(args)
+        logger.print('successEventArgs.neighboursByT =') logger.debugPrint(args.neighboursByT)
         logger.print('platformEdgeIds =') logger.debugPrint(platformEdgeIds)
         logger.print('trackEdgeIds =') logger.debugPrint(trackEdgeIds)
         local allEdgeIds = {}
         arrayUtils.concatValues(allEdgeIds, trackEdgeIds)
         arrayUtils.concatValues(allEdgeIds, platformEdgeIds)
-        arrayUtils.concatValues(allEdgeIds, successEventArgs.neighbours.platforms.edgeIds)
-        arrayUtils.concatValues(allEdgeIds, successEventArgs.neighbours.tracks.edgeIds)
+        for _, neighbours in pairs(args.neighboursByT) do
+            arrayUtils.concatValues(allEdgeIds, neighbours.platforms.edgeIds)
+            arrayUtils.concatValues(allEdgeIds, neighbours.tracks.edgeIds)
+        end
         logger.print('allEdgeIds =') logger.debugPrint(allEdgeIds)
 
         local proposal = api.type.SimpleProposal.new()
@@ -946,15 +1066,19 @@ local _actions = {
         local sharedNodeIds = {}
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
-        arrayUtils.concatValues(sharedNodeIds, successEventArgs.neighbours.tracks.endNodeIds_wNeighbourEdge)
-        arrayUtils.concatValues(sharedNodeIds, successEventArgs.neighbours.platforms.endNodeIds_wNeighbourEdge)
-        arrayUtils.concatValues(sharedNodeIds, successEventArgs.neighbours.tracks.loneNodeIds)
-        arrayUtils.concatValues(sharedNodeIds, successEventArgs.neighbours.platforms.loneNodeIds)
+        for t, neighbours in pairs(args.neighboursByT) do
+            if args.nTerminal == t then
+                arrayUtils.concatValues(sharedNodeIds, neighbours.tracks.innerSharedNodeIds)
+                arrayUtils.concatValues(sharedNodeIds, neighbours.platforms.innerSharedNodeIds)
+            end
+            arrayUtils.concatValues(sharedNodeIds, neighbours.tracks.outerLoneNodeIds)
+            arrayUtils.concatValues(sharedNodeIds, neighbours.platforms.outerLoneNodeIds)
+        end
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
         -- logger.print('proposal.streetProposal.nodesToRemove =') logger.debugPrint(proposal.streetProposal.nodesToRemove)
-        logger.print('build 35716 removeTracks proposal =') logger.debugPrint(proposal)
+        logger.print('build 35716 _removeTracks proposal =') logger.debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -965,15 +1089,15 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('command callback firing for removeTracks, success =', success)
+                logger.print('command callback firing for _removeTracks, success =', success)
                 -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
-                    logger.print('removeTracks callback is about to send command')
+                    logger.print('_removeTracks callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName,
-                        arrayUtils.cloneDeepOmittingFields(successEventArgs)
+                        arrayUtils.cloneDeepOmittingFields(args)
                     ))
                 end
             end
@@ -2258,7 +2382,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
+                    logger.print('lollo_freestyle_station.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
                     -- logger.print('args =') logger.debugPrint(args)
                     logger.print('state =') logger.debugPrint(state)
                     -- LOLLO NOTE ONLY SOMETIMES, it can crash when calling game.interface.getEntity(stationId).
@@ -2786,9 +2910,32 @@ function data()
                             return
                         end
 
-                        eventArgs.neighbours = {
-                            tracks = _utils.getAdjacentTracksAndLoneNodes(eventArgs.trackEdgeList),
-                            platforms = _utils.getAdjacentTracksAndLoneNodes(eventArgs.platformEdgeList)
+                        eventArgs.nTerminal = 1
+                        local con = nil
+                        if edgeUtils.isValidAndExistingId(eventArgs.join2StationConId) then
+                            con = api.engine.getComponent(eventArgs.join2StationConId, api.type.ComponentType.CONSTRUCTION)
+                            if con ~= nil then
+                                logger.print('joining an existing station')
+                                eventArgs.nTerminal = #con.params.terminals + 1
+                            end
+                        end
+                        logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
+
+                        eventArgs.neighboursByT = {}
+                        if con ~= nil then
+                            logger.print('con ~= nil')
+                            for nTerminal, terminalProps in pairs(con.params.terminals) do
+                                logger.print('nTerminal =', nTerminal)
+                                logger.print('terminalProps =') logger.debugPrint(terminalProps)
+                                eventArgs.neighboursByT[nTerminal] = {
+                                    tracks = _utils.getNeighbours(terminalProps.trackEdgeLists),
+                                    platforms = _utils.getNeighbours(terminalProps.platformEdgeLists)
+                                }
+                            end
+                        end
+                        eventArgs.neighboursByT[#eventArgs.neighboursByT+1] = {
+                            tracks = _utils.getNeighbours(eventArgs.trackEdgeList),
+                            platforms = _utils.getNeighbours(eventArgs.platformEdgeList)
                         }
 
                         _actions.removeTracks(
@@ -2798,17 +2945,25 @@ function data()
                             eventArgs
                         )
                     elseif name == _eventNames.BUILD_STATION_REQUESTED then
-                        local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
-                        eventArgs.nTerminal = 1
-                        if edgeUtils.isValidAndExistingId(eventArgs.join2StationConId) then
-                            local con = api.engine.getComponent(eventArgs.join2StationConId, api.type.ComponentType.CONSTRUCTION)
-                            if con ~= nil then eventArgs.nTerminal = #con.params.terminals + 1 end
-                        end
-                        logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
+                        -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
+                        -- eventArgs.nTerminal = 1
+                        -- if edgeUtils.isValidAndExistingId(eventArgs.join2StationConId) then
+                        --     local con = api.engine.getComponent(eventArgs.join2StationConId, api.type.ComponentType.CONSTRUCTION)
+                        --     if con ~= nil then eventArgs.nTerminal = #con.params.terminals + 1 end
+                        -- end
+                        -- logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
 
                         _actions.buildStation(
+                            _eventNames.REBUILD_NEIGHBOURS_REQUESTED,
+                            -- eventArgs
+                            args
+                        )
+                    elseif name == _eventNames.REBUILD_NEIGHBOURS_REQUESTED then
+                        -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
+                        _actions.rebuildNeighbours(
                             _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED,
-                            eventArgs
+                            -- eventArgs
+                            args
                         )
                     elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
                         _actions.removeTerminal(

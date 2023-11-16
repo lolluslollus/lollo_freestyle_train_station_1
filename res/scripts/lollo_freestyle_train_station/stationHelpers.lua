@@ -1325,6 +1325,10 @@ local _getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
     return result
 end
 
+helpers.getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
+    return _getTrackEndNodeIds4T(con, nTerminal, frozenEdges, frozenNodes)
+end
+
 local _getStationTrackEndEntities4T = function(con, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- logger.print('con =') logger.debugPrint(conData)

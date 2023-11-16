@@ -27,6 +27,7 @@ local constants = {
             PLATFORM_WAYPOINT_1_SPLIT_REQUESTED = 'platformWaypoint1SplitRequested',
             PLATFORM_WAYPOINT_2_SPLIT_REQUESTED = 'platformWaypoint2SplitRequested',
             REBUILD_1_TRACK_REQUESTED = 'rebuild1TrackRequested',
+            REBUILD_NEIGHBOURS_REQUESTED = 'rebuildNeighboursRequested',
             REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
             SUBWAY_JOIN_REQUESTED = 'subwayJoinRequested',
             TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
