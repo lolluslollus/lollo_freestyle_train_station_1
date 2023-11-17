@@ -1255,10 +1255,10 @@ local _getStationStreetEndEntities = function(con, t)
         }
         endEntity.jointNeighbourEdges.edgeIds, endEntity.jointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(endEntity.nodeId, frozenEdgeIds, false)
     end
-    for _, endEntity in pairs(results) do
-        for _, edgeId in pairs(endEntity.jointNeighbourEdges.edgeIds) do
+    for a, endEntity in pairs(results) do
+        for b, edgeId in pairs(endEntity.jointNeighbourEdges.edgeIds) do
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
+            for c, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
                 if #(edgeUtils.street.getConnectedEdgeIds({nodeId})) < 2 then
                     arrayUtils.addUnique(endEntity.jointNeighbourNodes.outerLoneNodeIds, nodeId)
                 end
