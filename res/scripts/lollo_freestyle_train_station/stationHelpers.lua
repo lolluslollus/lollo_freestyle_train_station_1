@@ -3,6 +3,7 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
+local streetUtils = require('lollo_freestyle_train_station.streetUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -12,7 +13,7 @@ local transfUtilsUG = require('transf')
 ---@alias nodeIdsProperties table<{nodeId: integer, position: {x: number, y: number, z: number}}>
 local helpers = {
     ---@return edgeIdsProperties
-    getEdgeIdsProperties = function(edgeIds)
+    getEdgeIdsProperties = function(edgeIds, isTrack)
         if type(edgeIds) ~= 'table' then return {} end
 
         local _getEdgeType = function(baseEdgeType)
@@ -35,10 +36,11 @@ local helpers = {
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
             -- logger.print('baseEdge =') logger.debugPrint(baseEdge)
             local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+            local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
             -- logger.print('baseEdgeTrack =') logger.debugPrint(baseEdgeTrack)
             local baseNode0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
             local baseNode1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-            local baseEdgeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
+            local baseEdgeProperties = isTrack and api.res.trackTypeRep.get(baseEdgeTrack.trackType) or api.res.streetTypeRep.get(baseEdgeStreet.streetType)
 
             local pos0 = baseNode0.position
             local pos1 = baseNode1.position
@@ -70,7 +72,9 @@ local helpers = {
 
             local result = {
                 edgeId = edgeId,
-                catenary = baseEdgeTrack.catenary,
+                catenary = baseEdgeTrack and baseEdgeTrack.catenary,
+                hasBus = baseEdgeStreet and baseEdgeStreet.hasBus,
+                isTrack = isTrack,
                 posTanX2 = {
                     {
                         {
@@ -97,14 +101,17 @@ local helpers = {
                         }
                     }
                 },
-                trackType = baseEdgeTrack.trackType,
-                trackTypeName = api.res.trackTypeRep.getName(baseEdgeTrack.trackType),
+                streetType = baseEdgeStreet and baseEdgeStreet.streetType,
+                streetTypeName = baseEdgeStreet and api.res.streetTypeRep.getName(baseEdgeStreet.streetType),
+                trackType = baseEdgeTrack and baseEdgeTrack.trackType,
+                trackTypeName = baseEdgeTrack and api.res.trackTypeRep.getName(baseEdgeTrack.trackType),
+                tramTrackType = baseEdgeStreet and baseEdgeStreet.tramTrackType,
                 type = baseEdge.type, -- 0 on ground, 1 bridge, 2 tunnel
                 edgeType = _getEdgeType(baseEdge.type), -- same as above but in a format constructions understand
                 typeIndex = baseEdge.typeIndex, -- -1 on ground, 0 tunnel / cement bridge, 1 steel bridge, 2 stone bridge, 3 suspension bridge
                 edgeTypeName = _getEdgeTypeName(baseEdge.type, baseEdge.typeIndex), -- same as above but in a format constructions understand
                 width = baseEdgeProperties.trackDistance,
-                era = trackUtils.getEraPrefix(baseEdgeTrack.trackType)
+                era = isTrack and trackUtils.getEraPrefix(baseEdgeTrack.trackType) or streetUtils.getEraPrefix(baseEdgeStreet.streetType)
             }
             results[#results+1] = result
         end
@@ -1236,6 +1243,33 @@ local _getStationStreetEndEntities = function(con, t)
         endEntity.disjointNeighbourNodeId = _getDisjointNeighbourNodeId(endEntity.nodeId, endEntity.nodePosition, frozenNodeIds, false)
         endEntity.disjointNeighbourEdges, endEntity.isNodeAdjoiningAConstruction, endEntity.neighbourConIds = _getNeighbourEdgeIdsAndConIds(endEntity.disjointNeighbourNodeId, frozenEdgeIds, false)
     end
+    for _, endEntity in pairs(results) do
+        endEntity.jointNeighbourNodes = {
+            isNode1AdjoiningAConstruction = false,
+            isNode2AdjoiningAConstruction = false,
+            outerLoneNodeIds = {},
+        }
+        endEntity.jointNeighbourEdges = {
+            edgeIds = {},
+            props = {}
+        }
+        endEntity.jointNeighbourEdges.edgeIds, endEntity.jointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(endEntity.nodeId, frozenEdgeIds, false)
+    end
+    for _, endEntity in pairs(results) do
+        for _, edgeId in pairs(endEntity.jointNeighbourEdges.edgeIds) do
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+            for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
+                if #(edgeUtils.street.getConnectedEdgeIds({nodeId})) < 2 then
+                    arrayUtils.addUnique(endEntity.jointNeighbourNodes.outerLoneNodeIds, nodeId)
+                end
+            end
+            endEntity.jointNeighbourEdges.props[edgeId] = {
+                edgeProps = helpers.getEdgeIdsProperties({edgeId}, false),
+                node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
+                node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
+            }
+        end
+    end
 
     logger.print('_getStationStreetEndEntities results =') logger.debugPrint(results)
     return results
@@ -1474,7 +1508,7 @@ local _getStationTrackEndEntities4T = function(con, t)
             end
         end
         result.platforms.jointNeighbourEdges.props[edgeId] = {
-            edgeProps = helpers.getEdgeIdsProperties({edgeId}),
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true),
             node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
             node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
         }
@@ -1487,7 +1521,7 @@ local _getStationTrackEndEntities4T = function(con, t)
             end
         end
         result.tracks.jointNeighbourEdges.props[edgeId] = {
-            edgeProps = helpers.getEdgeIdsProperties({edgeId}),
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true),
             node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
             node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
         }

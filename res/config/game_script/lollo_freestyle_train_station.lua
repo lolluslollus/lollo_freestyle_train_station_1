@@ -123,7 +123,7 @@ local _utils = {
                 end
             end
             edges[edgeId] = {
-                edgeProps = stationHelpers.getEdgeIdsProperties({edgeId}),
+                edgeProps = stationHelpers.getEdgeIdsProperties({edgeId}, true),
                 node0Props = stationHelpers.getNodeIdsProperties({baseEdge.node0}),
                 node1Props = stationHelpers.getNodeIdsProperties({baseEdge.node1})
             }
@@ -2596,10 +2596,10 @@ function data()
 
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'splitPlatformNode1Id', 'splitPlatformNode2Id', 'splitTrackNode1Id', 'splitTrackNode2Id', })
                         logger.print('track bulldoze requested, platformEdgeIdsBetweenNodeIds =') logger.debugPrint(platformEdgeIdsBetweenNodeIds)
-                        eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds)
+                        eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds, true)
                         -- logger.print('track bulldoze requested, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
                         logger.print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') logger.debugPrint(trackEdgeIdsBetweenNodeIds)
-                        eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
+                        eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds, true)
                         -- logger.print('track bulldoze requested, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
 
                         local _getTrackMidIndex_orSplitPoint = function()
