@@ -1492,6 +1492,26 @@ local _getStationTrackEndEntities4T = function(con, t)
             node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
         }
     end
+    for edgeId, edgeProps in pairs(result.platforms.jointNeighbourEdges.props) do
+        result.platforms.jointNeighbourEdges.props[edgeId].isNode0ToBeAdded = arrayUtils.arrayHasValue(
+            result.platforms.jointNeighbourNodes.outerLoneNodeIds,
+            edgeProps.node0Props[1].nodeId
+        )
+        result.platforms.jointNeighbourEdges.props[edgeId].isNode1ToBeAdded = arrayUtils.arrayHasValue(
+            result.platforms.jointNeighbourNodes.outerLoneNodeIds,
+            edgeProps.node1Props[1].nodeId
+        )
+    end
+    for edgeId, edgeProps in pairs(result.tracks.jointNeighbourEdges.props) do
+        result.tracks.jointNeighbourEdges.props[edgeId].isNode0ToBeAdded = arrayUtils.arrayHasValue(
+            result.tracks.jointNeighbourNodes.outerLoneNodeIds,
+            edgeProps.node0Props[1].nodeId
+        )
+        result.tracks.jointNeighbourEdges.props[edgeId].isNode1ToBeAdded = arrayUtils.arrayHasValue(
+            result.tracks.jointNeighbourNodes.outerLoneNodeIds,
+            edgeProps.node1Props[1].nodeId
+        )
+    end
 
     -- logger.print('__getStationTrackEndEntities4T result =') logger.debugPrint(result)
     return result

@@ -681,7 +681,13 @@ local _actions = {
         local allEdges = {}
         arrayUtils.concatKeysValues(allEdges, args.newTerminalNeighbours.platforms.edges)
         arrayUtils.concatKeysValues(allEdges, args.newTerminalNeighbours.tracks.edges)
-        -- LOLLO TODO add stuff from args.endEntities
+        if args.endEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.endEntities) do
+                arrayUtils.concatKeysValues(allEdges, terminalEndEntities.platforms.jointNeighbourEdges.props)
+                arrayUtils.concatKeysValues(allEdges, terminalEndEntities.tracks.jointNeighbourEdges.props)
+            end
+        end
+
         for _, edgeData in pairs(allEdges) do
             local node0Id, node1Id = nil, nil
             if edgeData.isNode0ToBeAdded then
@@ -756,6 +762,7 @@ local _actions = {
                         args
                     ))
                 end
+                _utils.sendHideProgress()
             end
         )
     end,
@@ -2946,24 +2953,13 @@ function data()
                             eventArgs
                         )
                     elseif name == _eventNames.BUILD_STATION_REQUESTED then
-                        -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
-                        -- eventArgs.nTerminal = 1
-                        -- if edgeUtils.isValidAndExistingId(eventArgs.join2StationConId) then
-                        --     local con = api.engine.getComponent(eventArgs.join2StationConId, api.type.ComponentType.CONSTRUCTION)
-                        --     if con ~= nil then eventArgs.nTerminal = #con.params.terminals + 1 end
-                        -- end
-                        -- logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
-
                         _actions.buildStation(
                             _eventNames.REBUILD_NEIGHBOURS_REQUESTED,
-                            -- eventArgs
                             args
                         )
                     elseif name == _eventNames.REBUILD_NEIGHBOURS_REQUESTED then
-                        -- local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
                         _actions.rebuildNeighbours(
-                            _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED,
-                            -- eventArgs
+                            _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED,
                             args
                         )
                     elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
@@ -2990,9 +2986,9 @@ function data()
                             args.removedTerminalEdgeProps.platformEdgeLists,
                             stationHelpers.getNeighbourNodeIdsOfBulldozedTerminal(args.removedTerminalEdgeProps.platformEdgeLists, args.removedTerminalEdgeProps.trackEdgeLists),
                             args.stationConstructionId,
-                            args.nRemainingTerminals > 0 and _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED or _eventNames.BULLDOZE_STATION_REQUESTED
+                            args.nRemainingTerminals > 0 and _eventNames.BUILD_SNAPPY_NEIGHBOURS_REQUESTED or _eventNames.BULLDOZE_STATION_REQUESTED
                         )
-                    elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
+                    elseif name == _eventNames.BUILD_SNAPPY_NEIGHBOURS_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
                             logger.err('args.stationConstructionId not valid')
                             return
@@ -3014,7 +3010,7 @@ function data()
                             logger.err('args.join2StationConId or args.subwayId is invalid')
                             return
                         end
-                        _actions.addSubway(args.join2StationConId, args.subwayId, _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED)
+                        _actions.addSubway(args.join2StationConId, args.subwayId, _eventNames.BUILD_SNAPPY_NEIGHBOURS_REQUESTED)
                     elseif name == _eventNames.TRACK_SPLIT_REQUESTED then
                         if args ~= nil and args.conId ~= nil then
                             if edgeUtils.isValidAndExistingId(args.conId) then
@@ -3089,7 +3085,7 @@ function data()
                         end
                         local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
                         if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
-                            logger.err('construction', args.stationConstructionId, 'is not a freestyle station')
+                            logger.err('construction', args.stationConstructionId, 'is not a freestyle station, I cannot build its snappy street edges')
                             return
                         end
                         _actions.buildSnappyStreetEdges(args.stationConstructionId)
