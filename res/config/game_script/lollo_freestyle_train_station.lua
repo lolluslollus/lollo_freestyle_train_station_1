@@ -70,7 +70,10 @@ local _utils = {
         ---@return table<integer>, integer | nil, boolean
         local _getNeighbours = function(thisEdgeId, nextEdgeId)
             local _baseEdge = api.engine.getComponent(thisEdgeId, api.type.ComponentType.BASE_EDGE)
-            if _baseEdge == nil then return {}, nil, false end
+            if _baseEdge == nil then
+                logger.print('_baseEdge == nil, thisEdgeId =', thisEdgeId)
+                return {}, nil, false
+            end
 
             local innerNodeId = _baseEdge.node0
             local connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({innerNodeId})
@@ -248,26 +251,26 @@ local _utils = {
         newSegment.entity = nNewEntities_
     
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-        if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+        if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodes.node1Id then
             newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
+            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodes.node1Id)
             -- logger.print('twenty-one')
-        elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+        elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodes.node2Id then
             newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
+            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodes.node2Id)
             -- logger.print('twenty-two')
         else
             newSegment.comp.node0 = baseEdge.node0
             -- logger.print('twenty-three')
         end
     
-        if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+        if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodes.node1Id then
             newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
+            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodes.node1Id)
             -- logger.print('twenty-four')
-        elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+        elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodes.node2Id then
             newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
+            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodes.node2Id)
             -- logger.print('twenty-five')
         else
             newSegment.comp.node1 = baseEdge.node1
@@ -643,7 +646,8 @@ local _actions = {
                             _eventId,
                             successEventName,
                             {
-                                neighboursByT = args.neighboursByT,
+                                endEntities = args.endEntities,
+                                newTerminalNeighbours = args.newTerminalNeighbours,
                                 nTerminal = args.nTerminal,
                                 stationConstructionId = stationConstructionId
                             }
@@ -675,8 +679,9 @@ local _actions = {
         local proposal = api.type.SimpleProposal.new()
         local nNewEntities = -1
         local allEdges = {}
-        arrayUtils.concatKeysValues(allEdges, args.neighboursByT[args.nTerminal].platforms.edges)
-        arrayUtils.concatKeysValues(allEdges, args.neighboursByT[args.nTerminal].tracks.edges)
+        arrayUtils.concatKeysValues(allEdges, args.newTerminalNeighbours.platforms.edges)
+        arrayUtils.concatKeysValues(allEdges, args.newTerminalNeighbours.tracks.edges)
+        -- LOLLO TODO add stuff from args.endEntities
         for _, edgeData in pairs(allEdges) do
             local node0Id, node1Id = nil, nil
             if edgeData.isNode0ToBeAdded then
@@ -737,19 +742,12 @@ local _actions = {
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
-        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-            string.sub(debug.getinfo(1, 'S').source, 1),
-            _eventId,
-            successEventName,
-            args
-        ))
-        if true then return end -- LOLLO TODO remove after testing
+
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
                 logger.print('LOLLO _rebuildNeighbours success = ', success)
                 -- logger.print('LOLLO result = ') logger.debugPrint(result)
-                if true then return end -- LOLLO TODO remove after testing
                 if success and successEventName ~= nil then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -801,7 +799,6 @@ local _actions = {
         }
 
         -- write this away before removing it
-        -- LOLLO TODO check the new behaviour with forced electrification values
         local electricModuleValue = oldModules[slotHelpers.mangleId(nTerminalToRemove, 0, _constants.idBases.trackElectrificationSlotId)]
         local isForceTrackElectrification = electricModuleValue ~= nil
         and (electricModuleValue.name == _constants.trackElectrificationYesModuleFileName or electricModuleValue.name == _constants.trackElectrificationNoModuleFileName)
@@ -1034,15 +1031,24 @@ local _actions = {
         logger.print('_removeTracks starting')
         -- logger.print('successEventName =') logger.debugPrint(successEventName)
         logger.print('args =') logger.debugPrint(args)
-        logger.print('successEventArgs.neighboursByT =') logger.debugPrint(args.neighboursByT)
+        -- logger.print('args.endEntities =') logger.debugPrint(args.endEntities)
+        -- logger.print('args.newTerminalNeighbours =') logger.debugPrint(args.newTerminalNeighbours)
         logger.print('platformEdgeIds =') logger.debugPrint(platformEdgeIds)
         logger.print('trackEdgeIds =') logger.debugPrint(trackEdgeIds)
         local allEdgeIds = {}
         arrayUtils.concatValues(allEdgeIds, trackEdgeIds)
         arrayUtils.concatValues(allEdgeIds, platformEdgeIds)
-        for _, neighbours in pairs(args.neighboursByT) do
-            arrayUtils.concatValues(allEdgeIds, neighbours.platforms.edgeIds)
-            arrayUtils.concatValues(allEdgeIds, neighbours.tracks.edgeIds)
+        arrayUtils.concatValues(allEdgeIds, args.newTerminalNeighbours.platforms.edgeIds)
+        arrayUtils.concatValues(allEdgeIds, args.newTerminalNeighbours.tracks.edgeIds)
+        if args.endEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.endEntities) do
+                for edgeId, _ in pairs(terminalEndEntities.platforms.jointNeighbourEdges.props) do
+                    allEdgeIds[#allEdgeIds+1] = edgeId
+                end
+                for edgeId, _ in pairs(terminalEndEntities.tracks.jointNeighbourEdges.props) do
+                    allEdgeIds[#allEdgeIds+1] = edgeId
+                end
+            end
         end
         logger.print('allEdgeIds =') logger.debugPrint(allEdgeIds)
 
@@ -1066,13 +1072,15 @@ local _actions = {
         local sharedNodeIds = {}
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
-        for t, neighbours in pairs(args.neighboursByT) do
-            if args.nTerminal == t then
-                arrayUtils.concatValues(sharedNodeIds, neighbours.tracks.innerSharedNodeIds)
-                arrayUtils.concatValues(sharedNodeIds, neighbours.platforms.innerSharedNodeIds)
+        arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.innerSharedNodeIds)
+        arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.innerSharedNodeIds)
+        arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.outerLoneNodeIds)
+        arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.outerLoneNodeIds)
+        if args.endEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.endEntities) do
+                arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds)
+                arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.platforms.jointNeighbourNodes.outerLoneNodeIds)
             end
-            arrayUtils.concatValues(sharedNodeIds, neighbours.tracks.outerLoneNodeIds)
-            arrayUtils.concatValues(sharedNodeIds, neighbours.platforms.outerLoneNodeIds)
         end
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
@@ -1988,13 +1996,13 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
-    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.platforms.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction or endEntities4T.platforms.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction
-    for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
+    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.platforms.disjointNeighbourNodes.isNode1AdjoiningAConstruction or endEntities4T.platforms.disjointNeighbourNodes.isNode2AdjoiningAConstruction
+    for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdges.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _utils.tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
         -- logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
     end
-    for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge2Ids) do
+    for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdges.edge2Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _utils.tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
         -- logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
@@ -2065,7 +2073,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     _getStationStreetEndEntities results =
         {
             {
-                disjointNeighbourEdgeIds = { 29462, },
+                disjointNeighbourEdges = { 29462, },
                 disjointNeighbourNodeId = 28429,
                 edgeId = 20883,
                 isNodeAdjoiningAConstruction = false,
@@ -2078,7 +2086,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
                 },
             },
             {
-                disjointNeighbourEdgeIds = { 29462, },
+                disjointNeighbourEdges = { 29462, },
                 disjointNeighbourNodeId = 28919,
                 edgeId = 23547,
                 isNodeAdjoiningAConstruction = false,
@@ -2098,7 +2106,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
 
     local endEntities_GroupedBy_disjointNeighbourEdgeId = {}
     for _, endEntity in pairs(allEndEntities) do
-        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
+        for _, edgeId in pairs(endEntity.disjointNeighbourEdges) do
             if edgeUtils.isValidAndExistingId(edgeId) then
                 if not(endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId]) then endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId] = {} end
 
@@ -2278,12 +2286,12 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
-    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.tracks.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction or endEntities4T.tracks.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction
-    for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
+    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.tracks.disjointNeighbourNodes.isNode1AdjoiningAConstruction or endEntities4T.tracks.disjointNeighbourNodes.isNode2AdjoiningAConstruction
+    for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdges.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _utils.tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
     end
-    for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge2Ids) do
+    for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdges.edge2Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _utils.tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
     end
@@ -2915,25 +2923,18 @@ function data()
                         if edgeUtils.isValidAndExistingId(eventArgs.join2StationConId) then
                             con = api.engine.getComponent(eventArgs.join2StationConId, api.type.ComponentType.CONSTRUCTION)
                             if con ~= nil then
-                                logger.print('joining an existing station')
+                                logger.print('joining an existing station, conId = eventArgs.join2StationConId')
                                 eventArgs.nTerminal = #con.params.terminals + 1
                             end
                         end
                         logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
 
-                        eventArgs.neighboursByT = {}
                         if con ~= nil then
-                            logger.print('con ~= nil')
-                            for nTerminal, terminalProps in pairs(con.params.terminals) do
-                                logger.print('nTerminal =', nTerminal)
-                                logger.print('terminalProps =') logger.debugPrint(terminalProps)
-                                eventArgs.neighboursByT[nTerminal] = {
-                                    tracks = _utils.getNeighbours(terminalProps.trackEdgeLists),
-                                    platforms = _utils.getNeighbours(terminalProps.platformEdgeLists)
-                                }
-                            end
+                            logger.print('con ~= nil, con.params =') --logger.debugPrint(con.params)
+                            eventArgs.endEntities = stationHelpers.getStationTrackEndEntities(eventArgs.join2StationConId)
+                            logger.print('eventArgs.endEntities =') logger.debugPrint(eventArgs.endEntities)
                         end
-                        eventArgs.neighboursByT[#eventArgs.neighboursByT+1] = {
+                        eventArgs.newTerminalNeighbours = {
                             tracks = _utils.getNeighbours(eventArgs.trackEdgeList),
                             platforms = _utils.getNeighbours(eventArgs.platformEdgeList)
                         }

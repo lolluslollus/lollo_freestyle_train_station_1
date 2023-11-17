@@ -25,4 +25,9 @@ local conc = arrayUtils.concatKeysValues(getTab1(), getTab2())
 local tab1 = getTab1()
 arrayUtils.concatKeysValues(tab1, getTab2())
 
+local tabAll1 = arrayUtils.getConcatKeysValues(getTab1(), getTab2())
+local tabAll2 = arrayUtils.getConcatKeysValues({1, 2, 3}, {3, 4, 5})
+local tabAll3 = arrayUtils.getConcatValues(getTab1(), getTab2())
+local tabAll4 = arrayUtils.getConcatValues({1, 2, 3}, {3, 4, 5})
+
 local dummy = 124

@@ -1145,7 +1145,7 @@ local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionX
     return nearestNodeId
 end
 
-local _getDisjointNeighbourEdgeIdsAndConIds = function(nodeId, frozenEdgeIds, isTrack)
+local _getNeighbourEdgeIdsAndConIds = function(nodeId, frozenEdgeIds, isTrack)
     local freeEdgeIds_indexed = {}
     local isAnyEdgeFrozenInAConstruction = false
     local neighbourConIds_indexed = {}
@@ -1234,7 +1234,7 @@ local _getStationStreetEndEntities = function(con, t)
 
     for _, endEntity in pairs(results) do
         endEntity.disjointNeighbourNodeId = _getDisjointNeighbourNodeId(endEntity.nodeId, endEntity.nodePosition, frozenNodeIds, false)
-        endEntity.disjointNeighbourEdgeIds, endEntity.isNodeAdjoiningAConstruction, endEntity.neighbourConIds = _getDisjointNeighbourEdgeIdsAndConIds(endEntity.disjointNeighbourNodeId, frozenEdgeIds, false)
+        endEntity.disjointNeighbourEdges, endEntity.isNodeAdjoiningAConstruction, endEntity.neighbourConIds = _getNeighbourEdgeIdsAndConIds(endEntity.disjointNeighbourNodeId, frozenEdgeIds, false)
     end
 
     logger.print('_getStationStreetEndEntities results =') logger.debugPrint(results)
@@ -1325,10 +1325,6 @@ local _getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
     return result
 end
 
-helpers.getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
-    return _getTrackEndNodeIds4T(con, nTerminal, frozenEdges, frozenNodes)
-end
-
 local _getStationTrackEndEntities4T = function(con, t)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- logger.print('con =') logger.debugPrint(conData)
@@ -1387,16 +1383,28 @@ local _getStationTrackEndEntities4T = function(con, t)
     local result = {
         platforms = {
             -- these are empty or nil if the station has been snapped to its neighbours
-            disjointNeighbourEdgeIds = {
+            disjointNeighbourEdges = {
                 edge1Ids = {},
                 edge2Ids = {}
             },
             -- same
-            disjointNeighbourNodeIds = {
+            disjointNeighbourNodes = {
                 isNode1AdjoiningAConstruction = false,
                 isNode2AdjoiningAConstruction = false,
                 node1Id = nil,
                 node2Id = nil,
+            },
+            -- these are populated or nil if the station has been snapped to its neighbours
+            jointNeighbourEdges = {
+                edge1Ids = {},
+                edge2Ids = {},
+                props = {}
+            },
+            -- same
+            jointNeighbourNodes = {
+                isNode1AdjoiningAConstruction = false,
+                isNode2AdjoiningAConstruction = false,
+                outerLoneNodeIds = {},
             },
             stationEndNodeIds = {
                 node1Id = endNodeIds4T.platforms.node1Id,
@@ -1409,16 +1417,28 @@ local _getStationTrackEndEntities4T = function(con, t)
         },
         tracks = {
             -- these are empty or nil if the station has been snapped to its neighbours, or if there are no neighbours.
-            disjointNeighbourEdgeIds = {
+            disjointNeighbourEdges = {
                 edge1Ids = {},
                 edge2Ids = {}
             },
             -- same
-            disjointNeighbourNodeIds = {
+            disjointNeighbourNodes = {
                 isNode1AdjoiningAConstruction = false,
                 isNode2AdjoiningAConstruction = false,
                 node1Id = nil,
                 node2Id = nil,
+            },
+            -- these are populated or nil if the station has been snapped to its neighbours, or if there are no neighbours.
+            jointNeighbourEdges = {
+                edge1Ids = {},
+                edge2Ids = {},
+                props = {}
+            },
+            -- same
+            jointNeighbourNodes = {
+                isNode1AdjoiningAConstruction = false,
+                isNode2AdjoiningAConstruction = false,
+                outerLoneNodeIds = {},
             },
             stationEndNodeIds = {
                 node1Id = endNodeIds4T.tracks.node1Id,
@@ -1431,22 +1451,54 @@ local _getStationTrackEndEntities4T = function(con, t)
         },
     }
 
-    result.platforms.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node1Id, result.platforms.stationEndNodePositions.node1, frozenNodeIds, true)
-    result.platforms.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node2Id, result.platforms.stationEndNodePositions.node2, frozenNodeIds, true)
-    result.tracks.disjointNeighbourNodeIds.node1Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node1Id, result.tracks.stationEndNodePositions.node1, frozenNodeIds, true)
-    result.tracks.disjointNeighbourNodeIds.node2Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node2Id, result.tracks.stationEndNodePositions.node2, frozenNodeIds, true)
+    result.platforms.disjointNeighbourNodes.node1Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node1Id, result.platforms.stationEndNodePositions.node1, frozenNodeIds, true)
+    result.platforms.disjointNeighbourNodes.node2Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node2Id, result.platforms.stationEndNodePositions.node2, frozenNodeIds, true)
+    result.tracks.disjointNeighbourNodes.node1Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node1Id, result.tracks.stationEndNodePositions.node1, frozenNodeIds, true)
+    result.tracks.disjointNeighbourNodes.node2Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node2Id, result.tracks.stationEndNodePositions.node2, frozenNodeIds, true)
 
-    result.platforms.disjointNeighbourEdgeIds.edge1Ids, result.platforms.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction = _getDisjointNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodeIds.node1Id, frozenEdgeIds, true)
-    result.platforms.disjointNeighbourEdgeIds.edge2Ids, result.platforms.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction = _getDisjointNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodeIds.node2Id, frozenEdgeIds, true)
-    result.tracks.disjointNeighbourEdgeIds.edge1Ids, result.tracks.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction = _getDisjointNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodeIds.node1Id, frozenEdgeIds, true)
-    result.tracks.disjointNeighbourEdgeIds.edge2Ids, result.tracks.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction = _getDisjointNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodeIds.node2Id, frozenEdgeIds, true)
+    result.platforms.disjointNeighbourEdges.edge1Ids, result.platforms.disjointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodes.node1Id, frozenEdgeIds, true)
+    result.platforms.disjointNeighbourEdges.edge2Ids, result.platforms.disjointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodes.node2Id, frozenEdgeIds, true)
+    result.tracks.disjointNeighbourEdges.edge1Ids, result.tracks.disjointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodes.node1Id, frozenEdgeIds, true)
+    result.tracks.disjointNeighbourEdges.edge2Ids, result.tracks.disjointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodes.node2Id, frozenEdgeIds, true)
 
-    -- logger.print('_getStationTrackEndEntities4T result =') logger.debugPrint(result)
+    result.platforms.jointNeighbourEdges.edge1Ids, result.platforms.jointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.stationEndNodeIds.node1Id, frozenEdgeIds, true)
+    result.platforms.jointNeighbourEdges.edge2Ids, result.platforms.jointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.stationEndNodeIds.node2Id, frozenEdgeIds, true)
+    result.tracks.jointNeighbourEdges.edge1Ids, result.tracks.jointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.stationEndNodeIds.node1Id, frozenEdgeIds, true)
+    result.tracks.jointNeighbourEdges.edge2Ids, result.tracks.jointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.stationEndNodeIds.node2Id, frozenEdgeIds, true)
+
+    for _, edgeId in pairs(arrayUtils.getConcatValues(result.platforms.jointNeighbourEdges.edge1Ids, result.platforms.jointNeighbourEdges.edge2Ids)) do
+        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+        for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
+            if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
+                arrayUtils.addUnique(result.platforms.jointNeighbourNodes.outerLoneNodeIds, nodeId)
+            end
+        end
+        result.platforms.jointNeighbourEdges.props[edgeId] = {
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}),
+            node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
+            node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
+        }
+    end
+    for _, edgeId in pairs(arrayUtils.getConcatValues(result.tracks.jointNeighbourEdges.edge1Ids, result.tracks.jointNeighbourEdges.edge2Ids)) do
+        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+        for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
+            if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
+                arrayUtils.addUnique(result.tracks.jointNeighbourNodes.outerLoneNodeIds, nodeId)
+            end
+        end
+        result.tracks.jointNeighbourEdges.props[edgeId] = {
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}),
+            node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
+            node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
+        }
+    end
+
+    -- logger.print('__getStationTrackEndEntities4T result =') logger.debugPrint(result)
     return result
 end
 
 helpers.getStationTrackEndEntities = function(stationConstructionId)
-    logger.print('getStationTrackEndEntities started, conId =', stationConstructionId or 'NIL')
+    logger.print('_getStationTrackEndEntities started, conId =', stationConstructionId or 'NIL')
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         logger.err('getStationTrackEndEntities invalid stationConstructionId') logger.errorDebugPrint(stationConstructionId)
         return nil
