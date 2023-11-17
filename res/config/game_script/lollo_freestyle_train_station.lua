@@ -646,7 +646,7 @@ local _actions = {
                             _eventId,
                             successEventName,
                             {
-                                endEntities = args.endEntities,
+                                trackEndEntities = args.trackEndEntities,
                                 streetEndEntities = args.streetEndEntities,
                                 newTerminalNeighbours = args.newTerminalNeighbours,
                                 nTerminal = args.nTerminal,
@@ -683,8 +683,8 @@ local _actions = {
         local allEdges = {}
         arrayUtils.concatKeysValues(allEdges, args.newTerminalNeighbours.platforms.edges)
         arrayUtils.concatKeysValues(allEdges, args.newTerminalNeighbours.tracks.edges)
-        if args.endEntities ~= nil then
-            for t, terminalEndEntities in pairs(args.endEntities) do
+        if args.trackEndEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.trackEndEntities) do
                 arrayUtils.concatKeysValues(allEdges, terminalEndEntities.platforms.jointNeighbourEdges.props)
                 arrayUtils.concatKeysValues(allEdges, terminalEndEntities.tracks.jointNeighbourEdges.props)
             end
@@ -1041,7 +1041,7 @@ local _actions = {
         logger.print('_removeNeighbours starting')
         -- logger.print('successEventName =') logger.debugPrint(successEventName)
         logger.print('args =') logger.debugPrint(args)
-        -- logger.print('args.endEntities =') logger.debugPrint(args.endEntities)
+        -- logger.print('args.trackEndEntities =') logger.debugPrint(args.trackEndEntities)
         -- logger.print('args.streetEndEntities =') logger.debugPrint(args.streetEndEntities)
         -- logger.print('args.newTerminalNeighbours =') logger.debugPrint(args.newTerminalNeighbours)
         local trackEdgeIds = {}
@@ -1057,8 +1057,8 @@ local _actions = {
         end
         arrayUtils.concatValues(allEdgeIds, args.newTerminalNeighbours.platforms.edgeIds)
         arrayUtils.concatValues(allEdgeIds, args.newTerminalNeighbours.tracks.edgeIds)
-        if args.endEntities ~= nil then
-            for t, terminalEndEntities in pairs(args.endEntities) do
+        if args.trackEndEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.trackEndEntities) do
                 for edgeId, _ in pairs(terminalEndEntities.platforms.jointNeighbourEdges.props) do
                     allEdgeIds[#allEdgeIds+1] = edgeId
                 end
@@ -1067,14 +1067,13 @@ local _actions = {
                 end
             end
         end
-        -- LOLLO TODO restore after fixing it
-        -- if args.streetEndEntities ~= nil then
-        --     for _a, endEntity in pairs(args.streetEndEntities) do
-        --         for edgeId, _b in pairs(endEntity.jointNeighbourEdges.props) do
-        --             allEdgeIds[#allEdgeIds+1] = edgeId
-        --         end
-        --     end
-        -- end
+        if args.streetEndEntities ~= nil then
+            for _a, endEntity in pairs(args.streetEndEntities) do
+                for edgeId, _b in pairs(endEntity.jointNeighbourEdges.props) do
+                    allEdgeIds[#allEdgeIds+1] = edgeId
+                end
+            end
+        end
         logger.print('allEdgeIds =') logger.debugPrint(allEdgeIds)
 
         local proposal = api.type.SimpleProposal.new()
@@ -1101,18 +1100,17 @@ local _actions = {
         arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.innerSharedNodeIds)
         arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.outerLoneNodeIds)
         arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.outerLoneNodeIds)
-        if args.endEntities ~= nil then
-            for t, terminalEndEntities in pairs(args.endEntities) do
+        if args.trackEndEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.trackEndEntities) do
                 arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds)
                 arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.platforms.jointNeighbourNodes.outerLoneNodeIds)
             end
         end
-        -- LOLLO TODO restore after fixing it
-        -- if args.streetEndEntities ~= nil then
-        --     for _, endEntity in pairs(args.streetEndEntities) do
-        --         arrayUtils.concatValues(sharedNodeIds, endEntity.jointNeighbourNodes.outerLoneNodeIds)
-        --     end
-        -- end
+        if args.streetEndEntities ~= nil then
+            for _, endEntity in pairs(args.streetEndEntities) do
+                arrayUtils.concatValues(sharedNodeIds, endEntity.jointNeighbourNode.outerLoneNodeIds)
+            end
+        end
         -- LOLLO TODO if the neighbour is a construction, bulldoze it and rebuild it later
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
@@ -2105,11 +2103,11 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     _getStationStreetEndEntities results =
         {
             {
-                disjointNeighbourEdges = { 29462, },
-                disjointNeighbourNodeId = 28429,
+                disjointNeighbourEdges.edgeIds = { 29462, },
+                disjointNeighbourNode.nodeId = 28429,
                 edgeId = 20883,
-                isNodeAdjoiningAConstruction = false,
-                neighbourConIds = { },
+                disjointNeighbourNode.isNodeAdjoiningAConstruction = false,
+                disjointNeighbourNode.conIds = { },
                 nodeId = 29504,
                 nodePosition = {
                 x = 71.972915649414,
@@ -2118,11 +2116,11 @@ _actions.buildSnappyStreetEdges = function(stationConId)
                 },
             },
             {
-                disjointNeighbourEdges = { 29462, },
-                disjointNeighbourNodeId = 28919,
+                disjointNeighbourEdges.edgeIds = { 29462, },
+                disjointNeighbourNode.nodeId = 28919,
                 edgeId = 23547,
-                isNodeAdjoiningAConstruction = false,
-                neighbourConIds = { },
+                disjointNeighbourNode.isNodeAdjoiningAConstruction = false,
+                disjointNeighbourNode.conIds = { },
                 nodeId = 29619,
                 nodePosition = {
                 x = 46.655982971191,
@@ -2138,7 +2136,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
 
     local endEntities_GroupedBy_disjointNeighbourEdgeId = {}
     for _, endEntity in pairs(allEndEntities) do
-        for _, edgeId in pairs(endEntity.disjointNeighbourEdges) do
+        for _, edgeId in pairs(endEntity.disjointNeighbourEdges.edgeIds) do
             if edgeUtils.isValidAndExistingId(edgeId) then
                 if not(endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId]) then endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId] = {} end
 
@@ -2155,7 +2153,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     end
 
     for _, endEntity in pairs(allEndEntities) do
-        for _, conId in pairs(endEntity.neighbourConIds) do
+        for _, conId in pairs(endEntity.disjointNeighbourNode.conIds) do
             if edgeUtils.isValidAndExistingId(conId) then
                 neighbourConIds_indexed[conId] = true
             else
@@ -2168,7 +2166,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         logger.print('endEntities =') logger.debugPrint(endEntities)
         logger.print('valid disjointNeighbourEdgeId in buildSnappyStreetEdges, going ahead')
         -- for _, endEntity in pairs(endEntities) do
-            -- for _, neighbourConId in pairs(endEntity.neighbourConIds) do
+            -- for _, neighbourConId in pairs(endEntity.disjointNeighbourNode.conIds) do
             --     neighbourConIds_indexed[neighbourConId] = true
             -- end
         -- end
@@ -2178,9 +2176,9 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         local baseEdge = api.engine.getComponent(disjointNeighbourEdgeId, api.type.ComponentType.BASE_EDGE)
         local isNode0ReplacingDisjoint = false
         for _, endEntity in pairs(endEntities) do
-            if baseEdge.node0 == endEntity.disjointNeighbourNodeId then
+            if baseEdge.node0 == endEntity.disjointNeighbourNode.nodeId then
                 newSegment.comp.node0 = endEntity.nodeId
-                _addNodeToRemove(endEntity.disjointNeighbourNodeId)
+                _addNodeToRemove(endEntity.disjointNeighbourNode.nodeId)
                 logger.print('twenty-one')
                 isNode0ReplacingDisjoint = true
                 break
@@ -2193,9 +2191,9 @@ _actions.buildSnappyStreetEdges = function(stationConId)
 
         local isNode1ReplacingDisjoint = false
         for _, endEntity in pairs(endEntities) do
-            if baseEdge.node1 == endEntity.disjointNeighbourNodeId then
+            if baseEdge.node1 == endEntity.disjointNeighbourNode.nodeId then
                 newSegment.comp.node1 = endEntity.nodeId
-                _addNodeToRemove(endEntity.disjointNeighbourNodeId)
+                _addNodeToRemove(endEntity.disjointNeighbourNode.nodeId)
                 logger.print('twenty-four')
                 isNode1ReplacingDisjoint = true
                 break
@@ -2956,9 +2954,8 @@ function data()
                             if con ~= nil then
                                 logger.print('joining an existing station, conId = eventArgs.join2StationConId')
                                 eventArgs.nTerminal = #con.params.terminals + 1
-                                eventArgs.endEntities = stationHelpers.getStationTrackEndEntities(eventArgs.join2StationConId)
-                                -- LOLLO TODO restore after fixing - it causes an unhandled crash later on
-                                -- eventArgs.streetEndEntities = stationHelpers.getStationStreetEndEntities(eventArgs.join2StationConId)
+                                eventArgs.trackEndEntities = stationHelpers.getStationTrackEndEntities(eventArgs.join2StationConId)
+                                eventArgs.streetEndEntities = stationHelpers.getStationStreetEndEntities(eventArgs.join2StationConId)
                             end
                         end
                         logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)

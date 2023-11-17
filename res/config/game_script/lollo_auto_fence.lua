@@ -363,8 +363,8 @@ local _guiActions = {
         end
 
         -- convert userdata to table
-        local edge2Node0Pos = api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position
-        local edge2Node1Pos = api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position
+        local edge2Node0Pos = edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position)
+        local edge2Node1Pos = edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position)
 
         -- useless
         -- local edgeObject1Side, edgeObject2Side
@@ -388,8 +388,8 @@ local _guiActions = {
         local eventArgs = {
             edge1Id = edge1Id,
             edge2Id = edge2Id,
-            edge2Node0Pos = {edge2Node0Pos.x, edge2Node0Pos.y, edge2Node0Pos.z},
-            edge2Node1Pos = {edge2Node1Pos.x, edge2Node1Pos.y, edge2Node1Pos.z},
+            edge2Node0Pos = edge2Node0Pos,
+            edge2Node1Pos = edge2Node1Pos,
             fenceWaypoint1Id = fenceWaypointIds[1],
             fenceWaypoint2Id = fenceWaypointIds[2],
             fenceWaypointMidTransf = fenceWaypointMidTransf,

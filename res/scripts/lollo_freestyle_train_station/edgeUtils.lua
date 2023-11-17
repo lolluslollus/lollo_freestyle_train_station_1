@@ -42,6 +42,10 @@ end
 --     any2, any1 = any1, any2
 -- end
 
+helper.getPositionTableFromUserdata = function(pos)
+    return {x = pos.x, y = pos.y, z = pos.z}
+end
+
 helper.getNearbyObjectIds = function(transf, searchRadius, componentType, minZ, maxZ)
     if type(transf) ~= 'table' then return {} end
 
@@ -219,8 +223,8 @@ local _getEdgeLength_Street = function(edgeId, baseEdge, tn, isExtendedLog)
     local tan1 = baseEdge.tangent1
     local resultWithBaseEdge = (transfUtils.getVectorLength_FAST(tan0) + transfUtils.getVectorLength_FAST(tan1)) * 0.5 -- they should be equal but they are not, so we average them
 
-    local pos0 = api.engine.getComponent(node0Id, api.type.ComponentType.BASE_NODE).position
-    local pos1 = api.engine.getComponent(node1Id, api.type.ComponentType.BASE_NODE).position
+    local pos0 = helper.getPositionTableFromUserdata(api.engine.getComponent(node0Id, api.type.ComponentType.BASE_NODE).position)
+    local pos1 = helper.getPositionTableFromUserdata(api.engine.getComponent(node1Id, api.type.ComponentType.BASE_NODE).position)
     -- group data by splits, sorted in the direction node0Id -> node1Id
     local dataBySplit = {}
     for i = 1, #tn.edges, 1 do
@@ -337,8 +341,8 @@ local _getEdgeLength_Track = function(edgeId, baseEdge, tn, isExtendedLog)
     local tan1 = baseEdge.tangent1
     local resultWithBaseEdge = (transfUtils.getVectorLength_FAST(tan0) + transfUtils.getVectorLength_FAST(tan1)) * 0.5 -- they should be equal but they are not, so we average them
 
-    local pos0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE).position
-    local pos1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE).position
+    local pos0 = helper.getPositionTableFromUserdata(api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE).position)
+    local pos1 = helper.getPositionTableFromUserdata(api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE).position)
     local geometry0 = tn.edges[1].geometry
     local geometry1 = tn.edges[#tn.edges].geometry
 
