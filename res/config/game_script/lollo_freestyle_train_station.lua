@@ -736,7 +736,7 @@ local _actions = {
             end
         end
         logger.print('allTrackEdges =') logger.debugPrint(allTrackEdges)
--- LOLLO TODO add args.streetEndEntities: check it
+
         local allStreetEdges = {}
         if args.streetEndEntities ~= nil then
             for e, endEntity in pairs(args.streetEndEntities) do
