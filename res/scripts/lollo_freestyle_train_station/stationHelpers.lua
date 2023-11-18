@@ -1270,7 +1270,15 @@ local _getStationStreetEndEntities = function(stationCon, t)
             endEntity.jointNeighbourEdges.props[edgeId] = {
                 edgeProps = helpers.getEdgeIdsProperties({edgeId}, false),
                 node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
-                node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
+                node1Props = helpers.getNodeIdsProperties({baseEdge.node1}),
+                isNode0ToBeAdded = arrayUtils.arrayHasValue(
+                    endEntity.jointNeighbourNode.outerLoneNodeIds,
+                    baseEdge.node0
+                ),
+                isNode1ToBeAdded = arrayUtils.arrayHasValue(
+                    endEntity.jointNeighbourNode.outerLoneNodeIds,
+                    baseEdge.node1
+                ),
             }
         end
         -- this is to rebuild neighbouring constructions

@@ -726,18 +726,26 @@ local _actions = {
 
         local proposal = api.type.SimpleProposal.new()
         local nNewEntities = -1
-        local allEdges = {}
-        arrayUtils.concatKeysValues(allEdges, args.newTerminalNeighbours.platforms.edges)
-        arrayUtils.concatKeysValues(allEdges, args.newTerminalNeighbours.tracks.edges)
+        local allTrackEdges = {}
+        arrayUtils.concatKeysValues(allTrackEdges, args.newTerminalNeighbours.platforms.edges)
+        arrayUtils.concatKeysValues(allTrackEdges, args.newTerminalNeighbours.tracks.edges)
         if args.trackEndEntities ~= nil then
             for t, terminalEndEntities in pairs(args.trackEndEntities) do
-                arrayUtils.concatKeysValues(allEdges, terminalEndEntities.platforms.jointNeighbourEdges.props)
-                arrayUtils.concatKeysValues(allEdges, terminalEndEntities.tracks.jointNeighbourEdges.props)
+                arrayUtils.concatKeysValues(allTrackEdges, terminalEndEntities.platforms.jointNeighbourEdges.props)
+                arrayUtils.concatKeysValues(allTrackEdges, terminalEndEntities.tracks.jointNeighbourEdges.props)
             end
         end
-        logger.print('allEdges =') logger.debugPrint(allEdges)
--- LOLLO TODO add args.streetEndEntities
-        for _, edgeData in pairs(allEdges) do
+        logger.print('allTrackEdges =') logger.debugPrint(allTrackEdges)
+-- LOLLO TODO add args.streetEndEntities: check it
+        local allStreetEdges = {}
+        if args.streetEndEntities ~= nil then
+            for e, endEntity in pairs(args.streetEndEntities) do
+                arrayUtils.concatKeysValues(allStreetEdges, endEntity.jointNeighbourEdges.props)
+            end
+        end
+        logger.print('allStreetEdges =') logger.debugPrint(allStreetEdges)
+
+        for _, edgeData in pairs(allTrackEdges) do
             local node0Id, node1Id = nil, nil
             if edgeData.isNode0ToBeAdded then
                 local newNode = api.type.NodeAndEntity.new()
@@ -786,6 +794,59 @@ local _actions = {
             newSegment.type = _constants.railEdgeType
             newSegment.trackEdge.trackType = edgeData.edgeProps[1].trackType
             newSegment.trackEdge.catenary = edgeData.edgeProps[1].catenary
+            nNewEntities = nNewEntities - 1
+            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+        end
+        for _, edgeData in pairs(allStreetEdges) do
+            local node0Id, node1Id = nil, nil
+            if edgeData.isNode0ToBeAdded then
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities
+                newNode.comp.position.x = edgeData.node0Props[1].position.x
+                newNode.comp.position.y = edgeData.node0Props[1].position.y
+                newNode.comp.position.z = edgeData.node0Props[1].position.z
+                node0Id = nNewEntities
+                nNewEntities = nNewEntities - 1
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+            else
+                node0Id = _getNearbyNodeId(edgeData.node0Props[1].position)
+                if node0Id == nil then
+                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node0Props[1].position)
+                end
+            end
+            if edgeData.isNode1ToBeAdded then
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities
+                newNode.comp.position.x = edgeData.node1Props[1].position.x
+                newNode.comp.position.y = edgeData.node1Props[1].position.y
+                newNode.comp.position.z = edgeData.node1Props[1].position.z
+                node1Id = nNewEntities
+                nNewEntities = nNewEntities - 1
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+            else
+                node1Id = _getNearbyNodeId(edgeData.node1Props[1].position)
+                if node1Id == nil then
+                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node1Props[1].position)
+                end
+            end
+
+            local newSegment = api.type.SegmentAndEntity.new()
+            newSegment.entity = nNewEntities
+            newSegment.comp.node0 = node0Id
+            newSegment.comp.node1 = node1Id
+            newSegment.comp.tangent0.x = edgeData.edgeProps[1].posTanX2[1][2][1]
+            newSegment.comp.tangent0.y = edgeData.edgeProps[1].posTanX2[1][2][2]
+            newSegment.comp.tangent0.z = edgeData.edgeProps[1].posTanX2[1][2][3]
+            newSegment.comp.tangent1.x = edgeData.edgeProps[1].posTanX2[2][2][1]
+            newSegment.comp.tangent1.y = edgeData.edgeProps[1].posTanX2[2][2][2]
+            newSegment.comp.tangent1.z = edgeData.edgeProps[1].posTanX2[2][2][3]
+            newSegment.comp.type = edgeData.edgeProps[1].type
+            newSegment.comp.typeIndex = edgeData.edgeProps[1].typeIndex
+            -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+            newSegment.type = _constants.streetEdgeType
+            newSegment.streetEdge.streetType = edgeData.edgeProps[1].streetType
+            newSegment.streetEdge.tramTrackType = edgeData.edgeProps[1].tramTrackType
+            newSegment.streetEdge.hasBus = edgeData.edgeProps[1].hasBus
             nNewEntities = nNewEntities - 1
             proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
         end
