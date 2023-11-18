@@ -1111,7 +1111,8 @@ local _actions = {
                 arrayUtils.concatValues(sharedNodeIds, endEntity.jointNeighbourNode.outerLoneNodeIds)
             end
         end
-        -- LOLLO TODO if the neighbour is a construction, bulldoze it and rebuild it later
+        -- LOLLO TODO see what happens with edgeObjects, both on streets and on tracks
+        -- LOLLO TODO if the neighbour is a construction, bulldoze it and rebuild it later. Be careful not to remove the same con twice.
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
