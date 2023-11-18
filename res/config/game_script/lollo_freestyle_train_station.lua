@@ -851,6 +851,143 @@ local _actions = {
             proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
         end
         -- LOLLO TODO rebuild edge objects
+        -- local eo = api.type.SimpleStreetProposal.EdgeObject.new()
+        -- eo.left = true
+        -- eo.model = "street/signal_waypoint.mdl"
+        -- eo.name = "MY Beautiful Signal"
+        -- eo.oneWay = false
+        -- eo.param = 0.5
+        -- eo.playerEntity = api.engine.util.getPlayer()
+        -- eo.edgeEntity = -1
+        -- proposal.streetProposal.edgeObjectsToAdd[#proposal.streetProposal.edgeObjectsToAdd+1] = eo
+        --[[
+            --- this sample data is for a streetside lorry station ---
+            api.engine.getComponent(30738, api.type.ComponentType.BASE_EDGE)
+            {
+                node0 = 30710,
+                node1 = 30740,
+                tangent0 = {
+                    x = -72.014991760254,
+                    y = 2.8233120441437,
+                    z = -1.7176966667175,
+                },
+                tangent1 = {
+                    x = -72.014991760254,
+                    y = 2.8233120441437,
+                    z = -1.7176966667175,
+                },
+                type = 0,
+                typeIndex = -1,
+                objects = {
+                    { 30731, 1, }, -- 0 or 1 for left or right, or viceversa. It does not say if it is a waypoint. 2 is for tracks.
+                    -- in my test, the white arrow (which opposes the yellow arrow) goes from baseEdge.node1 to baseEdge.node0 if the second value is 0
+                },
+            }
+            local eoId = 30731
+            api.engine.getComponent(eoId, api.type.ComponentType.MODEL_INSTANCE_LIST)
+            {
+                thinInstances = {
+                },
+                fatInstances = {
+                    [1] = {
+                    modelId = 2523,
+                    transf0 = nil,
+                    transf = { -- the only information about param (how far from either end of the edge) is here
+                        cols = <function>,
+                    },
+                    transformator = -1, -- and maybe here
+                    },
+                },
+                dynamic = false,
+            }
+            local ugTransf = api.engine.getComponent(eoId, api.type.ComponentType.MODEL_INSTANCE_LIST).fatInstances[1].transf
+            local myTransf = transfUtilsUG.new(ugTransf:cols(0), ugTransf:cols(1), ugTransf:cols(2), ugTransf:cols(3))
+            -- from transf I can figure out the position, then I check its distance from baseEdge.node0 and baseEdge.node1
+            -- and I coursely estimate param, which must be between 0.0 and 1.0 .
+
+            api.res.modelRep.getName(2523)
+            "station/road/small_cargo.mdl"
+
+            api.engine.getComponent(eoId, api.type.ComponentType.NAME)
+            {
+                name = "South Street",
+            }
+
+            api.engine.getComponent(eoId, api.type.ComponentType.STATION) -- useless
+            {
+                cargo = true,
+                terminals = {
+                    [1] = {
+                    tag = nil,
+                    personNodes = {
+                        [1] = {
+                        new = nil,
+                        entity = 30699,
+                        index = 0,
+                        },
+                    },
+                    personEdges = {
+                    },
+                    vehicleNodeId = {
+                        new = nil,
+                        entity = 30699,
+                        index = 1,
+                    },
+                    },
+                },
+                tag = nil,
+                pool = {
+                    edges = {
+                    },
+                    moreCapacity = 0,
+                },
+            }
+
+            api.engine.getComponent(eoId, api.type.ComponentType.SIGNAL_LIST)
+            nil
+        ]]
+        --[[
+            --- this sample data is for a signal on a piece of track
+            api.engine.getComponent(30738, api.type.ComponentType.BASE_EDGE)
+            {
+                node0 = 30716,
+                node1 = 30738,
+                tangent0 = {
+                    x = -38.321929931641,
+                    y = 1.0498884916306,
+                    z = -0.61189258098602,
+                },
+                tangent1 = {
+                    x = -38.321929931641,
+                    y = 1.0498884916306,
+                    z = -0.61189252138138,
+                },
+                type = 0,
+                typeIndex = -1,
+                objects = {
+                    { 30753, 2, }, -- 2 does not say if it is left or right, one-way or two-way, waypoint or traffic light; it only says it is a track
+                    { 30748, 2, }, -- 2 does not say if it is left or right, one-way or two-way, waypoint or traffic light; it only says it is a track
+                },
+            }
+
+            api.engine.getComponent(eoId, api.type.ComponentType.SIGNAL_LIST)
+            {
+                signals = {
+                    [1] = {
+                        edgePr = {
+                            new = nil,
+                            entity = 30749, -- this is edgeId
+                            index = 0, -- this tells if it is left or right (0 or 1 or viceversa) 
+                            -- in my test, 1 is left to right and 0 viceversa
+                            -- with 0, the yellow arrow points from baseEdge.node0 to baseEdge.node1; the white arrow viceversa
+                        },
+                        type = 2, -- 2 is waypoint, 1 is two-way signal, 0 is one-way signal
+                        state = 0,
+                        stateTime = -1,
+                    },
+                },
+            }
+        ]]
 
         -- rebuild neighbouring constructions
         if args.streetEndEntities ~= nil then
@@ -1279,9 +1416,6 @@ local _actions = {
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
-        -- logger.print('proposal.streetProposal.nodesToRemove =') logger.debugPrint(proposal.streetProposal.nodesToRemove)
-
-        -- LOLLO TODO see what happens with edgeObjects, both on streets and on tracks. You probably need to add their data in stationHelpers.getEdgeIdsProperties()
 
         -- if the neighbour is a construction, bulldoze it and rebuild it later
         local neighbourConIds = {}
