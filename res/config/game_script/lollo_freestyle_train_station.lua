@@ -853,8 +853,8 @@ local _actions = {
         -- LOLLO TODO rebuild edge objects
 
         -- rebuild neighbouring constructions
-        local neighbourConIds = {}
         if args.streetEndEntities ~= nil then
+            local neighbourConIds = {}
             for _, endEntity in pairs(args.streetEndEntities) do
                 for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
                     if not(arrayUtils.arrayHasValue(neighbourConIds, conId)) then
@@ -894,25 +894,31 @@ local _actions = {
                 logger.print('LOLLO _rebuildNeighbours success = ', success)
                 -- logger.print('LOLLO result = ') logger.debugPrint(result)
                 if success then
-                    local _upgradeNeighbourCons = function()
-                        -- rebuild the adjoining constructions.
-                        -- If they have snappy edges, they will resnap.
-                        -- LOLLO TODO they don't resnap, make them.
-                        local isAnyUpgradeFailed = false
-                        for _, neighbourConId in pairs(neighbourConIds) do
-                            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
+                    if result.resultEntities ~= nil then
+                        local newConIds = {}
+                        for _, conId in pairs(result.resultEntities) do
+                            newConIds[#newConIds+1] = conId
                         end
-                        logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
-                        if not(isAnyUpgradeFailed) then return end
+                        logger.print('newConIds =') logger.debugPrint(newConIds)
+                        local _upgradeNeighbourCons = function()
+                            -- Upgrade the adjoining constructions.
+                            -- If they have snappy edges, they will resnap.
+                            local isAnyUpgradeFailed = false
+                            for _, newConId in pairs(newConIds) do
+                                isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId))
+                            end
+                            logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
+                            if not(isAnyUpgradeFailed) then return end
 
-                        state.warningText = _('UnsnappedRoads')
+                            state.warningText = _('UnsnappedRoads')
+                        end
+
+                        -- if #proposal.streetProposal.edgesToAdd > 0 then
+                        --     logger.print('no street edges added')
+                            _upgradeNeighbourCons()
+                            -- return
+                        -- end
                     end
-
-                    -- if #proposal.streetProposal.edgesToAdd > 0 then
-                    --     logger.print('no street edges added')
-                        _upgradeNeighbourCons()
-                        -- return
-                    -- end
                     -- once you rebuild the street neighbours, do not call "rebuild snappy" anymore.
                     -- if successEventName ~= nil then
                     --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
