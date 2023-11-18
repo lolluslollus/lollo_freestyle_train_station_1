@@ -1224,18 +1224,17 @@ local _getStationStreetEndNodes = function(con, frozenEdges, frozenNodes)
     return freeNodes
 end
 
-local _getStationStreetEndEntities = function(con, t)
-    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- logger.print('con =') logger.debugPrint(conData)
-    if not(con) or con.fileName ~= _constants.stationConFileName then
-        logger.err('_getStationStreetEndEntities con.fileName =')
-        logger.errorDebugPrint(con.fileName)
+local _getStationStreetEndEntities = function(stationCon, t)
+    -- stationCon contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
+    if not(stationCon) or stationCon.fileName ~= _constants.stationConFileName then
+        logger.err('_getStationStreetEndEntities stationCon.fileName =')
+        logger.errorDebugPrint(stationCon.fileName)
         return nil
     end
 
-    local frozenEdgeIds = arrayUtils.cloneDeepOmittingFields(con.frozenEdges, {}, true)
-    local frozenNodeIds = arrayUtils.cloneDeepOmittingFields(con.frozenNodes, {}, true)
-    local results = _getStationStreetEndNodes(con, frozenEdgeIds, frozenNodeIds)
+    local frozenEdgeIds = arrayUtils.cloneDeepOmittingFields(stationCon.frozenEdges, {}, true)
+    local frozenNodeIds = arrayUtils.cloneDeepOmittingFields(stationCon.frozenNodes, {}, true)
+    local results = _getStationStreetEndNodes(stationCon, frozenEdgeIds, frozenNodeIds)
 
     for _, endEntity in pairs(results) do
         endEntity.disjointNeighbourNode = {
@@ -1249,6 +1248,7 @@ local _getStationStreetEndEntities = function(con, t)
         endEntity.disjointNeighbourEdges.edgeIds, endEntity.disjointNeighbourNode.isNodeAdjoiningAConstruction, endEntity.disjointNeighbourNode.conIds = _getNeighbourEdgeIdsAndConIds(endEntity.disjointNeighbourNode.nodeId, frozenEdgeIds, false)
         endEntity.jointNeighbourNode = {
             conIds = {},
+            conProps = {},
             isNodeAdjoiningAConstruction = false,
             outerLoneNodeIds = {}
         }
@@ -1271,6 +1271,22 @@ local _getStationStreetEndEntities = function(con, t)
                 edgeProps = helpers.getEdgeIdsProperties({edgeId}, false),
                 node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
                 node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
+            }
+        end
+        -- this is to rebuild neighbouring constructions
+        for d, conId in pairs(endEntity.jointNeighbourNode.conIds) do
+            local neighbourCon = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+            endEntity.jointNeighbourNode.conProps[conId] = {
+                conId = conId,
+                fileName = neighbourCon.fileName,
+                params = arrayUtils.cloneDeepOmittingFields(neighbourCon.params, nil, true),
+                -- playerEntity = api.engine.util.getPlayer(),  
+                transf = transfUtilsUG.new(
+                    neighbourCon.transf:cols(0),
+                    neighbourCon.transf:cols(1),
+                    neighbourCon.transf:cols(2),
+                    neighbourCon.transf:cols(3)
+                )
             }
         end
     end

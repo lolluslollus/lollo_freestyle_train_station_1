@@ -310,6 +310,52 @@ local _utils = {
     
         return true, nNewEntities_
     end,
+    tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId)
+        logger.print('_tryUpgradeStationOrStairsOrLiftConstruction starting, oldConId =', oldConId)
+        if not(edgeUtils.isValidAndExistingId(oldConId)) then return false end
+
+        local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
+        logger.print('oldCon.fileName =') logger.debugPrint(oldCon and oldCon.fileName or 'NIL')
+        if not(oldCon)
+        or not(arrayUtils.arrayHasValue(
+            {
+                _constants.stationConFileName,
+                -- 'station/rail/lollo_freestyle_train_station/openLiftFree.con',
+                'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con',
+                'station/rail/lollo_freestyle_train_station/openStairsFree.con',
+                -- 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con',
+                'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con',
+            },
+            oldCon.fileName
+        ))
+        or not(oldCon.params)
+        then return false end
+
+        local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
+        return xpcall(
+            function()
+                -- UG TODO there is no such thing in the new api,
+                -- nor an upgrade event, both would be useful
+                collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                logger.print('_tryUpgradeStationOrStairsOrLiftConstruction - collect garbage done')
+                logger.print('oldConId =') logger.debugPrint(oldConId)
+                logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
+                local upgradedConId = game.interface.upgradeConstruction(
+                    oldConId,
+                    oldCon.fileName,
+                    paramsBak_NoSeed
+                )
+                logger.print('_tryUpgradeStationOrStairsOrLiftConstruction succeeded, upgradedConId =') logger.debugPrint(upgradedConId)
+                -- return true
+            end,
+            function(error)
+                logger.warn('_tryUpgradeStationOrStairsOrLiftConstruction failed')
+                state.warningText = _('NeedAdjust4Snap')
+                logger.warn(error)
+                -- return false
+            end
+        )
+    end,
 }
 
 local _actions = {
@@ -743,6 +789,35 @@ local _actions = {
             nNewEntities = nNewEntities - 1
             proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
         end
+        -- LOLLO TODO rebuild edge objects
+
+        -- rebuild neighbouring constructions
+        local neighbourConIds = {}
+        if args.streetEndEntities ~= nil then
+            for _, endEntity in pairs(args.streetEndEntities) do
+                for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
+                    if not(arrayUtils.arrayHasValue(neighbourConIds, conId)) then
+                        neighbourConIds[#neighbourConIds+1] = conId
+
+                        local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
+                        newParams.seed = conProps.params.seed + 1
+                        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+                        newCon.fileName = conProps.fileName
+                        newCon.params = newParams
+                        newCon.playerEntity = api.engine.util.getPlayer()
+                        -- newCon.transf = oldCon.transf
+                        newCon.transf = api.type.Mat4f.new(
+                            api.type.Vec4f.new(conProps.transf[1], conProps.transf[2], conProps.transf[3], conProps.transf[4]),
+                            api.type.Vec4f.new(conProps.transf[5], conProps.transf[6], conProps.transf[7], conProps.transf[8]),
+                            api.type.Vec4f.new(conProps.transf[9], conProps.transf[10], conProps.transf[11], conProps.transf[12]),
+                            api.type.Vec4f.new(conProps.transf[13], conProps.transf[14], conProps.transf[15], conProps.transf[16])
+                        )
+
+                        proposal.constructionsToAdd[#proposal.constructionsToAdd+1] = newCon
+                    end
+                end
+            end
+        end
 
         logger.print('_rebuildNeighbours made proposal =') logger.debugPrint(proposal)
         local context = api.type.Context:new()
@@ -757,13 +832,35 @@ local _actions = {
             function(result, success)
                 logger.print('LOLLO _rebuildNeighbours success = ', success)
                 -- logger.print('LOLLO result = ') logger.debugPrint(result)
-                if success and successEventName ~= nil then
-                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                        string.sub(debug.getinfo(1, 'S').source, 1),
-                        _eventId,
-                        successEventName,
-                        args
-                    ))
+                if success then
+                    local _upgradeNeighbourCons = function()
+                        -- rebuild the adjoining constructions.
+                        -- If they have snappy edges, they will resnap.
+                        -- LOLLO TODO they don't resnap, make them.
+                        local isAnyUpgradeFailed = false
+                        for _, neighbourConId in pairs(neighbourConIds) do
+                            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
+                        end
+                        logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
+                        if not(isAnyUpgradeFailed) then return end
+
+                        state.warningText = _('UnsnappedRoads')
+                    end
+
+                    -- if #proposal.streetProposal.edgesToAdd > 0 then
+                    --     logger.print('no street edges added')
+                        _upgradeNeighbourCons()
+                        -- return
+                    -- end
+                    -- once you rebuild the street neighbours, do not call "rebuild snappy" anymore.
+                    -- if successEventName ~= nil then
+                    --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                    --         string.sub(debug.getinfo(1, 'S').source, 1),
+                    --         _eventId,
+                    --         successEventName,
+                    --         args
+                    --     ))
+                    -- end
                 end
                 _utils.sendHideProgress()
             end
@@ -1111,12 +1208,27 @@ local _actions = {
                 arrayUtils.concatValues(sharedNodeIds, endEntity.jointNeighbourNode.outerLoneNodeIds)
             end
         end
-        -- LOLLO TODO see what happens with edgeObjects, both on streets and on tracks
-        -- LOLLO TODO if the neighbour is a construction, bulldoze it and rebuild it later. Be careful not to remove the same con twice.
+
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
         -- logger.print('proposal.streetProposal.nodesToRemove =') logger.debugPrint(proposal.streetProposal.nodesToRemove)
+
+        -- LOLLO TODO see what happens with edgeObjects, both on streets and on tracks. You probably need to add their data in stationHelpers.getEdgeIdsProperties()
+
+        -- if the neighbour is a construction, bulldoze it and rebuild it later
+        local neighbourConIds = {}
+        if args.streetEndEntities ~= nil then
+            for a, endEntity in pairs(args.streetEndEntities) do
+                for b, conId in pairs(endEntity.jointNeighbourNode.conIds) do
+                    arrayUtils.addUnique(neighbourConIds, conId)
+                end
+            end
+        end
+        if #neighbourConIds > 0 then
+            proposal.constructionsToRemove = neighbourConIds
+        end
+
         logger.print('build 35716 _removeNeighbours proposal =') logger.debugPrint(proposal)
 
         local context = api.type.Context:new()
@@ -1514,53 +1626,6 @@ local _actions = {
         )
     end,
 
-    tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId)
-        logger.print('tryUpgradeStationOrStairsOrLiftConstruction starting, oldConId =', oldConId)
-        if not(edgeUtils.isValidAndExistingId(oldConId)) then return false end
-
-        local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
-        logger.print('oldCon.fileName =') logger.debugPrint(oldCon and oldCon.fileName or 'NIL')
-        if not(oldCon)
-        or not(arrayUtils.arrayHasValue(
-            {
-                _constants.stationConFileName,
-                -- 'station/rail/lollo_freestyle_train_station/openLiftFree.con',
-                'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con',
-                'station/rail/lollo_freestyle_train_station/openStairsFree.con',
-                -- 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con',
-                'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con',
-            },
-            oldCon.fileName
-        ))
-        or not(oldCon.params)
-        then return false end
-
-        local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
-        return xpcall(
-            function()
-                -- UG TODO there is no such thing in the new api,
-                -- nor an upgrade event, both would be useful
-                collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
-                logger.print('collectgarbage done')
-                logger.print('oldConId =') logger.debugPrint(oldConId)
-                logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
-                local upgradedConId = game.interface.upgradeConstruction(
-                    oldConId,
-                    oldCon.fileName,
-                    paramsBak_NoSeed
-                )
-                logger.print('tryUpgradeStationOrStairsOrLiftConstruction succeeded, upgradedConId =') logger.debugPrint(upgradedConId)
-                -- return true
-            end,
-            function(error)
-                logger.warn('tryUpgradeStationOrStairsOrLiftConstruction failed')
-                state.warningText = _('NeedAdjust4Snap')
-                logger.warn(error)
-                -- return false
-            end
-        )
-    end,
-
     upgradeStationConstructionUNUSED = function(oldConId)
         logger.print('upgradeStationConstruction starting, oldConId =', oldConId)
         if not(edgeUtils.isValidAndExistingId(oldConId)) then return end
@@ -1578,7 +1643,7 @@ local _actions = {
                 -- UG TODO there is no such thing in the new api,
                 -- nor an upgrade event, both would be useful
                 collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
-                logger.print('collectgarbage done')
+                logger.print('upgradeStationConstruction - collect garbage done')
                 logger.print('oldConId =') logger.debugPrint(oldConId)
                 logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
                 local upgradedConId = game.interface.upgradeConstruction(
@@ -2243,7 +2308,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         -- If they have snappy edges, they will resnap.
         local isAnyUpgradeFailed = false
         for neighbourConId, _ in pairs(neighbourConIds_indexed) do
-            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_actions.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
+            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
         end
         logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
         if not(isAnyUpgradeFailed) then return end
@@ -2977,7 +3042,8 @@ function data()
                         )
                     elseif name == _eventNames.REBUILD_NEIGHBOURS_REQUESTED then
                         _actions.rebuildNeighbours(
-                            _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED,
+                            -- _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED,
+                            nil,
                             args
                         )
                     elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
