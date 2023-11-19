@@ -364,10 +364,10 @@ local _actions = {
     -- which has the same format as the result of api.cmd.make.buildProposal
     addSubway = function(successEventName, args)
         logger.print('_addSubway starting, args =') logger.debugPrint(args)
-        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.warn('invalid stationConstructionId') logger.warningDebugPrint(args.stationConstructionId) return end
+        if not(edgeUtils.isValidAndExistingId(args.join2StationConId)) then logger.warn('invalid join2StationConId') logger.warningDebugPrint(args.join2StationConId) return end
         if not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then logger.warn('invalid subwayConstructionId') logger.warningDebugPrint(args.subwayConstructionId) return end
 
-        local oldCon = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+        local oldCon = api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
         if oldCon == nil then return end
 
         local subwayCon = api.engine.getComponent(args.subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
@@ -433,9 +433,9 @@ local _actions = {
 
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
-        proposal.constructionsToRemove = { args.stationConstructionId, args.subwayConstructionId }
+        proposal.constructionsToRemove = { args.join2StationConId, args.subwayConstructionId }
         -- proposal.old2new = {
-        --     [stationConstructionId] = 0,
+        --     [join2StationConId] = 0,
         -- }
 
         local context = api.type.Context:new()
@@ -444,7 +444,7 @@ local _actions = {
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
         -- context.player = api.engine.util.getPlayer()
--- LOLLO TODO this fails after build 35716: check it
+
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
@@ -820,10 +820,6 @@ local _actions = {
             if isSegmentWithEdgeObjects then
                 proposal = api.type.SimpleProposal.new()
                 proposalsWithEdgesWithObjects[#proposalsWithEdgesWithObjects+1] = proposal
-                -- proposalsWithEdgesWithObjects[#proposalsWithEdgesWithObjects+1] = {
-                --     proposal = proposal,
-                --     edgeObjects = edgeData.edgeProps[1].edgeObjects
-                -- }
                 nNewEntities_local = -1
             else
                 proposal = proposalWithObjectlessEdges
@@ -872,7 +868,7 @@ local _actions = {
                     logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node1Props[1].position)
                 end
             end
--- LOLLO TODO test 2 or more objects on the same edge
+
             -- now the nodes are done, complete the segment
             newSegment.comp.node0 = node0Id
             newSegment.comp.node1 = node1Id
@@ -910,6 +906,7 @@ local _actions = {
         end
 
         logger.print('_rebuildNeighbours made proposalWithObjectlessEdges =') logger.debugPrint(proposalWithObjectlessEdges)
+        logger.print('_rebuildNeighbours made proposalsWithEdgesWithObjects =') logger.debugPrint(proposalsWithEdgesWithObjects)
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
         -- context.cleanupStreetGraph = true -- default is false
@@ -1292,10 +1289,12 @@ local _actions = {
         local sharedNodeIds = {}
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
-        arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.innerSharedNodeIds)
-        arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.innerSharedNodeIds)
-        arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.outerLoneNodeIds)
-        arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.outerLoneNodeIds)
+        if args.newTerminalNeighbours ~= nil then
+            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.innerSharedNodeIds)
+            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.innerSharedNodeIds)
+            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.outerLoneNodeIds)
+            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.outerLoneNodeIds)
+        end
         if args.trackEndEntities ~= nil then
             for t, terminalEndEntities in pairs(args.trackEndEntities) do
                 arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds)
@@ -1852,7 +1851,7 @@ local _guiActions = {
             _eventNames.SUBWAY_JOIN_REQUESTED,
             nil,
             {
-                subwayId = conId
+                subwayConstructionId = conId
                 -- join2StationConId will be added by the popup
             }
         )
@@ -3178,8 +3177,8 @@ function data()
                         _actions.bulldozeConstruction(args.stationConstructionId)
                     elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
-                        or not(edgeUtils.isValidAndExistingId(args.subwayId)) then
-                            logger.err('args.join2StationConId or args.subwayId is invalid')
+                        or not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then
+                            logger.err('args.join2StationConId or args.subwayConstructionId is invalid')
                             return
                         end
 
@@ -3193,8 +3192,8 @@ function data()
                         _actions.removeNeighbours(_eventNames.SUBWAY_BUILD_REQUESTED, args)
                     elseif name == _eventNames.SUBWAY_BUILD_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
-                        or not(edgeUtils.isValidAndExistingId(args.subwayId)) then
-                            logger.err('args.join2StationConId or args.subwayId is invalid')
+                        or not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then
+                            logger.err('args.join2StationConId or args.subwayConstructionId is invalid')
                             return
                         end
                         _actions.addSubway(_eventNames.REBUILD_NEIGHBOURS_REQUESTED, args)
