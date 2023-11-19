@@ -1799,7 +1799,7 @@ return {
             privateFuncs.edges._addPlatformEdges(result, tag2nodes, params, t)
             privateFuncs.edges._addTrackEdges(result, tag2nodes, params, t)
     
-            logger.print('build 35716 moduleHelpers.edges.addEdges ending for terminal', t, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
+            -- logger.print('build 35716 moduleHelpers.edges.addEdges ending for terminal', t, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
         end,
         dynamicBridgeTypes_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
             -- local sampleUpdateScriptParams = {

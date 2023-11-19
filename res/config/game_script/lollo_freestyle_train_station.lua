@@ -63,6 +63,90 @@ local _utils = {
 
         return (baseNode0.position.z + baseNode1.position.z) / 2
     end,
+    ---gets adjacent tracks, (station) end nodes and lone nodes without station; expects a list with > 1 entries
+    ---@param trackEdgeList edgeIdsProperties
+    ---@return {edgeIds: table<integer>, edges: table<integer, {edgeProps: edgeIdsProperties, node0Props: nodeIdsProperties, node1Props: nodeIdsProperties}>, innerSharedNodeIds: table<integer>, outerLoneNodeIds: table<integer>}
+    getNeighbours = function(trackEdgeList)
+        ---@return table<integer>, integer | nil, boolean
+        local _getNeighbours = function(thisEdgeId, nextEdgeId)
+            local _baseEdge = api.engine.getComponent(thisEdgeId, api.type.ComponentType.BASE_EDGE)
+            if _baseEdge == nil then
+                logger.print('_baseEdge == nil, thisEdgeId =', thisEdgeId)
+                return {}, nil, false
+            end
+
+            local innerNodeId = _baseEdge.node0
+            local connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({innerNodeId})
+            logger.print('thisEdgeId =', thisEdgeId, 'nextEdgeId', nextEdgeId, 'connectedEdgeIds =') logger.debugPrint(connectedEdgeIds)
+            if arrayUtils.arrayHasValue(connectedEdgeIds, nextEdgeId) then
+                innerNodeId = _baseEdge.node1
+                connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({innerNodeId})
+                if arrayUtils.arrayHasValue(connectedEdgeIds, nextEdgeId) then
+                    logger.err('getAdjacentTracks failed to retrieve adjacent edges, edgeId =', thisEdgeId)
+                    return {}, nil, false
+                end
+            end
+            local neighbourEdgeIds = {}
+            for _, edgeId in pairs(connectedEdgeIds) do
+                if edgeId ~= thisEdgeId then
+                    neighbourEdgeIds[edgeId] = true
+                end
+            end
+            return neighbourEdgeIds, innerNodeId, #connectedEdgeIds > 1
+        end
+
+        logger.print('_getNeighbours got trackEdgeList =') logger.debugPrint(trackEdgeList)
+        local numEdges = #trackEdgeList
+        if type(trackEdgeList) ~= 'table' or #trackEdgeList < 2 or trackEdgeList[1].edgeId == trackEdgeList[numEdges].edgeId then
+            logger.err('trackEdgeList too short or nil')
+            return {
+                edgeIds = {},
+                edges = {},
+                innerSharedNodeIds = {},
+                outerLoneNodeIds = {},
+            }
+        end
+
+        local neighbourEdge1Ids_indexed, innerNode1Id, is1Shared = _getNeighbours(trackEdgeList[1].edgeId, trackEdgeList[2].edgeId)
+        local neighbourEdgeNIds_indexed, innerNodeNId, isNShared = _getNeighbours(trackEdgeList[numEdges].edgeId, trackEdgeList[numEdges-1].edgeId)
+        arrayUtils.concatKeysValues(neighbourEdge1Ids_indexed, neighbourEdgeNIds_indexed)
+        logger.print('neighbourEdge1Ids_indexed =') logger.debugPrint(neighbourEdge1Ids_indexed)
+
+        local edgeIds = {}
+        local edges = {}
+        local outerLoneNodeIds_indexed = {}
+        for edgeId, _ in pairs(neighbourEdge1Ids_indexed) do
+            local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+            for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
+                if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
+                    outerLoneNodeIds_indexed[nodeId] = true
+                end
+            end
+            edges[edgeId] = {
+                edgeProps = stationHelpers.getEdgeIdsProperties({edgeId}, true, true, false),
+                node0Props = stationHelpers.getNodeIdsProperties({baseEdge.node0}),
+                node1Props = stationHelpers.getNodeIdsProperties({baseEdge.node1})
+            }
+            edgeIds[#edgeIds+1] = edgeId
+        end
+        for edgeId, _ in pairs(neighbourEdge1Ids_indexed) do
+            edges[edgeId].isNode0ToBeAdded = outerLoneNodeIds_indexed[edges[edgeId].node0Props[1].nodeId]
+            edges[edgeId].isNode1ToBeAdded = outerLoneNodeIds_indexed[edges[edgeId].node1Props[1].nodeId]
+        end
+
+        local innerSharedNodeIds = {}
+        if innerNode1Id ~= nil and is1Shared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNode1Id end
+        if innerNodeNId ~= nil and innerNodeNId ~= innerNode1Id and isNShared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNodeNId end
+        local outerLoneNodeIds = {}
+        for id, _ in pairs(outerLoneNodeIds_indexed) do outerLoneNodeIds[#outerLoneNodeIds+1] = id end
+
+        return {
+            edgeIds = edgeIds,
+            edges = edges,
+            innerSharedNodeIds = innerSharedNodeIds,
+            outerLoneNodeIds = outerLoneNodeIds
+        }
+    end,
     sendAllowProgress = function()
         api.cmd.sendCommand(
             api.cmd.make.sendScriptEvent(
@@ -167,26 +251,26 @@ local _utils = {
         newSegment.entity = nNewEntities_
     
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-        if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+        if baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodes.node1Id then
             newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
+            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodes.node1Id)
             -- logger.print('twenty-one')
-        elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+        elseif baseEdge.node0 == endEntities4T_plOrTr.disjointNeighbourNodes.node2Id then
             newSegment.comp.node0 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
+            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodes.node2Id)
             -- logger.print('twenty-two')
         else
             newSegment.comp.node0 = baseEdge.node0
             -- logger.print('twenty-three')
         end
     
-        if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id then
+        if baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodes.node1Id then
             newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node1Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node1Id)
+            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodes.node1Id)
             -- logger.print('twenty-four')
-        elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id then
+        elseif baseEdge.node1 == endEntities4T_plOrTr.disjointNeighbourNodes.node2Id then
             newSegment.comp.node1 = endEntities4T_plOrTr.stationEndNodeIds.node2Id
-            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodeIds.node2Id)
+            _addNodeToRemove(endEntities4T_plOrTr.disjointNeighbourNodes.node2Id)
             -- logger.print('twenty-five')
         else
             newSegment.comp.node1 = baseEdge.node1
@@ -203,13 +287,13 @@ local _utils = {
         newSegment.comp.typeIndex = baseEdge.typeIndex
         newSegment.comp.objects = baseEdge.objects
         -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-        newSegment.type = _constants.railEdgeType
         local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
         local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
     
         if baseEdgeTrack ~= nil then
             newSegment.trackEdge.trackType = baseEdgeTrack.trackType
             newSegment.trackEdge.catenary = baseEdgeTrack.catenary
+            newSegment.type = _constants.railEdgeType
         elseif baseEdgeStreet ~= nil then
             logger.warn('edgeId', edgeId, 'is street')
             newSegment.streetEdge.streetType = baseEdgeStreet.streetType
@@ -217,6 +301,7 @@ local _utils = {
             newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
             -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
             -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
+            newSegment.type = _constants.streetEdgeType
         end
     
         proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
@@ -226,20 +311,66 @@ local _utils = {
     
         return true, nNewEntities_
     end,
+    tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId)
+        logger.print('_tryUpgradeStationOrStairsOrLiftConstruction starting, oldConId =', oldConId)
+        if not(edgeUtils.isValidAndExistingId(oldConId)) then return false end
+
+        local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
+        logger.print('oldCon.fileName =') logger.debugPrint(oldCon and oldCon.fileName or 'NIL')
+        if not(oldCon)
+        or not(arrayUtils.arrayHasValue(
+            {
+                _constants.stationConFileName,
+                -- 'station/rail/lollo_freestyle_train_station/openLiftFree.con',
+                'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con',
+                'station/rail/lollo_freestyle_train_station/openStairsFree.con',
+                -- 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con',
+                'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con',
+            },
+            oldCon.fileName
+        ))
+        or not(oldCon.params)
+        then return false end
+
+        local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
+        return xpcall(
+            function()
+                -- UG TODO there is no such thing in the new api,
+                -- nor an upgrade event, both would be useful
+                collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                logger.print('_tryUpgradeStationOrStairsOrLiftConstruction - collect garbage done')
+                logger.print('oldConId =') logger.debugPrint(oldConId)
+                logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
+                local upgradedConId = game.interface.upgradeConstruction(
+                    oldConId,
+                    oldCon.fileName,
+                    paramsBak_NoSeed
+                )
+                logger.print('_tryUpgradeStationOrStairsOrLiftConstruction succeeded, upgradedConId =') logger.debugPrint(upgradedConId)
+                -- return true
+            end,
+            function(error)
+                logger.warn('_tryUpgradeStationOrStairsOrLiftConstruction failed')
+                state.warningText = _('NeedAdjust4Snap')
+                logger.warn(error)
+                -- return false
+            end
+        )
+    end,
 }
 
 local _actions = {
     -- LOLLO NOTE api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
-    addSubway = function(stationConstructionId, subwayConstructionId, successEventName)
-        logger.print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
-        if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then logger.warn('invalid stationConstructionId') logger.warningDebugPrint(stationConstructionId) return end
-        if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then logger.warn('invalid subwayConstructionId') logger.warningDebugPrint(subwayConstructionId) return end
+    addSubway = function(successEventName, args)
+        logger.print('_addSubway starting, args =') logger.debugPrint(args)
+        if not(edgeUtils.isValidAndExistingId(args.join2StationConId)) then logger.warn('invalid join2StationConId') logger.warningDebugPrint(args.join2StationConId) return end
+        if not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then logger.warn('invalid subwayConstructionId') logger.warningDebugPrint(args.subwayConstructionId) return end
 
-        local oldCon = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+        local oldCon = api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
         if oldCon == nil then return end
 
-        local subwayCon = api.engine.getComponent(subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
+        local subwayCon = api.engine.getComponent(args.subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
         if not(subwayCon) or not(subwayCon.transf) then logger.err('no subway con found') return end
 
         local subwayTransf = subwayCon.transf
@@ -302,9 +433,9 @@ local _actions = {
 
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
-        proposal.constructionsToRemove = { stationConstructionId, subwayConstructionId }
+        proposal.constructionsToRemove = { args.join2StationConId, args.subwayConstructionId }
         -- proposal.old2new = {
-        --     [stationConstructionId] = 0,
+        --     [join2StationConId] = 0,
         -- }
 
         local context = api.type.Context:new()
@@ -317,19 +448,20 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('addSubway callback, success =', success)
-                -- logger.debugPrint(result)
+                logger.print('_addSubway callback, success =', success)
                 if success then
                     if successEventName ~= nil then
+                        args.stationConstructionId = result.resultEntities[1]
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                             string.sub(debug.getinfo(1, 'S').source, 1),
                             _eventId,
                             successEventName,
-                            {
-                                stationConstructionId = result.resultEntities[1]
-                            }
+                            args
                         ))
                     end
+                else
+                    logger.print('proposal =') logger.debugPrint(proposal)
+                    logger.print('result =') logger.debugPrint(result)
                 end
             end
         )
@@ -367,9 +499,7 @@ local _actions = {
     buildStation = function(successEventName, args)
         local conTransf = args.platformWaypointMidTransf
 
-        logger.print('buildStation starting, args =')
-        logger.print('build 35716 platformEdgeLists =') logger.debugPrint(args.platformEdgeList)
-        logger.print('build 35716 trackEdgeLists =') logger.debugPrint(args.trackEdgeList)
+        logger.print('_buildStation starting, args =')
 
         local oldCon = edgeUtils.isValidAndExistingId(args.join2StationConId)
         and api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
@@ -546,44 +676,298 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('build station callback, success =', success)
+                logger.print('_buildStation callback, success =', success)
                 -- logger.debugPrint(result)
                 if success then
-                    logger.print('build 35716 buildStation succeeded, result =') logger.debugPrint(result)
                     local stationConstructionId = result.resultEntities[1]
-                    logger.print('buildStation succeeded, stationConstructionId = ', stationConstructionId)
+                    logger.print('_buildStation succeeded, stationConstructionId = ', stationConstructionId)
                     _utils.tryRenameStationGroup(stationConstructionId)
                     if successEventName ~= nil then
                         -- logger.print('station proposal data = ', result.resultProposalData) -- userdata
                         -- logger.print('station entities = ', result.resultEntities) -- userdata
-                        logger.print('buildStation callback is about to send command')
+                        logger.print('_buildStation callback is about to send command')
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                             string.sub(debug.getinfo(1, 'S').source, 1),
                             _eventId,
                             successEventName,
                             {
+                                trackEndEntities = args.trackEndEntities,
+                                streetEndEntities = args.streetEndEntities,
+                                newTerminalNeighbours = args.newTerminalNeighbours,
+                                nTerminal = args.nTerminal,
                                 stationConstructionId = stationConstructionId
                             }
                         ))
                     end
                 else
-                    logger.warn('buildStation failed, result =') logger.warningDebugPrint(result)
+                    logger.warn('_buildStation failed, result =') logger.warningDebugPrint(result)
+                    _utils.sendHideProgress()
                 end
             end
         )
     end,
 
-    removeTerminal = function(constructionId, nTerminalToRemove, nRemainingTerminals, successEventName)
-        logger.print('removeTerminal starting, constructionId =', constructionId)
+    rebuildNeighbours = function(args)
+        logger.print('_rebuildNeighbours starting, args =') logger.debugPrint(args)
+        local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
 
-        local oldCon = edgeUtils.isValidAndExistingId(constructionId)
-        and api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+        local _getNearbyNodeId = function(positionXYZ)
+            local _tolerance = 0.001
+            local nearbyNodeIds = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(positionXYZ),
+                _tolerance,
+                api.type.ComponentType.BASE_NODE,
+                positionXYZ.z - _tolerance,
+                positionXYZ.z + _tolerance
+            )
+            return nearbyNodeIds[1]
+        end
+        local _setEdgeObjects = function(edgeData, newSegment, proposal)
+            if edgeData.edgeProps[1].edgeObjects == nil then return end
+
+            local segmentCompObjects = {}
+            for o, edgeObject in pairs(edgeData.edgeProps[1].edgeObjects) do
+                logger.print('edgeObject =') logger.debugPrint(edgeObject)
+                logger.print('#proposal.streetProposal.edgeObjectsToAdd =') logger.debugPrint(#proposal.streetProposal.edgeObjectsToAdd)
+                local eo = api.type.SimpleStreetProposal.EdgeObject.new()
+                eo.left = edgeObject.isLeft
+                eo.model = edgeObject.modelFileName
+                -- eo.model = edgeObject.modelId NO!
+                eo.name = edgeObject.name
+                eo.oneWay = edgeObject.isOneWay
+                eo.param = edgeObject.param
+                if edgeObject.playerEntity then eo.playerEntity = edgeObject.playerEntity end
+                -- LOLLO NOTE the api makes trouble with edge objects unless the edge has entity -1
+                -- 0 crash
+                -- 1 Assertion `eo.edgeEntity.GetId() < 0 && eo.edgeEntity.GetId() >= -(int)result.proposal.addedSegments.size()' failed.
+                -- 2 crash
+                -- 3 crash
+                -- 4 crash
+                -- 5 ecs::Engine::GetComponentDataIndex(const class ecs::Entity &,int) const: Assertion `it != components.end()' failed
+                -- 6 crash
+                -- 7 crash
+                -- 8 ecs::Engine::GetComponentDataIndex(const class ecs::Entity &,int) const: Assertion `it != components.end()' failed.
+
+                -- eo.edgeEntity = newSegment.entity -- 1
+                -- eo.edgeEntity = nNewSegments -- 0 2 3 4 5 6 7 8
+                eo.edgeEntity = -1 -- fix to avoid trouble
+
+                proposal.streetProposal.edgeObjectsToAdd[#proposal.streetProposal.edgeObjectsToAdd+1] = eo
+
+                segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects -1, edgeObject.flag}
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects -1, edgeObject.flag} -- 5
+                -- segmentCompObjects[#segmentCompObjects+1] = {#segmentCompObjects -1, edgeObject.flag} -- 6
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects, edgeObject.flag} -- 7
+                -- segmentCompObjects[#segmentCompObjects+1] = {#segmentCompObjects, edgeObject.flag} -- 8
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#proposal.streetProposal.edgeObjectsToAdd, edgeObject.flag} -- 0 1
+                -- segmentCompObjects[#segmentCompObjects+1] = {#proposal.streetProposal.edgeObjectsToAdd, edgeObject.flag} -- 2
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#proposal.streetProposal.edgeObjectsToAdd +1, edgeObject.flag} -- 3
+                -- segmentCompObjects[#segmentCompObjects+1] = {#proposal.streetProposal.edgeObjectsToAdd +1, edgeObject.flag} -- 4
+            end
+            logger.print('segmentCompObjects =') logger.debugPrint(segmentCompObjects)
+            newSegment.comp.objects = segmentCompObjects
+        end
+        local _setSegmentProps = function(edgeData, newSegment)
+            local props = edgeData.edgeProps[1]
+            newSegment.comp.tangent0.x = props.posTanX2[1][2][1]
+            newSegment.comp.tangent0.y = props.posTanX2[1][2][2]
+            newSegment.comp.tangent0.z = props.posTanX2[1][2][3]
+            newSegment.comp.tangent1.x = props.posTanX2[2][2][1]
+            newSegment.comp.tangent1.y = props.posTanX2[2][2][2]
+            newSegment.comp.tangent1.z = props.posTanX2[2][2][3]
+            newSegment.comp.type = props.type
+            newSegment.comp.typeIndex = props.typeIndex
+            if props.player ~= nil then newSegment.playerOwned = { player = props.player } end
+            if props.isTrack then
+                newSegment.type = _constants.railEdgeType
+                newSegment.trackEdge.trackType = props.trackType
+                newSegment.trackEdge.catenary = props.catenary
+            else
+                newSegment.type = _constants.streetEdgeType
+                newSegment.streetEdge.streetType = props.streetType
+                newSegment.streetEdge.tramTrackType = props.tramTrackType
+                newSegment.streetEdge.hasBus = props.hasBus
+            end
+        end
+
+        -- edges and nodes
+        local allEdges_indexedByEdgeId = {}
+        if args.newTerminalNeighbours ~= nil then
+            arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, args.newTerminalNeighbours.platforms.edges)
+            arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, args.newTerminalNeighbours.tracks.edges)
+        end
+        if args.trackEndEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.trackEndEntities) do
+                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, terminalEndEntities.platforms.jointNeighbourEdges.props)
+                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, terminalEndEntities.tracks.jointNeighbourEdges.props)
+            end
+        end
+        if args.streetEndEntities ~= nil then
+            for e, endEntity in pairs(args.streetEndEntities) do
+                -- you can't do the same edge twice coz the table is indexed by edgeId
+                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, endEntity.jointNeighbourEdges.props)
+            end
+        end
+        logger.print('allEdges_indexedByEdgeId =') logger.debugPrint(allEdges_indexedByEdgeId)
+
+        local nNewEntities_total = -1
+        local proposalWithObjectlessEdges = api.type.SimpleProposal.new()
+        local proposalsWithEdgesWithObjects = {}
+        local _getInitialLoopProps = function(edgeData)
+            local isSegmentWithEdgeObjects = edgeData.edgeProps[1].edgeObjects ~= nil
+            local proposal = nil
+            local nNewEntities_local = 0
+            if isSegmentWithEdgeObjects then
+                proposal = api.type.SimpleProposal.new()
+                proposalsWithEdgesWithObjects[#proposalsWithEdgesWithObjects+1] = proposal
+                nNewEntities_local = -1
+            else
+                proposal = proposalWithObjectlessEdges
+                nNewEntities_local = nNewEntities_total
+            end
+
+            return isSegmentWithEdgeObjects, proposal, nNewEntities_local
+        end
+        for _, edgeData in pairs(allEdges_indexedByEdgeId) do
+            local isSegmentWithEdgeObjects, proposal, nNewEntities_local = _getInitialLoopProps(edgeData)
+            -- first add the segment, so its "entity" will always be -1, so the edge objects won't suffer at the hands of the dumb api
+            local newSegment = api.type.SegmentAndEntity.new()
+            newSegment.entity = nNewEntities_local
+            _setSegmentProps(edgeData, newSegment)
+            _setEdgeObjects(edgeData, newSegment, proposal)
+            nNewEntities_local = nNewEntities_local - 1
+
+            local node0Id, node1Id = nil, nil
+            if edgeData.isNode0ToBeAdded then
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities_local
+                newNode.comp.position.x = edgeData.node0Props[1].position.x
+                newNode.comp.position.y = edgeData.node0Props[1].position.y
+                newNode.comp.position.z = edgeData.node0Props[1].position.z
+                node0Id = newNode.entity
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                nNewEntities_local = nNewEntities_local - 1
+            else
+                node0Id = _getNearbyNodeId(edgeData.node0Props[1].position)
+                if node0Id == nil then
+                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node0Props[1].position)
+                end
+            end
+            if edgeData.isNode1ToBeAdded then
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities_local
+                newNode.comp.position.x = edgeData.node1Props[1].position.x
+                newNode.comp.position.y = edgeData.node1Props[1].position.y
+                newNode.comp.position.z = edgeData.node1Props[1].position.z
+                node1Id = newNode.entity
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                nNewEntities_local = nNewEntities_local - 1
+            else
+                node1Id = _getNearbyNodeId(edgeData.node1Props[1].position)
+                if node1Id == nil then
+                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node1Props[1].position)
+                end
+            end
+
+            -- now the nodes are done, complete the segment
+            newSegment.comp.node0 = node0Id
+            newSegment.comp.node1 = node1Id
+            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+
+            if not(isSegmentWithEdgeObjects) then nNewEntities_total = nNewEntities_local end
+        end
+
+        -- neighbouring constructions
+        if args.streetEndEntities ~= nil then
+            local neighbourConIds = {}
+            for _, endEntity in pairs(args.streetEndEntities) do
+                for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
+                    if not(arrayUtils.arrayHasValue(neighbourConIds, conId)) then -- make sure you don't do the same con twice
+                        neighbourConIds[#neighbourConIds+1] = conId
+
+                        local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
+                        newParams.seed = conProps.params.seed + 1
+                        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+                        newCon.fileName = conProps.fileName
+                        newCon.params = newParams
+                        newCon.playerEntity = api.engine.util.getPlayer()
+                        -- newCon.transf = oldCon.transf
+                        newCon.transf = api.type.Mat4f.new(
+                            api.type.Vec4f.new(conProps.transf[1], conProps.transf[2], conProps.transf[3], conProps.transf[4]),
+                            api.type.Vec4f.new(conProps.transf[5], conProps.transf[6], conProps.transf[7], conProps.transf[8]),
+                            api.type.Vec4f.new(conProps.transf[9], conProps.transf[10], conProps.transf[11], conProps.transf[12]),
+                            api.type.Vec4f.new(conProps.transf[13], conProps.transf[14], conProps.transf[15], conProps.transf[16])
+                        )
+
+                        proposalWithObjectlessEdges.constructionsToAdd[#proposalWithObjectlessEdges.constructionsToAdd+1] = newCon
+                    end
+                end
+            end
+        end
+
+        logger.print('_rebuildNeighbours made proposalWithObjectlessEdges =') logger.debugPrint(proposalWithObjectlessEdges)
+        logger.print('_rebuildNeighbours made proposalsWithEdgesWithObjects =') logger.debugPrint(proposalsWithEdgesWithObjects)
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposalWithObjectlessEdges, context, true),
+            function(result_0, success_0)
+                logger.print('LOLLO _rebuildNeighbours success_0 = ', success_0)
+                -- logger.print('LOLLO result = ') logger.debugPrint(result)
+                if success_0 then
+                    -- Write away the adjoining constructions
+                    local newConIds = {}
+                    if result_0.resultEntities ~= nil then
+                        for _, conId in pairs(result_0.resultEntities) do
+                            newConIds[#newConIds+1] = conId
+                        end
+                        logger.print('newConIds =') logger.debugPrint(newConIds)
+                    end
+                    -- Add edges with objects, one by one coz the api does not work well with edge objects
+                    for _, proposal in pairs(proposalsWithEdgesWithObjects) do
+                        api.cmd.sendCommand(
+                            api.cmd.make.buildProposal(proposal, context, true),
+                            function(result_1, success_1)
+                                logger.print('LOLLO _rebuildNeighbours success_1 = ', success_1)
+                                if not(success_1) then logger.warn('cannot rebuild all the edge objects ONE') end
+                                if result_1.resultProposalData.errorState.critical then logger.warn('cannot rebuild all the edge objects ONE_TWO') end
+                            end
+                        )
+                    end
+                    -- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap.
+                    local _upgradeNeighbourCons = function()
+                        local isAnyUpgradeFailed = false
+                        for _, newConId in pairs(newConIds) do
+                            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId))
+                        end
+                        logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
+                        if not(isAnyUpgradeFailed) then return end
+
+                        state.warningText = _('UnsnappedRoads')
+                    end
+                    _upgradeNeighbourCons()
+                end
+                _utils.sendHideProgress()
+            end
+        )
+    end,
+
+    rebuildStationWithOneLessTerminal = function(successEventName, args)
+        logger.print('_rebuildStationWithOneLessTerminal starting, args =', args)
+
+        if type(args.nTerminalToRemove) ~= 'number' then logger.err('args.nTerminalToRemove is not a number') return end
+        if type(args.nRemainingTerminals) ~= 'number' then logger.err('args.nRemainingTerminals is not a number') return end
+
+        local oldCon = edgeUtils.isValidAndExistingId(args.stationConstructionId)
+        and api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
         or nil
         -- logger.print('oldCon =') logger.debugPrint(oldCon)
         if oldCon == nil then return end
-
-        logger.print('nTerminalToRemove =') logger.debugPrint(nTerminalToRemove)
-        if type(nTerminalToRemove) ~= 'number' then return end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.stationConFileName
@@ -592,9 +976,9 @@ local _actions = {
         local newModules = {}
         for slotId, modu in pairs(oldModules) do
             local nTerminal, nTrackEdge, baseId = slotHelpers.demangleId(slotId)
-            if nTerminal < nTerminalToRemove then
+            if nTerminal < args.nTerminalToRemove then
                 newModules[slotId] = modu
-            elseif nTerminal == nTerminalToRemove then
+            elseif nTerminal == args.nTerminalToRemove then
             else
                 local newSlotId = slotHelpers.mangleId(nTerminal - 1, nTrackEdge, baseId)
                 newModules[newSlotId] = modu
@@ -612,18 +996,17 @@ local _actions = {
         }
 
         -- write this away before removing it
-        -- LOLLO TODO check the new behaviour with forced electrification values
-        local electricModuleValue = oldModules[slotHelpers.mangleId(nTerminalToRemove, 0, _constants.idBases.trackElectrificationSlotId)]
+        local electricModuleValue = oldModules[slotHelpers.mangleId(args.nTerminalToRemove, 0, _constants.idBases.trackElectrificationSlotId)]
         local isForceTrackElectrification = electricModuleValue ~= nil
         and (electricModuleValue.name == _constants.trackElectrificationYesModuleFileName or electricModuleValue.name == _constants.trackElectrificationNoModuleFileName)
         local forcedElectrificationValue = isForceTrackElectrification and electricModuleValue.name == _constants.trackElectrificationYesModuleFileName
         local removedTerminalEdgeProps = {
             isForceTrackElectrification = isForceTrackElectrification,
             forcedElectrificationValue = forcedElectrificationValue,
-            platformEdgeLists = newParams.terminals[nTerminalToRemove].platformEdgeLists,
-            trackEdgeLists = newParams.terminals[nTerminalToRemove].trackEdgeLists,
+            platformEdgeLists = newParams.terminals[args.nTerminalToRemove].platformEdgeLists,
+            trackEdgeLists = newParams.terminals[args.nTerminalToRemove].trackEdgeLists,
         }
-        table.remove(newParams.terminals, nTerminalToRemove)
+        table.remove(newParams.terminals, args.nTerminalToRemove)
         -- get rid of subways if bulldozing the last terminal
         if #newParams.terminals < 1 then newParams.subways = {} end
 
@@ -634,7 +1017,7 @@ local _actions = {
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
 
-        proposal.constructionsToRemove = { constructionId }
+        proposal.constructionsToRemove = { args.stationConstructionId }
         -- proposal.old2new = {
         --     [constructionId] = 0,
         -- }
@@ -649,21 +1032,19 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('removeTerminal callback, success =', success)
+                logger.print('_rebuildStationWithOneLessTerminal callback, success =', success)
                 -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
-                    local eventArgs = {
-                        nRemainingTerminals = nRemainingTerminals,
-                        removedTerminalEdgeProps = removedTerminalEdgeProps,
-                        stationConstructionId = result.resultEntities[1]
-                    }
-                    logger.print('eventArgs.stationConstructionId =', eventArgs.stationConstructionId)
-                    logger.print('removeTerminal callback is about to send command')
+                    args.nTerminalToRemove = nil
+                    args.removedTerminalEdgeProps = removedTerminalEdgeProps
+                    args.stationConstructionId = result.resultEntities[1]
+                    logger.print('eventArgs.stationConstructionId =', args.stationConstructionId)
+                    logger.print('_rebuildStationWithOneLessTerminal callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName,
-                        eventArgs
+                        args
                     ))
                 end
             end
@@ -680,7 +1061,7 @@ local _actions = {
         successEventName
     )
         local _significantFigures4LocateNode = 5 -- you may lower this if tracks are not properly rebuilt.
-        -- cleanupStreetGraph in previous events (removeTerminal and bulldozeConstruction) might also play a role, it might.
+        -- cleanupStreetGraph in previous events (rebuildStationWithOneLessTerminal and bulldozeConstruction) might also play a role, it might.
         logger.print('rebuildOneTerminalTracks starting')
         -- logger.print('trackEdgeLists =') logger.debugPrint(trackEdgeLists)
         -- logger.print('platformEdgeLists =') logger.debugPrint(platformEdgeLists)
@@ -841,15 +1222,49 @@ local _actions = {
         )
     end,
 
-    removeTracks = function(platformEdgeIds, trackEdgeIds, successEventName, successEventArgs)
-        logger.print('removeTracks starting')
+    removeNeighbours = function(successEventName, args)
+        logger.print('_removeNeighbours starting')
         -- logger.print('successEventName =') logger.debugPrint(successEventName)
-        -- logger.print('successEventArgs =') logger.debugPrint(successEventArgs)
-        logger.print('platformEdgeIds =') logger.debugPrint(platformEdgeIds)
-        logger.print('trackEdgeIds =') logger.debugPrint(trackEdgeIds)
+        logger.print('args =') logger.debugPrint(args)
+        -- logger.print('args.trackEndEntities =') logger.debugPrint(args.trackEndEntities)
+        -- logger.print('args.streetEndEntities =') logger.debugPrint(args.streetEndEntities)
+        -- logger.print('args.newTerminalNeighbours =') logger.debugPrint(args.newTerminalNeighbours)
+        local trackEdgeIds = {}
+        local platformEdgeIds = {}
         local allEdgeIds = {}
-        arrayUtils.concatValues(allEdgeIds, trackEdgeIds)
-        arrayUtils.concatValues(allEdgeIds, platformEdgeIds)
+        if args.trackEdgeList ~= nil then
+            for _, edgeProps in pairs(args.trackEdgeList) do
+                allEdgeIds[#allEdgeIds+1] = edgeProps.edgeId
+                trackEdgeIds[#trackEdgeIds+1] = edgeProps.edgeId
+            end
+        end
+        if args.platformEdgeList ~= nil then
+            for _, edgeProps in pairs(args.platformEdgeList) do
+                allEdgeIds[#allEdgeIds+1] = edgeProps.edgeId
+                platformEdgeIds[#platformEdgeIds+1] = edgeProps.edgeId
+            end
+        end
+        if args.newTerminalNeighbours ~= nil then
+            arrayUtils.concatValues(allEdgeIds, args.newTerminalNeighbours.platforms.edgeIds)
+            arrayUtils.concatValues(allEdgeIds, args.newTerminalNeighbours.tracks.edgeIds)
+        end
+        if args.trackEndEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.trackEndEntities) do
+                for edgeId, _ in pairs(terminalEndEntities.platforms.jointNeighbourEdges.props) do
+                    allEdgeIds[#allEdgeIds+1] = edgeId
+                end
+                for edgeId, _ in pairs(terminalEndEntities.tracks.jointNeighbourEdges.props) do
+                    allEdgeIds[#allEdgeIds+1] = edgeId
+                end
+            end
+        end
+        if args.streetEndEntities ~= nil then
+            for _a, endEntity in pairs(args.streetEndEntities) do
+                for edgeId, _b in pairs(endEntity.jointNeighbourEdges.props) do
+                    allEdgeIds[#allEdgeIds+1] = edgeId
+                end
+            end
+        end
         logger.print('allEdgeIds =') logger.debugPrint(allEdgeIds)
 
         local proposal = api.type.SimpleProposal.new()
@@ -872,11 +1287,40 @@ local _actions = {
         local sharedNodeIds = {}
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
         arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
+        if args.newTerminalNeighbours ~= nil then
+            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.innerSharedNodeIds)
+            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.innerSharedNodeIds)
+            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.outerLoneNodeIds)
+            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.outerLoneNodeIds)
+        end
+        if args.trackEndEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.trackEndEntities) do
+                arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds)
+                arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.platforms.jointNeighbourNodes.outerLoneNodeIds)
+            end
+        end
+        if args.streetEndEntities ~= nil then
+            for _, endEntity in pairs(args.streetEndEntities) do
+                arrayUtils.concatValues(sharedNodeIds, endEntity.jointNeighbourNode.outerLoneNodeIds)
+            end
+        end
+
         for i = 1, #sharedNodeIds do
             proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
         end
-        -- logger.print('proposal.streetProposal.nodesToRemove =') logger.debugPrint(proposal.streetProposal.nodesToRemove)
-        logger.print('build 35716 removeTracks proposal =') logger.debugPrint(proposal)
+
+        -- if the neighbour is a construction, bulldoze it and rebuild it later
+        local neighbourConIds = {}
+        if args.streetEndEntities ~= nil then
+            for a, endEntity in pairs(args.streetEndEntities) do
+                for b, conId in pairs(endEntity.jointNeighbourNode.conIds) do
+                    arrayUtils.addUnique(neighbourConIds, conId)
+                end
+            end
+        end
+        if #neighbourConIds > 0 then
+            proposal.constructionsToRemove = neighbourConIds
+        end
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -887,15 +1331,15 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('command callback firing for removeTracks, success =', success)
+                logger.print('command callback firing for _removeNeighbours, success =', success)
                 -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
-                    logger.print('removeTracks callback is about to send command')
+                    logger.print('_removeNeighbours callback is about to send command')
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName,
-                        arrayUtils.cloneDeepOmittingFields(successEventArgs)
+                        arrayUtils.cloneDeepOmittingFields(args)
                     ))
                 end
             end
@@ -1273,53 +1717,6 @@ local _actions = {
         )
     end,
 
-    tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId)
-        logger.print('tryUpgradeStationOrStairsOrLiftConstruction starting, oldConId =', oldConId)
-        if not(edgeUtils.isValidAndExistingId(oldConId)) then return false end
-
-        local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
-        logger.print('oldCon.fileName =') logger.debugPrint(oldCon and oldCon.fileName or 'NIL')
-        if not(oldCon)
-        or not(arrayUtils.arrayHasValue(
-            {
-                _constants.stationConFileName,
-                -- 'station/rail/lollo_freestyle_train_station/openLiftFree.con',
-                'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con',
-                'station/rail/lollo_freestyle_train_station/openStairsFree.con',
-                -- 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con',
-                'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con',
-            },
-            oldCon.fileName
-        ))
-        or not(oldCon.params)
-        then return false end
-
-        local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
-        return xpcall(
-            function()
-                -- UG TODO there is no such thing in the new api,
-                -- nor an upgrade event, both would be useful
-                collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
-                logger.print('collectgarbage done')
-                logger.print('oldConId =') logger.debugPrint(oldConId)
-                logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
-                local upgradedConId = game.interface.upgradeConstruction(
-                    oldConId,
-                    oldCon.fileName,
-                    paramsBak_NoSeed
-                )
-                logger.print('tryUpgradeStationOrStairsOrLiftConstruction succeeded, upgradedConId =') logger.debugPrint(upgradedConId)
-                -- return true
-            end,
-            function(error)
-                logger.warn('tryUpgradeStationOrStairsOrLiftConstruction failed')
-                state.warningText = _('NeedAdjust4Snap')
-                logger.warn(error)
-                -- return false
-            end
-        )
-    end,
-
     upgradeStationConstructionUNUSED = function(oldConId)
         logger.print('upgradeStationConstruction starting, oldConId =', oldConId)
         if not(edgeUtils.isValidAndExistingId(oldConId)) then return end
@@ -1337,7 +1734,7 @@ local _actions = {
                 -- UG TODO there is no such thing in the new api,
                 -- nor an upgrade event, both would be useful
                 collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
-                logger.print('collectgarbage done')
+                logger.print('upgradeStationConstruction - collect garbage done')
                 logger.print('oldConId =') logger.debugPrint(oldConId)
                 logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
                 local upgradedConId = game.interface.upgradeConstruction(
@@ -1452,7 +1849,7 @@ local _guiActions = {
             _eventNames.SUBWAY_JOIN_REQUESTED,
             nil,
             {
-                subwayId = conId
+                subwayConstructionId = conId
                 -- join2StationConId will be added by the popup
             }
         )
@@ -1757,7 +2154,7 @@ local _guiActions = {
         }
     end,
 }
-
+--[[
 _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     -- we make a build proposal for each terminal, so if one fails we still get the others
     -- LOLLO NOTE after building the station, never mind how well you placed it,
@@ -1786,13 +2183,13 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
-    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.platforms.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction or endEntities4T.platforms.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction
-    for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge1Ids) do
+    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.platforms.disjointNeighbourNodes.isNode1AdjoiningAConstruction or endEntities4T.platforms.disjointNeighbourNodes.isNode2AdjoiningAConstruction
+    for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdges.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _utils.tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
         -- logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
     end
-    for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdgeIds.edge2Ids) do
+    for _, edgeId in pairs(endEntities4T.platforms.disjointNeighbourEdges.edge2Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _utils.tryReplaceSegment(edgeId, endEntities4T.platforms, proposal, nNewEntities)
         -- logger.print('isSuccess =', isSuccess, 'nNewEntities =', nNewEntities)
@@ -1835,7 +2232,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
         _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
     end
 end
-
+]]
 _actions.buildSnappyStreetEdges = function(stationConId)
     -- rebuild the street edges connected to the station.
     -- If some are frozen in a construction, force-upgrade the station instead.
@@ -1863,11 +2260,11 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     _getStationStreetEndEntities results =
         {
             {
-                disjointNeighbourEdgeIds = { 29462, },
-                disjointNeighbourNodeId = 28429,
+                disjointNeighbourEdges.edgeIds = { 29462, },
+                disjointNeighbourNode.nodeId = 28429,
                 edgeId = 20883,
-                isNodeAdjoiningAConstruction = false,
-                neighbourConIds = { },
+                disjointNeighbourNode.isNodeAdjoiningAConstruction = false,
+                disjointNeighbourNode.conIds = { },
                 nodeId = 29504,
                 nodePosition = {
                 x = 71.972915649414,
@@ -1876,11 +2273,11 @@ _actions.buildSnappyStreetEdges = function(stationConId)
                 },
             },
             {
-                disjointNeighbourEdgeIds = { 29462, },
-                disjointNeighbourNodeId = 28919,
+                disjointNeighbourEdges.edgeIds = { 29462, },
+                disjointNeighbourNode.nodeId = 28919,
                 edgeId = 23547,
-                isNodeAdjoiningAConstruction = false,
-                neighbourConIds = { },
+                disjointNeighbourNode.isNodeAdjoiningAConstruction = false,
+                disjointNeighbourNode.conIds = { },
                 nodeId = 29619,
                 nodePosition = {
                 x = 46.655982971191,
@@ -1896,7 +2293,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
 
     local endEntities_GroupedBy_disjointNeighbourEdgeId = {}
     for _, endEntity in pairs(allEndEntities) do
-        for _, edgeId in pairs(endEntity.disjointNeighbourEdgeIds) do
+        for _, edgeId in pairs(endEntity.disjointNeighbourEdges.edgeIds) do
             if edgeUtils.isValidAndExistingId(edgeId) then
                 if not(endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId]) then endEntities_GroupedBy_disjointNeighbourEdgeId[edgeId] = {} end
 
@@ -1913,7 +2310,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     end
 
     for _, endEntity in pairs(allEndEntities) do
-        for _, conId in pairs(endEntity.neighbourConIds) do
+        for _, conId in pairs(endEntity.disjointNeighbourNode.conIds) do
             if edgeUtils.isValidAndExistingId(conId) then
                 neighbourConIds_indexed[conId] = true
             else
@@ -1926,7 +2323,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         logger.print('endEntities =') logger.debugPrint(endEntities)
         logger.print('valid disjointNeighbourEdgeId in buildSnappyStreetEdges, going ahead')
         -- for _, endEntity in pairs(endEntities) do
-            -- for _, neighbourConId in pairs(endEntity.neighbourConIds) do
+            -- for _, neighbourConId in pairs(endEntity.disjointNeighbourNode.conIds) do
             --     neighbourConIds_indexed[neighbourConId] = true
             -- end
         -- end
@@ -1936,9 +2333,9 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         local baseEdge = api.engine.getComponent(disjointNeighbourEdgeId, api.type.ComponentType.BASE_EDGE)
         local isNode0ReplacingDisjoint = false
         for _, endEntity in pairs(endEntities) do
-            if baseEdge.node0 == endEntity.disjointNeighbourNodeId then
+            if baseEdge.node0 == endEntity.disjointNeighbourNode.nodeId then
                 newSegment.comp.node0 = endEntity.nodeId
-                _addNodeToRemove(endEntity.disjointNeighbourNodeId)
+                _addNodeToRemove(endEntity.disjointNeighbourNode.nodeId)
                 logger.print('twenty-one')
                 isNode0ReplacingDisjoint = true
                 break
@@ -1951,9 +2348,9 @@ _actions.buildSnappyStreetEdges = function(stationConId)
 
         local isNode1ReplacingDisjoint = false
         for _, endEntity in pairs(endEntities) do
-            if baseEdge.node1 == endEntity.disjointNeighbourNodeId then
+            if baseEdge.node1 == endEntity.disjointNeighbourNode.nodeId then
                 newSegment.comp.node1 = endEntity.nodeId
-                _addNodeToRemove(endEntity.disjointNeighbourNodeId)
+                _addNodeToRemove(endEntity.disjointNeighbourNode.nodeId)
                 logger.print('twenty-four')
                 isNode1ReplacingDisjoint = true
                 break
@@ -2002,7 +2399,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         -- If they have snappy edges, they will resnap.
         local isAnyUpgradeFailed = false
         for neighbourConId, _ in pairs(neighbourConIds_indexed) do
-            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_actions.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
+            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(neighbourConId))
         end
         logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
         if not(isAnyUpgradeFailed) then return end
@@ -2054,7 +2451,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         end
     )
 end
-
+--[[
 _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     -- see the comments in buildSnappyPlatforms
     logger.print('buildSnappyTracks starting for terminal =', t or 'NIL')
@@ -2076,12 +2473,12 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     local nNewEntities = 0
     local isSuccess = true
 
-    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.tracks.disjointNeighbourNodeIds.isNode1AdjoiningAConstruction or endEntities4T.tracks.disjointNeighbourNodeIds.isNode2AdjoiningAConstruction
-    for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge1Ids) do
+    -- local isAnyNodeAdjoiningAConstruction = endEntities4T.tracks.disjointNeighbourNodes.isNode1AdjoiningAConstruction or endEntities4T.tracks.disjointNeighbourNodes.isNode2AdjoiningAConstruction
+    for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdges.edge1Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _utils.tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
     end
-    for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdgeIds.edge2Ids) do
+    for _, edgeId in pairs(endEntities4T.tracks.disjointNeighbourEdges.edge2Ids) do
         if not(isSuccess) then break end
         isSuccess, nNewEntities = _utils.tryReplaceSegment(edgeId, endEntities4T.tracks, proposal, nNewEntities)
     end
@@ -2129,7 +2526,7 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
 
     _utils.sendHideProgress()
 end
-
+]]
 function data()
     return {
         -- ini = function()
@@ -2180,7 +2577,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
+                    logger.print('lollo_freestyle_station.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
                     -- logger.print('args =') logger.debugPrint(args)
                     logger.print('state =') logger.debugPrint(state)
                     -- LOLLO NOTE ONLY SOMETIMES, it can crash when calling game.interface.getEntity(stationId).
@@ -2379,10 +2776,10 @@ function data()
 
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'splitPlatformNode1Id', 'splitPlatformNode2Id', 'splitTrackNode1Id', 'splitTrackNode2Id', })
                         logger.print('track bulldoze requested, platformEdgeIdsBetweenNodeIds =') logger.debugPrint(platformEdgeIdsBetweenNodeIds)
-                        eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds)
+                        eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds, true, false, true)
                         -- logger.print('track bulldoze requested, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
                         logger.print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') logger.debugPrint(trackEdgeIdsBetweenNodeIds)
-                        eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds)
+                        eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds, true, false, true)
                         -- logger.print('track bulldoze requested, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
 
                         local _getTrackMidIndex_orSplitPoint = function()
@@ -2708,37 +3105,42 @@ function data()
                             return
                         end
 
-                        _actions.removeTracks(
-                            platformEdgeIdsBetweenNodeIds,
-                            trackEdgeIdsBetweenNodeIds,
+                        eventArgs.nTerminal = 1
+                        if edgeUtils.isValidAndExistingId(eventArgs.join2StationConId) then
+                            local con = api.engine.getComponent(eventArgs.join2StationConId, api.type.ComponentType.CONSTRUCTION)
+                            if con ~= nil then
+                                logger.print('joining an existing station, conId = eventArgs.join2StationConId')
+                                eventArgs.nTerminal = #con.params.terminals + 1
+                                eventArgs.trackEndEntities = stationHelpers.getStationTrackEndEntities(eventArgs.join2StationConId)
+                                eventArgs.streetEndEntities = stationHelpers.getStationStreetEndEntities(eventArgs.join2StationConId)
+                            end
+                        end
+                        logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
+
+                        eventArgs.newTerminalNeighbours = {
+                            tracks = _utils.getNeighbours(eventArgs.trackEdgeList),
+                            platforms = _utils.getNeighbours(eventArgs.platformEdgeList)
+                        }
+
+                        _actions.removeNeighbours(
                             _eventNames.BUILD_STATION_REQUESTED,
                             eventArgs
                         )
                     elseif name == _eventNames.BUILD_STATION_REQUESTED then
-                        local eventArgs = arrayUtils.cloneDeepOmittingFields(args)
-                        eventArgs.nTerminal = 1
-                        if edgeUtils.isValidAndExistingId(eventArgs.join2StationConId) then
-                            local con = api.engine.getComponent(eventArgs.join2StationConId, api.type.ComponentType.CONSTRUCTION)
-                            if con ~= nil then eventArgs.nTerminal = #con.params.terminals + 1 end
-                        end
-                        logger.print('eventArgs.nTerminal =', eventArgs.nTerminal)
-
-                        _actions.buildStation(
-                            _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED,
-                            eventArgs
-                        )
+                        _actions.buildStation(_eventNames.REBUILD_NEIGHBOURS_REQUESTED, args)
+                    elseif name == _eventNames.REBUILD_NEIGHBOURS_REQUESTED then
+                        _actions.rebuildNeighbours(args)
                     elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
-                        _actions.removeTerminal(
-                            args.stationConstructionId,
-                            args.nTerminalToRemove,
-                            args.nRemainingTerminals,
-                            _eventNames.REBUILD_1_TRACK_REQUESTED
-                        )
+                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.err('about to remove neighbours, args.stationConstructionId not valid') return end
+
+                        args.trackEndEntities = stationHelpers.getStationTrackEndEntities(args.stationConstructionId)
+                        args.streetEndEntities = stationHelpers.getStationStreetEndEntities(args.stationConstructionId)
+                        _actions.removeNeighbours(_eventNames.REBUILD_STATION_WITH_ONE_LESS_TERMINAL_REQUESTED, args)
+                    elseif name == _eventNames.REBUILD_STATION_WITH_ONE_LESS_TERMINAL_REQUESTED then
+                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.err('about to rebuild a station without a terminal, args.stationConstructionId not valid') return end
+                        _actions.rebuildStationWithOneLessTerminal(_eventNames.REBUILD_1_TRACK_REQUESTED, args)
                     elseif name == _eventNames.REBUILD_1_TRACK_REQUESTED then
-                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
-                            logger.err('args.stationConstructionId not valid')
-                            return
-                        end
+                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.err('about to rebuild a track, args.stationConstructionId not valid') return end
                         if type(args.removedTerminalEdgeProps) ~= 'table' or type(args.removedTerminalEdgeProps.trackEdgeLists) ~= 'table' then
                             _actions.bulldozeConstruction(args.stationConstructionId)
                             logger.err('args.removedTerminalEdgeProps.trackEdgeLists not available')
@@ -2751,31 +3153,33 @@ function data()
                             args.removedTerminalEdgeProps.platformEdgeLists,
                             stationHelpers.getNeighbourNodeIdsOfBulldozedTerminal(args.removedTerminalEdgeProps.platformEdgeLists, args.removedTerminalEdgeProps.trackEdgeLists),
                             args.stationConstructionId,
-                            args.nRemainingTerminals > 0 and _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED or _eventNames.BULLDOZE_STATION_REQUESTED
+                            args.nRemainingTerminals > 0 and _eventNames.REBUILD_NEIGHBOURS_REQUESTED or _eventNames.BULLDOZE_STATION_REQUESTED
                         )
-                    elseif name == _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED then
-                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
-                            logger.err('args.stationConstructionId not valid')
-                            return
-                        end
-                        local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
-                        if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
-                            logger.err('construction', args.stationConstructionId, 'is not a freestyle station, I cannot build its snappy neighbours')
-                            return
-                        end
-                        _actions.buildSnappyPlatforms(args.stationConstructionId, 1, #con.params.terminals)
-                        _actions.buildSnappyStreetEdges(args.stationConstructionId)
-                        _actions.buildSnappyTracks(args.stationConstructionId, 1, #con.params.terminals)
                     elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
                         _utils.sendHideProgress()
                         _actions.bulldozeConstruction(args.stationConstructionId)
                     elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
-                        or not(edgeUtils.isValidAndExistingId(args.subwayId)) then
-                            logger.err('args.join2StationConId or args.subwayId is invalid')
+                        or not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then
+                            logger.err('args.join2StationConId or args.subwayConstructionId is invalid')
                             return
                         end
-                        _actions.addSubway(args.join2StationConId, args.subwayId, _eventNames.BUILD_SNAPPY_TRACKS_REQUESTED)
+
+                        local con = api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
+                        if con ~= nil then
+                            logger.print('subway joining an existing station, conId = eventArgs.join2StationConId')
+                            args.trackEndEntities = stationHelpers.getStationTrackEndEntities(args.join2StationConId)
+                            args.streetEndEntities = stationHelpers.getStationStreetEndEntities(args.join2StationConId)
+                        end
+
+                        _actions.removeNeighbours(_eventNames.SUBWAY_BUILD_REQUESTED, args)
+                    elseif name == _eventNames.SUBWAY_BUILD_REQUESTED then
+                        if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
+                        or not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then
+                            logger.err('args.join2StationConId or args.subwayConstructionId is invalid')
+                            return
+                        end
+                        _actions.addSubway(_eventNames.REBUILD_NEIGHBOURS_REQUESTED, args)
                     elseif name == _eventNames.TRACK_SPLIT_REQUESTED then
                         if args ~= nil and args.conId ~= nil then
                             if edgeUtils.isValidAndExistingId(args.conId) then
@@ -2850,7 +3254,7 @@ function data()
                         end
                         local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
                         if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
-                            logger.err('construction', args.stationConstructionId, 'is not a freestyle station')
+                            logger.err('construction', args.stationConstructionId, 'is not a freestyle station, I cannot build its snappy street edges')
                             return
                         end
                         _actions.buildSnappyStreetEdges(args.stationConstructionId)
