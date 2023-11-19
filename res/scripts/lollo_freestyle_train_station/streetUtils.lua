@@ -1,5 +1,4 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
-local _constants = require('lollo_freestyle_train_station.constants')
 local fileUtils = require('lollo_freestyle_train_station.fileUtils')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
@@ -626,16 +625,6 @@ helper.getGlobalBridgeDataPlusNoBridge = function(carrierId)
     local results = helper.getGlobalBridgeData(carrierId)
     table.insert(results, 1, {name = _texts.noBridge, icon = 'ui/bridges/no_bridge.tga'})
     return results
-end
-
-helper.getEraPrefix = function(streetTypeIndex)
-    if type(streetTypeIndex) ~= 'number' or streetTypeIndex < 0 then return _constants.eras.era_c.prefix end
-    local fileName = api.res.streetTypeRep.getFileName(streetTypeIndex)
-    if stringUtils.stringContains(fileName, _constants.eras.era_a.prefix) then return _constants.eras.era_a.prefix
-    elseif stringUtils.stringContains(fileName, _constants.eras.era_b.prefix) then return _constants.eras.era_b.prefix
-    elseif stringUtils.stringContains(fileName, _constants.eras.era_c.prefix) then return _constants.eras.era_c.prefix
-    end
-    return _constants.eras.era_c.prefix
 end
 
 return helper

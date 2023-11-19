@@ -9,6 +9,18 @@ local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
+local _utils = {
+    getStreetEraPrefix = function(streetTypeIndex)
+        if type(streetTypeIndex) ~= 'number' or streetTypeIndex < 0 then return _constants.eras.era_c.prefix end
+        local fileName = api.res.streetTypeRep.getFileName(streetTypeIndex)
+        if stringUtils.stringContains(fileName, _constants.eras.era_a.prefix) then return _constants.eras.era_a.prefix
+        elseif stringUtils.stringContains(fileName, _constants.eras.era_b.prefix) then return _constants.eras.era_b.prefix
+        elseif stringUtils.stringContains(fileName, _constants.eras.era_c.prefix) then return _constants.eras.era_c.prefix
+        end
+        return _constants.eras.era_c.prefix
+    end,
+}
+
 ---@alias edgeObject {flag: 0|1|2, param: number, modelFileName: string, playerEntity: string | nil, isLeft: boolean, isOneWay: boolean}
 ---@alias edgeIdsProperties table<{edgeId: integer, catenary: boolean, player: integer | nil, posTanX2: table, trackType: integer, trackTypeName: string, type: 0|1|2, edgeType: string, typeIndex: 0|1|2, edgeTypeName: string, width: number, era: eraPrefix, edgeObjects: table<edgeObject>}>
 ---@alias nodeIdsProperties table<{nodeId: integer, position: {x: number, y: number, z: number}}>
@@ -121,7 +133,7 @@ local helpers = {
                 typeIndex = baseEdge.typeIndex, -- -1 on ground, 0 tunnel / cement bridge, 1 steel bridge, 2 stone bridge, 3 suspension bridge
                 edgeTypeName = _getEdgeTypeName(baseEdge.type, baseEdge.typeIndex), -- same as above but in a format constructions understand
                 width = baseEdgeProperties.trackDistance,
-                era = isTrack and trackUtils.getEraPrefix(baseEdgeTrack.trackType) or streetUtils.getEraPrefix(baseEdgeStreet.streetType)
+                era = isTrack and trackUtils.getEraPrefix(baseEdgeTrack.trackType) or _utils.getStreetEraPrefix(baseEdgeStreet.streetType)
             }
             if isReadEdgeObjects then
                 result.edgeObjects = {}
