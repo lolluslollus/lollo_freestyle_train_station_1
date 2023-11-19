@@ -872,7 +872,7 @@ local _actions = {
                     logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node1Props[1].position)
                 end
             end
-
+-- LOLLO TODO test 2 or more objects on the same edge
             -- now the nodes are done, complete the segment
             newSegment.comp.node0 = node0Id
             newSegment.comp.node1 = node1Id
