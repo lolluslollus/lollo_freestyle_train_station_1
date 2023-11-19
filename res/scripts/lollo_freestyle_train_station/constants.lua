@@ -30,6 +30,7 @@ local constants = {
             REBUILD_NEIGHBOURS_REQUESTED = 'rebuildNeighboursRequested',
             REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
             SUBWAY_JOIN_REQUESTED = 'subwayJoinRequested',
+            SUBWAY_BUILD_REQUESTED = 'subwayBuildRequested',
             TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
             TRACK_SPLIT_REQUESTED = 'trackSplitRequested',
             TRACK_WAYPOINT_1_SPLIT_REQUESTED = 'trackWaypoint1SplitRequested',
