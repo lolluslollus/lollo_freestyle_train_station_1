@@ -444,12 +444,11 @@ local _actions = {
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
         -- context.player = api.engine.util.getPlayer()
-
+-- LOLLO TODO this fails with build 35716
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
                 logger.print('addSubway callback, success =', success)
-                -- logger.debugPrint(result)
                 if success then
                     if successEventName ~= nil then
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -461,6 +460,9 @@ local _actions = {
                             }
                         ))
                     end
+                else
+                    logger.print('proposal =') logger.debugPrint(proposal)
+                    logger.print('result =') logger.debugPrint(result)
                 end
             end
         )
@@ -923,36 +925,37 @@ local _actions = {
                 logger.print('LOLLO _rebuildNeighbours success_0 = ', success_0)
                 -- logger.print('LOLLO result = ') logger.debugPrint(result)
                 if success_0 then
-                    -- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap.
+                    -- Write away the adjoining constructions
+                    local newConIds = {}
                     if result_0.resultEntities ~= nil then
-                        local newConIds = {}
                         for _, conId in pairs(result_0.resultEntities) do
                             newConIds[#newConIds+1] = conId
                         end
                         logger.print('newConIds =') logger.debugPrint(newConIds)
-                        local _upgradeNeighbourCons = function()
-                            local isAnyUpgradeFailed = false
-                            for _, newConId in pairs(newConIds) do
-                                isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId))
-                            end
-                            logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
-                            if not(isAnyUpgradeFailed) then return end
-
-                            state.warningText = _('UnsnappedRoads')
-                        end
-                        _upgradeNeighbourCons()
                     end
-                    -- add edge objects, one by one coz the api does not work well with edge objects
+                    -- Add edges with objects, one by one coz the api does not work well with edge objects
                     for _, proposal in pairs(proposalsWithEdgesWithObjects) do
                         api.cmd.sendCommand(
                             api.cmd.make.buildProposal(proposal, context, true),
                             function(result_1, success_1)
                                 logger.print('LOLLO _rebuildNeighbours success_1 = ', success_1)
-                                if not(success_1) then logger.warn('cannot rebuild all the edge objects ONE') return end
-                                if result_1.resultProposalData.errorState.critical then logger.warn('cannot rebuild all the edge objects ONE_TWO') return end
+                                if not(success_1) then logger.warn('cannot rebuild all the edge objects ONE') end
+                                if result_1.resultProposalData.errorState.critical then logger.warn('cannot rebuild all the edge objects ONE_TWO') end
                             end
                         )
                     end
+                    -- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap.
+                    local _upgradeNeighbourCons = function()
+                        local isAnyUpgradeFailed = false
+                        for _, newConId in pairs(newConIds) do
+                            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId))
+                        end
+                        logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
+                        if not(isAnyUpgradeFailed) then return end
+
+                        state.warningText = _('UnsnappedRoads')
+                    end
+                    _upgradeNeighbourCons()
                 end
                 _utils.sendHideProgress()
             end
