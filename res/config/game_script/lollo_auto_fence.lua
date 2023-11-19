@@ -363,8 +363,8 @@ local _guiActions = {
         end
 
         -- convert userdata to table
-        local edge2Node0Pos = api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position
-        local edge2Node1Pos = api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position
+        local edge2Node0Pos = edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position)
+        local edge2Node1Pos = edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position)
 
         -- useless
         -- local edgeObject1Side, edgeObject2Side
@@ -388,8 +388,8 @@ local _guiActions = {
         local eventArgs = {
             edge1Id = edge1Id,
             edge2Id = edge2Id,
-            edge2Node0Pos = {edge2Node0Pos.x, edge2Node0Pos.y, edge2Node0Pos.z},
-            edge2Node1Pos = {edge2Node1Pos.x, edge2Node1Pos.y, edge2Node1Pos.z},
+            edge2Node0Pos = edge2Node0Pos,
+            edge2Node1Pos = edge2Node1Pos,
             fenceWaypoint1Id = fenceWaypointIds[1],
             fenceWaypoint2Id = fenceWaypointIds[2],
             fenceWaypointMidTransf = fenceWaypointMidTransf,
@@ -619,7 +619,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
+                    logger.print('lollo_auto_fence.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
                     if name == _eventNames.FENCE_WAYPOINTS_BUILT then
                         -- fence waypoints built, eventArgs = {
                         --     edge1Id = edge1Id,
@@ -636,7 +636,7 @@ function data()
                             args.edge1Id, args.edge2Id, _constants.maxFenceWaypointDistance, true, logger.isExtendedLog()
                         )
                         if #trackEdgeIdsBetweenEdgeIds > 0 then
-                            local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds)
+                            local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds, true, false, true)
                             if comparisonUtils.is123sSame(
                                 trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1],
                                 args.edge2Node1Pos
