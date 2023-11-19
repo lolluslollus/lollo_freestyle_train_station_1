@@ -363,7 +363,7 @@ local _actions = {
     -- LOLLO NOTE api.engine.util.proposal.makeProposalData(simpleProposal, context) returns the proposal data,
     -- which has the same format as the result of api.cmd.make.buildProposal
     addSubway = function(stationConstructionId, subwayConstructionId, successEventName)
-        logger.print('addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
+        logger.print('_addSubway starting, stationConstructionId =', stationConstructionId, 'subwayConstructionId =', subwayConstructionId)
         if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then logger.warn('invalid stationConstructionId') logger.warningDebugPrint(stationConstructionId) return end
         if not(edgeUtils.isValidAndExistingId(subwayConstructionId)) then logger.warn('invalid subwayConstructionId') logger.warningDebugPrint(subwayConstructionId) return end
 
@@ -444,11 +444,11 @@ local _actions = {
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
         -- context.player = api.engine.util.getPlayer()
--- LOLLO TODO this fails with build 35716
+-- LOLLO TODO this fails after build 35716
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('addSubway callback, success =', success)
+                logger.print('_addSubway callback, success =', success)
                 if success then
                     if successEventName ~= nil then
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -501,8 +501,6 @@ local _actions = {
         local conTransf = args.platformWaypointMidTransf
 
         logger.print('_buildStation starting, args =')
-        logger.print('build 35716 platformEdgeLists =') logger.debugPrint(args.platformEdgeList)
-        logger.print('build 35716 trackEdgeLists =') logger.debugPrint(args.trackEdgeList)
 
         local oldCon = edgeUtils.isValidAndExistingId(args.join2StationConId)
         and api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
@@ -682,7 +680,6 @@ local _actions = {
                 logger.print('_buildStation callback, success =', success)
                 -- logger.debugPrint(result)
                 if success then
-                    logger.print('build 35716 _buildStation succeeded, result =') logger.debugPrint(result)
                     local stationConstructionId = result.resultEntities[1]
                     logger.print('_buildStation succeeded, stationConstructionId = ', stationConstructionId)
                     _utils.tryRenameStationGroup(stationConstructionId)
@@ -1320,8 +1317,6 @@ local _actions = {
         if #neighbourConIds > 0 then
             proposal.constructionsToRemove = neighbourConIds
         end
-
-        logger.print('build 35716 _removeNeighbours proposal =') logger.debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -3153,6 +3148,7 @@ function data()
                             logger.err('args.removedTerminalEdgeProps.trackEdgeLists not available')
                             return
                         end
+-- LOLLO TODO this fails after build 35716
                         _actions.rebuildOneTerminalTracks(
                             args.removedTerminalEdgeProps.isForceTrackElectrification,
                             args.removedTerminalEdgeProps.forcedElectrificationValue,
