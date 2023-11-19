@@ -123,7 +123,7 @@ local _utils = {
                 end
             end
             edges[edgeId] = {
-                edgeProps = stationHelpers.getEdgeIdsProperties({edgeId}, true),
+                edgeProps = stationHelpers.getEdgeIdsProperties({edgeId}, true, true, false),
                 node0Props = stationHelpers.getNodeIdsProperties({baseEdge.node0}),
                 node1Props = stationHelpers.getNodeIdsProperties({baseEdge.node1})
             }
@@ -287,13 +287,13 @@ local _utils = {
         newSegment.comp.typeIndex = baseEdge.typeIndex
         newSegment.comp.objects = baseEdge.objects
         -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-        newSegment.type = _constants.railEdgeType
         local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
         local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
     
         if baseEdgeTrack ~= nil then
             newSegment.trackEdge.trackType = baseEdgeTrack.trackType
             newSegment.trackEdge.catenary = baseEdgeTrack.catenary
+            newSegment.type = _constants.railEdgeType
         elseif baseEdgeStreet ~= nil then
             logger.warn('edgeId', edgeId, 'is street')
             newSegment.streetEdge.streetType = baseEdgeStreet.streetType
@@ -301,6 +301,7 @@ local _utils = {
             newSegment.streetEdge.tramTrackType = baseEdgeStreet.tramTrackType
             -- newSegment.streetEdge.precedenceNode0 = baseEdgeStreet.precedenceNode0
             -- newSegment.streetEdge.precedenceNode1 = baseEdgeStreet.precedenceNode1
+            newSegment.type = _constants.streetEdgeType
         end
     
         proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
@@ -708,7 +709,7 @@ local _actions = {
         )
     end,
 
-    rebuildNeighbours = function(successEventName, args)
+    rebuildNeighboursOLD = function(successEventName, args)
         logger.print('_rebuildNeighbours starting, args =') logger.debugPrint(args)
         local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
 
@@ -725,7 +726,64 @@ local _actions = {
         end
 
         local proposal = api.type.SimpleProposal.new()
+        local _addEdgeObjects = function(edgeData, newSegment, nNewSegments)
+            if edgeData.edgeProps[1].edgeObjects == nil then return end
+
+            local segmentCompObjects = {}
+            for o, edgeObject in pairs(edgeData.edgeProps[1].edgeObjects) do
+                logger.print('edgeObject =') logger.debugPrint(edgeObject)
+                logger.print('#proposal.streetProposal.edgeObjectsToAdd =') logger.debugPrint(#proposal.streetProposal.edgeObjectsToAdd)
+                local eo = api.type.SimpleStreetProposal.EdgeObject.new()
+                eo.left = edgeObject.isLeft
+                eo.model = edgeObject.modelFileName
+                -- eo.model = edgeObject.modelId NO!
+                eo.name = edgeObject.name
+                eo.oneWay = edgeObject.isOneWay
+                eo.param = edgeObject.param
+                if edgeObject.playerEntity then eo.playerEntity = edgeObject.playerEntity end
+
+                -- 0 crash
+                -- 1 Assertion `eo.edgeEntity.GetId() < 0 && eo.edgeEntity.GetId() >= -(int)result.proposal.addedSegments.size()' failed.
+                -- 2 crash
+                -- 3 crash
+                -- 4 crash
+                -- 5 ecs::Engine::GetComponentDataIndex(const class ecs::Entity &,int) const: Assertion `it != components.end()' failed
+                -- 6 crash
+                -- 7 crash
+                -- 8 ecs::Engine::GetComponentDataIndex(const class ecs::Entity &,int) const: Assertion `it != components.end()' failed.
+
+                -- eo.edgeEntity = newSegment.entity -- 1
+                eo.edgeEntity = nNewSegments -- 0 2 3 4 5 6 7 8
+
+                proposal.streetProposal.edgeObjectsToAdd[#proposal.streetProposal.edgeObjectsToAdd+1] = eo
+
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects -1, edgeObject.flag} -- 5
+                -- segmentCompObjects[#segmentCompObjects+1] = {#segmentCompObjects -1, edgeObject.flag} -- 6
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects, edgeObject.flag} -- 7
+                segmentCompObjects[#segmentCompObjects+1] = {#segmentCompObjects, edgeObject.flag} -- 8
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#proposal.streetProposal.edgeObjectsToAdd, edgeObject.flag} -- 0 1
+                -- segmentCompObjects[#segmentCompObjects+1] = {#proposal.streetProposal.edgeObjectsToAdd, edgeObject.flag} -- 2
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#proposal.streetProposal.edgeObjectsToAdd +1, edgeObject.flag} -- 3
+                -- segmentCompObjects[#segmentCompObjects+1] = {#proposal.streetProposal.edgeObjectsToAdd +1, edgeObject.flag} -- 4
+            end
+            logger.print('segmentCompObjects =') logger.debugPrint(segmentCompObjects)
+            newSegment.comp.objects = segmentCompObjects
+        end
+        local _setCommonSegmentProps = function(edgeData, newSegment)
+            local props = edgeData.edgeProps[1]
+            newSegment.comp.tangent0.x = props.posTanX2[1][2][1]
+            newSegment.comp.tangent0.y = props.posTanX2[1][2][2]
+            newSegment.comp.tangent0.z = props.posTanX2[1][2][3]
+            newSegment.comp.tangent1.x = props.posTanX2[2][2][1]
+            newSegment.comp.tangent1.y = props.posTanX2[2][2][2]
+            newSegment.comp.tangent1.z = props.posTanX2[2][2][3]
+            newSegment.comp.type = props.type
+            newSegment.comp.typeIndex = props.typeIndex
+            if props.player ~= nil then newSegment.playerOwned = { player = props.player } end
+        end
+
         local nNewEntities = -1
+        local nNewSegments = -1
         local allTrackEdges = {}
         arrayUtils.concatKeysValues(allTrackEdges, args.newTerminalNeighbours.platforms.edges)
         arrayUtils.concatKeysValues(allTrackEdges, args.newTerminalNeighbours.tracks.edges)
@@ -754,8 +812,8 @@ local _actions = {
                 newNode.comp.position.y = edgeData.node0Props[1].position.y
                 newNode.comp.position.z = edgeData.node0Props[1].position.z
                 node0Id = nNewEntities
-                nNewEntities = nNewEntities - 1
                 proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                nNewEntities = nNewEntities - 1
             else
                 node0Id = _getNearbyNodeId(edgeData.node0Props[1].position)
                 if node0Id == nil then
@@ -769,8 +827,8 @@ local _actions = {
                 newNode.comp.position.y = edgeData.node1Props[1].position.y
                 newNode.comp.position.z = edgeData.node1Props[1].position.z
                 node1Id = nNewEntities
-                nNewEntities = nNewEntities - 1
                 proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                nNewEntities = nNewEntities - 1
             else
                 node1Id = _getNearbyNodeId(edgeData.node1Props[1].position)
                 if node1Id == nil then
@@ -782,20 +840,14 @@ local _actions = {
             newSegment.entity = nNewEntities
             newSegment.comp.node0 = node0Id
             newSegment.comp.node1 = node1Id
-            newSegment.comp.tangent0.x = edgeData.edgeProps[1].posTanX2[1][2][1]
-            newSegment.comp.tangent0.y = edgeData.edgeProps[1].posTanX2[1][2][2]
-            newSegment.comp.tangent0.z = edgeData.edgeProps[1].posTanX2[1][2][3]
-            newSegment.comp.tangent1.x = edgeData.edgeProps[1].posTanX2[2][2][1]
-            newSegment.comp.tangent1.y = edgeData.edgeProps[1].posTanX2[2][2][2]
-            newSegment.comp.tangent1.z = edgeData.edgeProps[1].posTanX2[2][2][3]
-            newSegment.comp.type = edgeData.edgeProps[1].type
-            newSegment.comp.typeIndex = edgeData.edgeProps[1].typeIndex
-            -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+            _setCommonSegmentProps(edgeData, newSegment)
             newSegment.type = _constants.railEdgeType
             newSegment.trackEdge.trackType = edgeData.edgeProps[1].trackType
             newSegment.trackEdge.catenary = edgeData.edgeProps[1].catenary
-            nNewEntities = nNewEntities - 1
+            _addEdgeObjects(edgeData, newSegment, nNewSegments)
             proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+            nNewEntities = nNewEntities - 1
+            nNewSegments = nNewSegments - 1
         end
         for _, edgeData in pairs(allStreetEdges) do
             local node0Id, node1Id = nil, nil
@@ -806,8 +858,8 @@ local _actions = {
                 newNode.comp.position.y = edgeData.node0Props[1].position.y
                 newNode.comp.position.z = edgeData.node0Props[1].position.z
                 node0Id = nNewEntities
-                nNewEntities = nNewEntities - 1
                 proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                nNewEntities = nNewEntities - 1
             else
                 node0Id = _getNearbyNodeId(edgeData.node0Props[1].position)
                 if node0Id == nil then
@@ -821,8 +873,8 @@ local _actions = {
                 newNode.comp.position.y = edgeData.node1Props[1].position.y
                 newNode.comp.position.z = edgeData.node1Props[1].position.z
                 node1Id = nNewEntities
-                nNewEntities = nNewEntities - 1
                 proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                nNewEntities = nNewEntities - 1
             else
                 node1Id = _getNearbyNodeId(edgeData.node1Props[1].position)
                 if node1Id == nil then
@@ -834,23 +886,18 @@ local _actions = {
             newSegment.entity = nNewEntities
             newSegment.comp.node0 = node0Id
             newSegment.comp.node1 = node1Id
-            newSegment.comp.tangent0.x = edgeData.edgeProps[1].posTanX2[1][2][1]
-            newSegment.comp.tangent0.y = edgeData.edgeProps[1].posTanX2[1][2][2]
-            newSegment.comp.tangent0.z = edgeData.edgeProps[1].posTanX2[1][2][3]
-            newSegment.comp.tangent1.x = edgeData.edgeProps[1].posTanX2[2][2][1]
-            newSegment.comp.tangent1.y = edgeData.edgeProps[1].posTanX2[2][2][2]
-            newSegment.comp.tangent1.z = edgeData.edgeProps[1].posTanX2[2][2][3]
-            newSegment.comp.type = edgeData.edgeProps[1].type
-            newSegment.comp.typeIndex = edgeData.edgeProps[1].typeIndex
-            -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
+            _setCommonSegmentProps(edgeData, newSegment)
             newSegment.type = _constants.streetEdgeType
             newSegment.streetEdge.streetType = edgeData.edgeProps[1].streetType
             newSegment.streetEdge.tramTrackType = edgeData.edgeProps[1].tramTrackType
             newSegment.streetEdge.hasBus = edgeData.edgeProps[1].hasBus
-            nNewEntities = nNewEntities - 1
+            _addEdgeObjects(edgeData, newSegment, nNewSegments)
             proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+            nNewEntities = nNewEntities - 1
+            nNewSegments = nNewSegments - 1
         end
-        -- LOLLO TODO rebuild edge objects
+        -- LOLLO NOTE rebuild edge objects fails
+
         -- local eo = api.type.SimpleStreetProposal.EdgeObject.new()
         -- eo.left = true
         -- eo.model = "street/signal_waypoint.mdl"
@@ -981,7 +1028,7 @@ local _actions = {
                             -- in my test, 1 is left to right and 0 viceversa
                             -- with 0, the yellow arrow points from baseEdge.node0 to baseEdge.node1; the white arrow viceversa
                         },
-                        type = 2, -- 2 is waypoint, 1 is two-way signal, 0 is one-way signal
+                        type = 2, -- 2 is waypoint, 0 is two-way signal, 1 is one-way signal
                         state = 0,
                         stateTime = -1,
                     },
@@ -1065,6 +1112,256 @@ local _actions = {
                     --         args
                     --     ))
                     -- end
+                end
+                _utils.sendHideProgress()
+            end
+        )
+    end,
+
+    rebuildNeighbours = function(args)
+        logger.print('_rebuildNeighbours starting, args =') logger.debugPrint(args)
+        local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+
+        local _getNearbyNodeId = function(positionXYZ)
+            local _tolerance = 0.001
+            local nearbyNodeIds = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(positionXYZ),
+                _tolerance,
+                api.type.ComponentType.BASE_NODE,
+                positionXYZ.z - _tolerance,
+                positionXYZ.z + _tolerance
+            )
+            return nearbyNodeIds[1]
+        end
+        local _setEdgeObjects = function(edgeData, newSegment, proposal)
+            if edgeData.edgeProps[1].edgeObjects == nil then return end
+
+            local segmentCompObjects = {}
+            for o, edgeObject in pairs(edgeData.edgeProps[1].edgeObjects) do
+                logger.print('edgeObject =') logger.debugPrint(edgeObject)
+                logger.print('#proposal.streetProposal.edgeObjectsToAdd =') logger.debugPrint(#proposal.streetProposal.edgeObjectsToAdd)
+                local eo = api.type.SimpleStreetProposal.EdgeObject.new()
+                eo.left = edgeObject.isLeft
+                eo.model = edgeObject.modelFileName
+                -- eo.model = edgeObject.modelId NO!
+                eo.name = edgeObject.name
+                eo.oneWay = edgeObject.isOneWay
+                eo.param = edgeObject.param
+                if edgeObject.playerEntity then eo.playerEntity = edgeObject.playerEntity end
+                -- LOLLO NOTE the api makes trouble with edge objects unless the edge has entity -1
+                -- 0 crash
+                -- 1 Assertion `eo.edgeEntity.GetId() < 0 && eo.edgeEntity.GetId() >= -(int)result.proposal.addedSegments.size()' failed.
+                -- 2 crash
+                -- 3 crash
+                -- 4 crash
+                -- 5 ecs::Engine::GetComponentDataIndex(const class ecs::Entity &,int) const: Assertion `it != components.end()' failed
+                -- 6 crash
+                -- 7 crash
+                -- 8 ecs::Engine::GetComponentDataIndex(const class ecs::Entity &,int) const: Assertion `it != components.end()' failed.
+
+                -- eo.edgeEntity = newSegment.entity -- 1
+                -- eo.edgeEntity = nNewSegments -- 0 2 3 4 5 6 7 8
+                eo.edgeEntity = -1 -- fix to avoid trouble
+
+                proposal.streetProposal.edgeObjectsToAdd[#proposal.streetProposal.edgeObjectsToAdd+1] = eo
+
+                segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects -1, edgeObject.flag}
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects -1, edgeObject.flag} -- 5
+                -- segmentCompObjects[#segmentCompObjects+1] = {#segmentCompObjects -1, edgeObject.flag} -- 6
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects, edgeObject.flag} -- 7
+                -- segmentCompObjects[#segmentCompObjects+1] = {#segmentCompObjects, edgeObject.flag} -- 8
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#proposal.streetProposal.edgeObjectsToAdd, edgeObject.flag} -- 0 1
+                -- segmentCompObjects[#segmentCompObjects+1] = {#proposal.streetProposal.edgeObjectsToAdd, edgeObject.flag} -- 2
+                -- segmentCompObjects[#segmentCompObjects+1] = {-#proposal.streetProposal.edgeObjectsToAdd +1, edgeObject.flag} -- 3
+                -- segmentCompObjects[#segmentCompObjects+1] = {#proposal.streetProposal.edgeObjectsToAdd +1, edgeObject.flag} -- 4
+            end
+            logger.print('segmentCompObjects =') logger.debugPrint(segmentCompObjects)
+            newSegment.comp.objects = segmentCompObjects
+        end
+        local _setSegmentProps = function(edgeData, newSegment)
+            local props = edgeData.edgeProps[1]
+            newSegment.comp.tangent0.x = props.posTanX2[1][2][1]
+            newSegment.comp.tangent0.y = props.posTanX2[1][2][2]
+            newSegment.comp.tangent0.z = props.posTanX2[1][2][3]
+            newSegment.comp.tangent1.x = props.posTanX2[2][2][1]
+            newSegment.comp.tangent1.y = props.posTanX2[2][2][2]
+            newSegment.comp.tangent1.z = props.posTanX2[2][2][3]
+            newSegment.comp.type = props.type
+            newSegment.comp.typeIndex = props.typeIndex
+            if props.player ~= nil then newSegment.playerOwned = { player = props.player } end
+            if props.isTrack then
+                newSegment.type = _constants.railEdgeType
+                newSegment.trackEdge.trackType = props.trackType
+                newSegment.trackEdge.catenary = props.catenary
+            else
+                newSegment.type = _constants.streetEdgeType
+                newSegment.streetEdge.streetType = props.streetType
+                newSegment.streetEdge.tramTrackType = props.tramTrackType
+                newSegment.streetEdge.hasBus = props.hasBus
+            end
+        end
+
+        -- edges and nodes
+        local allEdges_indexedByEdgeId = {}
+        arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, args.newTerminalNeighbours.platforms.edges)
+        arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, args.newTerminalNeighbours.tracks.edges)
+        if args.trackEndEntities ~= nil then
+            for t, terminalEndEntities in pairs(args.trackEndEntities) do
+                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, terminalEndEntities.platforms.jointNeighbourEdges.props)
+                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, terminalEndEntities.tracks.jointNeighbourEdges.props)
+            end
+        end
+        if args.streetEndEntities ~= nil then
+            for e, endEntity in pairs(args.streetEndEntities) do
+                -- you can't do the same edge twice coz the table is indexed by edgeId
+                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, endEntity.jointNeighbourEdges.props)
+            end
+        end
+        logger.print('allEdges_indexedByEdgeId =') logger.debugPrint(allEdges_indexedByEdgeId)
+
+        local nNewEntities_total = -1
+        local proposalWithObjectlessEdges = api.type.SimpleProposal.new()
+        local proposalsWithEdgesWithObjects = {}
+        local _getInitialLoopProps = function(edgeData)
+            local isSegmentWithEdgeObjects = edgeData.edgeProps[1].edgeObjects ~= nil
+            local proposal = nil
+            local nNewEntities_local = 0
+            if isSegmentWithEdgeObjects then
+                proposal = api.type.SimpleProposal.new()
+                proposalsWithEdgesWithObjects[#proposalsWithEdgesWithObjects+1] = proposal
+                -- proposalsWithEdgesWithObjects[#proposalsWithEdgesWithObjects+1] = {
+                --     proposal = proposal,
+                --     edgeObjects = edgeData.edgeProps[1].edgeObjects
+                -- }
+                nNewEntities_local = -1
+            else
+                proposal = proposalWithObjectlessEdges
+                nNewEntities_local = nNewEntities_total
+            end
+
+            return isSegmentWithEdgeObjects, proposal, nNewEntities_local
+        end
+        for _, edgeData in pairs(allEdges_indexedByEdgeId) do
+            local isSegmentWithEdgeObjects, proposal, nNewEntities_local = _getInitialLoopProps(edgeData)
+            -- first add the segment, so its "entity" will always be -1, so the edge objects won't suffer at the hands of the dumb api
+            local newSegment = api.type.SegmentAndEntity.new()
+            newSegment.entity = nNewEntities_local
+            _setSegmentProps(edgeData, newSegment)
+            _setEdgeObjects(edgeData, newSegment, proposal)
+            nNewEntities_local = nNewEntities_local - 1
+
+            local node0Id, node1Id = nil, nil
+            if edgeData.isNode0ToBeAdded then
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities_local
+                newNode.comp.position.x = edgeData.node0Props[1].position.x
+                newNode.comp.position.y = edgeData.node0Props[1].position.y
+                newNode.comp.position.z = edgeData.node0Props[1].position.z
+                node0Id = newNode.entity
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                nNewEntities_local = nNewEntities_local - 1
+            else
+                node0Id = _getNearbyNodeId(edgeData.node0Props[1].position)
+                if node0Id == nil then
+                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node0Props[1].position)
+                end
+            end
+            if edgeData.isNode1ToBeAdded then
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities_local
+                newNode.comp.position.x = edgeData.node1Props[1].position.x
+                newNode.comp.position.y = edgeData.node1Props[1].position.y
+                newNode.comp.position.z = edgeData.node1Props[1].position.z
+                node1Id = newNode.entity
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                nNewEntities_local = nNewEntities_local - 1
+            else
+                node1Id = _getNearbyNodeId(edgeData.node1Props[1].position)
+                if node1Id == nil then
+                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node1Props[1].position)
+                end
+            end
+
+            -- now the nodes are done, complete the segment
+            newSegment.comp.node0 = node0Id
+            newSegment.comp.node1 = node1Id
+            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+
+            if not(isSegmentWithEdgeObjects) then nNewEntities_total = nNewEntities_local end
+        end
+
+        -- neighbouring constructions
+        if args.streetEndEntities ~= nil then
+            local neighbourConIds = {}
+            for _, endEntity in pairs(args.streetEndEntities) do
+                for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
+                    if not(arrayUtils.arrayHasValue(neighbourConIds, conId)) then -- make sure you don't do the same con twice
+                        neighbourConIds[#neighbourConIds+1] = conId
+
+                        local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
+                        newParams.seed = conProps.params.seed + 1
+                        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+                        newCon.fileName = conProps.fileName
+                        newCon.params = newParams
+                        newCon.playerEntity = api.engine.util.getPlayer()
+                        -- newCon.transf = oldCon.transf
+                        newCon.transf = api.type.Mat4f.new(
+                            api.type.Vec4f.new(conProps.transf[1], conProps.transf[2], conProps.transf[3], conProps.transf[4]),
+                            api.type.Vec4f.new(conProps.transf[5], conProps.transf[6], conProps.transf[7], conProps.transf[8]),
+                            api.type.Vec4f.new(conProps.transf[9], conProps.transf[10], conProps.transf[11], conProps.transf[12]),
+                            api.type.Vec4f.new(conProps.transf[13], conProps.transf[14], conProps.transf[15], conProps.transf[16])
+                        )
+
+                        proposalWithObjectlessEdges.constructionsToAdd[#proposalWithObjectlessEdges.constructionsToAdd+1] = newCon
+                    end
+                end
+            end
+        end
+
+        logger.print('_rebuildNeighbours made proposalWithObjectlessEdges =') logger.debugPrint(proposalWithObjectlessEdges)
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposalWithObjectlessEdges, context, true),
+            function(result_0, success_0)
+                logger.print('LOLLO _rebuildNeighbours success_0 = ', success_0)
+                -- logger.print('LOLLO result = ') logger.debugPrint(result)
+                if success_0 then
+                    -- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap.
+                    if result_0.resultEntities ~= nil then
+                        local newConIds = {}
+                        for _, conId in pairs(result_0.resultEntities) do
+                            newConIds[#newConIds+1] = conId
+                        end
+                        logger.print('newConIds =') logger.debugPrint(newConIds)
+                        local _upgradeNeighbourCons = function()
+                            local isAnyUpgradeFailed = false
+                            for _, newConId in pairs(newConIds) do
+                                isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId))
+                            end
+                            logger.print('isAnyUpgradeFailed =', isAnyUpgradeFailed)
+                            if not(isAnyUpgradeFailed) then return end
+
+                            state.warningText = _('UnsnappedRoads')
+                        end
+                        _upgradeNeighbourCons()
+                    end
+                    -- add edge objects, one by one coz the api does not work well with edge objects
+                    for _, proposal in pairs(proposalsWithEdgesWithObjects) do
+                        api.cmd.sendCommand(
+                            api.cmd.make.buildProposal(proposal, context, true),
+                            function(result_1, success_1)
+                                logger.print('LOLLO _rebuildNeighbours success_1 = ', success_1)
+                                if not(success_1) then logger.warn('cannot rebuild all the edge objects ONE') return end
+                                if result_1.resultProposalData.errorState.critical then logger.warn('cannot rebuild all the edge objects ONE_TWO') return end
+                            end
+                        )
+                    end
                 end
                 _utils.sendHideProgress()
             end
@@ -2886,10 +3183,10 @@ function data()
 
                         local eventArgs = arrayUtils.cloneDeepOmittingFields(args, { 'splitPlatformNode1Id', 'splitPlatformNode2Id', 'splitTrackNode1Id', 'splitTrackNode2Id', })
                         logger.print('track bulldoze requested, platformEdgeIdsBetweenNodeIds =') logger.debugPrint(platformEdgeIdsBetweenNodeIds)
-                        eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds, true)
+                        eventArgs.platformEdgeList = stationHelpers.getEdgeIdsProperties(platformEdgeIdsBetweenNodeIds, true, false, true)
                         -- logger.print('track bulldoze requested, platformEdgeList =') logger.debugPrint(eventArgs.platformEdgeList)
                         logger.print('track bulldoze requested, trackEdgeIdsBetweenNodeIds =') logger.debugPrint(trackEdgeIdsBetweenNodeIds)
-                        eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds, true)
+                        eventArgs.trackEdgeList = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenNodeIds, true, false, true)
                         -- logger.print('track bulldoze requested, trackEdgeList =') logger.debugPrint(eventArgs.trackEdgeList)
 
                         local _getTrackMidIndex_orSplitPoint = function()
@@ -3242,9 +3539,12 @@ function data()
                             args
                         )
                     elseif name == _eventNames.REBUILD_NEIGHBOURS_REQUESTED then
+                        -- _actions.rebuildNeighboursOLD(
+                        --     -- _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED,
+                        --     nil,
+                        --     args
+                        -- )
                         _actions.rebuildNeighbours(
-                            -- _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED,
-                            nil,
                             args
                         )
                     elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then

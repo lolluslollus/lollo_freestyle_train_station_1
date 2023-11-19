@@ -9,11 +9,17 @@ local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 local transfUtilsUG = require('transf')
 
----@alias edgeIdsProperties table<{edgeId: integer, catenary: boolean, posTanX2: table, trackType: integer, trackTypeName: string, type: 0|1|2, edgeType: string, typeIndex: 0|1|2, edgeTypeName: string, width: number, era: eraPrefix}>
+---@alias edgeObject {flag: 0|1|2, param: number, modelFileName: string, playerEntity: string | nil, isLeft: boolean, isOneWay: boolean}
+---@alias edgeIdsProperties table<{edgeId: integer, catenary: boolean, player: integer | nil, posTanX2: table, trackType: integer, trackTypeName: string, type: 0|1|2, edgeType: string, typeIndex: 0|1|2, edgeTypeName: string, width: number, era: eraPrefix, edgeObjects: table<edgeObject>}>
 ---@alias nodeIdsProperties table<{nodeId: integer, position: {x: number, y: number, z: number}}>
 local helpers = {
+    ---isReadEdgeObjects might disagree with isSortOutput
+    ---@param edgeIds table<integer>
+    ---@param isTrack boolean
+    ---@param isReadEdgeObjects boolean
+    ---@param isSortOutput boolean
     ---@return edgeIdsProperties
-    getEdgeIdsProperties = function(edgeIds, isTrack)
+    getEdgeIdsProperties = function(edgeIds, isTrack, isReadEdgeObjects, isSortOutput)
         if type(edgeIds) ~= 'table' then return {} end
 
         local _getEdgeType = function(baseEdgeType)
@@ -47,34 +53,38 @@ local helpers = {
             local tan0 = baseEdge.tangent0
             local tan1 = baseEdge.tangent1
 
-            local _swap = function()
-                -- LOLLO NOTE lua does not need the third variable for swapping since the assignments take place at the same time
-                pos0, pos1 = pos1, pos0
-                tan0, tan1 = tan1, tan0
-                tan0.x = -tan0.x
-                tan0.y = -tan0.y
-                tan0.z = -tan0.z
-                tan1.x = -tan1.x
-                tan1.y = -tan1.y
-                tan1.z = -tan1.z
-            end
-            -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
-            if i == 1 then
-                if i < #edgeIds then
-                    -- logger.print('nextBaseEdgeId =') logger.debugPrint(edgeIds[i + 1])
-                    local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
-                    if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
+            if isSortOutput then
+                local _swap = function()
+                    -- LOLLO NOTE lua does not need the third variable for swapping since the assignments take place at the same time
+                    pos0, pos1 = pos1, pos0
+                    tan0, tan1 = tan1, tan0
+                    tan0.x = -tan0.x
+                    tan0.y = -tan0.y
+                    tan0.z = -tan0.z
+                    tan1.x = -tan1.x
+                    tan1.y = -tan1.y
+                    tan1.z = -tan1.z
                 end
-            else
-                local prevBaseEdge = api.engine.getComponent(edgeIds[i - 1], api.type.ComponentType.BASE_EDGE)
-                if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then _swap() end
+                -- edgeIds are in the right sequence, but baseNode0 and baseNode1 depend on the sequence edges were laid in
+                if i == 1 then
+                    if i < #edgeIds then
+                        -- logger.print('nextBaseEdgeId =') logger.debugPrint(edgeIds[i + 1])
+                        local nextBaseEdge = api.engine.getComponent(edgeIds[i + 1], api.type.ComponentType.BASE_EDGE)
+                        if baseEdge.node0 == nextBaseEdge.node0 or baseEdge.node0 == nextBaseEdge.node1 then _swap() end
+                    end
+                else
+                    local prevBaseEdge = api.engine.getComponent(edgeIds[i - 1], api.type.ComponentType.BASE_EDGE)
+                    if baseEdge.node1 == prevBaseEdge.node0 or baseEdge.node1 == prevBaseEdge.node1 then _swap() end
+                end
             end
 
+            local playerOwned = api.engine.getComponent(edgeId, api.type.ComponentType.PLAYER_OWNED)
             local result = {
                 edgeId = edgeId,
                 catenary = baseEdgeTrack and baseEdgeTrack.catenary,
                 hasBus = baseEdgeStreet and baseEdgeStreet.hasBus,
                 isTrack = isTrack,
+                player = playerOwned and playerOwned.player,
                 posTanX2 = {
                     {
                         {
@@ -113,11 +123,76 @@ local helpers = {
                 width = baseEdgeProperties.trackDistance,
                 era = isTrack and trackUtils.getEraPrefix(baseEdgeTrack.trackType) or streetUtils.getEraPrefix(baseEdgeStreet.streetType)
             }
+            if isReadEdgeObjects then
+                result.edgeObjects = {}
+                for _, object in pairs(baseEdge.objects) do
+                    if object ~= nil and object[1] ~= nil then
+                        local newEdgeObject = {}
+
+                        local edgeObjectId = object[1]
+                        newEdgeObject.flag = object[2] or 0
+                        local modelInstanceList = api.engine.getComponent(edgeObjectId, api.type.ComponentType.MODEL_INSTANCE_LIST)
+                        local ugTransf = modelInstanceList.fatInstances[1].transf
+                        local myTransf = transfUtilsUG.new(ugTransf:cols(0), ugTransf:cols(1), ugTransf:cols(2), ugTransf:cols(3))
+                        local distanceNode0Object = transfUtils.getPositionsDistance(
+                            baseNode0.position,
+                            transfUtils.transf2Position(myTransf, true)
+                        )
+                        local distanceNode1Object = transfUtils.getPositionsDistance(
+                            baseNode1.position,
+                            transfUtils.transf2Position(myTransf, true)
+                        )
+                        if (distanceNode0Object + distanceNode1Object) > 0 then
+                            newEdgeObject.param = distanceNode0Object / (distanceNode0Object + distanceNode1Object)
+                            if newEdgeObject.param < 0 then newEdgeObject.param = 0 elseif newEdgeObject.param > 1 then newEdgeObject.param = 1 end
+                        else
+                            newEdgeObject.param = 0.5
+                            logger.warn('getEdgeIdsProperties found edge ' .. edgeId .. ' has length 0')
+                        end
+
+                        newEdgeObject.modelFileName = api.res.modelRep.getName(modelInstanceList.fatInstances[1].modelId)
+
+                        local playerOwned = api.engine.getComponent(edgeObjectId, api.type.ComponentType.PLAYER_OWNED)
+                        if playerOwned then newEdgeObject.playerEntity = playerOwned.player end
+
+                        local objectWithName = api.engine.getComponent(edgeObjectId, api.type.ComponentType.NAME)
+                        if objectWithName ~= nil then newEdgeObject.name = objectWithName.name end
+
+                        --[[
+                            api.type.enum.EdgeObjectType.SIGNAL = 2
+                            api.type.enum.EdgeObjectType.STOP_LEFT = 0
+                            api.type.enum.EdgeObjectType.STOP_RIGHT = 1
+                        ]]
+                        -- I tested isLeft in one of the few occasions when this stupid thing worked
+                        local isEdgeObjectLeft = true
+                        local isEdgeObjectOneWay = false
+                        if newEdgeObject.flag == 1 then -- 0 and 1 are for street edges
+                            isEdgeObjectLeft = false
+                        elseif newEdgeObject.flag == 2 then -- rail edge
+                            local signalList = api.engine.getComponent(edgeObjectId, api.type.ComponentType.SIGNAL_LIST)
+                            if signalList ~= nil then
+                                local signal = signalList.signals[1]
+                                -- local edgeId = signal.edgePr.entity
+                                isEdgeObjectOneWay = (signal.type == 1)
+                                isEdgeObjectLeft = (signal.edgePr.index ~= 1)
+                            else
+                                logger.warn('getEdgeIdsProperties found no signal list for edge ' .. edgeId)
+                            end
+                        end
+                        newEdgeObject.isLeft = isEdgeObjectLeft
+                        newEdgeObject.isOneWay = isEdgeObjectOneWay
+
+                        result.edgeObjects[#result.edgeObjects+1] = newEdgeObject
+                    end
+                end
+            end
             results[#results+1] = result
         end
 
         return results
     end,
+
+    ---@param nodeIds table<integer>
     ---@return nodeIdsProperties
     getNodeIdsProperties = function(nodeIds)
         if type(nodeIds) ~= 'table' then return {} end
@@ -1268,7 +1343,7 @@ local _getStationStreetEndEntities = function(stationCon, t)
                 end
             end
             endEntity.jointNeighbourEdges.props[edgeId] = {
-                edgeProps = helpers.getEdgeIdsProperties({edgeId}, false),
+                edgeProps = helpers.getEdgeIdsProperties({edgeId}, false, true, false),
                 node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
                 node1Props = helpers.getNodeIdsProperties({baseEdge.node1}),
                 isNode0ToBeAdded = arrayUtils.arrayHasValue(
@@ -1536,7 +1611,7 @@ local _getStationTrackEndEntities4T = function(con, t)
             end
         end
         result.platforms.jointNeighbourEdges.props[edgeId] = {
-            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true),
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false),
             node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
             node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
         }
@@ -1549,7 +1624,7 @@ local _getStationTrackEndEntities4T = function(con, t)
             end
         end
         result.tracks.jointNeighbourEdges.props[edgeId] = {
-            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true),
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false),
             node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
             node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
         }
