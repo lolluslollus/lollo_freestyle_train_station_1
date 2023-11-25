@@ -1119,7 +1119,8 @@ local helpers = {
     end,
 }
 
-helpers.getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnlyPassengers)
+helpers.getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnlyPassengers, isCheckMaxTerminals)
+    logger.print('getNearbyFreestyleStationConsList starting')
     if type(transf) ~= 'table' then return {} end
     if tonumber(searchRadius) == nil then searchRadius = _constants.searchRadius4NearbyStation2Join end
 
@@ -1135,7 +1136,6 @@ helpers.getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnl
         if edgeUtils.isValidAndExistingId(stationId) then
             local conId = _station2ConstructionMap[stationId]
             if edgeUtils.isValidAndExistingId(conId) then
-                -- logger.print('getNearbyFreestyleStationConsList has found conId =', conId)
                 local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                 if con ~= nil and con.fileName == _constants.stationConFileName then
                     -- logger.print('construction.name =') logger.debugPrint(con.name) nil
@@ -1146,7 +1146,7 @@ helpers.getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnl
                         local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
                         local howManyTerminalsInStationGroup = helpers.getHowManyTerminalsInStationGroup(stationGroupId)
                         logger.print('howManyTerminalsInStationGroup =', howManyTerminalsInStationGroup)
-                        if howManyTerminalsInStationGroup >= 0 and howManyTerminalsInStationGroup < _constants.maxNTerminals then
+                        if howManyTerminalsInStationGroup >= 0 and (howManyTerminalsInStationGroup < _constants.maxNTerminals or not(isCheckMaxTerminals)) then
                             local isTwinCargo = false
                             local isTwinPassenger = false
                             local cargoStationGroupName = nil

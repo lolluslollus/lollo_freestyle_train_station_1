@@ -1798,7 +1798,7 @@ local _guiActions = {
             trackWaypoint2Id = distance11 < distance12 and trackWaypointIds[2] or trackWaypointIds[1],
         }
 
-        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join)
+        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join, false, true)
         logger.print('handleValidWaypointBuilt found #nearbyFreestyleStations = ' .. #nearbyFreestyleStations)
         if #nearbyFreestyleStations > 0 then
             guiHelpers.showNearbyStationPicker(
@@ -1837,7 +1837,7 @@ local _guiActions = {
         if subwayTransf_lua == nil then return false end
 
         logger.print('conTransf =') logger.debugPrint(subwayTransf_lua)
-        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true)
+        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true, false)
 
         logger.print('#nearbyFreestyleStations =', #nearbyFreestyleStations)
         if #nearbyFreestyleStations == 0 then return false end
