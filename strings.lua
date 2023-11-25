@@ -388,6 +388,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["TrackWaypointsMissing"] = "Build two track markers first",
 			["UndergroundTrainDepotName"] = "Underground Train depot",
 			["UndergroundTrainDepotDesc"] = "Used to buy/sell trains. The 'Look Underground' track construction helps to snap it to the track.",
+			["UnsnappedSomething"] = "Some connections have unsnapped from their neighbours, check them with <AltGr> + <L>",
+			["UnsnappedSomethingHere"] = "Some connections have unsnapped from their neighbours here. Check them with <AltGr> + <L>",
 			["UnsnappedRoads"] = "Some street connections have unsnapped from their neighbours, check them with <AltGr> + <L>",
 			["Wait4Join"] = "Joining may take a while, wait a bit!",
 			["WarningWindowTitle"] = "Warning",
@@ -417,6 +419,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["EdgeWithNoBridge"] = "Auto Path",
 			["Era"] = "Era",
 			["ErrorReplacingConWithSnappyCopy"] = "This object cannot connect to nearby roads, change it or move it somewhere else",
+			["Fences"] = "Fences",
 			["FlatSlopedTerrain"] = "Terrain Incline",
 			["Model"] = "Platform",
 			["ModelRaised"] = "Raised Platform",
@@ -484,6 +487,9 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["YShift"] = "Shift m",
 			["ZDelta"] = "Slope",
 			["ZRotation"] = "Bending",
+
+			-- pin with message
+			["UnsnappedSomethingMessage"] = "Message: broken connection",
 		},
 		de = {
 			["DESC"] = [[
@@ -873,6 +879,8 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["TrackWaypointsMissing"] = "Baue zuerst zwei Gleismarker",
 			["UndergroundTrainDepotName"] = "U-Bahn-Depot",
 			["UndergroundTrainDepotDesc"] = "Wird zum Kauf/Verkauf von Zügen verwendet. Die Gleiskonstruktion 'Look Underground' hilft beim Einrasten auf dem Gleis.",
+			["UnsnappedSomething"] = "Einige Verbindungen sind jetzt getrennt, überprüfen Sie sie mit <AltGr> + <L>",
+			["UnsnappedSomethingHere"] = "Einige Verbindungen sind hier getrennt, überprüfen Sie sie mit <AltGr> + <L>",
 			["UnsnappedRoads"] = "Einige Straßenverbindungen sind jetzt getrennt, überprüfen Sie sie mit <AltGr> + <L>",
 			["Wait4Join"] = "Das Verbinden kann eine Weile dauern, warte ein bisschen!",
 			["WarningWindowTitle"] = "Warnung",
@@ -902,6 +910,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["EdgeWithNoBridge"] = "Automatischer Pfad",
 			["Zeitalter"] = "Zeitalter",
 			["ErrorReplacingConWithSnappyCopy"] = "Dieses Objekt kann nicht an nahe gelegene Straßen angeschlossen werden, ändern Sie es oder verschieben Sie es woanders hin",
+			["Fences"] = "Zäune",
 			["FlatSlopedTerrain"] = "Gefälle des Geländes",
 			["Model"] = "Bahnsteig",
 			["ModelRaised"] = "Erhöhte Bahnsteig",
@@ -969,6 +978,9 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["YShift"] = "Versetzung m",
 			["ZDelta"] = "Steigung",
 			["ZRotation"] = "Biegung",
+
+			-- pin with message
+			["UnsnappedSomethingMessage"] = "Meldung: kaputte Verbindung",
 		},
 	}
 end

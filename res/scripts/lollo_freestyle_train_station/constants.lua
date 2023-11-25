@@ -103,6 +103,7 @@ local constants = {
         -- ['station/rail/lollo_freestyle_train_station/subwayMetropolitain.con'] = true,
     },
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
+    unsnappedSomethingMessageConFileName = 'lollo_freestyle_train_station/unsnapped_something_message.con',
 
     axialCargoExitModuleType = 'freestyleTrainStationAxialCargoExit',
     axialFlushCargoExitModuleType = 'freestyleTrainStationAxialFlushCargoExit',
@@ -269,6 +270,7 @@ local constants = {
     era_a_openStairsExitModelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl',
     era_b_openStairsExitModelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl',
     era_c_openStairsExitModelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl',
+    redHugeMessageModelFileName = 'lollo_freestyle_train_station/icon/red_huge_w_message.mdl',
     redMessageModelFileName = 'lollo_freestyle_train_station/icon/red_w_message.mdl',
     yellowMessageModelFileName = 'lollo_freestyle_train_station/icon/yellow_w_message.mdl',
     emptyModelFileName = 'lollo_freestyle_train_station/empty.mdl',

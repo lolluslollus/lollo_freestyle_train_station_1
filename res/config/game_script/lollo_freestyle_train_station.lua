@@ -710,6 +710,7 @@ local _actions = {
     rebuildNeighbours = function(args)
         logger.print('_rebuildNeighbours starting, args =') logger.debugPrint(args)
         local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+        local errorPositions = {}
 
         local _getNearbyNodeId = function(positionXYZ)
             local _tolerance = 0.001
@@ -828,7 +829,8 @@ local _actions = {
 
             return isSegmentWithEdgeObjects, proposal, nNewEntities_local
         end
-        for _, edgeData in pairs(allEdges_indexedByEdgeId) do
+        for e, edgeData in pairs(allEdges_indexedByEdgeId) do
+            local isError = false
             local isSegmentWithEdgeObjects, proposal, nNewEntities_local = _getInitialLoopProps(edgeData)
             -- first add the segment, so its "entity" will always be -1, so the edge objects won't suffer at the hands of the dumb api
             local newSegment = api.type.SegmentAndEntity.new()
@@ -838,43 +840,54 @@ local _actions = {
             nNewEntities_local = nNewEntities_local - 1
 
             local node0Id, node1Id = nil, nil
+            local newNode0, newNode1 = nil, nil
             if edgeData.isNode0ToBeAdded then
-                local newNode = api.type.NodeAndEntity.new()
-                newNode.entity = nNewEntities_local
-                newNode.comp.position.x = edgeData.node0Props[1].position.x
-                newNode.comp.position.y = edgeData.node0Props[1].position.y
-                newNode.comp.position.z = edgeData.node0Props[1].position.z
-                node0Id = newNode.entity
-                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                newNode0 = api.type.NodeAndEntity.new()
+                newNode0.entity = nNewEntities_local
+                newNode0.comp.position.x = edgeData.node0Props[1].position.x
+                newNode0.comp.position.y = edgeData.node0Props[1].position.y
+                newNode0.comp.position.z = edgeData.node0Props[1].position.z
+                node0Id = newNode0.entity
                 nNewEntities_local = nNewEntities_local - 1
             else
                 node0Id = _getNearbyNodeId(edgeData.node0Props[1].position)
                 if node0Id == nil then
-                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node0Props[1].position)
+                    isError = true
+                    errorPositions[#errorPositions+1] = arrayUtils.cloneOmittingFields(edgeData.node0Props[1].position)
+                    logger.warn('_rebuildNeighbours cannot find nearby node, position =') logger.warningDebugPrint(edgeData.node0Props[1].position)
+                    logger.warn('edgeData =') logger.warningDebugPrint(edgeData)
                 end
             end
             if edgeData.isNode1ToBeAdded then
-                local newNode = api.type.NodeAndEntity.new()
-                newNode.entity = nNewEntities_local
-                newNode.comp.position.x = edgeData.node1Props[1].position.x
-                newNode.comp.position.y = edgeData.node1Props[1].position.y
-                newNode.comp.position.z = edgeData.node1Props[1].position.z
-                node1Id = newNode.entity
-                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                newNode1 = api.type.NodeAndEntity.new()
+                newNode1.entity = nNewEntities_local
+                newNode1.comp.position.x = edgeData.node1Props[1].position.x
+                newNode1.comp.position.y = edgeData.node1Props[1].position.y
+                newNode1.comp.position.z = edgeData.node1Props[1].position.z
+                node1Id = newNode1.entity
                 nNewEntities_local = nNewEntities_local - 1
             else
                 node1Id = _getNearbyNodeId(edgeData.node1Props[1].position)
                 if node1Id == nil then
-                    logger.err('_rebuildNeighbours cannot find nearby node, position =') logger.errorDebugPrint(edgeData.node1Props[1].position)
+                    isError = true
+                    errorPositions[#errorPositions+1] = arrayUtils.cloneOmittingFields(edgeData.node1Props[1].position)
+                    logger.warn('_rebuildNeighbours cannot find nearby node, position =') logger.warningDebugPrint(edgeData.node1Props[1].position)
+                    logger.warn('edgeData =') logger.warningDebugPrint(edgeData)
                 end
             end
 
-            -- now the nodes are done, complete the segment
-            newSegment.comp.node0 = node0Id
-            newSegment.comp.node1 = node1Id
-            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
+            if isError then
+                state.warningText = _('UnsnappedSomething')
+            else
+                if newNode0 ~= nil then proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode0 end
+                if newNode1 ~= nil then proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode1 end
+                -- now the nodes are done, complete the segment
+                newSegment.comp.node0 = node0Id
+                newSegment.comp.node1 = node1Id
+                proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
 
-            if not(isSegmentWithEdgeObjects) then nNewEntities_total = nNewEntities_local end
+                if not(isSegmentWithEdgeObjects) then nNewEntities_total = nNewEntities_local end
+            end
         end
 
         -- neighbouring constructions
@@ -905,6 +918,24 @@ local _actions = {
             end
         end
 
+        for _, pos in pairs(errorPositions) do
+            if pos ~= nil and type(pos.x) == 'number' and type(pos.y) == 'number' and type(pos.z) == 'number' then
+                local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+                newCon.fileName = _constants.unsnappedSomethingMessageConFileName
+                newCon.params = {
+                    seed = math.abs(math.ceil(pos.x * 1000)),
+                }
+                newCon.playerEntity = api.engine.util.getPlayer()
+                newCon.transf = api.type.Mat4f.new(
+                    api.type.Vec4f.new(1, 0, 0, 0),
+                    api.type.Vec4f.new(0, 1, 0, 0),
+                    api.type.Vec4f.new(0, 0, 1, 0),
+                    api.type.Vec4f.new(pos.x, pos.y, pos.z, 1)
+                )
+
+                proposalWithObjectlessEdges.constructionsToAdd[#proposalWithObjectlessEdges.constructionsToAdd+1] = newCon
+            end
+        end
         logger.print('_rebuildNeighbours made proposalWithObjectlessEdges =') logger.debugPrint(proposalWithObjectlessEdges)
         logger.print('_rebuildNeighbours made proposalsWithEdgesWithObjects =') logger.debugPrint(proposalsWithEdgesWithObjects)
         local context = api.type.Context:new()

@@ -1,0 +1,76 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 2184,
+					offset = 12920,
+				},
+				position = {
+					count = 2184,
+					offset = 15104,
+				},
+				tangent = {
+					count = 2184,
+					offset = 8552,
+				},
+				uv0 = {
+					count = 2184,
+					offset = 10736,
+				},
+			},
+			materials = {
+				"station/road/streetstation/streetstation_1.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 48,
+					offset = 17384,
+				},
+				position = {
+					count = 48,
+					offset = 17432,
+				},
+				tangent = {
+					count = 48,
+					offset = 17288,
+				},
+				uv0 = {
+					count = 48,
+					offset = 17336,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/icon/black.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 1044,
+			numComp = 3,
+			offset = 6344,
+		},
+		position = {
+			count = 1164,
+			numComp = 3,
+			offset = 7388,
+		},
+		tangent = {
+			count = 4416,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 1928,
+			numComp = 2,
+			offset = 4416,
+		},
+	},
+}
+end

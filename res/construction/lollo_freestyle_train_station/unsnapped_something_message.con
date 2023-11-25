@@ -1,0 +1,63 @@
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local constants = require('lollo_freestyle_train_station.constants')
+local logger = require('lollo_freestyle_train_station.logger')
+
+function data()
+	return {
+        type = 'ASSET_DEFAULT',
+		availability = {
+			yearFrom = -1,
+			yearTo = -1,
+		},
+        categories = { 'fences', 'stairs' },
+		description = {
+			name = _('UnsnappedSomethingMessage'),
+			description = _('UnsnappedSomethingMessage'),
+        },
+		-- order = 1110,
+		updateFn = function(params)
+            logger.print('red_huge_message.updateFn firing, params =') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+
+            local result = {
+                colliders = {},
+                cost = 0,
+                edgeLists = {},
+                -- groundFaces = {},
+                groundFaces = { -- dummy ground faces otherwise the message won't show UG TODO this is wrong
+                    {
+                        face = {
+                            {0.1, -0.1, 0.0, 1.0},
+                            {0.1, 0.1, 0.0, 1.0},
+                            {-0.1, 0.1, 0.0, 1.0},
+                            {-0.1, -0.1, 0.0, 1.0},
+                        },
+                        modes = {
+                            {
+                                type = 'FILL',
+                                key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                            }
+                        }
+                    },
+                },
+                labelText = {
+                    [0] = { _('UnsnappedSomethingHere'), _('UnsnappedSomethingHere') }
+                },
+                models = {
+                    {
+                        id = constants.redHugeMessageModelFileName,
+                        transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+                    },
+                },
+                terrainAlignmentLists = { {
+                    type = 'EQUAL',
+                    optional = true,
+                    faces =  { }
+                } },
+            }
+
+			return result
+		end,
+        upgradeFn = function(_)
+        end,
+	}
+end
