@@ -709,7 +709,6 @@ local _actions = {
 
     rebuildNeighbours = function(args)
         logger.print('_rebuildNeighbours starting, args =') logger.debugPrint(args)
-        local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
         local errorPositions = {}
 
         local _getNearbyNodeId = function(positionXYZ)
@@ -948,7 +947,7 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposalWithObjectlessEdges, context, true),
             function(result_0, success_0)
-                logger.print('LOLLO _rebuildNeighbours success_0 = ', success_0)
+                logger.print('_rebuildNeighbours success_0 = ', success_0)
                 -- logger.print('LOLLO result = ') logger.debugPrint(result)
                 if success_0 then
                     -- Write away the adjoining constructions
@@ -964,7 +963,7 @@ local _actions = {
                         api.cmd.sendCommand(
                             api.cmd.make.buildProposal(proposal, context, true),
                             function(result_1, success_1)
-                                logger.print('LOLLO _rebuildNeighbours success_1 = ', success_1)
+                                logger.print('_rebuildNeighbours success_1 = ', success_1)
                                 if not(success_1) then logger.warn('cannot rebuild all the edge objects ONE') end
                                 if result_1.resultProposalData.errorState.critical then logger.warn('cannot rebuild all the edge objects ONE_TWO') end
                             end
@@ -1047,14 +1046,13 @@ local _actions = {
 
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
-
         proposal.constructionsToRemove = { args.stationConstructionId }
         -- proposal.old2new = {
         --     [constructionId] = 0,
         -- }
 
         local context = api.type.Context:new()
-        context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
         -- context.cleanupStreetGraph = true -- default is false
         -- context.gatherBuildings = false -- default is false
         -- context.gatherFields = true -- default is true
@@ -1066,11 +1064,11 @@ local _actions = {
                 logger.print('_rebuildStationWithOneLessTerminal callback, success =', success)
                 -- logger.debugPrint(result)
                 if success and successEventName ~= nil then
-                    args.nTerminalToRemove = nil
+                    -- args.nTerminalToRemove = nil
                     args.removedTerminalEdgeProps = removedTerminalEdgeProps
                     args.stationConstructionId = result.resultEntities[1]
-                    logger.print('eventArgs.stationConstructionId =', args.stationConstructionId)
-                    logger.print('_rebuildStationWithOneLessTerminal callback is about to send command')
+                    logger.print('_rebuildStationWithOneLessTerminal eventArgs.stationConstructionId =', args.stationConstructionId)
+                    logger.print('_rebuildStationWithOneLessTerminal callback is about to send command ' .. successEventName .. ' with args =') logger.debugPrint(args)
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
@@ -1082,23 +1080,15 @@ local _actions = {
         )
     end,
 
-    rebuildOneTerminalTracks = function(
-        isForceTrackElectrification,
-        forcedElectrificationValue,
-        trackEdgeLists,
-        platformEdgeLists,
-        neighbourNodeIds,
-        stationConstructionId,
-        successEventName
-    )
+    rebuildOneTerminalTracks = function(successEventName, args)
         local _significantFigures4LocateNode = 5 -- you may lower this if tracks are not properly rebuilt.
         -- cleanupStreetGraph in previous events (rebuildStationWithOneLessTerminal and bulldozeConstruction) might also play a role, it might.
-        logger.print('rebuildOneTerminalTracks starting')
-        -- logger.print('trackEdgeLists =') logger.debugPrint(trackEdgeLists)
-        -- logger.print('platformEdgeLists =') logger.debugPrint(platformEdgeLists)
-        -- logger.print('neighbourNodeIds =') logger.debugPrint(neighbourNodeIds)
-        if trackEdgeLists == nil or type(trackEdgeLists) ~= 'table' then return end
-        if platformEdgeLists == nil or type(platformEdgeLists) ~= 'table' then return end
+        logger.print('_rebuildOneTerminalTracks starting')
+        -- logger.print('trackEdgeLists =') logger.debugPrint(args.removedTerminalEdgeProps.trackEdgeLists)
+        -- logger.print('platformEdgeLists =') logger.debugPrint(args.removedTerminalEdgeProps.platformEdgeLists)
+        logger.print('args.neighbourNodeIdsOfBulldozedTerminal =') logger.debugPrint(args.neighbourNodeIdsOfBulldozedTerminal)
+        logger.print('args.stationConstructionId =') logger.debugPrint(args.stationConstructionId)
+        logger.print('successEventName =') logger.debugPrint(successEventName)
 
         local proposal = api.type.SimpleProposal.new()
 
@@ -1176,8 +1166,8 @@ local _actions = {
                 -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
                 newSegment.type = _constants.railEdgeType
                 newSegment.trackEdge.trackType = trackEdgeList.trackType
-                if isForceTrackElectrification then
-                    newSegment.trackEdge.catenary = forcedElectrificationValue
+                if args.removedTerminalEdgeProps.isForceTrackElectrification then
+                    newSegment.trackEdge.catenary = args.removedTerminalEdgeProps.forcedElectrificationValue
                 else
                     newSegment.trackEdge.catenary = trackEdgeList.catenary
                 end
@@ -1193,11 +1183,26 @@ local _actions = {
             return result
         end
 
-        local isPlatformsChanged = doTrackOrPlatform(platformEdgeLists, neighbourNodeIds.platforms)
-        local isTracksChanged = doTrackOrPlatform(trackEdgeLists, neighbourNodeIds.tracks)
-        if not(isPlatformsChanged) and not(isTracksChanged) then return end
+        local isPlatformsChanged = type(args.removedTerminalEdgeProps.platformEdgeLists) == 'table'
+            and doTrackOrPlatform(args.removedTerminalEdgeProps.platformEdgeLists, args.neighbourNodeIdsOfBulldozedTerminal.platforms)
+        local isTracksChanged = type(args.removedTerminalEdgeProps.platformEdgeLists) == 'table'
+            and doTrackOrPlatform(args.removedTerminalEdgeProps.trackEdgeLists, args.neighbourNodeIdsOfBulldozedTerminal.tracks)
+        if not(isPlatformsChanged) and not(isTracksChanged) then
+            logger.print('_rebuildOneTerminalTracks found neither tracks nor platforms have changed')
+            if successEventName ~= nil then
+                logger.print('_rebuildOneTerminalTracks about to send command ' .. successEventName)
+                args.removedTerminalEdgeProps = nil
+                api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                    string.sub(debug.getinfo(1, 'S').source, 1),
+                    _eventId,
+                    successEventName,
+                    args
+                ))
+            end
+            return
+        end
 
-        -- logger.print('rebuildOneTerminalTracks proposal =') logger.debugPrint(proposal)
+        -- logger.print('_rebuildOneTerminalTracks proposal =') logger.debugPrint(proposal)
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -1208,16 +1213,14 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
-                logger.print('LOLLO rebuildOneTerminalTracks success = ', success)
+                logger.print('_rebuildOneTerminalTracks success = ', success)
                 -- logger.print('LOLLO result = ') logger.debugPrint(result)
                 if success and successEventName ~= nil then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
                         _eventId,
                         successEventName,
-                        {
-                            stationConstructionId = stationConstructionId
-                        }
+                        args
                     ))
                 end
             end
@@ -1247,8 +1250,8 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.print('LOLLO bulldozeConstruction success = ', success)
-                -- logger.print('LOLLO bulldozeConstruction result = ') logger.debugPrint(result)
+                logger.print('LOLLO _bulldozeConstruction success = ', success)
+                -- logger.print('LOLLO _bulldozeConstruction result = ') logger.debugPrint(result)
             end
         )
     end,
@@ -1296,7 +1299,7 @@ local _actions = {
                 end
             end
         end
-        logger.print('allEdgeIds =') logger.debugPrint(allEdgeIds)
+        logger.print('_removeNeighbours allEdgeIds =') logger.debugPrint(allEdgeIds)
 
         local proposal = api.type.SimpleProposal.new()
         for _, edgeId in pairs(allEdgeIds) do
@@ -2267,11 +2270,11 @@ end
 _actions.buildSnappyStreetEdges = function(stationConId)
     -- rebuild the street edges connected to the station.
     -- If some are frozen in a construction, force-upgrade the station instead.
-    logger.print('buildSnappyStreetEdges starting')
+    logger.print('_buildSnappyStreetEdges starting')
 
     local allEndEntities = stationHelpers.getStationStreetEndEntities(stationConId)
     if allEndEntities == nil then
-        logger.err('buildSnappyStreetEdges cannot find the station end entities')
+        logger.err('_buildSnappyStreetEdges cannot find the station end entities')
         return
     end
 
@@ -2334,7 +2337,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
                 )
             else
                 state.warningText = _('UnsnappedRoads')
-                logger.warn('invalid disjointNeighbourEdgeId in buildSnappyStreetEdges')
+                logger.warn('invalid disjointNeighbourEdgeId in _buildSnappyStreetEdges, edgeId = ' .. (edgeId or 'NIL'))
                 return
             end
         end
@@ -2345,14 +2348,14 @@ _actions.buildSnappyStreetEdges = function(stationConId)
             if edgeUtils.isValidAndExistingId(conId) then
                 neighbourConIds_indexed[conId] = true
             else
-                logger.warn('invalid disjointNeighbourEdgeId in buildSnappyStreetEdges')
+                logger.warn('invalid disjointNeighbourNodeId.conId in _buildSnappyStreetEdges, conId = ' .. (conId or 'NIL'))
             end
         end
     end
 
     for disjointNeighbourEdgeId, endEntities in pairs(endEntities_GroupedBy_disjointNeighbourEdgeId) do
         logger.print('endEntities =') logger.debugPrint(endEntities)
-        logger.print('valid disjointNeighbourEdgeId in buildSnappyStreetEdges, going ahead')
+        logger.print('valid disjointNeighbourEdgeId in _buildSnappyStreetEdges, going ahead')
         -- for _, endEntity in pairs(endEntities) do
             -- for _, neighbourConId in pairs(endEntity.disjointNeighbourNode.conIds) do
             --     neighbourConIds_indexed[neighbourConId] = true
@@ -2421,8 +2424,8 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         newSegmentEntity = newSegmentEntity - 1
     end
 
-    logger.print('proposal =') logger.debugPrint(proposal)
-    logger.print('neighbourConIds_indexed =') logger.debugPrint(neighbourConIds_indexed)
+    logger.print('_buildSnappyStreetEdges proposal =') logger.debugPrint(proposal)
+    logger.print('_buildSnappyStreetEdges neighbourConIds_indexed =') logger.debugPrint(neighbourConIds_indexed)
 
     local _upgradeNeighbourCons = function()
         -- cannot rebuild some of the edges coz they are be locked in a construction:
@@ -2439,7 +2442,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     end
 
     if #proposal.streetProposal.edgesToAdd == 0 then
-        logger.print('no street edges added')
+        logger.print('_buildSnappyStreetEdges added no street edges')
         _upgradeNeighbourCons()
         return
     end
@@ -2453,7 +2456,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     -- UG TODO I need to check myself coz the api will crash, even if I call it in this step-by-step fashion.
     local expectedResult = api.engine.util.proposal.makeProposalData(proposal, context)
     if expectedResult.errorState.critical then
-        logger.print('expectedResult =') logger.debugPrint(expectedResult)
+        logger.print('_buildSnappyStreetEdges expectedResult =') logger.debugPrint(expectedResult)
         state.warningText = _('UnsnappedRoads')
         return
     end
@@ -2461,7 +2464,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
     api.cmd.sendCommand(
         api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
         function(result, success)
-            logger.print('buildSnappyStreetEdges callback, success =', success)
+            logger.print('_buildSnappyStreetEdges callback, success =', success)
             --[[
                 LOLLO NOTE Snapping trouble with street edges:
                 1) if an edge is non-snappy and it is attached to a road, fine: 
@@ -3153,63 +3156,53 @@ function data()
                             platforms = _utils.getNeighbours(eventArgs.platformEdgeList)
                         }
 
-                        _actions.removeNeighbours(
-                            _eventNames.BUILD_STATION_REQUESTED,
-                            eventArgs
-                        )
+                        _actions.removeNeighbours(_eventNames.BUILD_STATION_REQUESTED, eventArgs)
                     elseif name == _eventNames.BUILD_STATION_REQUESTED then
                         _actions.buildStation(_eventNames.REBUILD_NEIGHBOURS_REQUESTED, args)
                     elseif name == _eventNames.REBUILD_NEIGHBOURS_REQUESTED then
                         _actions.rebuildNeighbours(args)
+                        if args.nRemainingTerminals < 1 then
+                            -- two process running at the same time, it's all right coz they are independent
+                            logger.print('_rebuildNeighbours running, no more terminals left, about to bulldoze the station')
+                            _utils.sendHideProgress()
+                            _actions.bulldozeConstruction(args.stationConstructionId)
+                        end
                     elseif name == _eventNames.REMOVE_TERMINAL_REQUESTED then
-                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.err('about to remove neighbours, args.stationConstructionId not valid') return end
+                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.err('REMOVE_TERMINAL_REQUESTED got args.stationConstructionId not valid') return end
 
                         args.trackEndEntities = stationHelpers.getStationTrackEndEntities(args.stationConstructionId)
                         args.streetEndEntities = stationHelpers.getStationStreetEndEntities(args.stationConstructionId)
                         _actions.removeNeighbours(_eventNames.REBUILD_STATION_WITH_ONE_LESS_TERMINAL_REQUESTED, args)
                     elseif name == _eventNames.REBUILD_STATION_WITH_ONE_LESS_TERMINAL_REQUESTED then
-                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.err('about to rebuild a station without a terminal, args.stationConstructionId not valid') return end
+                        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.err('REBUILD_STATION_WITH_ONE_LESS_TERMINAL_REQUESTED got args.stationConstructionId not valid') return end
+
                         _actions.rebuildStationWithOneLessTerminal(_eventNames.REBUILD_1_TRACK_REQUESTED, args)
                     elseif name == _eventNames.REBUILD_1_TRACK_REQUESTED then
                         if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then logger.err('about to rebuild a track, args.stationConstructionId not valid') return end
+
                         if type(args.removedTerminalEdgeProps) ~= 'table' or type(args.removedTerminalEdgeProps.trackEdgeLists) ~= 'table' then
                             _actions.bulldozeConstruction(args.stationConstructionId)
-                            logger.err('args.removedTerminalEdgeProps.trackEdgeLists not available')
+                            logger.warn('args.removedTerminalEdgeProps.trackEdgeLists not available, the station was bulldozed')
                             return
                         end
-                        _actions.rebuildOneTerminalTracks(
-                            args.removedTerminalEdgeProps.isForceTrackElectrification,
-                            args.removedTerminalEdgeProps.forcedElectrificationValue,
-                            args.removedTerminalEdgeProps.trackEdgeLists,
-                            args.removedTerminalEdgeProps.platformEdgeLists,
-                            stationHelpers.getNeighbourNodeIdsOfBulldozedTerminal(args.removedTerminalEdgeProps.platformEdgeLists, args.removedTerminalEdgeProps.trackEdgeLists),
-                            args.stationConstructionId,
-                            args.nRemainingTerminals > 0 and _eventNames.REBUILD_NEIGHBOURS_REQUESTED or _eventNames.BULLDOZE_STATION_REQUESTED
-                        )
+
+                        args.neighbourNodeIdsOfBulldozedTerminal = stationHelpers.getNeighbourNodeIdsOfBulldozedTerminal(args.removedTerminalEdgeProps.platformEdgeLists, args.removedTerminalEdgeProps.trackEdgeLists)
+                        _actions.rebuildOneTerminalTracks(_eventNames.REBUILD_NEIGHBOURS_REQUESTED, args)
                     elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
                         _utils.sendHideProgress()
                         _actions.bulldozeConstruction(args.stationConstructionId)
                     elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
-                        if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
-                        or not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then
-                            logger.err('args.join2StationConId or args.subwayConstructionId is invalid')
-                            return
-                        end
+                        if not(edgeUtils.isValidAndExistingId(args.join2StationConId)) then logger.err('SUBWAY_JOIN_REQUESTED got args.join2StationConId is invalid') return end
+                        if not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then logger.err('SUBWAY_JOIN_REQUESTED got args.subwayConstructionId is invalid') return end
 
-                        local con = api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
-                        if con ~= nil then
-                            logger.print('subway joining an existing station, conId = eventArgs.join2StationConId')
-                            args.trackEndEntities = stationHelpers.getStationTrackEndEntities(args.join2StationConId)
-                            args.streetEndEntities = stationHelpers.getStationStreetEndEntities(args.join2StationConId)
-                        end
-
+                        logger.print('subway joining an existing station, conId = eventArgs.join2StationConId')
+                        args.trackEndEntities = stationHelpers.getStationTrackEndEntities(args.join2StationConId)
+                        args.streetEndEntities = stationHelpers.getStationStreetEndEntities(args.join2StationConId)
                         _actions.removeNeighbours(_eventNames.SUBWAY_BUILD_REQUESTED, args)
                     elseif name == _eventNames.SUBWAY_BUILD_REQUESTED then
-                        if not(edgeUtils.isValidAndExistingId(args.join2StationConId))
-                        or not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then
-                            logger.err('args.join2StationConId or args.subwayConstructionId is invalid')
-                            return
-                        end
+                        if not(edgeUtils.isValidAndExistingId(args.join2StationConId)) then logger.err('SUBWAY_BUILD_REQUESTED got args.join2StationConId is invalid') return end
+                        if not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then logger.err('SUBWAY_BUILD_REQUESTED got args.subwayConstructionId is invalid') return end
+
                         _actions.addSubway(_eventNames.REBUILD_NEIGHBOURS_REQUESTED, args)
                     elseif name == _eventNames.TRACK_SPLIT_REQUESTED then
                         if args ~= nil and args.conId ~= nil then
