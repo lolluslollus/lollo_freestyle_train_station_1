@@ -9,16 +9,22 @@ local constants = {
     trainTracksCategory = 'train-tracks',
 
     eventData = {
+        autoFence = {
+            eventId = '__lolloAutoFence__',
+            eventNames = {
+                BULLDOZE_CON_REQUESTED = 'bulldozeConRequested',
+                CON_PARAMS_UPDATED = 'conParamsUpdated',
+                FENCE_WAYPOINTS_BUILT = 'fenceWaypointsBuilt',
+                WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
+            },
+        },
         eventId = '__lolloFreestyleTrainStation__',
         eventNames = {
             ALLOW_PROGRESS = 'allowProgress',
             BUILD_SNAPPY_STREET_EDGES_REQUESTED = 'buildSnappyStreetEdgesRequested',
             BUILD_STATION_REQUESTED = 'buildStationRequested',
-            BULLDOZE_CON_REQUESTED = 'bulldozeConRequested',
             BULLDOZE_MARKER_REQUESTED = 'bulldozeMarkerRequested',
             BULLDOZE_STATION_REQUESTED = 'bulldozeStationRequested',
-            CON_PARAMS_UPDATED = 'conParamsUpdated',
-            FENCE_WAYPOINTS_BUILT = 'fenceWaypointsBuilt',
             HIDE_HOLE_REQUESTED = 'hideHoleRequested',
             HIDE_PROGRESS = 'hideProgress',
             HIDE_WARNINGS = 'hideWarnings',

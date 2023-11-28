@@ -13,8 +13,8 @@ local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
-local _eventId = _constants.eventData.eventId
-local _eventNames = _constants.eventData.eventNames
+local _eventId = _constants.eventData.autoFence.eventId
+local _eventNames = _constants.eventData.autoFence.eventNames
 local _guiFenceWaypointModelId = nil
 local _guiTexts = {
     differentPlatformWidths = '',
@@ -362,9 +362,9 @@ local _guiActions = {
             return
         end
 
-        -- convert userdata to table
-        local edge2Node0Pos = edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position)
-        local edge2Node1Pos = edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position)
+        -- convert userdata.XYZ to table.123
+        local edge2Node0Pos = transfUtils.xYZ2OneTwoThree(api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position)
+        local edge2Node1Pos = transfUtils.xYZ2OneTwoThree(api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position)
 
         -- useless
         -- local edgeObject1Side, edgeObject2Side
@@ -637,6 +637,7 @@ function data()
                         )
                         if #trackEdgeIdsBetweenEdgeIds > 0 then
                             local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds, true, false, true)
+
                             if comparisonUtils.is123sSame(
                                 trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1],
                                 args.edge2Node1Pos
@@ -651,6 +652,10 @@ function data()
                                 args.isWaypoint2ArrowAgainstTrackDirection = not(args.isWaypoint2ArrowAgainstTrackDirection)
                             else
                                 logger.warn('cannot find the right direction to build my fence')
+                                print('last track\'s start position =') debugPrint(trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[1][1])
+                                print('last track\'s end position =') debugPrint(trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1])
+                                print('second waypoint edge\'s node0 pos =') debugPrint(args.edge2Node0Pos)
+                                print('second waypoint edge\'s node1 pos =') debugPrint(args.edge2Node1Pos)
                             end
 
                             if args.isWaypoint2ArrowAgainstTrackDirection then

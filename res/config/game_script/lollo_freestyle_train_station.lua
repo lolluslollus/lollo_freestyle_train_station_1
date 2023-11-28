@@ -3282,8 +3282,6 @@ function data()
                             return
                         end
                         _actions.buildSnappyStreetEdges(args.stationConstructionId)
-                    elseif name == _eventNames.BULLDOZE_CON_REQUESTED then
-                        _actions.bulldozeCon(args.conId)
                     end
                 end,
                 logger.xpErrorHandler
