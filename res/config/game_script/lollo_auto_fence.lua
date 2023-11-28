@@ -179,7 +179,32 @@ local _actions = {
             end
         )
     end,
+--[[
+    bulldozeCon = function(conId)
+        if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
+        local proposal = api.type.SimpleProposal.new()
+        -- LOLLO NOTE there are asymmetries how different tables are handled.
+        -- This one requires this system, UG says they will document it or amend it.
+        proposal.constructionsToRemove = { conId }
+        -- proposal.constructionsToRemove[1] = constructionId -- fails to add
+        -- proposal.constructionsToRemove:add(constructionId) -- fails to add
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        -- context.player = api.engine.util.getPlayer() -- default is -1
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                logger.print('_bulldozeCon success = ', success)
+                -- logger.print('_bulldozeCon result = ') logger.debugPrint(result)
+            end
+        )
+    end,
+]]
     replaceEdgeWithSameRemovingObject = function(objectIdToRemove)
         logger.print('_replaceEdgeWithSameRemovingObject starting')
         if not(edgeUtils.isValidAndExistingId(objectIdToRemove)) then return end
@@ -297,7 +322,7 @@ local _guiActions = {
             }
         ))
     end,
-    handleBulldozeClicked = function(conId)
+    handleBulldozeClicked = function(conId) -- unused
         logger.print('_handleBulldozeClicked starting for conId =', conId or 'NIL')
         if not(edgeUtils.isValidAndExistingId(conId)) then
             logger.warn('_handleBulldozeClicked got no con or no valid con')
@@ -712,6 +737,8 @@ function data()
                         _actions.replaceEdgeWithSameRemovingObject(args.fenceWaypoint2Id)
                     elseif name == _eventNames.CON_PARAMS_UPDATED then
                         _actions.updateConstruction(args.conId, args.paramKey, args.newParamValueIndexBase0)
+                    -- elseif name == _eventNames.BULLDOZE_CON_REQUESTED then -- unused
+                    --     _actions.bulldozeCon(args.conId)
                     end
                 end,
                 logger.xpErrorHandler
@@ -768,7 +795,7 @@ function data()
                             _guiActions.handleParamValueChanged,
                             modelHelper.getChangeableParamsMetadata(),
                             con.params,
-                            _guiActions.handleBulldozeClicked
+                            _guiActions.handleBulldozeClicked -- unused
                         )
                         -- not required but it might prevent a crash with the conMover: no it does not
                         -- local paramsMetadata = modelHelper.getChangeableParamsMetadata()
