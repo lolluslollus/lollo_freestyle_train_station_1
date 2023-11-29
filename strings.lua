@@ -42,12 +42,13 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Extra ground textures are in my terrain tweaks mod.
 - If you want different buildings, use assets. There are mods with those.
 - This mod adds stairs and lifts as configurable assets; they can be used anywhere. My "Construction Mover" mod helps to place them easily. Still, the game does not handle them gracefully and <AltGr> + <L> will help you check if they snap to your network. Cycling between snappy and non-snappy roads or bridges in the parameter window might help.
-- Use the track constructions "Track splitter" to do precision work.
+- Use the track construction "Track Splitter" to do precision work.
+- Use the track construction "Track Segment Remover" to easily remove underground tracks. It is in my Street Fine Tuning mod.
 - Upgrading tracks does all tracks at once.
 - If you have too many track types, use the categories in the menu to make life easier.
-- After a while, the area surrounding your station will have developed and might throw collision errors whenever you try to config the station. Patiently look for the guilty street, building or asset and remove it. Snappy passenger connections (now obsolete) may be at fault: try to replace them with non-snappy ones. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
+- After a while, the area surrounding your station will have developed and might throw collision errors whenever you try to configure the station. To get past that, start removing pedestrian bridges that snap into the station and add them back once you are done. If this does not help, patiently look for the guilty street, building or asset and remove it, then add it back once you are done. Snappy passenger connections (now obsolete) may be at fault: try to replace them with non-snappy ones. If the worst comes to the worst, use the mod "build with collision" to remove colliding station modules.
 
-[h1]Note:[/h1]
+[h1]Notable changes:[/h1]
 - Underground stations are now in the assets.
 - Minor version 1.81 (31st August 2022) introduced important layout changes. Previously built terminals will keep working but might have some glitches. To benefit from the changes, remove them, wait for them to reappear and build them anew.
 - Platforms do not connect automatically to adjacent roads, you must add an exit or a station.
@@ -59,6 +60,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
 - Station naming does not work properly.
 - 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
+- Underpasses do not show underground. Ask UG to fix the terrain when snapping tracks alongside.
 - The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute. Just wait.
 - Some modules can only be placed after some others, eg stairs exits after stairs, but the configuration menu does not refresh automatically. After placing the first set of stairs, you need to close and reopen the menu for stairs exits to appear.
 - Some track and signal mods are incompatible. As a general rule, avoid mods that overwrite or disable stock game tracks. Chances are you won't miss them anyway.
