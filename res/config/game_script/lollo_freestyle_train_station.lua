@@ -3327,6 +3327,7 @@ function data()
                 xpcall(
                     function()
                         if name == 'builder.proposalCreate' then
+                            logger.print('name == builder.proposalCreate, id = ' .. (id or 'NIL') .. ', args.data = ') logger.debugPrint(args and args.data)
                             if id == 'streetTerminalBuilder' then
                                 -- waypoint, traffic light, my own waypoints built
                                 if args and args.proposal and args.proposal.proposal
