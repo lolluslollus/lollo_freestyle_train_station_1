@@ -3161,7 +3161,7 @@ function data()
                         _actions.buildStation(_eventNames.REBUILD_NEIGHBOURS_REQUESTED, args)
                     elseif name == _eventNames.REBUILD_NEIGHBOURS_REQUESTED then
                         _actions.rebuildNeighbours(args)
-                        if args.nRemainingTerminals < 1 then
+                        if type(args.nRemainingTerminals) == 'number' and args.nRemainingTerminals < 1 then
                             -- two process running at the same time, it's all right coz they are independent
                             logger.print('_rebuildNeighbours running, no more terminals left, about to bulldoze the station')
                             _utils.sendHideProgress()
@@ -3502,13 +3502,14 @@ function data()
                             end
                         elseif name == 'destroy' and type(id) == 'string' and stringUtils.stringStartsWith(id, 'temp.addModuleComp.params.entity_') then
                             -- added or removed a module: force snappy street edges
+                            if true then return end -- LOLLO TODO this seems unnecessary after build 35715, test it on
                             local conId = tonumber(id:sub(34), 10)
                             if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
                             local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                             if con == nil or con.fileName ~= _constants.stationConFileName then return end
 
-                            logger.print('about to send command BUILD_SNAPPY_STREET_EDGES_REQUESTED, conId = ' .. conId)
+                            logger.print('a module was added or removed, about to send command BUILD_SNAPPY_STREET_EDGES_REQUESTED, conId = ' .. conId)
                             api.cmd.sendCommand(
                                 api.cmd.make.sendScriptEvent(
                                     string.sub(debug.getinfo(1, 'S').source, 1),
