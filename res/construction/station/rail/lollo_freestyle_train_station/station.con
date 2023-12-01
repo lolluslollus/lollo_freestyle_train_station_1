@@ -174,6 +174,11 @@ function data()
 						message = nil,
 						skipCollisionCheck = true,
 					},
+					[_constants.openStairsExitModuleType] = { -- probably useless
+						maxModules = -1,
+						message = nil,
+						skipCollisionCheck = true,
+					},
 				},
                 slots = {},
 				stations = {},
@@ -2199,7 +2204,7 @@ function data()
 		end,
  		preProcessFn = function(modules, change, three)
 			-- this fires when the user adds or removes a module
-			-- logger.print('LOLLO preProcessFn')
+			-- logger.print('preProcessFn starting')
 			-- logger.print('modules =') logger.debugPrint(modules)
 			-- logger.print('change =') logger.debugPrint(change)
 			-- logger.print('three =') logger.debugPrint(three)
@@ -2210,40 +2215,109 @@ function data()
 			-- else
 			-- 	modules[change.slotId] = nil
 			-- end
-
+--[[
 			-- Replace pedestrian edges with snappy pedestrian edges.
 			-- Otherwise, whenever a change is made to the station, existing connections will break on the sly
-			-- (you can only see this with AltGr + L)
---[[
+			-- (you can only see this with AltGr + L) -- This is no more so after build 35716
+
 			-- It would be great to get rid of this altogether coz snappy edges make for annoying collision problems.
 			-- Now, we use BUILD_SNAPPY_STREET_EDGES_REQUESTED and we don't force snappy edges anymore.
-			if modules ~= nil then
+
+			-- After build 35716, BUILD_SNAPPY_STREET_EDGES_REQUESTED becomes useless coz nodes in the same location can only be unique.
+			-- On top of it, non-snappy edges throw collisions no matter what, if they are connected to the road network.
+			-- So, we keep snappy edges invisible in the menu and we automatically replace non-snappy edges with them.
+			-- The trouble is, nearby snappy edges will try to snap together and error out if they cannot,
+			-- UG TODO this is wrong
+			-- but we live with it.
+			-- LOLLO TODO Ideally, I'd find a way to replace non-snappy with snappy quietly, whenever the user leaves the config menu for example;
+			-- and replace snappy with non-snappy whenever the user opens the config menu
+]]
+			local _convertStreetEdgesToSnappy_ExceptCurrent = function(modules_, change_)
+				if modules_ == nil then return end
+
 				local slotIdToBeLeftAlone = nil -- do not replace the module if the user is placing it
-				if change ~= nil and change.added and change.module then
-					if change.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/axialPassengerStairsEdge.module'
-					or change.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
-					or change.module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m.module'
+				if change_ ~= nil and change_.added ~= nil and change_.module ~= nil then
+					if change_.module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module'
+					or change_.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
+					or change_.module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module'
 					then
-						slotIdToBeLeftAlone = change.slotId
+						slotIdToBeLeftAlone = change_.slotId
 					end
 				end
 
-				for slotId, module in pairs(modules) do
-					if module then
-						if module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/axialPassengerStairsEdge.module'
-						and (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
-							module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/axialPassengerStairsSnappyEdge.module'
-						elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
-						and (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
-							module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
-						elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m.module'
-						and (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
-							module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m.module'
+				for slotId, module in pairs(modules_) do
+					if module ~= nil then
+						if module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module' then
+							if (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
+								module.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module'
+							end
+						elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module' then
+							if (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
+								module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
+							end
+						elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module' then
+							if (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
+								module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
+							end
 						end
 					end
 				end
 			end
-]]
+			local _convertStreetEdgesToSnappy = function(modules_)
+				if modules_ ~= nil then
+					for slotId, module in pairs(modules_) do
+						if module then
+							if module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module' then
+								module.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module'
+							elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module' then
+								module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
+							elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module' then
+								module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
+							end
+						end
+					end
+				end
+			end
+			local _convertStreetEdgesToNonSnappy = function(modules_)
+				if modules_ ~= nil then
+					for slotId, module in pairs(modules_) do
+						if module then
+							if module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module' then
+								module.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module'
+							elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module' then
+								module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
+							elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module' then
+								module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module'
+							end
+						end
+					end
+				end
+			end
+			local _logStreetEdges = function(modules_)
+				print('_logStreetEdges starting')
+				if modules_ ~= nil then
+					for slotId, module in pairs(modules_) do
+						if module then
+							print('module =') debugPrint(module)
+							-- local moduSample = {
+							--     metadata = { },
+							--     name = "station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module",
+							--     updateScript = {
+							--       fileName = "",
+							--       params = { },
+							--     },
+							--     variant = 0,
+							-- }
+						end
+					end
+				end
+			end
+			-- _logStreetEdges(modules)
+
+			-- _convertStreetEdgesToNonSnappy(modules) -- NO! after build 35716, this will throw collisions if any external edges are connected
+			_convertStreetEdgesToSnappy_ExceptCurrent(modules, change) -- neighbourless snappy edges will try to connect to each other, if they are close enough
+			-- LOLLO NOTE api.engine.getComponent is not available here
+
 			---comment
 			---@param nTerminalNew boolean|number
 			---@param baseIdNew_s table
@@ -2314,6 +2388,11 @@ function data()
 			-- end
 			return modules
         end,
+		-- postProcessFn = function(one, two, three) -- this does not exist
+		-- 	print('postProcessFn starting, one =') debugPrint(one)
+		-- 	print('two =') debugPrint(two)
+		-- 	print('three =') debugPrint(three)
+		-- end,
         upgradeFn = function(args)
 			-- args contains the params and slotId, which is sometimes correct and sometimes -1, and no transf.
 			-- it also contains:

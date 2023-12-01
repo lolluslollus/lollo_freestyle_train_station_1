@@ -25,6 +25,7 @@ local constants = {
             BUILD_STATION_REQUESTED = 'buildStationRequested',
             BULLDOZE_MARKER_REQUESTED = 'bulldozeMarkerRequested',
             BULLDOZE_STATION_REQUESTED = 'bulldozeStationRequested',
+            CON_CONFIG_MENU_CLOSED = 'conConfigMenuClosed',
             HIDE_HOLE_REQUESTED = 'hideHoleRequested',
             HIDE_PROGRESS = 'hideProgress',
             HIDE_WARNINGS = 'hideWarnings',
@@ -58,6 +59,10 @@ local constants = {
     openStairsUpZ = 8,
     trackCrossingZ = 0.45,
     trackCrossingRaise = 0.25,
+
+    -- stairsEdgeSpacing = {-1, 3, 0.5, 0.5}, -- old
+    -- stairsEdgeSpacing = {-0.2, 0.5, 0.4, 0.4}, -- touches the external edge
+    stairsEdgeSpacing = {-0.1, 0.4, 0.4, 0.4}, -- inward, outward. side1, side2
 
     maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
     minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,

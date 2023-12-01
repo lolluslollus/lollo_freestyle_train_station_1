@@ -1227,6 +1227,107 @@ local _actions = {
         )
     end,
 
+    rebuildStationWithSnappyStreetEdges = function(args) -- unused
+        logger.print('_rebuildStationWithSnappyStreetEdges starting, args =') logger.debugPrint(args)
+        if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then return end
+
+        local oldCon = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+        if oldCon == nil or oldCon.fileName ~= _constants.stationConFileName then return end
+
+        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+
+        local oldModules = arrayUtils.cloneDeepOmittingFields(oldCon.params.modules, nil, true)
+        local newModules = {}
+        -- local _interestingBaseIds = {
+        --     _constants.idBases.axialEdgeSlotId,
+        --     _constants.idBases.flatPassengerEdgeSlotId,
+        --     _constants.idBases.openLiftExitBackwardSlotId,
+        --     _constants.idBases.openLiftExitForwardSlotId,
+        --     _constants.idBases.openLiftExitInnerSlotId,
+        --     _constants.idBases.openLiftExitOuterSlotId,
+        --     _constants.idBases.openStairsExitCentreSlotId,
+        --     _constants.idBases.openStairsExitInnerSlotId,
+        --     _constants.idBases.openStairsExitOuterSlotId,
+        -- }
+        local isSomethingChanged = false
+        for slotId, modu in pairs(oldModules) do
+            -- replace non-snappy with snappy if they have neighbours
+            -- and snappy with non-snappy if they have no neighbours
+            -- leave if nothing changed
+            -- LOLLO TODO this is not easy and perhaps not doable. Fallback:
+            -- Either I figure out the neighbours or I make everything snappy in station.con.preProcessFn(), which is easier
+            -- Sadly, making everything snappy is bad because unconnected edges might try and snap to each other and cause pointless errors UG TODO
+            -- local nTerminal, nTrackEdge, baseId = slotHelpers.demangleId(slotId)
+            -- if baseId ~= nil then
+            --     if arrayUtils.arrayHasValue(_interestingBaseIds, baseId) then
+            --         logger.print('baseId == ' .. baseId .. ' , module =') logger.debugPrint(modu)
+                    -- local moduSample = {
+                    --     metadata = { },
+                    --     name = "station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module",
+                    --     updateScript = {
+                    --       fileName = "",
+                    --       params = { },
+                    --     },
+                    --     variant = 0,
+                    -- }
+                    if modu.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module' then
+                        modu.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module'
+                        isSomethingChanged = true
+                    elseif modu.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module' then
+                        modu.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
+                        isSomethingChanged = true
+                    elseif modu.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module' then
+                        modu.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
+                        isSomethingChanged = true
+                    end
+            --     end
+            -- end
+            newModules[slotId] = modu
+        end
+        if not(isSomethingChanged) then return end
+
+        local newParams = {
+            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.inverseMainTransf, nil, true),
+            mainTransf = arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true),
+            modules = newModules, -- this is what it's all about
+            seed = oldCon.params.seed + 1,
+            subways = arrayUtils.cloneDeepOmittingFields(oldCon.params.subways, nil, true),
+            -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
+            terminals = arrayUtils.cloneDeepOmittingFields(oldCon.params.terminals, nil, true),
+        }
+        logger.print('_rebuildStationWithSnappyStreetEdges newParams.modules =') logger.debugPrint(newParams.modules)
+
+        newCon.fileName = _constants.stationConFileName
+        newCon.params = newParams
+        newCon.playerEntity = api.engine.util.getPlayer()
+        newCon.transf = oldCon.transf
+
+        local proposal = api.type.SimpleProposal.new()
+        proposal.constructionsToAdd[1] = newCon
+        proposal.constructionsToRemove = { args.stationConstructionId }
+        -- proposal.old2new = { -- this does not save destroying and rebuilding the neighbours
+        --     [constructionId] = 0,
+        -- }
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- true gives smoother z, default is false
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = false -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer()
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                logger.print('_rebuildStationWithSnappyStreetEdges callback, success =', success)
+                if success then
+                else
+                    logger.print('_rebuildStationWithSnappyStreetEdges proposal =') logger.debugPrint(proposal)
+                    logger.print('_rebuildStationWithSnappyStreetEdges result =') logger.debugPrint(result)
+                end
+            end
+        )
+    end,
     bulldozeConstruction = function(constructionId)
         if not(edgeUtils.isValidAndExistingId(constructionId)) then return end
 
@@ -2267,7 +2368,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     end
 end
 ]]
-_actions.buildSnappyStreetEdges = function(stationConId)
+_actions.buildSnappyStreetEdges = function(stationConId) -- unused
     -- rebuild the street edges connected to the station.
     -- If some are frozen in a construction, force-upgrade the station instead.
     logger.print('_buildSnappyStreetEdges starting')
@@ -3271,7 +3372,7 @@ function data()
                             end
                             _actions.bulldozeConstruction(args.conId)
                         end
-                    elseif name == _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED then
+                    elseif name == _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED then -- unused
                         if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
                             logger.err('args.stationConstructionId not valid')
                             return
@@ -3282,6 +3383,8 @@ function data()
                             return
                         end
                         _actions.buildSnappyStreetEdges(args.stationConstructionId)
+                    elseif name == _eventNames.CON_CONFIG_MENU_CLOSED then -- unused
+                        _actions.rebuildStationWithSnappyStreetEdges(args)
                     end
                 end,
                 logger.xpErrorHandler
@@ -3500,24 +3603,48 @@ function data()
                                     return
                                 end
                             end
+--[[
                         elseif name == 'destroy' and type(id) == 'string' and stringUtils.stringStartsWith(id, 'temp.addModuleComp.params.entity_') then
-                            -- added or removed a module: force snappy street edges
-                            if true then return end -- LOLLO TODO this seems unnecessary after build 35715, test it on
+                            -- temp.addModuleComp.params.entity_31084	name =	idAdded when opening the con config menu, 31084 is the station conId
+                            -- temp.addModuleComp.params.entity_31084	name =	destroy when closing the con config menu, 31084 is the station conId
+                            -- id = bulldozer	name =	builder.apply fires when the user destroys a module
+                            -- no way to tell when the user adds a module
+                            -- con config menu closed: force snappy street edges
+                            -- To prevent collisions, whenever the user opens OR closes the con config menu,
+                            -- I could make street edges with adjoining neighbours snappy and the other non-snappy
+                            -- If unattached edges are snappy, they will try to snap to their neighbours and throw pointless errors;
+                            -- UG TODO these errors are pointless because snapping is automatic, so it should be tolerant
+                            -- If attached edges are non-snappy, the game will throw collision errors whenever the user attempts to change the con config
+                            -- UG TODO this is wrong, too.
+                            -- preProcessFn has no access to the api, so I must do this here.
+                            
                             local conId = tonumber(id:sub(34), 10)
                             if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
                             local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                             if con == nil or con.fileName ~= _constants.stationConFileName then return end
 
-                            logger.print('a module was added or removed, about to send command BUILD_SNAPPY_STREET_EDGES_REQUESTED, conId = ' .. conId)
-                            api.cmd.sendCommand(
-                                api.cmd.make.sendScriptEvent(
-                                    string.sub(debug.getinfo(1, 'S').source, 1),
-                                    _eventId,
-                                    _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED,
-                                    { stationConstructionId = conId }
-                                )
-                            )
+                            -- logger.print('the con config menu was closed, about to send command CON_CONFIG_MENU_CLOSED, conId = ' .. conId)
+                            -- api.cmd.sendCommand(
+                            --     api.cmd.make.sendScriptEvent(
+                            --         string.sub(debug.getinfo(1, 'S').source, 1),
+                            --         _eventId,
+                            --         _eventNames.CON_CONFIG_MENU_CLOSED,
+                            --         { stationConstructionId = conId }
+                            --     )
+                            -- )
+
+                            -- LOLLO TODO this seems unnecessary after build 35715, test it on
+                            -- logger.print('the con config menu was closed, about to send command BUILD_SNAPPY_STREET_EDGES_REQUESTED, conId = ' .. conId)
+                            -- api.cmd.sendCommand(
+                            --     api.cmd.make.sendScriptEvent(
+                            --         string.sub(debug.getinfo(1, 'S').source, 1),
+                            --         _eventId,
+                            --         _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED,
+                            --         { stationConstructionId = conId }
+                            --     )
+                            -- )
+]]
                         end
                     end,
                     logger.xpErrorHandler

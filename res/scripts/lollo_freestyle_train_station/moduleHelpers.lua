@@ -222,6 +222,27 @@ local privateFuncs = {
     end,
 }
 privateFuncs.axialAreas = {
+    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        local isCargoTerminal = params.terminals[nTerminal].isCargo
+        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+        local perronModelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
+        if (isCargoTerminal) then
+            perronModelId = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl'
+        elseif eraPrefix == constants.eras.era_b.prefix then
+            perronModelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
+        elseif eraPrefix == constants.eras.era_a.prefix then
+            perronModelId = 'lollo_freestyle_train_station/asset/era_a_perron_number.mdl'
+        end
+        result.models[#result.models + 1] = {
+            id = perronModelId,
+            slotId = slotId,
+            -- transf = transfUtils.getTransf_Shifted(slotTransf, {-0.5, 0.5, 0}),
+            transf = transfUtils.getTransf_Shifted(slotTransf, {-0.2, 0.8, 0}),
+            tag = tag
+        }
+        -- the model index must be in base 0 !
+        result.labelText[#result.models - 1] = { tostring(nTerminal), "↑" }
+    end,
     getMNAdjustedTransf = function(params, slotId, slotTransf)
         local variant = privateFuncs.getVariant(params, slotId)
         local tilt = privateFuncs.getFromVariant_AxialAreaTilt(variant)
@@ -1781,9 +1802,10 @@ return {
     },
     edges = {
         addEdges = function(result, tag, params, t)
-            -- logger.print('moduleHelpers.edges.addEdges starting for terminal', t, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
+            logger.print('moduleHelpers.edges.addEdges starting for terminal', t, ', tag = ', (tag or 'NIL'))
+            -- logger.print('result.edgeLists =') logger.debugPrint(result.edgeLists)
     
-            local nNodesInTerminalSoFar = privateFuncs.edges._getNNodesInTerminalsSoFar(params, t)
+            local nNodesInTerminalSoFar = 0 -- privateFuncs.edges._getNNodesInTerminalsSoFar(params, t)
     
             local tag2nodes = {
                 [tag] = { } -- list of base 0 indexes
@@ -1950,6 +1972,9 @@ return {
         end,
     },
     axialAreas = {
+        addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            return privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        end,
         exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
@@ -1960,13 +1985,13 @@ return {
 
 			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
-
 			result.models[#result.models + 1] = {
 				id = myModelId,
 				slotId = slotId,
 				transf = adjustedTransf,
 				tag = tag
 			}
+            privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
 			table.insert(
@@ -1990,7 +2015,10 @@ return {
 						type = _autoBridgePathsRefData.streetTypeName_noBridge,
 					},
 					snapNodes = isSnap and { 1 } or {},
-					tag2nodes = {},
+					-- tag2nodes = {},
+                    tag2nodes = {
+                        [tag] = { 0, 1 } -- list of base 0 indexes of nodes
+                    },
 					type = 'STREET'
 				}
 			)
@@ -2018,7 +2046,7 @@ return {
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
 --[[
             This is dangerous coz it adds nodes outside the station, where we have no control, and this could cause crashes.
             local laneZ = result.laneZs[nTerminal]
@@ -2180,13 +2208,13 @@ return {
 
 			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
-
 			result.models[#result.models + 1] = {
 				id = myModelId,
 				slotId = slotId,
 				transf = zAdjustedTransf,
 				tag = tag
 			}
+            privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
 
 			-- this connects the platform to its outer edge (ie border)
 			privateFuncs.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
@@ -2213,7 +2241,10 @@ return {
 						type = _autoBridgePathsRefData.streetTypeName_noBridge,
 					},
 					snapNodes = isSnap and { 1 } or {},
-					tag2nodes = {},
+					-- tag2nodes = {},
+                    tag2nodes = {
+                        [tag] = { 0, 1 } -- list of base 0 indexes of nodes
+                    },
 					type = 'STREET'
 				}
 			)
@@ -2469,10 +2500,11 @@ return {
 				transf = slotTransf,
 				-- tag = tag
 			}
+
 			table.insert(result.slots, {
 				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitInnerSlotId),
 				shape = 1,
-				spacing = {-1, 3, 0.5, 0.5},
+				spacing = constants.stairsEdgeSpacing,
 				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
 					slotTransf,
 					{0, -1, constants.openStairsUpZ}
@@ -2482,7 +2514,7 @@ return {
 			table.insert(result.slots, {
 				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitForwardSlotId),
 				shape = 1,
-				spacing = {-1, 3, 0.5, 0.5},
+				spacing = constants.stairsEdgeSpacing,
 				transf = transfUtils.getTransf_Shifted(
 					slotTransf,
 					{2.5, 0, constants.openStairsUpZ}
@@ -2492,7 +2524,7 @@ return {
 			table.insert(result.slots, {
 				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitOuterSlotId),
 				shape = 1,
-				spacing = {-1, 3, 0.5, 0.5},
+				spacing = constants.stairsEdgeSpacing,
 				transf = transfUtils.getTransf_ZRotatedP90_Shifted(
 					slotTransf,
 					{0, 1, constants.openStairsUpZ}
@@ -2502,7 +2534,7 @@ return {
 			table.insert(result.slots, {
 				id = result.mangleId(nTerminal, nTrackEdge, constants.idBases.openLiftExitBackwardSlotId),
 				shape = 1,
-				spacing = {-1, 3, 0.5, 0.5},
+				spacing = constants.stairsEdgeSpacing,
 				transf = transfUtils.getTransf_ZRotated180_Shifted(
 					slotTransf,
 					{-2.5, 0, constants.openStairsUpZ}
@@ -2595,10 +2627,10 @@ return {
 						type = _autoBridgePathsRefData.streetTypeName_noBridge,
 					},
 					snapNodes = isSnap and { 1 } or {},
-					tag2nodes = {},
-                    -- tag2nodes = {
-                    --     [tag] = { 1, 0 } -- list of base 0 indexes of nodes
-                    -- },
+					-- tag2nodes = {},
+                    tag2nodes = {
+                        [tag] = { 0, 1 } -- list of base 0 indexes of nodes
+                    },
 					type = 'STREET'
 				}
 			)

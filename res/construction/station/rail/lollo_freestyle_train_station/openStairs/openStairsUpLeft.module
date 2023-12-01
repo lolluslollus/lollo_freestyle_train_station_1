@@ -44,10 +44,11 @@ function data()
 				transf = slotTransf,
 				tag = tag
 			}
+
 			table.insert(result.slots, {
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitInnerSlotId),
 				shape = 1,
-				spacing = {-1, 3, 0.5, 0.5},
+				spacing = _constants.stairsEdgeSpacing,
 				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
 					slotTransf,
 					{0, -1, _constants.openStairsUpZ}
@@ -59,7 +60,7 @@ function data()
 				table.insert(result.slots, {
 					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitCentreSlotId),
 					shape = 1,
-					spacing = {-1, 3, 0.5, 0.5},
+					spacing = _constants.stairsEdgeSpacing,
 					transf = transfUtils.getTransf_Shifted(
 						slotTransf,
 						{1, 0, _constants.openStairsUpZ}
@@ -70,7 +71,7 @@ function data()
 			table.insert(result.slots, {
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.openStairsExitOuterSlotId),
 				shape = 1,
-				spacing = {-1, 3, 0.5, 0.5},
+				spacing = _constants.stairsEdgeSpacing,
 				transf = transfUtils.getTransf_ZRotatedP90_Shifted(
 					slotTransf,
 					{0, 1, _constants.openStairsUpZ}

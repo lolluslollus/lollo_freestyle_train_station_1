@@ -44,7 +44,6 @@ local _utils = {
 
 local _actions = {
     replaceEdgeWithParallelNarrowTracks = function(oldEdgeId, newTrackTypeId)
-        -- LOLLO TODO add the second edge and shift them by 1.25
         logger.print('replaceEdgeWithParallelNarrowTracks starting, oldEdgeId =', oldEdgeId, 'newTrackTypeId =', newTrackTypeId)
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
         if not(edgeUtils.isValidId(newTrackTypeId)) then return end
