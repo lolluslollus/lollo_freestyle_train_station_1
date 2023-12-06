@@ -17,7 +17,7 @@ function data()
 		description = {
 			name = _("OpenStairsExitWithEdgeName_3m"),
 			description = _("OpenStairsExitWithEdgeDesc"),
-			icon = "ui/lollo_freestyle_train_station/openStairsExitWithEdge2m.tga"
+			icon = "ui/lollo_freestyle_train_station/exitWithEdge2m.tga"
 		},
 		metadata = { },
 		order = {

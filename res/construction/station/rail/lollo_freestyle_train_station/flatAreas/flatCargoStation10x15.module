@@ -42,8 +42,9 @@ function data()
 				5
 			)
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local _terminalData = params.terminals[nTerminal]
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
+			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_10x15.mdl'
@@ -58,7 +59,7 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
 			local groundFace = {
 				{-5.5, -6, -_constants.stairsAndRampHeight, 1},

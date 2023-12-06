@@ -37,10 +37,11 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
+			local _terminalData = params.terminals[nTerminal]
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 			local buildingTransf = transfUtils.getTransf_ZRotatedP90(zAdjustedTransf)
 
-			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
 
 			local modelId = nil
@@ -54,7 +55,7 @@ function data()
 				transf = buildingTransf,
 				tag = tag
 			}
-			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_9x6.mdl',
 				slotId = slotId,

@@ -32,8 +32,9 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
+			local _terminalData = params.terminals[nTerminal]
 			local adjustedTransf = moduleHelpers.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
-			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'flatCargoRampDownSteepModelFileName']
 
@@ -44,7 +45,7 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
 			local groundFace = { -- groundFaces ignore z, terrainAlignmentLists don't
 				{-1, -2, _constants.platformSideBitsZ, 1},

@@ -21,8 +21,10 @@ local _utils = {
 }
 
 ---@alias edgeObject {flag: 0|1|2, param: number, modelFileName: string, playerEntity: string | nil, isLeft: boolean, isOneWay: boolean}
----@alias edgeIdsProperties table<{edgeId: integer, catenary: boolean, player: integer | nil, posTanX2: table, trackType: integer, trackTypeName: string, type: 0|1|2, edgeType: string, typeIndex: 0|1|2, edgeTypeName: string, width: number, era: eraPrefix, edgeObjects: table<edgeObject>}>
----@alias nodeIdsProperties table<{nodeId: integer, position: {x: number, y: number, z: number}}>
+---@alias edgeIdProperties {edgeId: integer, catenary: boolean, player: integer | nil, posTanX2: table, trackType: integer, trackTypeName: string, type: 0|1|2, edgeType: string, typeIndex: 0|1|2, edgeTypeName: string, width: number, era: eraPrefix, edgeObjects: table<edgeObject>}
+---@alias edgeIdsProperties table<edgeIdProperties>
+---@alias nodeIdProperties {nodeId: integer, position: {x: number, y: number, z: number}}
+---@alias nodeIdsProperties table<nodeIdProperties>
 local helpers = {
     ---isReadEdgeObjects might disagree with isSortOutput
     ---@param edgeIds table<integer>
@@ -1052,6 +1054,7 @@ local helpers = {
                         nearestNodeId = nodeId
                     elseif distance == shortestDistance then
                         -- LOLLO TODO what if there are multiple nodes in the same position? It's academic, but how do I make sure it will take the best one?
+                        -- after build 35716, this should never happen; it'd be nice to know the game tolerance for "same position".
                         logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got two nodes at') logger.warningDebugPrint(refPosition)
                     end
                 end
@@ -1204,7 +1207,7 @@ helpers.getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnl
     return results
 end
 
-local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionXYZ, frozenNodeIds, isTrack)
+local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionXYZ, frozenNodeIds_indexed, isTrack)
     if not(edgeUtils.isValidAndExistingId(stationNodeId)) or stationNodePositionXYZ == nil then return nil end
 
     local _map = isTrack and api.engine.system.streetSystem.getNode2TrackEdgeMap() or api.engine.system.streetSystem.getNode2StreetEdgeMap()
@@ -1222,13 +1225,14 @@ local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionX
     for _, nearbyNodeId in pairs(_nearbyNodeIds) do
         if edgeUtils.isValidAndExistingId(nearbyNodeId)
         and nearbyNodeId ~= stationNodeId
-        and not(arrayUtils.arrayHasValue(frozenNodeIds, nearbyNodeId))
+        and not(frozenNodeIds_indexed[nearbyNodeId])
         -- only take street or track nodes, depending on isTrack, and with at least one edge attached
         and #_map[nearbyNodeId] > 0
         then
             local node = api.engine.getComponent(nearbyNodeId, api.type.ComponentType.BASE_NODE)
             local distance = transfUtils.getPositionsDistance(stationNodePositionXYZ, node.position)
             -- LOLLO TODO what if there are multiple nodes in the same position? It's academic, but how do I make sure it will take the best one?
+            -- after build 35716, this should never happen; it'd be nice to know the game tolerance for "same position".
             if distance and distance < shortestDistance then
                 shortestDistance = distance
                 nearestNodeId = nearbyNodeId
@@ -1238,7 +1242,7 @@ local _getDisjointNeighbourNodeId = function(stationNodeId, stationNodePositionX
     return nearestNodeId
 end
 
-local _getNeighbourEdgeIdsAndConIds = function(nodeId, frozenEdgeIds, isTrack)
+local _getNeighbourEdgeIdsAndConIds = function(nodeId, frozenEdgeIds_indexed, isTrack)
     local freeEdgeIds_indexed = {}
     local isAnyEdgeFrozenInAConstruction = false
     local neighbourConIds_indexed = {}
@@ -1247,7 +1251,7 @@ local _getNeighbourEdgeIdsAndConIds = function(nodeId, frozenEdgeIds, isTrack)
     for _, edgeId in pairs(connectedEdgeIds) do
         -- for streets, I use the generic edge getter so I also get the edges in the adjoining constructions;
         -- I make sure they are streets later
-        if not(arrayUtils.arrayHasValue(frozenEdgeIds, edgeId)) then
+        if not(frozenEdgeIds_indexed[edgeId]) then
             -- check that the edge is not frozen in another construction, such as nearby stairs with a snappy bridge
             local neighbourConId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
             if edgeUtils.isValidId(neighbourConId) then
@@ -1271,13 +1275,10 @@ local _getNeighbourEdgeIdsAndConIds = function(nodeId, frozenEdgeIds, isTrack)
     return freeEdgeIds, isAnyEdgeFrozenInAConstruction, neighbourConIds
 end
 ---@return table<{nodeId: integer, edgeId: integer, nodePosition: {x: number, y: number, z: number}}>
-local _getStationStreetEndNodes = function(con, frozenEdges, frozenNodes)
-    logger.print('_getStationStreetEndNodes starting, frozenEdges =') logger.debugPrint(frozenEdges)
-    -- logger.print('getStationEndNodesUnsorted, con =') logger.debugPrint(con)
-    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
+local _getStationStreetEndNodes = function(frozenEdgeIds_indexed, frozenNodeIds_indexed)
+    logger.print('_getStationStreetEndNodes starting, frozenEdges =') logger.debugPrint(frozenEdgeIds_indexed)
     -- we may want to respect frozen edges and nodes of other constructions, too, so we import them
     -- instead of picking them from the current station.
-    if not(con) or con.fileName ~= _constants.stationConFileName then return {} end
 
     local freeNodes = {}
     local _addNode = function(nodeId, edgeId)
@@ -1287,18 +1288,18 @@ local _getStationStreetEndNodes = function(con, frozenEdges, frozenNodes)
             nodePosition = edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(nodeId, api.type.ComponentType.BASE_NODE).position)
         }
     end
-    for _, edgeId in pairs(frozenEdges) do
+    for edgeId, _ in pairs(frozenEdgeIds_indexed) do
         if edgeUtils.isValidAndExistingId(edgeId) then
             local baseEdgeStreet = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_STREET)
             if baseEdgeStreet ~= nil then
                 local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
                 if baseEdge ~= nil then
-                    if arrayUtils.arrayHasValue(frozenNodes, baseEdge.node0) then
-                        if not(arrayUtils.arrayHasValue(frozenNodes, baseEdge.node1)) then
+                    if frozenNodeIds_indexed[baseEdge.node0] then
+                        if not(frozenNodeIds_indexed[baseEdge.node1]) then
                             _addNode(baseEdge.node1, edgeId)
                         end
-                    elseif arrayUtils.arrayHasValue(frozenNodes, baseEdge.node1) then
-                        if not(arrayUtils.arrayHasValue(frozenNodes, baseEdge.node0)) then
+                    elseif frozenNodeIds_indexed[baseEdge.node1] then
+                        if not(frozenNodeIds_indexed[baseEdge.node0]) then
                             _addNode(baseEdge.node0, edgeId)
                         end
                     end
@@ -1310,28 +1311,21 @@ local _getStationStreetEndNodes = function(con, frozenEdges, frozenNodes)
     return freeNodes
 end
 
-local _getStationStreetEndEntities = function(stationCon, t)
-    -- stationCon contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    if not(stationCon) or stationCon.fileName ~= _constants.stationConFileName then
-        logger.err('_getStationStreetEndEntities stationCon.fileName =')
-        logger.errorDebugPrint(stationCon.fileName)
-        return nil
-    end
-
-    local frozenEdgeIds = arrayUtils.cloneDeepOmittingFields(stationCon.frozenEdges, {}, true)
-    local frozenNodeIds = arrayUtils.cloneDeepOmittingFields(stationCon.frozenNodes, {}, true)
-    local results = _getStationStreetEndNodes(stationCon, frozenEdgeIds, frozenNodeIds)
+local _getStationStreetEndEntities = function(frozenEdgeIds_indexed, frozenNodeIds_indexed)
+    -- local frozenEdgeIds = arrayUtils.cloneDeepOmittingFields(stationCon.frozenEdges, {}, true)
+    -- local frozenNodeIds = arrayUtils.cloneDeepOmittingFields(stationCon.frozenNodes, {}, true)
+    local results = _getStationStreetEndNodes(frozenEdgeIds_indexed, frozenNodeIds_indexed)
 
     for _, endEntity in pairs(results) do
-        endEntity.disjointNeighbourNode = {
-            conIds = {},
-            isNodeAdjoiningAConstruction = false,
-            nodeId = _getDisjointNeighbourNodeId(endEntity.nodeId, endEntity.nodePosition, frozenNodeIds, false)
-        }
-        endEntity.disjointNeighbourEdges = {
-            edgeIds = {}
-        }
-        endEntity.disjointNeighbourEdges.edgeIds, endEntity.disjointNeighbourNode.isNodeAdjoiningAConstruction, endEntity.disjointNeighbourNode.conIds = _getNeighbourEdgeIdsAndConIds(endEntity.disjointNeighbourNode.nodeId, frozenEdgeIds, false)
+        -- endEntity.disjointNeighbourNode = {
+        --     conIds = {},
+        --     isNodeAdjoiningAConstruction = false,
+        --     nodeId = _getDisjointNeighbourNodeId(endEntity.nodeId, endEntity.nodePosition, frozenNodeIds_indexed, false)
+        -- }
+        -- endEntity.disjointNeighbourEdges = {
+        --     edgeIds = {}
+        -- }
+        -- endEntity.disjointNeighbourEdges.edgeIds, endEntity.disjointNeighbourNode.isNodeAdjoiningAConstruction, endEntity.disjointNeighbourNode.conIds = _getNeighbourEdgeIdsAndConIds(endEntity.disjointNeighbourNode.nodeId, frozenEdgeIds_indexed, false)
         endEntity.jointNeighbourNode = {
             conIds = {},
             conProps = {},
@@ -1342,7 +1336,7 @@ local _getStationStreetEndEntities = function(stationCon, t)
             edgeIds = {},
             props = {}
         }
-        endEntity.jointNeighbourEdges.edgeIds, endEntity.jointNeighbourNode.isNodeAdjoiningAConstruction, endEntity.jointNeighbourNode.conIds = _getNeighbourEdgeIdsAndConIds(endEntity.nodeId, frozenEdgeIds, false)
+        endEntity.jointNeighbourEdges.edgeIds, endEntity.jointNeighbourNode.isNodeAdjoiningAConstruction, endEntity.jointNeighbourNode.conIds = _getNeighbourEdgeIdsAndConIds(endEntity.nodeId, frozenEdgeIds_indexed, false)
     end
     logger.print('_getStationStreetEndEntities results 1 =') logger.debugPrint(results)
     for a, endEntity in pairs(results) do
@@ -1354,9 +1348,9 @@ local _getStationStreetEndEntities = function(stationCon, t)
                 end
             end
             endEntity.jointNeighbourEdges.props[edgeId] = {
-                edgeProps = helpers.getEdgeIdsProperties({edgeId}, false, true, false),
-                node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
-                node1Props = helpers.getNodeIdsProperties({baseEdge.node1}),
+                edgeProps = helpers.getEdgeIdsProperties({edgeId}, false, true, false)[1],
+                node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
+                node1Props = helpers.getNodeIdsProperties({baseEdge.node1})[1],
                 isNode0ToBeAdded = arrayUtils.arrayHasValue(
                     endEntity.jointNeighbourNode.outerLoneNodeIds,
                     baseEdge.node0
@@ -1389,21 +1383,15 @@ local _getStationStreetEndEntities = function(stationCon, t)
     return results
 end
 
-local _getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
+local _getTrackEndNodeIds4T = function(nTerminal, frozenEdgeIds_indexed, frozenNodeIds_indexed, platformEdgeLists, trackEdgeLists)
     -- logger.print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
-    -- logger.print('getStationEndNodesUnsorted, con =') logger.debugPrint(con)
-    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- we may want to respect frozen edges and nodes of other constructions, too, so we import them
     -- instead of picking them from the current station.
-    if not(con) or con.fileName ~= _constants.stationConFileName then
-        return {}
-    end
-
     local _tolerance = 0.001
     local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
-    local _getNodeId = function(nodePosition, otherEdgeNodePosition)
+    local _getNodeId = function(nodePosition, twinNodePosition)
         -- logger.print('nodePosition =') logger.debugPrint(nodePosition)
-        -- logger.print('otherEdgeNodePosition =') logger.debugPrint(otherEdgeNodePosition)
+        -- logger.print('twinNodePosition =') logger.debugPrint(twinNodePosition)
         local nearbyNodeIds = edgeUtils.getNearbyObjectIds(
             transfUtils.position2Transf(nodePosition),
             _tolerance,
@@ -1412,26 +1400,28 @@ local _getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
             nodePosition[3] + _tolerance
         )
         -- logger.print('nodeFunds =') logger.debugPrint(nearbyNodeIds)
-        for _, nodeId in pairs(nearbyNodeIds) do
-            if _map[nodeId] ~= nil and not(arrayUtils.arrayHasValue(frozenNodes, nodeId)) then
-                for _, edgeId in pairs(_map[nodeId]) do
-                    if arrayUtils.arrayHasValue(frozenEdges, edgeId) then
-                        local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-                        local baseEdgeTrack = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
+        for _, freeNodeId in pairs(nearbyNodeIds) do
+            if not(frozenNodeIds_indexed[freeNodeId]) then -- outer nodes are not frozen
+                for __, frozenEdgeId in pairs(_map[freeNodeId] or {}) do
+                    if frozenEdgeIds_indexed[frozenEdgeId] then -- outer edges are frozen
+                        local baseEdgeTrack = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE_TRACK)
                         if baseEdgeTrack ~= nil then
-                            -- If I have two terminals after the other, as opposed to parallel,
-                            -- nodeId could belong to the other terminal: to make sure, I check the other node attached to the same frozen edge.
-                            if baseEdge.node0 == nodeId then
-                                local otherBaseNode = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-                                -- logger.print('baseEdge.node0 == nodeId, otherBaseNode =') logger.debugPrint(otherBaseNode)
-                                if otherBaseNode and otherBaseNode.position and comparisonUtils.isVec3sVeryClose(otherBaseNode.position, otherEdgeNodePosition, 4) then
-                                    return nodeId
-                                end
-                            elseif baseEdge.node1 == nodeId then
-                                local otherBaseNode = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-                                -- logger.print('baseEdge.node1 == nodeId, otherBaseNode =') logger.debugPrint(otherBaseNode)
-                                if otherBaseNode and otherBaseNode.position and comparisonUtils.isVec3sVeryClose(otherBaseNode.position, otherEdgeNodePosition, 4) then
-                                    return nodeId
+                            local baseEdge = api.engine.getComponent(frozenEdgeId, api.type.ComponentType.BASE_EDGE)
+                            if baseEdge ~= nil then
+                                -- If I have two terminals after the other, as opposed to parallel,
+                                -- nodeId could belong to the other terminal: to make sure, I check the other node attached to the same frozen edge.
+                                if baseEdge.node0 == freeNodeId then
+                                    local twinBaseNode = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
+                                    -- logger.print('baseEdge.node0 == nodeId, twinBaseNode =') logger.debugPrint(twinBaseNode)
+                                    if twinBaseNode and twinBaseNode.position and comparisonUtils.isVec3sVeryClose(twinBaseNode.position, twinNodePosition, 4) then
+                                        return freeNodeId
+                                    end
+                                elseif baseEdge.node1 == freeNodeId then
+                                    local twinBaseNode = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+                                    -- logger.print('baseEdge.node1 == nodeId, twinBaseNode =') logger.debugPrint(twinBaseNode)
+                                    if twinBaseNode and twinBaseNode.position and comparisonUtils.isVec3sVeryClose(twinBaseNode.position, twinNodePosition, 4) then
+                                        return freeNodeId
+                                    end
                                 end
                             end
                         end
@@ -1444,12 +1434,24 @@ local _getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
 
     local result = {
         platforms = {
-            node1Id = _getNodeId(con.params.terminals[nTerminal].platformEdgeLists[1].posTanX2[1][1], con.params.terminals[nTerminal].platformEdgeLists[1].posTanX2[2][1]),
-            node2Id = _getNodeId(arrayUtils.getLast(con.params.terminals[nTerminal].platformEdgeLists).posTanX2[2][1], arrayUtils.getLast(con.params.terminals[nTerminal].platformEdgeLists).posTanX2[1][1])
+            node1Id = _getNodeId(
+                platformEdgeLists[1].posTanX2[1][1],
+                platformEdgeLists[1].posTanX2[2][1]
+            ),
+            node2Id = _getNodeId(
+                arrayUtils.getLast(platformEdgeLists).posTanX2[2][1],
+                arrayUtils.getLast(platformEdgeLists).posTanX2[1][1]
+            )
         },
         tracks = {
-            node1Id = _getNodeId(con.params.terminals[nTerminal].trackEdgeLists[1].posTanX2[1][1], con.params.terminals[nTerminal].trackEdgeLists[1].posTanX2[2][1]),
-            node2Id = _getNodeId(arrayUtils.getLast(con.params.terminals[nTerminal].trackEdgeLists).posTanX2[2][1], arrayUtils.getLast(con.params.terminals[nTerminal].trackEdgeLists).posTanX2[1][1])
+            node1Id = _getNodeId(
+                trackEdgeLists[1].posTanX2[1][1],
+                trackEdgeLists[1].posTanX2[2][1]
+            ),
+            node2Id = _getNodeId(
+                arrayUtils.getLast(trackEdgeLists).posTanX2[2][1],
+                arrayUtils.getLast(trackEdgeLists).posTanX2[1][1]
+            )
         }
     }
 
@@ -1473,23 +1475,14 @@ local _getTrackEndNodeIds4T = function(con, nTerminal, frozenEdges, frozenNodes)
     return result
 end
 
-local _getStationTrackEndEntities4T = function(con, t)
-    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- logger.print('con =') logger.debugPrint(conData)
-    if not(con) or con.fileName ~= _constants.stationConFileName then
-        logger.err('_getStationTrackEndEntities4T con.fileName =')
-        logger.errorDebugPrint(con.fileName)
-        return nil
-    end
-
+local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed, frozenNodeIds_indexed, platformEdgeLists, trackEdgeLists)
     -- frozen edges and nodes can be streets or tracks
-    local frozenEdgeIds = arrayUtils.cloneDeepOmittingFields(con.frozenEdges, {}, true)
-    local frozenNodeIds = arrayUtils.cloneDeepOmittingFields(con.frozenNodes, {}, true)
+
     -- get all stations, not only mine? It does not seem necessary for now, and we also bar building close to a station, on top of it.
     -- This thing here works, just in case.
     -- local conTransf = transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
-    -- logger.print('frozenEdges first =') logger.debugPrint(frozenEdgeIds)
-    -- logger.print('frozenNodes first =') logger.debugPrint(frozenNodeIds)
+    -- logger.print('frozenEdges first =') logger.debugPrint(frozenEdgeIds_indexed)
+    -- logger.print('frozenNodes first =') logger.debugPrint(frozenNodeIds_indexed)
     -- local nearbyStations = helpers.getNearbyFreestyleStationConsList(conTransf, _constants.searchRadius4NearbyStation2Join, true)
     -- for _, nearbyStation in pairs(nearbyStations) do
     --     logger.print('nearbyStation =') logger.debugPrint(nearbyStation)
@@ -1499,20 +1492,19 @@ local _getStationTrackEndEntities4T = function(con, t)
     --         logger.print('#nearbyCon.frozenEdges = ', #nearbyCon.frozenEdges, 'nearbyCon.frozenEdges =') logger.debugPrint(nearbyCon.frozenEdges)
     --         if nearbyCon and nearbyCon.frozenEdges then
     --             for _, frozenEdgeId in pairs(nearbyCon.frozenEdges) do
-    --                 frozenEdgeIds[#frozenEdgeIds+1] = frozenEdgeId
+    --                 frozenEdgeIds_indexed[frozenEdgeId] = true
     --             end
     --         end
     --         if nearbyCon and nearbyCon.frozenNodes then
     --             for _, frozenNodeId in pairs(nearbyCon.frozenNodes) do
-    --                 frozenNodeIds[#frozenNodeIds+1] = frozenNodeId
+    --                 frozenNodeIds_indexed[frozenNodeId] = true
     --             end
     --         end
     --     end
     -- end
-    -- logger.print('frozenEdges with neighbours =') logger.debugPrint(frozenEdgeIds)
-    -- logger.print('frozenNodes with neighbours =') logger.debugPrint(frozenNodeIds)
-
-    local endNodeIds4T = _getTrackEndNodeIds4T(con, t, frozenEdgeIds, frozenNodeIds)
+    -- logger.print('frozenEdges with neighbours =') logger.debugPrint(frozenEdgeIds_indexed)
+    -- logger.print('frozenNodes with neighbours =') logger.debugPrint(frozenNodeIds_indexed)
+    local endNodeIds4T = _getTrackEndNodeIds4T(nTerminal, frozenEdgeIds_indexed, frozenNodeIds_indexed, platformEdgeLists, trackEdgeLists)
     -- logger.print('endNodeIds4T =') logger.debugPrint(endNodeIds4T)
     -- I cannot clone these, for some reason: it dumps
     local platformNode1Position = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node1Id)
@@ -1530,18 +1522,18 @@ local _getStationTrackEndEntities4T = function(con, t)
 
     local result = {
         platforms = {
-            -- these are empty or nil if the station has been snapped to its neighbours
-            disjointNeighbourEdges = {
-                edge1Ids = {},
-                edge2Ids = {}
-            },
-            -- same
-            disjointNeighbourNodes = {
-                isNode1AdjoiningAConstruction = false,
-                isNode2AdjoiningAConstruction = false,
-                node1Id = nil,
-                node2Id = nil,
-            },
+            -- -- these are empty or nil if the station has been snapped to its neighbours
+            -- disjointNeighbourEdges = {
+            --     edge1Ids = {},
+            --     edge2Ids = {}
+            -- },
+            -- -- same
+            -- disjointNeighbourNodes = {
+            --     isNode1AdjoiningAConstruction = false,
+            --     isNode2AdjoiningAConstruction = false,
+            --     node1Id = nil,
+            --     node2Id = nil,
+            -- },
             -- these are populated or nil if the station has been snapped to its neighbours
             jointNeighbourEdges = {
                 edge1Ids = {},
@@ -1564,18 +1556,18 @@ local _getStationTrackEndEntities4T = function(con, t)
             }
         },
         tracks = {
-            -- these are empty or nil if the station has been snapped to its neighbours, or if there are no neighbours.
-            disjointNeighbourEdges = {
-                edge1Ids = {},
-                edge2Ids = {}
-            },
-            -- same
-            disjointNeighbourNodes = {
-                isNode1AdjoiningAConstruction = false,
-                isNode2AdjoiningAConstruction = false,
-                node1Id = nil,
-                node2Id = nil,
-            },
+            -- -- these are empty or nil if the station has been snapped to its neighbours, or if there are no neighbours.
+            -- disjointNeighbourEdges = {
+            --     edge1Ids = {},
+            --     edge2Ids = {}
+            -- },
+            -- -- same
+            -- disjointNeighbourNodes = {
+            --     isNode1AdjoiningAConstruction = false,
+            --     isNode2AdjoiningAConstruction = false,
+            --     node1Id = nil,
+            --     node2Id = nil,
+            -- },
             -- these are populated or nil if the station has been snapped to its neighbours, or if there are no neighbours.
             jointNeighbourEdges = {
                 edge1Ids = {},
@@ -1599,20 +1591,20 @@ local _getStationTrackEndEntities4T = function(con, t)
         },
     }
 
-    result.platforms.disjointNeighbourNodes.node1Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node1Id, result.platforms.stationEndNodePositions.node1, frozenNodeIds, true)
-    result.platforms.disjointNeighbourNodes.node2Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node2Id, result.platforms.stationEndNodePositions.node2, frozenNodeIds, true)
-    result.tracks.disjointNeighbourNodes.node1Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node1Id, result.tracks.stationEndNodePositions.node1, frozenNodeIds, true)
-    result.tracks.disjointNeighbourNodes.node2Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node2Id, result.tracks.stationEndNodePositions.node2, frozenNodeIds, true)
+    -- result.platforms.disjointNeighbourNodes.node1Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node1Id, result.platforms.stationEndNodePositions.node1, frozenNodeIds_indexed, true)
+    -- result.platforms.disjointNeighbourNodes.node2Id = _getDisjointNeighbourNodeId(result.platforms.stationEndNodeIds.node2Id, result.platforms.stationEndNodePositions.node2, frozenNodeIds_indexed, true)
+    -- result.tracks.disjointNeighbourNodes.node1Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node1Id, result.tracks.stationEndNodePositions.node1, frozenNodeIds_indexed, true)
+    -- result.tracks.disjointNeighbourNodes.node2Id = _getDisjointNeighbourNodeId(result.tracks.stationEndNodeIds.node2Id, result.tracks.stationEndNodePositions.node2, frozenNodeIds_indexed, true)
 
-    result.platforms.disjointNeighbourEdges.edge1Ids, result.platforms.disjointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodes.node1Id, frozenEdgeIds, true)
-    result.platforms.disjointNeighbourEdges.edge2Ids, result.platforms.disjointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodes.node2Id, frozenEdgeIds, true)
-    result.tracks.disjointNeighbourEdges.edge1Ids, result.tracks.disjointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodes.node1Id, frozenEdgeIds, true)
-    result.tracks.disjointNeighbourEdges.edge2Ids, result.tracks.disjointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodes.node2Id, frozenEdgeIds, true)
+    -- result.platforms.disjointNeighbourEdges.edge1Ids, result.platforms.disjointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodes.node1Id, frozenEdgeIds_indexed, true)
+    -- result.platforms.disjointNeighbourEdges.edge2Ids, result.platforms.disjointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.disjointNeighbourNodes.node2Id, frozenEdgeIds_indexed, true)
+    -- result.tracks.disjointNeighbourEdges.edge1Ids, result.tracks.disjointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodes.node1Id, frozenEdgeIds_indexed, true)
+    -- result.tracks.disjointNeighbourEdges.edge2Ids, result.tracks.disjointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.disjointNeighbourNodes.node2Id, frozenEdgeIds_indexed, true)
 
-    result.platforms.jointNeighbourEdges.edge1Ids, result.platforms.jointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.stationEndNodeIds.node1Id, frozenEdgeIds, true)
-    result.platforms.jointNeighbourEdges.edge2Ids, result.platforms.jointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.stationEndNodeIds.node2Id, frozenEdgeIds, true)
-    result.tracks.jointNeighbourEdges.edge1Ids, result.tracks.jointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.stationEndNodeIds.node1Id, frozenEdgeIds, true)
-    result.tracks.jointNeighbourEdges.edge2Ids, result.tracks.jointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.stationEndNodeIds.node2Id, frozenEdgeIds, true)
+    result.platforms.jointNeighbourEdges.edge1Ids, result.platforms.jointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.stationEndNodeIds.node1Id, frozenEdgeIds_indexed, true)
+    result.platforms.jointNeighbourEdges.edge2Ids, result.platforms.jointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.platforms.stationEndNodeIds.node2Id, frozenEdgeIds_indexed, true)
+    result.tracks.jointNeighbourEdges.edge1Ids, result.tracks.jointNeighbourNodes.isNode1AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.stationEndNodeIds.node1Id, frozenEdgeIds_indexed, true)
+    result.tracks.jointNeighbourEdges.edge2Ids, result.tracks.jointNeighbourNodes.isNode2AdjoiningAConstruction = _getNeighbourEdgeIdsAndConIds(result.tracks.stationEndNodeIds.node2Id, frozenEdgeIds_indexed, true)
 
     for _, edgeId in pairs(arrayUtils.getConcatValues(result.platforms.jointNeighbourEdges.edge1Ids, result.platforms.jointNeighbourEdges.edge2Ids)) do
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
@@ -1622,9 +1614,9 @@ local _getStationTrackEndEntities4T = function(con, t)
             end
         end
         result.platforms.jointNeighbourEdges.props[edgeId] = {
-            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false),
-            node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
-            node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false)[1],
+            node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
+            node1Props = helpers.getNodeIdsProperties({baseEdge.node1})[1]
         }
     end
     for _, edgeId in pairs(arrayUtils.getConcatValues(result.tracks.jointNeighbourEdges.edge1Ids, result.tracks.jointNeighbourEdges.edge2Ids)) do
@@ -1635,39 +1627,39 @@ local _getStationTrackEndEntities4T = function(con, t)
             end
         end
         result.tracks.jointNeighbourEdges.props[edgeId] = {
-            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false),
-            node0Props = helpers.getNodeIdsProperties({baseEdge.node0}),
-            node1Props = helpers.getNodeIdsProperties({baseEdge.node1})
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false)[1],
+            node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
+            node1Props = helpers.getNodeIdsProperties({baseEdge.node1})[1]
         }
     end
-    for edgeId, edgeProps in pairs(result.platforms.jointNeighbourEdges.props) do
+    for edgeId, props in pairs(result.platforms.jointNeighbourEdges.props) do
         result.platforms.jointNeighbourEdges.props[edgeId].isNode0ToBeAdded = arrayUtils.arrayHasValue(
             result.platforms.jointNeighbourNodes.outerLoneNodeIds,
-            edgeProps.node0Props[1].nodeId
+            props.node0Props.nodeId
         )
         result.platforms.jointNeighbourEdges.props[edgeId].isNode1ToBeAdded = arrayUtils.arrayHasValue(
             result.platforms.jointNeighbourNodes.outerLoneNodeIds,
-            edgeProps.node1Props[1].nodeId
+            props.node1Props.nodeId
         )
     end
-    for edgeId, edgeProps in pairs(result.tracks.jointNeighbourEdges.props) do
+    for edgeId, props in pairs(result.tracks.jointNeighbourEdges.props) do
         result.tracks.jointNeighbourEdges.props[edgeId].isNode0ToBeAdded = arrayUtils.arrayHasValue(
             result.tracks.jointNeighbourNodes.outerLoneNodeIds,
-            edgeProps.node0Props[1].nodeId
+            props.node0Props.nodeId
         )
         result.tracks.jointNeighbourEdges.props[edgeId].isNode1ToBeAdded = arrayUtils.arrayHasValue(
             result.tracks.jointNeighbourNodes.outerLoneNodeIds,
-            edgeProps.node1Props[1].nodeId
+            props.node1Props.nodeId
         )
     end
-
     -- logger.print('__getStationTrackEndEntities4T result =') logger.debugPrint(result)
     return result
 end
 
-helpers.getStationTrackEndEntities = function(stationConstructionId)
+helpers.getStationTrackEndEntities = function(stationConstructionId, isSkipLogging)
     logger.print('_getStationTrackEndEntities started, conId =', stationConstructionId or 'NIL')
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
+        if isSkipLogging then return nil end
         logger.err('getStationTrackEndEntities invalid stationConstructionId') logger.errorDebugPrint(stationConstructionId)
         return nil
     end
@@ -1676,20 +1668,33 @@ helpers.getStationTrackEndEntities = function(stationConstructionId)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
+        if isSkipLogging then return nil end
         logger.err('getStationTrackEndEntities con.fileName =') logger.errorDebugPrint(con.fileName)
         return nil
     end
 
+    local frozenEdgeIds_indexed = {}
+    for _, edgeId in pairs(con.frozenEdges) do
+        frozenEdgeIds_indexed[edgeId] = true
+    end
+    local frozenNodeIds_indexed = {}
+    for _, nodeId in pairs(con.frozenNodes) do
+        frozenNodeIds_indexed[nodeId] = true
+    end
+    local conParams = con.params -- LOLLO NOTE addressing con, which is huge, can take 100's of msec, so we break it up
     local result = {}
-    for t = 1, #con.params.terminals do
-        result[t] = _getStationTrackEndEntities4T(con, t)
+    for t = 1, #conParams.terminals do
+        local _terminalData = conParams.terminals[t]
+        local _platformEdgeLists = _terminalData.platformEdgeLists
+        local _trackEdgeLists = _terminalData.trackEdgeLists
+        result[t] = _getStationTrackEndEntities4T(t, frozenEdgeIds_indexed, frozenNodeIds_indexed, _platformEdgeLists, _trackEdgeLists)
     end
 
     -- logger.print('getStationEndEntities result =') logger.debugPrint(result)
     return result
 end
 
-helpers.getStationTrackEndEntities4T = function(stationConstructionId, t)
+helpers.getStationTrackEndEntities4T = function(stationConstructionId, nTerminal)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         logger.err('getStationTrackEndEntities4T received an invalid stationConstructionId')
         logger.errorDebugPrint(stationConstructionId)
@@ -1705,17 +1710,29 @@ helpers.getStationTrackEndEntities4T = function(stationConstructionId, t)
         return nil
     end
 
-    if type(t) ~= 'number' or t < 1 or t > #con.params.terminals then
-        logger.warn('getStationTrackEndEntities4T received invalid t =')
-        logger.warningDebugPrint(t)
+    if type(nTerminal) ~= 'number' or nTerminal < 1 or nTerminal > #con.params.terminals then
+        logger.warn('getStationTrackEndEntities4T received invalid nTerminal =')
+        logger.warningDebugPrint(nTerminal)
         return nil
     end
 
-    return _getStationTrackEndEntities4T(con, t)
+    local frozenEdgeIds_indexed = {}
+    for _, edgeId in pairs(con.frozenEdges) do
+        frozenEdgeIds_indexed[edgeId] = true
+    end
+    local frozenNodeIds_indexed = {}
+    for _, nodeId in pairs(con.frozenNodes) do
+        frozenNodeIds_indexed[nodeId] = true
+    end
+    local _terminalData = con.params.terminals[nTerminal] -- LOLLO NOTE addressing con, which is huge, can take 100's of msec, so we break it up
+    local _platformEdgeLists = _terminalData.platformEdgeLists
+    local _trackEdgeLists = _terminalData.trackEdgeLists
+    return _getStationTrackEndEntities4T(nTerminal, frozenEdgeIds_indexed, frozenNodeIds_indexed, _platformEdgeLists, _trackEdgeLists)
 end
 
-helpers.getStationStreetEndEntities = function(stationConstructionId)
+helpers.getStationStreetEndEntities = function(stationConstructionId, isSkipLogging)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
+        if isSkipLogging then return nil end
         logger.err('getStationStreetEndEntities received an invalid stationConstructionId')
         logger.errorDebugPrint(stationConstructionId)
         return nil
@@ -1725,12 +1742,21 @@ helpers.getStationStreetEndEntities = function(stationConstructionId)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
     -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
+        if isSkipLogging then return nil end
         logger.err('getStationStreetEndEntities con.fileName =')
         logger.errorDebugPrint(con.fileName)
         return nil
     end
 
-    return _getStationStreetEndEntities(con)
+    local frozenEdgeIds_indexed = {}
+    for _, edgeId in pairs(con.frozenEdges) do
+        frozenEdgeIds_indexed[edgeId] = true
+    end
+    local frozenNodeIds_indexed = {}
+    for _, nodeId in pairs(con.frozenNodes) do
+        frozenNodeIds_indexed[nodeId] = true
+    end
+    return _getStationStreetEndEntities(frozenEdgeIds_indexed, frozenNodeIds_indexed)
 end
 
 local _getPosTanX2ListIndex_Nearest2_Point = function(posTanX2List, position)

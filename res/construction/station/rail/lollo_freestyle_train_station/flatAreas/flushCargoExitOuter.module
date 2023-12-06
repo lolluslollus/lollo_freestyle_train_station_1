@@ -33,14 +33,15 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
+			local _terminalData = params.terminals[nTerminal]
 			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
-			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 		end,
 
 		getModelsFn = function(params)

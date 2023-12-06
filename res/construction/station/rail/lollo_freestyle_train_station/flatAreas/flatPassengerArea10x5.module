@@ -37,8 +37,9 @@ function data()
 				2.3 -- 2.5 minus a bit for bends
 			)
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local _terminalData = params.terminals[nTerminal]
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
+			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_area10x5.mdl'
@@ -55,7 +56,7 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
 			local groundFace = {
 				{-3, -6, 0, 1},

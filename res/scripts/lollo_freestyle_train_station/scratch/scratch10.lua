@@ -30,4 +30,17 @@ local tabAll2 = arrayUtils.getConcatKeysValues({1, 2, 3}, {3, 4, 5})
 local tabAll3 = arrayUtils.getConcatValues(getTab1(), getTab2())
 local tabAll4 = arrayUtils.getConcatValues({1, 2, 3}, {3, 4, 5})
 
+local aaa = function()
+    return xpcall(
+        function ()
+            local div0 = 123 / 'aa'
+            return 'OK'
+        end,
+        function(err)
+            return 'Err'
+        end
+    )
+end
+local aaa0, aaa1, aaa2 = aaa()
+
 local dummy = 124

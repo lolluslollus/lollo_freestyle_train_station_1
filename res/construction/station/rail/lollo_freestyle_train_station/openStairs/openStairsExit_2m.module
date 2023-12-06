@@ -1,0 +1,63 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+-- local constructionutil = require "constructionutil"
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+-- local modulesutil = require "modulesutil"
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require "transf"
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-road-access-stairs", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("OpenStairsExitName_2m"),
+			description = _("OpenStairsExitDesc"),
+			icon = "ui/lollo_freestyle_train_station/openStairsExit2m.tga"
+		},
+		metadata = { },
+		order = {
+			value = 62,
+		},
+		type = _constants.openStairsExitModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(2, eraPrefix)
+
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = moduleHelpers.openStairs.getExitModelTransf(slotTransf, slotId, params),
+				tag = tag
+			}
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/passenger_lane.mdl',
+				slotId = slotId,
+				-- transf = transfUtilsUG.mul(slotTransf, {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 1}),
+				transf = transfUtils.getTransf_XShifted(slotTransf, -1),
+				tag = tag
+			}
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_2m.mdl',
+					transf = _constants.idTransf,
+				},
+				moduleHelpers.openStairs.getPreviewIcon(params),
+			}
+		end
+	}
+end

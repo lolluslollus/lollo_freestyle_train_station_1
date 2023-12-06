@@ -38,8 +38,9 @@ function data()
 				2.3 -- 2.5 minus a bit for bends
 			)
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local _terminalData = params.terminals[nTerminal]
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
+			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'flatCargoArea5x5ModelFileName']
@@ -63,7 +64,7 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
 			local groundFace = {
 				{-3, -3.5, 0, 1},

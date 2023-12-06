@@ -102,10 +102,11 @@ local privateFuncs = {
     ---get era prefix of current terminal bit and overwrite it with the era module if present
     ---@param params table
     ---@param nTerminal integer
+    ---@param terminalData table
     ---@param nTrackEdge integer
     ---@return eraPrefix
-    getEraPrefix = function(params, nTerminal, nTrackEdge)
-        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge] or params.terminals[nTerminal].centrePlatformsRelative[1]
+    getEraPrefix = function(params, nTerminal, terminalData, nTrackEdge)
+        local cpl = terminalData.centrePlatformsRelative[nTrackEdge] or terminalData.centrePlatformsRelative[1]
         local result = cpl.era or constants.eras.era_c.prefix
         if params.modules then
             if params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraASlotId)] then
@@ -222,9 +223,9 @@ local privateFuncs = {
     end,
 }
 privateFuncs.axialAreas = {
-    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-        local isCargoTerminal = params.terminals[nTerminal].isCargo
-        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
+        local isCargoTerminal = terminalData.isCargo
+        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, nTrackEdge)
         local perronModelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
         if (isCargoTerminal) then
             perronModelId = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl'
@@ -513,14 +514,14 @@ privateFuncs.deco = {
         local variant = privateFuncs.getVariant(params, slotId)
         return privateFuncs.getFromVariant_0_or_1(variant)
     end,
-    getStationSignFineIndexes = function(params, nTerminal)
+    getStationSignFineIndexes = function(params, nTerminal, terminalData)
         local results = {}
-        for ii = 3, #params.terminals[nTerminal].centrePlatformsFineRelative - 2, constants.maxPassengerWaitingAreaEdgeLength * 6 do
+        for ii = 3, #terminalData.centrePlatformsFineRelative - 2, constants.maxPassengerWaitingAreaEdgeLength * 6 do
             results[ii] = true
         end
         return results
     end,
-    getWallBaseModelId = function(params, nTerminal, eraPrefix)
+    getWallBaseModelId = function(params, eraPrefix)
         local wallModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
         if eraPrefix == constants.eras.era_a.prefix then
             wallModelId = 'lollo_freestyle_train_station/trackWalls/era_a_wall_base_5m.mdl'
@@ -529,7 +530,7 @@ privateFuncs.deco = {
         end
         return wallModelId
     end,
-    getWallBehindBaseModelId = function(params, nTerminal, eraPrefix)
+    getWallBehindBaseModelId = function(params, eraPrefix)
         local wallModelId = 'lollo_freestyle_train_station/trackWalls/behind/era_c_wall_base_5m.mdl'
         if eraPrefix == constants.eras.era_a.prefix then
             wallModelId = 'lollo_freestyle_train_station/trackWalls/behind/era_a_wall_base_5m.mdl'
@@ -573,12 +574,12 @@ privateFuncs.deco = {
     end,
 }
 privateFuncs.edges = {
-    _addTrackEdges = function(result, tag2nodes, params, t)
-        result.terminateConstructionHookInfo.vehicleNodes[t] = (#result.edgeLists + params.terminals[t].trackEdgeListMidIndex) * 2 - 2
-    
-        logger.print('_addTrackEdges starting for terminal =', t)
+    _addTrackEdges = function(result, tag2nodes, params, nTerminal, terminalData)
+        result.terminateConstructionHookInfo.vehicleNodes[nTerminal] = (#result.edgeLists + terminalData.trackEdgeListMidIndex) * 2 - 2
+
+        logger.print('_addTrackEdges starting for terminal =', nTerminal)
         local forceCatenary = 0
-        local trackElectrificationModuleKey = slotHelpers.mangleId(t, 0, constants.idBases.trackElectrificationSlotId)
+        local trackElectrificationModuleKey = slotHelpers.mangleId(nTerminal, 0, constants.idBases.trackElectrificationSlotId)
         if params.modules[trackElectrificationModuleKey] ~= nil then
             if params.modules[trackElectrificationModuleKey].name == constants.trackElectrificationYesModuleFileName then
                 forceCatenary = 2
@@ -588,7 +589,7 @@ privateFuncs.edges = {
         end
         logger.print('forceCatenary =', forceCatenary)
         local forceFast = 0
-        local trackSpeedModuleKey = slotHelpers.mangleId(t, 0, constants.idBases.trackSpeedSlotId)
+        local trackSpeedModuleKey = slotHelpers.mangleId(nTerminal, 0, constants.idBases.trackSpeedSlotId)
         if params.modules[trackSpeedModuleKey] ~= nil then
             if params.modules[trackSpeedModuleKey].name == constants.trackSpeedFastModuleFileName then
                 forceFast = 2
@@ -598,9 +599,9 @@ privateFuncs.edges = {
         end
         logger.print('forceFast =', forceFast)
     
-        local maxI = #params.terminals[t].trackEdgeLists
+        local maxI = #terminalData.trackEdgeLists
         for i = 1, maxI do
-            local tel = params.terminals[t].trackEdgeLists[i]
+            local tel = terminalData.trackEdgeLists[i]
     
             local overriddenCatenary = tel.catenary
             if forceCatenary == 1 then overriddenCatenary = false
@@ -644,14 +645,14 @@ privateFuncs.edges = {
             result.edgeLists[#result.edgeLists+1] = newEdgeList
 
             if not(result.trackEdgeListsIndexes) then result.trackEdgeListsIndexes = {} end
-            if not(result.trackEdgeListsIndexes[t]) then result.trackEdgeListsIndexes[t] = {} end
-            result.trackEdgeListsIndexes[t][i] = #result.edgeLists
+            if not(result.trackEdgeListsIndexes[nTerminal]) then result.trackEdgeListsIndexes[nTerminal] = {} end
+            result.trackEdgeListsIndexes[nTerminal][i] = #result.edgeLists
         end
     end,
-    _addPlatformEdges = function(result, tag2nodes, params, t)
-        local maxI = #params.terminals[t].platformEdgeLists
+    _addPlatformEdges = function(result, tag2nodes, params, nTerminal, terminalData)
+        local maxI = #terminalData.platformEdgeLists
         for i = 1, maxI do
-            local pel = params.terminals[t].platformEdgeLists[i]
+            local pel = terminalData.platformEdgeLists[i]
 
             local newEdgeList = {
                 -- UG TODO LOLLO TODO never mind if I align the terrain or I change the track materials,
@@ -714,13 +715,13 @@ privateFuncs.edges = {
             result.edgeLists[#result.edgeLists+1] = newEdgeList
 
             if not(result.platformEdgeListsIndexes) then result.platformEdgeListsIndexes = {} end
-            if not(result.platformEdgeListsIndexes[t]) then result.platformEdgeListsIndexes[t] = {} end
-            result.platformEdgeListsIndexes[t][i] = #result.edgeLists
+            if not(result.platformEdgeListsIndexes[nTerminal]) then result.platformEdgeListsIndexes[nTerminal] = {} end
+            result.platformEdgeListsIndexes[nTerminal][i] = #result.edgeLists
         end
     end,
-    _getNNodesInTerminalsSoFar = function(params, t)
+    _getNNodesInTerminalsSoFar = function(params, nTerminal)
         local result = 0
-        for tt = 1, t - 1 do
+        for tt = 1, nTerminal - 1 do
             if params.terminals[tt] ~= nil then
                 if params.terminals[tt].platformEdgeLists ~= nil then
                     result = result + #params.terminals[tt].platformEdgeLists * 2
@@ -734,18 +735,18 @@ privateFuncs.edges = {
     end,
 }
 privateFuncs.flatAreas = {
-    addCargoLaneToSelf = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+    addCargoLaneToSelf = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
+        local cpl = terminalData.centrePlatformsRelative[nTrackEdge]
 
         local position123 = nil
         if cpl.width <= 5 then
-            position123 = params.terminals[nTerminal].cargoWaitingAreasRelative[1][nTrackEdge].posTanX2[1][1]
+            position123 = terminalData.cargoWaitingAreasRelative[1][nTrackEdge].posTanX2[1][1]
         elseif cpl.width <= 10 then
-            position123 = params.terminals[nTerminal].cargoWaitingAreasRelative[2][nTrackEdge].posTanX2[1][1]
+            position123 = terminalData.cargoWaitingAreasRelative[2][nTrackEdge].posTanX2[1][1]
         elseif cpl.width <= 15 then
-            position123 = params.terminals[nTerminal].cargoWaitingAreasRelative[3][nTrackEdge].posTanX2[1][1]
+            position123 = terminalData.cargoWaitingAreasRelative[3][nTrackEdge].posTanX2[1][1]
         else
-            position123 = params.terminals[nTerminal].cargoWaitingAreasRelative[4][nTrackEdge].posTanX2[1][1]
+            position123 = terminalData.cargoWaitingAreasRelative[4][nTrackEdge].posTanX2[1][1]
         end
         local _lane2AreaTransf = transfUtils.get1MLaneTransf(
             transfUtils.getPositionRaisedBy(position123, result.laneZs[nTerminal]),
@@ -760,9 +761,9 @@ privateFuncs.flatAreas = {
         }
 
     end,
-    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-        local isCargoTerminal = params.terminals[nTerminal].isCargo
-        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
+        local isCargoTerminal = terminalData.isCargo
+        local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, nTrackEdge)
         local perronModelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
         if (isCargoTerminal) then
             perronModelId = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl'
@@ -781,8 +782,8 @@ privateFuncs.flatAreas = {
         -- the model index must be in base 0 !
         result.labelText[#result.models - 1] = { tostring(nTerminal), "↑" }
     end,
-    addPassengerLaneToSelf = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-        local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
+    addPassengerLaneToSelf = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
+        local crossConnectorPosTanX2 = terminalData.crossConnectorsRelative[nTrackEdge].posTanX2
         local lane2AreaTransf = transfUtils.get1MLaneTransf(
             transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], result.laneZs[nTerminal]),
             transfUtils.transf2Position(slotTransf)
@@ -801,8 +802,8 @@ privateFuncs.flatAreas = {
     end,
 }
 privateFuncs.openStairs = {
-    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix)
-        local isCargoTerminal = params.terminals[nTerminal].isCargo
+    addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge, eraPrefix)
+        local isCargoTerminal = terminalData.isCargo
         local perronModelId = 'lollo_freestyle_train_station/asset/era_c_perron_number.mdl'
         if (isCargoTerminal) then
             perronModelId = 'lollo_freestyle_train_station/asset/cargo_perron_number.mdl'
@@ -830,10 +831,14 @@ privateFuncs.openStairs = {
         -- eraPrefix is a string like 'era_a_'
         local lengthStr = '4'
         if length < 3 then lengthStr = '2'
-        elseif length < 6 then lengthStr = '4'
-        elseif length < 12 then lengthStr = '8'
-        elseif length < 24 then lengthStr = '16'
-        elseif length < 48 then lengthStr = '32'
+        elseif length < 5 then lengthStr = '4'
+        elseif length < 7 then lengthStr = '6'
+        elseif length < 10 then lengthStr = '8'
+        elseif length < 14 then lengthStr = '12'
+        elseif length < 20 then lengthStr = '16'
+        elseif length < 28 then lengthStr = '24'
+        elseif length < 40 then lengthStr = '32'
+        elseif length < 56 then lengthStr = '48'
         else lengthStr = '64'
         end
 
@@ -850,15 +855,15 @@ privateFuncs.openStairs = {
     end,
 }
 privateFuncs.slopedAreas = {
-    addSlopedCargoAreaDeco = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
+    addSlopedCargoAreaDeco = function(result, tag, slotId, params, nTerminal, terminalData, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
         if areaWidth < 5 then return end
 
         local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
         if isEndFiller then return end
 
         local laneZ = result.laneZs[nTerminal]
-        local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+        local isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
+        local cpl = terminalData.centrePlatformsRelative[nTrackEdge]
         local platformWidth = cpl.width
 
         local xShift1 = nWaitingAreas <= 4 and -4.5 or -4.5
@@ -888,15 +893,15 @@ privateFuncs.slopedAreas = {
             tag = tag
         }
     end,
-    addSlopedPassengerAreaDeco = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
+    addSlopedPassengerAreaDeco = function(result, tag, slotId, params, nTerminal, terminalData, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
         if areaWidth < 5 then return end
 
         local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
         if isEndFiller then return end
 
         local laneZ = result.laneZs[nTerminal]
-        local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-        local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+        local isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
+        local cpl = terminalData.centrePlatformsRelative[nTrackEdge]
         local platformWidth = cpl.width
 
         local xShift = nWaitingAreas <= 4 and -2.0 or 0.0
@@ -1079,17 +1084,17 @@ privateFuncs.slopedAreas = {
     isSlopedAreaAllowed = function(cpf, areaWidth)
         return cpf.type == 0 or (cpf.type == 1 and areaWidth <= 2.5)
     end,
-    doTerrain4SlopedArea = function(result, params, nTerminal, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
+    doTerrain4SlopedArea = function(result, params, nTerminal, terminalData, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
         -- logger.print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
         local terrainCoordinates = {}
 
         local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
         local iN = nTrackEdge + 1
-        local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+        local isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
 
-        local cpfs = params.terminals[nTerminal].centrePlatformsFineRelative
+        local cpfs = terminalData.centrePlatformsFineRelative
         for ii = 1, #cpfs do
-            local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+            local cpf = cpfs[ii]
             local leadingIndex = cpf.leadingIndex
             if leadingIndex > iN then break end
             if cpf.type == 0 then -- only on ground
@@ -1209,7 +1214,11 @@ privateFuncs.subways = {
 return {
     eras = constants.eras,
     getEraPrefix = function(params, nTerminal, nTrackEdge)
-        return privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+        local _terminalData = params.terminals[nTerminal]
+        return privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
+    end,
+    getEraPrefix2 = function(params, nTerminal, terminalData, nTrackEdge)
+        return privateFuncs.getEraPrefix(params, nTerminal, terminalData, nTrackEdge)
     end,
     getGroundFace = function(face, key)
         return {
@@ -1273,18 +1282,19 @@ return {
         return privateFuncs.getPlatformObjectTransf_WithYRotation(posTanX2)
     end,
     cargoShelves = {
-        doCargoShelf = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+        doCargoShelf = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge,
             bracket5ModelId, bracket10ModelId, bracket20ModelId,
             legs5ModelId, legs10ModelId, legs20ModelId)
-            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+
+            local isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
-            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.cargoShelves.bracketStep do
-                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+            for ii = 1, #terminalData.centrePlatformsFineRelative, privateConstants.cargoShelves.bracketStep do
+                local cpf = terminalData.centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
@@ -1353,8 +1363,8 @@ return {
                 transf = arrowModelTransf,
             }
         end,
-        getStationSignFineIndexes = function(params, nTerminal)
-            return privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
+        getStationSignFineIndexes = function(params, nTerminal, _terminalData)
+            return privateFuncs.deco.getStationSignFineIndexes(params, nTerminal, _terminalData)
         end,
         doPlatformRoof = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
             ceiling2_5ModelId, ceiling5ModelId, pillar2_5ModelId, pillar5ModelId, alternativeCeiling2_5ModelId, alternativeCeiling5ModelId, isTunnelOk)
@@ -1419,12 +1429,13 @@ return {
             -- => totalStretchFactor = abs(posTanX2[1][2][2] - posTanX2[2][2][2]) * 0.66667 * platformWidth + 1
             -- Season 0.6667 to taste, it's empyrical.
             -- In real life I don't know how x and y are orientated, so I must account for both, and also z could give surprises if I have a hump.
-            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local _terminalData = params.terminals[nTerminal]
+            local isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
 
-            local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
+            local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal, _terminalData)
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
@@ -1435,14 +1446,14 @@ return {
                 isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
 
-            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
+            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, 1)
             local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
             if eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
             elseif eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
             end
 
-            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
-                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+            for ii = 1, #_terminalData.centrePlatformsFineRelative, privateConstants.deco.ceilingStep do
+                local cpf = _terminalData.centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
@@ -1523,15 +1534,15 @@ return {
                 end
             end
         end,
-        doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+        doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge,
             wall_5m_ModelId,
             wall_low_5m_ModelId,
             pillar2_5ModelId, pillar5ModelId,
             isTunnelOk
         )
-            local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
-            local _isSkipPillars = params.terminals[nTerminal].isCargo or pillar2_5ModelId == nil or pillar5ModelId == nil
-            local _isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
+            local _isSkipPillars = terminalData.isCargo or pillar2_5ModelId == nil or pillar5ModelId == nil
+            local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
             local _transfXZoom = _isTrackOnPlatformLeft and -1 or 1
             local _transfYZoom = _isTrackOnPlatformLeft and -1 or 1
             local _isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
@@ -1543,14 +1554,14 @@ return {
             if (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0) then
                 wallBehindModelId = privateFuncs.deco.getWallBehindModelId(wall_low_5m_ModelId)
             end
-            local wallBehindBaseModelId = privateFuncs.deco.getWallBehindBaseModelId(params, nTerminal, _eraPrefix)
+            local wallBehindBaseModelId = privateFuncs.deco.getWallBehindBaseModelId(params, _eraPrefix)
 
             local perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_c_perron_number_hanging.mdl'
             if _eraPrefix == constants.eras.era_a.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_a_perron_number_hanging.mdl'
             elseif _eraPrefix == constants.eras.era_b.prefix then perronNumberModelId = 'lollo_freestyle_train_station/roofs/era_b_perron_number_hanging_plain.mdl'
             end
 
-            local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal)
+            local _barredNumberSignIIs = privateFuncs.deco.getStationSignFineIndexes(params, nTerminal, terminalData)
 
             local _i1 = _isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = _isEndFiller and nTrackEdge or (nTrackEdge + 1)
@@ -1579,17 +1590,17 @@ return {
                 if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
                 return cpf.width * 0.5 + slopedAreaWidth, slopedAreaWidth -- slotTransf is centred at half platform width + full sloped area width
             end
-            local _iiMax = #params.terminals[nTerminal].centrePlatformsFineRelative
+            local _iiMax = #terminalData.centrePlatformsFineRelative
             -- logger.print('############')
             for ii = 1, _iiMax, privateConstants.deco.ceilingStep do
-                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+                local cpf = terminalData.centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
                     if isTunnelOk or cpf.type ~= 2 then -- ground or bridge, tunnel only if allowed
                         local isCanDraw = false -- are there stations or exits in this fine segment?
                         if isLookAhead[cpf.leadingIndex] then
-                            local cpfAheadByDeco2FlatAreaShift = params.terminals[nTerminal].centrePlatformsFineRelative[ii + _deco2FlatAreaShiftInt]
+                            local cpfAheadByDeco2FlatAreaShift = terminalData.centrePlatformsFineRelative[ii + _deco2FlatAreaShiftInt]
                             isCanDraw = not(cpfAheadByDeco2FlatAreaShift)
                                 or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex]
                                 or not(isLookAhead[cpfAheadByDeco2FlatAreaShift.leadingIndex])
@@ -1693,8 +1704,8 @@ return {
                             -- add walls across
                             if cpf.type ~= 2 then
                                 -- whenever getting in or out of a tunnel, skip altogether
-                                local cpfM1 = ii ~= 1 and params.terminals[nTerminal].centrePlatformsFineRelative[ii-1] or nil
-                                local cpfP1 = ii ~= _iiMax and params.terminals[nTerminal].centrePlatformsFineRelative[ii+1] or nil
+                                local cpfM1 = ii ~= 1 and terminalData.centrePlatformsFineRelative[ii-1] or nil
+                                local cpfP1 = ii ~= _iiMax and terminalData.centrePlatformsFineRelative[ii+1] or nil
                                 if ii == 1 then
                                     if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
                                         -- logger.print('_ONE')
@@ -1726,17 +1737,17 @@ return {
                 end
             end
         end,
-        doTrackWall = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+        doTrackWall = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge,
             wall_5m_ModelId,
             wall_low_5m_ModelId,
             isTunnelOk
         )
             -- check this coz it was added later
-            if type(params.terminals[nTerminal].centreTracksFineRelative) ~= 'table' then return end
+            if type(terminalData.centreTracksFineRelative) ~= 'table' then return end
 
             -- do not confuse the tracks array with the platforms array: they are similar but different
-            local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
-            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
+            local isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
@@ -1744,18 +1755,18 @@ return {
 
             -- query the first platform segment coz track segments, unlike platform segments,
             -- have no knowledge of the era: they only have leadingIndex, posTanX2, type and width.
-            local wallBaseModelId = privateFuncs.deco.getWallBaseModelId(params, nTerminal, _eraPrefix)
+            local wallBaseModelId = privateFuncs.deco.getWallBaseModelId(params, _eraPrefix)
             local wallBehindModelId
             if (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0) then
                 wallBehindModelId = privateFuncs.deco.getWallBehindModelId(wall_low_5m_ModelId)
             end
-            local wallBehindBaseModelId = privateFuncs.deco.getWallBehindBaseModelId(params, nTerminal, _eraPrefix)
+            local wallBehindBaseModelId = privateFuncs.deco.getWallBehindBaseModelId(params, _eraPrefix)
 
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
 
-            for ii = 1, #params.terminals[nTerminal].centreTracksFineRelative, privateConstants.deco.ceilingStep do
-                local ctf = params.terminals[nTerminal].centreTracksFineRelative[ii]
+            for ii = 1, #terminalData.centreTracksFineRelative, privateConstants.deco.ceilingStep do
+                local ctf = terminalData.centreTracksFineRelative[ii]
                 local leadingIndex = ctf.leadingIndex
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
@@ -1801,27 +1812,27 @@ return {
         end,
     },
     edges = {
-        addEdges = function(result, tag, params, t)
-            logger.print('moduleHelpers.edges.addEdges starting for terminal', t, ', tag = ', (tag or 'NIL'))
+        addEdges = function(result, tag, params, nTerminal, terminalData)
+            logger.print('moduleHelpers.edges.addEdges starting for terminal', nTerminal, ', tag = ', (tag or 'NIL'))
             -- logger.print('result.edgeLists =') logger.debugPrint(result.edgeLists)
     
-            local nNodesInTerminalSoFar = 0 -- privateFuncs.edges._getNNodesInTerminalsSoFar(params, t)
+            local nNodesInTerminalSoFar = 0 -- privateFuncs.edges._getNNodesInTerminalsSoFar(params, nTerminal)
     
             local tag2nodes = {
                 [tag] = { } -- list of base 0 indexes
             }
     
-            for i = 1, #params.terminals[t].platformEdgeLists + #params.terminals[t].trackEdgeLists do
+            for i = 1, #terminalData.platformEdgeLists + #terminalData.trackEdgeLists do
                 for ii = 1, 2 do
                     tag2nodes[tag][#tag2nodes[tag]+1] = nNodesInTerminalSoFar
                     nNodesInTerminalSoFar = nNodesInTerminalSoFar + 1
                 end
             end
     
-            privateFuncs.edges._addPlatformEdges(result, tag2nodes, params, t)
-            privateFuncs.edges._addTrackEdges(result, tag2nodes, params, t)
+            privateFuncs.edges._addPlatformEdges(result, tag2nodes, params, nTerminal, terminalData)
+            privateFuncs.edges._addTrackEdges(result, tag2nodes, params, nTerminal, terminalData)
     
-            -- logger.print('build 35716 moduleHelpers.edges.addEdges ending for terminal', t, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
+            -- logger.print('build 35716 moduleHelpers.edges.addEdges ending for terminal', nTerminal, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
         end,
         dynamicBridgeTypes_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
             -- local sampleUpdateScriptParams = {
@@ -1972,56 +1983,95 @@ return {
         end,
     },
     axialAreas = {
-        addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            return privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
+            return privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
         end,
-        exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
+        exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap, isFake)
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
+            local _terminalData = params.terminals[nTerminal]
             local adjustedTransf = privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
-			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
 
 			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
 			result.models[#result.models + 1] = {
-				id = myModelId,
+				id = 'lollo_freestyle_train_station/railroad/axial/passengers/' .. eraPrefix .. 'edge.mdl',
 				slotId = slotId,
 				transf = adjustedTransf,
 				tag = tag
 			}
-            privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            -- if logger.isExtendedLog() then
+                -- if isSnap then
+                --     result.models[#result.models + 1] = {
+                --         id = 'lollo_freestyle_train_station/icon/red.mdl',
+                --         slotId = slotId,
+                --         transf = transfUtils.getTransf_XShifted(adjustedTransf, 0.5),
+                --         tag = tag
+                --     }
+                -- else
+                --     result.models[#result.models + 1] = {
+                --         id = 'lollo_freestyle_train_station/icon/blue.mdl',
+                --         slotId = slotId,
+                --         transf = transfUtils.getTransf_XShifted(adjustedTransf, 0.5),
+                --         tag = tag
+                --     }
+                -- end
+            -- end
+            -- LOLLO NOTE
+            -- These are invisible walls that should block silly auto snapping,
+            -- which the game attempts, fails at and raises an error UG TODO this is wrong
+            -- They are useless coz the game still tries to snap together edges,
+            -- which belong to the station, ignoring this.
+            -- They only work with edges, which do not belong to the station.
+            -- result.colliders[#result.colliders+1] = {
+            --     params = {
+            --         halfExtents = { 10, 0.1, 1, },
+            --     },
+            --     transf = transfUtils.getTransf_Shifted(adjustedTransf, {1.0, 0.6, 0}), -- halfway into the edge, 0.6 right
+            --     type = 'BOX',
+            -- }
+            -- result.colliders[#result.colliders+1] = {
+            --     params = {
+            --         halfExtents = { 10, 0.1, 1, },
+            --     },
+            --     transf = transfUtils.getTransf_Shifted(adjustedTransf, {1.0, -0.6, 0}), -- halfway into the edge, 0.6 left
+            --     type = 'BOX',
+            -- }
+            privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
-			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
-			table.insert(
-				result.edgeLists,
-				{
-					alignTerrain = false, -- only align on ground and in tunnels
-					edges = transfUtils.getPosTanX2Transformed(
-						{
-							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
-							{ { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
-						},
-						adjustedTransf
-					),
-					-- better make it a bridge to avoid ugly autolinks between nearby modules
-					edgeType = 'BRIDGE',
-					edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
-					freeNodes = { 1 },
-					params = {
-						hasBus = true,
-						tramTrackType  = 'NO',
-						type = _autoBridgePathsRefData.streetTypeName_noBridge,
-					},
-					snapNodes = isSnap and { 1 } or {},
-					-- tag2nodes = {},
-                    tag2nodes = {
-                        [tag] = { 0, 1 } -- list of base 0 indexes of nodes
-                    },
-					type = 'STREET'
-				}
-			)
+            if not(isFake) then
+                local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
+                table.insert(
+                    result.edgeLists,
+                    {
+                        alignTerrain = false, -- only align on ground and in tunnels
+                        edges = transfUtils.getPosTanX2Transformed(
+                            {
+                                { { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+                                { { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+                            },
+                            adjustedTransf
+                        ),
+                        -- better make it a bridge to avoid ugly autolinks between nearby modules
+                        edgeType = 'BRIDGE',
+                        edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
+                        freeNodes = { 1 },
+                        params = {
+                            hasBus = true,
+                            tramTrackType  = 'NO',
+                            type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                        },
+                        snapNodes = isSnap and { 1 } or {},
+                        -- tag2nodes = {},
+                        tag2nodes = {
+                            [tag] = { 0, 1 } -- list of base 0 indexes of nodes
+                        },
+                        type = 'STREET'
+                    }
+                )
+            end
 
 			local terrainAlignmentList = {
 				faces = {
@@ -2046,11 +2096,12 @@ return {
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            local _terminalData = params.terminals[nTerminal]
+			privateFuncs.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 --[[
             This is dangerous coz it adds nodes outside the station, where we have no control, and this could cause crashes.
             local laneZ = result.laneZs[nTerminal]
-            local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[(nTrackEdge == 1 and 1 or #params.terminals[nTerminal].centrePlatformsFineRelative)]
+            local cpf = _terminalData.centrePlatformsFineRelative[(nTrackEdge == 1 and 1 or #_terminalData.centrePlatformsFineRelative)]
 			local pos1 = (nTrackEdge == 1)
 				and cpf.posTanX2[1][1]
 				or cpf.posTanX2[2][1]
@@ -2186,68 +2237,70 @@ return {
                 transf = arrowModelTransf,
             }
         end,
-        addCargoLaneToSelf = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            return privateFuncs.flatAreas.addCargoLaneToSelf(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        addCargoLaneToSelf = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
+            return privateFuncs.flatAreas.addCargoLaneToSelf(result, slotAdjustedTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
         end,
-        addPassengerLaneToSelf = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            return privateFuncs.flatAreas.addPassengerLaneToSelf(result, slotAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        addPassengerLaneToSelf = function(result, slotAdjustedTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
+            return privateFuncs.flatAreas.addPassengerLaneToSelf(result, slotAdjustedTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
         end,
 
-        exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
+        exitWithEdgeModule_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap, isFake)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
+            local _terminalData = params.terminals[nTerminal]
 			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
 			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, false)
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
 
 			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl'
 			result.models[#result.models + 1] = {
-				id = myModelId,
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl',
 				slotId = slotId,
 				transf = zAdjustedTransf,
 				tag = tag
 			}
-            privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+            privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
 			-- this connects the platform to its outer edge (ie border)
-			privateFuncs.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			privateFuncs.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
-			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
-			table.insert(
-				result.edgeLists,
-				{
-					alignTerrain = false, -- only align on ground and in tunnels
-					edges = transfUtils.getPosTanX2Transformed(
-						{
-							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
-							{ { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
-						},
-						zAdjustedTransf
-					),
-					-- better make it a bridge to avoid ugly autolinks between nearby modules
-					edgeType = 'BRIDGE',
-					edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
-					freeNodes = { 1 },
-					params = {
-						hasBus = true,
-						tramTrackType  = 'NO',
-						type = _autoBridgePathsRefData.streetTypeName_noBridge,
-					},
-					snapNodes = isSnap and { 1 } or {},
-					-- tag2nodes = {},
-                    tag2nodes = {
-                        [tag] = { 0, 1 } -- list of base 0 indexes of nodes
-                    },
-					type = 'STREET'
-				}
-			)
+            if not(isFake) then
+                local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
+                table.insert(
+                    result.edgeLists,
+                    {
+                        alignTerrain = false, -- only align on ground and in tunnels
+                        edges = transfUtils.getPosTanX2Transformed(
+                            {
+                                { { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+                                { { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+                            },
+                            zAdjustedTransf
+                        ),
+                        -- better make it a bridge to avoid ugly autolinks between nearby modules
+                        edgeType = 'BRIDGE',
+                        edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
+                        freeNodes = { 1 },
+                        params = {
+                            hasBus = true,
+                            tramTrackType  = 'NO',
+                            type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                        },
+                        snapNodes = isSnap and { 1 } or {},
+                        -- tag2nodes = {},
+                        tag2nodes = {
+                            [tag] = { 0, 1 } -- list of base 0 indexes of nodes
+                        },
+                        type = 'STREET'
+                    }
+                )
+            end
 
 			local terrainAlignmentList = {
 				faces = {
@@ -2269,8 +2322,8 @@ return {
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 		end,
 
-        addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
-            return privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+        addExitPole = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
+            return privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
         end
     },
     lifts = {
@@ -2309,9 +2362,9 @@ return {
                 },
             }
         end,
-        tryGetLiftHeight = function(params, nTerminal, nTrackEdge, slotId)
-            local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-            local cplP1 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge+1] or {}
+        tryGetLiftHeight = function(params, nTerminal, terminalData, nTrackEdge, slotId)
+            local cpl = terminalData.centrePlatformsRelative[nTrackEdge]
+            local cplP1 = terminalData.centrePlatformsRelative[nTrackEdge+1] or {}
             local bridgeHeight = (cpl.type == 1 and cplP1.type == 1)
             and (params.mainTransf[15] + cpl.posTanX2[1][1][3] - cpl.terrainHeight1)
             or 0
@@ -2424,7 +2477,8 @@ return {
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+            local _terminalData = params.terminals[nTerminal]
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
 			local modelId = nil
 			if eraPrefix == constants.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/open_lifts/era_a_open_lift_8m.mdl'
 			elseif eraPrefix == constants.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/open_lifts/era_b_open_lift_8m.mdl'
@@ -2481,7 +2535,8 @@ return {
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+            local _terminalData = params.terminals[nTerminal]
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
 			local modelId = nil
 			if eraPrefix == constants.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/open_lifts/era_a_open_lift_8m.mdl'
 			elseif eraPrefix == constants.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/open_lifts/era_b_open_lift_8m.mdl'
@@ -2547,7 +2602,8 @@ return {
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
+            local _terminalData = params.terminals[nTerminal]
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
 			local modelId = privateFuncs.openStairs.getPedestrianBridgeModelId(2, eraPrefix, true)
 			local transf = privateFuncs.openStairs.getExitModelTransf(slotTransf, slotId, params)
 
@@ -2592,48 +2648,51 @@ return {
 				}
 			)
 		end,
-        stairsExitWithEdgeModule_v2_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap)
+        stairsExitWithEdgeModule_v2_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap, isFake)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
-			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, nTrackEdge)
-            privateFuncs.openStairs.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix)
+            local _terminalData = params.terminals[nTerminal]
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
+            privateFuncs.openStairs.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge, eraPrefix)
             local transf = privateFuncs.openStairs.getExitModelTransf(slotTransf, slotId, params)
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/passenger_lane_stairs_edge.mdl',
 				slotId = slotId,
 				transf = transf,
-				-- tag = tag
+				tag = tag
 			}
 
-			local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
-			table.insert(
-				result.edgeLists,
-				{
-					alignTerrain = false, -- only align on ground and in tunnels
-					edges = transfUtils.getPosTanX2Transformed(
-						{
-							{ { -0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
-							{ { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
-						},
-						transf
-					),
-					edgeType = 'BRIDGE',
-					edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
-					freeNodes = { 1 },
-					params = {
-						hasBus = true,
-						tramTrackType  = 'NO',
-						type = _autoBridgePathsRefData.streetTypeName_noBridge,
-					},
-					snapNodes = isSnap and { 1 } or {},
-					-- tag2nodes = {},
-                    tag2nodes = {
-                        [tag] = { 0, 1 } -- list of base 0 indexes of nodes
-                    },
-					type = 'STREET'
-				}
-			)
+            if not(isFake) then
+                local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
+                table.insert(
+                    result.edgeLists,
+                    {
+                        alignTerrain = false, -- only align on ground and in tunnels
+                        edges = transfUtils.getPosTanX2Transformed(
+                            {
+                                { { -0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+                                { { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+                            },
+                            transf
+                        ),
+                        edgeType = 'BRIDGE',
+                        edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_noRailing,
+                        freeNodes = { 1 },
+                        params = {
+                            hasBus = true,
+                            tramTrackType  = 'NO',
+                            type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                        },
+                        snapNodes = isSnap and { 1 } or {},
+                        -- tag2nodes = {},
+                        tag2nodes = {
+                            [tag] = { 0, 1 } -- list of base 0 indexes of nodes
+                        },
+                        type = 'STREET'
+                    }
+                )
+            end
 		end,
         getExitModelTransf = function(slotTransf, slotId, params)
             return privateFuncs.openStairs.getExitModelTransf(slotTransf, slotId, params)
@@ -2652,11 +2711,16 @@ return {
                 newEraPrefix2 = constants.eras.era_c.prefix
             end
             local newEraPrefix = (newEraPrefix1 > newEraPrefix2) and newEraPrefix1 or newEraPrefix2
-    
-            if length < 6 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_4m.mdl'
-            elseif length < 12 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_8m.mdl'
-            elseif length < 24 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_16m.mdl'
-            elseif length < 48 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_32m.mdl'
+
+            if length < 3 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_2m.mdl'
+            elseif length < 5 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_4m.mdl'
+            elseif length < 7 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_6m.mdl'
+            elseif length < 10 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_8m.mdl'
+            elseif length < 14 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_12m.mdl'
+            elseif length < 20 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_16m.mdl'
+            elseif length < 28 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_24m.mdl'
+            elseif length < 40 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_32m.mdl'
+            elseif length < 56 then return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_48m.mdl'
             else return 'lollo_freestyle_train_station/open_stairs/' .. newEraPrefix .. 'bridge_chunk_compressed_64m.mdl'
             end
         end,
@@ -2685,7 +2749,7 @@ return {
         end,
     },
     platforms = {
-        addPlatform = function(result, tag, slotId, params, nTerminal)
+        addPlatform = function(result, tag, slotId, params, nTerminal, terminalData)
             -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
             -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
             -- The former is a bit glitchy, the latter is prettier.
@@ -2736,15 +2800,15 @@ return {
                 --     return myModelId
                 -- end
             end
-    
-            local isCargoTerminal = params.terminals[nTerminal].isCargo
-            local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
-            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, 1)
+
+            local isCargoTerminal = terminalData.isCargo
+            local isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
+            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
             -- local isFirstDone = false
-            for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative do
-                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
-                local cpfM1 = params.terminals[nTerminal].centrePlatformsFineRelative[ii-1] or {}
-                local cpfP1 = params.terminals[nTerminal].centrePlatformsFineRelative[ii+1] or {}
+            for ii = 1, #terminalData.centrePlatformsFineRelative do
+                local cpf = terminalData.centrePlatformsFineRelative[ii]
+                local cpfM1 = terminalData.centrePlatformsFineRelative[ii-1] or {}
+                local cpfP1 = terminalData.centrePlatformsFineRelative[ii+1] or {}
                 local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
                 local myModelId = _getPlatformModelId(
                     isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix,
@@ -2771,7 +2835,7 @@ return {
                 -- isFirstDone = true
             end
             -- local isFirstDone = false
-            -- for _, cpl in pairs(params.terminals[nTerminal].centrePlatformsRelative) do
+            -- for _, cpl in pairs(_terminalData.centrePlatformsRelative) do
             --     local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
             --     myTransf[15] = myTransf[15] + 1
             --     result.models[#result.models+1] = {
@@ -2785,11 +2849,11 @@ return {
         end,
     },
     slopedAreas = {
-        getYShift = function(params, t, i, slopedAreaWidth)
-            local isTrackOnPlatformLeft = params.terminals[t].isTrackOnPlatformLeft
-            if not(params.terminals[t].centrePlatformsRelative[i]) then return false end
+        getYShift = function(params, nTerminal, terminalData, i, slopedAreaWidth)
+            local isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
+            if not(terminalData.centrePlatformsRelative[i]) then return false end
 
-            local platformWidth = params.terminals[t].centrePlatformsRelative[i].width
+            local platformWidth = terminalData.centrePlatformsRelative[i].width
             local baseYShift = (slopedAreaWidth + platformWidth) * 0.5 -0.85
             local yShiftOutside = isTrackOnPlatformLeft and -baseYShift or baseYShift
 
@@ -2797,20 +2861,20 @@ return {
 
             return yShiftOutside, yShiftOutside4StreetAccess
         end,
-        addAll = function(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey, isCargo)
+        addAll = function(result, tag, slotId, params, nTerminal, terminalData, nTrackEdge, eraPrefix, areaWidth, modelId, waitingAreaModelId, groundFacesFillKey, isCargo)
             local _isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
             local _waitingAreaScaleFactor = areaWidth * 0.8
             local _i1 = _isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iN = _isEndFiller and nTrackEdge or (nTrackEdge + 1)
-            local _isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+            local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
             local _laneZ = result.laneZs[nTerminal]
 
             local waitingAreaIndex = 0
             local nWaitingAreas = 0
             local isDecoBarred = false
-            local _cpfs = params.terminals[nTerminal].centrePlatformsFineRelative
+            local _cpfs = terminalData.centrePlatformsFineRelative
             for ii = 1, #_cpfs do
-                local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+                local cpf = terminalData.centrePlatformsFineRelative[ii]
                 local leadingIndex = cpf.leadingIndex
                 if leadingIndex > _iN then break end
                 if leadingIndex >= _i1 then
@@ -2872,14 +2936,14 @@ return {
                 end
             end
 
-            privateFuncs.slopedAreas.doTerrain4SlopedArea(result, params, nTerminal, nTrackEdge, _isEndFiller, areaWidth, groundFacesFillKey)
+            privateFuncs.slopedAreas.doTerrain4SlopedArea(result, params, nTerminal, terminalData, nTrackEdge, _isEndFiller, areaWidth, groundFacesFillKey)
             if waitingAreaModelId ~= nil and not(isDecoBarred) then
-                local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+                local cpl = terminalData.centrePlatformsRelative[nTrackEdge]
                 local verticalTransf = privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2)
                 if isCargo then
-                    privateFuncs.slopedAreas.addSlopedCargoAreaDeco(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransf)
+                    privateFuncs.slopedAreas.addSlopedCargoAreaDeco(result, tag, slotId, params, nTerminal, terminalData, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransf)
                 else
-                    privateFuncs.slopedAreas.addSlopedPassengerAreaDeco(result, tag, slotId, params, nTerminal, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransf)
+                    privateFuncs.slopedAreas.addSlopedPassengerAreaDeco(result, tag, slotId, params, nTerminal, terminalData, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransf)
                 end
             end
         end,

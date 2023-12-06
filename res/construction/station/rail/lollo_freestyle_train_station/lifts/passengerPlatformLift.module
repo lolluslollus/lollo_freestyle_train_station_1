@@ -39,12 +39,13 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not nTrackEdge or not baseId then return end
 
+		local _terminalData = params.terminals[nTerminal]
 		-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
 		-- in base_config.lua
 		-- Set it into the models so the game knows what module they belong to.
 
-		local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
+		local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+		local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, _terminalData, nTrackEdge, slotId)
 		if not(buildingHeight) then return end
 		local buildingModelId = moduleHelpers.lifts.tryGetPlatformLiftModelId(params, nTerminal, nTrackEdge, era, buildingHeight)
 		if not(buildingModelId) then return end
@@ -62,7 +63,7 @@ return {
 		if result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] == nil then
 			result.terminateConstructionHookInfo.liftBottomPositions[nTerminal] = {}
 		end
-		local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+		local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
 		table.insert(
 			result.terminateConstructionHookInfo.liftBottomPositions[nTerminal],
 			{

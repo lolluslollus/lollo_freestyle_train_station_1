@@ -1,0 +1,6 @@
+local constants = require('lollo_freestyle_train_station.constants')
+local pedestrianBridgeUtils = require('lollo_freestyle_train_station.pedestrianBridgeUtil')
+
+function data()
+	return pedestrianBridgeUtils.getModel4StationBridge(12, true, constants.eras.era_b.prefix)
+end
