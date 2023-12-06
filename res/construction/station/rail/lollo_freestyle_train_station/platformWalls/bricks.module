@@ -33,7 +33,8 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local _terminalData = params.terminals[nTerminal]
+			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 			local pillar_2_5m_modelId = 'lollo_freestyle_train_station/roofs/iron/platformRoofPillar_2_5m.mdl'
 			local pillar_5m_modelId = 'lollo_freestyle_train_station/roofs/iron/platformRoofPillar_5m.mdl'
 			if eraPrefix == moduleHelpers.eras.era_c.prefix then
@@ -41,7 +42,7 @@ function data()
 				pillar_5m_modelId = 'lollo_freestyle_train_station/roofs/concrete_modern/pillar_5m.mdl'
 			end
 
-			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
 			'lollo_freestyle_train_station/platformWalls/bricks/platformWall_5m.mdl',
 			'lollo_freestyle_train_station/platformWalls/bricks/platformWall_low_5m.mdl',
 			pillar_2_5m_modelId, pillar_5m_modelId,

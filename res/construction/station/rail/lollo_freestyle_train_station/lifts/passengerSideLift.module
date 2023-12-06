@@ -38,11 +38,12 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
+			local _terminalData = params.terminals[nTerminal]
 			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
 			-- in base_config.lua
 			-- Set it into the models so the game knows what module they belong to.
-			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-			local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, nTrackEdge, slotId)
+			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			local buildingHeight = moduleHelpers.lifts.tryGetLiftHeight(params, nTerminal, _terminalData, nTrackEdge, slotId)
 			if not(buildingHeight) then return end
 			local buildingModelId = moduleHelpers.lifts.tryGetSideLiftModelId(params, nTerminal, nTrackEdge, eraPrefix, buildingHeight)
 			if not(buildingModelId) then return end
@@ -57,7 +58,7 @@ function data()
 				tag = tag
 			}
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
 			if buildingHeight > 0 then
 				-- add waiting area
 				result.models[#result.models + 1] = {
@@ -102,7 +103,7 @@ function data()
 			end
 
 			-- add lane to centre platform
-			local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
+			local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[nTrackEdge].posTanX2
 			result.models[#result.models+1] = {
 				id = _constants.passengerLaneModelId,
 				transf = transfUtils.get1MLaneTransf(

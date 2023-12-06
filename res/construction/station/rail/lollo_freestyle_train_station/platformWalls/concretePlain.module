@@ -33,7 +33,8 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge,
+			local _terminalData = params.terminals[nTerminal]
+			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
 			'lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_5m.mdl',
 			'lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_low_5m.mdl',
 			'lollo_freestyle_train_station/roofs/concrete_plain/platformRoofPillar_2_5m.mdl', 'lollo_freestyle_train_station/roofs/concrete_plain/platformRoofPillar_5m.mdl',

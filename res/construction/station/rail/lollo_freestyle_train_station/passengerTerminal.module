@@ -35,13 +35,15 @@ return {
 		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 		if not nTerminal or not baseId then return end
 
-		moduleHelpers.edges.addEdges(result, tag, params, nTerminal)
+		local _terminalData = params.terminals[nTerminal]
+
+		moduleHelpers.edges.addEdges(result, tag, params, nTerminal, _terminalData)
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
-		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal)
+		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal, _terminalData)
 
 		local laneZ = result.laneZs[nTerminal]
 		-- start from 3 to avoid deco peeping out of the platform
-		local isTrackOnPlatformLeft = params.terminals[nTerminal].isTrackOnPlatformLeft
+		local isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
 		if logger.isExtendedLog() then
 			if isTrackOnPlatformLeft then
 				result.models[#result.models + 1] = {
@@ -58,7 +60,7 @@ return {
 					tag = tag
 				}
 			end
-			local cpls = params.terminals[nTerminal].centrePlatformsRelative
+			local cpls = _terminalData.centrePlatformsRelative
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/icon/orange.mdl',
 				slotId = slotId,
@@ -113,7 +115,7 @@ return {
 		local isOpenLift_indexed = {}
 		local isStairs_indexed = {}
 		local isTunnelStairs_indexed = {}
-		for i = 1, #params.terminals[nTerminal].centrePlatformsRelative, 1 do
+		for i = 1, #_terminalData.centrePlatformsRelative, 1 do
 			isUnderpass_indexed[i] = isUnderpass(nTerminal, i)
 			isOpenLift_indexed[i] = isOpenLift(nTerminal, i)
 			isStairs_indexed[i] = isStairs(nTerminal, i)
@@ -151,8 +153,14 @@ return {
 			'station/rail/asset/era_a_trashcan.mdl',
 			'lollo_freestyle_train_station/asset/era_a_two_chairs.mdl',
 		}
+		local era_a_belly_5m_modelId = 'lollo_freestyle_train_station/bridge_station/era_a_belly_5m_2m.mdl'
+		local era_a_belly_2_5m_modelId = 'lollo_freestyle_train_station/bridge_station/era_a_belly_2_5m_2m.mdl'
+		local era_b_belly_5m_modelId = 'lollo_freestyle_train_station/bridge_station/era_b_belly_5m_2m.mdl'
+		local era_b_belly_2_5m_modelId = 'lollo_freestyle_train_station/bridge_station/era_b_belly_2_5m_2m.mdl'
+		local era_c_belly_5m_modelId = 'lollo_freestyle_train_station/bridge_station/belly_5m_2m.mdl'
+		local era_c_belly_2_5m_modelId = 'lollo_freestyle_train_station/bridge_station/belly_2_5m_2m.mdl'
 
-		local _eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, 1)
+		local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, 1)
 		local tunnelStationSignModelId = 'lollo_freestyle_train_station/subway/roof_edge_w_station_name_5m_2m.mdl'
 		if _eraPrefix == moduleHelpers.eras.era_b.prefix then tunnelStationSignModelId = 'lollo_freestyle_train_station/subway/era_b_station_sign_single.mdl'
 		elseif _eraPrefix == moduleHelpers.eras.era_a.prefix then tunnelStationSignModelId = 'lollo_freestyle_train_station/subway/era_a_station_sign_double.mdl'
@@ -173,20 +181,29 @@ return {
 		-- elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/asset/era_b_perron_number.mdl'
 		elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then numberSignModelId = 'lollo_freestyle_train_station/asset/era_b_perron_number_plain.mdl'
 		end
+		local belly_5m_modelId = era_c_belly_5m_modelId
+		local belly_2_5m_modelId = era_c_belly_2_5m_modelId
+		if _eraPrefix == moduleHelpers.eras.era_a.prefix then
+			belly_5m_modelId = era_a_belly_5m_modelId
+			belly_2_5m_modelId = era_a_belly_2_5m_modelId
+		elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then
+			belly_5m_modelId = era_b_belly_5m_modelId
+			belly_2_5m_modelId = era_b_belly_2_5m_modelId
+		end
 
 		local cpfM1 = nil
-		for ii = 1, #params.terminals[nTerminal].centrePlatformsFineRelative, 2 do
-			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+		for ii = 1, #_terminalData.centrePlatformsFineRelative, 2 do
+			local cpf = _terminalData.centrePlatformsFineRelative[ii]
             if cpf.type == 1 then -- belly to cover pedestrian paths (only on bridges)
 				-- local yShift = 0
 				-- local yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				local yShift = 0
-				local myModelId = 'lollo_freestyle_train_station/bridge_station/belly_5m_2m.mdl'
+				local myModelId = belly_5m_modelId
 				if cpf.width >= 5 then
 					-- yShift = isTrackOnPlatformLeft and 0.12 or -0.12
 				else
 					-- yShift = isTrackOnPlatformLeft and 1.37 or -1.37
-					myModelId = 'lollo_freestyle_train_station/bridge_station/belly_2_5m_2m.mdl'
+					myModelId = belly_2_5m_modelId
 				end
 				result.models[#result.models + 1] = {
 					id = myModelId,
@@ -228,10 +245,10 @@ return {
 			cpfM1 = cpf
 		end
 		-- station name signs
-		for ii, _ in pairs(moduleHelpers.deco.getStationSignFineIndexes(params, nTerminal)) do
-		-- for i = 3, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-			-- local cpl = params.terminals[nTerminal].centrePlatformsRelative[ii]
-			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+		for ii, _ in pairs(moduleHelpers.deco.getStationSignFineIndexes(params, nTerminal, _terminalData)) do
+		-- for i = 3, #_terminalData.centrePlatformsRelative - 1, 6 do
+			-- local cpl = _terminalData.centrePlatformsRelative[ii]
+			local cpf = _terminalData.centrePlatformsFineRelative[ii]
 			local platformWidth = cpf.width
 			if cpf.type == 2 then -- tunnel
 				if cpf.width >= 5 or not(isTunnelStairs_indexed[cpf.leadingIndex]) then
@@ -273,9 +290,9 @@ return {
 			end
 		end
 		-- platform number signs
-		-- for i = 4, #params.terminals[nTerminal].centrePlatformsRelative - 1, 6 do
-		for ii = 3 + math.floor(_constants.maxPassengerWaitingAreaEdgeLength / 2), #params.terminals[nTerminal].centrePlatformsFineRelative - 2, _constants.maxPassengerWaitingAreaEdgeLength * 6 do
-			local cpf = params.terminals[nTerminal].centrePlatformsFineRelative[ii]
+		-- for i = 4, #_terminalData.centrePlatformsRelative - 1, 6 do
+		for ii = 3 + math.floor(_constants.maxPassengerWaitingAreaEdgeLength / 2), #_terminalData.centrePlatformsFineRelative - 2, _constants.maxPassengerWaitingAreaEdgeLength * 6 do
+			local cpf = _terminalData.centrePlatformsFineRelative[ii]
 			local platformWidth = cpf.width
 			if cpf.type == 2 then -- tunnel
 				if cpf.width >= 5 or not(isTunnelStairs_indexed[cpf.leadingIndex]) then
@@ -316,9 +333,9 @@ return {
 			end
 		end
 		-- arrivals and departure tables
-		for i = 2, #params.terminals[nTerminal].centrePlatformsRelative - 1, 3 do
+		for i = 2, #_terminalData.centrePlatformsRelative - 1, 3 do
 			if not(isUnderpass_indexed[i]) and not(isOpenLift_indexed[i]) and not(isStairs_indexed[i]) and not(isTunnelStairs_indexed[i]) then
-				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
+				local cpl = _terminalData.centrePlatformsRelative[i]
 				local platformWidth = cpl.width
 				local yShift = isTrackOnPlatformLeft and platformWidth * 0.2 + 0.1 or -platformWidth * 0.2 - 0.1
 				-- local transf = moduleHelpers.getTerminalDecoTransf(cpl.posTanX2)
@@ -354,9 +371,9 @@ return {
 			end
 		end
 		-- chairs, rubbish bins etc
-		for i = 2, #params.terminals[nTerminal].centrePlatformsRelative - 1, 1 do
+		for i = 2, #_terminalData.centrePlatformsRelative - 1, 1 do
 			if not(isUnderpass_indexed[i]) and not(isOpenLift_indexed[i]) and not(isStairs_indexed[i]) and not(isTunnelStairs_indexed[i]) then
-				local cpl = params.terminals[nTerminal].centrePlatformsRelative[i]
+				local cpl = _terminalData.centrePlatformsRelative[i]
 				local platformWidth = cpl.width
 
 				local transf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2)

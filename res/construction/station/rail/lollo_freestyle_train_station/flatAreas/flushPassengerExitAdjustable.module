@@ -33,11 +33,12 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
+			local _terminalData = params.terminals[nTerminal]
 			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local crossConnectorPosTanX2 = params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
+			local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[nTrackEdge].posTanX2
 			local yShift = cpl.width
 			local platformBorderPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
 			local myTransfAlongPlatformBorder = transfUtils.getTransf_ZShifted(
@@ -50,8 +51,8 @@ function data()
 				xAdjustedTransf[n] = slotTransf[n] + (myTransfAlongPlatformBorder[n] - slotTransf[n]) * step0To1
 			end
 
-			moduleHelpers.flatAreas.addExitPole(result, xAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, xAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addExitPole(result, xAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, xAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
 			if result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] == nil then
 				result.terminateConstructionHookInfo.autoStitchablePositions[nTerminal] = {}

@@ -749,8 +749,8 @@ local public = {
                         },
                         name = 'container_2m_side1',
                         skin = (i == 0 or i == _iMaxLod0)
-                            and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh'
-                            or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh',
+                            and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod0.msh'
+                            or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_full_side_lod0.msh',
                         skinMaterials = (i == 0 or i == _iMaxLod0)
                             and _lod0_skinMaterials_side_no_railing
                             or _lod0_skinMaterials_side,
@@ -781,8 +781,8 @@ local public = {
                         },
                         name = 'container_2m_side2',
                         skin = (i == 0 or i == _iMaxLod0)
-                            and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh'
-                            or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh',
+                            and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod0.msh'
+                            or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_full_side_lod0.msh',
                         skinMaterials = (i == 0 or i == _iMaxLod0)
                             and _lod0_skinMaterials_side_no_railing
                             or _lod0_skinMaterials_side,
@@ -800,7 +800,7 @@ local public = {
             lod1Children[#lod1Children + 1] = {
                 children = {
                     {
-                        mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh',
+                        mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod1.msh',
                         materials = _lod1_materials,
                     },
                 },
@@ -818,7 +818,7 @@ local public = {
             lod1Children[#lod1Children + 1] = {
                 children = {
                     {
-                        mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh',
+                        mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod1.msh',
                         materials = _lod1_materials,
                     },
                 },
@@ -1040,8 +1040,8 @@ local public = {
                         },
                         name = 'container_2m_side1',
                         skin = (i == 0 or i == _iMaxLod0)
-                            and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh'
-                            or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_tube_side_lod0.msh',
+                            and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod0.msh'
+                            or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_tube_side_lod0.msh',
                         skinMaterials = (i == 0 or i == _iMaxLod0)
                             and _lod0_skinMaterials_side_no_railing
                             or _lod0_skinMaterials_side_tube,
@@ -1072,8 +1072,8 @@ local public = {
                         },
                         name = 'container_2m_side2',
                         skin = (i == 0 or i == _iMaxLod0)
-                            and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh'
-                            or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_tube_side_lod0.msh',
+                            and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod0.msh'
+                            or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_tube_side_lod0.msh',
                         skinMaterials = (i == 0 or i == _iMaxLod0)
                             and _lod0_skinMaterials_side_no_railing
                             or _lod0_skinMaterials_side_tube,
@@ -1088,7 +1088,7 @@ local public = {
             lod1Children[#lod1Children + 1] = {
                 children = {
                     {
-                        mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh',
+                        mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod1.msh',
                         materials = _lod1_materials,
                     },
                 },
@@ -1106,7 +1106,7 @@ local public = {
             lod1Children[#lod1Children + 1] = {
                 children = {
                     {
-                        mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh',
+                        mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod1.msh',
                         materials = _lod1_materials,
                     },
                 },
@@ -1254,8 +1254,8 @@ local public = {
                                 },
                                 name = 'container_2m_side1',
                                 skin = isSide
-                                    and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_full_side_lod0.msh'
-                                    or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod0.msh',
+                                    and 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_full_side_lod0.msh'
+                                    or 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod0.msh',
                                 skinMaterials = isSide
                                     and _lod0_skinMaterials_side
                                     or _lod0_skinMaterials_side_no_railing,
@@ -1272,7 +1272,7 @@ local public = {
                     node = {
                         children = {
                             {
-                                mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/cement_low_bottom_railing_rep_side_no_side_lod1.msh',
+                                mesh = 'lollo_freestyle_train_station/bridge/pedestrian_cement/railing_rep_side_skin/lowb_railing_rep_side_no_side_lod1.msh',
                                 materials = _lod1_materials,
                             },
                         },

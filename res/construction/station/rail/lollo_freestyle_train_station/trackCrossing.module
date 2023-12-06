@@ -33,7 +33,8 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local _terminalData = params.terminals[nTerminal]
+			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 			local modelId = nil
 			if eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_a_trackCrossing.mdl'
 			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_b_trackCrossing.mdl'
@@ -47,17 +48,17 @@ function data()
 			}
 
 			local _laneZ = result.laneZs[nTerminal]
-			local _isCargoTerminal = params.terminals[nTerminal].isCargo
+			local _isCargoTerminal = _terminalData.isCargo
 
 			-- add link from platform border into track crossing
 			local platformBorderPos = transfUtils.getPositionRaisedBy(
-				params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
+				_terminalData.crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
 				_laneZ
 			)
 			-- place these off the track centre so it won't overlap the track node (it happened!)
 			local trackCrossingPos1 = transfUtils.getPositionRaisedBy(
 				transfUtils.getExtrapolatedPosX2Continuation(
-					params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
+					_terminalData.crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
 					transfUtils.transf2Position(slotTransf),
 					-1
 				),
@@ -65,7 +66,7 @@ function data()
 			)
 			local trackCrossingPos2 = transfUtils.getPositionRaisedBy(
 				transfUtils.getExtrapolatedPosX2Continuation(
-					params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
+					_terminalData.crossConnectorsRelative[nTrackEdge].posTanX2[1][1],
 					transfUtils.transf2Position(slotTransf),
 					1
 				),
@@ -94,7 +95,7 @@ function data()
 				result.terminateConstructionHookInfo.trackCrossingPositions[nTerminal],
 				{
 					t = nTerminal,
-					-- lanePosTanX2 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge].posTanX2,
+					-- lanePosTanX2 = _terminalData.centrePlatformsRelative[nTrackEdge].posTanX2,
 					pos = trackCrossingPos2
 				}
 			)
@@ -103,7 +104,7 @@ function data()
 			local platformCentrePos
 			if _isCargoTerminal then
 				platformCentrePos = transfUtils.getPositionRaisedBy(
-					params.terminals[nTerminal].crossConnectorsRelative[nTrackEdge].posTanX2[2][1],
+					_terminalData.crossConnectorsRelative[nTrackEdge].posTanX2[2][1],
 					_laneZ
 				)
 				result.models[#result.models+1] = {

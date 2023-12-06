@@ -1,12 +1,13 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 
--- LOLLO OBSOLETE this is dangerous, leave it out
+-- LOLLO NOTE after build 35716, we need this to avoid the station throwing collisions whenever an external edge is connected.
+-- It is inconvenient to place, so we hide it and replace it quietly.
 function data()
 	return {
 		availability = {
 			yearFrom = -1,
-			yearTo = -1
+			yearTo = -1,
 		},
 		category = {
 			categories = { "passenger-road-access", },
@@ -17,7 +18,7 @@ function data()
 		description = {
 			name = _("FlatPassengerStairsSnappyEdgeName"),
 			description = _("FlatPassengerStairsSnappyEdgeDesc"),
-			icon = "ui/lollo_freestyle_train_station/openStairsExitWithSnappyEdge2m.tga"
+			icon = "ui/lollo_freestyle_train_station/exitWithSnappyEdge2m.tga"
 		},
 		metadata = { },
 		order = {

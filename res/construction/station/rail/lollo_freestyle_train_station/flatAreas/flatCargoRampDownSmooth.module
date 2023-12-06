@@ -38,8 +38,9 @@ function data()
 
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local _terminalData = params.terminals[nTerminal]
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
+			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'flatCargoRampDownSmoothModelFileName']
@@ -51,8 +52,8 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, nTrackEdge)
-			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, nTrackEdge)
+			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
 			local groundFace = { -- groundFaces ignore z, terrainAlignmentLists don't
 				{-1, -2, _constants.platformSideBitsZ, 1},

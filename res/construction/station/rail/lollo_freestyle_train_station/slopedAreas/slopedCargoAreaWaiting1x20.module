@@ -28,8 +28,9 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-            local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, nTrackEdge, era,
+			local _terminalData = params.terminals[nTerminal]
+            local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, _terminalData, nTrackEdge, era,
 				20,
 				_constants[era .. 'slopedCargoArea1x20ModelFileName'],
 				_constants.cargoWaitingAreaCentredModelFileName,

@@ -32,14 +32,15 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
-			local cpl = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge]
-			local cplP1 = params.terminals[nTerminal].centrePlatformsRelative[nTrackEdge+1] or {}
+			local _terminalData = params.terminals[nTerminal]
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
+			local cplP1 = _terminalData.centrePlatformsRelative[nTrackEdge+1] or {}
 			slotTransf = transfUtils.getTransf_ZShifted(
 				moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 				result.laneZs[nTerminal]
 			)
 
-			local era = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 			local modelId = nil
 			if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/underpass/era_a_underpass_stairs_10m.mdl'
 			elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/underpass/era_b_underpass_stairs_10m.mdl'

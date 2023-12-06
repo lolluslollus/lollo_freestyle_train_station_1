@@ -13,8 +13,8 @@ local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
-local _eventId = _constants.eventData.eventId
-local _eventNames = _constants.eventData.eventNames
+local _eventId = _constants.eventData.autoFence.eventId
+local _eventNames = _constants.eventData.autoFence.eventNames
 local _guiFenceWaypointModelId = nil
 local _guiTexts = {
     differentPlatformWidths = '',
@@ -179,7 +179,32 @@ local _actions = {
             end
         )
     end,
+--[[
+    bulldozeCon = function(conId)
+        if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
+        local proposal = api.type.SimpleProposal.new()
+        -- LOLLO NOTE there are asymmetries how different tables are handled.
+        -- This one requires this system, UG says they will document it or amend it.
+        proposal.constructionsToRemove = { conId }
+        -- proposal.constructionsToRemove[1] = constructionId -- fails to add
+        -- proposal.constructionsToRemove:add(constructionId) -- fails to add
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        -- context.player = api.engine.util.getPlayer() -- default is -1
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            function(result, success)
+                logger.print('_bulldozeCon success = ', success)
+                -- logger.print('_bulldozeCon result = ') logger.debugPrint(result)
+            end
+        )
+    end,
+]]
     replaceEdgeWithSameRemovingObject = function(objectIdToRemove)
         logger.print('_replaceEdgeWithSameRemovingObject starting')
         if not(edgeUtils.isValidAndExistingId(objectIdToRemove)) then return end
@@ -297,7 +322,7 @@ local _guiActions = {
             }
         ))
     end,
-    handleBulldozeClicked = function(conId)
+    handleBulldozeClicked = function(conId) -- unused
         logger.print('_handleBulldozeClicked starting for conId =', conId or 'NIL')
         if not(edgeUtils.isValidAndExistingId(conId)) then
             logger.warn('_handleBulldozeClicked got no con or no valid con')
@@ -362,9 +387,9 @@ local _guiActions = {
             return
         end
 
-        -- convert userdata to table
-        local edge2Node0Pos = api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position
-        local edge2Node1Pos = api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position
+        -- convert userdata.XYZ to table.123
+        local edge2Node0Pos = transfUtils.xYZ2OneTwoThree(api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position)
+        local edge2Node1Pos = transfUtils.xYZ2OneTwoThree(api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position)
 
         -- useless
         -- local edgeObject1Side, edgeObject2Side
@@ -388,8 +413,8 @@ local _guiActions = {
         local eventArgs = {
             edge1Id = edge1Id,
             edge2Id = edge2Id,
-            edge2Node0Pos = {edge2Node0Pos.x, edge2Node0Pos.y, edge2Node0Pos.z},
-            edge2Node1Pos = {edge2Node1Pos.x, edge2Node1Pos.y, edge2Node1Pos.z},
+            edge2Node0Pos = edge2Node0Pos,
+            edge2Node1Pos = edge2Node1Pos,
             fenceWaypoint1Id = fenceWaypointIds[1],
             fenceWaypoint2Id = fenceWaypointIds[2],
             fenceWaypointMidTransf = fenceWaypointMidTransf,
@@ -619,7 +644,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
+                    logger.print('lollo_auto_fence.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
                     if name == _eventNames.FENCE_WAYPOINTS_BUILT then
                         -- fence waypoints built, eventArgs = {
                         --     edge1Id = edge1Id,
@@ -636,7 +661,8 @@ function data()
                             args.edge1Id, args.edge2Id, _constants.maxFenceWaypointDistance, true, logger.isExtendedLog()
                         )
                         if #trackEdgeIdsBetweenEdgeIds > 0 then
-                            local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds)
+                            local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds, true, false, true)
+
                             if comparisonUtils.is123sSame(
                                 trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1],
                                 args.edge2Node1Pos
@@ -651,6 +677,10 @@ function data()
                                 args.isWaypoint2ArrowAgainstTrackDirection = not(args.isWaypoint2ArrowAgainstTrackDirection)
                             else
                                 logger.warn('cannot find the right direction to build my fence')
+                                print('last track\'s start position =') debugPrint(trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[1][1])
+                                print('last track\'s end position =') debugPrint(trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1])
+                                print('second waypoint edge\'s node0 pos =') debugPrint(args.edge2Node0Pos)
+                                print('second waypoint edge\'s node1 pos =') debugPrint(args.edge2Node1Pos)
                             end
 
                             if args.isWaypoint2ArrowAgainstTrackDirection then
@@ -707,6 +737,8 @@ function data()
                         _actions.replaceEdgeWithSameRemovingObject(args.fenceWaypoint2Id)
                     elseif name == _eventNames.CON_PARAMS_UPDATED then
                         _actions.updateConstruction(args.conId, args.paramKey, args.newParamValueIndexBase0)
+                    -- elseif name == _eventNames.BULLDOZE_CON_REQUESTED then -- unused
+                    --     _actions.bulldozeCon(args.conId)
                     end
                 end,
                 logger.xpErrorHandler
@@ -763,7 +795,7 @@ function data()
                             _guiActions.handleParamValueChanged,
                             modelHelper.getChangeableParamsMetadata(),
                             con.params,
-                            _guiActions.handleBulldozeClicked
+                            _guiActions.handleBulldozeClicked -- unused
                         )
                         -- not required but it might prevent a crash with the conMover: no it does not
                         -- local paramsMetadata = modelHelper.getChangeableParamsMetadata()

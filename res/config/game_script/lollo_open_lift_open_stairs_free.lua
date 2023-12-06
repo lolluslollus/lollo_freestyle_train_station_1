@@ -149,7 +149,7 @@ local _actions = {
                             logger.print('updateConstruction succeeded, stationConId = ', newConId)
                             -- UG TODO there is no such thing in the new api, nor an upgrade event, both would be useful
                             collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
-                            logger.print('collectgarbage done')
+                            logger.print('lollo_open_lifts_open_stairs_free - collect garbage done')
                             logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
                             local upgradedConId = game.interface.upgradeConstruction(
                                 newConId,

@@ -1,4 +1,5 @@
 local _constants = require('lollo_freestyle_train_station.constants')
+local logger = require('lollo_freestyle_train_station.logger')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
 local helpers = {
@@ -20,6 +21,8 @@ local helpers = {
         return _constants.eras.era_c.prefix
     end,
     getInvisibleTwinFileName = function(trackFileName)
+        logger.print('build 35716, trackFileName = ' .. (trackFileName or 'NIL'))
+        -- return trackFileName
         local result = stringUtils.stringContains(trackFileName, '_cargo_')
             and trackFileName:gsub('_cargo_', '_invisible_')
             or trackFileName:gsub('_passenger_', '_invisible_')
@@ -27,6 +30,8 @@ local helpers = {
         result = result:gsub('era_a_', '')
         result = result:gsub('era_b_', '')
         result = result:gsub('era_c_', '')
+
+        logger.print('build 35716, invisibleTwinFileName = ' .. (result or 'NIL'))
         return result
     end,
     getTrackAvailability = function(trackFileName)

@@ -157,10 +157,10 @@ function data()
 
             xpcall(
                 function()
-                    logger.print('handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+                    logger.print('lollo_auto_bridge_paths.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
 
-                    if edgeUtils.isValidAndExistingId(args.edgeId) then
-                        if name == _eventProperties.buildBridgeRequested.eventName then
+                    if name == _eventProperties.buildBridgeRequested.eventName then
+                        if edgeUtils.isValidAndExistingId(args.edgeId) and edgeUtils.isValidId(args.bridgeTypeId) then
                             _actions.replaceEdgeWithSameOnBridge(args.edgeId, args.bridgeTypeId)
                         end
                     end

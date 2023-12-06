@@ -9,17 +9,24 @@ local constants = {
     trainTracksCategory = 'train-tracks',
 
     eventData = {
+        autoFence = {
+            eventId = '__lolloAutoFence__',
+            eventNames = {
+                BULLDOZE_CON_REQUESTED = 'bulldozeConRequested',
+                CON_PARAMS_UPDATED = 'conParamsUpdated',
+                FENCE_WAYPOINTS_BUILT = 'fenceWaypointsBuilt',
+                WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
+            },
+        },
         eventId = '__lolloFreestyleTrainStation__',
         eventNames = {
             ALLOW_PROGRESS = 'allowProgress',
             BUILD_SNAPPY_STREET_EDGES_REQUESTED = 'buildSnappyStreetEdgesRequested',
-            BUILD_SNAPPY_TRACKS_REQUESTED = 'buildSnappyTracksRequested',
             BUILD_STATION_REQUESTED = 'buildStationRequested',
-            BULLDOZE_CON_REQUESTED = 'bulldozeConRequested',
             BULLDOZE_MARKER_REQUESTED = 'bulldozeMarkerRequested',
             BULLDOZE_STATION_REQUESTED = 'bulldozeStationRequested',
-            CON_PARAMS_UPDATED = 'conParamsUpdated',
-            FENCE_WAYPOINTS_BUILT = 'fenceWaypointsBuilt',
+            CON_CONFIG_MENU_CLOSED = 'conConfigMenuClosed',
+            CON_CONFIG_MENU_OPENED = 'conConfigMenuOpened',
             HIDE_HOLE_REQUESTED = 'hideHoleRequested',
             HIDE_PROGRESS = 'hideProgress',
             HIDE_WARNINGS = 'hideWarnings',
@@ -27,8 +34,12 @@ local constants = {
             PLATFORM_WAYPOINT_1_SPLIT_REQUESTED = 'platformWaypoint1SplitRequested',
             PLATFORM_WAYPOINT_2_SPLIT_REQUESTED = 'platformWaypoint2SplitRequested',
             REBUILD_1_TRACK_REQUESTED = 'rebuild1TrackRequested',
+            REBUILD_NEIGHBOURS_REQUESTED = 'rebuildNeighboursRequested',
+            REBUILD_STATION_WITH_ONE_LESS_TERMINAL_REQUESTED = 'rebuildStationWithOneLessTerminalRequested',
+            REBUILD_STATION_WITH_SNAPPY_STREET_EDGES_REQUESTED = 'rebuildStationWithSnappyStreetEdgesRequested',
             REMOVE_TERMINAL_REQUESTED = 'removeTerminalRequested',
             SUBWAY_JOIN_REQUESTED = 'subwayJoinRequested',
+            SUBWAY_BUILD_REQUESTED = 'subwayBuildRequested',
             TRACK_BULLDOZE_REQUESTED = 'trackBulldozeRequested',
             TRACK_SPLIT_REQUESTED = 'trackSplitRequested',
             TRACK_WAYPOINT_1_SPLIT_REQUESTED = 'trackWaypoint1SplitRequested',
@@ -50,6 +61,10 @@ local constants = {
     openStairsUpZ = 8,
     trackCrossingZ = 0.45,
     trackCrossingRaise = 0.25,
+
+    -- stairsEdgeSpacing = {-1, 3, 0.5, 0.5}, -- old
+    -- stairsEdgeSpacing = {-0.2, 0.5, 0.4, 0.4}, -- touches the external edge
+    stairsEdgeSpacing = {-0.1, 0.4, 0.4, 0.4}, -- inward, outward. side1, side2
 
     maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
     minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,
@@ -101,6 +116,7 @@ local constants = {
         -- ['station/rail/lollo_freestyle_train_station/subwayMetropolitain.con'] = true,
     },
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
+    unsnappedSomethingMessageConFileName = 'lollo_freestyle_train_station/unsnapped_something_message.con',
 
     axialCargoExitModuleType = 'freestyleTrainStationAxialCargoExit',
     axialFlushCargoExitModuleType = 'freestyleTrainStationAxialFlushCargoExit',
@@ -267,13 +283,14 @@ local constants = {
     era_a_openStairsExitModelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl',
     era_b_openStairsExitModelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl',
     era_c_openStairsExitModelId = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_4m.mdl',
+    redHugeMessageModelFileName = 'lollo_freestyle_train_station/icon/red_huge_w_message.mdl',
     redMessageModelFileName = 'lollo_freestyle_train_station/icon/red_w_message.mdl',
     yellowMessageModelFileName = 'lollo_freestyle_train_station/icon/yellow_w_message.mdl',
     emptyModelFileName = 'lollo_freestyle_train_station/empty.mdl',
 
     cargoTerminalModuleFileName = 'station/rail/lollo_freestyle_train_station/cargoTerminal.module',
     openLiftModuleFileName = 'station/rail/lollo_freestyle_train_station/openLifts/openLift.module',
-    openLift_NoAutoLink_ModuleFileName = 'station/rail/lollo_freestyle_train_station/openLifts/openLift_NoAutoLink.module',
+    openLift_NoAutoLink_ModuleFileName = 'station/rail/lollo_freestyle_train_station/openLifts/openLift_NoAutoLink_v2.module',
     openStairsUpLeftModuleFileName = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsUpLeft.module',
     openStairsUpLeft_NoAutoLink_ModuleFileName = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsUpLeft_NoAutoLink.module',
     openStairsUpRightModuleFileName = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsUpRight.module',
