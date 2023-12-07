@@ -15,11 +15,11 @@ function data()
                                 'lollo_freestyle_train_station/square_marble_tiles_low_prio.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/assets/platform_cube_1x1m.msh',
-                            transf = {0, 1, 0, 0,  -_mdlHelpers.getSlopedPlatformStretchFactor(1, 5), 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                            -- transf = {0, 1, 0, 0,  -_mdlHelpers.getSlopedPlatformStretchFactor(1, 5), 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                         },
                     },
                     name = 'RootNode',
-                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                    -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                 },
                 static = false,
                 visibleFrom = 0,

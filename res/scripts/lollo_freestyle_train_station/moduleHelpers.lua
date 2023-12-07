@@ -454,7 +454,7 @@ privateFuncs.deco = {
         end
         ]]
     end,
-    addWallBehind = function (result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, eraPrefix)
+    addWallBehind = function (result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, eraPrefix, laneZ)
         local wallBehindTransf
         if xScaleFactor > 1 then
             -- walls behind are 1 m thick
@@ -477,10 +477,11 @@ privateFuncs.deco = {
         local faceTransformed = transfUtils.getFaceTransformed_FAST(
             wallBehindTransf,
             {
-                {-0.5, 0, -1.2, 1}, -- put the terrain level with wallBehindBase, which is 1.4m high, plus a little something to get the wall jammed in
-                {-0.5, 1, -1.2, 1},
-                {0.5, 1, -1.2, 1},
-                {0.5, 0, -1.2, 1},
+                {-0.5, 0, -laneZ, 1}, -- put the terrain level with wallBehindBase, which is 1.4m high, plus a little something to get the wall jammed in
+                {-0.5, 0.5, -laneZ, 1}, -- {-0.5, 1, -laneZ, 1}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                {0.5, 0.5, -laneZ, 1}, -- {0.5, 1, -laneZ, 1}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                {0.5, 0, -laneZ, 1},
+                -- {x, positive outwards, z, 1}
             }
         )
         result.groundFaces[#result.groundFaces+1] = {
@@ -1648,7 +1649,7 @@ return {
                                 tag = tag
                             }
                             if wallBehindModelId ~= nil and cpf.type == 0 then
-                                privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix)
+                                privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, _laneZ)
                             end
                             -- if ii % 4 == 0 then
                             --     result.models[#result.models+1] = {
@@ -1751,7 +1752,7 @@ return {
             local transfXZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local transfYZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            local laneZ = result.laneZs[nTerminal]
+            local _laneZ = result.laneZs[nTerminal]
 
             -- query the first platform segment coz track segments, unlike platform segments,
             -- have no knowledge of the era: they only have leadingIndex, posTanX2, type and width.
@@ -1785,7 +1786,7 @@ return {
                                 transfXZoom * xScaleFactor, 0, 0, 0,
                                 0, transfYZoom, 0, 0,
                                 0, 0, 1, 0,
-                                0, 0, laneZ, 1
+                                0, 0, _laneZ, 1
                             }
                         )
                         -- if not(_isVertical) then
@@ -1804,7 +1805,7 @@ return {
                             tag = tag
                         }
                         if wallBehindModelId ~= nil and ctf.type == 0 then
-                            privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix)
+                            privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, _laneZ)
                         end
                     end
                 end

@@ -73,8 +73,8 @@ end
 ---@param joinEventName string
 ---@param noJoinEventName string|nil
 ---@param eventArgs table<any>
----@param onClickFunc? function
-guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eventId, joinEventName, noJoinEventName, eventArgs, onClickFunc)
+---@param onClickJoinFunc? function
+guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eventId, joinEventName, noJoinEventName, eventArgs, onClickJoinFunc)
     -- print('showNearbyStationPicker starting')
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
     local window = api.gui.util.getById(_stationPickerWindowId)
@@ -116,7 +116,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             local joinButton = api.gui.comp.Button.new(joinButtonLayout, true)
             joinButton:onClick(
                 function()
-                    if type(onClickFunc) == 'function' then onClickFunc() end
+                    if type(onClickJoinFunc) == 'function' then onClickJoinFunc() end
                     logger.print('guiHelpers 120')
                     if not(stringUtils.isNullOrEmptyString(joinEventName)) then
                         eventArgs.join2StationConId = station.id
@@ -156,7 +156,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 2) =') debugPrint(string.sub(debug.getinfo(2, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 3) =') debugPrint(string.sub(debug.getinfo(3, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 4) =') debugPrint(string.sub(debug.getinfo(4, 'S').source, 1))
-                if type(onClickFunc) == 'function' then onClickFunc() end
+                -- if type(onClickJoinFunc) == 'function' then onClickJoinFunc() end
                 logger.print('guiHelpers 160')
                 if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
