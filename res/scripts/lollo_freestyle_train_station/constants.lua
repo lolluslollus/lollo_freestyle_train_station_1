@@ -44,6 +44,7 @@ local constants = {
             TRACK_SPLIT_REQUESTED = 'trackSplitRequested',
             TRACK_WAYPOINT_1_SPLIT_REQUESTED = 'trackWaypoint1SplitRequested',
             TRACK_WAYPOINT_2_SPLIT_REQUESTED = 'trackWaypoint2SplitRequested',
+            UPGRADE_NEIGHBOUR_CONS_REQUESTED = 'upgradeNeibourConsRequested',
             WAYPOINT_BULLDOZE_REQUESTED = 'waypointBulldozeRequested',
         }
     },
@@ -118,6 +119,23 @@ local constants = {
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
     unsnappedSomethingMessageConFileName = 'lollo_freestyle_train_station/unsnapped_something_message.con',
 
+    edgeModuleFileNames = {
+        fake = {
+            axialArea = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsFakeEdge.module',
+            flatArea = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsFakeEdge.module',
+            openStairs = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithFakeEdge_2m_v2.module'
+        },
+        plain = {
+            axialArea = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module',
+            flatArea = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module',
+            openStairs = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module'
+        },
+        snappy = {
+            axialArea = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module',
+            flatArea = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module',
+            openStairs = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
+        },
+    },
     axialCargoExitModuleType = 'freestyleTrainStationAxialCargoExit',
     axialFlushCargoExitModuleType = 'freestyleTrainStationAxialFlushCargoExit',
     axialFlushPassengerExitModuleType = 'freestyleTrainStationAxialFlushPassengerExit',

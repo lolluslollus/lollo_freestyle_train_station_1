@@ -2663,7 +2663,14 @@ return {
 				tag = tag
 			}
 
-            if not(isFake) then
+            if (isFake) then
+                result.models[#result.models + 1] = {
+                    id = 'lollo_freestyle_train_station/open_stairs/' .. eraPrefix .. 'fake_edge.mdl',
+                    slotId = slotId,
+                    transf = transfUtils.getTransf_XShifted(transf, -0.7),
+                    tag = tag
+                }
+            else
                 local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
                 table.insert(
                     result.edgeLists,

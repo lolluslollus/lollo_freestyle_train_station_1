@@ -2302,21 +2302,22 @@ function data()
 			end
 			local _convertStreetEdgesToFake = function(modules_)
 				-- local _startSec = os.clock()
+				local _edgeModuleFileNames = _constants.edgeModuleFileNames
 				if modules_ ~= nil then
 					for slotId, module in pairs(modules_) do
 						if module then
-							if module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsFakeEdge.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsFakeEdge.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithFakeEdge_2m_v2.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsFakeEdge.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsFakeEdge.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithFakeEdge_2m_v2.module'
+							if module.name == _edgeModuleFileNames.plain.axialArea then
+								module.name = _edgeModuleFileNames.fake.axialArea
+							elseif module.name == _edgeModuleFileNames.plain.flatArea then
+								module.name = _edgeModuleFileNames.fake.flatArea
+							elseif module.name == _edgeModuleFileNames.plain.openStairs then
+								module.name = _edgeModuleFileNames.fake.openStairs
+							elseif module.name == _edgeModuleFileNames.snappy.axialArea then
+								module.name = _edgeModuleFileNames.fake.axialArea
+							elseif module.name == _edgeModuleFileNames.snappy.flatArea then
+								module.name = _edgeModuleFileNames.fake.flatArea
+							elseif module.name == _edgeModuleFileNames.snappy.openStairs then
+								module.name = _edgeModuleFileNames.fake.openStairs
 							end
 						end
 					end

@@ -16,8 +16,9 @@ function data()
         },
 		-- order = 1110,
 		updateFn = function(params)
-            logger.print('red_huge_message.updateFn firing, params =') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
-
+            logger.print('unsnapped_something_message.updateFn firing, params =') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+            logger.print('params.message =') debugPrint(params.message)
+            local message = params.message or _('UnsnappedSomethingHere')
             local result = {
                 colliders = {},
                 cost = 0,
@@ -40,7 +41,7 @@ function data()
                     },
                 },
                 labelText = {
-                    [0] = { _('UnsnappedSomethingHere'), _('UnsnappedSomethingHere') }
+                    [0] = { message, message }
                 },
                 models = {
                     {

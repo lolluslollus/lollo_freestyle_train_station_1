@@ -48,6 +48,57 @@ local _guiTexts = {
 }
 
 local _utils = {
+    ---build posts with messages for the user to see where things are not right
+    ---@param pos {x: number, y: number, z: number}
+    buildWarningHints = function(pos, message4Sign, message4Warning)
+        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
+        newCon.fileName = _constants.unsnappedSomethingMessageConFileName
+        newCon.params = {
+            message = message4Sign,
+            seed = math.abs(math.ceil(pos.x * 1000)),
+        }
+        newCon.playerEntity = api.engine.util.getPlayer()
+        newCon.transf = api.type.Mat4f.new(
+            api.type.Vec4f.new(1, 0, 0, 0),
+            api.type.Vec4f.new(0, 1, 0, 0),
+            api.type.Vec4f.new(0, 0, 1, 0),
+            api.type.Vec4f.new(pos.x, pos.y, pos.z, 1)
+        )
+        local warningProposal = api.type.SimpleProposal.new()
+        warningProposal.constructionsToAdd[1] = newCon
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
+
+        api.cmd.sendCommand(
+            api.cmd.make.buildProposal(warningProposal, context, true),
+            function(result, success)
+                if message4Warning ~= nil then state.warningText = message4Warning end
+            end
+        )
+    end,
+    ---remove posts with messages for the user to see where things are not right
+    ---@param pos {x: number, y: number, z: number}
+    removeWarningHints = function(pos)
+        local nearbyConIds = edgeUtils.getNearbyObjectIds(transfUtils.position2Transf(pos), 100, api.type.ComponentType.CONSTRUCTION, pos.z - 20, pos.z + 20)
+        if not(nearbyConIds) or #nearbyConIds == 0 then return end
+
+        local proposal = api.type.SimpleProposal.new()
+        local conIdsToRemove = nearbyConIds
+
+        local context = api.type.Context:new()
+        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
+        -- context.cleanupStreetGraph = true -- default is false
+        -- context.gatherBuildings = true  -- default is false
+        -- context.gatherFields = true -- default is true
+        context.player = api.engine.util.getPlayer() -- default is -1
+
+        api.cmd.sendCommand(api.cmd.make.buildProposal(proposal, context, true))
+    end,
     getAverageZ = function(edgeId)
         if not(edgeUtils.isValidAndExistingId(edgeId)) then return nil end
 
@@ -81,21 +132,23 @@ local _utils = {
         --     _constants.idBases.openStairsExitOuterSlotId,
         -- }
 
+        local _edgeModuleFileNames = _constants.edgeModuleFileNames
         local isSomethingChanged = false
         local newModules = {}
         for slotId, modu in pairs(oldModules) do
-            if modu.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsFakeEdge.module' then
-                modu.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module'
+            if modu.name == _edgeModuleFileNames.fake.axialArea then
+                modu.name = _edgeModuleFileNames.snappy.axialArea
                 isSomethingChanged = true
-            elseif modu.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsFakeEdge.module' then
-                modu.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
+            elseif modu.name == _edgeModuleFileNames.fake.flatArea then
+                modu.name = _edgeModuleFileNames.snappy.flatArea
                 isSomethingChanged = true
-            elseif modu.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithFakeEdge_2m_v2.module' then
-                modu.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
+            elseif modu.name == _edgeModuleFileNames.fake.openStairs then
+                modu.name = _edgeModuleFileNames.snappy.openStairs
                 isSomethingChanged = true
             end
             newModules[slotId] = modu
         end
+        logger.print('### getModulesWithoutFakes is about to return isSomethingChanged = ' .. tostring(isSomethingChanged))
         return isSomethingChanged, newModules
     end,
     ---gets adjacent tracks, (station) end nodes and lone nodes without station; expects a list with > 1 entries
@@ -348,6 +401,7 @@ local _utils = {
         return true, nNewEntities_
     end,
 ]]
+    ---Try to upgrade a construction such as stairs or a lift. This might crash and there is no way to catch it UG TODO, so call it last.
     ---@return boolean, table<number> | nil
     tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId)
         logger.print('_tryUpgradeStationOrStairsOrLiftConstruction starting, oldConId =', oldConId)
@@ -1178,55 +1232,34 @@ local _actions = {
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
 
-        ---build posts with messages for the user to see where things are not right
-        ---@param pos {x: number, y: number, z: number}
-        local _buildWarningHints = function(pos)
-            local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-            newCon.fileName = _constants.unsnappedSomethingMessageConFileName
-            newCon.params = {
-                seed = math.abs(math.ceil(pos.x * 1000)),
-            }
-            newCon.playerEntity = api.engine.util.getPlayer()
-            newCon.transf = api.type.Mat4f.new(
-                api.type.Vec4f.new(1, 0, 0, 0),
-                api.type.Vec4f.new(0, 1, 0, 0),
-                api.type.Vec4f.new(0, 0, 1, 0),
-                api.type.Vec4f.new(pos.x, pos.y, pos.z, 1)
-            )
-            local warningProposal = api.type.SimpleProposal.new()
-            warningProposal.constructionsToAdd[1] = newCon
-            api.cmd.sendCommand(api.cmd.make.buildProposal(warningProposal, context, true))
-        end
         local _rebuildConstructions = function()
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(constructionsProposal, context, true),
-                function(result_0, success_0)
-                    logger.print('_rebuildNeighbours success_0 = ', success_0)
-                    if success_0 then
+                function(result, success)
+                    logger.print('_rebuildNeighbours success = ', success)
+                    if success then
                         -- Write away the adjoining constructions
                         local newConIds = {}
-                        if result_0.resultEntities ~= nil then
-                            for _, conId in pairs(result_0.resultEntities) do
-                                newConIds[#newConIds+1] = conId
-                            end
-                            logger.print('newConIds =') logger.debugPrint(newConIds)
-                        end
-                        -- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap.
-                        local _upgradeNeighbourCons = function()
-                            local isAnyUpgradeFailed = false
-                            for _, newConId in pairs(newConIds) do
-                                local isThisUpgradeOK, conTransf = _utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId)
-                                if not(isThisUpgradeOK) and conTransf ~= nil then
-                                    _buildWarningHints(transfUtils.transf2Position(conTransf, true))
-                                end
-                                isAnyUpgradeFailed = isAnyUpgradeFailed or not(isThisUpgradeOK)
-                            end
-                            if not(isAnyUpgradeFailed) then return end
+                        if result.resultEntities == nil then return end
 
-                            logger.warn('some construction upgrades failed')
-                            state.warningText = _('UnsnappedRoads')
+                        for _, conId in pairs(result.resultEntities) do
+                            newConIds[#newConIds+1] = conId
                         end
-                        _upgradeNeighbourCons()
+                        logger.print('newConIds =') logger.debugPrint(newConIds)
+
+                        if #newConIds == 0 then return end
+
+                        -- upgrade the neighbour cons in a separate event, so the neighbours will stay rebuilt if the upgrade fails
+                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                            string.sub(debug.getinfo(1, 'S').source, 1),
+                            _eventId,
+                            _eventNames.UPGRADE_NEIGHBOUR_CONS_REQUESTED,
+                            {
+                                conIdsToBeUpgraded = newConIds
+                            }
+                        ))
+                    else
+                        logger.warn('_rebuildNeighbours failed, result.resultProposalData =') logger.warningDebugPrint(result.resultProposalData)
                     end
                     _utils.sendHideProgress()
                 end
@@ -1320,10 +1353,11 @@ local _actions = {
                 api.cmd.make.buildProposal(proposal, context, true),
                 function(result, success)
                     allEdgesIndex = allEdgesIndex + 1
-                    if not(success) then
+                    if success then
+                        _utils.removeWarningHints(edge.node0Props.position)
+                    else
                         logger.warn('edgeId ' .. tostring(edgeId or 'NIL') .. ' was not rebuilt')
-                        state.warningText = _('UnsnappedSomething')
-                        _buildWarningHints(edge.node0Props.position)
+                        _utils.buildWarningHints(edge.node0Props.position, _('UnsnappedSomethingHere'), _('UnsnappedSomething'))
                     end
                     logger.print('about to call nextFunc()')
                     nextFunc(nextFunc)
@@ -1333,6 +1367,23 @@ local _actions = {
         _rebuildEdge(_rebuildEdge)
     end,
 
+    --- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap. It calls an old routine that may crash uncatchable, so call it last.
+    upgradeNeighbourCons = function(args)
+        if not(args) or type(args.conIds) ~= 'table' then return end
+
+        local isAnyUpgradeFailed = false
+        for _, newConId in pairs(args.conIds) do
+            local isThisUpgradeOK, conTransf = _utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId)
+            if not(isThisUpgradeOK) and conTransf ~= nil then
+                _utils.buildWarningHints(transfUtils.transf2Position(conTransf, true))
+            end
+            isAnyUpgradeFailed = isAnyUpgradeFailed or not(isThisUpgradeOK)
+        end
+        if not(isAnyUpgradeFailed) then return end
+
+        logger.warn('some construction upgrades failed')
+        state.warningText = _('UnsnappedRoads')
+    end,
     rebuildStationWithOneLessTerminal = function(successEventName, args)
         logger.print('_rebuildStationWithOneLessTerminal starting, args =', args)
 
@@ -1586,6 +1637,7 @@ local _actions = {
 
         local oldConParams = oldCon.params
         local oldModules = arrayUtils.cloneDeepOmittingFields(oldConParams.modules, nil, true)
+        local conTransf_lua = transfUtilsUG.new(oldCon.transf:cols(0), oldCon.transf:cols(1), oldCon.transf:cols(2), oldCon.transf:cols(3))
         local isSomethingChanged, newModules = _utils.getModulesWithoutFakes(oldModules)
 
         if not(isSomethingChanged) then
@@ -1638,6 +1690,7 @@ local _actions = {
             function(result, success)
                 logger.print('_rebuildStationWithSnappyStreetEdges callback, success =', success)
                 if success then
+                    _utils.removeWarningHints(transfUtils.transf2Position(conTransf_lua, true))
                     if successEventName ~= nil then
                         logger.print('_rebuildStationWithSnappyStreetEdges callback is about to send command ' .. successEventName)
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -1647,10 +1700,11 @@ local _actions = {
                             -- arrayUtils.cloneDeepOmittingFields(args)
                             args
                         ))
-                    end        
+                    end
                 else
-                    logger.print('_rebuildStationWithSnappyStreetEdges proposal =') logger.debugPrint(proposal)
-                    logger.print('_rebuildStationWithSnappyStreetEdges result =') logger.debugPrint(result)
+                    -- logger.warn('_rebuildStationWithSnappyStreetEdges proposal =') logger.warningDebugPrint(proposal)
+                    logger.warn('_rebuildStationWithSnappyStreetEdges result.resultProposalData =') logger.warningDebugPrint(result.resultProposalData)
+                    _utils.buildWarningHints(transfUtils.transf2Position(conTransf_lua, true), _('UnsnappedCheckEdgeExits'), _('UnsnappedCheckEdgeExits'))
                 end
             end
         )
@@ -3775,6 +3829,8 @@ function data()
                         _actions.removeNeighbours(_eventNames.REBUILD_STATION_WITH_SNAPPY_STREET_EDGES_REQUESTED, args)
                     elseif name == _eventNames.REBUILD_STATION_WITH_SNAPPY_STREET_EDGES_REQUESTED then
                         _actions.rebuildStationWithSnappyStreetEdges(_eventNames.REBUILD_NEIGHBOURS_REQUESTED, args)
+                    elseif name == _eventNames.UPGRADE_NEIGHBOUR_CONS_REQUESTED then
+                        _actions.upgradeNeighbourCons(args)
                     end
                 end,
                 logger.xpErrorHandler
@@ -3820,7 +3876,7 @@ function data()
                 xpcall(
                     function()
                         if name == 'builder.proposalCreate' then
-                            logger.print('name == builder.proposalCreate, id = ' .. (id or 'NIL') .. ', args.data = ') logger.debugPrint(args and args.data)
+                            -- logger.print('name == builder.proposalCreate, id = ' .. (id or 'NIL') .. ', args.data = ') logger.debugPrint(args and args.data)
                             if id == 'streetTerminalBuilder' then
                                 -- waypoint, traffic light, my own waypoints built
                                 if args and args.proposal and args.proposal.proposal
@@ -4054,7 +4110,7 @@ function data()
                                 )
                             )
 
-                            -- LOLLO TODO this seems unnecessary after build 35715, test it on
+                            -- LOLLO TODO this seems unnecessary after build 35716, test it on
                             -- logger.print('the con config menu was closed, about to send command BUILD_SNAPPY_STREET_EDGES_REQUESTED, conId = ' .. conId)
                             -- api.cmd.sendCommand(
                             --     api.cmd.make.sendScriptEvent(

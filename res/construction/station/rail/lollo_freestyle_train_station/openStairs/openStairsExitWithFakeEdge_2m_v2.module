@@ -28,14 +28,9 @@ function data()
 		},
 		type = _constants.openStairsExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-			return moduleHelpers.openStairs.stairsExitWithEdgeModule_v2_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true, true)
-			-- local transf = moduleHelpers.openStairs.getExitModelTransf(slotTransf, slotId, params)
-			-- result.models[#result.models + 1] = {
-			-- 	id = 'lollo_freestyle_train_station/icon/yellow.mdl',
-			-- 	slotId = slotId,
-			-- 	transf = transf,
-			-- 	tag = tag
-			-- }
+			return moduleHelpers.openStairs.stairsExitWithEdgeModule_v2_updateFn(
+				result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false, true
+			)
 		end,
 
 		getModelsFn = function(params)
