@@ -6,27 +6,39 @@ function data()
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
     local function _addGround(transf, yShift, result, wallBehindModelId)
+--[[
         local _faceTransformed = wallBehindModelId == nil
-            and transfUtils.getFaceTransformed_FAST(
-                transf,
-                {
-                    {-0.5, -0.2, 0, 1.0},
-                    {0.5, -0.2, 0, 1.0},
-                    {0.5, 0.5 + yShift, 0, 1.0},
-                    {-0.5, 0.5 + yShift, 0, 1.0},
-                    -- {x, positive backwards, z, 1}
-                }
-            )
-            or transfUtils.getFaceTransformed_FAST(
-                transf,
-                {
-                    {-0.5, -0.2, 0, 1.0},
-                    {0.5, -0.2, 0, 1.0},
-                    {0.5, 1.0 + yShift, 0, 1.0},
-                    {-0.5, 1.0 + yShift, 0, 1.0},
-                    -- {x, positive backwards, z, 1}
-                }
-            )
+        and transfUtils.getFaceTransformed_FAST(
+            transf,
+            {
+                {-0.5, -0.2, 0, 1.0},
+                {0.5, -0.2, 0, 1.0},
+                {0.5, 0.5 + yShift, 0, 1.0},
+                {-0.5, 0.5 + yShift, 0, 1.0},
+                -- {x, positive outwards, z, 1}
+            }
+        )
+        or transfUtils.getFaceTransformed_FAST(
+            transf,
+            {
+                {-0.5, -0.2, 0, 1.0},
+                {0.5, -0.2, 0, 1.0},
+                {0.5, 1.0 + yShift, 0, 1.0}, 
+                {-0.5, 1.0 + yShift, 0, 1.0},
+                -- {x, positive outwards, z, 1}
+            }
+        )
+]]
+        local _faceTransformed = transfUtils.getFaceTransformed_FAST(
+            transf,
+            {
+                {-0.5, -0.2, 0, 1.0},
+                {0.5, -0.2, 0, 1.0},
+                {0.5, 0.5 + yShift, 0, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                {-0.5, 0.5 + yShift, 0, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                -- {x, positive outwards, z, 1}
+            }
+        )
         table.insert(
             result.groundFaces,
             {
@@ -259,10 +271,10 @@ function data()
             for _, transfData in pairs(params.transfs_ground) do
                 if transfData.groundBridgeTunnel_012 == 2 then -- tunnel
                     _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId_Tunnel, wallBaseModelId)
-                else
+                else -- ground or bridge
                     _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
                 end
-                if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then
+                if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then -- ground
                     _addGround(transfData.transf, _yStart, result, wallBehindModelId)
                 end
             end

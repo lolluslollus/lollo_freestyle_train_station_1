@@ -25,7 +25,9 @@ function data()
 		},
 		type = _constants.openStairsExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-			return moduleHelpers.openStairs.stairsExitWithEdgeModule_v2_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false)
+			return moduleHelpers.openStairs.stairsExitWithEdgeModule_v2_updateFn(
+				result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false, false
+			)
 		end,
 
 		getModelsFn = function(params)
