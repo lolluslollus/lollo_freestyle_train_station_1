@@ -39,7 +39,7 @@ function data()
 			-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			logger.print('subway.module.updateFn starting')
 			logger.print('slotId =') logger.debugPrint(slotId)
-			logger.print('updateScriptParams =') logger.debugPrint(updateScriptParams)
+			logger.print('subway.module.updateScriptParams =') logger.debugPrint(updateScriptParams)
 			-- logger.print('params.subways =') logger.debugPrint(params.subways)
 			local subwayConFileName = params and params.subways and params.subways[slotId] and params.subways[slotId].subwayConFileName
 			logger.print('subwayConFileName =', subwayConFileName or 'NIL')

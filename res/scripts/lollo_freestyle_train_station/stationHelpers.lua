@@ -1609,8 +1609,10 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
     for _, edgeId in pairs(arrayUtils.getConcatValues(result.platforms.jointNeighbourEdges.edge1Ids, result.platforms.jointNeighbourEdges.edge2Ids)) do
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
         for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
-            if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
-                arrayUtils.addUnique(result.platforms.jointNeighbourNodes.outerLoneNodeIds, nodeId)
+            if nodeId ~= result.platforms.stationEndNodeIds.node1Id and nodeId ~= result.platforms.stationEndNodeIds.node2Id then
+                if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
+                    arrayUtils.addUnique(result.platforms.jointNeighbourNodes.outerLoneNodeIds, nodeId)
+                end
             end
         end
         result.platforms.jointNeighbourEdges.props[edgeId] = {
@@ -1622,8 +1624,10 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
     for _, edgeId in pairs(arrayUtils.getConcatValues(result.tracks.jointNeighbourEdges.edge1Ids, result.tracks.jointNeighbourEdges.edge2Ids)) do
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
         for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
-            if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
-                arrayUtils.addUnique(result.tracks.jointNeighbourNodes.outerLoneNodeIds, nodeId)
+            if nodeId ~= result.tracks.stationEndNodeIds.node1Id and nodeId ~= result.tracks.stationEndNodeIds.node2Id then
+                if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
+                    arrayUtils.addUnique(result.tracks.jointNeighbourNodes.outerLoneNodeIds, nodeId)
+                end
             end
         end
         result.tracks.jointNeighbourEdges.props[edgeId] = {
@@ -1656,7 +1660,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
     return result
 end
 
-helpers.getStationTrackEndEntities = function(stationConstructionId, isSkipLogging)
+helpers.getStationTrackEndEntities = function(stationConstructionId, isSkipLogging, nRemovedTerminal)
     logger.print('_getStationTrackEndEntities started, conId =', stationConstructionId or 'NIL')
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         if isSkipLogging then return nil end
@@ -1684,10 +1688,12 @@ helpers.getStationTrackEndEntities = function(stationConstructionId, isSkipLoggi
     local conParams = con.params -- LOLLO NOTE addressing con, which is huge, can take 100's of msec, so we break it up
     local result = {}
     for t = 1, #conParams.terminals do
-        local _terminalData = conParams.terminals[t]
-        local _platformEdgeLists = _terminalData.platformEdgeLists
-        local _trackEdgeLists = _terminalData.trackEdgeLists
-        result[t] = _getStationTrackEndEntities4T(t, frozenEdgeIds_indexed, frozenNodeIds_indexed, _platformEdgeLists, _trackEdgeLists)
+        if t ~= nRemovedTerminal then
+            local _terminalData = conParams.terminals[t]
+            local _platformEdgeLists = _terminalData.platformEdgeLists
+            local _trackEdgeLists = _terminalData.trackEdgeLists
+            result[t] = _getStationTrackEndEntities4T(t, frozenEdgeIds_indexed, frozenNodeIds_indexed, _platformEdgeLists, _trackEdgeLists)
+        end
     end
 
     -- logger.print('getStationEndEntities result =') logger.debugPrint(result)

@@ -11,14 +11,14 @@ function data()
                         {
                             -- materials = {'lollo_freestyle_train_station/icon/red.mtl'},
                             materials = {
-                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey_low_prio.mtl',
+                                'lollo_freestyle_train_station/wall_grey_3_low_prio.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/bridge_station/belly_2_5m_2m_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/bridge_station/belly_5m_1m_lod0.msh',
                             transf = {1.0375, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1},
-                            -- transf = { _mdlHelpers.getPlatformStretchFactor(1, 2.5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1, },
+                            -- transf = { _mdlHelpers.getPlatformStretchFactor(1, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1, 1, },
                         },
                     },
-                    name = 'era_c_belly_2_5m_2m',
+                    name = 'era_a_belly_5m_1m',
                     -- transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                 },
                 static = false,

@@ -32,11 +32,12 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - To visualise the lanes and the splits, start the game in debug mode and press <AltGr> + <L>. This is particularly useful with multi-level underground stations. Try to lay platforms and tracks smoothly and cleanly.
 - To work underground, use <NumPad 4> or the "Look Underground" track construction.
 - Platforms only carry passengers or cargo if they are part of a terminal.
-- 2.5 m platforms do not agree with bridges and tunnels. My "no railing" bridges help, tunnels can't be helped.
+- 2.5 m platforms do not agree with bridges and tunnels. My bridges help, tunnels can't be helped.
 - This mod adds bridges to help with elevated stations.
 - Very thin paths help with certain setups: those are in my Street Fine Tuning mod.
 - This mod adds pedestrian paths and bridges; some turn into bridges after placing them. For precision work, use the Street Fine Tuning "chunks" and "splitter" constructions.
 - You can use pedestrian paths and bridges to link your station to the outside world. Their connections may appear broken when the construction menu is open, but repair themselves after you closed it.
+- When you remove a terminal, the station will fully update after the construction menu is closed.
 - Sound effects for stations are in my dedicated mod.
 - Sound effects for trains are in my dedicated mod.
 - Extra ground textures are in my terrain tweaks mod.
@@ -388,6 +389,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["BuildSubwayInProgress"] = "Building subways...",
 			["ConConfigWindowTitle"] = "Settings",
 			["DifferentPlatformWidths"] = "Avoid different track widths with cargo stations",
+			["ErrorRemovingTerminal"] = "Error removing terminal",
+			["ErrorRemovingTerminalHere"] = "Error removing terminal here",
 			["GoBack"] = "Go back",
 			["GoThere"] = "Go there",
 			["Join"] = "Join",
@@ -506,6 +509,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["wallBehind_isOnBridges"] = "Supporting walls on bridges",
 			["wallWithNoModelsHere"] = "Here is a wall with no parts, configure it or bulldoze it",
 			["YShift"] = "Shift m",
+			["YShiftFine"] = "Fine shift m",
 			["ZDelta"] = "Slope",
 			["ZRotation"] = "Bending",
 
@@ -543,11 +547,12 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Um die Fahrspuren und die Spaltungen zu visualisieren, starten Sie das Spiel im Debug-Modus und drücken Sie <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich. Versuchen Sie, Gleise und Bahnsteige sauber zu verlegen.
 - Um unterirdisch zu arbeiten, verwenden Sie <NumPad 4> oder die Gleiskonstruktion "Unterirdisch suchen".
 - Bahnsteige befördern nur dann Passagiere oder Fracht, wenn sie Teil eines Terminals sind.
-- 2,5 m hohe Bahnsteige vertragen sich nicht mit Brücken und Tunneln. Meine "geländerlosen" Brücken helfen, bei Tunneln kann man nichts machen.
+- 2,5 m hohe Bahnsteige vertragen sich nicht mit Brücken und Tunneln. Meine Brücken helfen, bei Tunneln kann man nichts machen.
 - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
 - Sehr dünne Pfade helfen bei bestimmten Setups: diese sind in meinem "Street Fine Tuning" Mod.
 - Dieser Mod fügt Fußgängerwege und Brücken hinzu; einige verwandeln sich in Brücken, nachdem sie platziert wurden. Für Präzisionsarbeit, verwenden Sie die "Street Fine Tuning" "Chunks" und "Splits" Konstruktionen.
-- Du kannst mit Fußgängerwegen und Brücken deinen Bahnhof mit der Außenwelt verbinden. Diese Verbindungen können zunächst als kaputt erscheinen, wenn das Konstrultionsmenu offen ist; sie reparieren sich aber von selbst, wenn das Menu sich schliesst.
+- Du kannst mit Fußgängerwegen und Brücken deinen Bahnhof mit der Außenwelt verbinden. Diese Verbindungen können zunächst als kaputt erscheinen, wenn das Konstruktionsmenü offen ist; sie reparieren sich aber von selbst, wenn das Menu sich schliesst.
+- Wenn du ein Terminal entfernst, wird der Bahnhof erst nach Schliessen des Konstruktionsmenüs völlig aktualisiert.
 - Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
 - Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
 - Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
@@ -897,6 +902,8 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["BuildSubwayInProgress"] = "Bau von Unterführungen...",
 			["ConConfigWindowTitle"] = "Einstellungen",
 			["DifferentPlatformWidths"] = "Vermeide unterschiedliche Gleisbreiten bei Frachtbahnhöfen",
+			["ErrorRemovingTerminal"] = "Fehler beim Löschen eines Terminals",
+			["ErrorRemovingTerminalHere"] = "Fehler beim Löschen eines Terminals hier",
 			["GoBack"] = "Zurückgehen",
 			["GoThere"] = "Dorthin gehen",
 			["Join"] = "Beitreten",
@@ -1016,6 +1023,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["wallBehind_isOnBridges"] = "Stützwand auf Brücken",
 			["wallWithNoModelsHere"] = "Hier steht eine Mauer ohne Teile, konfigurieren Sie sie oder reißen Sie sie ab.",
 			["YShift"] = "Versetzung m",
+			["YShiftFine"] = "Versetzung fein, m",
 			["ZDelta"] = "Steigung",
 			["ZRotation"] = "Biegung",
 

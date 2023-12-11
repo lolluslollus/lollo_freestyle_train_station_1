@@ -1,6 +1,5 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
-local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
 -- LOLLO NOTE we need this to avoid the street edges trying to snap to each other while configuring.
 -- After build 35716, non-snappy edges will throw collision when they are connected to the road network and the user opens the config menu,
@@ -28,14 +27,7 @@ function data()
 		},
 		type = _constants.flatPassengerEdgeModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-			return moduleHelpers.flatAreas.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true, true)
-			-- local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, false)
-			-- result.models[#result.models + 1] = {
-			-- 	id = 'lollo_freestyle_train_station/icon/yellow.mdl',
-			-- 	slotId = slotId,
-			-- 	transf = zAdjustedTransf,
-			-- 	tag = tag
-			-- }
+			return moduleHelpers.flatAreas.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false, true)
 		end,
 
 		getModelsFn = function(params)

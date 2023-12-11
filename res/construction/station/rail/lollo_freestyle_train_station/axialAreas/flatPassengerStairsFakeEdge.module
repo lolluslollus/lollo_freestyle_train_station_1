@@ -28,7 +28,7 @@ function data()
 		},
 		type = _constants.axialPassengerEdgeModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-			return moduleHelpers.axialAreas.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true, true)
+			return moduleHelpers.axialAreas.exitWithEdgeModule_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false, true)
 			-- local adjustedTransf = moduleHelpers.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 			-- result.models[#result.models + 1] = {
 			-- 	id = 'lollo_freestyle_train_station/icon/yellow.mdl',

@@ -174,11 +174,11 @@ function data()
 						message = nil,
 						skipCollisionCheck = true,
 					},
-					[_constants.openStairsExitModuleType] = { -- probably useless
-						maxModules = -1,
-						message = nil,
-						skipCollisionCheck = true,
-					},
+					-- [_constants.openStairsExitModuleType] = { -- probably useless
+					-- 	maxModules = -1,
+					-- 	message = nil,
+					-- 	skipCollisionCheck = true,
+					-- },
 					-- [_constants.axialPassengerEdgeModuleType] = { -- probably useless
 					-- 	maxModules = -1,
 					-- 	message = nil,
@@ -311,863 +311,814 @@ function data()
 			local topBottomTwinIndex = 1
 -- local timeMsec0 = os.clock() * 1000
 			for t = 1, #params.terminals do
-				-- this is only a test to see if the transformation was ok. They match beautifully! Use this when talking to UG.
-				-- if #result.edgeLists > 0 then
-				-- 	local firstPosTanX2 = result.edgeLists[1].edges
-				-- 	logger.print('firstPosTanX2 =') logger.debugPrint(firstPosTanX2)
-				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
-				-- 	logger.print('retransformed first edge =') logger.debugPrint(retransformedFirstEdge)
-				-- end
-				local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal:
-				-- everything except the platforms and the terminal deco will vary along with it.
-				result.laneZs[t] = _laneZ
+				local _terminalSlotId = result.mangleId(t, 0, _constants.idBases.terminalSlotId)
+				if _terminalSlotId ~= nil then -- avoid crash after deleting a terminal and placing something on it
+					-- this is only a test to see if the transformation was ok. They match beautifully!
+					-- if #result.edgeLists > 0 then
+					-- 	local firstPosTanX2 = result.edgeLists[1].edges
+					-- 	logger.print('firstPosTanX2 =') logger.debugPrint(firstPosTanX2)
+					-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
+					-- 	logger.print('retransformed first edge =') logger.debugPrint(retransformedFirstEdge)
+					-- end
+					local _laneZ = _constants.platformHeight -- we could also make it vary for each terminal:
+					-- everything except the platforms and the terminal deco will vary along with it.
+					result.laneZs[t] = _laneZ
 
-				local _terminalData = params.terminals[t] -- write this away to speed up accesses to it
-				local isCargoTerminal = _terminalData.isCargo
-				if isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
+					local _terminalData = params.terminals[t] -- write this away to speed up accesses to it
+					local _cpfs = _terminalData.centrePlatformsFineRelative -- idem
+					local _isCargoTerminal = _terminalData.isCargo
+					if _isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
 
-				local isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
+					local _isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
 
-				local function _addCargoShelves()
-					if not(isCargoTerminal) then return end
+					local function _addCargoShelves()
+						if not(_isCargoTerminal) then return end
 
-					local _decoSpacing = {-0.1, 2, -1.1, 2}
-					local _iMax = #_terminalData.centrePlatformsRelative
-					local iss = {}
-					for i = 2, _iMax, 3 do iss[#iss+1] = i end
-					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
+						local _decoSpacing = {-0.1, 2, -1.1, 2}
+						local _iMax = #_terminalData.centrePlatformsRelative
+						local iss = {}
+						for i = 2, _iMax, 3 do iss[#iss+1] = i end
+						-- fill the last if any
+						if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
 
-					for _, i in pairs(iss) do
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
-						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no cargo shelves in tunnels unless we are at the entrance
-							table.insert(result.slots, {
-								-- height = 0,
-								id = result.mangleId(t, i, _constants.idBases.cargoShelfSlotId),
-								spacing = _decoSpacing,
-								transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
-								type = _constants.cargoShelfModuleType,
-							})
-						end
-					end
-				end
-				_addCargoShelves()
-
-				local function _addSlopedAreas()
-					local _iMax = #_terminalData.centrePlatformsRelative
-					local iss = {}
-					for i = 2, _iMax, 3 do iss[#iss+1] = i end
-					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
-
-					for _, i in pairs(iss) do
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
-						local cplTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
-						-- no thin extensions in tunnels unless we are at the entrance
-						if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) and not(isCargoTerminal) then
-							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x2_5SlotId then
-								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 2.5)
-								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x2_5SlotId)
+						for _, i in pairs(iss) do
+							local cpl = _terminalData.centrePlatformsRelative[i]
+							local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
+							local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+							if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no cargo shelves in tunnels unless we are at the entrance
 								table.insert(result.slots, {
 									-- height = 0,
-									id = myId,
-									-- 0, 3} and 3, 0} shift this along the track so it avoids flat areas,
-									-- which have the same thing reversed.
-									-- This way, sloped areas and flat areas can be easily combined.
-									spacing = isTrackOnPlatformLeft and {1.5, 0, 0, 3} or {0, 1.5, 3, 0},
-									-- transf = transfUtilsUG.mul(
-									-- 	cplTransf,
-									-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
-									-- ),
-									transf = transfUtils.getTransf_ZRotatedP90_Shifted(
-										cplTransf,
-										{0, yShiftOutside, 0}
-									),
-									type = _constants.slopedPassengerArea1x2_5ModuleType,
+									id = result.mangleId(t, i, _constants.idBases.cargoShelfSlotId),
+									spacing = _decoSpacing,
+									transf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
+									type = _constants.cargoShelfModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess, 2.5)
-							end
-						end
-						-- thick extensions only on ground or at tunnel entrances, never on bridges
-						if cpl.type == 0 or (cpl.type == 2 and cplM1.type == 0) or (cpl.type == 2 and cplP1.type == 0) then
-							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
-								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 5)
-								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
-								table.insert(result.slots, {
-									-- height = 0,
-									id = myId,
-									-- 0, 3} and 3, 0} shift this along the track so it avoids flat areas,
-									-- which have the same thing reversed.
-									-- This way, sloped areas and flat areas can be easily combined.
-									spacing = isTrackOnPlatformLeft and {2, 0, 0, 3} or {0, 2, 3, 0},
-									-- transf = transfUtilsUG.mul(
-									-- 	cplTransf,
-									-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
-									-- ),
-									transf = transfUtils.getTransf_ZRotatedP90_Shifted(
-										cplTransf,
-										{0, yShiftOutside, 0}
-									),
-									type = isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
-								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess, 5)
-							end
-							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
-								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 10)
-								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)
-								table.insert(result.slots, {
-									-- height = 0,
-									id = myId,
-									spacing = isTrackOnPlatformLeft and {3, 2, 0, 3} or {2, 3, 3, 0},
-									-- transf = transfUtilsUG.mul(
-									-- 	cplTransf,
-									-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
-									-- ),
-									transf = transfUtils.getTransf_ZRotatedP90_Shifted(
-										cplTransf,
-										{0, yShiftOutside, 0}
-									),
-									type = isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
-								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess, 10)
-							end
-							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
-								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 20)
-								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
-								table.insert(result.slots, {
-									-- height = 0,
-									id = myId,
-									spacing = isTrackOnPlatformLeft and {8, 4, 0, 3} or {4, 8, 3, 0},
-									-- transf = transfUtilsUG.mul(
-									-- 	cplTransf,
-									-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
-									-- ),
-									transf = transfUtils.getTransf_ZRotatedP90_Shifted(
-										cplTransf,
-										{0, yShiftOutside, 0}
-									),
-									type = isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
-								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess, 20)
 							end
 						end
 					end
-				end
-				_addSlopedAreas()
+					_addCargoShelves()
 
-				local function _addFlatAreas()
-					local nCentrePlatformsRelative = #_terminalData.centrePlatformsRelative
-					local _iMin = 2
-					local _iMax = nCentrePlatformsRelative -1
-					for i = _iMin, _iMax, 1 do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						-- local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
-						if cpl.type ~= 2 and cplP1.type ~= 2 then -- no tunnels
-							local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[i].posTanX2
-							local yShift = cpl.width + result.getOccupiedInfo4SlopedAreas(t, i).yShift
-							local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
-							local myTransf = transfUtils.getTransf_ZShifted(
-								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
-								_laneZ
-							)
-							if not(isCargoTerminal) then
-								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerEdgeSlotId then
-									local myId = result.mangleId(t, i, _constants.idBases.flatPassengerEdgeSlotId)
+					local function _addSlopedAreas()
+						local _iMax = #_terminalData.centrePlatformsRelative
+						local iss = {}
+						for i = 2, _iMax, 3 do iss[#iss+1] = i end
+						-- fill the last if any
+						if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
+
+						for _, i in pairs(iss) do
+							local cpl = _terminalData.centrePlatformsRelative[i]
+							local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
+							local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+							local cplTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
+							-- no thin extensions in tunnels unless we are at the entrance
+							if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) and not(_isCargoTerminal) then
+								if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x2_5SlotId then
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 2.5)
+									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x2_5SlotId)
 									table.insert(result.slots, {
 										-- height = 0,
 										id = myId,
-										spacing = {0.5, 1.5, -0.1, 1},
-										transf = myTransf,
-										type = _constants.flatPassengerEdgeModuleType,
+										-- 0, 3} and 3, 0} shift this along the track so it avoids flat areas,
+										-- which have the same thing reversed.
+										-- This way, sloped areas and flat areas can be easily combined.
+										spacing = _isTrackOnPlatformLeft and {1.5, 0, 0, 3} or {0, 1.5, 3, 0},
+										-- transf = transfUtilsUG.mul(
+										-- 	cplTransf,
+										-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+										-- ),
+										transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+											cplTransf,
+											{0, yShiftOutside, 0}
+										),
+										type = _constants.slopedPassengerArea1x2_5ModuleType,
 									})
-									if params.modules[myId] ~= nil then
-										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatPassengerEdgeSlotId)
-									end
+									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess, 2.5)
 								end
 							end
-							if cpl.type == 0 and cplP1.type == 0 then -- ground
-								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flushExitSlotId then
-									local myId = result.mangleId(t, i, _constants.idBases.flushExitSlotId)
+							-- thick extensions only on ground or at tunnel entrances, never on bridges
+							if cpl.type == 0 or (cpl.type == 2 and cplM1.type == 0) or (cpl.type == 2 and cplP1.type == 0) then
+								if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 5)
+									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
 									table.insert(result.slots, {
 										-- height = 0,
 										id = myId,
-										spacing = {0.5, 1.5, -0.1, 1},
-										transf = myTransf,
-										type = isCargoTerminal and _constants.flushCargoExitModuleType or _constants.flushPassengerExitModuleType,
+										-- 0, 3} and 3, 0} shift this along the track so it avoids flat areas,
+										-- which have the same thing reversed.
+										-- This way, sloped areas and flat areas can be easily combined.
+										spacing = _isTrackOnPlatformLeft and {2, 0, 0, 3} or {0, 2, 3, 0},
+										-- transf = transfUtilsUG.mul(
+										-- 	cplTransf,
+										-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+										-- ),
+										transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+											cplTransf,
+											{0, yShiftOutside, 0}
+										),
+										type = _isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
 									})
-									if params.modules[myId] ~= nil then
-										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flushExitSlotId)
-									end
+									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess, 5)
+								end
+								if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 10)
+									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x10SlotId)
+									table.insert(result.slots, {
+										-- height = 0,
+										id = myId,
+										spacing = _isTrackOnPlatformLeft and {3, 2, 0, 3} or {2, 3, 3, 0},
+										-- transf = transfUtilsUG.mul(
+										-- 	cplTransf,
+										-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+										-- ),
+										transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+											cplTransf,
+											{0, yShiftOutside, 0}
+										),
+										type = _isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
+									})
+									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess, 10)
+								end
+								if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
+									local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 20)
+									local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x20SlotId)
+									table.insert(result.slots, {
+										-- height = 0,
+										id = myId,
+										spacing = _isTrackOnPlatformLeft and {8, 4, 0, 3} or {4, 8, 3, 0},
+										-- transf = transfUtilsUG.mul(
+										-- 	cplTransf,
+										-- 	{ 0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, yShiftOutside, 0, 1 }
+										-- ),
+										transf = transfUtils.getTransf_ZRotatedP90_Shifted(
+											cplTransf,
+											{0, yShiftOutside, 0}
+										),
+										type = _isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
+									})
+									_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess, 20)
 								end
 							end
-							if cpl.type == 0 and cplP1.type == 0 then -- ground
-								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsOrRampSlotId then
-									local myId = result.mangleId(t, i, _constants.idBases.flatStairsOrRampSlotId)
-									table.insert(result.slots, {
-										-- height = 0,
-										id = myId,
-										spacing = {0.5, 1.5, -0.1, 1},
-										transf = myTransf,
-										type = isCargoTerminal and _constants.flatCargoRampModuleType or _constants.flatPassengerStairsModuleType,
-									})
-									if params.modules[myId] ~= nil then
-										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStairsOrRampSlotId)
-									end
-								end
-								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea5x5SlotId then
-									local myId = result.mangleId(t, i, _constants.idBases.flatArea5x5SlotId)
-									table.insert(result.slots, {
-										-- height = 0,
-										id = myId,
-										spacing = {0.5, 3, -0.1, 2},
-										transf = myTransf,
-										type = isCargoTerminal and _constants.flatCargoArea5x5ModuleType or _constants.flatPassengerArea5x5ModuleType,
-									})
-									if params.modules[myId] ~= nil then
-										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea5x5SlotId)
-									end
-								end
-								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea8x5SlotId then
-									local myId = result.mangleId(t, i, _constants.idBases.flatArea8x5SlotId)
-									table.insert(result.slots, {
-										-- height = 0,
-										id = myId,
-										spacing = {0.5, 3, -0.1, 3},
-										transf = myTransf,
-										type = isCargoTerminal and _constants.flatCargoArea8x5ModuleType or _constants.flatPassengerArea8x5ModuleType,
-									})
-									if params.modules[myId] ~= nil then
-										_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea8x5SlotId)
-									end
-								end
-								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea8x10SlotId then
-									local myId = result.mangleId(t, i, _constants.idBases.flatArea8x10SlotId)
-									table.insert(result.slots, {
-										-- height = 0,
-										id = myId,
-										spacing = {0.5, 3, -0.1, 3},
-										transf = myTransf,
-										type = isCargoTerminal and _constants.flatCargoArea8x10ModuleType or _constants.flatPassengerArea8x10ModuleType,
-									})
-									if params.modules[myId] ~= nil then
-										_setOccupiedInfo4LargeFlatAreas(t, i, myId, nCentrePlatformsRelative)
-									end
-								end
-								if not(isCargoTerminal) then
+						end
+					end
+					_addSlopedAreas()
+
+					local function _addFlatAreas()
+						local nCentrePlatformsRelative = #_terminalData.centrePlatformsRelative
+						local _iMin = 2
+						local _iMax = nCentrePlatformsRelative -1
+						for i = _iMin, _iMax, 1 do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges
+							local cpl = _terminalData.centrePlatformsRelative[i]
+							-- local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
+							local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+							if cpl.type ~= 2 and cplP1.type ~= 2 then -- no tunnels
+								local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[i].posTanX2
+								local yShift = cpl.width + result.getOccupiedInfo4SlopedAreas(t, i).yShift
+								local myPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(crossConnectorPosTanX2, yShift)
+								local myTransf = transfUtils.getTransf_ZShifted(
+									moduleHelpers.getPlatformObjectTransf_AlwaysVertical(myPosTanX2),
+									_laneZ
+								)
+								if not(_isCargoTerminal) then
 									if not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStation0MSlotId then
-										local myId = result.mangleId(t, i, _constants.idBases.flatStation0MSlotId)
+									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerEdgeSlotId then
+										local myId = result.mangleId(t, i, _constants.idBases.flatPassengerEdgeSlotId)
 										table.insert(result.slots, {
 											-- height = 0,
 											id = myId,
-											spacing = isTrackOnPlatformLeft and {1, 1, 3, -0.1} or {1, 1, -0.1, 3},
+											spacing = {0.5, 1.5, -0.1, 1},
 											transf = myTransf,
-											type = _constants.flatPassengerStation0MModuleType,
+											type = _constants.flatPassengerEdgeModuleType,
+										})
+										if params.modules[myId] ~= nil then
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatPassengerEdgeSlotId)
+										end
+									end
+								end
+								if cpl.type == 0 and cplP1.type == 0 then -- ground
+									if not(result.getOccupiedInfo4FlatAreas(t, i))
+									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flushExitSlotId then
+										local myId = result.mangleId(t, i, _constants.idBases.flushExitSlotId)
+										table.insert(result.slots, {
+											-- height = 0,
+											id = myId,
+											spacing = {0.5, 1.5, -0.1, 1},
+											transf = myTransf,
+											type = _isCargoTerminal and _constants.flushCargoExitModuleType or _constants.flushPassengerExitModuleType,
+										})
+										if params.modules[myId] ~= nil then
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flushExitSlotId)
+										end
+									end
+								end
+								if cpl.type == 0 and cplP1.type == 0 then -- ground
+									if not(result.getOccupiedInfo4FlatAreas(t, i))
+									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsOrRampSlotId then
+										local myId = result.mangleId(t, i, _constants.idBases.flatStairsOrRampSlotId)
+										table.insert(result.slots, {
+											-- height = 0,
+											id = myId,
+											spacing = {0.5, 1.5, -0.1, 1},
+											transf = myTransf,
+											type = _isCargoTerminal and _constants.flatCargoRampModuleType or _constants.flatPassengerStairsModuleType,
+										})
+										if params.modules[myId] ~= nil then
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStairsOrRampSlotId)
+										end
+									end
+									if not(result.getOccupiedInfo4FlatAreas(t, i))
+									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea5x5SlotId then
+										local myId = result.mangleId(t, i, _constants.idBases.flatArea5x5SlotId)
+										table.insert(result.slots, {
+											-- height = 0,
+											id = myId,
+											spacing = {0.5, 3, -0.1, 2},
+											transf = myTransf,
+											type = _isCargoTerminal and _constants.flatCargoArea5x5ModuleType or _constants.flatPassengerArea5x5ModuleType,
+										})
+										if params.modules[myId] ~= nil then
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea5x5SlotId)
+										end
+									end
+									if not(result.getOccupiedInfo4FlatAreas(t, i))
+									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea8x5SlotId then
+										local myId = result.mangleId(t, i, _constants.idBases.flatArea8x5SlotId)
+										table.insert(result.slots, {
+											-- height = 0,
+											id = myId,
+											spacing = {0.5, 3, -0.1, 3},
+											transf = myTransf,
+											type = _isCargoTerminal and _constants.flatCargoArea8x5ModuleType or _constants.flatPassengerArea8x5ModuleType,
+										})
+										if params.modules[myId] ~= nil then
+											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea8x5SlotId)
+										end
+									end
+									if not(result.getOccupiedInfo4FlatAreas(t, i))
+									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea8x10SlotId then
+										local myId = result.mangleId(t, i, _constants.idBases.flatArea8x10SlotId)
+										table.insert(result.slots, {
+											-- height = 0,
+											id = myId,
+											spacing = {0.5, 3, -0.1, 3},
+											transf = myTransf,
+											type = _isCargoTerminal and _constants.flatCargoArea8x10ModuleType or _constants.flatPassengerArea8x10ModuleType,
 										})
 										if params.modules[myId] ~= nil then
 											_setOccupiedInfo4LargeFlatAreas(t, i, myId, nCentrePlatformsRelative)
 										end
 									end
-									if not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStation5MSlotId then
-										local myId = result.mangleId(t, i, _constants.idBases.flatStation5MSlotId)
-										table.insert(result.slots, {
-											-- height = 0,
-											id = myId,
-											spacing = isTrackOnPlatformLeft and {1, 1, 3, -0.1} or {1, 1, -0.1, 3},
-											transf = myTransf,
-											type = _constants.flatPassengerStation5MModuleType,
-										})
-										if params.modules[myId] ~= nil then
-											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation5MSlotId)
+									if not(_isCargoTerminal) then
+										if not(result.getOccupiedInfo4FlatAreas(t, i))
+										or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStation0MSlotId then
+											local myId = result.mangleId(t, i, _constants.idBases.flatStation0MSlotId)
+											table.insert(result.slots, {
+												-- height = 0,
+												id = myId,
+												spacing = _isTrackOnPlatformLeft and {1, 1, 3, -0.1} or {1, 1, -0.1, 3},
+												transf = myTransf,
+												type = _constants.flatPassengerStation0MModuleType,
+											})
+											if params.modules[myId] ~= nil then
+												_setOccupiedInfo4LargeFlatAreas(t, i, myId, nCentrePlatformsRelative)
+											end
 										end
-									end
-								end
-							elseif cpl.type == 1 and cplP1.type == 1 then -- bridge
-								if not(isCargoTerminal) then
-									if not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.sideLiftSlotId then
-										local myId = result.mangleId(t, i, _constants.idBases.sideLiftSlotId)
-										table.insert(result.slots, {
-											-- height = 0,
-											id = myId,
-											spacing = isTrackOnPlatformLeft and {1, 1, 3, -0.1} or {1, 1, -0.1, 3},
-											transf = myTransf,
-											type = _constants.passengerSideLiftModuleType,
-										})
-										if params.modules[myId] ~= nil then
-											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.sideLiftSlotId)
-										end
-									end
-									if i < #_terminalData.centrePlatformsRelative
-									and (not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.platformLiftSlotId) then
-										local xyZoomFactor = isTrackOnPlatformLeft and 1 or -1
-										-- local myTransf_xy = transfUtilsUG.mul(
-										-- 	moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
-										-- 	{ xyZoomFactor, 0, 0, 0,  0, xyZoomFactor, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
-										-- )
-										local myTransf_xy = transfUtils.getTransf_Scaled_Shifted(
-											moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
-											{xyZoomFactor, xyZoomFactor, 1},
-											{0, 0, _laneZ}
-										)
-										local myId = result.mangleId(t, i, _constants.idBases.platformLiftSlotId)
-										table.insert(result.slots, {
-											-- height = 0,
-											id = myId,
-											spacing = isTrackOnPlatformLeft and {3, -0.1, 1, 1} or {-0.1, 3, 1, 1},
-											transf = myTransf_xy,
-											type = _constants.passengerPlatformLiftModuleType,
-										})
-									end
-								end
-							end
-						end
-					end
-				end
-				_addFlatAreas()
-
-				local function _addAxialExits()
-					local ii_s = {1, #_terminalData.centrePlatformsFineRelative}
-					for _, ii in pairs(ii_s) do
-						local cpf = _terminalData.centrePlatformsFineRelative[ii]
-						local adjacentTransf = (ii == 1)
-							and moduleHelpers.getPlatformObjectTransf_WithYRotation(
-								-- transfUtils.getPosTanX2Normalised(
-									transfUtils.getPosTanX2Reversed(
-										cpf.posTanX2
-									)
-								-- )
-							)
-							or moduleHelpers.getPlatformObjectTransf_WithYRotation(
-								-- transfUtils.getPosTanX2Normalised(
-									cpf.posTanX2
-								-- )
-							)
-						local endPos = (ii == 1)
-							and cpf.posTanX2[1][1]
-							or cpf.posTanX2[2][1]
-						local myTransf = transfUtils.getTransf_ZShifted(
-							{
-								adjacentTransf[1], adjacentTransf[2], adjacentTransf[3], adjacentTransf[4],
-								adjacentTransf[5], adjacentTransf[6], adjacentTransf[7], adjacentTransf[8],
-								adjacentTransf[9], adjacentTransf[10], adjacentTransf[11], adjacentTransf[12],
-								endPos[1], endPos[2], endPos[3], 1
-							},
-							_laneZ
-						)
-						local flushExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialFlushExitSlotId)
-						table.insert(result.slots, {
-							-- height = 0,
-							id = flushExitId,
-							spacing = {1, -0.5, 1, 1},
-							transf = myTransf,
-							type = isCargoTerminal and _constants.axialFlushCargoExitModuleType or _constants.axialFlushPassengerExitModuleType,
-						})
-						if params.modules[flushExitId] ~= nil then
-							_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
-						end
-
-						if not(isCargoTerminal) then -- edges only for passengers
-							local edgeExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialEdgeSlotId)
-							table.insert(result.slots, {
-								-- height = 0,
-								id = edgeExitId,
-								spacing = {1, 1, 1, 1},
-								transf = myTransf,
-								type = _constants.axialPassengerEdgeModuleType,
-							})
-							if params.modules[edgeExitId] ~= nil then
-								_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
-							end
-						end
-
-						if cpf.type == 0 then -- ramps and stairs only on ground
-							local stairsOrRampExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialStairsOrRampSlotId)
-							table.insert(result.slots, {
-								-- height = 0,
-								id = stairsOrRampExitId,
-								spacing = {1, 1, 1, 1},
-								transf = myTransf,
-								type = isCargoTerminal and _constants.axialCargoExitModuleType or _constants.axialPassengerExitModuleType,
-							})
-							if params.modules[stairsOrRampExitId] ~= nil then
-								_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
-							end
-						end
-					end
-				end
-				_addAxialExits()
-
-				local function _addPlatformRoofsAndWalls()
-					local _roofSpacing = isTrackOnPlatformLeft and {-1.1, 2, -0.1, 0.9} or {2, -1.1, 0.9, -0.1}
-					local _wallSpacing = isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
-					-- make indexes
-					local _iMax = #_terminalData.centrePlatformsRelative
-					local iss = {}
-					for i = 2, _iMax, 3 do iss[#iss+1] = i end
-					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
-
-					for _, i in pairs(iss) do
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
-						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
-						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
-						myTransf = transfUtils.getTransf_ZShifted(myTransf, 3)
-						if not(isCargoTerminal) then
-							if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
-								table.insert(result.slots, {
-									id = result.mangleId(t, i, _constants.idBases.platformRoofSlotId),
-									spacing = _roofSpacing,
-									transf = myTransf,
-									type = _constants.platformRoofModuleType,
-								})
-							end
-						end
-
-						if (
-							not(result.getOccupiedInfo4FlatAreas(t, i-1))
-							or not(result.getOccupiedInfo4FlatAreas(t, i))
-							or not(result.getOccupiedInfo4FlatAreas(t, i+1))
-							or not(result.getOccupiedInfo4FlatAreas(t, i+2)) -- check 1 bit ahead because of the shift between flat areas and deco
-							-- or (isTrackOnPlatformLeft and not(result.getOccupiedInfo4FlatAreas(t, i+2)) or not(result.getOccupiedInfo4FlatAreas(t, i-2))) -- check 1 bit ahead because of the shift between flat areas and deco
-						)
-						then
-							local wallTransf = myTransf
-							local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(t, i).width
-							if slopedAreaWidth ~= 0 then
-								local platformWidth = _terminalData.centrePlatformsRelative[i].width
-								local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5)
-								local yShiftAreaBorder = isTrackOnPlatformLeft and -baseYShift4AreaBorder or baseYShift4AreaBorder
-								-- I need the transf here, merely shifting isPlatform2 cheap but wrong
-								wallTransf = transfUtils.getTransf_YShifted(myTransf, yShiftAreaBorder)
-							end
-							table.insert(result.slots, {
-								id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
-								spacing = _wallSpacing,
-								transf = wallTransf,
-								type = _constants.platformWallModuleType,
-							})
-						end
-					end
-				end
-				_addPlatformRoofsAndWalls()
-
-				local function _addTrackWalls()
-					-- check this coz it was added later
-					if type(_terminalData.centreTracksRelative) ~= 'table' then return end
-
-					-- do not confuse the tracks array with the platforms array: they are similar but different
-					local _wallSpacing = isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
-					local _iMax = #_terminalData.centreTracksRelative
-					local iss = {}
-					for i = 2, _iMax, 3 do iss[#iss+1] = i end
-					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
-
-					for _, i in pairs(iss) do
-						local ctl = _terminalData.centreTracksRelative[i]
-						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(ctl.posTanX2)
-						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
-
-						table.insert(result.slots, {
-							id = result.mangleId(t, i, _constants.idBases.trackWallSlotId),
-							spacing = _wallSpacing,
-							transf = transfUtils.getTransf_ZShifted(myTransf, 3),
-							type = _constants.trackWallModuleType,
-						})
-					end
-				end
-				_addTrackWalls()
-
-				local _addUpDownSlots = function()
-					if isCargoTerminal then return end
-
-					local _mySpacing = {3, -0.1, 1, 1}
-					local _iMax = #_terminalData.centrePlatformsRelative - 1
-					local _iMin = 2
-					for i = _iMin, _iMax, 1 do
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
-						local era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i)
-						local myTransf = transfUtils.getTransf_ZShifted(
-							moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
-							_laneZ
-						)
-						if cpl.type == 2 and cplP1.type == 2 then -- tunnels
-							local idM1_TunnelStairsUp = result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpSlotId)
-							local idP1_TunnelStairsUp = result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpSlotId)
-							local idM1_TunnelStairsUpDown = result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpDownSlotId)
-							local idP1_TunnelStairsUpDown = result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpDownSlotId)
-							if not(params.modules[idM1_TunnelStairsUp]) and not(params.modules[idP1_TunnelStairsUp])
-							and not(params.modules[idM1_TunnelStairsUpDown]) and not(params.modules[idP1_TunnelStairsUpDown])
-							then
-								table.insert(result.slots, {
-									-- height = 0,
-									id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId),
-									spacing = _mySpacing,
-									transf = myTransf,
-									type = _constants.tunnelStairsUpModuleType,
-								})
-								table.insert(result.slots, {
-									-- height = 0,
-									id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId),
-									spacing = _mySpacing,
-									transf = myTransf,
-									type = _constants.tunnelStairsUpDownModuleType,
-								})
-							end
-						else -- ground and bridges
-							local id_Underpass = result.mangleId(t, i, _constants.idBases.underpassSlotId)
-							local idM1_Underpass = result.mangleId(t, i-1, _constants.idBases.underpassSlotId)
-							local idP1_Underpass = result.mangleId(t, i+1, _constants.idBases.underpassSlotId)
-							local idM1_OpenStairsUpLeft = result.mangleId(t, i-1, _constants.idBases.openStairsUpLeftSlotId)
-							local idP1_OpenStairsUpLeft = result.mangleId(t, i+1, _constants.idBases.openStairsUpLeftSlotId)
-							local idM1_OpenStairsUpRight = result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)
-							local idP1_OpenStairsUpRight = result.mangleId(t, i+1, _constants.idBases.openStairsUpRightSlotId)
-							if not(params.modules[idM1_OpenStairsUpLeft]) and not(params.modules[idP1_OpenStairsUpLeft])
-							and not(params.modules[idM1_OpenStairsUpRight]) and not(params.modules[idP1_OpenStairsUpRight])
-							then
-								if not(params.modules[idM1_Underpass]) and not(params.modules[idP1_Underpass]) then
-									table.insert(result.slots, {
-										-- height = 0,
-										id = id_Underpass,
-										-- shape 0 1 2 3, only graphical
-										spacing = _mySpacing,
-										transf = myTransf,
-										type = _constants.underpassModuleType,
-									})
-								end
-								-- if cpl.type == 0 and cplP1.type == 0 then -- ground
-									if not(params.modules[id_Underpass]) then
-										table.insert(result.slots, {
-											-- height = 0,
-											id = result.mangleId(t, i, _constants.idBases.openLiftSlotId),
-											-- shape 0 1 2 3, only graphical
-											spacing = _mySpacing,
-											transf = myTransf,
-											type = _constants.openLiftModuleType,
-										})
-										if not(params.modules[idM1_Underpass]) and not(params.modules[idP1_Underpass]) then
-											local idM2_OpenStairsUpRight = i > _iMin and result.mangleId(t, i-2, _constants.idBases.openStairsUpRightSlotId) or nil
-											local idP2_OpenStairsUpRight = i < _iMax and result.mangleId(t, i+2, _constants.idBases.openStairsUpRightSlotId) or nil
-											local idM2_OpenStairsUpLeft = i > _iMin and result.mangleId(t, i-2, _constants.idBases.openStairsUpLeftSlotId) or nil
-											local idP2_OpenStairsUpLeft = i < _iMax and result.mangleId(t, i+2, _constants.idBases.openStairsUpLeftSlotId) or nil
-											if not(params.modules[idM2_OpenStairsUpRight]) and not(params.modules[idP2_OpenStairsUpRight])
-											and not(params.modules[idM2_OpenStairsUpLeft]) and not(params.modules[idP2_OpenStairsUpLeft])
-											then
-												if i ~= _iMin then
-													table.insert(result.slots, {
-														-- height = 0,
-														id = result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId),
-														spacing = _mySpacing,
-														transf = myTransf,
-														type = _constants.openStairsUpLeftModuleType,
-													})
-												end
-												if i ~= _iMax then
-													table.insert(result.slots, {
-														-- height = 0,
-														id = result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId),
-														spacing = _mySpacing,
-														transf = transfUtils.getTransf_ZRotated180(
-															myTransf
-														),
-														type = _constants.openStairsUpRightModuleType,
-													})
-												end
+										if not(result.getOccupiedInfo4FlatAreas(t, i))
+										or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStation5MSlotId then
+											local myId = result.mangleId(t, i, _constants.idBases.flatStation5MSlotId)
+											table.insert(result.slots, {
+												-- height = 0,
+												id = myId,
+												spacing = _isTrackOnPlatformLeft and {1, 1, 3, -0.1} or {1, 1, -0.1, 3},
+												transf = myTransf,
+												type = _constants.flatPassengerStation5MModuleType,
+											})
+											if params.modules[myId] ~= nil then
+												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatStation5MSlotId)
 											end
 										end
 									end
-								-- end
+								elseif cpl.type == 1 and cplP1.type == 1 then -- bridge
+									if not(_isCargoTerminal) then
+										if not(result.getOccupiedInfo4FlatAreas(t, i))
+										or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.sideLiftSlotId then
+											local myId = result.mangleId(t, i, _constants.idBases.sideLiftSlotId)
+											table.insert(result.slots, {
+												-- height = 0,
+												id = myId,
+												spacing = _isTrackOnPlatformLeft and {1, 1, 3, -0.1} or {1, 1, -0.1, 3},
+												transf = myTransf,
+												type = _constants.passengerSideLiftModuleType,
+											})
+											if params.modules[myId] ~= nil then
+												_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.sideLiftSlotId)
+											end
+										end
+										if i < #_terminalData.centrePlatformsRelative
+										and (not(result.getOccupiedInfo4FlatAreas(t, i))
+										or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.platformLiftSlotId) then
+											local xyZoomFactor = _isTrackOnPlatformLeft and 1 or -1
+											-- local myTransf_xy = transfUtilsUG.mul(
+											-- 	moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
+											-- 	{ xyZoomFactor, 0, 0, 0,  0, xyZoomFactor, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+											-- )
+											local myTransf_xy = transfUtils.getTransf_Scaled_Shifted(
+												moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
+												{xyZoomFactor, xyZoomFactor, 1},
+												{0, 0, _laneZ}
+											)
+											local myId = result.mangleId(t, i, _constants.idBases.platformLiftSlotId)
+											table.insert(result.slots, {
+												-- height = 0,
+												id = myId,
+												spacing = _isTrackOnPlatformLeft and {3, -0.1, 1, 1} or {-0.1, 3, 1, 1},
+												transf = myTransf_xy,
+												type = _constants.passengerPlatformLiftModuleType,
+											})
+										end
+									end
+								end
 							end
 						end
 					end
-				end
-				_addUpDownSlots()
+					_addFlatAreas()
 
-				local function _addTrackCrossings()
-					-- if isCargoTerminal then return end
-					-- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
-					-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
-					local _iiMax = #_terminalData.centrePlatformsFineRelative - 3 -- do not go past the station ends
-					local _iiMin = 4 -- idem
-					for ii = _iiMin, _iiMax do
-						local cpf = _terminalData.centrePlatformsFineRelative[ii]
-						local cpl = _terminalData.centrePlatformsRelative[cpf.leadingIndex]
-						local cpfPrevious = _terminalData.centrePlatformsFineRelative[ii-1]
-						if cpf.leadingIndex ~= cpfPrevious.leadingIndex then
-							local i = cpf.leadingIndex
-
-							local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[i].posTanX2
-							-- a bit of a bodge: I take the position from the connector,
-							-- which has no knowledge of the slope,
-							-- and the slope from the centre platform fine,
-							-- which is very slightly shifted from the connector. Not too bad.
-							local trackCrossingPosTanX2 = transfUtils.getPosTanX2Normalised(
-								transfUtils.getPosTanX2Reversed(crossConnectorPosTanX2), -- cross connectors go from the platform border to its centre, here we go toward the edge
-								cpl.width * 0.5 + 2.5 -- half platform width plus half track width is the centre of the track
-							)
-							local trackCrossingTransf = isTrackOnPlatformLeft
-								and moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
-								or moduleHelpers.getPlatformObjectTransf_WithYRotation(transfUtils.getPosTanX2Reversed(cpf.posTanX2))
-							trackCrossingTransf[13] = trackCrossingPosTanX2[2][1][1]
-							trackCrossingTransf[14] = trackCrossingPosTanX2[2][1][2]
-							trackCrossingTransf[15] = trackCrossingPosTanX2[2][1][3]
-
-							local trackCrossingId = result.mangleId(t, i, _constants.idBases.trackCrossingSlotId)
-							table.insert(result.slots, {
-								-- height = 0,
-								id = trackCrossingId,
-								spacing = {1.5, -0.5, 1, 1}, -- avoid module collisions with terminal slots
-								transf = trackCrossingTransf,
-								type = _constants.trackCrossingModuleType,
-							})
-
-							if result.terminateConstructionHookInfo.trackCrossingOppositePositions[t] == nil then
-								result.terminateConstructionHookInfo.trackCrossingOppositePositions[t] = {}
-							end
-							table.insert(result.terminateConstructionHookInfo.trackCrossingOppositePositions[t], {
-								t = t,
-								pos = transfUtils.getPositionRaisedBy(cpl.posTanX2[1][1], _laneZ)
-							})
-						end
-					end
-				end
-				_addTrackCrossings()
-
-				local function _addLanesAcross()
-					if isCargoTerminal then return end
-
-					for i = 2, #_terminalData.centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
-						local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[i].posTanX2
-						result.models[#result.models+1] = {
-							id = _constants.passengerLaneModelId,
-							transf = transfUtils.getTransf_ZShifted(
-								transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
+					local function _addAxialExits()
+						local ii_s = {1, #_cpfs}
+						for _, ii in pairs(ii_s) do
+							local cpf = _cpfs[ii]
+							local adjacentTransf = (ii == 1)
+								and moduleHelpers.getPlatformObjectTransf_WithYRotation(
+									-- transfUtils.getPosTanX2Normalised(
+										transfUtils.getPosTanX2Reversed(
+											cpf.posTanX2
+										)
+									-- )
+								)
+								or moduleHelpers.getPlatformObjectTransf_WithYRotation(
+									-- transfUtils.getPosTanX2Normalised(
+										cpf.posTanX2
+									-- )
+								)
+							local endPos = (ii == 1)
+								and cpf.posTanX2[1][1]
+								or cpf.posTanX2[2][1]
+							local myTransf = transfUtils.getTransf_ZShifted(
+								{
+									adjacentTransf[1], adjacentTransf[2], adjacentTransf[3], adjacentTransf[4],
+									adjacentTransf[5], adjacentTransf[6], adjacentTransf[7], adjacentTransf[8],
+									adjacentTransf[9], adjacentTransf[10], adjacentTransf[11], adjacentTransf[12],
+									endPos[1], endPos[2], endPos[3], 1
+								},
 								_laneZ
 							)
-						}
-						-- Simple flat areas (like smooth stairs or flush exits) will add their own positions outside, on top of these.
-						-- With sloped areas (aka extensions), if the player wants to stitch platforms together, they must set their own flush exits.
-						if not(result.getOccupiedInfo4SlopedAreas(t, i).id) then
-							if result.terminateConstructionHookInfo.autoStitchablePositions[t] == nil then result.terminateConstructionHookInfo.autoStitchablePositions[t] = {} end
-							local cpl = _terminalData.centrePlatformsRelative[i]
-							table.insert(
-								result.terminateConstructionHookInfo.autoStitchablePositions[t],
-								{
-									t = t,
-									-- lanePosTanX2 = cpl.posTanX2,
-									pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], _laneZ)
-								}
-							)
+							local flushExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialFlushExitSlotId)
+							table.insert(result.slots, {
+								-- height = 0,
+								id = flushExitId,
+								spacing = {1, -0.5, 1, 1},
+								transf = myTransf,
+								type = _isCargoTerminal and _constants.axialFlushCargoExitModuleType or _constants.axialFlushPassengerExitModuleType,
+							})
+							if params.modules[flushExitId] ~= nil then
+								_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
+							end
+
+							if not(_isCargoTerminal) then -- edges only for passengers
+								local edgeExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialEdgeSlotId)
+								table.insert(result.slots, {
+									-- height = 0,
+									id = edgeExitId,
+									spacing = {1, 1, 1, 1},
+									transf = myTransf,
+									type = _constants.axialPassengerEdgeModuleType,
+								})
+								if params.modules[edgeExitId] ~= nil then
+									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
+								end
+							end
+
+							if cpf.type == 0 then -- ramps and stairs only on ground
+								local stairsOrRampExitId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialStairsOrRampSlotId)
+								table.insert(result.slots, {
+									-- height = 0,
+									id = stairsOrRampExitId,
+									spacing = {1, 1, 1, 1},
+									transf = myTransf,
+									type = _isCargoTerminal and _constants.axialCargoExitModuleType or _constants.axialPassengerExitModuleType,
+								})
+								if params.modules[stairsOrRampExitId] ~= nil then
+									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, _constants.idBases.flatPassengerEdgeSlotId)
+								end
+							end
 						end
 					end
-				end
-				_addLanesAcross()
+					_addAxialExits()
 
-				local function _addLanesAlong()
-					if isCargoTerminal then return end
+					local function _addPlatformRoofsAndWalls()
+						local _roofSpacing = _isTrackOnPlatformLeft and {-1.1, 2, -0.1, 0.9} or {2, -1.1, 0.9, -0.1}
+						local _wallSpacing = _isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
+						-- make indexes
+						local _iMax = #_terminalData.centrePlatformsRelative
+						local iss = {}
+						for i = 2, _iMax, 3 do iss[#iss+1] = i end
+						-- fill the last if any
+						if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
 
-					local _iMin = 1 -- 2
-					local _iMax = #_terminalData.centrePlatformsRelative -- - 1
-					for i = _iMin, _iMax do -- we used to skip the outermost edges to avoid collisions (the game can be picky here);
-						-- now we try the whole stretch, so we can connect platforms head to head
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
-						-- local isInTunnel = cpl.type == 2 and cplP1.type == 2
-						local isOnBridge = cpl.type == 1 and cplP1.type == 1
-						local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
-						local isStairsUp = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
-						local isStairsUpDown = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
-						local openLiftModule = params.modules[result.mangleId(t, i, _constants.idBases.openLiftSlotId)]
-						local isOpenLift = openLiftModule ~= nil
-						local openStairsUpLeftModule = params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId)]
-                        local isOpenStairsUpLeft = openStairsUpLeftModule ~= nil
-						local isNextOpenStairsUpLeft = i < _iMax
-							and params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
-							or false
-						local openStairsUpRightModule = params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId)]
-						local isOpenStairsUpRight = openStairsUpRightModule ~= nil
-						local isNextOpenStairsUpRight = i > _iMin
-							and params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
-							or false
-						local underpassModule = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)]
-						local isAnyUnderpass = underpassModule ~= nil
-						local isUnderpassBuilding = isAnyUnderpass and underpassModule.name == 'station/rail/lollo_freestyle_train_station/underpass.module'
+						for _, i in pairs(iss) do
+							local cpl = _terminalData.centrePlatformsRelative[i]
+							local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
+							local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
+							-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
+							myTransf = transfUtils.getTransf_ZShifted(myTransf, 3)
+							if not(_isCargoTerminal) then
+								if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
+									table.insert(result.slots, {
+										id = result.mangleId(t, i, _constants.idBases.platformRoofSlotId),
+										spacing = _roofSpacing,
+										transf = myTransf,
+										type = _constants.platformRoofModuleType,
+									})
+								end
+							end
 
-						-- local myModelId = _constants.passengerLaneLinkableModelId
-						local myModelId = _constants.passengerLaneModelId
-							if isPlatformLift then myModelId = 'lollo_freestyle_train_station/passenger_lane_lift.mdl'
-							elseif isUnderpassBuilding then myModelId = 'lollo_freestyle_train_station/passenger_lane_underpass_building.mdl'
-							elseif isAnyUnderpass then myModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl'
-							elseif isOpenLift then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_lift.mdl'
-							elseif isStairsUp then myModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up.mdl'
-							elseif isStairsUpDown then myModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up_down.mdl'
-							-- elseif isOpenStairsUpLeft then myModelId = _constants.passengerLaneOpenStairsUpTopModelId
-							-- elseif isOpenStairsUpRight then myModelId = _constants.passengerLaneOpenStairsUpTopModelId
-							elseif isNextOpenStairsUpLeft then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_next.mdl'
-							elseif isNextOpenStairsUpRight then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_prev.mdl'
-							end
-						local centreLaneTransf = (isOpenStairsUpLeft or isOpenStairsUpRight)
-							and transfUtils.get1MModelTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
-							or transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
-                        if (isOpenStairsUpLeft or isOpenStairsUpRight) then
-                            if isOpenStairsUpLeft then
-                                result.models[#result.models+1] = {
-                                    id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_next.mdl',
-									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
-                                }
-                            end
-                            if isOpenStairsUpRight then
-                                result.models[#result.models+1] = {
-                                    id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_prev.mdl',
-									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
-                                }
-                            end
-                        else
-                            result.models[#result.models+1] = {
-                                id = myModelId,
-								transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
-                            }
-                        end
-						if isStairsUp then
-							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
-								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
-								{
-									t = t,
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
-										-- ),
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
-										)
-									)
-								}
+							if (
+								not(result.getOccupiedInfo4FlatAreas(t, i-1))
+								or not(result.getOccupiedInfo4FlatAreas(t, i))
+								or not(result.getOccupiedInfo4FlatAreas(t, i+1))
+								or not(result.getOccupiedInfo4FlatAreas(t, i+2)) -- check 1 bit ahead because of the shift between flat areas and deco
+								-- or (_isTrackOnPlatformLeft and not(result.getOccupiedInfo4FlatAreas(t, i+2)) or not(result.getOccupiedInfo4FlatAreas(t, i-2))) -- check 1 bit ahead because of the shift between flat areas and deco
 							)
-						elseif isStairsUpDown then
-							if result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] == nil then
-								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t],
-								{
-									t = t,
-									bottomTwinIndex = topBottomTwinIndex,
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
-										-- )
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
-										)
-									)
-								}
-							)
-							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
-								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
-								{
-									t = t,
-									topTwinIndex = topBottomTwinIndex,
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
-										-- )
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
-										)
-									)
-								}
-							)
-							topBottomTwinIndex = topBottomTwinIndex + 1
-						elseif (isAnyUnderpass and isOnBridge) or isPlatformLift then
-							if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
-								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
-								{
-									t = t,
-									era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i),
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
-										-- )
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
-										)
-									)
-								}
-							)
-						elseif isAnyUnderpass then
-							if result.terminateConstructionHookInfo.underpassPositionsOnGround[t] == nil then
-								result.terminateConstructionHookInfo.underpassPositionsOnGround[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.underpassPositionsOnGround[t],
-								{
-									t = t,
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
-										-- )
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
-										)
-									)
-								}
-							)
-						elseif (isOpenStairsUpLeft or isOpenStairsUpRight or isOpenLift) then
-							-- print('openLiftModule =') debugPrint(openLiftModule.name)
-							-- print('openStairsUpLeftModule =') debugPrint(openStairsUpLeftModule.name)
-							-- print('openStairsUpRightModule =') debugPrint(openStairsUpRightModule.name)
-							if (openLiftModule or {}).name == _constants.openLift_NoAutoLink_ModuleFileName
-							or (openStairsUpLeftModule or {}).name == _constants.openStairsUpLeft_NoAutoLink_ModuleFileName
-							or (openStairsUpRightModule or {}).name == _constants.openStairsUpRight_NoAutoLink_ModuleFileName
 							then
-								-- do not add auto links if any of the stairs or lifts have no auto link
+								local wallTransf = myTransf
+								local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(t, i).width
+								if slopedAreaWidth ~= 0 then
+									local platformWidth = _terminalData.centrePlatformsRelative[i].width
+									local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5)
+									local yShiftAreaBorder = _isTrackOnPlatformLeft and -baseYShift4AreaBorder or baseYShift4AreaBorder
+									-- I need the transf here, merely shifting isPlatform2 cheap but wrong
+									wallTransf = transfUtils.getTransf_YShifted(myTransf, yShiftAreaBorder)
+								end
+								table.insert(result.slots, {
+									id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
+									spacing = _wallSpacing,
+									transf = wallTransf,
+									type = _constants.platformWallModuleType,
+								})
+							end
+						end
+					end
+					_addPlatformRoofsAndWalls()
+
+					local function _addTrackWalls()
+						-- check this coz it was added later
+						if type(_terminalData.centreTracksRelative) ~= 'table' then return end
+
+						-- do not confuse the tracks array with the platforms array: they are similar but different
+						local _wallSpacing = _isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
+						local _iMax = #_terminalData.centreTracksRelative
+						local iss = {}
+						for i = 2, _iMax, 3 do iss[#iss+1] = i end
+						-- fill the last if any
+						if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
+
+						for _, i in pairs(iss) do
+							local ctl = _terminalData.centreTracksRelative[i]
+							local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(ctl.posTanX2)
+							-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
+
+							table.insert(result.slots, {
+								id = result.mangleId(t, i, _constants.idBases.trackWallSlotId),
+								spacing = _wallSpacing,
+								transf = transfUtils.getTransf_ZShifted(myTransf, 3),
+								type = _constants.trackWallModuleType,
+							})
+						end
+					end
+					_addTrackWalls()
+
+					local _addUpDownSlots = function()
+						if _isCargoTerminal then return end
+
+						local _mySpacing = {3, -0.1, 1, 1}
+						local _iMax = #_terminalData.centrePlatformsRelative - 1
+						local _iMin = 2
+						for i = _iMin, _iMax, 1 do
+							local cpl = _terminalData.centrePlatformsRelative[i]
+							local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+							local era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i)
+							local myTransf = transfUtils.getTransf_ZShifted(
+								moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
+								_laneZ
+							)
+							if cpl.type == 2 and cplP1.type == 2 then -- tunnels
+								local idM1_TunnelStairsUp = result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpSlotId)
+								local idP1_TunnelStairsUp = result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpSlotId)
+								local idM1_TunnelStairsUpDown = result.mangleId(t, i-1, _constants.idBases.tunnelStairsUpDownSlotId)
+								local idP1_TunnelStairsUpDown = result.mangleId(t, i+1, _constants.idBases.tunnelStairsUpDownSlotId)
+								if not(params.modules[idM1_TunnelStairsUp]) and not(params.modules[idP1_TunnelStairsUp])
+								and not(params.modules[idM1_TunnelStairsUpDown]) and not(params.modules[idP1_TunnelStairsUpDown])
+								then
+									table.insert(result.slots, {
+										-- height = 0,
+										id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId),
+										spacing = _mySpacing,
+										transf = myTransf,
+										type = _constants.tunnelStairsUpModuleType,
+									})
+									table.insert(result.slots, {
+										-- height = 0,
+										id = result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId),
+										spacing = _mySpacing,
+										transf = myTransf,
+										type = _constants.tunnelStairsUpDownModuleType,
+									})
+								end
+							else -- ground and bridges
+								local id_Underpass = result.mangleId(t, i, _constants.idBases.underpassSlotId)
+								local idM1_Underpass = result.mangleId(t, i-1, _constants.idBases.underpassSlotId)
+								local idP1_Underpass = result.mangleId(t, i+1, _constants.idBases.underpassSlotId)
+								local idM1_OpenStairsUpLeft = result.mangleId(t, i-1, _constants.idBases.openStairsUpLeftSlotId)
+								local idP1_OpenStairsUpLeft = result.mangleId(t, i+1, _constants.idBases.openStairsUpLeftSlotId)
+								local idM1_OpenStairsUpRight = result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)
+								local idP1_OpenStairsUpRight = result.mangleId(t, i+1, _constants.idBases.openStairsUpRightSlotId)
+								if not(params.modules[idM1_OpenStairsUpLeft]) and not(params.modules[idP1_OpenStairsUpLeft])
+								and not(params.modules[idM1_OpenStairsUpRight]) and not(params.modules[idP1_OpenStairsUpRight])
+								then
+									if not(params.modules[idM1_Underpass]) and not(params.modules[idP1_Underpass]) then
+										table.insert(result.slots, {
+											-- height = 0,
+											id = id_Underpass,
+											-- shape 0 1 2 3, only graphical
+											spacing = _mySpacing,
+											transf = myTransf,
+											type = _constants.underpassModuleType,
+										})
+									end
+									-- if cpl.type == 0 and cplP1.type == 0 then -- ground
+										if not(params.modules[id_Underpass]) then
+											table.insert(result.slots, {
+												-- height = 0,
+												id = result.mangleId(t, i, _constants.idBases.openLiftSlotId),
+												-- shape 0 1 2 3, only graphical
+												spacing = _mySpacing,
+												transf = myTransf,
+												type = _constants.openLiftModuleType,
+											})
+											if not(params.modules[idM1_Underpass]) and not(params.modules[idP1_Underpass]) then
+												local idM2_OpenStairsUpRight = i > _iMin and result.mangleId(t, i-2, _constants.idBases.openStairsUpRightSlotId) or nil
+												local idP2_OpenStairsUpRight = i < _iMax and result.mangleId(t, i+2, _constants.idBases.openStairsUpRightSlotId) or nil
+												local idM2_OpenStairsUpLeft = i > _iMin and result.mangleId(t, i-2, _constants.idBases.openStairsUpLeftSlotId) or nil
+												local idP2_OpenStairsUpLeft = i < _iMax and result.mangleId(t, i+2, _constants.idBases.openStairsUpLeftSlotId) or nil
+												if not(params.modules[idM2_OpenStairsUpRight]) and not(params.modules[idP2_OpenStairsUpRight])
+												and not(params.modules[idM2_OpenStairsUpLeft]) and not(params.modules[idP2_OpenStairsUpLeft])
+												then
+													if i ~= _iMin then
+														table.insert(result.slots, {
+															-- height = 0,
+															id = result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId),
+															spacing = _mySpacing,
+															transf = myTransf,
+															type = _constants.openStairsUpLeftModuleType,
+														})
+													end
+													if i ~= _iMax then
+														table.insert(result.slots, {
+															-- height = 0,
+															id = result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId),
+															spacing = _mySpacing,
+															transf = transfUtils.getTransf_ZRotated180(
+																myTransf
+															),
+															type = _constants.openStairsUpRightModuleType,
+														})
+													end
+												end
+											end
+										end
+									-- end
+								end
+							end
+						end
+					end
+					_addUpDownSlots()
+
+					local function _addTrackCrossings()
+						-- if _isCargoTerminal then return end
+						-- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
+						-- I work with centrePlatformsFineRelative instead of centrePlatformsRelative so I get more accurate angles
+						local _iiMax = #_cpfs - 3 -- do not go past the station ends
+						local _iiMin = 4 -- idem
+						for ii = _iiMin, _iiMax do
+							local cpf = _cpfs[ii]
+							local cpl = _terminalData.centrePlatformsRelative[cpf.leadingIndex]
+							local cpfPrevious = _cpfs[ii-1]
+							if cpf.leadingIndex ~= cpfPrevious.leadingIndex then
+								local i = cpf.leadingIndex
+
+								local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[i].posTanX2
+								-- a bit of a bodge: I take the position from the connector,
+								-- which has no knowledge of the slope,
+								-- and the slope from the centre platform fine,
+								-- which is very slightly shifted from the connector. Not too bad.
+								local trackCrossingPosTanX2 = transfUtils.getPosTanX2Normalised(
+									transfUtils.getPosTanX2Reversed(crossConnectorPosTanX2), -- cross connectors go from the platform border to its centre, here we go toward the edge
+									cpl.width * 0.5 + 2.5 -- half platform width plus half track width is the centre of the track
+								)
+								local trackCrossingTransf = _isTrackOnPlatformLeft
+									and moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
+									or moduleHelpers.getPlatformObjectTransf_WithYRotation(transfUtils.getPosTanX2Reversed(cpf.posTanX2))
+								trackCrossingTransf[13] = trackCrossingPosTanX2[2][1][1]
+								trackCrossingTransf[14] = trackCrossingPosTanX2[2][1][2]
+								trackCrossingTransf[15] = trackCrossingPosTanX2[2][1][3]
+
+								local trackCrossingId = result.mangleId(t, i, _constants.idBases.trackCrossingSlotId)
+								table.insert(result.slots, {
+									-- height = 0,
+									id = trackCrossingId,
+									spacing = {1.5, -0.5, 1, 1}, -- avoid module collisions with terminal slots
+									transf = trackCrossingTransf,
+									type = _constants.trackCrossingModuleType,
+								})
+
+								if result.terminateConstructionHookInfo.trackCrossingOppositePositions[t] == nil then
+									result.terminateConstructionHookInfo.trackCrossingOppositePositions[t] = {}
+								end
+								table.insert(result.terminateConstructionHookInfo.trackCrossingOppositePositions[t], {
+									t = t,
+									pos = transfUtils.getPositionRaisedBy(cpl.posTanX2[1][1], _laneZ)
+								})
+							end
+						end
+					end
+					_addTrackCrossings()
+
+					local function _addLanesAcross()
+						if _isCargoTerminal then return end
+
+						for i = 2, #_terminalData.centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
+							local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[i].posTanX2
+							result.models[#result.models+1] = {
+								id = _constants.passengerLaneModelId,
+								transf = transfUtils.getTransf_ZShifted(
+									transfUtils.get1MLaneTransf(crossConnectorPosTanX2[1][1], crossConnectorPosTanX2[2][1]),
+									_laneZ
+								)
+							}
+							-- Simple flat areas (like smooth stairs or flush exits) will add their own positions outside, on top of these.
+							-- With sloped areas (aka extensions), if the player wants to stitch platforms together, they must set their own flush exits.
+							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) then
+								if result.terminateConstructionHookInfo.autoStitchablePositions[t] == nil then result.terminateConstructionHookInfo.autoStitchablePositions[t] = {} end
+								local cpl = _terminalData.centrePlatformsRelative[i]
+								table.insert(
+									result.terminateConstructionHookInfo.autoStitchablePositions[t],
+									{
+										t = t,
+										-- lanePosTanX2 = cpl.posTanX2,
+										pos = transfUtils.getPositionRaisedBy(crossConnectorPosTanX2[2][1], _laneZ)
+									}
+								)
+							end
+						end
+					end
+					_addLanesAcross()
+
+					local function _addLanesAlong()
+						if _isCargoTerminal then return end
+
+						local _iMin = 1 -- 2
+						local _iMax = #_terminalData.centrePlatformsRelative -- - 1
+						for i = _iMin, _iMax do -- we used to skip the outermost edges to avoid collisions (the game can be picky here);
+							-- now we try the whole stretch, so we can connect platforms head to head
+							local cpl = _terminalData.centrePlatformsRelative[i]
+							local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+							-- local isInTunnel = cpl.type == 2 and cplP1.type == 2
+							local isOnBridge = cpl.type == 1 and cplP1.type == 1
+							local isPlatformLift = params.modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
+							local isStairsUp = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpSlotId)] ~= nil
+							local isStairsUpDown = params.modules[result.mangleId(t, i, _constants.idBases.tunnelStairsUpDownSlotId)] ~= nil
+							local openLiftModule = params.modules[result.mangleId(t, i, _constants.idBases.openLiftSlotId)]
+							local isOpenLift = openLiftModule ~= nil
+							local openStairsUpLeftModule = params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpLeftSlotId)]
+							local isOpenStairsUpLeft = openStairsUpLeftModule ~= nil
+							local isNextOpenStairsUpLeft = i < _iMax
+								and params.modules[result.mangleId(t, i+1, _constants.idBases.openStairsUpLeftSlotId)] ~= nil
+								or false
+							local openStairsUpRightModule = params.modules[result.mangleId(t, i, _constants.idBases.openStairsUpRightSlotId)]
+							local isOpenStairsUpRight = openStairsUpRightModule ~= nil
+							local isNextOpenStairsUpRight = i > _iMin
+								and params.modules[result.mangleId(t, i-1, _constants.idBases.openStairsUpRightSlotId)] ~= nil
+								or false
+							local underpassModule = params.modules[result.mangleId(t, i, _constants.idBases.underpassSlotId)]
+							local isAnyUnderpass = underpassModule ~= nil
+							local isUnderpassBuilding = isAnyUnderpass and underpassModule.name == 'station/rail/lollo_freestyle_train_station/underpass.module'
+
+							-- local myModelId = _constants.passengerLaneLinkableModelId
+							local myModelId = _constants.passengerLaneModelId
+								if isPlatformLift then myModelId = 'lollo_freestyle_train_station/passenger_lane_lift.mdl'
+								elseif isUnderpassBuilding then myModelId = 'lollo_freestyle_train_station/passenger_lane_underpass_building.mdl'
+								elseif isAnyUnderpass then myModelId = 'lollo_freestyle_train_station/passenger_lane_underpass.mdl'
+								elseif isOpenLift then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_lift.mdl'
+								elseif isStairsUp then myModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up.mdl'
+								elseif isStairsUpDown then myModelId = 'lollo_freestyle_train_station/passenger_lane_tunnel_stairs_up_down.mdl'
+								-- elseif isOpenStairsUpLeft then myModelId = _constants.passengerLaneOpenStairsUpTopModelId
+								-- elseif isOpenStairsUpRight then myModelId = _constants.passengerLaneOpenStairsUpTopModelId
+								elseif isNextOpenStairsUpLeft then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_next.mdl'
+								elseif isNextOpenStairsUpRight then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_prev.mdl'
+								end
+							local centreLaneTransf = (isOpenStairsUpLeft or isOpenStairsUpRight)
+								and transfUtils.get1MModelTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
+								or transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
+							if (isOpenStairsUpLeft or isOpenStairsUpRight) then
+								if isOpenStairsUpLeft then
+									result.models[#result.models+1] = {
+										id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_next.mdl',
+										transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+									}
+								end
+								if isOpenStairsUpRight then
+									result.models[#result.models+1] = {
+										id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_prev.mdl',
+										transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+									}
+								end
 							else
-								if result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t] == nil then
-									result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t] = {}
+								result.models[#result.models+1] = {
+									id = myModelId,
+									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+								}
+							end
+							if isStairsUp then
+								if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
+									result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
 								end
 								table.insert(
-									result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t],
+									result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
+									{
+										t = t,
+										lanePosTanX2 = cpl.posTanX2,
+										pos2Link = transfUtils.transf2Position(
+											-- transfUtilsUG.mul(
+											-- 	centreLaneTransf,
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+											-- ),
+											transfUtils.getTransf_Shifted(
+												centreLaneTransf,
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
+											)
+										)
+									}
+								)
+							elseif isStairsUpDown then
+								if result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] == nil then
+									result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] = {}
+								end
+								table.insert(
+									result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t],
+									{
+										t = t,
+										bottomTwinIndex = topBottomTwinIndex,
+										lanePosTanX2 = cpl.posTanX2,
+										pos2Link = transfUtils.transf2Position(
+											-- transfUtilsUG.mul(
+											-- 	centreLaneTransf,
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+											-- )
+											transfUtils.getTransf_Shifted(
+												centreLaneTransf,
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
+											)
+										)
+									}
+								)
+								if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
+									result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
+								end
+								table.insert(
+									result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
+									{
+										t = t,
+										topTwinIndex = topBottomTwinIndex,
+										lanePosTanX2 = cpl.posTanX2,
+										pos2Link = transfUtils.transf2Position(
+											-- transfUtilsUG.mul(
+											-- 	centreLaneTransf,
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+											-- )
+											transfUtils.getTransf_Shifted(
+												centreLaneTransf,
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
+											)
+										)
+									}
+								)
+								topBottomTwinIndex = topBottomTwinIndex + 1
+							elseif (isAnyUnderpass and isOnBridge) or isPlatformLift then
+								if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
+									result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
+								end
+								table.insert(
+									result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
 									{
 										t = t,
 										era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i),
@@ -1175,138 +1126,180 @@ function data()
 										pos2Link = transfUtils.transf2Position(
 											-- transfUtilsUG.mul(
 											-- 	centreLaneTransf,
-											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.openStairsUpZ, 1 }
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
 											-- )
 											transfUtils.getTransf_Shifted(
 												centreLaneTransf,
-												{0.5, 0, _laneZ + _constants.openStairsUpZ}
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
 											)
 										)
 									}
 								)
+							elseif isAnyUnderpass then
+								if result.terminateConstructionHookInfo.underpassPositionsOnGround[t] == nil then
+									result.terminateConstructionHookInfo.underpassPositionsOnGround[t] = {}
+								end
+								table.insert(
+									result.terminateConstructionHookInfo.underpassPositionsOnGround[t],
+									{
+										t = t,
+										lanePosTanX2 = cpl.posTanX2,
+										pos2Link = transfUtils.transf2Position(
+											-- transfUtilsUG.mul(
+											-- 	centreLaneTransf,
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+											-- )
+											transfUtils.getTransf_Shifted(
+												centreLaneTransf,
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
+											)
+										)
+									}
+								)
+							elseif (isOpenStairsUpLeft or isOpenStairsUpRight or isOpenLift) then
+								-- print('openLiftModule =') debugPrint(openLiftModule.name)
+								-- print('openStairsUpLeftModule =') debugPrint(openStairsUpLeftModule.name)
+								-- print('openStairsUpRightModule =') debugPrint(openStairsUpRightModule.name)
+								if (openLiftModule or {}).name == _constants.openLift_NoAutoLink_ModuleFileName
+								or (openStairsUpLeftModule or {}).name == _constants.openStairsUpLeft_NoAutoLink_ModuleFileName
+								or (openStairsUpRightModule or {}).name == _constants.openStairsUpRight_NoAutoLink_ModuleFileName
+								then
+									-- do not add auto links if any of the stairs or lifts have no auto link
+								else
+									if result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t] == nil then
+										result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t] = {}
+									end
+									table.insert(
+										result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t],
+										{
+											t = t,
+											era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i),
+											lanePosTanX2 = cpl.posTanX2,
+											pos2Link = transfUtils.transf2Position(
+												-- transfUtilsUG.mul(
+												-- 	centreLaneTransf,
+												-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.openStairsUpZ, 1 }
+												-- )
+												transfUtils.getTransf_Shifted(
+													centreLaneTransf,
+													{0.5, 0, _laneZ + _constants.openStairsUpZ}
+												)
+											)
+										}
+									)
+								end
 							end
 						end
 					end
-				end
-				_addLanesAlong()
+					_addLanesAlong()
 
-				local function _addWaitingAreas()
-					if isCargoTerminal then
-						for _, cwas in pairs(_terminalData.cargoWaitingAreasRelative) do
-							for i = 1, #cwas do
-								local posTanX2 = cwas[i].posTanX2
-								local centreLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
-								result.models[#result.models+1] = {
-									id = _constants.cargoWaitingAreaModelId,
-									tag = slotHelpers.mangleModelTag(t, true),
-									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
-								}
-							end
-						end
-					else
-						if isTrackOnPlatformLeft then
-							for i = 1, #_terminalData.leftPlatformsRelative do
-								local posTanX2 = _terminalData.leftPlatformsRelative[i].posTanX2
-								local leftLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
-
-								result.models[#result.models+1] = {
-									id = _constants.passengerWaitingAreaModelId,
-									tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtils.getTransf_ZShifted(leftLaneTransf, _laneZ)
-								}
+					local function _addWaitingAreas()
+						if _isCargoTerminal then
+							for _, cwas in pairs(_terminalData.cargoWaitingAreasRelative) do
+								for i = 1, #cwas do
+									local posTanX2 = cwas[i].posTanX2
+									local centreLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+									result.models[#result.models+1] = {
+										id = _constants.cargoWaitingAreaModelId,
+										tag = slotHelpers.mangleModelTag(t, true),
+										transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+									}
+								end
 							end
 						else
-							for i = 1, #_terminalData.rightPlatformsRelative do
-								local posTanX2 = _terminalData.rightPlatformsRelative[i].posTanX2
-								-- invert the lanes or the passengers will face away from the track when waiting
-								-- local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
-								local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[2][1], posTanX2[1][1])
+							if _isTrackOnPlatformLeft then
+								for i = 1, #_terminalData.leftPlatformsRelative do
+									local posTanX2 = _terminalData.leftPlatformsRelative[i].posTanX2
+									local leftLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
 
-								result.models[#result.models+1] = {
-									id = _constants.passengerWaitingAreaModelId,
-									tag = slotHelpers.mangleModelTag(t, false),
-									-- if you touch this, you screw things
-									-- transf = transfUtilsUG.mul(rightLaneTransf, {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
-									transf = transfUtils.getTransf_ZShifted(rightLaneTransf, _laneZ)
-								}
+									result.models[#result.models+1] = {
+										id = _constants.passengerWaitingAreaModelId,
+										tag = slotHelpers.mangleModelTag(t, false),
+										transf = transfUtils.getTransf_ZShifted(leftLaneTransf, _laneZ)
+									}
+								end
+							else
+								for i = 1, #_terminalData.rightPlatformsRelative do
+									local posTanX2 = _terminalData.rightPlatformsRelative[i].posTanX2
+									-- invert the lanes or the passengers will face away from the track when waiting
+									-- local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+									local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[2][1], posTanX2[1][1])
+
+									result.models[#result.models+1] = {
+										id = _constants.passengerWaitingAreaModelId,
+										tag = slotHelpers.mangleModelTag(t, false),
+										-- if you touch this, you screw things
+										-- transf = transfUtilsUG.mul(rightLaneTransf, {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+										transf = transfUtils.getTransf_ZShifted(rightLaneTransf, _laneZ)
+									}
+								end
 							end
 						end
 					end
-				end
-				_addWaitingAreas()
+					_addWaitingAreas()
 
-				local _addCentreTrackSlots = function()
-					local i = _terminalData.trackEdgeListMidIndex
-					local tel = _terminalData.trackEdgeLists[i]
-					local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf)
-					-- local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 2)
-					local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 0.1) -- does not need to be perfectly centred
-					local myTransf = transfUtils.getTransf_ZShifted(
-						moduleHelpers.getPlatformObjectTransf_WithYRotation(nearlyCentredPosTanX2),
-						_laneZ
-					)
-					table.insert(result.slots, {
-						-- height = 0,
-						id = result.mangleId(t, 0, _constants.idBases.terminalSlotId),
-						spacing = {0, 0, 0, 0}, -- this can collide so we keep it zero
-						transf = myTransf,
-						type = isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
-                    })
-                    -- insert two undeletable dummy slots for upgrading tracks
-					table.insert(result.slots, {
-						-- height = 0,
-						id = result.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId),
-						spacing = {0, 0, 0, 0}, -- this does not prevent deletion, it just makes it harder
-						transf = myTransf,
-						type = _constants.trackElectrificationModuleType
-					})
-					table.insert(result.slots, {
-						-- height = 0,
-						id = result.mangleId(t, 0, _constants.idBases.trackSpeedSlotId),
-						spacing = {0, 0, 0, 0},
-						transf = myTransf,
-						type = _constants.trackSpeedModuleType
-					})
-					-- platform era
-					table.insert(result.slots, {
-						-- height = 0,
-						id = result.mangleId(t, 0, _constants.idBases.platformEraASlotId),
-						spacing = {0, 0, 0, 0},
-						transf = myTransf,
-						type = _constants.era_a_platformModuleType
-					})
-					table.insert(result.slots, {
-						-- height = 0,
-						id = result.mangleId(t, 0, _constants.idBases.platformEraBSlotId),
-						spacing = {0, 0, 0, 0},
-						transf = myTransf,
-						type = _constants.era_b_platformModuleType
-					})
-					table.insert(result.slots, {
-						-- height = 0,
-						id = result.mangleId(t, 0, _constants.idBases.platformEraCSlotId),
-						spacing = {0, 0, 0, 0},
-						transf = myTransf,
-						type = _constants.era_c_platformModuleType
-					})
-					-- track, bridge and tunnel type
-					-- I want the blue square to be available even if there is already one of these modules,
-					-- so I place two in the same place
-					-- and remove the old module in preProcessFn
-					local trackTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.trackTypeSlotId)
-					local trackTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.trackTypeSlotId)
-					table.insert(result.slots, {
-						id = trackTypeSlotId0,
-						shape = 3,
-						-- spacing = {1, 1, 1, 1},
-						spacing = {0, 0, 0, 0},
-						-- raise to avoid collisions, this is not critical anyway.
-						transf = transfUtils.getTransf_ZShifted(myTransf, 1),
-						type = _constants.trackTypeModuleType,
-					})
-					if params.modules[trackTypeSlotId0] ~= nil or params.modules[trackTypeSlotId1] ~= nil then
+					local _addCentreTrackSlots = function()
+						local i = _terminalData.trackEdgeListMidIndex
+						local tel = _terminalData.trackEdgeLists[i]
+						local posTanX2 = transfUtils.getPosTanX2Transformed(tel.posTanX2, params.inverseMainTransf)
+						-- local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 2)
+						local nearlyCentredPosTanX2 = transfUtils.getPosTanX2Normalised(posTanX2, 0.1) -- does not need to be perfectly centred
+						local myTransf = transfUtils.getTransf_ZShifted(
+							moduleHelpers.getPlatformObjectTransf_WithYRotation(nearlyCentredPosTanX2),
+							_laneZ
+						)
 						table.insert(result.slots, {
-							id = trackTypeSlotId1,
+							-- height = 0,
+							id = _terminalSlotId,
+							spacing = {0, 0, 0, 0}, -- this can collide so we keep it zero
+							transf = myTransf,
+							type = _isCargoTerminal and _constants.cargoTerminalModuleType or _constants.passengerTerminalModuleType,
+						})
+						-- insert two undeletable dummy slots for upgrading tracks
+						table.insert(result.slots, {
+							-- height = 0,
+							id = result.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId),
+							spacing = {0, 0, 0, 0}, -- this does not prevent deletion, it just makes it harder
+							transf = myTransf,
+							type = _constants.trackElectrificationModuleType
+						})
+						table.insert(result.slots, {
+							-- height = 0,
+							id = result.mangleId(t, 0, _constants.idBases.trackSpeedSlotId),
+							spacing = {0, 0, 0, 0},
+							transf = myTransf,
+							type = _constants.trackSpeedModuleType
+						})
+						-- platform era
+						table.insert(result.slots, {
+							-- height = 0,
+							id = result.mangleId(t, 0, _constants.idBases.platformEraASlotId),
+							spacing = {0, 0, 0, 0},
+							transf = myTransf,
+							type = _constants.era_a_platformModuleType
+						})
+						table.insert(result.slots, {
+							-- height = 0,
+							id = result.mangleId(t, 0, _constants.idBases.platformEraBSlotId),
+							spacing = {0, 0, 0, 0},
+							transf = myTransf,
+							type = _constants.era_b_platformModuleType
+						})
+						table.insert(result.slots, {
+							-- height = 0,
+							id = result.mangleId(t, 0, _constants.idBases.platformEraCSlotId),
+							spacing = {0, 0, 0, 0},
+							transf = myTransf,
+							type = _constants.era_c_platformModuleType
+						})
+						-- track, bridge and tunnel type
+						-- I want the blue square to be available even if there is already one of these modules,
+						-- so I place two in the same place
+						-- and remove the old module in preProcessFn
+						local trackTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.trackTypeSlotId)
+						local trackTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.trackTypeSlotId)
+						table.insert(result.slots, {
+							id = trackTypeSlotId0,
 							shape = 3,
 							-- spacing = {1, 1, 1, 1},
 							spacing = {0, 0, 0, 0},
@@ -1314,22 +1307,22 @@ function data()
 							transf = transfUtils.getTransf_ZShifted(myTransf, 1),
 							type = _constants.trackTypeModuleType,
 						})
-					end
+						if params.modules[trackTypeSlotId0] ~= nil or params.modules[trackTypeSlotId1] ~= nil then
+							table.insert(result.slots, {
+								id = trackTypeSlotId1,
+								shape = 3,
+								-- spacing = {1, 1, 1, 1},
+								spacing = {0, 0, 0, 0},
+								-- raise to avoid collisions, this is not critical anyway.
+								transf = transfUtils.getTransf_ZShifted(myTransf, 1),
+								type = _constants.trackTypeModuleType,
+							})
+						end
 
-					local bridgeTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.bridgeTypeSlotId)
-					local bridgeTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.bridgeTypeSlotId)
-					table.insert(result.slots, {
-						id = bridgeTypeSlotId0,
-						shape = 2,
-						-- spacing = {1, 1, 1, 1},
-						spacing = {0, 0, 0, 0},
-						-- raise to avoid collisions, this is not critical anyway.
-						transf = transfUtils.getTransf_ZShifted(myTransf, 2),
-						type = _constants.bridgeTypeModuleType,
-					})
-					if params.modules[bridgeTypeSlotId0] ~= nil or params.modules[bridgeTypeSlotId1] ~= nil then
+						local bridgeTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.bridgeTypeSlotId)
+						local bridgeTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.bridgeTypeSlotId)
 						table.insert(result.slots, {
-							id = bridgeTypeSlotId1,
+							id = bridgeTypeSlotId0,
 							shape = 2,
 							-- spacing = {1, 1, 1, 1},
 							spacing = {0, 0, 0, 0},
@@ -1337,33 +1330,44 @@ function data()
 							transf = transfUtils.getTransf_ZShifted(myTransf, 2),
 							type = _constants.bridgeTypeModuleType,
 						})
-					end
+						if params.modules[bridgeTypeSlotId0] ~= nil or params.modules[bridgeTypeSlotId1] ~= nil then
+							table.insert(result.slots, {
+								id = bridgeTypeSlotId1,
+								shape = 2,
+								-- spacing = {1, 1, 1, 1},
+								spacing = {0, 0, 0, 0},
+								-- raise to avoid collisions, this is not critical anyway.
+								transf = transfUtils.getTransf_ZShifted(myTransf, 2),
+								type = _constants.bridgeTypeModuleType,
+							})
+						end
 
-					local tunnelTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.tunnelTypeSlotId)
-					local tunnelTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.tunnelTypeSlotId)
-					table.insert(result.slots, {
-						id = tunnelTypeSlotId0,
-						shape = 2,
-						-- spacing = {1, 1, 1, 1},
-						spacing = {0, 0, 0, 0},
-						-- raise to avoid collisions, this is not critical anyway.
-						transf = transfUtils.getTransf_ZShifted(myTransf, 3),
-						type = _constants.tunnelTypeModuleType,
-					})
-					if params.modules[tunnelTypeSlotId0] ~= nil or params.modules[tunnelTypeSlotId1] ~= nil then
+						local tunnelTypeSlotId0 = result.mangleId(t, 0, _constants.idBases.tunnelTypeSlotId)
+						local tunnelTypeSlotId1 = result.mangleId(t, 1, _constants.idBases.tunnelTypeSlotId)
 						table.insert(result.slots, {
-							id = tunnelTypeSlotId1,
+							id = tunnelTypeSlotId0,
 							shape = 2,
 							-- spacing = {1, 1, 1, 1},
 							spacing = {0, 0, 0, 0},
 							-- raise to avoid collisions, this is not critical anyway.
 							transf = transfUtils.getTransf_ZShifted(myTransf, 3),
-							type = _constants.tunnelTypeModuleType
+							type = _constants.tunnelTypeModuleType,
 						})
+						if params.modules[tunnelTypeSlotId0] ~= nil or params.modules[tunnelTypeSlotId1] ~= nil then
+							table.insert(result.slots, {
+								id = tunnelTypeSlotId1,
+								shape = 2,
+								-- spacing = {1, 1, 1, 1},
+								spacing = {0, 0, 0, 0},
+								-- raise to avoid collisions, this is not critical anyway.
+								transf = transfUtils.getTransf_ZShifted(myTransf, 3),
+								type = _constants.tunnelTypeModuleType
+							})
+						end
 					end
-				end
-				_addCentreTrackSlots()
+					_addCentreTrackSlots()
 
+				end -- terminal exists
 			end -- loop over terminals
 -- local timeMsec1 = os.clock() * 1000
 -- print('loop over terminals took ' .. (timeMsec1 - timeMsec0) .. ' mSec') -- about 35 ms with a large station
@@ -1911,10 +1915,10 @@ function data()
 						-- link platforms across terminals, on the ground, if they are close enough
 						local _getCentrePositionsAtTerminalEnds = function(t)
 							local _terminalData = params.terminals[t]
-							local maxII = #_terminalData.centrePlatformsFineRelative
+							local _cpfs = _terminalData.centrePlatformsFineRelative
 							local results = {
-								arrayUtils.cloneDeepOmittingFields(_terminalData.centrePlatformsFineRelative[1].posTanX2[1][1]),
-								arrayUtils.cloneDeepOmittingFields(_terminalData.centrePlatformsFineRelative[maxII].posTanX2[2][1]),
+								arrayUtils.cloneDeepOmittingFields(_cpfs[1].posTanX2[1][1]),
+								arrayUtils.cloneDeepOmittingFields(_cpfs[#_cpfs].posTanX2[2][1]),
 							}
 							results[1][3] = results[1][3] + result.laneZs[t] -- _constants.platformHeight
 							results[2][3] = results[2][3] + result.laneZs[t]

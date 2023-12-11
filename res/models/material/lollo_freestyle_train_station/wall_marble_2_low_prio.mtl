@@ -1,0 +1,70 @@
+function data()
+return {
+	order = 0,
+	params = {
+		albedo_scale = {
+			albedoScale = { 1, 0.95, 0.90, },
+		},
+		fade_out_range = {
+			fadeOutEndDist = 20000,
+			fadeOutStartDist = 10000,
+		},
+		map_albedo = {
+			fileName = "lollo_freestyle_train_station/rough_marble_albedo.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_metal_gloss_ao = {
+			fileName = "lollo_freestyle_train_station/rough_marble_metal_gloss_ao.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_normal = {
+			fileName = "lollo_freestyle_train_station/rough_marble_normal.tga",
+			redGreen = true,
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_1 = {
+			fileName = "models/industry/overlay_textures/big_02.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_2 = {
+			fileName = "models/industry/overlay_textures/small_05.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		normal_scale = {
+			normalScale = 0.5,
+		},
+		operation_1 = {
+			mode = "WORLD_XY",
+			op = "MULTIPLICATION",
+			opacity = 0.30000001192093,
+			scale = { 0.25, 0.25, },
+		},
+		operation_2 = {
+			mode = "NORMAL",
+			op = "OVERLAY",
+			opacity = 0.30000001192093,
+			scale = { 0.20000000298023, 0.20000000298023, },
+		},
+		polygon_offset = {
+			factor = 1,
+			forceDepthWrite = true,
+			units = 1,
+		},
+		two_sided = {
+			flipNormal = false,
+			twoSided = false,
+		},
+	},
+	type = "PHYSICAL_NRML_MAP_OP",
+}
+end

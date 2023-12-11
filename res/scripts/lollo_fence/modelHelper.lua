@@ -86,7 +86,7 @@ local privateFuncs = {
         end
         return results
     end,
-    getModels = function(isTunnel)
+    getModels = function(isWallTall)
         local results = {}
         local add = function(modelFileName, iconFileName, name)
             results[#results+1] = {
@@ -96,7 +96,7 @@ local privateFuncs = {
                 name = name
             }
         end
-        if isTunnel then
+        if isWallTall then
             add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
             add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
             add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
@@ -129,7 +129,7 @@ local privateFuncs = {
         end
         return results
     end,
-    getWallBehindModels = function()
+    getWallBehindModels = function(isWallTall)
         local results = {}
         local add = function(modelFileName, iconFileName, name)
             results[#results+1] = {
@@ -139,10 +139,17 @@ local privateFuncs = {
                 name = name
             }
         end
-        add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
-        add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
-        add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
-        add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+        if isWallTall then
+            add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
+            add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
+            add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
+            add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+        else
+            add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
+            add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
+            add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
+            add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+        end
         return results
     end,
 }
@@ -151,8 +158,8 @@ return {
     getModels = function(isTunnel)
         return privateFuncs.getModels(isTunnel)
     end,
-    getWallBehindModels = function()
-        return privateFuncs.getWallBehindModels()
+    getWallBehindModels = function(isTunnel)
+        return privateFuncs.getWallBehindModels(isTunnel)
     end,
     getConParams = function ()
         local models = privateFuncs.getModels()
@@ -211,6 +218,13 @@ return {
                 name = _('YShift'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getYShiftDisplayValues(),
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_yShiftFine,
+                key = 'lolloFenceAssets_yShiftFine',
+                name = _('YShiftFine'),
+                uiType = 'SLIDER',
+                values = privateFuncs.getYShiftFineDisplayValues(),
             },
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_zRotation,

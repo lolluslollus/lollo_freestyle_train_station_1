@@ -8,27 +8,38 @@ function data()
     local function _addGround(transf, result, zed, wallBehindModelId, isDoTerrain)
         if not(isDoTerrain) then return end
 
-        local _faceTransformed = wallBehindModelId == nil
-            and transfUtils.getFaceTransformed_FAST(
-                transf,
-                {
-                    {-0.5, -0.2, zed, 1.0},
-                    {0.5, -0.2, zed, 1.0},
-                    {0.5, 0.5, zed, 1.0},
-                    {-0.5, 0.5, zed, 1.0},
-                    -- {x, positive backwards, z, 1}
-                }
-            )
-            or transfUtils.getFaceTransformed_FAST(
-                transf,
-                {
-                    {-0.5, -0.2, zed, 1.0},
-                    {0.5, -0.2, zed, 1.0},
-                    {0.5, 1.0, zed, 1.0},
-                    {-0.5, 1.0, zed, 1.0},
-                    -- {x, positive backwards, z, 1}
-                }
-            )
+        -- local _faceTransformed = wallBehindModelId == nil
+        --     and transfUtils.getFaceTransformed_FAST(
+        --         transf,
+        --         {
+        --             {-0.5, -0.2, zed, 1.0},
+        --             {0.5, -0.2, zed, 1.0},
+        --             {0.5, 0.5, zed, 1.0},
+        --             {-0.5, 0.5, zed, 1.0},
+        --             -- {x, positive outwards, z, 1}
+        --         }
+        --     )
+        --     or transfUtils.getFaceTransformed_FAST(
+        --         transf,
+        --         {
+        --             {-0.5, -0.2, zed, 1.0},
+        --             {0.5, -0.2, zed, 1.0},
+        --             {0.5, 1.0, zed, 1.0},
+        --             {-0.5, 1.0, zed, 1.0},
+        --             -- {x, positive outwards, z, 1}
+        --         }
+        --     )
+        local _faceTransformed = transfUtils.getFaceTransformed_FAST(
+            transf,
+            {
+                {-0.5, -0.2, zed, 1.0},
+                {0.5, -0.2, zed, 1.0},
+                {0.5, 0.5, zed, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                {-0.5, 0.5, zed, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                -- {x, positive outwards, z, 1}
+            }
+        )
+
         table.insert(
             result.groundFaces,
             {
@@ -137,6 +148,7 @@ function data()
                 params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.lolloFenceAssets_wallEraPrefix
                 params.lolloFenceAssets_wallBehindModel = params.lolloFenceAssets_wallBehindModel or defaults.lolloFenceAssets_wallBehindModel
                 params.lolloFenceAssets_yShift = params.lolloFenceAssets_yShift or defaults.lolloFenceAssets_yShift
+                params.lolloFenceAssets_yShiftFine = params.lolloFenceAssets_yShiftFine or defaults.lolloFenceAssets_yShiftFine
                 params.lolloFenceAssets_zDelta = params.lolloFenceAssets_zDelta or defaults.lolloFenceAssets_zDelta
                 params.lolloFenceAssets_zRotation = params.lolloFenceAssets_zRotation or defaults.lolloFenceAssets_zRotation
             end
@@ -173,6 +185,7 @@ function data()
 
             local function _getYStart()
                 local result = fenceModelHelper.getYShiftActualValues()[params.lolloFenceAssets_yShift + 1]
+                    + fenceModelHelper.getYShiftFineActualValues()[params.lolloFenceAssets_yShiftFine + 1]
                 return result
             end
 
@@ -237,7 +250,7 @@ function data()
                 local wallMainModelId = fenceModelHelper.getModels(params.lolloFenceAssets_isWallTall == 1)[params.lolloFenceAssets_model + 1].fileName
                 local wallBaseModelId = _getWallBaseModelId()
                 local wallBehindBaseModelId = _getWallBehindBaseModelId()
-                local wallBehindModelId = fenceModelHelper.getWallBehindModels()[params.lolloFenceAssets_wallBehindModel + 1].fileName
+                local wallBehindModelId = fenceModelHelper.getWallBehindModels(params.lolloFenceAssets_isWallTall == 1)[params.lolloFenceAssets_wallBehindModel + 1].fileName
                 logger.print('_addModels got isDoTerrain =', isDoTerrain,
                     'wallMainModelId =', wallMainModelId or 'NIL',
                     'wallBaseModelId =', wallBaseModelId or 'NIL',
