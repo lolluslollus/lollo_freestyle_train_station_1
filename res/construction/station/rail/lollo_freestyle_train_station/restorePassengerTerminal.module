@@ -1,0 +1,51 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local logger = require('lollo_freestyle_train_station.logger')
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "restore-terminal", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("RestorePassengerTerminalName"),
+			description = _("RestoreTerminalDesc"),
+			icon = 'ui/lollo_freestyle_train_station/restorePassengerTerminal.tga',
+		},
+		metadata = { },
+		order = {
+			value = 1,
+		},
+		type = _constants.restorePassengerTerminalModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+			result.models[#result.models + 1] = {
+				-- id = _constants.terminalModelFileName,
+				id = 'lollo_freestyle_train_station/icon/green.mdl',
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					-- id = _constants.terminalModelFileName,
+					id = 'lollo_freestyle_train_station/icon/green.mdl',
+					transf = _constants.idTransf,
+				},
+			}
+		end
+	}
+end

@@ -24,6 +24,10 @@ local m_conConfigMenu = { -- also this is for the worker thread only
     args = nil, -- the data
 }
 
+local m_guiConConfigMenu = {
+    openForConId = nil
+}
+
 local _eventId = _constants.eventData.eventId
 local _eventNames = _constants.eventData.eventNames
 local _guiPlatformWaypointModelId = nil
@@ -33,6 +37,7 @@ local _guiTexts = {
     buildSubwayInProgress = '',
     buildMoreWaypoints = '',
     buildSnappyTracksFailed = '',
+    closeConConfigBeforeSaving = '',
     differentPlatformWidths = '',
     modName = '',
     needAdjust4Snap = '',
@@ -3700,6 +3705,7 @@ function data()
             _guiTexts.buildMoreWaypoints = _('BuildMoreWaypoints')
             _guiTexts.buildSnappyTracksFailed = _('BuildSnappyTracksFailed')
             _guiTexts.buildSubwayInProgress = _('BuildSubwayInProgress')
+            _guiTexts.closeConConfigBeforeSaving = _('CloseConConfigBeforeSaving')
             _guiTexts.modName = _('NAME')
             _guiTexts.needAdjust4Snap = _('NeedAdjust4Snap')
             _guiTexts.rebuildNeighboursInProgress = _('RebuildNeighboursInProgress')
@@ -3753,6 +3759,8 @@ function data()
 
                     if name == _eventNames.HIDE_WARNINGS then
                         m_state.warningText = nil
+                    elseif name == _eventNames.SHOW_WARNING then
+                        m_state.warningText = args.text
                     elseif name == _eventNames.HIDE_PROGRESS then
                         m_state.isHideProgress = true
                     elseif name == _eventNames.ALLOW_PROGRESS then
@@ -4501,7 +4509,7 @@ function data()
             -- LOLLO NOTE args can have different types, even boolean, depending on the event id and name
             -- logger.print('guiHandleEvent caught id =', id, 'name =', name)
             local isHideDistance = true
-            if (name == 'builder.proposalCreate' or name == 'builder.apply' or name == 'select' or name == 'destroy' or name == 'idAdded') then -- for performance
+            -- if (name == 'builder.proposalCreate' or name == 'builder.apply' or name == 'select' or name == 'destroy' or name == 'idAdded' or name == 'button.click') then -- for performance
                 xpcall(
                     function()
                         if name == 'builder.proposalCreate' then
@@ -4670,6 +4678,7 @@ function data()
                             local trackEndEntities = stationHelpers.getStationTrackEndEntities(conId, true)
                             if not(streetEndEntities) or not(trackEndEntities) then return end
 
+                            m_guiConConfigMenu.openForConId = conId
                             logger.print('the con config menu was opened, about to send command CON_CONFIG_MENU_OPENED, conId = ' .. conId)
                             api.cmd.sendCommand(api.cmd.make.setGameSpeed(0)) -- pause the game when config menu opens
                             api.cmd.sendCommand(
@@ -4687,12 +4696,17 @@ function data()
                             )
                         elseif name == 'destroy' and type(id) == 'string' and stringUtils.stringStartsWith(id, 'temp.addModuleComp.params.entity_') then
                             -- see the notes under idAdded
+                            m_guiConConfigMenu.openForConId = nil
 
                             local conId = tonumber(id:sub(34), 10)
                             if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
                             local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                             if con == nil or con.fileName ~= _constants.stationConFileName then return end
+
+                            -- prevent a crash if loading a game when the con config menu is open.
+                            local _ingameMenu = api.gui.util.getById('ingameMenu')
+                            if _ingameMenu ~= nil and _ingameMenu:isVisible() then return end
 
                             logger.print('the con config menu was closed, about to send command CON_CONFIG_MENU_CLOSED, conId = ' .. conId)
                             guiHelpers.showProgress(_guiTexts.rebuildNeighboursInProgress, _guiTexts.modName, _utils.sendAllowProgress)
@@ -4704,11 +4718,32 @@ function data()
                                     { stationConstructionId = conId }
                                 )
                             )
+                        -- elseif name == 'visibilityChange' then
+                        --     -- id =	ingameMenu.saveGameButton	name =	button.click
+                        --     logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+                        elseif name == 'button.click' and id == 'ingameMenu.saveGameButton' then
+                            -- bar saving the game if a station is not finalised
+                            if m_guiConConfigMenu.openForConId ~= nil then
+                                logger.print('saveGameButton clicked, a station con config menu was open')
+                                local _ingameMenu = api.gui.util.getById('ingameMenu')
+                                if _ingameMenu ~= nil and _ingameMenu:isVisible() then
+                                    logger.warn('about to save a game but the construction config menu is open, so a freestyle station is not finalised => closing the ingame menu')
+                                    _ingameMenu:setVisible(false, true)
+                                    api.cmd.sendCommand(
+                                        api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.SHOW_WARNING,
+                                            { text = _guiTexts.closeConConfigBeforeSaving }
+                                        )
+                                    )
+                                end
+                            end
                         end
                     end,
                     logger.xpErrorHandler
                 )
-            end
+            -- end
             if isHideDistance then guiHelpers.hideWaypointDistance() end
         end,
         guiUpdate = function()
