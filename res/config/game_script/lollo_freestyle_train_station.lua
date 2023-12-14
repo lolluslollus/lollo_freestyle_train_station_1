@@ -1502,8 +1502,8 @@ local _actions = {
                 if node1Id == nil then
                     -- isWarning = true
                     -- warningPositions[#warningPositions+1] = arrayUtils.cloneOmittingFields(edgeData.node1Props.position)
-                    logger.warn('_rebuildNeighbourEdges cannot find nearby node, so it added one. position =') logger.warningDebugPrint(edgeData.node1Props.position)
-                    logger.warn('edgeData =') logger.warningDebugPrint(edgeData)
+                    logger.print('_rebuildNeighbourEdges cannot find nearby node, so it added one. position =') logger.debugPrint(edgeData.node1Props.position)
+                    logger.print('edgeData =') logger.debugPrint(edgeData)
                     node1Id = _addNode1(edgeData.node1Props.position)
                 end
             end

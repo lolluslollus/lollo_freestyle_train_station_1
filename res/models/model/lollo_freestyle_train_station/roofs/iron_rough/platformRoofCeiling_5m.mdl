@@ -1,0 +1,34 @@
+function data()
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    materials = {
+                        "lollo_freestyle_train_station/metal/metal_corrugated.mtl",
+                        "lollo_freestyle_train_station/metal/metal_w_rivets.mtl",
+                    },
+                    mesh = 'lollo_freestyle_train_station/roofs/iron_rough/roof_5m_lod0.msh',
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 250,
+            },
+            {
+                node = {
+                    materials = {
+                        "lollo_freestyle_train_station/metal/metal_corrugated.mtl",
+                    },
+                    mesh = 'lollo_freestyle_train_station/roofs/iron_rough/roof_5m_lod1.msh',
+                },
+                static = false,
+                visibleFrom = 250,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

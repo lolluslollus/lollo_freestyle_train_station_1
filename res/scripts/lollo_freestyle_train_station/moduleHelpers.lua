@@ -1489,45 +1489,48 @@ return {
                                 - dz_dl * 4 -- account for xy rotations (humps or pits), all roofs are about 5m high, this can be negative
                                 -- + math.abs(dz) * 0.1 -- account for extra length due to slope
                             )
-                            -- this is s bit slower and a bit more accurate
+                            -- this is a bit slower and a bit more accurate
                             -- local tr1 = transfXZoom * (
                             --     1
                             --     + math.sqrt(dx_dl * dx_dl + dy_dl * dy_dl) * platformWidth -- account for z rotations, * 1 is an experimental coefficient
                             --     - dz_dl * 4 -- account for xy rotations (humps or pits), all roofs are about 5m high, this can be negative
                             -- --     + math.sqrt(dz * dz + 1) -1 -- account for extra length due to slope
                             -- )
+
+                            -- no skew
+                            local roofTransf = transfUtils.getTransf_Scaled_Shifted(
+                                privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+                                {tr1, transfYZoom, 1},
+                                {0, 0, constants.platformRoofZ}
+                            )
                             result.models[#result.models+1] = {
                                 id = roofModelId,
-                                -- transf = transfUtilsUG.mul(
-                                --     privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-                                --     {
-                                --         tr1, 0, 0, 0,
-                                --         0, transfYZoom, 0, 0,
-                                --         0, 0, 1, 0,
-                                --         0, 0, constants.platformRoofZ, 1
-                                --     }
-                                -- ),
-                                transf = transfUtils.getTransf_Scaled_Shifted(
-                                    privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
-                                    {tr1, transfYZoom, 1},
-                                    {0, 0, constants.platformRoofZ}
-                                ),
+                                transf = roofTransf,
                                 tag = tag
                             }
 
+                            -- yes skew -- this is correct but there are glitches inside bends, because x0-x1 is the same left and right
+                            -- local roofTransf = transfUtils.getTransf_Scaled_Shifted(
+                            --     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
+                            --     {tr1, transfYZoom, 1},
+                            --     {0, 0, constants.platformRoofZ}
+                            -- )
+                            -- local skew = (cpf.posTanX2[2][1][3] - cpf.posTanX2[1][1][3]) * tr1
+                            -- result.models[#result.models+1] = {
+                            --     id = roofModelId,
+                            --     transf = transfUtils.getTransf_XSkewedOnZ(roofTransf, skew),
+                            --     tag = tag
+                            -- }
+
                             if cpf.type ~= 2 and isFreeFromOpenStairsAndTunnels and math.fmod(ii, privateConstants.deco.pillarPeriod) == 0 then
-                                -- local myTransf = transfUtilsUG.mul(
-                                --     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
-                                --     { transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  0, 0, constants.platformRoofZ, 1 }
-                                -- )
-                                local myTransf = transfUtils.getTransf_Scaled_Shifted(
+                                local pillarTransf = transfUtils.getTransf_Scaled_Shifted(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                                     {transfXZoom, transfYZoom, 1},
                                     {0, 0, constants.platformRoofZ}
                                 )
                                 result.models[#result.models+1] = {
                                     id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
-                                    transf = myTransf,
+                                    transf = pillarTransf,
                                     tag = tag,
                                 }
                                 -- prevent overlapping with station name signs
@@ -1545,7 +1548,7 @@ return {
                                             --     myTransf,
                                             --     { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, yShift, 4.83, 1 }
                                             -- ),
-                                            transf = transfUtils.getTransf_Shifted(myTransf, {0, yShift, 4.83}),
+                                            transf = transfUtils.getTransf_Shifted(pillarTransf, {0, yShift, 4.83}),
                                             tag = tag
                                         }
                                         -- the model index must be in base 0 !

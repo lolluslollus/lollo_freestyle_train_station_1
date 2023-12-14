@@ -1,0 +1,103 @@
+function data()
+    return {
+        order = 0,
+        params = {
+            albedo_scale = {
+                albedoScale = { 0.6, 0.6, 0.6, },
+            },
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            map_albedo = {
+                -- LOLLO NOTE TGAs do not need flipping along the Y axis, DDSs do. It's a blender bug.
+                -- fileName = "lollo_freestyle_train_station/metal_corrugated/albedo_1024.tga",
+                fileName = "lollo_freestyle_train_station/metal_corrugated/albedo_1024.dds", --BC1, flipped vertically
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_metal_gloss_ao = {
+                -- fileName = "lollo_freestyle_train_station/metal_corrugated/metal_gloss_ao_1024.tga",
+                fileName = "lollo_freestyle_train_station/metal_corrugated/metal_gloss_ao_1024.dds", --BC3, flipped vertically
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_normal = {
+                -- fileName = "lollo_freestyle_train_station/metal_corrugated/normal_1024.tga",
+                fileName = "lollo_freestyle_train_station/metal_corrugated/normal_1024.dds", --BC5, flipped vertically
+                redGreen = true,
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            -- map_op_1 = {
+            --     fileName = "models/industry/overlay_textures/small_08.dds",
+            --     type = "TWOD",
+            --     wrapS = "REPEAT",
+            --     wrapT = "REPEAT",
+            -- },
+            -- map_op_2 = {
+            --     fileName = "models/industry/overlay_textures/big_02.dds",
+            --     type = "TWOD",
+            --     wrapS = "REPEAT",
+            --     wrapT = "REPEAT",
+            -- },
+            -- normal_scale = {
+            --     normalScale = 1,
+            -- },
+            -- operation_1 = {
+            --     mode = "WORLD_XY",
+            --     -- op = "NO_OP",
+            --     -- op = "MULTIPLICATION",
+            --     op = "OVERLAY",
+            --     opacity = 0.5,
+            --     scale = { 0.4, 0.4, },
+            -- },
+            -- operation_2 = {
+            --     mode = "WORLD_XY",
+            --     op = "OVERLAY",
+            --     opacity = 0.3,
+            --     scale = { 0.01, 0.01, },
+            -- },
+            map_op_1 = {
+                fileName = "buildings/overlay.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_2 = {
+                fileName = "buildings/dirtmap.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            normal_scale = {
+                normalScale = 0.5,
+            },
+            operation_1 = {
+                mode = "WORLD_XY",
+                op = "NO_OP",
+                opacity = 1,
+                scale = { 0.01, 0.01, },
+            },
+            operation_2 = {
+                mode = "WORLD_XY",
+                op = "MULTIPLICATION",
+                opacity = 1.0,
+                scale = { 0.1, 0.1, },
+            },
+            polygon_offset = {
+                factor = 0,
+                units = 0,
+            },
+            two_sided = {
+                flipNormal = false,
+                twoSided = false,
+            },
+        },
+        type = "PHYSICAL_NRML_MAP_OP",
+    }
+    end
+    
