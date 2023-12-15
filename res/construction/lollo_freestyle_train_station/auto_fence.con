@@ -5,26 +5,27 @@ function data()
     local logger = require('lollo_freestyle_train_station.logger')
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
-    local function _addGround(transf, yShift, result, wallBehindModelId)
+    local function _addGround(transf, yShift, zShiftOverDefaultPlatformHeight, result, wallBehindModelId)
+        local _zShift = math.max(zShiftOverDefaultPlatformHeight, 0) -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
 --[[
         local _faceTransformed = wallBehindModelId == nil
         and transfUtils.getFaceTransformed_FAST(
             transf,
             {
-                {-0.5, -0.2, 0, 1.0},
-                {0.5, -0.2, 0, 1.0},
-                {0.5, 0.5 + yShift, 0, 1.0},
-                {-0.5, 0.5 + yShift, 0, 1.0},
+                {-0.5, -0.2, _zShift, 1.0},
+                {0.5, -0.2, _zShift, 1.0},
+                {0.5, 0.5 + yShift, _zShift, 1.0},
+                {-0.5, 0.5 + yShift, _zShift, 1.0},
                 -- {x, positive outwards, z, 1}
             }
         )
         or transfUtils.getFaceTransformed_FAST(
             transf,
             {
-                {-0.5, -0.2, 0, 1.0},
-                {0.5, -0.2, 0, 1.0},
-                {0.5, 1.0 + yShift, 0, 1.0}, 
-                {-0.5, 1.0 + yShift, 0, 1.0},
+                {-0.5, -0.2, _zShift, 1.0},
+                {0.5, -0.2, _zShift, 1.0},
+                {0.5, 1.0 + yShift, _zShift, 1.0}, 
+                {-0.5, 1.0 + yShift, _zShift, 1.0},
                 -- {x, positive outwards, z, 1}
             }
         )
@@ -32,10 +33,10 @@ function data()
         local _faceTransformed = transfUtils.getFaceTransformed_FAST(
             transf,
             {
-                {-0.5, -0.2, 0, 1.0},
-                {0.5, -0.2, 0, 1.0},
-                {0.5, 0.5 + yShift, 0, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                {-0.5, 0.5 + yShift, 0, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                {-0.5, -0.2, _zShift, 1.0},
+                {0.5, -0.2, _zShift, 1.0},
+                {0.5, 0.5 + yShift, _zShift, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                {-0.5, 0.5 + yShift, _zShift, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
                 -- {x, positive outwards, z, 1}
             }
         )
@@ -65,34 +66,17 @@ function data()
     end
 
     local function _addWall(transf, result, yShift, zShift, wallMainModelId, wallBaseModelId)
-        if wallBaseModelId == nil then
-            if wallMainModelId ~= nil then
-                xpcall(
-                    function()
-                        table.insert(
-                            result.models,
-                            {
-                                id = wallMainModelId,
-                                transf = transfUtils.getTransf_YShifted(transf, yShift)
-                            }
-                        )
-                    end,
-                    function(err)
-                        print(err)
-                    end
-                )
-            end
-        else
-            local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
-            if wallMainModelId ~= nil then
-                table.insert(
-                    result.models,
-                    {
-                        id = wallMainModelId,
-                        transf = _transfShifted
-                    }
-                )
-            end
+        local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
+        if wallMainModelId ~= nil then
+            table.insert(
+                result.models,
+                {
+                    id = wallMainModelId,
+                    transf = _transfShifted
+                }
+            )
+        end
+        if wallBaseModelId ~= nil then
             table.insert(
                 result.models,
                 {
@@ -162,6 +146,7 @@ function data()
                 params.lolloFenceAssets_wallBehindInTunnels = params.lolloFenceAssets_wallBehindInTunnels or defaults.lolloFenceAssets_wallBehindInTunnels
                 params.lolloFenceAssets_wallBehindModel = params.lolloFenceAssets_wallBehindModel or defaults.lolloFenceAssets_wallBehindModel
                 params.lolloFenceAssets_yShiftFine = params.lolloFenceAssets_yShiftFine or defaults.lolloFenceAssets_yShiftFine
+                params.lolloFenceAssets_zShift = params.lolloFenceAssets_zShift or defaults.lolloFenceAssets_zShift
                 params.transfs = params.transfs or {} -- obsolete, it was an early release, newer releases have transfs_ground instead
                 params.transfs_ground = params.transfs_ground or {}
                 params.transfs_wallBehind = params.transfs_wallBehind or {}
@@ -230,6 +215,7 @@ function data()
             end
 
             -- make sure something appears even if the models are all nil, so the costruction will not stay around as a ghost
+            logger.print('wallMainModelId =', wallMainModelId, 'wallBaseModelId =', wallBaseModelId, 'wallBehindModelId =', wallBehindModelId)
             if not(wallMainModelId) and not(wallBaseModelId) and not(wallBehindModelId) then
                 result.labelText = {
                     [0] = { _('wallWithNoModelsHere'), _('wallWithNoModelsHere') }
@@ -259,12 +245,14 @@ function data()
             logger.print('fenceModelId =', wallMainModelId or 'NIL')
             logger.print('wallBaseModelId =', wallBaseModelId or 'NIL')
             logger.print('#params.transfs =', #params.transfs)
-
             local _yStart = fenceModelHelper.getYShiftFineActualValues()[params.lolloFenceAssets_yShiftFine + 1]
-            local _zStart = (wallBaseModelId == nil) and 0 or constants.platformHeight
+-- LOLLO TODO adjust height: check this
+            local _zShift = fenceModelHelper.getZShiftActualValues()[params.lolloFenceAssets_zShift + 1]
+            local _zStart = ((wallBaseModelId == nil) and 0 or constants.defaultPlatformHeight) + _zShift
             logger.print('_yStart =', _yStart or 'NIL')
+            logger.print('_zShift =', _zShift or 'NIL')
             logger.print('_zStart =', _zStart or 'NIL')
-            -- the wall is 1.4m tall, constants.platformHeight is 1.2m, so we sink all by 20cm. This is level with freestyle stations and looks good.
+            -- the wall is 1.4m tall, constants.defaultPlatformHeight is 1.2m, so we sink all by 20cm. This is level with freestyle stations and looks good.
             -- for _, transf in pairs(params.transfs) do -- compatibility with early releases, newer releases have no transfs
             --     _addWall(transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
             -- end
@@ -275,7 +263,7 @@ function data()
                     _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
                 end
                 if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then -- ground
-                    _addGround(transfData.transf, _yStart, result, wallBehindModelId)
+                    _addGround(transfData.transf, _yStart, _zShift, result, wallBehindModelId)
                 end
             end
             for _, transfData in pairs(params.transfs_wallBehind) do

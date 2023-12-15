@@ -33,6 +33,7 @@ local _eventNames = _constants.eventData.eventNames
 local _guiPlatformWaypointModelId = nil
 local _guiTrackWaypointModelId = nil
 local _guiTexts = {
+    awaitFinalisationBeforeSaving = '',
     buildInProgress = '',
     buildSubwayInProgress = '',
     buildMoreWaypoints = '',
@@ -129,6 +130,10 @@ local _utils = {
 
         return (baseNode0.position.z + baseNode1.position.z) / 2
     end,
+    ---this alters oldModules in place
+    ---@param oldModules table
+    ---@return boolean
+    ---@return table
     replaceFakeEdgesWithSnappy = function (oldModules)
         -- local _interestingBaseIds = {
         --     _constants.idBases.axialEdgeSlotId,
@@ -3700,6 +3705,7 @@ function data()
             _guiPlatformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
             _guiTrackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
             -- read texts
+            _guiTexts.awaitFinalisationBeforeSaving = _('AwaitFinalisationBeforeSaving')
             _guiTexts.differentPlatformWidths = _('DifferentPlatformWidths')
             _guiTexts.buildInProgress = _('BuildInProgress')
             _guiTexts.buildMoreWaypoints = _('BuildMoreWaypoints')
@@ -3738,6 +3744,9 @@ function data()
 					iLayoutItem:setIcon('ui/hammer19.tga')
 				end
 			end
+            m_guiConConfigMenu = {
+                openForConId = nil
+            }
         end,
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
@@ -3759,8 +3768,6 @@ function data()
 
                     if name == _eventNames.HIDE_WARNINGS then
                         m_state.warningText = nil
-                    elseif name == _eventNames.SHOW_WARNING then
-                        m_state.warningText = args.text
                     elseif name == _eventNames.HIDE_PROGRESS then
                         m_state.isHideProgress = true
                     elseif name == _eventNames.ALLOW_PROGRESS then
@@ -4723,20 +4730,26 @@ function data()
                         --     logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') logger.debugPrint(args)
                         elseif name == 'button.click' and id == 'ingameMenu.saveGameButton' then
                             -- bar saving the game if a station is not finalised
+                            local userMessage = nil
                             if m_guiConConfigMenu.openForConId ~= nil then
-                                logger.print('saveGameButton clicked, a station con config menu was open')
-                                local _ingameMenu = api.gui.util.getById('ingameMenu')
-                                if _ingameMenu ~= nil and _ingameMenu:isVisible() then
-                                    logger.warn('about to save a game but the construction config menu is open, so a freestyle station is not finalised => closing the ingame menu')
-                                    _ingameMenu:setVisible(false, true)
-                                    api.cmd.sendCommand(
-                                        api.cmd.make.sendScriptEvent(
-                                            string.sub(debug.getinfo(1, 'S').source, 1),
-                                            _eventId,
-                                            _eventNames.SHOW_WARNING,
-                                            { text = _guiTexts.closeConConfigBeforeSaving }
-                                        )
-                                    )
+                                logger.warn('about to save a game but the construction config menu is open, so a freestyle station is not finalised => closing the ingame menu')
+                                userMessage = _guiTexts.closeConConfigBeforeSaving
+                            elseif m_state.warningText ~= nil then
+                                logger.warn('about to save a game but a warning is open, so a freestyle station is not finalised => closing the ingame menu')
+                                userMessage = _guiTexts.awaitFinalisationBeforeSaving
+                            elseif m_conConfigMenu.isBusy then
+                                logger.warn('about to save a game but the mod is busy, so a freestyle station is not finalised => closing the ingame menu')
+                                userMessage = _guiTexts.awaitFinalisationBeforeSaving
+                            end
+                            if userMessage ~= nil then
+                                if guiHelpers.isAllowSaving then
+                                    logger.warn('force-saving a game with a possibly unready station')
+                                else
+                                    local _ingameMenu = api.gui.util.getById('ingameMenu')
+                                    if _ingameMenu ~= nil and _ingameMenu:isVisible() then
+                                        _ingameMenu:setVisible(false, true)
+                                        guiHelpers.showSaveWarning(userMessage)
+                                    end
                                 end
                             end
                         end
@@ -4765,6 +4778,7 @@ function data()
                     _utils.sendHideWarnings
                 )
             end
+
             if m_state.isHideProgress then
                 guiHelpers.hideProgress(
                     _utils.sendAllowProgress

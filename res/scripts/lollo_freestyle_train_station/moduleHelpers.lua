@@ -106,14 +106,15 @@ local privateFuncs = {
     ---@param nTrackEdge integer
     ---@return eraPrefix
     getEraPrefix = function(params, nTerminal, terminalData, nTrackEdge)
+        local _modules = params.modules
         local cpl = terminalData.centrePlatformsRelative[nTrackEdge] or terminalData.centrePlatformsRelative[1]
         local result = cpl.era or constants.eras.era_c.prefix
-        if params.modules then
-            if params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraASlotId)] then
+        if _modules then
+            if _modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraASlotId)] then
                 result = constants.eras.era_a.prefix
-            elseif params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraBSlotId)] then
+            elseif _modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraBSlotId)] then
                 result = constants.eras.era_b.prefix
-            elseif params.modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraCSlotId)] then
+            elseif _modules[slotHelpers.mangleId(nTerminal, 0, constants.idBases.platformEraCSlotId)] then
                 result = constants.eras.era_c.prefix
             end
         end
@@ -212,12 +213,13 @@ local privateFuncs = {
     end,
     -- returns an integer starting at 0, it can be positive or negative
     getVariant = function(params, slotId)
+        local _modules = params.modules
         local variant = 0
         if type(params) == 'table'
-        and type(params.modules) == 'table'
-        and type(params.modules[slotId]) == 'table'
-        and type(params.modules[slotId].variant) == 'number' then
-            variant = params.modules[slotId].variant or 0
+        and type(_modules) == 'table'
+        and type(_modules[slotId]) == 'table'
+        and type(_modules[slotId].variant) == 'number' then
+            variant = _modules[slotId].variant or 0
         end
         return variant
     end,
@@ -578,23 +580,24 @@ privateFuncs.edges = {
     _addTrackEdges = function(result, tag2nodes, params, nTerminal, terminalData)
         result.terminateConstructionHookInfo.vehicleNodes[nTerminal] = (#result.edgeLists + terminalData.trackEdgeListMidIndex) * 2 - 2
 
+        local _modules = params.modules
         logger.print('_addTrackEdges starting for terminal =', nTerminal)
         local forceCatenary = 0
         local trackElectrificationModuleKey = slotHelpers.mangleId(nTerminal, 0, constants.idBases.trackElectrificationSlotId)
-        if params.modules[trackElectrificationModuleKey] ~= nil then
-            if params.modules[trackElectrificationModuleKey].name == constants.trackElectrificationYesModuleFileName then
+        if _modules[trackElectrificationModuleKey] ~= nil then
+            if _modules[trackElectrificationModuleKey].name == constants.trackElectrificationYesModuleFileName then
                 forceCatenary = 2
-            elseif params.modules[trackElectrificationModuleKey].name == constants.trackElectrificationNoModuleFileName then
+            elseif _modules[trackElectrificationModuleKey].name == constants.trackElectrificationNoModuleFileName then
                 forceCatenary = 1
             end
         end
         logger.print('forceCatenary =', forceCatenary)
         local forceFast = 0
         local trackSpeedModuleKey = slotHelpers.mangleId(nTerminal, 0, constants.idBases.trackSpeedSlotId)
-        if params.modules[trackSpeedModuleKey] ~= nil then
-            if params.modules[trackSpeedModuleKey].name == constants.trackSpeedFastModuleFileName then
+        if _modules[trackSpeedModuleKey] ~= nil then
+            if _modules[trackSpeedModuleKey].name == constants.trackSpeedFastModuleFileName then
                 forceFast = 2
-            elseif params.modules[trackSpeedModuleKey].name == constants.trackSpeedSlowModuleFileName then
+            elseif _modules[trackSpeedModuleKey].name == constants.trackSpeedSlowModuleFileName then
                 forceFast = 1
             end
         end
@@ -687,8 +690,8 @@ privateFuncs.edges = {
                 -- The winner does not seem affected by height.
                 -- Neither by the material priority.
                 -- It seems to have a degree of randomness, but the sucky part is: there is a winner and it takes all.
-                -- So, even if I set a transparent ballastMaterial and I managa to make it will,
-                -- also the normal tracks will receive a transparent ballast - not that I could manage so far.
+                -- So, even if I set a transparent ballastMaterial and I manage to make it win (not that I could manage so far),
+                -- also the normal tracks will receive a transparent ballast.
                 alignTerrain = pel.type == 0 or pel.type == 2, -- only align on ground and in tunnels
                 edges = transfUtils.getPosTanX2Transformed(pel.posTanX2, params.inverseMainTransf),
                 edgeType = pel.edgeType,
@@ -1295,6 +1298,8 @@ return {
             local _i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
             local _cpfs = terminalData.centrePlatformsFineRelative
+            local _laneZ = result.laneZs[nTerminal]
+            local _zShift = _laneZ - constants.defaultPlatformHeight
             for ii = 1, #_cpfs, privateConstants.cargoShelves.bracketStep do
                 local cpf = _cpfs[ii]
                 local leadingIndex = cpf.leadingIndex
@@ -1315,10 +1320,11 @@ return {
                             transf = transfUtils.getTransf_Scaled_Shifted(
                                 privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
                                 {transfXZoom, transfYZoom, 1},
-                                {0, 0, constants.platformRoofZ}
+                                {0, 0, constants.platformRoofZ + _zShift}
                             ),
                             tag = tag
                         }
+                        -- waiting areas on shelves
                         -- we shift it by 2 so it does not cover light and speakers
                         if math.fmod(ii + 2, privateConstants.cargoShelves.pillarPeriod) == 0 then
                             local legsModelId = legs5ModelId
@@ -1338,7 +1344,7 @@ return {
                             local myTransf = transfUtils.getTransf_Scaled_Shifted(
                                 privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                                 {transfXZoom, transfYZoom, 1},
-                                {0, 0, constants.platformRoofZ}
+                                {0, 0, constants.platformRoofZ + _zShift}
                             )
                             result.models[#result.models+1] = {
                                 id = legsModelId,
@@ -1441,8 +1447,11 @@ return {
             -- => totalStretchFactor = abs(posTanX2[1][2][2] - posTanX2[2][2][2]) * 0.66667 * platformWidth + 1
             -- Season 0.6667 to taste, it's empyrical.
             -- In real life I don't know how x and y are orientated, so I must account for both, and also z could give surprises if I have a hump.
+            local _modules = params.modules
             local _terminalData = params.terminals[nTerminal]
             local _cpfs = _terminalData.centrePlatformsFineRelative
+            local _laneZ = result.laneZs[nTerminal]
+            local _zShift = _laneZ - constants.defaultPlatformHeight
 
             local isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
             local transfXZoom = isTrackOnPlatformLeft and -1 or 1
@@ -1456,8 +1465,8 @@ return {
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
             for i = _i1, _iMax, 1 do
-                isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
-                isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
+                isFreeFromOpenStairsLeft[i] = not(_modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
+                isFreeFromOpenStairsRight[i] = (i < 2 or not(_modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
 
             local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, 1)
@@ -1501,7 +1510,7 @@ return {
                             local roofTransf = transfUtils.getTransf_Scaled_Shifted(
                                 privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
                                 {tr1, transfYZoom, 1},
-                                {0, 0, constants.platformRoofZ}
+                                {0, 0, constants.platformRoofZ + _zShift}
                             )
                             result.models[#result.models+1] = {
                                 id = roofModelId,
@@ -1513,7 +1522,7 @@ return {
                             -- local roofTransf = transfUtils.getTransf_Scaled_Shifted(
                             --     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                             --     {tr1, transfYZoom, 1},
-                            --     {0, 0, constants.platformRoofZ}
+                            --     {0, 0, constants.platformRoofZ + _zShift}
                             -- )
                             -- local skew = (cpf.posTanX2[2][1][3] - cpf.posTanX2[1][1][3]) * tr1
                             -- result.models[#result.models+1] = {
@@ -1526,7 +1535,7 @@ return {
                                 local pillarTransf = transfUtils.getTransf_Scaled_Shifted(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(cpf.posTanX2),
                                     {transfXZoom, transfYZoom, 1},
-                                    {0, 0, constants.platformRoofZ}
+                                    {0, 0, constants.platformRoofZ + _zShift}
                                 )
                                 result.models[#result.models+1] = {
                                     id = platformWidth < 5 and pillar2_5ModelId or pillar5ModelId,
@@ -1567,6 +1576,7 @@ return {
             pillar2_5ModelId, pillar5ModelId,
             isTunnelOk
         )
+            local _modules = params.modules
             local _cpfs = terminalData.centrePlatformsFineRelative
             local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
             local _isSkipPillars = terminalData.isCargo or pillar2_5ModelId == nil or pillar5ModelId == nil
@@ -1576,6 +1586,7 @@ return {
             local _isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
             -- logger.print('_isEndFiller =', _isEndFiller)
             local _laneZ = result.laneZs[nTerminal]
+            local _zShift = _laneZ - constants.defaultPlatformHeight
 
             -- local _isVertical = false
             local wallBehindModelId
@@ -1597,11 +1608,11 @@ return {
             local isFreeFromOpenStairsLeft = {}
             local isFreeFromOpenStairsRight = {}
             for i = _i1, _iMax, 1 do
-                isFreeFromOpenStairsLeft[i] = not(params.modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
-                isFreeFromOpenStairsRight[i] = (i < 2 or not(params.modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
+                isFreeFromOpenStairsLeft[i] = not(_modules[result.mangleId(nTerminal, i+1, constants.idBases.openStairsUpLeftSlotId)])
+                isFreeFromOpenStairsRight[i] = (i < 2 or not(_modules[result.mangleId(nTerminal, i-1, constants.idBases.openStairsUpRightSlotId)]))
             end
 
-            local isFreeFromRoof = not(params.modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.platformRoofSlotId)])
+            local isFreeFromRoof = not(_modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.platformRoofSlotId)])
 
             -- flat areas and deco are shifted by this amount, and it makes sense this way, so we must account for it
             local _deco2FlatAreaShiftInt = math.floor(constants.maxPassengerWaitingAreaEdgeLength / 2)
@@ -1639,6 +1650,13 @@ return {
                             -- logger.print('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
                         end
                         if isCanDraw then
+                            -- tunnels: do not raise the walls or they may cut through the ceiling. On second thoughts, I'll leave it as it is for now.
+                            -- local __laneZ = cpf.type ~= 2 and _laneZ or math.min(_laneZ, constants.defaultPlatformHeight)
+                            -- logger.print('_laneZ = ' .. tostring(_laneZ) .. ',__laneZ = ' .. tostring(__laneZ) .. ', cpf.type = ' .. tostring(cpf.type))
+                            -- local __zShift = cpf.type ~= 2 and _zShift or __laneZ - constants.defaultPlatformHeight
+                            local __laneZ = _laneZ
+                            local __zShift = _zShift
+
                             local widthAboveNil, slopedAreaWidth = _getWidthAbove_0m_BarePlatformWidth(cpf)
                             -- this would help if I take cpf.posTanX2, but then I'd get some ugly steps.
                             -- local yShift = _isTrackOnPlatformLeft and -cpf.width * 0.5 - slopedAreaWidth or cpf.width * 0.5 + slopedAreaWidth
@@ -1662,13 +1680,13 @@ return {
                             --         _transfXZoom * xScaleFactor, 0, 0, 0,
                             --         0, _transfYZoom, 0, 0,
                             --         0, 0, 1, 0,
-                            --         0, 0, _laneZ, 1
+                            --         0, 0, __laneZ, 1
                             --     }
                             -- )
                             local wallTransf = transfUtils.getTransf_Scaled_Shifted(
                                 privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                                 {_transfXZoom * xScaleFactor, _transfYZoom, 1},
-                                {0, 0, _laneZ}
+                                {0, 0, __laneZ}
                             )
                             -- if not(_isVertical) then
                                 local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
@@ -1682,7 +1700,7 @@ return {
                                 tag = tag
                             }
                             if wallBehindModelId ~= nil and cpf.type == 0 then -- only on ground
-                                privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, _laneZ)
+                                privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, __laneZ)
                             end
                             -- if ii % 4 == 0 then
                             --     result.models[#result.models+1] = {
@@ -1717,7 +1735,7 @@ return {
                                 local pillarTransf = transfUtils.getTransf_Scaled_Shifted(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                                     {_transfXZoom, _transfYZoom, 1},
-                                    {0, yShift4Pillar, constants.platformRoofZ}
+                                    {0, yShift4Pillar, constants.platformRoofZ + __zShift}
                                 )
                                 result.models[#result.models+1] = {
                                     id = cpf.width < 5 and pillar2_5ModelId or pillar5ModelId,
@@ -1811,6 +1829,11 @@ return {
                 if leadingIndex > _iMax then break end
                 if leadingIndex >= _i1 then
                     if isTunnelOk or ctf.type ~= 2 then -- ground or bridge, tunnel only if allowed
+                        -- tunnels: do not raise the walls or they may cut through the ceiling. On second thoughts, I'll leave it as it is for now.
+                        -- local __laneZ = ctf.type ~= 2 and _laneZ or math.min(_laneZ, constants.defaultPlatformHeight)
+                        -- logger.print('_laneZ = ' .. tostring(_laneZ) .. ',__laneZ = ' .. tostring(__laneZ) .. ', ctf.type = ' .. tostring(ctf.type))
+                        local __laneZ = _laneZ
+
                         local widthAboveNil = ctf.width * 0.5
                         local wallPosTanX2 = transfUtils.getParallelSidewaysCoarse(
                             ctf.posTanX2,
@@ -1825,13 +1848,13 @@ return {
                         --         transfXZoom * xScaleFactor, 0, 0, 0,
                         --         0, transfYZoom, 0, 0,
                         --         0, 0, 1, 0,
-                        --         0, 0, _laneZ, 1
+                        --         0, 0, __laneZ, 1
                         --     }
                         -- )
                         local wallTransf = transfUtils.getTransf_Scaled_Shifted(
                             privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                             {transfXZoom * xScaleFactor, transfYZoom, 1},
-                            {0, 0, _laneZ}
+                            {0, 0, __laneZ}
                         )
                         -- if not(_isVertical) then
                             local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
@@ -1849,7 +1872,7 @@ return {
                             tag = tag
                         }
                         if wallBehindModelId ~= nil and ctf.type == 0 then -- only on ground
-                            privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, _laneZ)
+                            privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, __laneZ)
                         end
                     end
                 end
@@ -2805,67 +2828,91 @@ return {
             -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
             -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
             -- The former is a bit glitchy, the latter is prettier.
-            local _getPlatformModelId = function (isCargo, isTrackOnPlatformLeft, width, nTrackEdge, eraPrefix,
-            previousLeadingIndex, currentLeadingIndex, nextLeadingIndex)
-                local myModelId = ''
+            local _modules = params.modules
+            local _maxIIMod10 = constants.maxPassengerWaitingAreaEdgeLength
+
+            local _getPlatformModelId = function (eraPrefix, isCargo, isTrackOnPlatformLeft, width, ii,
+            previousLeadingIndex, currentLeadingIndex, nextLeadingIndex, _platformStyleModuleFileName)
                 if isCargo then
                     if width < 10 then
-                        myModelId = 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_5m_wide.mdl'
+                        return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_5m_wide.mdl'
                     elseif width < 20 then
-                        myModelId = 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_10m_wide.mdl'
+                        return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_10m_wide.mdl'
                     else
-                        myModelId = 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_20m_wide.mdl'
+                        return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_20m_wide.mdl'
                     end
                 else
-                    local isUnderpass = params.modules[result.mangleId(nTerminal, nTrackEdge, constants.idBases.underpassSlotId)] ~= nil
-                    and previousLeadingIndex == currentLeadingIndex
-                    and currentLeadingIndex == nextLeadingIndex
-                    if isUnderpass then
+                    local _underpassModule = _modules[result.mangleId(nTerminal, currentLeadingIndex, constants.idBases.underpassSlotId)]
+                    -- if _underpassModule ~= nil then print('ii = ') debugPrint(ii) end
+
+                    local _isHole = _underpassModule ~= nil
+                        and previousLeadingIndex == currentLeadingIndex
+                        and currentLeadingIndex == nextLeadingIndex
+                        and arrayUtils.arrayHasValue(_underpassModule.metadata.holeIIs, ii % _maxIIMod10)
+                    if _isHole then
                         if width < 5 then
-                            myModelId = isTrackOnPlatformLeft
-                                and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
-                                or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
+                            if _platformStyleModuleFileName == constants.platformStyles._DB_eraC.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_gap_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_gap_right.mdl'
+                            else
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
+                            end
                         else
-                            myModelId = isTrackOnPlatformLeft
+                            if _platformStyleModuleFileName == constants.platformStyles._DB_eraC.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_gap_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_gap_right.mdl'
+                            else
+                                return isTrackOnPlatformLeft
                                 and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
                                 or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
+                            end
                         end
                     else
                         if width < 5 then
-                            myModelId = isTrackOnPlatformLeft
-                                and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
-                                or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
+                            if _platformStyleModuleFileName == constants.platformStyles._DB_eraC.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_gap_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_gap_right.mdl'
+                            else
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
+                            end
                         else
-                            myModelId = isTrackOnPlatformLeft
-                                and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
-                                or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
+                            if _platformStyleModuleFileName == constants.platformStyles._DB_eraC.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_gap_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_gap_right.mdl'
+                            else
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
+                            end
                         end
                     end
                 end
-
-                return myModelId
-                -- if eraPrefix == constants.eras.era_a.prefix then
-                --     return myModelId:gsub(constants.eras.era_c.prefix, constants.eras.era_a.prefix)
-                -- elseif eraPrefix == constants.eras.era_b.prefix then
-                --     return myModelId:gsub(constants.eras.era_c.prefix, constants.eras.era_b.prefix)
-                -- else
-                --     return myModelId
-                -- end
             end
-
-            local isCargoTerminal = terminalData.isCargo
-            local isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
-            local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
+            local _isCargoTerminal = terminalData.isCargo
+            local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
+            local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
             local _cpfs = terminalData.centrePlatformsFineRelative
-            -- local isFirstDone = false
+            local _platformStyleModuleFileName = result.platformStyles[nTerminal] -- it can be nil
+            local _zShift = result.laneZs[nTerminal] - constants.defaultPlatformHeight
             for ii = 1, #_cpfs do
                 local cpf = _cpfs[ii]
                 local cpfM1 = _cpfs[ii-1] or {}
                 local cpfP1 = _cpfs[ii+1] or {}
-                local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2)
+                local myTransf = transfUtils.getTransf_ZShifted(
+                    privateFuncs.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+                    _zShift
+                )
                 local myModelId = _getPlatformModelId(
-                    isCargoTerminal, isTrackOnPlatformLeft, cpf.width, cpf.leadingIndex, eraPrefix,
-                    cpfM1.leadingIndex, cpf.leadingIndex, cpfP1.leadingIndex
+                    _eraPrefix, _isCargoTerminal, _isTrackOnPlatformLeft, cpf.width, ii,
+                    cpfM1.leadingIndex, cpf.leadingIndex, cpfP1.leadingIndex, _platformStyleModuleFileName
                 )
 -- LOLLO NOTE platforms and sloped areas used to look wrong on humps: they were full of cuts.
 -- The trouble is, edges on humps have the wrong tangents (too short)
@@ -2878,27 +2925,7 @@ return {
                     tag = tag,
                     transf = myTransf
                 }
-                -- if not(isFirstDone) then myTransf[15] = myTransf[15] + 1 end
-                -- result.models[#result.models+1] = {
-                --     id = isFirstDone and 'lollo_freestyle_train_station/icon/green.mdl' or 'lollo_freestyle_train_station/icon/red.mdl',
-                --     slotId = slotId,
-                --     tag = tag,
-                --     transf = myTransf
-                -- }
-                -- isFirstDone = true
             end
-            -- local isFirstDone = false
-            -- for _, cpl in pairs(_terminalData.centrePlatformsRelative) do
-            --     local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
-            --     myTransf[15] = myTransf[15] + 1
-            --     result.models[#result.models+1] = {
-            --         id = isFirstDone and 'lollo_freestyle_train_station/icon/red.mdl' or 'lollo_freestyle_train_station/icon/green.mdl',
-            --         slotId = slotId,
-            --         tag = tag,
-            --         transf = myTransf
-            --     }
-            --     isFirstDone = true
-            -- end
         end,
     },
     slopedAreas = {
@@ -2921,6 +2948,7 @@ return {
             local _iN = _isEndFiller and nTrackEdge or (nTrackEdge + 1)
             local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
             local _laneZ = result.laneZs[nTerminal]
+            local _zShift = _laneZ - constants.defaultPlatformHeight
 
             local waitingAreaIndex = 0
             local nWaitingAreas = 0
@@ -2947,11 +2975,8 @@ return {
                         -- logger.print('xScaleFactor w ratios =', xScaleFactor)
                         result.models[#result.models+1] = {
                             id = modelId,
-                            -- transf = transfUtilsUG.mul(
-                            --     myTransf,
-                            --     { xScaleFactor, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
-                            -- ),
-                            transf = transfUtils.getTransf_XScaled(myTransf, xScaleFactor),
+                            -- transf = transfUtils.getTransf_XScaled(myTransf, xScaleFactor),
+                            transf = transfUtils.getTransf_Scaled_Shifted(myTransf, {xScaleFactor, 1, 1}, {0, 0, _zShift}),
                             tag = tag
                         }
 
@@ -2965,7 +2990,7 @@ return {
                                     id = waitingAreaModelId,
                                     transf = transfUtilsUG.mul(
                                         myTransf,
-                                        { 0, _waitingAreaScaleFactor, 0, 0,  -_waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
+                                        { 0, _waitingAreaScaleFactor, 0, 0,  -_waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + _zShift, 1 }
                                     ),
                                     tag = slotHelpers.mangleModelTag(nTerminal, isCargo),
                                 }

@@ -1,0 +1,60 @@
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+function data()
+    return {
+        -- boundingInfo = {
+        --     bbMax = {4.9, 0.85, 2.1},
+        --     bbMin = {-4.9, -0.85, -0.1}
+        -- },
+        -- collider = {
+        --     params = {
+        --         halfExtents = {4.9, 0.85, 1.1}
+        --     },
+        --     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 1.0, 1},
+        --     type = 'BOX'
+        -- },
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_grey.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_2.mtl',
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                                'station/rail/era_c/era_c_trainstation_borders_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1_darker_low_prio.mtl',
+                                'lollo_freestyle_train_station/hole.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/underpass/era_c_underpass_stairs_8m_lod0.msh',
+                        },
+                    },
+                    name = 'era_c_db_underpass_lod0',
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 200
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'station/rail/era_c/era_c_trainstation_borders_1.mtl',
+                                'lollo_freestyle_train_station/era_c_station_tiles_1_darker_low_prio.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/underpass/underpass_stairs_10m_lod1.msh',
+                        },
+                    },
+                    name = 'era_c_db_underpass_lod1',
+                },
+                static = false,
+                visibleFrom = 200,
+                visibleTo = 1000
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

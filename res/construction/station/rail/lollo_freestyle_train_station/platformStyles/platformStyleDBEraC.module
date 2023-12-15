@@ -1,0 +1,46 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+
+function data()
+	return {
+		availability = {
+			yearFrom = _constants.eras.era_c.startYear,
+			yearTo = 0
+		},
+		category = {
+			categories = { "platform-era-height-style", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("PlatformStyleDBEraCName"),
+			description = _("PlatformStyleDBEraCDesc"),
+			icon = "ui/lollo_freestyle_train_station/platformStyleDBEraC.tga"
+		},
+		metadata = { },
+		order = {
+			value = 16,
+		},
+		type = _constants.platformStyleModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			-- if not nTerminal or not baseId then return end
+
+			-- result.models[#result.models + 1] = {
+			-- 	id = 'lollo_freestyle_train_station/icon/lilac.mdl',
+			-- 	slotId = slotId,
+			-- 	transf = slotTransf,
+			-- 	tag = tag
+			-- }
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/icon/lilac.mdl',
+					transf = _constants.idTransf,
+				}
+			}
+		end
+	}
+end

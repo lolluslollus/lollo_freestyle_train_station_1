@@ -1,4 +1,20 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local constants = require('lollo_freestyle_train_station.constants')
+
+
+local _platformHeightsSorted = {}
+for _, plh in pairs(constants.platformHeights) do
+    _platformHeightsSorted[#_platformHeightsSorted+1] = plh
+end
+arrayUtils.sort(_platformHeightsSorted, 'aboveRail', true)
+local _getZShiftDefaultIndex = function()
+    local index_base0 = 0
+    for _, plh in pairs(_platformHeightsSorted) do
+        if plh.aboveGround == constants.defaultPlatformHeight then return index_base0 end
+        index_base0 = index_base0 + 1
+    end
+    return 0
+end
 
 local privateValues = {
     maxLength = 200,
@@ -21,6 +37,7 @@ privateValues.defaults = {
     lolloFenceAssets_yShiftFine = privateValues.yShiftFineMaxIndex,
     lolloFenceAssets_zDelta = privateValues.zDeltaMaxIndex,
     lolloFenceAssets_zRotation = privateValues.zRotationMaxIndex,
+    lolloFenceAssets_zShift = _getZShiftDefaultIndex(),
 }
 local privateFuncs = {
     getLengthValues = function()
@@ -83,6 +100,20 @@ local privateFuncs = {
         local results = {}
         for i = -privateValues.zRotationMaxIndex, privateValues.zRotationMaxIndex, 1 do
             results[#results+1] = ("%.2g °"):format(i / privateValues.zRotationMaxIndex * 90)
+        end
+        return results
+    end,
+    getZShiftActualValues = function()
+        local results = {}
+        for _, plh in pairs(_platformHeightsSorted) do
+            results[#results+1] = plh.aboveGround - constants.defaultPlatformHeight
+        end
+        return results
+    end,
+    getZShiftDisplayValues = function()
+        local results = {}
+        for _, plh in pairs(_platformHeightsSorted) do
+            results[#results+1] = ("%.2g m"):format(plh.aboveRail)
         end
         return results
     end,
@@ -241,6 +272,13 @@ return {
                 values = privateFuncs.getZDeltaDisplayValues(),
             },
             {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_zShift,
+                key = 'lolloFenceAssets_zShift',
+                name = _('ZShift'),
+                uiType = 'BUTTON',
+                values = privateFuncs.getZShiftDisplayValues(),
+            },
+            {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_isWallTall,
                 key = 'lolloFenceAssets_isWallTall',
                 name = _('IsWallTall'),
@@ -314,7 +352,14 @@ return {
                 uiType = 'SLIDER',
                 values = privateFuncs.getYShiftFineDisplayValues(),
             },
-            -- there is no way yet to accurately find out if an edge is frozen:
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_zShift,
+                key = 'lolloFenceAssets_zShift',
+                name = _('ZShift'),
+                uiType = 'BUTTON',
+                values = privateFuncs.getZShiftDisplayValues(),
+            },
+            -- there is no way yet to accurately find out if an edge is frozen without the api:
             -- I often add or remove one metre, unless I rewrite getCentralEdgePositions_OnlyOuterBounds
             -- {
             --     defaultIndex = privateValues.defaults.lolloFenceAssets_buildOnFrozenEdges,
@@ -356,6 +401,9 @@ return {
     end,
     getZRotationActualValues = function()
         return privateFuncs.getZRotationActualValues()
+    end,
+    getZShiftActualValues = function()
+        return privateFuncs.getZShiftActualValues()
     end,
     getDefaultIndexes = function()
         return privateValues.defaults

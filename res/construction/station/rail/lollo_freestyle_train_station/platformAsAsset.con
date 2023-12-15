@@ -173,7 +173,7 @@ function data()
                 cost = 0,
                 models = {},
             }
-
+-- LOLLO TODO adjust height
             local _xHalfSize = (
                 _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_x_10m', params.lollo_platform_as_asset_x_10m) +
                 _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_x_1m', params.lollo_platform_as_asset_x_1m)
@@ -192,7 +192,7 @@ function data()
             if _isOnlyTerrain then
                 result.models[#result.models+1] = {
                     id = _modelId,
-                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -constants.platformHeight, 1}
+                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -constants.defaultPlatformHeight, 1}
                 }
             else
                 for x = -_xHalfSize, _xHalfSize, 1 do

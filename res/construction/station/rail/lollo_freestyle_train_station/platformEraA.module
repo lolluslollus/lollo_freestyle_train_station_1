@@ -7,7 +7,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "platform-deco", },
+			categories = { "platform-era-height-style", },
 		},
 		cost = {
 			price = 0,
@@ -19,7 +19,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 61,
+			value = 1,
 		},
 		type = _constants.era_a_platformModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)

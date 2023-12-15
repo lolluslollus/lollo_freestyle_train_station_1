@@ -36,7 +36,6 @@ local constants = {
             REBUILD_NEIGHBOUR_CONS = 'REBUILD_NEIGHBOUR_CONS',
             REBUILD_NEIGHBOURS_ALL = 'REBUILD_NEIGHBOURS_ALL',
             REBUILD_STATION_WITH_LATEST_PROPERTIES = 'REBUILD_STATION_WITH_LATEST_PROPERTIES',
-            SHOW_WARNING = 'SHOW_WARNING',
             SUBWAY_JOIN_REQUESTED = 'SUBWAY_JOIN_REQUESTED',
             SUBWAY_BUILD = 'SUBWAY_BUILD',
             TRACK_BULLDOZE_REQUESTED = 'TRACK_BULLDOZE_REQUESTED',
@@ -49,7 +48,20 @@ local constants = {
     },
 
     stairsAndRampHeight = 1.2,
-    platformHeight = 1.2,
+    defaultPlatformHeight = 1.2,
+    platformHeights = { -- there must be a module for each record
+    -- LOLLO TODO bridges may crash when lowering the platform to 20 cm (Purupuppertal). For now I do 25, I may have to raise it further: check it.
+        _25cm = {aboveRail = 0.25, aboveGround = 0.65, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight25.module',},
+        _40cm = {aboveRail = 0.4, aboveGround = 0.8, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight40.module',},
+        _60cm = {aboveRail = 0.6, aboveGround = 1.0, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight60.module',},
+         -- default
+        _80cm = {aboveRail = 0.8, aboveGround = 1.2, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight80.module',},
+        _100cm = {aboveRail = 1.0, aboveGround = 1.4, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight100.module',},
+        _110cm = {aboveRail = 1.1, aboveGround = 1.5, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight110.module',},
+    },
+    platformStyles = {
+        _DB_eraC = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleDBEraC.module'},
+    },
     platformSideBitsZ = -0.10, -- a bit lower than the platform, to look good in bends
     platformRoofZ = -0.20, -- a bit lower than the platform, to look good on slopes
     underpassZ = -4, -- must be negative and different from the lift heights (5, 10, 15 etc)
@@ -172,6 +184,8 @@ local constants = {
     restoreCargoTerminalModuleType = 'freestyleTrainStationRestoreCargoTerminal',
     passengerTerminalModuleType = 'freestyleTrainStationPassengerTerminal',
     restorePassengerTerminalModuleType = 'freestyleTrainStationRestorePassengerTerminal',
+    platformHeightModuleType = 'freestyleTrainStationPlatformHeight',
+    platformStyleModuleType = 'freestyleTrainStationPlatformStyle',
     era_a_platformModuleType = 'freestyleTrainStationPlatformEraA',
     era_b_platformModuleType = 'freestyleTrainStationPlatformEraB',
     era_c_platformModuleType = 'freestyleTrainStationPlatformEraC',
@@ -337,6 +351,8 @@ local constants = {
         terminalSlotId = 1000000,
         restoreCargoTerminalSlotId = 2000000,
         restorePassengerTerminalSlotId = 3000000,
+        platformHeightSlotId = 4000000,
+        platformStyleSlotId = 5000000,
         trackCrossingSlotId = 11000000,
         flatStairsOrRampSlotId = 12000000,
         flatArea5x5SlotId = 13000000,

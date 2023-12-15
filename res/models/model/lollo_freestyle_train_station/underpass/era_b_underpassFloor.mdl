@@ -10,16 +10,12 @@ function data()
                     children = {
                         {
                             materials = {
-                                "lollo_freestyle_train_station/hole.mtl",
-                                -- "lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl",
-                                "lollo_freestyle_train_station/era_b_station_tiles_1_low_prio.mtl",
+                                'lollo_freestyle_train_station/hole.mtl',
+                                'lollo_freestyle_train_station/era_b_station_tiles_1_low_prio.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/underpass/plate8x1_4_centred_hole.msh',
-                            transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0.025, 1}
+                            mesh = 'lollo_freestyle_train_station/underpass/plate6x2_centred_hole.msh',
                         },
                     },
-                    name = 'RootNode',
-                    transf = {1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1}
                 },
                 static = false,
                 visibleFrom = 0,

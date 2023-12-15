@@ -1,0 +1,69 @@
+function data()
+return {
+	order = 0,
+	params = {
+		albedo_scale = {
+			albedoScale = { 1, 1, 1, },
+		},
+		fade_out_range = {
+			fadeOutEndDist = 20000,
+			fadeOutStartDist = 10000,
+		},
+		map_albedo = {
+			--fileName = "models/station/rail/era_c/trainstation_1990_borders_003_albedo.dds",
+			fileName = "lollo_freestyle_train_station/era_c_trainstation_stripes_white_albedo_bc1a.dds",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_metal_gloss_ao = {
+			-- fileName = "models/station/rail/era_c/trainstation_1990_borders_003_metal_gloss_ao.dds",
+			fileName = "lollo_freestyle_train_station/era_c_trainstation_stripes_metal_gloss_ao_bc3.dds",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_normal = {
+			-- fileName = "models/station/rail/era_c/trainstation_1990_borders_003_normal.dds",
+			fileName = "lollo_freestyle_train_station/era_c_trainstation_stripes_normal_bc5.dds",
+			redGreen = true,
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_1 = {
+			fileName = "unknown_texture.tga",
+			type = "TWOD",
+		},
+		map_op_2 = {
+			fileName = "unknown_texture.tga",
+			type = "TWOD",
+		},
+		normal_scale = {
+			normalScale = 1,
+		},
+		operation_1 = {
+			mode = "TEXCOORD",
+			op = "NO_OP",
+			opacity = 1,
+			scale = { 1, 1, },
+		},
+		operation_2 = {
+			mode = "TEXCOORD",
+			op = "NO_OP",
+			opacity = 1,
+			scale = { 1, 1, },
+		},
+		polygon_offset = {
+			factor = -1,
+			forceDepthWrite = true,
+			units = -1,
+		},
+		two_sided = {
+			flipNormal = false,
+			twoSided = false,
+		},
+	},
+	type = "PHYSICAL_NRML_MAP_OP",
+}
+end

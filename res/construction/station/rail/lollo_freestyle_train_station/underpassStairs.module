@@ -23,7 +23,13 @@ function data()
 			description = _("UnderpassStairsDesc"),
 			icon = "ui/lollo_freestyle_train_station/underpassStairs.tga"
 		},
-		metadata = { },
+		metadata = {
+			holeIIs = {
+				-- 0, 1, 2, 3, 6, 7, 8, 9
+				-- 0, 1, 2, 3, 8, 9
+				0, 1, 2, 3, 4, 7, 8, 9
+			},
+		},
 		order = {
 			value = 41,
 		},
@@ -46,6 +52,8 @@ function data()
 			elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/underpass/era_b_underpass_stairs_10m.mdl'
 			else modelId = 'lollo_freestyle_train_station/underpass/era_c_underpass_stairs_10m.mdl'
 			end
+			-- exceptionally, underpasses need the paving material coz they are straight while curves are curvy
+			if result.platformStyles[nTerminal] == _constants.platformStyles._DB_eraC.moduleFileName then modelId = 'lollo_freestyle_train_station/underpass/DB_era_c_underpass_stairs_10m.mdl' end
 
 			result.models[#result.models + 1] = {
 				id = modelId,

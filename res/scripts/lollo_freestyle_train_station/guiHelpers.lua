@@ -8,12 +8,14 @@ local _stationPickerWindowId = 'lollo_freestyle_station_picker_window'
 local _warningWindowId = 'lollo_freestyle_station_warning_window_no_goto'
 local _warningWindowWithGotoId = 'lollo_freestyle_station_warning_window_with_goto'
 local _waypointDistanceWindowId = 'lollo_freestyle_station_waypoint_distance_window'
+local _saveWarningWindowId = 'lollo_freestyle_station_workflow_warning_window'
 
 local _texts = {
     goBack = _('GoBack'),
     goThere = _('GoThere'), -- cannot put this directly inside the loop for some reason
     join = _('Join'),
     noJoin = _('NoJoin'),
+    saveAnyway = _('SaveAnyway'),
     stationPickerWindowTitle = _('StationPickerWindowTitle'),
     wait4Join = _('Wait4Join'),
     warningWindowTitle = _('WarningWindowTitle'),
@@ -24,6 +26,7 @@ local _windowXShift = 40
 local _windowYShift = 40
 
 local guiHelpers = {
+    isAllowSaving = false,
     isShowingProgress = false,
     isShowingWarning = false,
     isShowingWarningWithGoTo = false,
@@ -254,6 +257,48 @@ guiHelpers.showWarning = function(text, onCloseFunc)
             guiHelpers.isShowingWarning = false
             window:setVisible(false, false)
             if type(onCloseFunc) == 'function' then onCloseFunc() end
+        end
+    )
+end
+
+---@param text string
+guiHelpers.showSaveWarning = function(text)
+    guiHelpers.isAllowSaving = false
+
+    local layout = api.gui.layout.BoxLayout.new('VERTICAL')
+    local window = api.gui.util.getById(_saveWarningWindowId)
+    if window == nil then
+        window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
+        window:setId(_saveWarningWindowId)
+    else
+        window:setContent(layout)
+        window:setVisible(true, false)
+    end
+
+    layout:addItem(api.gui.comp.TextView.new(text))
+
+    local toggleButtonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
+    toggleButtonLayout:addItem(api.gui.comp.ImageView.new('ui/save.tga'))
+    toggleButtonLayout:addItem(api.gui.comp.TextView.new(_texts.saveAnyway))
+    local button = api.gui.comp.ToggleButton.new(toggleButtonLayout)
+    button:setSelected(guiHelpers.isAllowSaving, false)
+    button:onToggle(
+        function(isOn)
+            guiHelpers.isAllowSaving = isOn
+        end
+    )
+    layout:addItem(button)
+
+    window:setHighlighted(true)
+    window:setMinimumSize(api.gui.util.Size.new(600, 120))
+    -- local uiContentRect = api.gui.util.getGameUI():getContentRect()
+    -- window:setPosition(uiContentRect.w - _windowXShift, uiContentRect.h - _windowYShift)
+    window:setPosition(300, 300) -- easier and quicker
+    -- window:addHideOnCloseHandler()
+    window:onClose(
+        function()
+            window:setVisible(false, false)
+            guiHelpers.isAllowSaving = false
         end
     )
 end
