@@ -1,5 +1,20 @@
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
+
+local _platformHeightsSorted = {}
+for _, plh in pairs(constants.platformHeights) do
+    _platformHeightsSorted[#_platformHeightsSorted+1] = plh
+end
+arrayUtils.sort(_platformHeightsSorted, 'aboveRail', true)
+local _getZShiftDefaultIndex = function()
+    local index_base0 = 0
+    for _, plh in pairs(_platformHeightsSorted) do
+        if plh.aboveGround == constants.defaultPlatformHeight then return index_base0 end
+        index_base0 = index_base0 + 1
+    end
+    return 0
+end
 
 local _paramConstants = {
     lollo_platform_as_asset_embankment = {
@@ -49,6 +64,36 @@ local _paramHelpers = {
             return min + step * (paramValue or 0)
         end,
     },
+    eraPrefix = {
+        getActualValues = function()
+            return {
+                -- '',
+                'cargo/era_a_cube_1x1.mdl',
+                'cargo/era_b_cube_1x1.mdl',
+                'cargo/era_c_cube_1x1.mdl',
+                'passengers/era_a_cube_1x1.mdl',
+                'passengers/era_b_cube_1x1.mdl',
+                'passengers/era_c_cube_1x1.mdl',
+                'passengers/era_b_db_cube_1x1.mdl',
+                'passengers/era_c_db_1_stripe_cube_1x1.mdl',
+                'passengers/era_c_db_2_stripes_cube_1x1.mdl',
+            }
+        end,
+        getDisplayValues = function()
+            return {
+                -- _('OnlyTerrain'),
+                _('CargoEraADefault'),
+                _('CargoEraBDefault'),
+                _('CargoEraCDefault'),
+                _('PassengersEraADefault'),
+                _('PassengersEraBDefault'),
+                _('PassengersEraCDefault'),
+                _('PassengersEraBDB'),
+                _('PassengersEraCDBOneStripe'),
+                _('PassengersEraCDBTwoStripes')
+            }
+        end,
+    },
     MinusN2PlusN = {
         getSliderValues = function(paramKey)
             local max, step = _paramConstants[paramKey].max, _paramConstants[paramKey].step
@@ -90,11 +135,26 @@ local _paramHelpers = {
             return {'EQUAL', 'LESS', 'GREATER'}
         end,
     },
+    zShift = {
+        getActualValues = function()
+            local results = {}
+            for _, plh in pairs(_platformHeightsSorted) do
+                results[#results+1] = plh.aboveGround - constants.defaultPlatformHeight
+            end
+            return results
+        end,
+        getDisplayValues = function()
+            local results = {}
+            for _, plh in pairs(_platformHeightsSorted) do
+                results[#results+1] = ("%.2g m"):format(plh.aboveRail)
+            end
+            return results
+        end,
+    },
 }
 
 function data()
     return {
-        -- type = 'STREET_CONSTRUCTION',
         type = 'ASSET_DEFAULT',
         description = {
             name = _('PlatformAsAssetName'),
@@ -112,16 +172,8 @@ function data()
         params = {
             {
                 key = 'lollo_platform_as_asset_era_prefix',
-                name = _('Era'),
-                values = {'A', 'B', 'C'},
-                uiType = 'BUTTON',
-                -- defaultIndex = 0,
-            },
-            {
-                key = 'lollo_platform_as_asset_is_cargo',
-                name = _('PlatformAsAsset_CargoOrPassengers'),
-                tooltip = _('PlatformAsAsset_CargoOrPassengers_Tooltip'),
-                values = {_('PlatformAsAsset_Cargo'), _('PlatformAsAsset_Passengers'), _('OnlyTerrain')},
+                name = _('Floor'),
+                values = _paramHelpers.eraPrefix.getDisplayValues(),
                 uiType = 'BUTTON',
                 -- defaultIndex = 0,
             },
@@ -166,6 +218,13 @@ function data()
                 uiType = 'SLIDER',
                 defaultIndex = _paramHelpers.embankment.getSliderMiddleValue(),
             },
+            {
+                key = 'lollo_platform_as_asset_zShift',
+                name = _('ZShift'),
+                values = _paramHelpers.zShift.getDisplayValues(),
+                uiType = 'SLIDER',
+                defaultIndex = _getZShiftDefaultIndex(),
+            },
         },
         updateFn = function(params)
             local result = {
@@ -173,7 +232,7 @@ function data()
                 cost = 0,
                 models = {},
             }
--- LOLLO TODO adjust height
+
             local _xHalfSize = (
                 _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_x_10m', params.lollo_platform_as_asset_x_10m) +
                 _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_x_1m', params.lollo_platform_as_asset_x_1m)
@@ -183,23 +242,23 @@ function data()
                 _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_platform_as_asset_y_1m', params.lollo_platform_as_asset_y_1m)
             ) / 2
             local _zMax = 0
+            local _zShift = _paramHelpers.zShift.getActualValues()[(params.lollo_platform_as_asset_zShift or 0) + 1]
 
-            local _era_prefix = ({constants.eras.era_a.prefix, constants.eras.era_b.prefix, constants.eras.era_c.prefix})[(params.lollo_platform_as_asset_era_prefix or 0) + 1]
-            local _isCargo = (params.lollo_platform_as_asset_is_cargo or 0) == 0
-            local _isOnlyTerrain = (params.lollo_platform_as_asset_is_cargo or 0) == 2
-            local _modelId = 'lollo_freestyle_train_station/railroad/assets/' .. (_isCargo and 'cargo' or 'passengers') .. '/'.. _era_prefix ..'cube_1x1.mdl'
-            logger.print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax)
+            local _fileName = (_paramHelpers.eraPrefix.getActualValues())[(params.lollo_platform_as_asset_era_prefix or 0) + 1]
+            local _isOnlyTerrain = type(_fileName) ~= 'string' or _fileName:len() == 0
+            logger.print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax, '_zShift =', _zShift)
             if _isOnlyTerrain then
                 result.models[#result.models+1] = {
-                    id = _modelId,
+                    id = 'lollo_freestyle_train_station/railroad/assets/cargo/era_a_cube_1x1.mdl',
                     transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, -constants.defaultPlatformHeight, 1}
                 }
             else
                 for x = -_xHalfSize, _xHalfSize, 1 do
                     for y = -_yHalfSize, _yHalfSize, 1 do
                         result.models[#result.models+1] = {
-                            id = _modelId,
-                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  x, y, 0, 1}
+                            id = 'lollo_freestyle_train_station/railroad/assets/' .. _fileName,
+                            -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  x, y, 0, 1}
+                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  x, y, _zShift, 1}
                         }
                     end
                 end
@@ -224,13 +283,14 @@ function data()
             local _embankmentTypeIndex = (params.lollo_platform_as_asset_embankment or 0)
             local _embankment = _paramHelpers.embankment.getValueFromSliderParamValue(_embankmentTypeIndex)
             logger.print('_embankment =') logger.debugPrint(_embankment)
-            -- local _zShift = -0.1
-            local _zShift = 0
+            -- local _terrainZ = 0
+            local _terrainZ = math.max(_zShift, 0)
+            logger.print('_terrainZ =') logger.debugPrint(_terrainZ)
             local _flatTerrainFaces = { {
-                {-_xHalfSize -_embankment, -_yHalfSize -_embankment, _zMax + _zShift},
-                {-_xHalfSize -_embankment, _yHalfSize +_embankment, _zMax + _zShift},
-                {_xHalfSize +_embankment, _yHalfSize +_embankment, _zMax + _zShift},
-                {_xHalfSize +_embankment, -_yHalfSize -_embankment, _zMax + _zShift}
+                {-_xHalfSize -_embankment, -_yHalfSize -_embankment, _zMax + _terrainZ},
+                {-_xHalfSize -_embankment, _yHalfSize +_embankment, _zMax + _terrainZ},
+                {_xHalfSize +_embankment, _yHalfSize +_embankment, _zMax + _terrainZ},
+                {_xHalfSize +_embankment, -_yHalfSize -_embankment, _zMax + _terrainZ}
             } }
 
             local _terrainAlignmentTypeIndex = (params.lollo_platform_as_asset_terrain_alignment_type or 0)

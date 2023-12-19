@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 312,
+					offset = 1768,
+				},
+				position = {
+					count = 312,
+					offset = 832,
+				},
+				tangent = {
+					count = 312,
+					offset = 1144,
+				},
+				uv0 = {
+					count = 312,
+					offset = 1456,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/underpass/tiles.001.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 48,
+			numComp = 3,
+			offset = 784,
+		},
+		position = {
+			count = 336,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 64,
+			numComp = 4,
+			offset = 336,
+		},
+		uv0 = {
+			count = 384,
+			numComp = 2,
+			offset = 400,
+		},
+	},
+}
+end

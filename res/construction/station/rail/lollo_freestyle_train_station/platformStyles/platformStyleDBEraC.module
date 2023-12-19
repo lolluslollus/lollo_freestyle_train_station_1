@@ -13,13 +13,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("PlatformStyleDBEraCName"),
-			description = _("PlatformStyleDBEraCDesc"),
-			icon = "ui/lollo_freestyle_train_station/platformStyleDBEraC.tga"
+			name = _("PlatformStyleEraCDBTwoStripesName"),
+			description = _("PlatformStyleEraCDBTwoStripesDesc"),
+			icon = "ui/lollo_freestyle_train_station/platformStylePassengersEraCDBTwoStripes.tga"
 		},
 		metadata = { },
 		order = {
-			value = 16,
+			value = 18,
 		},
 		type = _constants.platformStyleModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)

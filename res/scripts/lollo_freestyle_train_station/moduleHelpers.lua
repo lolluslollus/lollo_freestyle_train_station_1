@@ -2851,17 +2851,33 @@ return {
                         and arrayUtils.arrayHasValue(_underpassModule.metadata.holeIIs, ii % _maxIIMod10)
                     if _isHole then
                         if width < 5 then
-                            if _platformStyleModuleFileName == constants.platformStyles._DB_eraC.moduleFileName then
+                            if _platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
                                 return isTrackOnPlatformLeft
-                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_gap_left.mdl'
-                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_gap_right.mdl'
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
+                            elseif _platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
+                            elseif _platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+                            return isTrackOnPlatformLeft
+                                and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_gap_left.mdl'
+                                or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_gap_right.mdl'
                             else
-                                return isTrackOnPlatformLeft
-                                    and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
-                                    or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
+                            return isTrackOnPlatformLeft
+                                and 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
+                                or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
                             end
                         else
-                            if _platformStyleModuleFileName == constants.platformStyles._DB_eraC.moduleFileName then
+                            if _platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
+                            elseif _platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
+                            elseif _platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_gap_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_gap_right.mdl'
@@ -2873,7 +2889,15 @@ return {
                         end
                     else
                         if width < 5 then
-                            if _platformStyleModuleFileName == constants.platformStyles._DB_eraC.moduleFileName then
+                            if _platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
+                            elseif _platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
+                            elseif _platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_gap_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_gap_right.mdl'
@@ -2883,7 +2907,15 @@ return {
                                     or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
                             end
                         else
-                            if _platformStyleModuleFileName == constants.platformStyles._DB_eraC.moduleFileName then
+                            if _platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
+                            elseif _platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                                return isTrackOnPlatformLeft
+                                    and 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
+                                    or 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
+                            elseif _platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_gap_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_gap_right.mdl'
@@ -3134,9 +3166,12 @@ return {
             local newEraPrefix = (newEraPrefix1 > newEraPrefix2) and newEraPrefix1 or newEraPrefix2
 
             if length < 6 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_4m.mdl'
-            elseif length < 12 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_8m.mdl'
-            elseif length < 24 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_16m.mdl'
-            elseif length < 48 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_32m.mdl'
+            elseif length < 10 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_8m.mdl'
+            elseif length < 14 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_12m.mdl'
+            elseif length < 20 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_16m.mdl'
+            elseif length < 28 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_24m.mdl'
+            elseif length < 36 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_32m.mdl'
+            elseif length < 48 then return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_40m.mdl'
             else return 'lollo_freestyle_train_station/tubeBridge/' .. newEraPrefix .. 'bridge_chunk_compressed_64m.mdl'
             end
         end,

@@ -1,0 +1,71 @@
+function data()
+return {
+	order = 0,
+	params = {
+		albedo_scale = {
+			albedoScale = { 0.85, 0.85, 0.85, },
+		},
+		fade_out_range = {
+			fadeOutEndDist = 20000,
+			fadeOutStartDist = 10000,
+		},
+		map_albedo = {
+			fileName = "lollo_freestyle_train_station/square_concrete_tiles_albedo_bc1.dds",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_metal_gloss_ao = {
+			fileName = "lollo_freestyle_train_station/square_concrete_tiles_metal_gloss_ao_bc3.dds",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_normal = {
+			fileName = "lollo_freestyle_train_station/square_concrete_tiles_normal_bc5.dds",
+			redGreen = true,
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_1 = {
+			fileName = "models/industry/overlay_textures/small_08.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		map_op_2 = {
+			fileName = "models/industry/overlay_textures/big_02.tga",
+			type = "TWOD",
+			wrapS = "REPEAT",
+			wrapT = "REPEAT",
+		},
+		normal_scale = {
+			normalScale = -1,
+		},
+		operation_1 = {
+			mode = "WORLD_XY",
+			op = "NO_OP",
+			opacity = 0.69999998807907,
+			scale = { 0.40000000596046, 0.40000000596046, },
+		},
+		operation_2 = {
+			mode = "WORLD_XY",
+			-- op = "OVERLAY",
+			op = "LINEAR_BURN",
+			opacity = 0.4,
+			scale = { 0.0099999997764826, 0.0099999997764826, },
+		},
+		polygon_offset = {
+			factor = -1,
+			forceDepthWrite = true,
+			units = -1,
+		},
+		two_sided = {
+			flipNormal = false,
+			twoSided = false,
+		},
+	},
+	type = "PHYSICAL_NRML_MAP_OP",
+}
+end

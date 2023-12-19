@@ -34,12 +34,25 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local _terminalData = params.terminals[nTerminal]
-            local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
-			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, _terminalData, nTrackEdge, era,
+            local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			local modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/area1x20.mdl'
+			if _eraPrefix == _constants.eras.era_a.prefix then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_a_area1x20.mdl'
+			elseif _eraPrefix == _constants.eras.era_b.prefix then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_b_area1x20.mdl'
+			end
+			if result.platformStyles[nTerminal] == _constants.platformStyles.era_b_db.moduleFileName then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_b_db_area1x20.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_c_db_1_stripe_area1x20.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_c_db_2_stripes_area1x20.mdl'
+			end
+			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, _terminalData, nTrackEdge, _eraPrefix,
 				20,
-				_constants[era .. 'slopedPassengerArea1x20ModelFileName'],
+				modelId,
 				nil,
-				_constants[era .. 'groundFacesFillKey']
+				_constants[_eraPrefix .. 'groundFacesFillKey']
 			)
 		end,
 

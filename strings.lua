@@ -15,14 +15,14 @@ Now click your station to open the configuration menu and add some connections.
 - Adjacent platforms are connected together automatically. If they are too far apart, connect them with exits, stairs or underpasses. You can also connect two bridge exits with a suitable path - or a stairs or lift asset.
 - Every set of adjacent ground platforms requires street access, an underpass, a lift or stairs.
 - Every set of adjacent bridge platforms requires a lift or an underpass.
-- Every bridge level requires a lift, or an underpass close to a ground platform lift or stairs.
+- Every bridge level requires a lift, or an underpass close to lifts or stairs on a ground platform.
 - Every set of adjacent underground platforms requires stairs.
-- Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down (if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels).
+- Every underground level requires an underground entrance, or a ground platform with an underpass, or a higher underground level with stairs down - if you have multiple underground levels, you can add stairs on the higher levels, to go down to the lower levels.
 
 You can share a platform between two terminals, for example the first 100 metres with terminal 1 and the rest with terminal 2. If you do that, the heads will connect automatically if they are 7 metres apart or less. If they are farther, use end exits and connect them with a suitable path (street menu).
 You cannot share one stretch of platform or track among multiple terminals.
 
-When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers.
+When you bulldoze a terminal, the mod will try to rebuild the tracks as they were before, to make changes easy: bulldoze a terminal, change what you need, then rebuild it with the markers. If you have bulldozed a terminal by mistake, keep the construction menu open and place a "restore" module on it to make it reappear.
 When you bulldoze the station, everything will be bulldozed.
 
 Lifts, stairs and underground entrances are in the assets, search for "freestyle station".
@@ -235,10 +235,14 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["platformRoofIronGlassCopperDesc"] = "Iron and glass roof for passenger platforms",
 			["PlatformRoofMetalGlassName"] = "Glass platform roof",
 			["PlatformRoofMetalGlassDesc"] = "Glass roof for passenger platforms",
-			["PlatformStyleDBEraCName"] = "DB era C floor",
-			["PlatformStyleDBEraCDesc"] = "DB era C floor",
+			["PlatformStyleDBEraBName"] = "DB era B floor",
+			["PlatformStyleDBEraBDesc"] = "DB era B passenger platform floor",
+			["PlatformStyleEraCDBOneStripeName"] = "DB era C floor, one stripe",
+			["PlatformStyleEraCDBOneStripeDesc"] = "DB era C passenger platform floor, one stripe",
+			["PlatformStyleEraCDBTwoStripesName"] = "DB era C floor, two stripes",
+			["PlatformStyleEraCDBTwoStripesDesc"] = "DB era C passenger platform floor, two stripes",
 			["PlatformStyleDefaultName"] = "Default floor",
-			["PlatformStyleDefaultDesc"] = "Default floor",
+			["PlatformStyleDefaultDesc"] = "Default floor for the era",
 			["RestoreCargoTerminalName"] = "Restore cargo terminal",
 			["RestorePassengerTerminalName"] = "Restore passenger terminal",
 			["RestoreTerminalDesc"] = "Restore a deleted terminal before closing the configuration menu - it has no effect otherwise",
@@ -451,7 +455,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["WaypointsWrong"] = "Place two markers on the same platform and two on the same track",
 			["WrongTrack"] = "The track and / or platform is too irregular, lay it again cleanly.",
 
-			-- free open stairs and free lifts
+			-- free open stairs, free lifts, platform as asset
 			["BaseMode"] = "Base Mode",
 			["BaseTooltip_Lift"] = "It might be easier to select \"Auto Path\" first and change it to \"Snappy Path\" once done. Only make the links you really need, and make them snappy when you are done, or the connections may break. Check the connections with <AltGr> + <L>.",
 			["BaseTooltip_Stairs"] = "It might be easier to select \"Auto Path\" or \"Auto Bridge\" first and change it to \"Snappy Path\" or \"Snappy Bridge\" once done. Check the connections with <AltGr> + <L>.",
@@ -465,9 +469,19 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["EdgeWithBridge"] = "Auto Bridge",
 			["EdgeWithNoBridge"] = "Auto Path",
 			["Era"] = "Era",
+			["CargoEraADefault"] = "Era A Default, Cargo",
+			["CargoEraBDefault"] = "Era B Default, Cargo",
+			["CargoEraCDefault"] = "Era C Default, Cargo",
+			["PassengersEraADefault"] = "Era A Default, Passengers",
+			["PassengersEraBDefault"] = "Era B Default, Passengers",
+			["PassengersEraCDefault"] = "Era C Default, Passengers",
+			["PassengersEraBDB"] = "Era B DB, Passengers",
+			["PassengersEraCDBOneStripe"] = "Era C DB with 1 stripe, Passengers",
+			["PassengersEraCDBTwoStripes"] = "Era C DB with 2 stripes, Passengers",
 			["ErrorReplacingConWithSnappyCopy"] = "This object cannot connect to nearby roads, change it or move it somewhere else",
 			["Fences"] = "Fences",
 			["FlatSlopedTerrain"] = "Terrain Incline",
+			["Floor"] = "Floor",
 			["Model"] = "Platform",
 			["ModelRaised"] = "Raised Platform",
 			["NO"] = "No",
@@ -548,36 +562,36 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 Ein Freestyle-Bahnhof. Er führt einige neue Spezialgleise ein, die als Bahnsteige für Fracht oder Passagiere dienen werden.
 
 [h1]Anleitung[/h1]
-Legen Sie Bahnsteigen entlang normaler Gleise und platzieren Sie dann eine Bahnsteig- und einen Gleismarker dort, wo die Bahnsteig und das Gleis enden sollen. Wiederholen Sie den Vorgang am anderen Ende.
-WARTEN Sie einen Moment und lassen Sie den Computer nachdenken.
-Jetzt haben Sie einen Bahnhof gebaut, und die Züge werden zwischen den Gleismarker halten.
-Fügen Sie weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird Sie fragen, ob Sie Ihren neuen Terminal mit den anderen verbinden möchten. Sie können bis zu 12 Terminals in einem Bahnhof haben.
+Lege Bahnsteigen entlang normaler Gleise und platziere dann eine Bahnsteig- und einen Gleismarker dort, wo die Bahnsteig und das Gleis enden sollen. Wiederhole den Vorgang am anderen Ende.
+WARTE einen Moment und lass den Computer nachdenken.
+Jetzt hast du einen Bahnhof gebaut, und die Züge werden zwischen den Gleismarker halten.
+Füge weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird dich fragen, ob du deinen neuen Terminal mit den anderen verbinden möchtest. Du kannst bis zu 12 Terminals in einem Bahnhof haben.
 
-Klicken Sie nun auf Ihren Bahnhof, um das Konfigurationsmenü zu öffnen und einige Verbindungen hinzuzufügen.
-- Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinden Sie sie mit Ausgängen, Treppen oder Unterführungen. Sie können auch zwei Brückenausgänge mit einem geeigneten Weg verbinden - oder eine Treppe oder eine Aufzugsanlage.
+Klicke nun auf deinem Bahnhof, um das Konfigurationsmenü zu öffnen und einige Verbindungen hinzuzufügen.
+- Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinde sie mit Ausgängen, Treppen oder Unterführungen. Du kannst auch zwei Brückenausgänge mit einem geeigneten Weg verbinden - oder eine Treppe oder eine Aufzugsanlage.
 - Jeder Satz benachbarter Bahnsteige am Boden erfordert einen Straßenzugang, eine Unterführung, einen Aufzug oder eine Treppe.
 - Jede Reihe von benachbarten erhöhten Bahnsteigen erfordert einen Aufzug oder eine Unterführung.
 - Jede Brückenebene erfordert einen Aufzug oder eine Unterführung in der Nähe eines ebenerdigen Aufzugs oder einer Treppe.
 - Jede Gruppe von benachbarten unterirdischen Bahnsteigen erfordert eine Treppe.
-- Jede unterirdische Ebene erfordert einen unterirdischen Eingang oder einen Bahnsteig am Boden mit einer Unterführung oder eine höhere unterirdische Ebene mit einer Treppe nach unten (wenn Sie mehrere unterirdische Ebenen haben, können Sie auf den höheren Ebenen eine Treppe hinzufügen, um zu den unteren Ebenen hinunter zu gelangen).
+- Jede unterirdische Ebene erfordert einen unterirdischen Eingang oder einen Bahnsteig am Boden mit einer Unterführung oder eine höhere unterirdische Ebene mit einer Treppe nach unten (wenn du mehrere unterirdische Ebenen hast, kannst du auf den höheren Ebenen eine Treppe hinzufügen, um zu den unteren Ebenen hinunter zu gelangen).
 
-Sie können einen Bahnsteig zwischen zwei Terminals teilen, zum Beispiel die ersten 100 Meter mit Terminal 1 und den Rest mit Terminal 2. Wenn Sie dies tun, verbinden sich die Köpfe automatisch, wenn sie höchstens 7 Meter voneinander entfernt sind. Sind sie weiter voneinander entfernt, verwenden Sie Endausgänge und verbinden Sie sie mit einem geeigneten Weg (Straßenmenü).
-Sie können einen Bahnsteig- oder Gleisabschnitt nicht mit mehreren Terminals teilen.
+Du kannst einen Bahnsteig zwischen zwei Terminals teilen, zum Beispiel die ersten 100 Meter mit Terminal 1 und den Rest mit Terminal 2. Wenn du dies tust, verbinden sich die Köpfe automatisch, wenn sie höchstens 7 Meter voneinander entfernt sind. Sind sie weiter voneinander entfernt, verwende Endausgänge und verbinde sie mit einem geeigneten Weg (Straßenmenü).
+Du kannst einen Bahnsteig- oder Gleisabschnitt nicht mit mehreren Terminals teilen.
 
-Wenn Sie einen Terminal mit einem Bulldozer abreißen, versucht der Mod, die Gleise so wiederherzustellen, wie sie vorher waren, um Änderungen zu vereinfachen: Reißen Sie einen Terminal mit einem Bulldozer auf, ändern Sie, was Sie brauchen, und bauen Sie ihn dann mit den Markern wieder auf.
-Wenn Sie den Bahnhof mit dem Bulldozer zerstören, wird alles mit dem Bulldozer abgerissen.
+Wenn du einen Terminal mit einem Bulldozer abreißt, versucht der Mod, die Gleise so wiederherzustellen, wie sie vorher waren, um Änderungen zu vereinfachen: Reiße einen Terminal mit einem Bulldozer auf, änder das, was du brauchst, und baue ihn dann mit den Markern wieder auf. Wenn du einen Terminal aus Versehen abgerissen hast, lasse das Konfigurationsmenü offen und füge ein "Zurücksetzen" Modul hinzu, damit er zurückkommt.
+Wenn du den Bahnhof mit dem Bulldozer zerstörst, wird alles mit dem Bulldozer abgerissen.
 
-Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen Sie nach "freestyle station".
+Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche nach "freestyle station".
 
 [h1]Hinweise:[/h1]
 - Bahnsteigen sind Gleise und können auch unter Mikrospalten und Unebenheiten leiden, die sehr schwer zu sehen sind.
-- Um die Fahrspuren und die Spaltungen zu visualisieren, starten Sie das Spiel im Debug-Modus und drücken Sie <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich. Versuchen Sie, Gleise und Bahnsteige sauber zu verlegen.
-- Um unterirdisch zu arbeiten, verwenden Sie <NumPad 4> oder die Gleiskonstruktion "Unterirdisch suchen".
+- Um die Fahrspuren und die Spaltungen zu visualisieren, starte das Spiel im Debug-Modus und drücke <AltGr> + <L>. Dies ist besonders bei mehrstöckigen U-Bahn-Stationen nützlich. Versuche, Gleise und Bahnsteige sauber zu verlegen.
+- Um unterirdisch zu arbeiten, verwende <NumPad 4> oder die Gleiskonstruktion "Unterirdisch suchen".
 - Bahnsteige befördern nur dann Passagiere oder Fracht, wenn sie Teil eines Terminals sind.
 - 2,5 m hohe Bahnsteige vertragen sich nicht mit Brücken und Tunneln. Meine Brücken helfen, bei Tunneln kann man nichts machen.
 - Dieser Mod fügt Brücken hinzu, um bei erhöhten Bahnhöfen zu helfen.
 - Sehr dünne Pfade helfen bei bestimmten Setups: diese sind in meinem "Street Fine Tuning" Mod.
-- Dieser Mod fügt Fußgängerwege und Brücken hinzu; einige verwandeln sich in Brücken, nachdem sie platziert wurden. Für Präzisionsarbeit, verwenden Sie die "Street Fine Tuning" "Chunks" und "Splits" Konstruktionen.
+- Dieser Mod fügt Fußgängerwege und Brücken hinzu; einige verwandeln sich in Brücken, nachdem sie platziert wurden. Für Präzisionsarbeit, verwende die "Street Fine Tuning" "Chunks" und "Splits" Konstruktionen.
 - Du kannst mit Fußgängerwegen und Brücken deinen Bahnhof mit der Außenwelt verbinden. Diese Verbindungen können zunächst als kaputt erscheinen, wenn das Konfigurationsmenü offen ist; sie reparieren sich aber von selbst, wenn das Menu sich schliesst.
 - Wenn du ein Terminal entfernst, wird der Bahnhof erst nach Schliessen des Konfigurationsmenüs völlig aktualisiert.
 - Soundeffekte für Bahnhöfe sind in meinem speziellen Mod enthalten.
@@ -585,26 +599,26 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 - Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
 - Wenn du andere Gebäude willst, benutze Assets. Es gibt Mods mit diesen.
 - Diese Mod fügt Treppen und Aufzüge als konfigurierbare Objekte hinzu; sie können überall verwendet werden. Meine "Construction Mover" Mod hilft, sie leicht zu platzieren. Dennoch, das Spiel behandelt sie nicht anmutig und <AltGr> + <L> wird Ihnen helfen, zu überprüfen, ob sie in Ihrem Netzwerk einrasten. Das Wechseln zwischen einrastenden und nicht einrastenden Straßen oder Brücken im Parameterfenster könnte helfen.
-- Verwenden Sie den Gleisbau-"Gleisteiler", um Präzisionsarbeit zu leisten.
+- Verwende den Gleisbau-"Gleisteiler", um Präzisionsarbeit zu leisten.
 - Beim Aufrüsten von Gleisen werden alle Gleise auf einmal ausgebaut.
-- Wenn Sie zu viele Streckentypen haben, nutzen Sie die Kategorien im Menü, um sich das Leben leichter zu machen.
+- Wenn du zu viele Streckentypen hast, nutze die Kategorien im Menü, um sich das Leben leichter zu machen.
 
 [h1]Inkompatible Änderungen:[/h1]
 - U-Bahnhöfe sind jetzt in den Assets enthalten.
-- Mit der Minor-Version 1.81 (31. August 2022) wurden wichtige Änderungen am Layout vorgenommen. Zuvor gebaute Terminals werden weiterhin funktionieren, können aber einige Fehler aufweisen. Um von den Änderungen zu profitieren, entfernen Sie sie, warten Sie, bis sie wieder auftauchen, und bauen Sie sie neu.
-- Bahnsteige verbinden sich nicht mehr automatisch mit angrenzenden Straßen, Sie müssen eine Ausfahrt oder einen Bahnhof hinzufügen.
-- Minor Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis Sie eine neue bauen.
+- Mit der Minor-Version 1.81 (31. August 2022) wurden wichtige Änderungen am Layout vorgenommen. Zuvor gebaute Terminals werden weiterhin funktionieren, können aber einige Fehler aufweisen. Um von den Änderungen zu profitieren, entferne sie, warte, bis sie wieder auftauchen, und baue sie neu.
+- Bahnsteige verbinden sich nicht mehr automatisch mit angrenzenden Straßen, du musst eine Ausfahrt oder einen Bahnhof hinzufügen.
+- Minor Version 1.99 (13. Februar 2023) macht bestehende Wände unsichtbar, bis du eine neue baust.
 - Mauern um Gleise sind nur auf Terminals verfügbar, die mit Version 1.99 oder neuer gebaut wurden.
 - Mit der Minor-Version 1.115 werden bündige Ausgänge an den Bahnsteigenden nicht mehr verbunden, um Abstürze zu vermeiden. Ältere Aufzug- und Zwillingstreppen-Assets wurden auch ersetzt.
 
 [h1]Bekannte Probleme:[/h1]
 - Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
 - Die Benennung von Bahnhöfen funktioniert nicht richtig.
-- 2,5 m Bahnsteige stimmen nicht mit Brücken und Tunneln überein. Bitten Sie UG, trackDistance zum Laufen zu bringen.
+- 2,5 m Bahnsteige stimmen nicht mit Brücken und Tunneln überein. Bitten UG, trackDistance zum Laufen zu bringen.
 - Je größer ein Bahnhof ist, desto länger dauert es, ein Terminal hinzuzufügen oder zu entfernen. Es kann über eine Minute dauern. Warte einfach ab.
-- Einige Module können nur nach anderen platziert werden, z.B. Treppenausgänge nach Treppen, aber das Konfigurationsmenü wird nicht automatisch aktualisiert. Nachdem Sie die erste Treppe platziert haben, müssen Sie das Menü schließen und erneut öffnen, damit die Treppenausgänge erscheinen.
-- Einige Gleis- und Signalmods sind nicht kompatibel. Generell gilt: Vermeiden Sie Mods, die die Originalgleise des Spiels überschreiben oder deaktivieren. Wahrscheinlich werden Sie sie ohnehin nicht vermissen.
-- Nach einer Weile wird sich das Gebiet um Ihren Bahnhof herum entwickelt haben und möglicherweise Kollisionsfehler verursachen, wenn Sie versuchen, den Bahnhof zu konfigurieren. Dieses alte Problem betrifft auch andere Bahnhöfe. Suchen Sie geduldig erst nach der schuldigen Straße, dann nach dem Gleis, dann nach dem Gebäude oder der Anlage und entfernen Sie sie.
+- Einige Module können nur nach anderen platziert werden, z.B. Treppenausgänge nach Treppen, aber das Konfigurationsmenü wird nicht automatisch aktualisiert. Nachdem du die erste Treppe platziert hast, müsst du das Menü schließen und erneut öffnen, damit die Treppenausgänge erscheinen.
+- Einige Gleis- und Signalmods sind nicht kompatibel. Generell gilt: Vermeide Mods, die die Originalgleise des Spiels überschreiben oder deaktivieren. Du wirst sie nicht vermissen.
+- Nach einer Weile wird sich das Gebiet um Ihren Bahnhof herum entwickelt haben und möglicherweise Kollisionsfehler verursachen, wenn du versuchst, den Bahnhof zu konfigurieren. Dieses alte Problem betrifft auch andere Bahnhöfe. Suche geduldig erst nach der schuldigen Straße, dann nach dem Gleis, dann nach dem Gebäude oder der Anlage und entferne sie.
 			]],
 			["NAME"] = "Freestyle-Bahnhof",
 
@@ -631,9 +645,9 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["AxialFlushCargoExitName"] = "Bündiger Frachtausgang, Bahnsteigende",
 			["AxialFlushCargoExitDesc"] = "Bündiger Frachtausgang an einem Bahnsteigende. Es unterbricht lediglich Wände oder Zäune, wenn verfügbar. Kippt mit <m> und <n>.",
 			["AxialPassengerStairsEdgeName"] = "Eingang zum Bahnsteigende mit Auto-Brücke",
-			["AxialPassengerStairsEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz. Verbinden Sie es je nach Bedarf mit Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
+			["AxialPassengerStairsEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz. Verbinde es je nach Bedarf mit Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
 			["AxialPassengerStairsSnappyEdgeName"] = "Eingang zum Bahnsteigende mit Snappy-Autobrücke",
-			["AxialPassengerStairsSnappyEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verbinden Sie es je nach Bedarf mit Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
+			["AxialPassengerStairsSnappyEdgeDesc"] = "Verbindet ein Bahnsteigende mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verbinde es je nach Bedarf mit Assets, Brücken oder Wegen. Kippt mit <m> und <n>.",
 			["AxialFlushPassengerExitName"] = "Bündiger Passagierausgang, Bahnsteigende",
 			["AxialFlushPassengerExitDesc"] = "Bündiger Passagierausstieg am Bahnsteigende. Es unterbricht lediglich Wände oder Zäune, wenn verfügbar. Kippt mit <m> und <n>.",
 			["CargoStationSquarePlainName"] = "Einfacher Bahnhofsplatz",
@@ -641,35 +655,35 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["CargoShelfIronName"] = "Frachtregal",
 			["CargoShelfIronDesc"] = "Ein Regal zur Aufbewahrung zusätzlicher Fracht",
 			["FlatCargoRampDownSmoothName"] = "Glatte Laderampe nach unten",
-			["FlatCargoRampDownSmoothDesc"] = "Glatte Laderampe, die nach außen und nach unten führt, 2 m. Stellen Sie die Höhe mit <m> und <n> ein.",
+			["FlatCargoRampDownSmoothDesc"] = "Glatte Laderampe, die nach außen und nach unten führt, 2 m. Stelle die Höhe mit <m> und <n> ein.",
 			["FlatCargoRampDownSteepName"] = "Steile Laderampe nach unten",
-			["FlatCargoRampDownSteepDesc"] = "Steile Laderampe, die nach außen und nach unten führt, 2 m. Stellen Sie ihre Höhe mit <m> und <n> ein.",
+			["FlatCargoRampDownSteepDesc"] = "Steile Laderampe, die nach außen und nach unten führt, 2 m. Stelle ihre Höhe mit <m> und <n> ein.",
 			["FlatCargoRampFlatName"] = "Frachtausgang",
 			["FlatCargoRampFlatDesc"] = "Frachtausgang, 2 m. Höhe mit <m> und <n> einstellen.",
 			["FlatPassengerStairsDownSmoothName"] = "Ausstieg mit glatter Passagiertreppe nach unten",
-			["FlatPassengerStairsDownSmoothDesc"] = "Glatte Passagiertreppe, die nach außen und nach unten führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stellen Sie ihre Höhe mit <m> und <n> ein.",
+			["FlatPassengerStairsDownSmoothDesc"] = "Glatte Passagiertreppe, die nach außen und nach unten führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stelle ihre Höhe mit <m> und <n> ein.",
 			["FlatPassengerStairsDownSteepName"] = "Ausgang mit steiler Personentreppe nach unten",
 			["FlatPassengerStairsDownSteepDesc"] = "Steile Passagiertreppe, die nach außen und nach unten führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stelle ihre Höhe mit <m> und <n> ein.",
 			["FlatPassengerStairsEdgeName"] = "Eingang zur Bahnsteigseite mit automatischer Brücke",
-			["FlatPassengerStairsEdgeDesc"] = "Verbindet eine Bahnsteigseite mit dem Straßennetz. Verknüpfen Sie sie je nach Bedarf mit Treppen-Assets, Brücken oder Wegen. Passt seine Höhe mit <m> und <n> an.",
+			["FlatPassengerStairsEdgeDesc"] = "Verbindet eine Bahnsteigseite mit dem Straßennetz. Verknüpfe sie je nach Bedarf mit Treppen-Assets, Brücken oder Wegen. Passt seine Höhe mit <m> und <n> an.",
 			["FlatPassengerStairsSnappyEdgeName"] = "Eingang zur Bahnsteigseite mit bissiger Autobrücke",
-			["FlatPassengerStairsSnappyEdgeDesc"] = "Verbindet eine Bahnsteigseite mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verknüpfen Sie sie je nach Bedarf mit Treppen-Assets, Brücken oder Wegen. Passe ihre Höhe mit <m> und <n> an.",
+			["FlatPassengerStairsSnappyEdgeDesc"] = "Verbindet eine Bahnsteigseite mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Verknüpfe sie je nach Bedarf mit Treppen-Assets, Brücken oder Wegen. Passe ihre Höhe mit <m> und <n> an.",
 			["FlatPassengerStairsFlatName"] = "Flacher Passagierausgang",
-			["FlatPassengerStairsFlatDesc"] = "Flacher Passagierausgang, 2 m. Er verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stellen Sie seine Höhe mit <m> und <n> ein.",
+			["FlatPassengerStairsFlatDesc"] = "Flacher Passagierausgang, 2 m. Er verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stelle seine Höhe mit <m> und <n> ein.",
 			["FlatCargoRampUpSmoothName"] = "Glatte Laderampe nach oben",
-			["FlatCargoRampUpSmoothDesc"] = "Glatte Laderampe, die nach außen und nach oben führt, 2 m. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatCargoRampUpSmoothDesc"] = "Glatte Laderampe, die nach außen und nach oben führt, 2 m. Passe die Höhe mit <m> und <n> an.",
 			["FlatCargoRampUpSteepName"] = "Steile Laderampe nach oben",
-			["FlatCargoRampUpSteepDesc"] = "Steile Laderampe, die nach außen und nach oben führt, 2 m. Stellen Sie die Höhe mit <m> und <n> ein.",
+			["FlatCargoRampUpSteepDesc"] = "Steile Laderampe, die nach außen und nach oben führt, 2 m. Stelle die Höhe mit <m> und <n> ein.",
 			["FlatPassengerStairsUpSmoothName"] = "Ausstieg mit glatter Passagiertreppe nach oben",
-			["FlatPassengerStairsUpSmoothDesc"] = "Glatte Passagiertreppe, die nach außen und nach oben führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stellen Sie ihre Höhe mit <m> und <n> ein.",
+			["FlatPassengerStairsUpSmoothDesc"] = "Glatte Passagiertreppe, die nach außen und nach oben führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stelle ihre Höhe mit <m> und <n> ein.",
 			["FlatPassengerStairsUpSteepName"] = "Ausgang mit steiler Personentreppe nach oben",
-			["FlatPassengerStairsUpSteepDesc"] = "Steile Passagiertreppe, die nach außen und nach oben führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stellen Sie ihre Höhe mit <m> und <n> ein.",
+			["FlatPassengerStairsUpSteepDesc"] = "Steile Passagiertreppe, die nach außen und nach oben führt, 2 m. Sie verbindet automatisch mit nahe gelegenen Bahnsteigen oder Ausgängen. Stelle ihre Höhe mit <m> und <n> ein.",
 			["FlushCargoExitOuterName"] = "Bündiger Frachtausgang entlang des Bahnsteigs",
 			["FlushCargoExitOuterDesc"] = "Bündiger Frachtausgang entlang der Bahnsteig, unnützlich. Stelle seine Höhe mit <m> und <n> ein.",
 			["FlushPassengerExitAdjustableName"] = "Bündiger Passagierausgang mit einstellbarem Abstand",
 			["FlushPassengerExitAdjustableDesc"] = "Bündiger Passagierausstieg, um flexible Verbindungen über Erweiterungen hinweg herzustellen. Mit <m> und <n> kann der Abstand zwischen Bahnsteigkante und Erweiterungskante eingestellt werden. Er verbindet sich automatisch mit benachbarten Bahnsteigen oder Ausgängen.",
 			["FlushPassengerExitOuterName"] = "Bündiger Passagierausstieg entlang des Bahnsteigs",
-			["FlushPassengerExitOuterDesc"] = "Bündiger Passagierausgang entlang des Bahnsteigs oder der Erweiterungsgrenze, je nachdem, was weiter entfernt ist. Er verbindet sich automatisch mit benachbarten Bahnsteigen oder Ausgängen. Stellen Sie seine Höhe mit <m> und <n> ein.",
+			["FlushPassengerExitOuterDesc"] = "Bündiger Passagierausgang entlang des Bahnsteigs oder der Erweiterungsgrenze, je nachdem, was weiter entfernt ist. Er verbindet sich automatisch mit benachbarten Bahnsteigen oder Ausgängen. Stelle seine Höhe mit <m> und <n> ein.",
 			["FlatCargoArea5x5Name"] = "5x5 flacher Seitenbereich mit Rampe, Fracht",
 			["FlatCargoArea5x5Desc"] = "Flacher Seitenbereich mit Rampe, die nach draußen führt, 5x5 m, Fracht-Stil. Gut geeignet, um Fracht darauf zu platzieren. Passe die Höhe mit <m> und <n> an.",
 			["FlatCargoArea10x5Name"] = "10x5 flacher Seitenbereich mit Rampe, Fracht",
@@ -677,48 +691,48 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["FlatCargoArea10x10Name"] = "10x10 flacher Seitenbereich mit Rampe, Fracht",
 			["FlatCargoArea10x10Desc"] = "Flacher Seitenbereich mit Rampe nach außen, 10x10 m, Fracht. Gut geeignet, um Fracht darauf zu platzieren. Passe die Höhe mit <m> und <n> an.",
 			["FlatCargoStation10x10Name"] = "10x10 Ladestation",
-			["FlatCargoStation10x10Desc"] = "10x10-Ladestation. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatCargoStation10x10Desc"] = "10x10-Ladestation. Passe die Höhe mit <m> und <n> an.",
 			["FlatCargoStation10x15Name"] = "10x15-Ladestation",
-			["FlatCargoStation10x15Desc"] = "10x15-Ladestation. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatCargoStation10x15Desc"] = "10x15-Ladestation. Passe die Höhe mit <m> und <n> an.",
 			["FlatCargoStationLower10x10Name"] = "10x10 untere Ladestation",
 			["FlatCargoStationLower10x10Desc"] = "10x10 untere Ladestation. Passe seine Höhe mit <m> und <n> an. Male den Boden mit <shift> und einem Malwerkzeug neu an.",
 			["FlatCargoStation20x20Name"] = "20x20-Ladestation",
-			["FlatCargoStation20x20Desc"] = "20x20-Ladestation. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatCargoStation20x20Desc"] = "20x20-Ladestation. Passe die Höhe mit <m> und <n> an.",
 			["FlatCargoStation30x28Name"] = "30x28-Ladestation",
-			["FlatCargoStation30x28Desc"] = "30x28-Ladestation. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatCargoStation30x28Desc"] = "30x28-Ladestation. Passe die Höhe mit <m> und <n> an.",
 			["FlatPassengerArea5x5Name"] = "5x5 flacher Seitenbereich mit Treppe, Passagiere",
-			["FlatPassengerArea5x5Desc"] = "Flacher Seitenbereich mit Treppe nach draußen, 5x5 m, Passagierstil. Gut geeignet, um Assets darauf zu platzieren. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatPassengerArea5x5Desc"] = "Flacher Seitenbereich mit Treppe nach draußen, 5x5 m, Passagierstil. Gut geeignet, um Assets darauf zu platzieren. Passe die Höhe mit <m> und <n> an.",
 			["FlatPassengerArea10x5Name"] = "10x5 flacher Seitenbereich mit Treppe, Passagiere",
-			["FlatPassengerArea10x5Desc"] = "Flacher Seitenbereich mit Treppe nach draußen, 10x5 m, Passagierstil. Gut geeignet, um Assets darauf zu platzieren. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatPassengerArea10x5Desc"] = "Flacher Seitenbereich mit Treppe nach draußen, 10x5 m, Passagierstil. Gut geeignet, um Assets darauf zu platzieren. Passe die Höhe mit <m> und <n> an.",
 			["FlatPassengerArea10x10Name"] = "10x10 flacher Seitenbereich mit Treppe, Passagiere",
 			["FlatPassengerArea10x10Desc"] = "Flacher Seitenbereich mit Treppe nach draußen, 10x10 m, Passagierstil. Gut geeignet, um Assets darauf zu platzieren. Passe die Höhe mit <m> und <n> an.",
 			["FlatPassengerStation0MName"] = "Kleine glatte Personenbahnhof",
-			["FlatPassengerStation0MDesc"] = "Kleine, schicke Personenbahnhof. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatPassengerStation0MDesc"] = "Kleine, schicke Personenbahnhof. Passe die Höhe mit <m> und <n> an.",
 			["FlatPassengerStation5MName"] = "Kleiner Personenbahnhof, 5 m hoch",
 			["FlatPassengerStation5MDesc"] = "Kleiner Personenbahnhof, für den Zugang zu einem Bahnsteig, der etwas höher liegt als die Straße. Passe seine Höhe mit <m> und <n> an. Male den Boden mit <shift> und einem Malwerkzeug neu an.",
 			["FlatPassengerStationDown5MName"] = "Kleine Personenbahnhof, 5 m tiefer",
-			["FlatPassengerStationDown5MDesc"] = "Kleiner Personenbahnhof, für den Zugang zu einem Bahnsteig, der etwas tiefer liegt als die Straße. Stellen Sie die Höhe mit <m> und <n> ein.",
+			["FlatPassengerStationDown5MDesc"] = "Kleiner Personenbahnhof, für den Zugang zu einem Bahnsteig, der etwas tiefer liegt als die Straße. Stelle die Höhe mit <m> und <n> ein.",
 			["FlatPassengerStationSmallName"] = "Kleiner, verzierter Personenbahnhof",
-			["FlatPassengerStationSmallDesc"] = "Kleiner, verzierter Personenbahnhof. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatPassengerStationSmallDesc"] = "Kleiner, verzierter Personenbahnhof. Passe die Höhe mit <m> und <n> an.",
 			["FlatPassengerStationMidName"] = "Verschnörkelter Personenbahnhof",
-			["FlatPassengerStationMidDesc"] = "Verschnörkelter Personenbahnhof. Passen Sie die Höhe mit <m> und <n> an.",
+			["FlatPassengerStationMidDesc"] = "Verschnörkelter Personenbahnhof. Passe die Höhe mit <m> und <n> an.",
 			["FlatPassengerStationLargeName"] = "Verschnörkelter Personenbahnhof",
-			["FlatPassengerStationLargeDesc"] = "Verzierter Personenbahnhof mit Unterführung im Inneren. Passen Sie seine Höhe mit <m> und <n> an.",
+			["FlatPassengerStationLargeDesc"] = "Verzierter Personenbahnhof mit Unterführung im Inneren. Passe seine Höhe mit <m> und <n> an.",
 			["LookUndergroundName"] = "Unterirdisch aussehen",
 			["LookUndergroundDesc"] = "Schwebe oder baue dies, um unterirdisch reinzugucken, entferne es, wenn du fertig bist",
 			["NoBridge"] = "Keine Brücke",
 			["OpenLiftName"] = "Aufzug nach oben für Freiluftbahnsteige",
-			["OpenLiftDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
+			["OpenLiftDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn du einen Ausgang hinzufügst, mit dem Straßennetz.",
 			["OpenLift_NoAutoLinkName"] = "Aufzug nach oben für Freiluftbahnsteige, nur manuell",
-			["OpenLift_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn Sie einen Ausgang und eine Fußgängerbrücke hinzufügen. Sehr kurze Brücken gehen leider nicht.",
+			["OpenLift_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn du einen Ausgang und eine Fußgängerbrücke hinzufügst. Sehr kurze Brücken gehen leider nicht.",
 			["OpenStairsUpLeftName"] = "Treppe oben links für Bodenbahnsteig",
-			["OpenStairsUpLeftDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
+			["OpenStairsUpLeftDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn du einen Ausgang hinzufügst, mit dem Straßennetz.",
 			["OpenStairsUpLeft_NoAutoLinkName"] = "Treppe oben links für Bodenbahnsteig, nur manuell",
-			["OpenStairsUpLeft_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn Sie einen Ausgang und eine Fußgängerbrücke hinzufügen. Sehr kurze Brücken gehen leider nicht.",
+			["OpenStairsUpLeft_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn du einen Ausgang und eine Fußgängerbrücke hinzufügst. Sehr kurze Brücken gehen leider nicht.",
 			["OpenStairsUpRightName"] = "Treppe oben rechts für Bodenbahnsteig",
-			["OpenStairsUpRightDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn Sie einen Ausgang hinzufügen, mit dem Straßennetz.",
+			["OpenStairsUpRightDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn du einen Ausgang hinzufügst, mit dem Straßennetz.",
 			["OpenStairsUpRight_NoAutoLinkName"] = "Treppe oben rechts für Bodenbahnsteig, nur manuell",
-			["OpenStairsUpRight_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn Sie einen Ausgang und eine Fußgängerbrücke hinzufügen. Sehr kurze Brücken gehen leider nicht.",
+			["OpenStairsUpRight_NoAutoLinkDesc"] = "Verbindet Freiluftbahnsteige mit anderen Aufzügen oder Treppen oder mit dem Straßennetz, wenn du einen Ausgang und eine Fußgängerbrücke hinzufügst. Sehr kurze Brücken gehen leider nicht.",
 			["OpenStairsExitWithEdgeName_2m"] = "Eingang zur Treppe mit Autobrücke, kurz",
 			["OpenStairsExitWithEdgeName_3m"] = "Eingang zur Treppe mit Autobrücke, lang",
 			["OpenStairsExitWithSnappyEdgeName_2m"] = "Eingang zur Treppe mit zackiger Autobrücke",
@@ -732,9 +746,9 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["OpenStairsExitName_32m"] = "Eingang zur Treppe, 32 m",
 			["OpenStairsExitName_48m"] = "Eingang zur Treppe, 48 m",
 			["OpenStairsExitName_64m"] = "Eingang zur Treppe, 64 m",
-			["OpenStairsExitDesc"] = "Verbindet Treppen und Aufzüge mit dem Außenbereich. Stelle seine Neigung mit <m> und <n> ein. Verbinden Sie sie bei Bedarf mit dem Treppen-Asset ",
-			["OpenStairsExitWithEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz. Passen Sie seine Neigung mit <m> und <n> an. Verknüpfen Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen.",
-			["OpenStairsExitWithSnappyEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Passen Sie die Neigung mit <m> und <n> an. Verbinden Sie sie je nach Bedarf mit Treppen, Brücken oder Wegen.",
+			["OpenStairsExitDesc"] = "Verbindet Treppen und Aufzüge mit dem Außenbereich. Stelle seine Neigung mit <m> und <n> ein. Verbinde sie bei Bedarf mit dem Treppen-Asset ",
+			["OpenStairsExitWithEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz. Passe seine Neigung mit <m> und <n> an. Verknüpfe sie je nach Bedarf mit Treppen, Brücken oder Wegen.",
+			["OpenStairsExitWithSnappyEdgeDesc"] = "Verbindet Treppen und Aufzüge mit dem Straßennetz; es ist hübsch aber es kann Kollisionen verursachen. Passe die Neigung mit <m> und <n> an. Verbinde sie je nach Bedarf mit Treppen, Brücken oder Wegen.",
 			["PassengerSideLiftName"] = "Personenaufzug zu einer Brückenseite",
 			["PassengerSideLiftDesc"] = "Personenaufzug für den Zugang zu einer Bahnsteig auf einer Brücke von der Seite. Er kann an Brückenunterführungen und andere Aufzüge angeschlossen werden, wenn diese nahe genug sind. Maximale Höhe 40 m, einstellbar mit <m> und <n>. Der Boden kann mit <shift> und einem Malwerkzeug neu bemalt werden.",
 			["PassengerPlatformLiftName"] = "Personenaufzug zu einer Brücke",
@@ -775,10 +789,14 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["PlatformRoofIronGlassCopperDesc"] = "Eisen- und Glasdach für Passagierbahnsteige",
 			["PlatformRoofMetalGlassName"] = "Bahnsteigdach aus Glas",
 			["PlatformRoofMetalGlassDesc"] = "Glasdach für Passagierbahnsteige",
-			["PlatformStyleDBEraCName"] = "DB Epoche C Boden",
-			["PlatformStyleDBEraCDesc"] = "DB Epoche C Boden",
+			["PlatformStyleDBEraBName"] = "DB Epoche B Boden",
+			["PlatformStyleDBEraBDesc"] = "DB Epoche B Passagiersteigboden",
+			["PlatformStyleEraCDBOneStripeName"] = "DB Epoche C Boden, eine Streife",
+			["PlatformStyleEraCDBOneStripeDesc"] = "DB Epoche C Passagiersteigboden, eine Streife",
+			["PlatformStyleEraCDBTwoStripesName"] = "DB Epoche C Boden, zwei Streifen",
+			["PlatformStyleEraCDBTwoStripesDesc"] = "DB Epoche C Passagiersteigboden, zwei Streifen",
 			["PlatformStyleDefaultName"] = "Standard Boden",
-			["PlatformStyleDefaultDesc"] = "Standard Boden",
+			["PlatformStyleDefaultDesc"] = "Standard Boden für die Epoche",
 			["RestoreCargoTerminalName"] = "Fracht-Terminal zurücksetzen",
 			["RestorePassengerTerminalName"] = "Passagier-Terminal zurücksetzen",
 			["RestoreTerminalDesc"] = "Setzt einen gelöschten Terminal zurück, bevor das Konfigurationsmenü geschlossen wird. Es hat sonst keine Wirkung.",
@@ -811,7 +829,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["SlopedPassengerAreaWaiting1x20Name"] = "Bahnsteigerweiterung, 20 m, dekoriert",
 			["SlopedPassengerAreaWaiting1x20Desc"] = "Bahnsteigerweiterung, 20 m. Sie nimmt zusätzliche Passagiere für ihr Gleis auf und zeigt sie an.",
 			["SubwayName"] = "Unterirdischer Eingang",
-			["SubwayDesc"] = "Platzieren Sie diese in der Nähe eine Freestyle-Bahnhofs und verbinden Sie sie mit dem Popup. Stellen Sie sicher, dass Ihr Bahnhof Unterführungen und / oder U-Bahn-Treppen hat.",
+			["SubwayDesc"] = "Platziere diese in der Nähe eines Freestyle-Bahnhofs und verbinde sie mit dem Popup. Stelle sicher, dass dein Bahnhof Unterführungen und / oder U-Bahn-Treppen hat.",
 			["TrackCrossingName"] = "Gleisübergang für zwei Gleise",
 			["TrackCrossingDesc"] = "Er verbindet einen Bahnsteig und kann eine Verbindung zum Straßennetz oder zu einem gegenüberliegenden Zwilling herstellen, wenn dieser nahe genug ist.",
 			["TrackCrossingTwoStairsName"] = "Gleisübergang für ein einzelnes Gleis",
@@ -870,7 +888,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["EraCCargoPlatform20MName"] = "20 m Frachtplattform, Epoche C",
 			["EraCCargoPlatform20MDesc"] = "Frachtplattformen, die als Gleise zu verlegen sind, 20 m breit, Epoche C. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["FenceWaypointName"] = "Zaunmarker",
-			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicken Sie dann darauf, um den Zaun zu konfigurieren.",
+			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
 			["LolloFreestyleTrainStationName"] = "Freestyle-Bahnhof",
 			["LolloFreestyleTrainStationDesc"] = "Freestyle-Bahnhof",
 			["PlatformWaypointName"] = "Bahnsteigmarker",
@@ -878,23 +896,23 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["EraAPassengerPlatform5MName"] = "5 m Personenbahnsteig, Epoche A",
 			["EraAPassengerPlatform5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche A. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraAPassengerPlatform5MAutoSplitName"] = "Zwei 2,5 m Personenbahnsteige, Epoche A",
-			["EraAPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche A, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwenden Sie zuerst den 5 m Bahnsteig, dann wandeln Sie ihn in diesen mit dem Zauberstab um.",
+			["EraAPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche A, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwende zuerst den 5 m Bahnsteig, dann wandel ihn in diesen mit dem Zauberstab um.",
 			["EraAPassengerPlatform2_5MName"] = "2,5 m Personenbahnsteig, Epoche A",
 			["EraAPassengerPlatform2_5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 2,5 m breit, Epoche A, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraBPassengerPlatform5MName"] = "5 m Personenbahnsteig, Epoche B",
 			["EraBPassengerPlatform5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche B. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraBPassengerPlatform5MAutoSplitName"] = "Zwei 2,5 m Personenbahnsteige, Epoche B",
-			["EraBPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche B, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwenden Sie zuerst den 5 m Bahnsteig, dann wandeln Sie ihn in diesen mit dem Zauberstab um.",
+			["EraBPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche B, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwende zuerst den 5 m Bahnsteig, dann wandel ihn in diesen mit dem Zauberstab um.",
 			["EraBPassengerPlatform2_5MName"] = "2,5 m Personenbahnsteig, Epoche B",
 			["EraBPassengerPlatform2_5MDesc"] = "Als Gleise zu verlegende Personenbahnsteige, 2,5 m breit, Epoche B, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraCPassengerPlatform5MName"] = "5 m Personenbahnsteig, Epoche C",
 			["EraCPassengerPlatform5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche C. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraCPassengerPlatform5MAutoSplitName"] = "Zwei 2,5 m Personenbahnsteige, Epoche C",
-			["EraCPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwenden Sie zuerst den 5 m Bahnsteig, dann wandeln Sie ihn in diesen mit dem Zauberstab um.",
+			["EraCPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwende zuerst den 5 m Bahnsteig, dann wandel ihn in diesen mit dem Zauberstab um.",
 			["EraCPassengerPlatform2_5MName"] = "2,5 m Personenbahnsteig, Epoche C",
 			["EraCPassengerPlatform2_5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 2,5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["TrackWaypointName"] = "Gleismarker",
-			["TrackWaypointDesc"] = "Markiert die Enden eines Gleises, das Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Track in der Nähe endet, hat dieses Ende eine höhere Priorität. Nahegelegene Signalmasten können stören, Sie sollten sie entfernen und wieder einfügen, sobald der Bahnhof angelegt ist.",
+			["TrackWaypointDesc"] = "Markiert die Enden eines Gleises, das Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Track in der Nähe endet, hat dieses Ende eine höhere Priorität. Nahegelegene Signalmasten können stören: entferne sie und füge sie wieder ein, sobald der Bahnhof angelegt ist.",
 
 			["CementBridgeGlassWallNoPillars"] = "Eisenbrücke mit Glasschirmen und ohne Pfeiler. Nur für 5 m Bahnsteige.",
 			["CementBridgeGlassWallNormalPillars"] = "Eisenbrücke mit Glasschirmen. Nur für 5 m Bahnsteige.",
@@ -993,9 +1011,9 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 
 			-- lose offene Treppen und lose Aufzüge
 			["BaseMode"] = "Basismodus",
-			["BaseTooltip_Lift"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" auszuwählen und danach in \"Snappy-Pfad\" zu ändern. Machen Sie nur die Verbindungen die Sie brauchen, und machen Sie sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
-			["BaseTooltip_Stairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
-			["BaseTooltip_TwinStairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Machen Sie nur die Verbindungen die Sie brauchen, und machen Sie sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["BaseTooltip_Lift"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" auszuwählen und danach in \"Snappy-Pfad\" zu ändern. Mach nur die Verbindungen die du brauchst, und mach sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfe die Verbindungen mit <AltGr> + <L>.",
+			["BaseTooltip_Stairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfe die Verbindungen mit <AltGr> + <L>.",
+			["BaseTooltip_TwinStairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und danach in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Mach nur die Verbindungen die du brauchst, und mach sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfe die Verbindungen mit <AltGr> + <L>.",
 			["BaseTowardEast"] = "Basis nach Osten",
 			["BaseTowardWest"] = "Basis nach Westen",
 			["BridgeHeight"] = "Brückenhöhe",
@@ -1004,10 +1022,20 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["BridgeZAngle"] = "Brückendrehung",
 			["EdgeWithBridge"] = "Automatische Brücke",
 			["EdgeWithNoBridge"] = "Automatischer Pfad",
-			["Zeitalter"] = "Zeitalter",
-			["ErrorReplacingConWithSnappyCopy"] = "Dieses Objekt kann nicht an nahe gelegene Straßen angeschlossen werden, ändern Sie es oder verschieben Sie es woanders hin",
+			["Era"] = "Epoche",
+			["CargoEraADefault"] = "Epoche A Standard, Fracht",
+			["CargoEraBDefault"] = "Epoche B Standard, Fracht",
+			["CargoEraCDefault"] = "Epoche C Standard, Fracht",
+			["PassengersEraADefault"] = "Epoche A Standard, Passagiere",
+			["PassengersEraBDefault"] = "Epoche B Standard, Passagiere",
+			["PassengersEraCDefault"] = "Epoche C Standard, Passagiere",
+			["PassengersEraBDB"] = "Epoche B DB, Passagiere",
+			["PassengersEraCDBOneStripe"] = "Epoche C DB mit 1 Streife, Passagiere",
+			["PassengersEraCDBTwoStripes"] = "Epoche C DB mit 2 Streifen, Passagiere",
+			["ErrorReplacingConWithSnappyCopy"] = "Dieses Objekt kann nicht an nahe gelegene Straßen angeschlossen werden, ändere es oder verschiebe es woanders hin",
 			["Fences"] = "Zäune",
 			["FlatSlopedTerrain"] = "Gefälle des Geländes",
+			["Floor"] = "Boden",
 			["Model"] = "Bahnsteig",
 			["ModelRaised"] = "Erhöhte Bahnsteig",
 			["NO"] = "Nein",
@@ -1031,9 +1059,9 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["TerrainAlignmentTypeFlat"] = "Flach",
 			["TerrainAlignmentTypeSloped"] = "Abgeschrägt",
 			["TopPlatformLength"] = "Obere Bahnsteiglänge",
-			["TopPlatformLengthTooltip_Lift"] = "Es könnte einfacher sein, zuerst die Option \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Brücke\" zu ändern. Machen Sie nur die Verbindungen die Sie brauchen, und machen Sie sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
-			["TopPlatformLengthTooltip_Stairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
-			["TopPlatformLengthTooltip_TwinStairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Brücke\" zu ändern. Machen Sie nur die Verbindungen die Sie brauchen, und machen Sie sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfen Sie die Verbindungen mit <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_Lift"] = "Es könnte einfacher sein, zuerst die Option \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Brücke\" zu ändern. Mach nur die Verbindungen die du brauchst, und mach sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfe die Verbindungen mit <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_Stairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatischer Pfad\" oder \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Pfad\" oder \"Snappy-Brücke\" zu ändern. Überprüfe die Verbindungen mit <AltGr> + <L>.",
+			["TopPlatformLengthTooltip_TwinStairs"] = "Es könnte einfacher sein, zuerst die Option \"Automatische Brücke\" auszuwählen und sie anschließend in \"Snappy-Brücke\" zu ändern. Mach nur die Verbindungen die du brauchest, und mach sie anschließend snappy, sonst können sich die Verbindungen unterbrechen. Überprüfe die Verbindungen mit <AltGr> + <L>.",
 			["TopPlatformNorthLength"] = "Oberster Steg nach Norden",
 			["TopPlatformEastLength"] = "Oberster Steg nach Osten",
 			["TopPlatformSouthLength"] = "Oberster Steg nach Süden",
@@ -1041,16 +1069,16 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 
 			-- Gleisteiler
 			["TrackSplitterName"] = "Gleisteiler",
-			["TrackSplitterDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwenden Sie <AltGr> + <L>, um die Wirkung zu sehen.",
+			["TrackSplitterDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
 
 			-- Bahnsteige als Asset
 			["Bulldoze"] = "Abreißen",
 			["Embankment"] = "Böschung",
 			["OnlyTerrain"] = "Nur Boden",
 			["PlatformAsAssetName"] = "Bahnsteig als Asset",
-			["PlatformAsAssetDesc"] = "Bahnsteig oder Böschung als Asset. Passen Sie ihn mit dem \"Construction Mover\" an.",
+			["PlatformAsAssetDesc"] = "Bahnsteig oder Böschung als Asset. Pass ihn mit dem \"Construction Mover\" an.",
 			["PlatformAsAsset_CargoOrPassengers"] = "Fracht oder Passagiere",
-			["PlatformAsAsset_CargoOrPassengers_Tooltip"] = "Wählen Sie \"Nur Boden\" um Böschungen zu bauen",
+			["PlatformAsAsset_CargoOrPassengers_Tooltip"] = "Wähle \"Nur Boden\" um Böschungen zu bauen",
 			["PlatformAsAsset_Cargo"] = "Fracht",
 			["PlatformAsAsset_Passengers"] = "Passagiere",
 			["PlatformAsAsset_X10m"] = "X Größe, grob, m",
@@ -1063,7 +1091,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			-- Zaun-Assets
 			["DoTerrain"] = "Boden ausgleichen",
 			["FenceAssetsName"] = "Mauern und Zäune",
-			["FenceAssetsDesc"] = "Mauern und Zäune, die zu den Freestyle-Bahnhöfen passen. Passen Sie sie mit dem \"Construction Mover\" an.",
+			["FenceAssetsDesc"] = "Mauern und Zäune, die zu den Freestyle-Bahnhöfen passen. Passe sie mit dem \"Construction Mover\" an.",
 			["fenceModelName"] = "Mauer oben",
 			["IsWallTall"] = "Hohe Mauer",
 			["OutdatedConstruction"] = "Diese Konstruktion is obsolet, zerstöre sie und baue sie erneut",
@@ -1073,7 +1101,7 @@ Aufzüge, Treppen und unterirdische Eingänge finden Sie in den Assets, suchen S
 			["wallBehindModel_0IsNoWall"] = "Stützwand",
 			["wallBehind_isInTunnels"] = "Stützwand in Tunneln",
 			["wallBehind_isOnBridges"] = "Stützwand auf Brücken",
-			["wallWithNoModelsHere"] = "Hier steht eine Mauer ohne Teile, konfigurieren Sie sie oder reißen Sie sie ab.",
+			["wallWithNoModelsHere"] = "Hier steht eine Mauer ohne Teile, konfiguriere sie oder reiße sie ab.",
 			["YShift"] = "Versetzung m",
 			["YShiftFine"] = "Versetzung fein, m",
 			["ZDelta"] = "Steigung",

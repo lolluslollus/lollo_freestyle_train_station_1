@@ -47,16 +47,33 @@ function data()
 			)
 
 			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
-			local modelId = nil
-			if era == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/underpass/era_a_underpass_stairs_10m.mdl'
-			elseif era == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/underpass/era_b_underpass_stairs_10m.mdl'
-			else modelId = 'lollo_freestyle_train_station/underpass/era_c_underpass_stairs_10m.mdl'
+			local stairsModelId = nil
+			if era == moduleHelpers.eras.era_a.prefix then stairsModelId = 'lollo_freestyle_train_station/underpass/era_a_underpass_stairs_10m.mdl'
+			elseif era == moduleHelpers.eras.era_b.prefix then stairsModelId = 'lollo_freestyle_train_station/underpass/era_b_underpass_stairs_10m.mdl'
+			else stairsModelId = 'lollo_freestyle_train_station/underpass/era_c_underpass_stairs_10m.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = stairsModelId,
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+
+			local floorModelId = 'lollo_freestyle_train_station/underpass/era_c_underpass_stairs_floor_10m.mdl'
+			if era == moduleHelpers.eras.era_a.prefix then floorModelId = 'lollo_freestyle_train_station/underpass/era_a_underpass_stairs_floor_10m.mdl'
+			elseif era == moduleHelpers.eras.era_b.prefix then floorModelId = 'lollo_freestyle_train_station/underpass/era_b_underpass_stairs_floor_10m.mdl'
 			end
 			-- exceptionally, underpasses need the paving material coz they are straight while curves are curvy
-			if result.platformStyles[nTerminal] == _constants.platformStyles._DB_eraC.moduleFileName then modelId = 'lollo_freestyle_train_station/underpass/DB_era_c_underpass_stairs_10m.mdl' end
+			if result.platformStyles[nTerminal] == _constants.platformStyles.era_b_db.moduleFileName then
+				floorModelId = 'lollo_freestyle_train_station/underpass/era_b_db_underpass_stairs_floor_10m.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+				floorModelId = 'lollo_freestyle_train_station/underpass/era_b_db_underpass_stairs_floor_10m.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+				floorModelId = 'lollo_freestyle_train_station/underpass/era_c_db_2_stripes_underpass_stairs_floor_10m.mdl'
+			end
 
 			result.models[#result.models + 1] = {
-				id = modelId,
+				id = floorModelId,
 				slotId = slotId,
 				transf = slotTransf,
 				tag = tag

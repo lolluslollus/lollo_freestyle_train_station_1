@@ -40,29 +40,35 @@ function data()
 			-- local _isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
             local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
-			local modelId = 'lollo_freestyle_train_station/underpass/era_c_underpass_building_7m.mdl'
-			if eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/underpass/era_b_underpass_building_7m.mdl'
-			elseif eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/underpass/era_a_underpass_building_7m.mdl'
+			local buildingModelId = 'lollo_freestyle_train_station/underpass/era_c_underpass_building_7m.mdl'
+			if eraPrefix == moduleHelpers.eras.era_b.prefix then buildingModelId = 'lollo_freestyle_train_station/underpass/era_b_underpass_building_7m.mdl'
+			elseif eraPrefix == moduleHelpers.eras.era_a.prefix then buildingModelId = 'lollo_freestyle_train_station/underpass/era_a_underpass_building_7m.mdl'
 			end
 
 			local _skew = (cpl.posTanX2[2][1][3] - cpl.posTanX2[1][1][3]) / _constants.maxPassengerWaitingAreaEdgeLength
 			result.models[#result.models + 1] = {
-				id = modelId,
+				id = buildingModelId,
 				slotId = slotId,
 				-- transf = slotTransf,
 				transf = transfUtils.getTransf_XSkewedOnZ(slotTransf, _skew),
 				tag = tag
 			}
 
-			local underpassFloorModelId = 'lollo_freestyle_train_station/underpass/era_c_underpassFloor.mdl'
-			if eraPrefix == moduleHelpers.eras.era_b.prefix then underpassFloorModelId = 'lollo_freestyle_train_station/underpass/era_b_underpassFloor.mdl'
-			elseif eraPrefix == moduleHelpers.eras.era_a.prefix then underpassFloorModelId = 'lollo_freestyle_train_station/underpass/era_a_underpassFloor.mdl'
+			local floorModelId = 'lollo_freestyle_train_station/underpass/era_c_underpassFloor.mdl'
+			if eraPrefix == moduleHelpers.eras.era_b.prefix then floorModelId = 'lollo_freestyle_train_station/underpass/era_b_underpassFloor.mdl'
+			elseif eraPrefix == moduleHelpers.eras.era_a.prefix then floorModelId = 'lollo_freestyle_train_station/underpass/era_a_underpassFloor.mdl'
 			end
 			-- exceptionally, underpasses need the paving material coz they are straight while curves are curvy
-			if result.platformStyles[nTerminal] == _constants.platformStyles._DB_eraC.moduleFileName then underpassFloorModelId = 'lollo_freestyle_train_station/underpass/DB_era_c_underpassFloor.mdl' end
+			if result.platformStyles[nTerminal] == _constants.platformStyles.era_b_db.moduleFileName then
+				floorModelId = 'lollo_freestyle_train_station/underpass/era_b_db_underpassFloor.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+				floorModelId = 'lollo_freestyle_train_station/underpass/era_b_db_underpassFloor.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+				floorModelId = 'lollo_freestyle_train_station/underpass/era_c_db_2_stripes_underpassFloor.mdl'
+			end
 
 			result.models[#result.models+1] = {
-				id = underpassFloorModelId,
+				id = floorModelId,
 				transf = transfUtils.getTransf_ZShifted(
 					moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2),
 					result.laneZs[nTerminal] + 0.01

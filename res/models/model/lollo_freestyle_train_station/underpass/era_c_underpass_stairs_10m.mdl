@@ -24,10 +24,9 @@ function data()
                                 'lollo_freestyle_train_station/era_c_station_tiles_2.mtl',
                                 'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
                                 'station/rail/era_c/era_c_trainstation_borders_1.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl',
                                 'lollo_freestyle_train_station/hole.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/underpass/era_c_underpass_stairs_8m_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/underpass/era_c_underpass_stairs_8m_no_floor_lod0.msh',
                         },
                     },
                 },
@@ -40,8 +39,8 @@ function data()
                     children = {
                         {
                             materials = {
-                                'station/rail/era_c/era_c_trainstation_borders_1.mtl',
-                                'lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl',
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                                -- 'station/rail/era_c/era_c_trainstation_borders_1.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/underpass/underpass_stairs_10m_lod1.msh',
                         },

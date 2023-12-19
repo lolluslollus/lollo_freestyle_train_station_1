@@ -60,7 +60,9 @@ local constants = {
         _110cm = {aboveRail = 1.1, aboveGround = 1.5, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight110.module',},
     },
     platformStyles = {
-        _DB_eraC = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleDBEraC.module'},
+        era_b_db = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleDBEraB.module'},
+        era_c_db_1_stripe = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleDBEraC_OneStripe.module'},
+        era_c_db_2_stripes = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleDBEraC.module'},
     },
     platformSideBitsZ = -0.10, -- a bit lower than the platform, to look good in bends
     platformRoofZ = -0.20, -- a bit lower than the platform, to look good on slopes

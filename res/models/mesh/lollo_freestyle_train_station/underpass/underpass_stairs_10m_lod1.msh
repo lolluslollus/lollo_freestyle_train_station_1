@@ -1,75 +1,53 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, }, 
+		{ 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
 					count = 1152,
-					offset = 5760,
+					offset = 4816,
 				},
 				position = {
 					count = 1152,
-					offset = 3456,
+					offset = 1360,
 				},
 				tangent = {
 					count = 1152,
-					offset = 2304,
+					offset = 2512,
 				},
 				uv0 = {
 					count = 1152,
-					offset = 4608,
+					offset = 3664,
 				},
 			},
 			materials = {
-				"railing.mtl", 
-			},
-		}, {
-			indices = {
-				normal = {
-					count = 312,
-					offset = 7848,
-				},
-				position = {
-					count = 312,
-					offset = 7224,
-				},
-				tangent = {
-					count = 312,
-					offset = 6912,
-				},
-				uv0 = {
-					count = 312,
-					offset = 7536,
-				},
-			},
-			materials = {
-				"lollo_freestyle_train_station/underpass/tiles.001.mtl", 
+				"floor.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 120,
+			count = 96,
 			numComp = 3,
-			offset = 2184,
+			offset = 1264,
 		},
 		position = {
-			count = 1056,
+			count = 816,
 			numComp = 3,
-			offset = 464,
-		},
-		tangent = {
-			count = 464,
-			numComp = 4,
 			offset = 0,
 		},
+		tangent = {
+			count = 160,
+			numComp = 4,
+			offset = 816,
+		},
 		uv0 = {
-			count = 664,
+			count = 288,
 			numComp = 2,
-			offset = 1520,
+			offset = 976,
 		},
 	},
 }
