@@ -31,6 +31,7 @@ local m_guiConConfigMenu = {
 local _eventId = _constants.eventData.eventId
 local _eventNames = _constants.eventData.eventNames
 local _guiPlatformWaypointModelId = nil
+local _guiSplitterWaypointModelId = nil
 local _guiTrackWaypointModelId = nil
 local _guiTexts = {
     awaitFinalisationBeforeSaving = '',
@@ -213,7 +214,7 @@ local _utils = {
         local neighbourEdge1Ids_indexed, innerNode1Id, is1Shared = _getNeighbours(trackEdgeList[1].edgeId, trackEdgeList[2].edgeId)
         local neighbourEdgeNIds_indexed, innerNodeNId, isNShared = _getNeighbours(trackEdgeList[numEdges].edgeId, trackEdgeList[numEdges-1].edgeId)
         arrayUtils.concatKeysValues(neighbourEdge1Ids_indexed, neighbourEdgeNIds_indexed)
-        logger.print('neighbourEdge1Ids_indexed =') logger.debugPrint(neighbourEdge1Ids_indexed)
+        logger.print('_getNeighbours calculated neighbourEdge1Ids_indexed =') logger.debugPrint(neighbourEdge1Ids_indexed)
 
         local edgeIds = {}
         local edges = {}
@@ -2307,10 +2308,14 @@ logger.print('FOUR')
 
     removeNeighbours = function(successEventName, args)
         logger.print('_removeNeighbours starting, successEventName = ' .. (successEventName or 'NIL'))
-        logger.print('args =') logger.debugPrint(args)
+        -- logger.print('args =') logger.debugPrint(args)
+        logger.print('args.nTerminalsToRemove =') logger.debugPrint(args.nTerminalsToRemove)
+        logger.print('args.trackEdgeList =') logger.debugPrint(args.trackEdgeList)
+        logger.print('args.platformEdgeList =') logger.debugPrint(args.platformEdgeList)
+        logger.print('args.newTerminalNeighbours =') logger.debugPrint(args.newTerminalNeighbours)
         logger.print('args.trackEndEntities =') logger.debugPrint(args.trackEndEntities)
         logger.print('args.streetEndEntities =') logger.debugPrint(args.streetEndEntities)
-        logger.print('args.newTerminalNeighbours =') logger.debugPrint(args.newTerminalNeighbours)
+
         local trackEdgeIds = {}
         local platformEdgeIds = {}
         local allEdgeIds = {}
@@ -2368,10 +2373,11 @@ logger.print('FOUR')
         end
 
         local isAnythingChanged = false
+        local sharedNodeIds_indexed = {}
         local proposal = api.type.SimpleProposal.new()
         for edgeId, _ in pairs(allExistingEdgeIds_indexed) do
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
-            if baseEdge then
+            if baseEdge ~= nil then
                 proposal.streetProposal.edgesToRemove[#proposal.streetProposal.edgesToRemove+1] = edgeId
                 isAnythingChanged = true
                 if baseEdge.objects then
@@ -2379,42 +2385,80 @@ logger.print('FOUR')
                         proposal.streetProposal.edgeObjectsToRemove[#proposal.streetProposal.edgeObjectsToRemove+1] = baseEdge.objects[o][1]
                     end
                 end
+
+                for __, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
+                    local connectedEdgeIds = edgeUtils.getConnectedEdgeIds({nodeId})
+                    local isNodeToBeRemoved = true
+                    for ___, connectedEdgeId in pairs(connectedEdgeIds) do
+                        if not(allExistingEdgeIds_indexed[connectedEdgeId]) then
+                            isNodeToBeRemoved = false
+                            break
+                        end
+                    end
+                    if isNodeToBeRemoved then sharedNodeIds_indexed[nodeId] = true end
+                end
             end
         end
+        logger.print('sharedNodeIds ONE =') logger.debugPrint(sharedNodeIds_indexed)
+--[[
         -- logger.print('proposal.streetProposal.edgeObjectsToRemove =')
         -- logger.debugPrint(proposal.streetProposal.edgeObjectsToRemove)
 
-        local sharedNodeIds = {}
-        arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
-        arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
+        -- local sharedNodeIds = {}
+        -- arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
+        -- arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
         if args.newTerminalNeighbours ~= nil then
-            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.innerSharedNodeIds)
-            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.innerSharedNodeIds)
-            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.outerLoneNodeIds)
-            arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.outerLoneNodeIds)
+            for _, nodeId in pairs(args.newTerminalNeighbours.tracks.innerSharedNodeIds) do
+                sharedNodeIds_indexed[nodeId] = true
+            end
+            for _, nodeId in pairs(args.newTerminalNeighbours.platforms.innerSharedNodeIds) do
+                sharedNodeIds_indexed[nodeId] = true
+            end
+            for _, nodeId in pairs(args.newTerminalNeighbours.tracks.outerLoneNodeIds) do
+                sharedNodeIds_indexed[nodeId] = true
+            end
+            for _, nodeId in pairs(args.newTerminalNeighbours.platforms.outerLoneNodeIds) do
+                sharedNodeIds_indexed[nodeId] = true
+            end
+            -- arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.innerSharedNodeIds)
+            -- arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.innerSharedNodeIds)
+            -- arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.outerLoneNodeIds)
+            -- arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.outerLoneNodeIds)
         end
+        logger.print('sharedNodeIds TWO =') logger.debugPrint(sharedNodeIds_indexed)
         if args.trackEndEntities ~= nil then
             for t, terminalEndEntities in pairs(args.trackEndEntities) do
                 -- after removing a terminal, the inner node is also lonely and must be removed, always
                 if nTerminalsToRemove_indexed[t] then
                     if #terminalEndEntities.tracks.jointNeighbourEdges.edge1Ids ~= 0 then
-                        arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.tracks.stationEndNodeIds.node1Id)
+                        -- arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.tracks.stationEndNodeIds.node1Id)
+                        sharedNodeIds_indexed[terminalEndEntities.tracks.stationEndNodeIds.node1Id] = true
                     end
                     if #terminalEndEntities.tracks.jointNeighbourEdges.edge2Ids ~= 0 then
-                        arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.tracks.stationEndNodeIds.node2Id)
+                        -- arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.tracks.stationEndNodeIds.node2Id)
+                        sharedNodeIds_indexed[terminalEndEntities.tracks.stationEndNodeIds.node2Id] = true
                     end
                     if #terminalEndEntities.platforms.jointNeighbourEdges.edge1Ids ~= 0 then
-                        arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.platforms.stationEndNodeIds.node1Id)
+                        -- arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.platforms.stationEndNodeIds.node1Id)
+                        sharedNodeIds_indexed[terminalEndEntities.platforms.stationEndNodeIds.node1Id] = true
                     end
                     if #terminalEndEntities.platforms.jointNeighbourEdges.edge2Ids ~= 0 then
-                        arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.platforms.stationEndNodeIds.node2Id)
+                        -- arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.platforms.stationEndNodeIds.node2Id)
+                        sharedNodeIds_indexed[terminalEndEntities.platforms.stationEndNodeIds.node2Id] = true
                     end
                 end
-                arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds)
-                arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.platforms.jointNeighbourNodes.outerLoneNodeIds)
+                for _, nodeId in pairs(terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds) do
+                    sharedNodeIds_indexed[nodeId] = true
+                end
+                for _, nodeId in pairs(terminalEndEntities.platforms.jointNeighbourNodes.outerLoneNodeIds) do
+                    sharedNodeIds_indexed[nodeId] = true
+                end
+                -- arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds)
+                -- arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.platforms.jointNeighbourNodes.outerLoneNodeIds)
             end
         end
-        logger.print('sharedNodeIds TWO =') logger.debugPrint(sharedNodeIds)
+        logger.print('sharedNodeIds THREE =') logger.debugPrint(sharedNodeIds_indexed)
+]]
         if args.streetEndEntities ~= nil then
             local _tolerance = 0.001
             for _, endEntity in pairs(args.streetEndEntities) do
@@ -2439,7 +2483,8 @@ logger.print('FOUR')
                             break
                         end
                     end
-                    if isRemoveInnerNode then arrayUtils.addUnique(sharedNodeIds, innerNodeId) end
+                    -- if isRemoveInnerNode then arrayUtils.addUnique(sharedNodeIds, innerNodeId) end
+                    if isRemoveInnerNode then sharedNodeIds_indexed[innerNodeId] = true end
                 end
                 -- remove outer nodes if all their edges are marked for removal or were removed by preProcessFn()
                 for __, props in pairs(endEntity.jointNeighbourEdges.props) do
@@ -2459,14 +2504,21 @@ logger.print('FOUR')
                                 break
                             end
                         end
-                        if isRemoveOuterNode then arrayUtils.addUnique(sharedNodeIds, outerNodeId) end
+                        -- if isRemoveOuterNode then arrayUtils.addUnique(sharedNodeIds, outerNodeId) end
+                        if isRemoveOuterNode then sharedNodeIds_indexed[outerNodeId] = true end
                     end
                 end
             end
         end
-        logger.print('sharedNodeIds FOUR =') logger.debugPrint(sharedNodeIds)
-        for i = 1, #sharedNodeIds do
-            proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
+        logger.print('sharedNodeIds FOUR =') logger.debugPrint(sharedNodeIds_indexed)
+        -- for i = 1, #sharedNodeIds do
+        --     proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
+        --     isAnythingChanged = true
+        -- end
+        local i = 0
+        for nodeId, _ in pairs(sharedNodeIds_indexed) do
+            i = i + 1
+            proposal.streetProposal.nodesToRemove[i] = nodeId
             isAnythingChanged = true
         end
 
@@ -2925,6 +2977,19 @@ local _guiActions = {
         if not(edgeUtils.isValidAndExistingId(constructionId)) then return nil end
 
         return api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+    end,
+    handleSplitterWaypointBuilt = function()
+        local splitterWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiSplitterWaypointModelId)
+        if #splitterWaypointIds == 0 then return end
+
+        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+            string.sub(debug.getinfo(1, 'S').source, 1),
+            _eventId,
+            _eventNames.SPLITTER_WAYPOINT_PLACED,
+            {
+                splitterWaypointId = splitterWaypointIds[1],
+            }
+        ))
     end,
     handleValidWaypointBuilt = function()
         local trackWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiTrackWaypointModelId)
@@ -3703,6 +3768,7 @@ function data()
         guiInit = function()
             -- read variables
             _guiPlatformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
+            _guiSplitterWaypointModelId = api.res.modelRep.find(_constants.splitterWaypointModelId)
             _guiTrackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
             -- read texts
             _guiTexts.awaitFinalisationBeforeSaving = _('AwaitFinalisationBeforeSaving')
@@ -4471,6 +4537,21 @@ function data()
                             _eventNames.REBUILD_NEIGHBOURS_ALL,
                             args
                         )
+                    elseif name == _eventNames.SPLITTER_WAYPOINT_PLACED then
+                        if not(edgeUtils.isValidAndExistingId(args.splitterWaypointId)) then return end
+
+                        local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args.splitterWaypointId)
+                        if not(edgeUtils.isValidAndExistingId(edgeId)) or edgeUtils.isEdgeFrozen(edgeId) then return end
+
+                        local waypointPosition = edgeUtils.getObjectPosition(args.splitterWaypointId)
+                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(edgeId, transfUtils.oneTwoThree2XYZ(waypointPosition), false, logger.isExtendedLog())
+
+                        _actions.splitEdgeRemovingObject(
+                            edgeId,
+                            nodeBetween,
+                            args.splitterWaypointId,
+                            nil, nil, nil, true
+                        )
                     end
                 end,
                 function(error)
@@ -4623,6 +4704,9 @@ function data()
                                         if not(waypointData) then return end
 
                                         _guiActions.handleValidWaypointBuilt()
+
+                                    elseif args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId == _guiSplitterWaypointModelId then
+                                        _guiActions.handleSplitterWaypointBuilt()
                                     end
                                 end
                             end

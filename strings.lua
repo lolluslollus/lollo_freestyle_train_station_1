@@ -43,7 +43,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Extra ground textures are in my terrain tweaks mod.
 - If you want different buildings, use assets. There are mods with those.
 - This mod adds stairs and lifts as configurable assets; they can be used anywhere. My "Construction Mover" mod helps to place them easily. Still, the game does not handle them gracefully and <AltGr> + <L> will help you check if they snap to your network. Cycling between snappy and non-snappy roads or bridges in the parameter window might help.
-- Use the track construction "Track Splitter" to do precision work.
+- Use the track construction or the waypoint "Track Splitter" to do precision work.
 - Use the track construction "Track Segment Remover" to easily remove underground tracks. It is in my Street Fine Tuning mod.
 - Upgrading tracks does all tracks at once.
 - If you have too many track types, use the categories in the menu to make life easier.
@@ -333,12 +333,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["EraCCargoPlatform10MDesc"] = "Cargo platforms to be laid as tracks, 10 m wide, era C. They are in fact slow train tracks; they are not meant to be crossed.",
 			["EraCCargoPlatform20MName"] = "20 m cargo platform, era C",
 			["EraCCargoPlatform20MDesc"] = "Cargo platforms to be laid as tracks, 20 m wide, era C. They are in fact slow train tracks; they are not meant to be crossed.",
-			["FenceWaypointName"] = "Fence end marker",
-			["FenceWaypointDesc"] = "Marks the ends of a fence / wall that will be drawn along a track. The direction of the second marker sets the side the fence / wall will be on. Click the fence to configure it.",
 			["LolloFreestyleTrainStationName"] = "Freestyle train station",
 			["LolloFreestyleTrainStationDesc"] = "Freestyle train station",
-			["PlatformWaypointName"] = "Platform end marker",
-			["PlatformWaypointDesc"] = "Marks the ends of a platform that will become part of a freestyle station. The direction does not matter; if there is already a split nearby, it will take priority; if the platform ends nearby, that end will take a higher priority.",
 			["EraAPassengerPlatform5MName"] = "5 m passenger platform, era A",
 			["EraAPassengerPlatform5MDesc"] = "Passenger platforms to be laid as tracks, 5 m wide, era A. They are in fact slow train tracks; they are not meant to be crossed.",
 			["EraAPassengerPlatform5MAutoSplitName"] = "Two 2.5 m passenger platforms, era A",
@@ -357,6 +353,12 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["EraCPassengerPlatform5MAutoSplitDesc"] = "Passenger platforms to be laid as tracks, 5 m wide, era C, not for tunnels. They are in fact slow train tracks; they are not meant to be crossed. Once built, they split into two 2.5 m platforms; for complex constructions, lay a 5m platform first and turn it into this with the magic wand.",
 			["EraCPassengerPlatform2_5MName"] = "2.5 m passenger platform, era C",
 			["EraCPassengerPlatform2_5MDesc"] = "Passenger platforms to be laid as tracks, 2.5 m wide, era C, not for tunnels. They are in fact slow train tracks; they are not meant to be crossed.",
+			["FenceWaypointName"] = "Fence end marker",
+			["FenceWaypointDesc"] = "Marks the ends of a fence / wall that will be drawn along a track. The direction of the second marker sets the side the fence / wall will be on. Click the fence to configure it.",
+			["PlatformWaypointName"] = "Platform end marker",
+			["PlatformWaypointDesc"] = "Marks the ends of a platform that will become part of a freestyle station. The direction does not matter; if there is already a split nearby, it will take priority; if the platform ends nearby, that end will take a higher priority.",
+			["SplitterWaypointName"] = "Track Splitter",
+			["SplitterWaypointDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use <AltGr> + <L> to see its effect.",
 			["TrackWaypointName"] = "Track End Marker",
 			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter; if there is already a split nearby, it will take priority; if the track ends nearby, that end will take a higher priority. Nearby semaphores can interfere, you may want to remove them and put them back once the station is laid out.",
 
@@ -450,7 +452,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["WaypointsCrossStation"] = "You cannot cross an existing station",
 			["WaypointDistanceWindowTitle"] = "Air Distance",
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
-			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with the track splitter if you need to get close. The platform heads will connect automatically if they are closer than 7 metres",
+			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with a splitter if you need to get close. The platform heads will connect automatically if they are closer than 7 metres",
 			["WaypointsTooFar"] = "Too far from its twin",
 			["WaypointsWrong"] = "Place two markers on the same platform and two on the same track",
 			["WrongTrack"] = "The track and / or platform is too irregular, lay it again cleanly.",
@@ -599,7 +601,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 - Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
 - Wenn du andere Gebäude willst, benutze Assets. Es gibt Mods mit diesen.
 - Diese Mod fügt Treppen und Aufzüge als konfigurierbare Objekte hinzu; sie können überall verwendet werden. Meine "Construction Mover" Mod hilft, sie leicht zu platzieren. Dennoch, das Spiel behandelt sie nicht anmutig und <AltGr> + <L> wird Ihnen helfen, zu überprüfen, ob sie in Ihrem Netzwerk einrasten. Das Wechseln zwischen einrastenden und nicht einrastenden Straßen oder Brücken im Parameterfenster könnte helfen.
-- Verwende den Gleisbau-"Gleisteiler", um Präzisionsarbeit zu leisten.
+- Verwende den Gleisbau- oder Wegepunkt-"Gleisteiler", um Präzisionsarbeit zu leisten.
 - Beim Aufrüsten von Gleisen werden alle Gleise auf einmal ausgebaut.
 - Wenn du zu viele Streckentypen hast, nutze die Kategorien im Menü, um sich das Leben leichter zu machen.
 
@@ -887,12 +889,8 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["EraCCargoPlatform10MDesc"] = "Frachtplattformen, die als Gleise zu verlegen sind, 10 m breit, Epoche C. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraCCargoPlatform20MName"] = "20 m Frachtplattform, Epoche C",
 			["EraCCargoPlatform20MDesc"] = "Frachtplattformen, die als Gleise zu verlegen sind, 20 m breit, Epoche C. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
-			["FenceWaypointName"] = "Zaunmarker",
-			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
 			["LolloFreestyleTrainStationName"] = "Freestyle-Bahnhof",
 			["LolloFreestyleTrainStationDesc"] = "Freestyle-Bahnhof",
-			["PlatformWaypointName"] = "Bahnsteigmarker",
-			["PlatformWaypointDesc"] = "Markiert die Enden eines Bahnsteigs, der Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Bahnsteig in der Nähe endet, hat dieses Ende eine höhere Priorität.",
 			["EraAPassengerPlatform5MName"] = "5 m Personenbahnsteig, Epoche A",
 			["EraAPassengerPlatform5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche A. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraAPassengerPlatform5MAutoSplitName"] = "Zwei 2,5 m Personenbahnsteige, Epoche A",
@@ -911,6 +909,12 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["EraCPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwende zuerst den 5 m Bahnsteig, dann wandel ihn in diesen mit dem Zauberstab um.",
 			["EraCPassengerPlatform2_5MName"] = "2,5 m Personenbahnsteig, Epoche C",
 			["EraCPassengerPlatform2_5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 2,5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
+			["FenceWaypointName"] = "Zaunmarker",
+			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
+			["PlatformWaypointName"] = "Bahnsteigmarker",
+			["PlatformWaypointDesc"] = "Markiert die Enden eines Bahnsteigs, der Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Bahnsteig in der Nähe endet, hat dieses Ende eine höhere Priorität.",
+			["SplitterWaypointName"] = "Gleisteiler",
+			["SplitterWaypointDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
 			["TrackWaypointName"] = "Gleismarker",
 			["TrackWaypointDesc"] = "Markiert die Enden eines Gleises, das Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Track in der Nähe endet, hat dieses Ende eine höhere Priorität. Nahegelegene Signalmasten können stören: entferne sie und füge sie wieder ein, sobald der Bahnhof angelegt ist.",
 
@@ -1004,7 +1008,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["WaypointsCrossStation"] = "Du kannst einen bestehenden Bahnhof nicht kreuzen",
 			["WaypointDistanceWindowTitle"] = "Luftentfernung",
 			["WaypointsNotConnected"] = "Dieser Marker ist nicht mit seinem Gegenstück verbunden, oder es liegt ein Bahnhof / eine Verbindung / ein Signalmast dazwischen, oder er ist zu nahe an einem Bahnhof / einer Verbindung / einem Signalmast",
-			["WaypointsTooCloseToStation"] = "Zu nahe an einem bestehenden Bahnhof oder Depot. Schneide das Gleis mit dem Gleisteiler, wenn du näher herankommen musst. Die Bahnsteigköpfe verbinden sich automatisch, wenn sie näher als 7 Meter sind",
+			["WaypointsTooCloseToStation"] = "Zu nahe an einem bestehenden Bahnhof oder Depot. Schneide das Gleis mit einem Gleisteiler, wenn du näher herankommen musst. Die Bahnsteigköpfe verbinden sich automatisch, wenn sie näher als 7 Meter sind",
 			["WaypointsTooFar"] = "Zu weit von seinem Gegenstück entfernt",
 			["WaypointsWrong"] = "Platziere zwei Marker auf demselben Bahnsteig und zwei auf demselben Gleis",
 			["WrongTrack"] = "Bahnsteig und / oder Gleis sind nicht sauber, verlege sie neu.",
