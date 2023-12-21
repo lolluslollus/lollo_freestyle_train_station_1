@@ -1330,7 +1330,7 @@ local _getStationStreetEndEntities = function(frozenEdgeIds_indexed, frozenNodeI
             conIds = {},
             conProps = {},
             isNodeAdjoiningAConstruction = false,
-            outerLoneNodeIds = {}
+            -- outerLoneNodeIds = {}
         }
         endEntity.jointNeighbourEdges = {
             edgeIds = {},
@@ -1342,23 +1342,17 @@ local _getStationStreetEndEntities = function(frozenEdgeIds_indexed, frozenNodeI
     for a, endEntity in pairs(results) do
         for b, edgeId in pairs(endEntity.jointNeighbourEdges.edgeIds) do
             local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+    --[[
             for c, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
                 if #(edgeUtils.street.getConnectedEdgeIds({nodeId})) < 2 then
                     arrayUtils.addUnique(endEntity.jointNeighbourNode.outerLoneNodeIds, nodeId)
                 end
             end
+    ]]
             endEntity.jointNeighbourEdges.props[edgeId] = {
                 edgeProps = helpers.getEdgeIdsProperties({edgeId}, false, true, false)[1],
                 node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
                 node1Props = helpers.getNodeIdsProperties({baseEdge.node1})[1],
-                isNode0ToBeAdded = arrayUtils.arrayHasValue(
-                    endEntity.jointNeighbourNode.outerLoneNodeIds,
-                    baseEdge.node0
-                ),
-                isNode1ToBeAdded = arrayUtils.arrayHasValue(
-                    endEntity.jointNeighbourNode.outerLoneNodeIds,
-                    baseEdge.node1
-                ),
             }
         end
         -- this is to rebuild neighbouring constructions
@@ -1544,7 +1538,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
             jointNeighbourNodes = {
                 isNode1AdjoiningAConstruction = false,
                 isNode2AdjoiningAConstruction = false,
-                outerLoneNodeIds = {},
+                -- outerLoneNodeIds = {},
             },
             stationEndNodeIds = {
                 node1Id = endNodeIds4T.platforms.node1Id,
@@ -1578,7 +1572,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
             jointNeighbourNodes = {
                 isNode1AdjoiningAConstruction = false,
                 isNode2AdjoiningAConstruction = false,
-                outerLoneNodeIds = {},
+                -- outerLoneNodeIds = {},
             },
             stationEndNodeIds = {
                 node1Id = endNodeIds4T.tracks.node1Id,
@@ -1608,6 +1602,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
 
     for _, edgeId in pairs(arrayUtils.getConcatValues(result.platforms.jointNeighbourEdges.edge1Ids, result.platforms.jointNeighbourEdges.edge2Ids)) do
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+--[[
         for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
             if nodeId ~= result.platforms.stationEndNodeIds.node1Id and nodeId ~= result.platforms.stationEndNodeIds.node2Id then
                 if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
@@ -1615,6 +1610,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
                 end
             end
         end
+]]
         result.platforms.jointNeighbourEdges.props[edgeId] = {
             edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false)[1],
             node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
@@ -1623,6 +1619,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
     end
     for _, edgeId in pairs(arrayUtils.getConcatValues(result.tracks.jointNeighbourEdges.edge1Ids, result.tracks.jointNeighbourEdges.edge2Ids)) do
         local baseEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE)
+--[[
         for _, nodeId in pairs({baseEdge.node0, baseEdge.node1}) do
             if nodeId ~= result.tracks.stationEndNodeIds.node1Id and nodeId ~= result.tracks.stationEndNodeIds.node2Id then
                 if #(edgeUtils.track.getConnectedEdgeIds({nodeId})) < 2 then
@@ -1630,32 +1627,14 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
                 end
             end
         end
+]]
         result.tracks.jointNeighbourEdges.props[edgeId] = {
             edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false)[1],
             node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
             node1Props = helpers.getNodeIdsProperties({baseEdge.node1})[1]
         }
     end
-    for edgeId, props in pairs(result.platforms.jointNeighbourEdges.props) do
-        result.platforms.jointNeighbourEdges.props[edgeId].isNode0ToBeAdded = arrayUtils.arrayHasValue(
-            result.platforms.jointNeighbourNodes.outerLoneNodeIds,
-            props.node0Props.nodeId
-        )
-        result.platforms.jointNeighbourEdges.props[edgeId].isNode1ToBeAdded = arrayUtils.arrayHasValue(
-            result.platforms.jointNeighbourNodes.outerLoneNodeIds,
-            props.node1Props.nodeId
-        )
-    end
-    for edgeId, props in pairs(result.tracks.jointNeighbourEdges.props) do
-        result.tracks.jointNeighbourEdges.props[edgeId].isNode0ToBeAdded = arrayUtils.arrayHasValue(
-            result.tracks.jointNeighbourNodes.outerLoneNodeIds,
-            props.node0Props.nodeId
-        )
-        result.tracks.jointNeighbourEdges.props[edgeId].isNode1ToBeAdded = arrayUtils.arrayHasValue(
-            result.tracks.jointNeighbourNodes.outerLoneNodeIds,
-            props.node1Props.nodeId
-        )
-    end
+
     -- logger.print('__getStationTrackEndEntities4T result =') logger.debugPrint(result)
     return result
 end

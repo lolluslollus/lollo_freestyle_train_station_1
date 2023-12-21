@@ -136,18 +136,6 @@ local _utils = {
     ---@return boolean
     ---@return table
     replaceFakeEdgesWithSnappy = function (oldModules)
-        -- local _interestingBaseIds = {
-        --     _constants.idBases.axialEdgeSlotId,
-        --     _constants.idBases.flatPassengerEdgeSlotId,
-        --     _constants.idBases.openLiftExitBackwardSlotId,
-        --     _constants.idBases.openLiftExitForwardSlotId,
-        --     _constants.idBases.openLiftExitInnerSlotId,
-        --     _constants.idBases.openLiftExitOuterSlotId,
-        --     _constants.idBases.openStairsExitCentreSlotId,
-        --     _constants.idBases.openStairsExitInnerSlotId,
-        --     _constants.idBases.openStairsExitOuterSlotId,
-        -- }
-
         local _edgeModuleFileNames = _constants.edgeModuleFileNames
         local isSomethingChanged = false
         local newModules = {}
@@ -169,7 +157,8 @@ local _utils = {
     end,
     ---gets adjacent tracks, (station) end nodes and lone nodes without station; expects a list with > 1 entries
     ---@param trackEdgeList edgeIdsProperties
-    ---@return {edgeIds: table<integer>, edges: table<integer, {edgeProps: edgeIdProperties, node0Props: nodeIdProperties, node1Props: nodeIdProperties}>, innerSharedNodeIds: table<integer>, outerLoneNodeIds: table<integer>}
+    ---@return {edgeIds: table<integer>, edges: table<integer, {edgeProps: edgeIdProperties, node0Props: nodeIdProperties, node1Props: nodeIdProperties}>}
+    -- ---@return {edgeIds: table<integer>, edges: table<integer, {edgeProps: edgeIdProperties, node0Props: nodeIdProperties, node1Props: nodeIdProperties}>, innerSharedNodeIds: table<integer>, outerLoneNodeIds: table<integer>}
     getNeighbours = function(trackEdgeList)
         ---@return table<integer>, integer | nil, boolean
         local _getNeighbours = function(thisEdgeId, nextEdgeId)
@@ -206,8 +195,10 @@ local _utils = {
             return {
                 edgeIds = {},
                 edges = {},
+    --[[
                 innerSharedNodeIds = {},
                 outerLoneNodeIds = {},
+    ]]
             }
         end
 
@@ -233,22 +224,21 @@ local _utils = {
             }
             edgeIds[#edgeIds+1] = edgeId
         end
-        for edgeId, _ in pairs(neighbourEdge1Ids_indexed) do
-            edges[edgeId].isNode0ToBeAdded = outerLoneNodeIds_indexed[edges[edgeId].node0Props.nodeId]
-            edges[edgeId].isNode1ToBeAdded = outerLoneNodeIds_indexed[edges[edgeId].node1Props.nodeId]
-        end
-
+    --[[
         local innerSharedNodeIds = {}
         if innerNode1Id ~= nil and is1Shared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNode1Id end
         if innerNodeNId ~= nil and innerNodeNId ~= innerNode1Id and isNShared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNodeNId end
+    
         local outerLoneNodeIds = {}
         for id, _ in pairs(outerLoneNodeIds_indexed) do outerLoneNodeIds[#outerLoneNodeIds+1] = id end
-
+    ]]
         return {
             edgeIds = edgeIds,
             edges = edges,
+    --[[
             innerSharedNodeIds = innerSharedNodeIds,
             outerLoneNodeIds = outerLoneNodeIds
+    ]]
         }
     end,
     getProposal_2_rebuildAllTerminalTracks = function(oldConParams, nTerminalsToRemove)
@@ -281,7 +271,6 @@ local _utils = {
 
             return results
         end
-
         local removedTerminalsEdgeProps = _getRemovedTerminalsEdgeProps()
 
         logger.print('nTerminalsToRemove =') logger.debugPrint(nTerminalsToRemove)
@@ -289,13 +278,45 @@ local _utils = {
 
         if #nTerminalsToRemove == 0 then return nil end
 
-        local proposal = api.type.SimpleProposal.new()
-        local nNewEntities = 0
-        local newNodes = {}
+        local _newNodePositionsXYZ_indexed = {}
+        local _getNearbyNodeId = function(position123)--, isIgnoreExistingNodes)
+            local _tolerance = 0.001
+            for nodeId, nodePositionXYZ in pairs(_newNodePositionsXYZ_indexed) do
+                logger.print('nodeId =', tostring(nodeId))
+                logger.print('nodeId =') logger.debugPrint(nodePositionXYZ)
+                if math.abs(nodePositionXYZ.x - position123[1]) < _tolerance
+                and math.abs(nodePositionXYZ.y - position123[2]) < _tolerance
+                and math.abs(nodePositionXYZ.z - position123[3]) < _tolerance then
+                    -- logger.print('reusing a new node')
+                    return nodeId
+                end
+            end
+            -- local _significantFigures4LocateNode = 5 -- you may lower this if tracks are not properly rebuilt.
+            -- for nodeId, nodePositionXYZ in pairs(_newNodePositionsXYZ_indexed) do
+            --     if comparisonUtils.isNumsVeryClose(position123[1], nodePositionXYZ.x, _significantFigures4LocateNode)
+            --     and comparisonUtils.isNumsVeryClose(position123[2], nodePositionXYZ.y, _significantFigures4LocateNode)
+            --     and comparisonUtils.isNumsVeryClose(position123[3], nodePositionXYZ.z, _significantFigures4LocateNode)
+            --     then
+            --         -- logger.print('reusing a new node')
+            --         return nodeId
+            --     end
+            -- end
+            -- if isIgnoreExistingNodes then return nil end
 
+            local _nearbyNodeIds = edgeUtils.getNearbyObjectIds(
+                transfUtils.position2Transf(position123),
+                _tolerance,
+                api.type.ComponentType.BASE_NODE,
+                position123[3] - _tolerance,
+                position123[3] + _tolerance
+            )
+            return _nearbyNodeIds[1]
+        end
+
+        local proposal = api.type.SimpleProposal.new()
         local isAnythingChanged = false
+        local nNewEntities = 0
         local _rebuildOneTerminalTracks = function(removedTerminalEdgeProps)
-            local _significantFigures4LocateNode = 5 -- you may lower this if tracks are not properly rebuilt.
             -- cleanupStreetGraph in previous events (rebuildStationWithOneLessTerminal and bulldozeConstruction) might also play a role, it might.
             logger.print('_getProposal_2_rebuildAllTerminalTracks._rebuildOneTerminalTracks starting')
 
@@ -304,45 +325,35 @@ local _utils = {
                 local _baseNode1 = nil
                 local _baseNode2 = nil
 
-                local _addNode = function(position)
-                    -- logger.print('adding node, position =') logger.debugPrint(position)
-                    for _, newNode in pairs(newNodes) do
-                        if comparisonUtils.isNumsVeryClose(position[1], newNode.position[1], _significantFigures4LocateNode)
-                        and comparisonUtils.isNumsVeryClose(position[2], newNode.position[2], _significantFigures4LocateNode)
-                        and comparisonUtils.isNumsVeryClose(position[3], newNode.position[3], _significantFigures4LocateNode)
-                        then
-                            -- logger.print('reusing a new node')
-                            return newNode.id
-                        end
-                    end
-
-                    -- logger.print('making a new node')
+                local _addNode = function(position123)
                     local newNode = api.type.NodeAndEntity.new()
                     nNewEntities = nNewEntities - 1
                     newNode.entity = nNewEntities
-                    newNode.comp.position.x = position[1]
-                    newNode.comp.position.y = position[2]
-                    newNode.comp.position.z = position[3]
+                    newNode.comp.position.x = position123[1]
+                    newNode.comp.position.y = position123[2]
+                    newNode.comp.position.z = position123[3]
                     proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
-
-                    newNodes[#newNodes+1] = {
-                        id = nNewEntities,
-                        position = { position[1], position[2], position[3], }
+                    _newNodePositionsXYZ_indexed[nNewEntities] = {
+                        x = position123[1],
+                        y = position123[2],
+                        z = position123[3],
                     }
+
                     return nNewEntities
                 end
                 local _addSegment = function(trackEdgeList)
                     local newSegment = api.type.SegmentAndEntity.new()
                     nNewEntities = nNewEntities - 1
                     newSegment.entity = nNewEntities
-                    newSegment.comp.node0 = _addNode(trackEdgeList.posTanX2[1][1])
-                    newSegment.comp.node1 = _addNode(trackEdgeList.posTanX2[2][1])
-                    newSegment.comp.tangent0.x = trackEdgeList.posTanX2[1][2][1]
-                    newSegment.comp.tangent0.y = trackEdgeList.posTanX2[1][2][2]
-                    newSegment.comp.tangent0.z = trackEdgeList.posTanX2[1][2][3]
-                    newSegment.comp.tangent1.x = trackEdgeList.posTanX2[2][2][1]
-                    newSegment.comp.tangent1.y = trackEdgeList.posTanX2[2][2][2]
-                    newSegment.comp.tangent1.z = trackEdgeList.posTanX2[2][2][3]
+                    local _posTanX2 = trackEdgeList.posTanX2
+                    newSegment.comp.node0 = _getNearbyNodeId(_posTanX2[1][1]) or _addNode(_posTanX2[1][1])
+                    newSegment.comp.node1 = _getNearbyNodeId(_posTanX2[2][1]) or _addNode(_posTanX2[2][1])
+                    newSegment.comp.tangent0.x = _posTanX2[1][2][1]
+                    newSegment.comp.tangent0.y = _posTanX2[1][2][2]
+                    newSegment.comp.tangent0.z = _posTanX2[1][2][3]
+                    newSegment.comp.tangent1.x = _posTanX2[2][2][1]
+                    newSegment.comp.tangent1.y = _posTanX2[2][2][2]
+                    newSegment.comp.tangent1.z = _posTanX2[2][2][3]
                     newSegment.comp.type = trackEdgeList.type
                     newSegment.comp.typeIndex = trackEdgeList.typeIndex
                     -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
@@ -1049,16 +1060,24 @@ local _actions = {
         logger.print('_rebuildNeighbours starting, args =') logger.debugPrint(args)
         local errorPositions = {}
 
+        local _newNodePositionsXYZ_indexed = {}
         local _getNearbyNodeId = function(positionXYZ)
             local _tolerance = 0.001
-            local nearbyNodeIds = edgeUtils.getNearbyObjectIds(
+            for nodeId, nodePositionXYZ in pairs(_newNodePositionsXYZ_indexed) do
+                if math.abs(nodePositionXYZ.x - positionXYZ.x) < _tolerance
+                and math.abs(nodePositionXYZ.y - positionXYZ.y) < _tolerance
+                and math.abs(nodePositionXYZ.z - positionXYZ.z) < _tolerance then
+                    return nodeId
+                end
+            end
+            local _nearbyNodeIds = edgeUtils.getNearbyObjectIds(
                 transfUtils.position2Transf(positionXYZ),
                 _tolerance,
                 api.type.ComponentType.BASE_NODE,
                 positionXYZ.z - _tolerance,
                 positionXYZ.z + _tolerance
             )
-            return nearbyNodeIds[1]
+            return _nearbyNodeIds[1]
         end
         local _setEdgeObjects = function(edgeData, newSegment, proposal)
             if edgeData.edgeProps.edgeObjects == nil then return end
@@ -1167,7 +1186,6 @@ local _actions = {
             return isSegmentWithEdgeObjects, proposal, nNewEntities_local
         end
         for e, edgeData in pairs(allEdges_indexedByEdgeId) do
-            local isWarning = false
             local isSegmentWithEdgeObjects, proposal, nNewEntities_local = _getInitialLoopProps(edgeData)
             -- first add the segment, so its "entity" will always be -1, so the edge objects won't suffer at the hands of the dumb api
             local newSegment = api.type.SegmentAndEntity.new()
@@ -1177,53 +1195,25 @@ local _actions = {
             nNewEntities_local = nNewEntities_local - 1
 
             local node0Id, node1Id = nil, nil
-            local newNode0, newNode1 = nil, nil
-            local _addNode0 = function()
-                newNode0 = api.type.NodeAndEntity.new()
-                newNode0.entity = nNewEntities_local
-                newNode0.comp.position.x = edgeData.node0Props.position.x
-                newNode0.comp.position.y = edgeData.node0Props.position.y
-                newNode0.comp.position.z = edgeData.node0Props.position.z
-                node0Id = newNode0.entity
-                nNewEntities_local = nNewEntities_local - 1
-            end
-            local _addNode1 = function()
-                newNode1 = api.type.NodeAndEntity.new()
-                newNode1.entity = nNewEntities_local
-                newNode1.comp.position.x = edgeData.node1Props.position.x
-                newNode1.comp.position.y = edgeData.node1Props.position.y
-                newNode1.comp.position.z = edgeData.node1Props.position.z
-                node1Id = newNode1.entity
-                nNewEntities_local = nNewEntities_local - 1
-            end
-            if edgeData.isNode0ToBeAdded then
-                _addNode0()
-            else
-                node0Id = _getNearbyNodeId(edgeData.node0Props.position)
-                if node0Id == nil then
-                    isWarning = true
-                    errorPositions[#errorPositions+1] = arrayUtils.cloneOmittingFields(edgeData.node0Props.position)
-                    logger.warn('_rebuildNeighbours cannot find nearby node, position =') logger.warningDebugPrint(edgeData.node0Props.position)
-                    logger.warn('edgeData =') logger.warningDebugPrint(edgeData)
-                    _addNode0()
-                end
-            end
-            if edgeData.isNode1ToBeAdded then
-                _addNode1()
-            else
-                node1Id = _getNearbyNodeId(edgeData.node1Props.position)
-                if node1Id == nil then
-                    isWarning = true
-                    errorPositions[#errorPositions+1] = arrayUtils.cloneOmittingFields(edgeData.node1Props.position)
-                    logger.warn('_rebuildNeighbours cannot find nearby node, position =') logger.warningDebugPrint(edgeData.node1Props.position)
-                    logger.warn('edgeData =') logger.warningDebugPrint(edgeData)
-                    _addNode1()
-                end
-            end
+            local _addNode = function(positionXYZ)
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities_local
+                newNode.comp.position.x = positionXYZ.x
+                newNode.comp.position.y = positionXYZ.y
+                newNode.comp.position.z = positionXYZ.z
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                _newNodePositionsXYZ_indexed[nNewEntities_local] = {
+                    x = positionXYZ.x,
+                    y = positionXYZ.y,
+                    z = positionXYZ.z,
+                }
 
-            if isWarning then m_state.warningText = _('UnsnappedSomething') end
-            if newNode0 ~= nil then proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode0 end
-            if newNode1 ~= nil then proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode1 end
+                nNewEntities_local = nNewEntities_local - 1
+                return newNode.entity
+            end
+            node0Id = _getNearbyNodeId(edgeData.node0Props.position) or _addNode(edgeData.node0Props.position)
+            node1Id = _getNearbyNodeId(edgeData.node1Props.position) or _addNode(edgeData.node1Props.position)
+
             -- now the nodes are done, complete the segment
             newSegment.comp.node0 = node0Id
             newSegment.comp.node1 = node1Id
@@ -1427,18 +1417,6 @@ local _actions = {
         end
         logger.print('allEdges_indexedByEdgeId =') logger.debugPrint(allEdges_indexedByEdgeId)
 
-        local _getNearbyNodeId = function(positionXYZ)
-            local _tolerance = 0.001
-            local nearbyNodeIds = edgeUtils.getNearbyObjectIds(
-                transfUtils.position2Transf(positionXYZ),
-                _tolerance,
-                api.type.ComponentType.BASE_NODE,
-                positionXYZ.z - _tolerance,
-                positionXYZ.z + _tolerance
-            )
-            return nearbyNodeIds[1]
-        end
-
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
         -- context.cleanupStreetGraph = true -- default is false
@@ -1459,64 +1437,56 @@ local _actions = {
 
         local _getEdgeProposal = function(edgeData)
             local proposal = api.type.SimpleProposal.new()
-            -- local isWarning = false
-            -- local warningPositions = {}
-
             -- first add the segment, so its "entity" will always be -1, so the edge objects won't suffer at the hands of the dumb api
             local newSegment = api.type.SegmentAndEntity.new()
             newSegment.entity = -1
             _setSegmentProps(edgeData, newSegment)
             _setEdgeObjects(edgeData, newSegment, proposal)
+
+            local _newNodePositionsXYZ_indexed = {}
+            local _getNearbyNodeId = function(positionXYZ)
+                logger.print('_rebuildNeighbourEdges._getNearbyNodeId starting, positionXYZ =') logger.debugPrint(positionXYZ)
+                local _tolerance = 0.001
+                for nodeId, nodePositionXYZ in pairs(_newNodePositionsXYZ_indexed) do
+                    logger.print('nodePositionXYZ =') logger.debugPrint(nodePositionXYZ)
+                    if math.abs(nodePositionXYZ.x - positionXYZ.x) < _tolerance
+                    and math.abs(nodePositionXYZ.y - positionXYZ.y) < _tolerance
+                    and math.abs(nodePositionXYZ.z - positionXYZ.z) < _tolerance then
+                        logger.print('_rebuildNeighbourEdges._getNearbyNodeId found an existing node id')
+                        return nodeId
+                    end
+                end
+                local _nearbyNodeIds = edgeUtils.getNearbyObjectIds(
+                    transfUtils.position2Transf(positionXYZ),
+                    _tolerance,
+                    api.type.ComponentType.BASE_NODE,
+                    positionXYZ.z - _tolerance,
+                    positionXYZ.z + _tolerance
+                )
+                return _nearbyNodeIds[1]
+            end
+
             local nNewEntities = -2
-
             local node0Id, node1Id = nil, nil
-            local newNode0, newNode1 = nil, nil
-            local _addNode0 = function(positionXYZ)
-                newNode0 = api.type.NodeAndEntity.new()
-                newNode0.entity = nNewEntities
-                newNode0.comp.position.x = positionXYZ.x
-                newNode0.comp.position.y = positionXYZ.y
-                newNode0.comp.position.z = positionXYZ.z
-                nNewEntities = nNewEntities - 1
-                return newNode0.entity
-            end
-            local _addNode1 = function(positionXYZ)
-                newNode1 = api.type.NodeAndEntity.new()
-                newNode1.entity = nNewEntities
-                newNode1.comp.position.x = positionXYZ.x
-                newNode1.comp.position.y = positionXYZ.y
-                newNode1.comp.position.z = positionXYZ.z
-                nNewEntities = nNewEntities - 1
-                return newNode1.entity
-            end
-            if edgeData.isNode0ToBeAdded then
-                node0Id = _getNearbyNodeId(edgeData.node0Props.position) or _addNode0(edgeData.node0Props.position)
-            else
-                node0Id = _getNearbyNodeId(edgeData.node0Props.position)
-                if node0Id == nil then
-                    -- isWarning = true
-                    -- warningPositions[#warningPositions+1] = arrayUtils.cloneOmittingFields(edgeData.node0Props.position)
-                    logger.warn('_rebuildNeighbourEdges cannot find nearby node so it added one. position =') logger.warningDebugPrint(edgeData.node0Props.position)
-                    logger.warn('edgeData =') logger.warningDebugPrint(edgeData)
-                    node0Id = _addNode0(edgeData.node0Props.position)
-                end
-            end
-            if edgeData.isNode1ToBeAdded then
-                node1Id = _getNearbyNodeId(edgeData.node1Props.position) or _addNode1(edgeData.node1Props.position)
-            else
-                node1Id = _getNearbyNodeId(edgeData.node1Props.position)
-                if node1Id == nil then
-                    -- isWarning = true
-                    -- warningPositions[#warningPositions+1] = arrayUtils.cloneOmittingFields(edgeData.node1Props.position)
-                    logger.print('_rebuildNeighbourEdges cannot find nearby node, so it added one. position =') logger.debugPrint(edgeData.node1Props.position)
-                    logger.print('edgeData =') logger.debugPrint(edgeData)
-                    node1Id = _addNode1(edgeData.node1Props.position)
-                end
-            end
+            local _addNode = function(positionXYZ)
+                local newNode = api.type.NodeAndEntity.new()
+                newNode.entity = nNewEntities
+                newNode.comp.position.x = positionXYZ.x
+                newNode.comp.position.y = positionXYZ.y
+                newNode.comp.position.z = positionXYZ.z
+                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
+                _newNodePositionsXYZ_indexed[nNewEntities] = {
+                    x = positionXYZ.x,
+                    y = positionXYZ.y,
+                    z = positionXYZ.z,
+                }
 
-            -- if isWarning then state.warningText = _('UnsnappedSomething') end
-            if newNode0 ~= nil then proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode0 end
-            if newNode1 ~= nil then proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode1 end
+                nNewEntities = nNewEntities - 1
+                return newNode.entity
+            end
+            node0Id = _getNearbyNodeId(edgeData.node0Props.position) or _addNode(edgeData.node0Props.position)
+            node1Id = _getNearbyNodeId(edgeData.node1Props.position) or _addNode(edgeData.node1Props.position)
+
             -- now the nodes are done, complete the segment
             newSegment.comp.node0 = node0Id
             newSegment.comp.node1 = node1Id
@@ -2399,66 +2369,8 @@ logger.print('FOUR')
                 end
             end
         end
-        logger.print('sharedNodeIds ONE =') logger.debugPrint(sharedNodeIds_indexed)
---[[
-        -- logger.print('proposal.streetProposal.edgeObjectsToRemove =')
-        -- logger.debugPrint(proposal.streetProposal.edgeObjectsToRemove)
+        logger.print('sharedNodeIds_indexed ONE =') logger.debugPrint(sharedNodeIds_indexed)
 
-        -- local sharedNodeIds = {}
-        -- arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(trackEdgeIds, true))
-        -- arrayUtils.concatValues(sharedNodeIds, edgeUtils.track.getNodeIdsBetweenEdgeIds_optionalDeadEnds(platformEdgeIds, true))
-        if args.newTerminalNeighbours ~= nil then
-            for _, nodeId in pairs(args.newTerminalNeighbours.tracks.innerSharedNodeIds) do
-                sharedNodeIds_indexed[nodeId] = true
-            end
-            for _, nodeId in pairs(args.newTerminalNeighbours.platforms.innerSharedNodeIds) do
-                sharedNodeIds_indexed[nodeId] = true
-            end
-            for _, nodeId in pairs(args.newTerminalNeighbours.tracks.outerLoneNodeIds) do
-                sharedNodeIds_indexed[nodeId] = true
-            end
-            for _, nodeId in pairs(args.newTerminalNeighbours.platforms.outerLoneNodeIds) do
-                sharedNodeIds_indexed[nodeId] = true
-            end
-            -- arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.innerSharedNodeIds)
-            -- arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.innerSharedNodeIds)
-            -- arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.tracks.outerLoneNodeIds)
-            -- arrayUtils.concatValues(sharedNodeIds, args.newTerminalNeighbours.platforms.outerLoneNodeIds)
-        end
-        logger.print('sharedNodeIds TWO =') logger.debugPrint(sharedNodeIds_indexed)
-        if args.trackEndEntities ~= nil then
-            for t, terminalEndEntities in pairs(args.trackEndEntities) do
-                -- after removing a terminal, the inner node is also lonely and must be removed, always
-                if nTerminalsToRemove_indexed[t] then
-                    if #terminalEndEntities.tracks.jointNeighbourEdges.edge1Ids ~= 0 then
-                        -- arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.tracks.stationEndNodeIds.node1Id)
-                        sharedNodeIds_indexed[terminalEndEntities.tracks.stationEndNodeIds.node1Id] = true
-                    end
-                    if #terminalEndEntities.tracks.jointNeighbourEdges.edge2Ids ~= 0 then
-                        -- arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.tracks.stationEndNodeIds.node2Id)
-                        sharedNodeIds_indexed[terminalEndEntities.tracks.stationEndNodeIds.node2Id] = true
-                    end
-                    if #terminalEndEntities.platforms.jointNeighbourEdges.edge1Ids ~= 0 then
-                        -- arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.platforms.stationEndNodeIds.node1Id)
-                        sharedNodeIds_indexed[terminalEndEntities.platforms.stationEndNodeIds.node1Id] = true
-                    end
-                    if #terminalEndEntities.platforms.jointNeighbourEdges.edge2Ids ~= 0 then
-                        -- arrayUtils.addUnique(sharedNodeIds, terminalEndEntities.platforms.stationEndNodeIds.node2Id)
-                        sharedNodeIds_indexed[terminalEndEntities.platforms.stationEndNodeIds.node2Id] = true
-                    end
-                end
-                for _, nodeId in pairs(terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds) do
-                    sharedNodeIds_indexed[nodeId] = true
-                end
-                for _, nodeId in pairs(terminalEndEntities.platforms.jointNeighbourNodes.outerLoneNodeIds) do
-                    sharedNodeIds_indexed[nodeId] = true
-                end
-                -- arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.tracks.jointNeighbourNodes.outerLoneNodeIds)
-                -- arrayUtils.concatValues(sharedNodeIds, terminalEndEntities.platforms.jointNeighbourNodes.outerLoneNodeIds)
-            end
-        end
-        logger.print('sharedNodeIds THREE =') logger.debugPrint(sharedNodeIds_indexed)
-]]
         if args.streetEndEntities ~= nil then
             local _tolerance = 0.001
             for _, endEntity in pairs(args.streetEndEntities) do
@@ -2483,7 +2395,6 @@ logger.print('FOUR')
                             break
                         end
                     end
-                    -- if isRemoveInnerNode then arrayUtils.addUnique(sharedNodeIds, innerNodeId) end
                     if isRemoveInnerNode then sharedNodeIds_indexed[innerNodeId] = true end
                 end
                 -- remove outer nodes if all their edges are marked for removal or were removed by preProcessFn()
@@ -2504,17 +2415,12 @@ logger.print('FOUR')
                                 break
                             end
                         end
-                        -- if isRemoveOuterNode then arrayUtils.addUnique(sharedNodeIds, outerNodeId) end
                         if isRemoveOuterNode then sharedNodeIds_indexed[outerNodeId] = true end
                     end
                 end
             end
         end
-        logger.print('sharedNodeIds FOUR =') logger.debugPrint(sharedNodeIds_indexed)
-        -- for i = 1, #sharedNodeIds do
-        --     proposal.streetProposal.nodesToRemove[i] = sharedNodeIds[i]
-        --     isAnythingChanged = true
-        -- end
+        logger.print('sharedNodeIds_indexed FOUR =') logger.debugPrint(sharedNodeIds_indexed)
         local i = 0
         for nodeId, _ in pairs(sharedNodeIds_indexed) do
             i = i + 1
