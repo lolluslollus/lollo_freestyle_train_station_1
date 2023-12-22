@@ -63,6 +63,10 @@ function data()
 				floorModelId = 'lollo_freestyle_train_station/underpass/era_b_db_underpassFloor.mdl'
 			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_1_stripe.moduleFileName then
 				floorModelId = 'lollo_freestyle_train_station/underpass/era_b_db_underpassFloor.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+				floorModelId = 'lollo_freestyle_train_station/underpass/era_b_db_underpassFloor.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+				floorModelId = 'lollo_freestyle_train_station/underpass/era_b_db_underpassFloor.mdl'
 			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_2_stripes.moduleFileName then
 				floorModelId = 'lollo_freestyle_train_station/underpass/era_c_db_2_stripes_underpassFloor.mdl'
 			end

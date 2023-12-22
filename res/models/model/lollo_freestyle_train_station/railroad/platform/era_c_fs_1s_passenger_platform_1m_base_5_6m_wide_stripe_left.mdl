@@ -1,0 +1,36 @@
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    materials = {
+                        "lollo_freestyle_train_station/square_concrete_tiles.mtl",
+                        "lollo_freestyle_train_station/square_concrete_tiles_z.mtl",
+                        "lollo_freestyle_train_station/square_concrete_tiles.mtl",
+                        "lollo_freestyle_train_station/square_concrete_tiles_z.mtl",
+
+                        "lollo_freestyle_train_station/station_concrete_1.mtl",
+                        "lollo_freestyle_train_station/station_concrete_1_z.mtl",
+                        "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
+
+                        "lollo_freestyle_train_station/era_c_trainstation_stripes.mtl",
+                        "lollo_freestyle_train_station/era_c_trainstation_stripes_z.mtl",
+                        "lollo_freestyle_train_station/square_concrete_tiles.mtl",
+                        "lollo_freestyle_train_station/square_concrete_tiles_z.mtl",
+                    },
+                    mesh = "lollo_freestyle_train_station/railroad/platform/platform_1m_long_5_6m_wide_1_2m_high_stripe_gap_z.msh",
+                    transf = { _mdlHelpers.getPlatformStretchFactor(1, 5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+end

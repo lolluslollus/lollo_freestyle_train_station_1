@@ -59,11 +59,14 @@ local constants = {
         _80cm = {aboveRail = 0.8, aboveGround = 1.2, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight80.module',},
         _100cm = {aboveRail = 1.0, aboveGround = 1.4, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight100.module',},
         _110cm = {aboveRail = 1.1, aboveGround = 1.5, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight110.module',},
+        _125cm = {aboveRail = 1.25, aboveGround = 1.65, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight125.module',},
     },
     platformStyles = {
         era_b_db = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleDBEraB.module'},
         era_c_db_1_stripe = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleDBEraC_OneStripe.module'},
         era_c_db_2_stripes = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleDBEraC.module'},
+        era_c_fs_1_stripe = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleFSEraC_OneStripe.module'},
+        era_c_uk_2_stripes = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleUKEraC_TwoStripes.module'},
     },
     platformSideBitsZ = -0.10, -- a bit lower than the platform, to look good in bends
     platformRoofZ = -0.20, -- a bit lower than the platform, to look good on slopes

@@ -9,14 +9,20 @@ function data()
                 node = {
                     materials = {
                         "lollo_freestyle_train_station/era_c_station_tiles_1.mtl",
-                        "lollo_freestyle_train_station/station_concrete_1.mtl",
                         "lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl",
+                        "lollo_freestyle_train_station/era_c_station_tiles_1.mtl",
+                        "lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl",
+
+                        "lollo_freestyle_train_station/station_concrete_1.mtl",
                         "lollo_freestyle_train_station/station_concrete_1_z.mtl",
+                        "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
+
                         "lollo_freestyle_train_station/era_c_trainstation_stripes.mtl",
                         "lollo_freestyle_train_station/era_c_trainstation_stripes_z.mtl",
-                        "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
+                        "lollo_freestyle_train_station/era_c_trainstation_stripes_white.mtl",
+                        "lollo_freestyle_train_station/era_c_trainstation_stripes_white_z.mtl",
                     },
-                    mesh = "lollo_freestyle_train_station/railroad/platform/platform_1m_long_3_1m_wide_1_2m_high_hole_stripe_z.msh",
+                    mesh = "lollo_freestyle_train_station/railroad/platform/platform_1m_long_3_1m_wide_1_2m_high_hole_stripe_gap_z.msh",
                     transf = { _mdlHelpers.getPlatformStretchFactor(1, 2.5), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
                 },
                 static = false,

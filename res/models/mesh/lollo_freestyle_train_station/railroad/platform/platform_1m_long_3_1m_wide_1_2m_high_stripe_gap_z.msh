@@ -2,31 +2,100 @@ function data()
 return {
 	matConfigs = {
 		{
-			0, 0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 
 		}, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 1120,
+					count = 24,
+					offset = 952,
 				},
 				position = {
-					count = 48,
-					offset = 1072,
+					count = 24,
+					offset = 1000,
 				},
 				tangent = {
-					count = 48,
+					count = 24,
 					offset = 976,
 				},
 				uv0 = {
-					count = 48,
-					offset = 1024,
+					count = 24,
+					offset = 928,
 				},
 			},
 			materials = {
 				"station/train/passenger/tiles.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 1048,
+				},
+				position = {
+					count = 24,
+					offset = 1096,
+				},
+				tangent = {
+					count = 24,
+					offset = 1072,
+				},
+				uv0 = {
+					count = 24,
+					offset = 1024,
+				},
+			},
+			materials = {
+				"station/train/passenger/tiles_high_priority.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 1144,
+				},
+				position = {
+					count = 24,
+					offset = 1192,
+				},
+				tangent = {
+					count = 24,
+					offset = 1168,
+				},
+				uv0 = {
+					count = 24,
+					offset = 1120,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/platform/outer_tiles.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 1240,
+				},
+				position = {
+					count = 24,
+					offset = 1288,
+				},
+				tangent = {
+					count = 24,
+					offset = 1264,
+				},
+				uv0 = {
+					count = 24,
+					offset = 1216,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/platform/outer_tiles_high_priority.mtl", 
 			},
 		},
 		{
@@ -37,15 +106,15 @@ return {
 				},
 				position = {
 					count = 72,
-					offset = 1312,
+					offset = 1528,
 				},
 				tangent = {
 					count = 72,
-					offset = 1168,
+					offset = 1456,
 				},
 				uv0 = {
 					count = 72,
-					offset = 1240,
+					offset = 1312,
 				},
 			},
 			materials = {
@@ -55,43 +124,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
+					count = 72,
+					offset = 1672,
+				},
+				position = {
+					count = 72,
+					offset = 1816,
+				},
+				tangent = {
+					count = 72,
+					offset = 1744,
+				},
+				uv0 = {
+					count = 72,
 					offset = 1600,
-				},
-				position = {
-					count = 48,
-					offset = 1552,
-				},
-				tangent = {
-					count = 48,
-					offset = 1456,
-				},
-				uv0 = {
-					count = 48,
-					offset = 1504,
-				},
-			},
-			materials = {
-				"station/train/passenger/tiles_high_priority.mtl", 
-			},
-		},
-		{
-			indices = {
-				normal = {
-					count = 72,
-					offset = 1864,
-				},
-				position = {
-					count = 72,
-					offset = 1792,
-				},
-				tangent = {
-					count = 72,
-					offset = 1648,
-				},
-				uv0 = {
-					count = 72,
-					offset = 1720,
 				},
 			},
 			materials = {
@@ -102,7 +148,7 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 2080,
+					offset = 1936,
 				},
 				position = {
 					count = 48,
@@ -110,11 +156,34 @@ return {
 				},
 				tangent = {
 					count = 48,
-					offset = 1936,
+					offset = 1984,
 				},
 				uv0 = {
 					count = 48,
-					offset = 1984,
+					offset = 1888,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/platform/edge_low_prio.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 2104,
+				},
+				position = {
+					count = 24,
+					offset = 2152,
+				},
+				tangent = {
+					count = 24,
+					offset = 2128,
+				},
+				uv0 = {
+					count = 24,
+					offset = 2080,
 				},
 			},
 			materials = {
@@ -124,19 +193,19 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 2272,
+					count = 24,
+					offset = 2200,
 				},
 				position = {
-					count = 48,
-					offset = 2224,
+					count = 24,
+					offset = 2248,
 				},
 				tangent = {
-					count = 48,
-					offset = 2128,
+					count = 24,
+					offset = 2224,
 				},
 				uv0 = {
-					count = 48,
+					count = 24,
 					offset = 2176,
 				},
 			},
@@ -147,24 +216,47 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 48,
-					offset = 2464,
+					count = 24,
+					offset = 2296,
 				},
 				position = {
-					count = 48,
-					offset = 2416,
+					count = 24,
+					offset = 2344,
 				},
 				tangent = {
-					count = 48,
+					count = 24,
 					offset = 2320,
 				},
 				uv0 = {
-					count = 48,
+					count = 24,
+					offset = 2272,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/platform/outer_stripes.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 24,
+					offset = 2392,
+				},
+				position = {
+					count = 24,
+					offset = 2440,
+				},
+				tangent = {
+					count = 24,
+					offset = 2416,
+				},
+				uv0 = {
+					count = 24,
 					offset = 2368,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/railroad/platform/edge_low_prio.mtl", 
+				"lollo_freestyle_train_station/railroad/platform/outer_stripes_high_priority.mtl", 
 			},
 		}, 
 	},
@@ -172,22 +264,22 @@ return {
 		normal = {
 			count = 120,
 			numComp = 3,
-			offset = 856,
+			offset = 376,
 		},
 		position = {
 			count = 288,
 			numComp = 3,
-			offset = 568,
+			offset = 640,
 		},
 		tangent = {
 			count = 144,
 			numComp = 4,
-			offset = 0,
+			offset = 496,
 		},
 		uv0 = {
-			count = 424,
+			count = 376,
 			numComp = 2,
-			offset = 144,
+			offset = 0,
 		},
 	},
 }

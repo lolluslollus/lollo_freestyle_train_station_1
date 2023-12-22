@@ -3,7 +3,7 @@ return {
 	order = 0,
 	params = {
 		albedo_scale = {
-			albedoScale = { 0.5, 0.5, 0.5, },
+			albedoScale = { 0.6, 0.6, 0.6, },
 		},
 		fade_out_range = {
 			fadeOutEndDist = 20000,
