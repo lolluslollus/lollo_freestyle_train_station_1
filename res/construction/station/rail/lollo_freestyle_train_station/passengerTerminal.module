@@ -320,17 +320,28 @@ return {
 			or (not(isUnderpass_indexed[cpf.leadingIndex]) and not(isOpenLift_indexed[cpf.leadingIndex]) and not(isStairs_indexed[cpf.leadingIndex]))
 			then
 				local transf = moduleHelpers.getTerminalDecoTransf(cpf.posTanX2)
-				-- sign near the track
+				-- near the track
 				-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
-				-- sign 1.5 m from the track
-				local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.75 or -platformWidth * 0.5 + 0.75
+				-- 1.5 m from the track
+				-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.75 or -platformWidth * 0.5 + 0.75
 				-- sign 4.8 m or 2.3 m from the track
 				-- local yShift = isTrackOnPlatformLeft and - platformWidth * 0.5 + 0.25 or platformWidth * 0.5 - 0.25
+				-- very far from the track
+				local yShift = isTrackOnPlatformLeft and (-platformWidth * 0.5 + 0.5) or (platformWidth * 0.5 - 0.5)
+				-- result.models[#result.models + 1] = {
+				-- 	id = stationSignModelId,
+				-- 	slotId = slotId,
+				-- 	transf = transfUtils.getTransf_Shifted(transf, {xShift + 2, yShift, laneZ}),
+				-- 	tag = tag
+				-- }
 				result.models[#result.models + 1] = {
 					id = stationSignModelId,
 					slotId = slotId,
-					-- transf = transfUtilsUG.mul(transf, { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  xShift + 2, yShift, laneZ + 0.0, 1 }),
-					transf = transfUtils.getTransf_Shifted(transf, {xShift + 2, yShift, laneZ}),
+					transf = transfUtils.getTransf_Scaled_Shifted(
+						moduleHelpers.getTerminalDecoTransf(cpf.posTanX2),
+						{ transfXZoom, transfYZoom, 1}, -- rotate around z if isTrackOnPlatformLeft
+						{ xShift, yShift, laneZ}
+					),
 					tag = tag
 				}
 			end
@@ -368,15 +379,13 @@ return {
 				and not(isStairs_indexed[cpf.leadingIndex]))) then
 					-- very close to the track
 					-- local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 + 0.25 or -platformWidth * 0.5 - 0.25
-					-- sign 1.5 m from the track and facing outwards
-					local yShift = isTrackOnPlatformLeft and (platformWidth * 0.5 - 0.75) or (-platformWidth * 0.5 + 0.75)
+					-- 1.5 m from the track and facing outwards
+					-- local yShift = isTrackOnPlatformLeft and (platformWidth * 0.5 - 0.75) or (-platformWidth * 0.5 + 0.75)
+					-- very far from the track and facing outwards
+					local yShift = isTrackOnPlatformLeft and (-platformWidth * 0.5 + 0.5) or (platformWidth * 0.5 - 0.5)
 					result.models[#result.models + 1] = {
 						id = numberSignModelId,
 						slotId = slotId,
-						-- transf = transfUtilsUG.mul(
-						-- 	moduleHelpers.getTerminalDecoTransf(cpf.posTanX2),
-						-- 	{ transfXZoom, 0, 0, 0,  0, transfYZoom, 0, 0,  0, 0, 1, 0,  xShift, yShift, laneZ + 0.0, 1 }
-						-- ),
 						transf = transfUtils.getTransf_Scaled_Shifted(
 							moduleHelpers.getTerminalDecoTransf(cpf.posTanX2),
 							{ transfXZoom, transfYZoom, 1}, -- rotate around z if isTrackOnPlatformLeft
