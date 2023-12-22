@@ -1,7 +1,7 @@
 local guiConfigWindow = require('lollo_freestyle_train_station.guiConfigWindow')
 local logger = require('lollo_freestyle_train_station.logger')
 
-local instance = guiConfigWindow.new(
+return guiConfigWindow.new(
     'lollo_fence_con_config_layout_',
     'lollo_fence_warning_window_with_goto',
     {
@@ -12,9 +12,7 @@ local instance = guiConfigWindow.new(
         warningWindowTitle = _('WarningWindowTitle'),
     },
     60,
-    45, -- half the height of module icons, which we reuse here
+    60, -- half the height of module icons, which we reuse here
     40,
     40
 )
-
-return instance

@@ -25,7 +25,7 @@ local privateValues = {
 }
 privateValues.defaults = {
     -- lolloFenceAssets_buildOnFrozenEdges = 0,
-    lolloFenceAssets_doTerrain = 0,
+    lolloFenceAssets_doTerrain = 1,
     lolloFenceAssets_isWallTall = 0,
     lolloFenceAssets_length = 9,
     lolloFenceAssets_model = 1,
@@ -113,7 +113,7 @@ local privateFuncs = {
     getZShiftDisplayValues = function()
         local results = {}
         for _, plh in pairs(_platformHeightsSorted) do
-            results[#results+1] = ("%.2g m"):format(plh.aboveRail)
+            results[#results+1] = ("%.3g m"):format(plh.aboveRail)
         end
         return results
     end,

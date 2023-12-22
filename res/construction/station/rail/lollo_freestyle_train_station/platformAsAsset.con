@@ -148,7 +148,7 @@ local _paramHelpers = {
         getDisplayValues = function()
             local results = {}
             for _, plh in pairs(_platformHeightsSorted) do
-                results[#results+1] = ("%.2g m"):format(plh.aboveRail)
+                results[#results+1] = ("%.3g m"):format(plh.aboveRail)
             end
             return results
         end,
