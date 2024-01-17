@@ -26,19 +26,19 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 21,
+			value = 16,
 		},
 		type = _constants.flatCargoArea5x5ModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not baseId then return end
 
+			local _terminalData = params.terminals[nTerminal]
 			local zAdjustedTransf = transfUtils.getTransf_XShifted(
 				moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf),
 				2.3 -- 2.5 minus a bit for bends
 			)
 
-			local _terminalData = params.terminals[nTerminal]
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
 			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
@@ -64,7 +64,11 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			-- if baseId == _constants.idBases.axialStation0MSlotId then
+			-- 	moduleHelpers.axialAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			-- else
+				moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			-- end
 
 			local groundFace = {
 				{-3, -3.5, 0, 1},

@@ -30,7 +30,11 @@ function data()
 		},
 		type = _constants.axialFlushPassengerExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-			moduleHelpers.axialAreas.flushExit_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+            local _terminalData = params.terminals[nTerminal]
+			moduleHelpers.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 		end,
 
 		getModelsFn = function(params)

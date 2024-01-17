@@ -13,7 +13,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "passenger-road-access", },
+			categories = { "passenger-road-access", "passenger-road-access-axial", },
 		},
 		cost = {
 			price = 0,
@@ -62,7 +62,13 @@ function data()
 				transf = buildingTransf,
 				tag = tag
 			}
-			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+
+			if baseId == _constants.idBases.axialStation0MSlotId then
+				moduleHelpers.axialAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			else
+				moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			end
+
 			-- add waiting area
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_side_lift.mdl',

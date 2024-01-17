@@ -39,7 +39,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "passenger-road-access", },
+			categories = { "passenger-road-access", "passenger-road-access-axial", },
 		},
 		cost = {
 			price = 0,
@@ -50,9 +50,6 @@ function data()
 			icon = "ui/construction/station/rail/modular_station/side_building_1_era_c.tga",
 		},
 		metadata = {
-			-- nEvenSegmentPairs = 1,
-			-- nSegments2Minus = 1,
-			-- nSegments2Plus = 1,
 			moreCapacity = {
 				cargo = 0,
 				passenger = 20
@@ -74,14 +71,39 @@ function data()
 
 			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
 
-			local modelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/lollo_side.mdl'
 			result.models[#result.models + 1] = {
-				id = modelId,
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/lollo_side.mdl',
 				slotId = slotId,
 				transf = buildingTransf,
 				tag = tag
 			}
-			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			local perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/lollo_side_perron.mdl'
+			if result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_2s_lollo_side_perron.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_side_perron.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_side_perron.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_side_perron.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_b_db.moduleFileName then
+				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_side_perron.mdl'
+			elseif eraPrefix ~= _constants.eras.era_c.prefix then
+				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_side_perron.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = perronModelId,
+				slotId = slotId,
+				transf = buildingTransf,
+				tag = tag
+			}
+
+			if baseId == _constants.idBases.axialStation0MSlotId then
+				moduleHelpers.axialAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			else
+				moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			end
+
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_9x6.mdl',
 				slotId = slotId,

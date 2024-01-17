@@ -1,0 +1,23 @@
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    materials = _mdlHelpers.getPlatformTrackEraACargoMaterials(),
+                    mesh = 'lollo_freestyle_train_station/railroad/platformHeads/_4m_long_10m_wide_1_2m_high_z.msh',
+                    -- transf = { _mdlHelpers.getPlatformStretchFactor(1, 20), 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, 0, 1, },
+                    transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1,
+    }
+end

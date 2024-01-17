@@ -13,7 +13,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "passenger-road-access", },
+			categories = { "passenger-road-access", "passenger-road-access-axial", },
 		},
 		cost = {
 			price = 0,
@@ -26,6 +26,7 @@ function data()
 		metadata = {
 			nSegments2Minus = 1,
 			nSegments2Plus = 1,
+			widthOnOwnTerminalHead = 20,
 			moreCapacity = {
 				cargo = 0,
 				passenger = 90
@@ -39,10 +40,10 @@ function data()
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
+			local _terminalData = params.terminals[nTerminal]
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 			local buildingTransf = transfUtils.getTransf_ZRotatedP90(zAdjustedTransf)
 
-			local _terminalData = params.terminals[nTerminal]
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
@@ -59,7 +60,13 @@ function data()
 				transf = buildingTransf,
 				tag = tag
 			}
-			moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+
+			if baseId == _constants.idBases.axialStation0MSlotId then
+				moduleHelpers.axialAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			else
+				moduleHelpers.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			end
+
 			result.models[#result.models + 1] = {
 				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/passenger_waiting_area_station_30x8.mdl',
 				slotId = slotId,

@@ -1,7 +1,5 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 
-local _maxPercentageDeviation4Midpoint = 1.05
-
 local constants = {
     cargoPlatformTracksCategory = 'cargo-platform-tracks',
     invisiblePlatformTracksCategory = 'invisible-platform-tracks',
@@ -84,8 +82,7 @@ local constants = {
     -- stairsEdgeSpacing = {-0.2, 0.5, 0.4, 0.4}, -- touches the external edge
     stairsEdgeSpacing = {-0.1, 0.4, 0.4, 0.4}, -- inward, outward. side1, side2
 
-    maxPercentageDeviation4Midpoint = _maxPercentageDeviation4Midpoint,
-    minPercentageDeviation4Midpoint = 1 / _maxPercentageDeviation4Midpoint,
+    maxAbsoluteDeviation4Midpoint = 5, -- must be << the following
 
     maxCargoWaitingAreaEdgeLength = 10, -- do not tamper with this
     maxPassengerWaitingAreaEdgeLength = 10, -- do not tamper with this unless prepared to overhaul underpass models and some more
@@ -100,6 +97,7 @@ local constants = {
     minSplitDistanceAtEndOfLine = 3,
     maxFenceWaypointDistance = 1020,
     maxWaypointDistance = 1020,
+    minWaypointDistance = 20,
     searchRadius4NearbyStation2Join = 500,
     slopeHigh = 999,
     slopeLow = 2.5,
@@ -175,7 +173,8 @@ local constants = {
     passengerSideLiftModuleType = 'freestyleTrainStationPassengerSideLift',
     passengerPlatformLiftModuleType = 'freestyleTrainStationPassengerPlatformLift',
     passengerStationSquareModuleType = 'freestyleTrainStationPassengerStationSquare',
-    -- slopedStairsModuleType = 'freestyleTrainStationSlopedStairs',
+    passengersPlatformHeadModuleType = 'freestyleTrainStationPassengersPlatformHead',
+    cargoPlatformHeadModuleType = 'freestyleTrainStationCargoPlatformHead',
     slopedCargoArea1x5ModuleType = 'freestyleTrainStationSlopedCargoArea1x5',
     slopedCargoArea1x10ModuleType = 'freestyleTrainStationSlopedCargoArea1x10',
     slopedCargoArea1x20ModuleType = 'freestyleTrainStationSlopedCargoArea1x20',
@@ -360,6 +359,7 @@ local constants = {
         restorePassengerTerminalSlotId = 3000000,
         platformHeightSlotId = 4000000,
         platformStyleSlotId = 5000000,
+        platformHeadSlotId = 6000000,
         trackCrossingSlotId = 11000000,
         flatStairsOrRampSlotId = 12000000,
         flatArea5x5SlotId = 13000000,
@@ -397,6 +397,7 @@ local constants = {
         platformRoofSlotId = 70000000,
         platformWallSlotId = 71000000,
         trackWallSlotId = 72000000,
+        axialWallSlotId = 73000000,
         platformEraASlotId = 80000000,
         platformEraBSlotId = 81000000,
         platformEraCSlotId = 82000000,
@@ -407,6 +408,8 @@ local constants = {
         cargoShelfSlotId = 94000000,
         axialFlushExitSlotId = 95000000,
         axialStairsOrRampSlotId = 96000000,
+        axialStation0MSlotId = 97000000,
+        axialStation5MSlotId = 98000000,
     },
     idTransf = {
         1, 0, 0, 0,

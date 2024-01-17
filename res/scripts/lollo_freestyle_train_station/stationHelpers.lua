@@ -481,13 +481,13 @@ local helpers = {
             return {}
         end
         if logger.isExtendedLog() then
-            logger.debugPrint(edgeLists[1])
-            logger.debugPrint(edgeLists[2])
-            logger.debugPrint(edgeLists[3])
-            logger.print('...')
-            logger.debugPrint(edgeLists[#edgeLists-2])
-            logger.debugPrint(edgeLists[#edgeLists-1])
-            logger.debugPrint(edgeLists[#edgeLists])
+            debugPrint(edgeLists[1])
+            debugPrint(edgeLists[2])
+            debugPrint(edgeLists[3])
+            print('...')
+            debugPrint(edgeLists[#edgeLists-2])
+            debugPrint(edgeLists[#edgeLists-1])
+            debugPrint(edgeLists[#edgeLists])
             -- logger.print('########## edgeLists =')
             -- logger.debugPrint(edgeLists)
         end
@@ -697,7 +697,7 @@ local helpers = {
                 }
                 _addExtraProps(previousRefEdge, results[#results])
             else
-                logger.err('there is a piece missing')
+                logger.err('getCentralEdgePositions_OnlyOuterBounds: there is a piece missing')
             end
         end
         if logger.isExtendedLog() then
@@ -1747,7 +1747,7 @@ end
 local _getPosTanX2ListIndex_Nearest2_Point = function(posTanX2List, position)
     local result = 1
 
-    local distance = transfUtils.getPositionsDistance(
+    local distance_power2 = transfUtils.getPositionsDistance_power2(
         transfUtils.getPositionsMiddle(
             posTanX2List[1].posTanX2[1][1],
             posTanX2List[1].posTanX2[2][1]
@@ -1755,15 +1755,15 @@ local _getPosTanX2ListIndex_Nearest2_Point = function(posTanX2List, position)
         position
     )
     for i = 2, #posTanX2List do
-        local testDistance = transfUtils.getPositionsDistance(
+        local testDistance_power2 = transfUtils.getPositionsDistance_power2(
             transfUtils.getPositionsMiddle(
                 posTanX2List[i].posTanX2[1][1],
                 posTanX2List[i].posTanX2[2][1]
             ),
             position
         )
-        if testDistance < distance then
-            distance = testDistance
+        if testDistance_power2 < distance_power2 then
+            distance_power2 = testDistance_power2
             result = i
         end
     end
@@ -1771,8 +1771,8 @@ local _getPosTanX2ListIndex_Nearest2_Point = function(posTanX2List, position)
     return result
 end
 
-helpers.getIsTrackOnPlatformLeft = function(platformEdgeList, midTrackEdge)
-    logger.print('getIsTrackOnPlatformLeft starting')
+helpers.getIsTrackAlongPlatformLeft = function(platformEdgeList, midTrackEdge)
+    logger.print('getIsTrackAlongPlatformLeft starting')
     -- logger.print('platformEdgeList =') logger.debugPrint(platformEdgeList)
     -- platform and track may have different lengths, so I check the central track segment,
     -- which is where the train bellies will stop.
@@ -1781,7 +1781,7 @@ helpers.getIsTrackOnPlatformLeft = function(platformEdgeList, midTrackEdge)
     local _midTrackPoint = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
     local _centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
         platformEdgeList,
-        40,
+        20, -- was 40, 20 should because more accurate
         false
     )
     -- logger.print('test centrePlatforms =') logger.debugPrint(centrePlatforms)
@@ -1803,15 +1803,14 @@ helpers.getIsTrackOnPlatformLeft = function(platformEdgeList, midTrackEdge)
         _rightPlatforms[_centrePlatformIndex_Nearest2_TrackMid].posTanX2[2][1]
     )
 
-    local result = transfUtils.getPositionsDistance(
+    local result = transfUtils.getPositionsDistance_power2(
         _midTrackPoint,
         _midLeftPlatformPoint
-    ) < transfUtils.getPositionsDistance(
+    ) < transfUtils.getPositionsDistance_power2(
         _midTrackPoint,
         _midRightPlatformPoint
     )
-    logger.print('getIsTrackOnPlatformLeft is returning', result)
-    -- print('### getIsTrackOnPlatformLeft is returning', result)
+    logger.print('getIsTrackAlongPlatformLeft is returning', result)
 
     return result
 end
@@ -1823,25 +1822,31 @@ helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
     -- which is where the train bellies will stop.
 
     -- not the centre but the first of the two (nodes in the edge) is going to be my vehicleNode
-    local _midTrackPos = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
+    local _midTrackPos123 = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
+    logger.print('_midTrackPos =') logger.debugPrint(_midTrackPos123)
     local _centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
         platformEdgeList,
-        40,
+        20, -- was 40, 20 is more accurate
         false
     )
-    -- logger.print('test centrePlatforms =') logger.debugPrint(centrePlatforms)
 
-    local _centrePlatformIndex_Nearest2_TrackMid = _getPosTanX2ListIndex_Nearest2_Point(_centrePlatforms, _midTrackPos)
-    logger.print('_centrePlatformIndex_Nearest2_TrackMid =') logger.debugPrint(_centrePlatformIndex_Nearest2_TrackMid)
+    -- logger.print('_centrePlatforms =') logger.debugPrint(_centrePlatforms)
+    local _centrePlatformIndex_Nearest2_TrackMid = _getPosTanX2ListIndex_Nearest2_Point(_centrePlatforms, _midTrackPos123)
+    logger.print('_centrePlatformIndex_Nearest2_TrackMid =', tostring(_centrePlatformIndex_Nearest2_TrackMid))
 
-    local _midPlatformItem = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid]
-    local _midPlatformPos = transfUtils.getPositionsMiddle(_midPlatformItem.posTanX2[1][1], _midPlatformItem.posTanX2[2][1])
+    local _midPlatformSegment = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid]
+    logger.print('_midPlatformSegment =') logger.debugPrint(_midPlatformSegment)
+    -- Now, I draw a perpendicular line from midTrackPos to midPlatformSegment.
+    -- If it works, I check its intersection with midPlatformSegment;
+    -- Otherwise, I use the segment mid point as fallback
+    local _intersection123 = transfUtils.getPointToSegmentNormalIntersection_2D(_midTrackPos123, _midPlatformSegment.posTanX2[1][1], _midPlatformSegment.posTanX2[2][1])
+    or transfUtils.getPositionsMiddle(_midPlatformSegment.posTanX2[1][1], _midPlatformSegment.posTanX2[2][1])
+    logger.print('_intersection123 =') logger.debugPrint(_intersection123)
 
-    local result = (_midTrackPos[2] == _midPlatformPos[2])
-        and (_midTrackPos[1] < _midPlatformPos[1])
-        or (_midTrackPos[2] > _midPlatformPos[2])
+    local result = (_midTrackPos123[2] == _intersection123[2])
+        and (_midTrackPos123[1] < _intersection123[1])
+        or (_midTrackPos123[2] > _intersection123[2])
     logger.print('getIsTrackNorthOfPlatform is returning', result)
-    -- print('### getIsTrackNorthOfPlatform is returning', result)
 
     return result
 end

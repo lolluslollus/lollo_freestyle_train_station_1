@@ -1,97 +1,70 @@
 function data()
 return {
 	matConfigs = {
-		{
-			0, 0, 0, 0, 
-		}, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
 					count = 1428,
-					offset = 8068,
+					offset = 7840,
 				},
 				position = {
 					count = 1428,
-					offset = 3784,
+					offset = 6412,
 				},
 				tangent = {
 					count = 1428,
-					offset = 5212,
+					offset = 4984,
 				},
 				uv0 = {
 					count = 1428,
-					offset = 6640,
+					offset = 3556,
 				},
 			},
 			materials = {
 				"one.mtl", 
 			},
-		},
-		{
-			indices = {
-				normal = {
-					count = 36,
-					offset = 9604,
-				},
-				position = {
-					count = 36,
-					offset = 9496,
-				},
-				tangent = {
-					count = 36,
-					offset = 9532,
-				},
-				uv0 = {
-					count = 36,
-					offset = 9568,
-				},
-			},
-			materials = {
-				"two.mtl", 
-			},
-		},
-		{
+		}, {
 			indices = {
 				normal = {
 					count = 72,
-					offset = 9856,
+					offset = 9484,
 				},
 				position = {
 					count = 72,
-					offset = 9640,
+					offset = 9412,
 				},
 				tangent = {
 					count = 72,
-					offset = 9712,
+					offset = 9340,
 				},
 				uv0 = {
 					count = 72,
-					offset = 9784,
+					offset = 9268,
 				},
 			},
 			materials = {
 				"three.mtl", 
 			},
-		},
-		{
+		}, {
 			indices = {
 				normal = {
 					count = 120,
-					offset = 10288,
+					offset = 9916,
 				},
 				position = {
 					count = 120,
-					offset = 9928,
+					offset = 9796,
 				},
 				tangent = {
 					count = 120,
-					offset = 10048,
+					offset = 9676,
 				},
 				uv0 = {
 					count = 120,
-					offset = 10168,
+					offset = 9556,
 				},
 			},
 			materials = {
@@ -101,24 +74,24 @@ return {
 	},
 	vertexAttr = {
 		normal = {
-			count = 168,
+			count = 108,
 			numComp = 3,
-			offset = 3616,
+			offset = 3448,
 		},
 		position = {
 			count = 1272,
 			numComp = 3,
-			offset = 0,
+			offset = 2176,
 		},
 		tangent = {
-			count = 832,
+			count = 736,
 			numComp = 4,
-			offset = 1272,
+			offset = 1440,
 		},
 		uv0 = {
-			count = 1512,
+			count = 1440,
 			numComp = 2,
-			offset = 2104,
+			offset = 0,
 		},
 	},
 }

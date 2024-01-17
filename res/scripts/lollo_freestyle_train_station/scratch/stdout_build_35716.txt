@@ -1239,7 +1239,7 @@ resultWithTN > resultWithBaseEdge, =	43.457359313965	43.457326121393	; pos0, pos
   y = 7.667594909668,
   z = 0.0092067494988441,
 }
-lollo_freestyle_train_station INFO: 	getIsTrackOnPlatformLeft starting
+lollo_freestyle_train_station INFO: 	getIsTrackAlongPlatformLeft starting
 lollo_freestyle_train_station INFO: 	getCentralEdgePositions_OnlyOuterBounds starting, stepLength =	40	first 3 and last 3 edgeLists =
 {
   catenary = false,
@@ -1405,7 +1405,7 @@ nil
 }
 lollo_freestyle_train_station INFO: 	_centrePlatformIndex_Nearest2_TrackMid =
 1
-lollo_freestyle_train_station INFO: 	getIsTrackOnPlatformLeft is returning	true
+lollo_freestyle_train_station INFO: 	getIsTrackAlongPlatformLeft is returning	true
 lollo_freestyle_train_station INFO: 	getIsTrackNorthOfPlatform starting
 lollo_freestyle_train_station INFO: 	getCentralEdgePositions_OnlyOuterBounds starting, stepLength =	40	first 3 and last 3 edgeLists =
 {

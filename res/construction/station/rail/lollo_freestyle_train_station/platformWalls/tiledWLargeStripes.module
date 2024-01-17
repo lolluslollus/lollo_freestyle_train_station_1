@@ -34,11 +34,17 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local _terminalData = params.terminals[nTerminal]
-			moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
-			'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_5m.mdl',
-			'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl',
-			'lollo_freestyle_train_station/roofs/concrete_modern/pillar_2_5m.mdl', 'lollo_freestyle_train_station/roofs/concrete_modern/pillar_5m.mdl',
-			true)
+			if baseId == _constants.idBases.axialWallSlotId then
+				moduleHelpers.deco.doAxialWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
+				'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl'
+				)
+			else
+				moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
+				'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_5m.mdl',
+				'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl',
+				'lollo_freestyle_train_station/roofs/concrete_modern/pillar_2_5m.mdl', 'lollo_freestyle_train_station/roofs/concrete_modern/pillar_5m.mdl',
+				true)
+			end
 		end,
 
 		getModelsFn = function(params)

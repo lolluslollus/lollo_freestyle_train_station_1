@@ -1,0 +1,44 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 20, -5, 15.25, },
+		bbMin = { -20, -35, -2, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 20, 15, 8.625, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -20, 6.625, 1, },
+		type = 'BOX',
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								materials = {
+									'lollo_freestyle_train_station/square_concrete_tiles_low_prio.mtl',
+									'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
+								},
+								mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_station_large/station_3_main_perron_lod0.msh',
+								name = 'station_3_main_perron',
+							}
+						},
+						name = 'station_3_main_grp',
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = 'RootNode',
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 3500,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

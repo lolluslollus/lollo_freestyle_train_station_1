@@ -13,7 +13,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "cargo-road-access", },
+			categories = { "cargo-road-access", "cargo-road-access-axial", },
 		},
 		cost = {
 			price = 0,
@@ -25,8 +25,7 @@ function data()
 		},
 		metadata = {
 			nEvenSegmentPairs = 1,
-			-- nSegments2Minus = 1,
-			-- nSegments2Plus = 1,
+			widthOnOwnTerminalHead = 20,
 			moreCapacity = {
 				cargo = 80,
 				passenger = 0
@@ -41,6 +40,13 @@ function data()
 			if not nTerminal or not baseId then return end
 
 			local _terminalData = params.terminals[nTerminal]
+			if baseId == _constants.idBases.axialStation0MSlotId then -- ad hoc
+				local yShift = nTrackEdge == 1
+					and (_terminalData.isTrackOnPlatformLeft and 5 or -5)
+					or (_terminalData.isTrackOnPlatformLeft and -5 or 5)
+				slotTransf = transfUtils.getTransf_YShifted(slotTransf, yShift)
+			end
+
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
 
 			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
@@ -60,7 +66,11 @@ function data()
 				tag = tag
 			}
 
-			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			if baseId == _constants.idBases.axialStation0MSlotId then
+				moduleHelpers.axialAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			else
+				moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			end
 
 			local groundFace = { -- this model requires some z shift
 				{-5.5, -11, _constants.platformSideBitsZ -0.8, 1},

@@ -269,14 +269,14 @@ function data()
                                 --     name = "station_3_perron",
                                 --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                                 -- },
-                                {
-                                    materials = {
-                                        "lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl",
-                                        "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_station_large/station_3_main_perron_lod0.msh',
-                                    name = "station_3_main_perron",
-                                }
+                                -- {
+                                --     materials = {
+                                --         "lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl",
+                                --         "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
+                                --     },
+                                --     mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_station_large/station_3_main_perron_lod0.msh',
+                                --     name = "station_3_main_perron",
+                                -- }
                             },
                             name = "station_3_grp",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -762,14 +762,14 @@ function data()
                                 --     name = "station_3_perron",
                                 --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                                 -- },
-                                {
-                                    materials = {
-                                        "lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl",
-                                        "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
-                                    },
-                                    mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_station_large/station_3_main_perron_lod0.msh',
-                                    name = "station_3_main_perron",
-                                }
+                                -- {
+                                --     materials = {
+                                --         "lollo_freestyle_train_station/era_c_station_tiles_1_low_prio.mtl",
+                                --         "lollo_freestyle_train_station/station_concrete_1_low_prio.mtl",
+                                --     },
+                                --     mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_station_large/station_3_main_perron_lod0.msh',
+                                --     name = "station_3_main_perron",
+                                -- }
                             },
                             name = "station_3_grp",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -1027,12 +1027,12 @@ function data()
                                     name = "station_3_roof_ventilation_4",
                                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                                 },
-                                {
-                                    materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", },
-                                    mesh = "station/rail/era_c/station_3/station_3_perron_lod2.msh",
-                                    name = "station_3_perron",
-                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-                                },
+                                -- {
+                                --     materials = { "station/rail/era_c/era_c_trainstation_floor_1.mtl", },
+                                --     mesh = "station/rail/era_c/station_3/station_3_perron_lod2.msh",
+                                --     name = "station_3_perron",
+                                --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                -- },
                             },
                             name = "station_3_grp",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -1057,12 +1057,12 @@ function data()
                                     name = "station_3_roof_end_l",
                                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                                 },
-                                {
-                                    materials = { "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
-                                    mesh = "station/rail/era_c/station_3_end_l/station_3_end_l_perron_lod1.msh",
-                                    name = "station_3_end_l_perron",
-                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -19.735626220703, 0, 0, 1, },
-                                },
+                                -- {
+                                --     materials = { "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
+                                --     mesh = "station/rail/era_c/station_3_end_l/station_3_end_l_perron_lod1.msh",
+                                --     name = "station_3_end_l_perron",
+                                --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -19.735626220703, 0, 0, 1, },
+                                -- },
                             },
                             name = "station_3_end_l_grp",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -1087,12 +1087,12 @@ function data()
                                     name = "station_3_roof_end_r",
                                     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                                 },
-                                {
-                                    materials = { "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
-                                    mesh = "station/rail/era_c/station_3_end_r/station_3_end_r_perron_lod1.msh",
-                                    name = "station_3_end_r_perron",
-                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 19.764373779297, 0, 0, 1, },
-                                },
+                                -- {
+                                --     materials = { "station/rail/era_c/era_c_trainstation_borders_3.mtl", },
+                                --     mesh = "station/rail/era_c/station_3_end_r/station_3_end_r_perron_lod1.msh",
+                                --     name = "station_3_end_r_perron",
+                                --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 19.764373779297, 0, 0, 1, },
+                                -- },
                             },
                             name = "station_3_end_r_grp",
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },

@@ -1,0 +1,69 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 10, -2.5, 10, },
+		bbMin = { -10, -19, -2, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 10, 8.25, 6, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, -10.75, 4, 1, },
+		type = 'BOX',
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								materials = {
+									'lollo_freestyle_train_station/era_c_station_tiles_1_darker_low_prio.mtl',
+									'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
+								},
+								mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_station_small/station_1_perron_lod0.msh',
+								name = 'station_1_side_perron',
+							}
+						},
+						name = 'station_1_grp',
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = 'RootNode',
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 100,
+		},
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								materials = {
+									'lollo_freestyle_train_station/era_c_station_tiles_1_darker_low_prio.mtl',
+									'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
+								},
+								mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_station_small/station_1_perron_lod1.msh',
+								name = 'station_1_side_perron',
+							}
+						},
+						name = 'station_1_grp',
+						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+					},
+				},
+				name = 'RootNode',
+				transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 100,
+			visibleTo = 3500,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

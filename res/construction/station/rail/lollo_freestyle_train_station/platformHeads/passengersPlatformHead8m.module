@@ -1,0 +1,53 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local logger = require('lollo_freestyle_train_station.logger')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+local transfUtilsUG = require 'transf'
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { 'passenger-road-access-axial', },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _('PlatformHead8mName'),
+			description = _('PlatformHead8mDesc'),
+			icon = 'ui/lollo_freestyle_train_station/platformHead8m.tga'
+		},
+		metadata = {
+			howMany4mChunks = 2,
+		},
+		order = {
+			value = 22,
+		},
+		type = _constants.passengersPlatformHeadModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			moduleHelpers.platformHeads.updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, 2)
+		end,
+
+		getModelsFn = function(params)
+			local results = {}
+			for xShift = 0, 7, 4 do
+				results[#results+1] = {
+					id = 'lollo_freestyle_train_station/railroad/platformHeads/era_c_passengers_4m_long_10m_wide_left.mdl',
+					transf = {
+						1, 0, 0, 0,
+						0, 1, 0, 0,
+						0, 0, 1, 0,
+						xShift, 0, 0, 1
+					},
+				}
+			end
+			return results
+		end
+	}
+end

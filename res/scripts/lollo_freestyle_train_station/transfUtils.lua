@@ -727,6 +727,14 @@ utils.getVectorLength = function(xyz)
     return math.sqrt(x * x + y * y + z * z)
 end
 
+utils.getVectorLength_power2 = function(xyz)
+    if type(xyz) ~= 'table' and type(xyz) ~= 'userdata' then return nil end
+    local x = xyz.x or xyz[1] or 0.0
+    local y = xyz.y or xyz[2] or 0.0
+    local z = xyz.z or xyz[3] or 0.0
+    return x * x + y * y + z * z
+end
+
 ---runs no checks, takes an xyz table
 ---@param xyz table
 ---@return number
@@ -806,6 +814,26 @@ utils.getVectorMultiplied = function(xyz, factor)
     end
 end
 
+utils.getVectorsCross = function(xyz1, xyz2)
+    -- returns |xyz1| * |xyz2| * cos(angle between xyz1 and xyz2)
+    if type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata' then return nil end
+    if type(xyz2) ~= 'table' and type(xyz2) ~= 'userdata' then return nil end
+
+    local x1 = xyz1.x or xyz1[1] or 0.0
+    local y1 = xyz1.y or xyz1[2] or 0.0
+    local z1 = xyz1.z or xyz1[3] or 0.0
+
+    local x2 = xyz2.x or xyz2[1] or 0.0
+    local y2 = xyz2.y or xyz2[2] or 0.0
+    local z2 = xyz2.z or xyz2[3] or 0.0
+
+    return {
+		y1 * z2 - z1 * y2,
+		z1 * x2 - x1 * z2,
+		x1 * y2 - y1 * x2
+    }
+end
+
 utils.getVectorsDot = function(xyz1, xyz2)
     -- returns |xyz1| * |xyz2| * cos(angle between xyz1 and xyz2)
     if type(xyz1) ~= 'table' and type(xyz1) ~= 'userdata' then return nil end
@@ -823,20 +851,45 @@ utils.getVectorsDot = function(xyz1, xyz2)
 end
 
 utils.getPositionsDistance = function(pos0, pos1)
-    local distance = utils.getVectorLength({
+    return utils.getVectorLength({
         (pos0.x or pos0[1]) - (pos1.x or pos1[1]),
         (pos0.y or pos0[2]) - (pos1.y or pos1[2]),
         (pos0.z or pos0[3]) - (pos1.z or pos1[3]),
     })
-    return distance
 end
 
 utils.getPositionsDistance_onlyXY = function(pos0, pos1)
-    local distance = utils.getVectorLength_onlyXY({
+    return utils.getVectorLength_onlyXY({
         (pos0.x or pos0[1]) - (pos1.x or pos1[1]),
         (pos0.y or pos0[2]) - (pos1.y or pos1[2]),
     })
-    return distance
+end
+
+utils.getPositionsDistance_power2 = function(pos0, pos1)
+    return utils.getVectorLength_power2({
+        (pos0.x or pos0[1]) - (pos1.x or pos1[1]),
+        (pos0.y or pos0[2]) - (pos1.y or pos1[2]),
+        (pos0.z or pos0[3]) - (pos1.z or pos1[3]),
+    })
+end
+
+utils.getPointToSegmentNormalIntersection_2D = function(pos, segPos1, segPos2)
+    if segPos1[1] == segPos2[1] and segPos1[2] == segPos2[2] then print('getPointToSegmentNormalIntersection_2D is returning false') return false end
+
+    local u = ( (pos[1] - segPos1[1]) * (segPos2[1] - segPos1[1]) + (pos[2] - segPos1[2]) * (segPos2[2] - segPos1[2]) ) / ( (segPos2[1] - segPos1[1])^2 + (segPos2[2] - segPos1[2])^2 )
+    local x = segPos1[1] + u * (segPos2[1] - segPos1[1])
+    local y = segPos1[2] + u * (segPos2[2] - segPos1[2])
+    return {x, y}
+end
+
+utils.getPointToSegmentNormalIntersection_3D = function(pos, segPos1, segPos2)
+    if segPos1[1] == segPos2[1] and segPos1[2] == segPos2[2] and segPos1[3] == segPos2[3] then print('getPointToSegmentNormalIntersection_3D is returning false') return false end
+
+    local u = ( (pos[1] - segPos1[1]) * (segPos2[1] - segPos1[1]) + (pos[2] - segPos1[2]) * (segPos2[2] - segPos1[2]) + (pos[3] - segPos1[3]) * (segPos2[3] - segPos1[3]) ) / ( (segPos2[1] - segPos1[1])^2 + (segPos2[2] - segPos1[2])^2 + (segPos2[3] - segPos1[3])^2 )
+    local x = segPos1[1] + u * (segPos2[1] - segPos1[1])
+    local y = segPos1[2] + u * (segPos2[2] - segPos1[2])
+    local z = segPos1[3] + u * (segPos2[3] - segPos1[3])
+    return {x, y, z}
 end
 
 utils.getPositionsMiddle = function(pos0, pos1)

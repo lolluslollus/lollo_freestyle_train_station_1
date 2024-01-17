@@ -46,6 +46,7 @@ function data()
 			}
 
 			moduleHelpers.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			moduleHelpers.axialAreas.addCargoLaneToSelf(result, adjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 
 			local groundFace = { -- groundFaces ignore z, terrainAlignmentLists don't
 				{-1, -2, _constants.platformSideBitsZ, 1},
