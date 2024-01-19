@@ -155,7 +155,7 @@ local helpers = {
                             baseNode1.position,
                             transfUtils.transf2Position(myTransf, true)
                         )
-                        if (distanceNode0Object + distanceNode1Object) > 0 then
+                        if (distanceNode0Object + distanceNode1Object) ~= 0 then
                             newEdgeObject.param = distanceNode0Object / (distanceNode0Object + distanceNode1Object)
                             if newEdgeObject.param < 0 then newEdgeObject.param = 0 elseif newEdgeObject.param > 1 then newEdgeObject.param = 1 end
                         else
@@ -165,8 +165,8 @@ local helpers = {
 
                         newEdgeObject.modelFileName = api.res.modelRep.getName(modelInstanceList.fatInstances[1].modelId)
 
-                        local playerOwned = api.engine.getComponent(edgeObjectId, api.type.ComponentType.PLAYER_OWNED)
-                        if playerOwned then newEdgeObject.playerEntity = playerOwned.player end
+                        local objectPlayerOwned = api.engine.getComponent(edgeObjectId, api.type.ComponentType.PLAYER_OWNED)
+                        if objectPlayerOwned ~= nil then newEdgeObject.playerEntity = objectPlayerOwned.player end
 
                         local objectWithName = api.engine.getComponent(edgeObjectId, api.type.ComponentType.NAME)
                         if objectWithName ~= nil then newEdgeObject.name = objectWithName.name end
@@ -176,7 +176,6 @@ local helpers = {
                             api.type.enum.EdgeObjectType.STOP_LEFT = 0
                             api.type.enum.EdgeObjectType.STOP_RIGHT = 1
                         ]]
-                        -- I tested isLeft in one of the few occasions when this stupid thing worked
                         local isEdgeObjectLeft = true
                         local isEdgeObjectOneWay = false
                         if newEdgeObject.flag == 1 then -- 0 and 1 are for street edges
@@ -186,8 +185,15 @@ local helpers = {
                             if signalList ~= nil then
                                 local signal = signalList.signals[1]
                                 -- local edgeId = signal.edgePr.entity
+
+                                local objectIndex = signal.edgePr.index
+                                local signalAgainst = api.engine.system.signalSystem.getSignal(api.type.EdgeId.new(edgeId, objectIndex), false)
+                                local signalAlong = api.engine.system.signalSystem.getSignal(api.type.EdgeId.new(edgeId, objectIndex), true)
+                                if signalAgainst.entity == edgeObjectId then isEdgeObjectLeft = true
+                                elseif signalAlong.entity == edgeObjectId then isEdgeObjectLeft = false
+                                end
+
                                 isEdgeObjectOneWay = (signal.type == 1)
-                                isEdgeObjectLeft = (signal.edgePr.index ~= 1)
                             else
                                 logger.warn('getEdgeIdsProperties found no signal list for edge ' .. edgeId)
                             end
@@ -1635,7 +1641,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
         }
     end
 
-    -- logger.print('__getStationTrackEndEntities4T result =') logger.debugPrint(result)
+    -- logger.print('__getStationTrackEndEntities4T result for terminal ' .. tostring(nTerminal) .. ' =') logger.debugPrint(result)
     return result
 end
 
