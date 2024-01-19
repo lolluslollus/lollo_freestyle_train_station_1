@@ -3087,7 +3087,8 @@ return {
                     local _isHole = _underpassModule ~= nil
                         and previousLeadingIndex == currentLeadingIndex
                         and currentLeadingIndex == nextLeadingIndex
-                        and arrayUtils.arrayHasValue(_underpassModule.metadata.holeIIs, ii % _maxIIMod10)
+                        -- use default coz this metadata was introduced after its modules
+                        and arrayUtils.arrayHasValue(_underpassModule.metadata.holeIIs or { 3, 4, 7, 8 }, ii % _maxIIMod10)
                     if _isHole then
                         if width < 5 then
                             if platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
