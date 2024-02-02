@@ -22,7 +22,7 @@ local _texts = {
     waypointDistanceWindowTitle = _('WaypointDistanceWindowTitle'),
 }
 
-local _windowXShift = 40
+-- local _windowXShift = 40
 local _windowYShift = 40
 
 local guiHelpers = {
@@ -36,7 +36,33 @@ local guiHelpers = {
         game.gui.setCamera({position[1], position[2], cameraData[3], cameraData[4], cameraData[5]})
     end
 }
+---position window keeping it within the screen
+---@param window any
+---@param initialPosition {x:number, y:number}|nil
+guiHelpers.setWindowPosition = function(window, initialPosition)
+    local gameContentRect = api.gui.util.getGameUI():getContentRect()
+    local windowContentRect = window:getContentRect()
+    local windowMinimumSize = window:calcMinimumSize()
+    logger.print('### gameContentRect =') logger.debugPrint(gameContentRect)
+    logger.print('### windowContentRect =') logger.debugPrint(windowContentRect)
+    logger.print('### windowMinimumSize =') logger.debugPrint(windowMinimumSize)
 
+    local windowHeight = math.max(windowContentRect.h, windowMinimumSize.h)
+    local windowWidth = math.max(windowContentRect.w, windowMinimumSize.w)
+    local positionX = (initialPosition ~= nil and initialPosition.x) or math.max(0, (gameContentRect.w - windowWidth) * 0.5)
+    local positionY = (initialPosition ~= nil and initialPosition.y) or math.max(0, (gameContentRect.h - windowHeight) * 0.5)
+
+    logger.print('### positionX = ' .. tostring(positionX) .. ', positionY = ' .. tostring(positionY))
+
+    if (positionX + windowWidth) > gameContentRect.w then
+        positionX = math.max(0, gameContentRect.w - windowWidth)
+    end
+    if (positionY + windowHeight) > gameContentRect.h then
+        positionY = math.max(0, gameContentRect.h - windowHeight -100)
+    end
+    logger.print('### final position x = ' .. tostring(positionX) .. ', y = ' .. tostring(positionY))
+    window:setPosition(math.floor(positionX), math.floor(positionY))
+end
 ---@param text string
 ---@param title string
 ---@param onCloseFunc function
@@ -57,9 +83,7 @@ guiHelpers.showProgress = function(text, title, onCloseFunc)
 
     -- window:setHighlighted(true)
     window:setMinimumSize(api.gui.util.Size.new(400, 70))
-    -- local uiContentRect = api.gui.util.getGameUI():getContentRect()
-    -- window:setPosition(uiContentRect.w - _windowXShift, uiContentRect.h - _windowYShift)
-    window:setPosition(500, 200) -- easier and quicker
+    guiHelpers.setWindowPosition(window)
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
@@ -211,7 +235,10 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
 
     -- window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
+    -- position.x = position.x + _windowXShift
+    position.y = position.y + _windowYShift
+    guiHelpers.setWindowPosition(window, position)
+
     window:onClose(
         function()
             logger.print('guiHelpers 215')
@@ -248,9 +275,7 @@ guiHelpers.showWarning = function(text, onCloseFunc)
 
     window:setHighlighted(true)
     window:setMinimumSize(api.gui.util.Size.new(400, 70))
-    -- local uiContentRect = api.gui.util.getGameUI():getContentRect()
-    -- window:setPosition(uiContentRect.w - _windowXShift, uiContentRect.h - _windowYShift)
-    window:setPosition(500, 400) -- easier and quicker
+    guiHelpers.setWindowPosition(window)
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
@@ -291,9 +316,7 @@ guiHelpers.showSaveWarning = function(text)
 
     window:setHighlighted(true)
     window:setMinimumSize(api.gui.util.Size.new(600, 120))
-    -- local uiContentRect = api.gui.util.getGameUI():getContentRect()
-    -- window:setPosition(uiContentRect.w - _windowXShift, uiContentRect.h - _windowYShift)
-    window:setPosition(300, 300) -- easier and quicker
+    guiHelpers.setWindowPosition(window)
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
@@ -384,8 +407,9 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
 
     window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()
-    logger.print('window position (without shifts) =') logger.debugPrint(position)
-    window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
+    -- position.x = position.x + _windowXShift
+    position.y = position.y + _windowYShift
+    guiHelpers.setWindowPosition(window, position)
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
@@ -414,7 +438,9 @@ guiHelpers.showWaypointDistance = function(distance)
     content:addItem(api.gui.comp.TextView.new(text))
 
     local position = api.gui.util.getMouseScreenPos()
-    window:setPosition(position.x + _windowXShift, position.y + _windowYShift)
+    -- position.x = position.x + _windowXShift
+    position.y = position.y + _windowYShift
+    guiHelpers.setWindowPosition(window, position)
 
     -- make title bar invisible without that dumb pseudo css
     window:getLayout():getItem(0):setVisible(false, false)

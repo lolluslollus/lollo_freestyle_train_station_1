@@ -1,6 +1,7 @@
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 -- local constants = require('lollo_freestyle_train_station.constants')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
+local guiHelpers = require('lollo_freestyle_train_station.guiHelpers')
 local logger = require('lollo_freestyle_train_station.logger')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 
@@ -244,6 +245,8 @@ return {
 
             -- window:setAttached(false)
             window:setPinned(false)
+
+            guiHelpers.setWindowPosition(window, {x = api.gui.util.getGameUI():getContentRect().w - size.w})
         end
         self.isShowingWarning = self.privateData.isShowingWarning
         ---@param text string
@@ -327,8 +330,9 @@ return {
 
             window:setHighlighted(true)
             local position = api.gui.util.getMouseScreenPos()
-            logger.print('window position (without shifts) =') logger.debugPrint(position)
-            window:setPosition(position.x + self.privateData.windowXShift, position.y + self.privateData.windowYShift)
+            position.x = position.x + self.privateData.windowXShift
+            position.y = position.y + self.privateData.windowYShift
+            guiHelpers.setWindowPosition(window, position)
             -- window:addHideOnCloseHandler()
             window:onClose(
                 function()
