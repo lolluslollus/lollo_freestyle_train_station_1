@@ -1193,151 +1193,101 @@ function data()
 							elseif isNextOpenStairsUpLeft then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_next.mdl'
 							elseif isNextOpenStairsUpRight then myModelId = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_bottom_prev.mdl'
 							end
-						local centreLaneTransf = (isOpenStairsUpLeft or isOpenStairsUpRight)
-							and transfUtils.get1MModelTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
-							or transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
-						if (isOpenStairsUpLeft or isOpenStairsUpRight) then
-							if isOpenStairsUpLeft then
-								result.models[#result.models+1] = {
-									id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_next.mdl',
-									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
-								}
-							end
-							if isOpenStairsUpRight then
-								result.models[#result.models+1] = {
-									id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_prev.mdl',
-									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
-								}
-							end
-						else
-							result.models[#result.models+1] = {
-								id = myModelId,
-								transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
-							}
-						end
-						if isStairsUp then
-							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
-								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
-								{
-									t = t,
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
-										-- ),
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
-										)
-									)
-								}
-							)
-						elseif isStairsUpDown then
-							if result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] == nil then
-								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t],
-								{
-									t = t,
-									bottomTwinIndex = topBottomTwinIndex,
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
-										-- )
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
-										)
-									)
-								}
-							)
-							if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
-								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
-								{
-									t = t,
-									topTwinIndex = topBottomTwinIndex,
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
-										-- )
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
-										)
-									)
-								}
-							)
-							topBottomTwinIndex = topBottomTwinIndex + 1
-						elseif (isAnyUnderpass and isOnBridge) or isPlatformLift then
-							if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
-								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
-								{
-									t = t,
-									era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i),
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
-										-- )
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
-										)
-									)
-								}
-							)
-						elseif isAnyUnderpass then
-							if result.terminateConstructionHookInfo.underpassPositionsOnGround[t] == nil then
-								result.terminateConstructionHookInfo.underpassPositionsOnGround[t] = {}
-							end
-							table.insert(
-								result.terminateConstructionHookInfo.underpassPositionsOnGround[t],
-								{
-									t = t,
-									lanePosTanX2 = cpl.posTanX2,
-									pos2Link = transfUtils.transf2Position(
-										-- transfUtilsUG.mul(
-										-- 	centreLaneTransf,
-										-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
-										-- )
-										transfUtils.getTransf_Shifted(
-											centreLaneTransf,
-											{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
-										)
-									)
-								}
-							)
-						elseif (isOpenStairsUpLeft or isOpenStairsUpRight or isOpenLift) then
-							-- print('openLiftModule =') debugPrint(openLiftModule.name)
-							-- print('openStairsUpLeftModule =') debugPrint(openStairsUpLeftModule.name)
-							-- print('openStairsUpRightModule =') debugPrint(openStairsUpRightModule.name)
-							if (openLiftModule or {}).name == _constants.openLift_NoAutoLink_ModuleFileName
-							or (openStairsUpLeftModule or {}).name == _constants.openStairsUpLeft_NoAutoLink_ModuleFileName
-							or (openStairsUpRightModule or {}).name == _constants.openStairsUpRight_NoAutoLink_ModuleFileName
-							then
-								-- do not add auto links if any of the stairs or lifts have no auto link
+
+						if transfUtils.getPositionsDistance_power2_123_FAST(cpl.posTanX2[1][1], cpl.posTanX2[2][1]) >= _constants.minLinkLength_power2 then
+							local centreLaneTransf = (isOpenStairsUpLeft or isOpenStairsUpRight)
+								and transfUtils.get1MModelTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
+								or transfUtils.get1MLaneTransf(cpl.posTanX2[1][1], cpl.posTanX2[2][1])
+							if (isOpenStairsUpLeft or isOpenStairsUpRight) then
+								if isOpenStairsUpLeft then
+									result.models[#result.models+1] = {
+										id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_next.mdl',
+										transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+									}
+								end
+								if isOpenStairsUpRight then
+									result.models[#result.models+1] = {
+										id = 'lollo_freestyle_train_station/passenger_lane_open_stairs_up_top_prev.mdl',
+										transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+									}
+								end
 							else
-								if result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t] == nil then
-									result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t] = {}
+								result.models[#result.models+1] = {
+									id = myModelId,
+									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+								}
+							end
+							if isStairsUp then
+								if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
+									result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
 								end
 								table.insert(
-									result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t],
+									result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
+									{
+										t = t,
+										lanePosTanX2 = cpl.posTanX2,
+										pos2Link = transfUtils.transf2Position(
+											-- transfUtilsUG.mul(
+											-- 	centreLaneTransf,
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+											-- ),
+											transfUtils.getTransf_Shifted(
+												centreLaneTransf,
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
+											)
+										)
+									}
+								)
+							elseif isStairsUpDown then
+								if result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] == nil then
+									result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] = {}
+								end
+								table.insert(
+									result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t],
+									{
+										t = t,
+										bottomTwinIndex = topBottomTwinIndex,
+										lanePosTanX2 = cpl.posTanX2,
+										pos2Link = transfUtils.transf2Position(
+											-- transfUtilsUG.mul(
+											-- 	centreLaneTransf,
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+											-- )
+											transfUtils.getTransf_Shifted(
+												centreLaneTransf,
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
+											)
+										)
+									}
+								)
+								if result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] == nil then
+									result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] = {}
+								end
+								table.insert(
+									result.terminateConstructionHookInfo.tunnelStairsTopPositions[t],
+									{
+										t = t,
+										topTwinIndex = topBottomTwinIndex,
+										lanePosTanX2 = cpl.posTanX2,
+										pos2Link = transfUtils.transf2Position(
+											-- transfUtilsUG.mul(
+											-- 	centreLaneTransf,
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ, 1 }
+											-- )
+											transfUtils.getTransf_Shifted(
+												centreLaneTransf,
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.tunnelStairsUpZ}
+											)
+										)
+									}
+								)
+								topBottomTwinIndex = topBottomTwinIndex + 1
+							elseif (isAnyUnderpass and isOnBridge) or isPlatformLift then
+								if result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] == nil then
+									result.terminateConstructionHookInfo.underpassPositionsOnBridge[t] = {}
+								end
+								table.insert(
+									result.terminateConstructionHookInfo.underpassPositionsOnBridge[t],
 									{
 										t = t,
 										era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i),
@@ -1345,15 +1295,68 @@ function data()
 										pos2Link = transfUtils.transf2Position(
 											-- transfUtilsUG.mul(
 											-- 	centreLaneTransf,
-											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.openStairsUpZ, 1 }
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
 											-- )
 											transfUtils.getTransf_Shifted(
 												centreLaneTransf,
-												{0.5, 0, _laneZ + _constants.openStairsUpZ}
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
 											)
 										)
 									}
 								)
+							elseif isAnyUnderpass then
+								if result.terminateConstructionHookInfo.underpassPositionsOnGround[t] == nil then
+									result.terminateConstructionHookInfo.underpassPositionsOnGround[t] = {}
+								end
+								table.insert(
+									result.terminateConstructionHookInfo.underpassPositionsOnGround[t],
+									{
+										t = t,
+										lanePosTanX2 = cpl.posTanX2,
+										pos2Link = transfUtils.transf2Position(
+											-- transfUtilsUG.mul(
+											-- 	centreLaneTransf,
+											-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ, 1 }
+											-- )
+											transfUtils.getTransf_Shifted(
+												centreLaneTransf,
+												{_constants.underpassLengthM * 0.5, 0, _laneZ + _constants.underpassZ}
+											)
+										)
+									}
+								)
+							elseif (isOpenStairsUpLeft or isOpenStairsUpRight or isOpenLift) then
+								-- print('openLiftModule =') debugPrint(openLiftModule.name)
+								-- print('openStairsUpLeftModule =') debugPrint(openStairsUpLeftModule.name)
+								-- print('openStairsUpRightModule =') debugPrint(openStairsUpRightModule.name)
+								if (openLiftModule or {}).name == _constants.openLift_NoAutoLink_ModuleFileName
+								or (openStairsUpLeftModule or {}).name == _constants.openStairsUpLeft_NoAutoLink_ModuleFileName
+								or (openStairsUpRightModule or {}).name == _constants.openStairsUpRight_NoAutoLink_ModuleFileName
+								then
+									-- do not add auto links if any of the stairs or lifts have no auto link
+								else
+									if result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t] == nil then
+										result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t] = {}
+									end
+									table.insert(
+										result.terminateConstructionHookInfo.openStairsOrLiftsPositions[t],
+										{
+											t = t,
+											era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i),
+											lanePosTanX2 = cpl.posTanX2,
+											pos2Link = transfUtils.transf2Position(
+												-- transfUtilsUG.mul(
+												-- 	centreLaneTransf,
+												-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0.5, 0, _laneZ + _constants.openStairsUpZ, 1 }
+												-- )
+												transfUtils.getTransf_Shifted(
+													centreLaneTransf,
+													{0.5, 0, _laneZ + _constants.openStairsUpZ}
+												)
+											)
+										}
+									)
+								end
 							end
 						end
 					end
@@ -1365,40 +1368,44 @@ function data()
 						for _, cwas in pairs(_terminalData.cargoWaitingAreasRelative) do
 							for i = 1, #cwas do
 								local posTanX2 = cwas[i].posTanX2
-								local centreLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
-								result.models[#result.models+1] = {
-									id = _constants.cargoWaitingAreaModelId,
-									tag = slotHelpers.mangleModelTag(t, true),
-									transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
-								}
+								if transfUtils.getPositionsDistance_power2_123_FAST(posTanX2[1][1], posTanX2[2][1]) >= _constants.minLinkLength_power2 then
+									local centreLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+									result.models[#result.models+1] = {
+										id = _constants.cargoWaitingAreaModelId,
+										tag = slotHelpers.mangleModelTag(t, true),
+										transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+									}
+								end
 							end
 						end
 					else
 						if _isTrackOnPlatformLeft then
 							for i = 1, #_terminalData.leftPlatformsRelative do
 								local posTanX2 = _terminalData.leftPlatformsRelative[i].posTanX2
-								local leftLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
-
-								result.models[#result.models+1] = {
-									id = _constants.passengerWaitingAreaModelId,
-									tag = slotHelpers.mangleModelTag(t, false),
-									transf = transfUtils.getTransf_ZShifted(leftLaneTransf, _laneZ)
-								}
+								if transfUtils.getPositionsDistance_power2_123_FAST(posTanX2[1][1], posTanX2[2][1]) >= _constants.minLinkLength_power2 then
+									local leftLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+									result.models[#result.models+1] = {
+										id = _constants.passengerWaitingAreaModelId,
+										tag = slotHelpers.mangleModelTag(t, false),
+										transf = transfUtils.getTransf_ZShifted(leftLaneTransf, _laneZ)
+									}
+								end
 							end
 						else
 							for i = 1, #_terminalData.rightPlatformsRelative do
 								local posTanX2 = _terminalData.rightPlatformsRelative[i].posTanX2
-								-- invert the lanes or the passengers will face away from the track when waiting
-								-- local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
-								local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[2][1], posTanX2[1][1])
-
-								result.models[#result.models+1] = {
-									id = _constants.passengerWaitingAreaModelId,
-									tag = slotHelpers.mangleModelTag(t, false),
-									-- if you touch this, you screw things
-									-- transf = transfUtilsUG.mul(rightLaneTransf, {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
-									transf = transfUtils.getTransf_ZShifted(rightLaneTransf, _laneZ)
-								}
+								if transfUtils.getPositionsDistance_power2_123_FAST(posTanX2[1][1], posTanX2[2][1]) >= _constants.minLinkLength_power2 then
+									-- invert the lanes or the passengers will face away from the track when waiting
+									-- local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[1][1], posTanX2[2][1])
+									local rightLaneTransf = transfUtils.get1MLaneTransf(posTanX2[2][1], posTanX2[1][1])
+									result.models[#result.models+1] = {
+										id = _constants.passengerWaitingAreaModelId,
+										tag = slotHelpers.mangleModelTag(t, false),
+										-- if you touch this, you screw things
+										-- transf = transfUtilsUG.mul(rightLaneTransf, {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1})
+										transf = transfUtils.getTransf_ZShifted(rightLaneTransf, _laneZ)
+									}
+								end
 							end
 						end
 					end

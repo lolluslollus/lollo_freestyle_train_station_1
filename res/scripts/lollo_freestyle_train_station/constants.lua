@@ -90,6 +90,7 @@ local constants = {
 
     minLinkLength = 0.101, -- minimum length for auto links, shorter will crash with Assertion `edge.conns[0] != edge.conns[1]' failed
     -- found with reverse engineering
+    minLinkLength_power2 = 0.101 * 0.101,
 
     railEdgeType = 1, -- 0 = ROAD, 1 = RAIL
     streetEdgeType = 0, -- 0 = ROAD, 1 = RAIL

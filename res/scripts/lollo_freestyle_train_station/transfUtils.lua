@@ -873,6 +873,13 @@ utils.getPositionsDistance_power2 = function(pos0, pos1)
     })
 end
 
+utils.getPositionsDistance_power2_123_FAST = function(pos0, pos1)
+    local dx = pos0[1] - pos1[1]
+    local dy = pos0[2] - pos1[2]
+    local dz = pos0[3] - pos1[3]
+    return dx * dx + dy * dy + dz * dz
+end
+
 utils.getPointToSegmentNormalIntersection_2D = function(pos, segPos1, segPos2)
     if segPos1[1] == segPos2[1] and segPos1[2] == segPos2[2] then print('getPointToSegmentNormalIntersection_2D is returning false') return false end
 
