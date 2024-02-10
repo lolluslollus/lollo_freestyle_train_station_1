@@ -1124,6 +1124,29 @@ function data()
 							)
 						end
 					end
+--[[
+					-- test for minLinkLength
+					local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[2].posTanX2
+					local pos1 = crossConnectorPosTanX2[1][1]
+					local pos2 = {
+						-- crossConnectorPosTanX2[1][1][1] + 0.005,
+						-- crossConnectorPosTanX2[1][1][1] + 0.01,
+						-- crossConnectorPosTanX2[1][1][1] + 0.02,
+						-- crossConnectorPosTanX2[1][1][1] + 0.04,
+						-- crossConnectorPosTanX2[1][1][1] + 0.08,
+						-- crossConnectorPosTanX2[1][1][1] + 0.1,
+						crossConnectorPosTanX2[1][1][1] + 0.101, <-- this is it
+						crossConnectorPosTanX2[1][1][2],
+						crossConnectorPosTanX2[1][1][3],
+					}
+					result.models[#result.models+1] = {
+						id = _constants.passengerLaneModelId,
+						transf = transfUtils.getTransf_ZShifted(
+							transfUtils.get1MLaneTransf(pos1, pos2),
+							_laneZ
+						)
+					}
+]]
 				end
 				_addLanesAcross()
 
@@ -2082,7 +2105,7 @@ function data()
 																-- local linkLength = transfUtils.getPositionsDistance(positionsInT[i].pos, positionsInTT[ii].pos)
 																local linkLength = math.sqrt(distanceX*distanceX + distanceY*distanceY + distanceZ*distanceZ)
 																-- prevent very short links, they come from opposite flush exits or other things that we cannot check efficiently
-																if linkLength > _constants.minLinkLength and linkLength < maxLinkLength then
+																if linkLength >= _constants.minLinkLength and linkLength < maxLinkLength then
 																	result.models[#result.models+1] = {
 																		id = modelId,
 																		transf = transfUtils.get1MLaneTransf(
