@@ -23,8 +23,7 @@ function data()
                 colliders = {},
                 cost = 0,
                 edgeLists = {},
-                -- groundFaces = {},
-                groundFaces = { -- dummy ground faces otherwise the message won't show UG TODO this is wrong
+                groundFaces = { -- dummy ground faces otherwise the message won't show (documented)
                     {
                         face = {
                             {0.1, -0.1, 0.0, 1.0},
