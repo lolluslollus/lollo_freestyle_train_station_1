@@ -42,12 +42,13 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Sound effects for trains are in my dedicated mod.
 - Extra ground textures are in my terrain tweaks mod.
 - If you want different buildings, use assets. There are mods with those.
-- This mod adds stairs and lifts as configurable assets; they can be used anywhere. My "Construction Mover" mod helps to place them easily. Still, the game does not handle them gracefully and <AltGr> + <L> will help you check if they snap to your network. Cycling between snappy and non-snappy roads or bridges in the parameter window might help.
+- This mod adds stairs and lifts as configurable assets; they are useful for island platforms but can be used anywhere. My "Construction Mover" mod helps to place them easily. Still, the game does not handle them gracefully and <AltGr> + <L> will help you check if they snap to your network. Cycling between snappy and non-snappy roads or bridges in the parameter window might help.
 - Use the track construction or the waypoint "Track Splitter" to do precision work.
 - Use the track construction "Track Segment Remover" to easily remove underground tracks. It is in my Street Fine Tuning mod.
 - Upgrading tracks does all tracks at once.
 - If you have too many track types, use the categories in the menu to make life easier.
 - Use \"Build with Collision\" sparingly around these stations.
+- Some updates can make your existing stations look glitchy. If you see glitches, click your station to bring up the configuration menu, then add and remove something, like a roof. The glitch should go away.
 
 [h1]Breaking changes:[/h1]
 - Underground stations are now in the assets.
@@ -317,8 +318,12 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["WallConcreteModernDesc"] = "Concrete wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallConcretePlainName"] = "Concrete wall, plain",
 			["WallConcretePlainDesc"] = "Concrete wall, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallFenceBricksStoneName"] = "Brick and stone fence",
+			["WallFenceBricksStoneDesc"] = "Brick and stone fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallFenceMattoniName"] = "Brick fence",
 			["WallFenceMattoniDesc"] = "Brick fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallFenceWoodName"] = "Wooden fence",
+			["WallFenceWoodDesc"] = "Wooden fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallIronName"] = "Iron fence",
 			["WallIronDesc"] = "Iron fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallIronGlassCopperName"] = "Iron and glass wall",
@@ -622,11 +627,12 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 - Soundeffekte für Züge sind in meinem speziellen Mod enthalten.
 - Zusätzliche Bodentexturen befinden sich in meinem "Terrain Tweaks"-Mod.
 - Wenn du andere Gebäude willst, benutze Assets. Es gibt Mods mit diesen.
-- Diese Mod fügt Treppen und Aufzüge als konfigurierbare Objekte hinzu; sie können überall verwendet werden. Meine "Construction Mover" Mod hilft, sie leicht zu platzieren. Dennoch, das Spiel behandelt sie nicht anmutig und <AltGr> + <L> wird Ihnen helfen, zu überprüfen, ob sie in Ihrem Netzwerk einrasten. Das Wechseln zwischen einrastenden und nicht einrastenden Straßen oder Brücken im Parameterfenster könnte helfen.
+- Diese Mod fügt Treppen und Aufzüge als konfigurierbare Objekte hinzu; sie sind nützlich für Insel-Bahnsteige, sie können aber überall verwendet werden. Meine "Construction Mover" Mod hilft, sie leicht zu platzieren. Dennoch, das Spiel behandelt sie nicht anmutig und <AltGr> + <L> wird Ihnen helfen, zu überprüfen, ob sie in Ihrem Netzwerk einrasten. Das Wechseln zwischen einrastenden und nicht einrastenden Straßen oder Brücken im Parameterfenster könnte helfen.
 - Verwende den Gleisbau- oder Wegepunkt-"Gleisteiler", um Präzisionsarbeit zu leisten.
 - Beim Aufrüsten von Gleisen werden alle Gleise auf einmal ausgebaut.
 - Wenn du zu viele Streckentypen hast, nutze die Kategorien im Menü, um sich das Leben leichter zu machen.
 - Verwende \"Build with Collision\" so wenig wie möglich um diesen Bahnhöfen.
+- Einige Updates können dazu führen, dass deine vorhandenen Bahnhöfe komisch aussehen. Wenn dies vorkommt, klicke auf deinen Bahnhof, um das Konfigurationsmenü aufzurufen, füge dann irgendwas hinzu (z. B. ein Dach) und entferne es wieder. Der Fehler sollte dann verschwinden.
 
 [h1]Inkompatible Änderungen:[/h1]
 - U-Bahnhöfe sind jetzt in den Assets enthalten.
@@ -895,8 +901,12 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["WallConcreteModernDesc"] = "Betonwand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallConcretePlainName"] = "Betonwand, schlicht",
 			["WallConcretePlainDesc"] = "Betonwand, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallFenceBricksStoneName"] = "Backstein- und Steinzaun",
+			["WallFenceBricksStoneDesc"] = "Backstein- und Steinzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallFenceMattoniName"] = "Backsteinzaun",
 			["WallFenceMattoniDesc"] = "Backsteinzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallFenceWoodName"] = "Holzzaun",
+			["WallFenceWoodDesc"] = "Holzzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallIronName"] = "Eisenzaun",
 			["WallIronDesc"] = "Eisenzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallIronGlassCopperName"] = "Wand aus Eisen und Glas",

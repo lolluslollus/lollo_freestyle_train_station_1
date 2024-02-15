@@ -28,11 +28,12 @@ local _utils = {
 local helpers = {
     ---isReadEdgeObjects might disagree with isSortOutput
     ---@param edgeIds table<integer>
-    ---@param isTrack boolean
-    ---@param isReadEdgeObjects boolean
-    ---@param isSortOutput boolean
+    ---@param isTrack boolean|nil
+    ---@param isReadEdgeObjects boolean|nil
+    ---@param isSortOutput boolean|nil
+    ---@param isCheckLevelCrossings boolean|nil
     ---@return edgeIdsProperties
-    getEdgeIdsProperties = function(edgeIds, isTrack, isReadEdgeObjects, isSortOutput)
+    getEdgeIdsProperties = function(edgeIds, isTrack, isReadEdgeObjects, isSortOutput, isCheckLevelCrossings)
         if type(edgeIds) ~= 'table' then return {} end
 
         local _getEdgeType = function(baseEdgeType)
@@ -203,6 +204,13 @@ local helpers = {
 
                         result.edgeObjects[#result.edgeObjects+1] = newEdgeObject
                     end
+                end
+            end
+            if isCheckLevelCrossings then
+                if api.engine.system.railRoadCrossingSystem.getRailroadCrossingForNode(baseEdge.node0) ~= -1
+                or api.engine.system.railRoadCrossingSystem.getRailroadCrossingForNode(baseEdge.node1) ~= -1
+                then
+                    result.hasLevelCrossing = true
                 end
             end
             results[#results+1] = result
@@ -458,7 +466,14 @@ local helpers = {
         return results
     end,
 
-    getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight, isAddExtraProps)
+    ---comment
+    ---@param edgeLists edgeIdsProperties
+    ---@param stepLength number
+    ---@param isAddTerrainHeight boolean|nil
+    ---@param isAddExtraProps boolean|nil
+    ---@param isAddLevelCrossings boolean|nil
+    ---@return table
+    getCentralEdgePositions_OnlyOuterBounds = function(edgeLists, stepLength, isAddTerrainHeight, isAddExtraProps, isAddLevelCrossings)
         local _addExtraProps = function(source, target)
             target.width = source.width or 0 -- idem
             target.type = source.type -- 0 == ground, 1 == bridge, 2 == tunnel
@@ -479,9 +494,12 @@ local helpers = {
                 --     edgeResults[#edgeResults].posTanX2[2][1][2]
                 -- ))
             end
+            if isAddLevelCrossings then
+                target.hasLevelCrossing  = source.hasLevelCrossing
+            end
         end
 
-        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'first 3 and last 3 edgeLists =') --logger.debugPrint(edgeLists)
+        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'first 3 and last 3 edgeLists =') -- logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
             logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
             return {}
@@ -707,10 +725,10 @@ local helpers = {
             end
         end
         if logger.isExtendedLog() then
-            logger.print('getCentralEdgePositions_OnlyOuterBounds last 3 results =')
-            logger.debugPrint(results[#results-2])
-            logger.debugPrint(results[#results-1])
-            logger.debugPrint(results[#results])
+            print('getCentralEdgePositions_OnlyOuterBounds last 3 results =')
+            debugPrint(results[#results-2])
+            debugPrint(results[#results-1])
+            debugPrint(results[#results])
         end
         return results
     end,
@@ -1356,7 +1374,7 @@ local _getStationStreetEndEntities = function(frozenEdgeIds_indexed, frozenNodeI
             end
     ]]
             endEntity.jointNeighbourEdges.props[edgeId] = {
-                edgeProps = helpers.getEdgeIdsProperties({edgeId}, false, true, false)[1],
+                edgeProps = helpers.getEdgeIdsProperties({edgeId}, false, true)[1],
                 node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
                 node1Props = helpers.getNodeIdsProperties({baseEdge.node1})[1],
             }
@@ -1618,7 +1636,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
         end
 ]]
         result.platforms.jointNeighbourEdges.props[edgeId] = {
-            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false)[1],
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true)[1],
             node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
             node1Props = helpers.getNodeIdsProperties({baseEdge.node1})[1]
         }
@@ -1635,7 +1653,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
         end
 ]]
         result.tracks.jointNeighbourEdges.props[edgeId] = {
-            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true, false)[1],
+            edgeProps = helpers.getEdgeIdsProperties({edgeId}, true, true)[1],
             node0Props = helpers.getNodeIdsProperties({baseEdge.node0})[1],
             node1Props = helpers.getNodeIdsProperties({baseEdge.node1})[1]
         }
@@ -1787,8 +1805,7 @@ helpers.getIsTrackAlongPlatformLeft = function(platformEdgeList, midTrackEdge)
     local _midTrackPoint = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
     local _centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
         platformEdgeList,
-        20, -- was 40, 20 should because more accurate
-        false
+        20 -- was 40, 20 is more accurate
     )
     -- logger.print('test centrePlatforms =') logger.debugPrint(centrePlatforms)
 
@@ -1832,8 +1849,7 @@ helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
     logger.print('_midTrackPos =') logger.debugPrint(_midTrackPos123)
     local _centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
         platformEdgeList,
-        20, -- was 40, 20 is more accurate
-        false
+        20 -- was 40, 20 is more accurate
     )
 
     -- logger.print('_centrePlatforms =') logger.debugPrint(_centrePlatforms)

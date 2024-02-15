@@ -43,6 +43,7 @@ local _actions = {
                 -- logger.print('record =') logger.debugPrint(record)
                 return {
                     groundBridgeTunnel_012 = record.groundBridgeTunnel_012,
+                    hasLevelCrossing = record.hasLevelCrossing,
                     posTanX2_main = transfUtils.getPosTanX2Transformed(record.posTanX2_main, _inverseMainTransf),
                     -- posTanX2_wallBehind = transfUtils.getPosTanX2Transformed(record.posTanX2_wallBehind, _inverseMainTransf),
                     xRatio_main = record.xRatio_main,
@@ -90,6 +91,7 @@ local _actions = {
                 local skew = record.posTanX2_main[2][1][3] - record.posTanX2_main[1][1][3]
                 return {
                     groundBridgeTunnel_012 = record.groundBridgeTunnel_012,
+                    hasLevelCrossing = record.hasLevelCrossing,
                     transf = transfUtils.getTransf_XSkewedOnZ(
                         transfUtils.getTransf_XScaled(
                             moduleHelpers.getPlatformObjectTransf_AlwaysVertical(record.posTanX2_main),
@@ -106,6 +108,7 @@ local _actions = {
                 local skew = record.posTanX2_main[2][1][3] - record.posTanX2_main[1][1][3]
                 return {
                     groundBridgeTunnel_012 = record.groundBridgeTunnel_012,
+                    hasLevelCrossing = record.hasLevelCrossing,
                     transf = transfUtils.getTransf_XSkewedOnZ(
                         transfUtils.getTransf_XScaled(
                             moduleHelpers.getPlatformObjectTransf_AlwaysVertical(record.posTanX2_main),
@@ -661,7 +664,7 @@ function data()
                             args.edge1Id, args.edge2Id, _constants.maxFenceWaypointDistance, true, logger.isExtendedLog()
                         )
                         if #trackEdgeIdsBetweenEdgeIds > 0 then
-                            local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds, true, false, true)
+                            local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds, true, false, true, true)
 
                             if comparisonUtils.is123sSame(
                                 trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1],
@@ -693,7 +696,8 @@ function data()
                                 trackEdgeList_Ordered,
                                 1,
                                 false,
-                                false
+                                false,
+                                true
                             )
                             -- logger.print('trackEdgeListFine =') logger.debugPrint(trackEdgeListFine)
                             if #trackEdgeListFine > 0 then
@@ -710,6 +714,7 @@ function data()
                                         end
                                         return {
                                             groundBridgeTunnel_012 = tel.type,
+                                            hasLevelCrossing = tel.hasLevelCrossing,
                                             posTanX2_main = gps_main,
                                             xRatio_main = xRatio_main,
                                             yRatio_main = yRatio_main,

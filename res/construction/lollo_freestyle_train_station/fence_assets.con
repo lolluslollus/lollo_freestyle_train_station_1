@@ -273,7 +273,6 @@ function data()
                 end
 
                 local yStart = _getYStart()
--- LOLLO TODO adjust height: check this
                 local zShift = fenceModelHelper.getZShiftActualValues()[params.lolloFenceAssets_zShift + 1]
                 -- the wall base is 1.4m tall, so we sink all by 20cm. This is level with freestyle stations and looks good.
                 local zStart = (wallBaseModelId == nil and 0 or constants.defaultPlatformHeight) + zShift

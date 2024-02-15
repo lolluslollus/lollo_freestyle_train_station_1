@@ -246,7 +246,6 @@ function data()
             logger.print('wallBaseModelId =', wallBaseModelId or 'NIL')
             logger.print('#params.transfs =', #params.transfs)
             local _yStart = fenceModelHelper.getYShiftFineActualValues()[params.lolloFenceAssets_yShiftFine + 1]
--- LOLLO TODO adjust height: check this
             local _zShift = fenceModelHelper.getZShiftActualValues()[params.lolloFenceAssets_zShift + 1]
             local _zStart = ((wallBaseModelId == nil) and 0 or constants.defaultPlatformHeight) + _zShift
             logger.print('_yStart =', _yStart or 'NIL')
@@ -257,20 +256,24 @@ function data()
             --     _addWall(transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
             -- end
             for _, transfData in pairs(params.transfs_ground) do
-                if transfData.groundBridgeTunnel_012 == 2 then -- tunnel
-                    _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId_Tunnel, wallBaseModelId)
-                else -- ground or bridge
-                    _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
-                end
-                if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then -- ground
-                    _addGround(transfData.transf, _yStart, _zShift, result, wallBehindModelId)
+                if not(transfData.hasLevelCrossing) then
+                    if transfData.groundBridgeTunnel_012 == 2 then -- tunnel
+                        _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId_Tunnel, wallBaseModelId)
+                    else -- ground or bridge
+                        _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
+                    end
+                    if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then -- ground
+                        _addGround(transfData.transf, _yStart, _zShift, result, wallBehindModelId)
+                    end
                 end
             end
             for _, transfData in pairs(params.transfs_wallBehind) do
-                if transfData.groundBridgeTunnel_012 == 0
-                or (transfData.groundBridgeTunnel_012 == 1 and isWallBehindOnBridges)
-                or (transfData.groundBridgeTunnel_012 == 2 and isWallBehindInTunnels) then
-                    _addWallBehind(transfData.transf, result, _yStart,_zStart, wallBehindModelId, wallBehindBaseModelId)
+                if not(transfData.hasLevelCrossing) then
+                    if transfData.groundBridgeTunnel_012 == 0
+                    or (transfData.groundBridgeTunnel_012 == 1 and isWallBehindOnBridges)
+                    or (transfData.groundBridgeTunnel_012 == 2 and isWallBehindInTunnels) then
+                        _addWallBehind(transfData.transf, result, _yStart,_zStart, wallBehindModelId, wallBehindBaseModelId)
+                    end
                 end
             end
 

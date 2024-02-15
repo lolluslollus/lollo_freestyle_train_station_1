@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 1968,
+					offset = 8476,
+				},
+				position = {
+					count = 1968,
+					offset = 6508,
+				},
+				tangent = {
+					count = 1968,
+					offset = 2572,
+				},
+				uv0 = {
+					count = 1968,
+					offset = 4540,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge/medium.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 156,
+			numComp = 3,
+			offset = 2416,
+		},
+		position = {
+			count = 1248,
+			numComp = 3,
+			offset = 1168,
+		},
+		tangent = {
+			count = 256,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 912,
+			numComp = 2,
+			offset = 256,
+		},
+	},
+}
+end
