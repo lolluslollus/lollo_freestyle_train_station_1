@@ -119,15 +119,15 @@ function data()
 				tag = tag
 			}
 			local perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/lollo_main_perron.mdl'
-			if result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+			if result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_2s_lollo_main_perron.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_main_perron.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_main_perron.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_main_perron.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_b_db.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_b_db.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_main_perron.mdl'
 			elseif eraPrefix ~= _constants.eras.era_c.prefix then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_small/era_c_db_1s_lollo_main_perron.mdl'

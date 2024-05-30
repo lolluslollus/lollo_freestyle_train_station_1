@@ -3,7 +3,7 @@ local _constants = require('lollo_freestyle_train_station.constants')
 function data()
 	return {
 		availability = {
-			yearFrom = _constants.eras.era_c.startYear,
+			yearFrom = 0,
 			yearTo = 0
 		},
 		category = {
@@ -13,15 +13,15 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("PlatformStyleEraCFSOneStripeName"),
-			description = _("PlatformStyleEraCFSOneStripeDesc"),
-			icon = "ui/lollo_freestyle_train_station/platformStylePassengersEraCFSOneStripe.tga"
+			name = _("PlatformStyleCargoGravelName"),
+			description = _("PlatformStyleCargoGravelDesc"),
+			icon = "ui/lollo_freestyle_train_station/platformStyleCargoGravel.tga"
 		},
 		metadata = { },
 		order = {
-			value = 17,
+			value = 32,
 		},
-		type = _constants.passengersPlatformStyleModuleType,
+		type = _constants.cargoPlatformStyleModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			-- if not nTerminal or not baseId then return end

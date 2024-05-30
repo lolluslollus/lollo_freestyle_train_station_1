@@ -34,12 +34,23 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local _terminalData = params.terminals[nTerminal]
-            local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
-			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, _terminalData, nTrackEdge, era,
+            local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			local modelId = 'lollo_freestyle_train_station/railroad/slopedSides/cargo/area1x10.mdl'
+			if _eraPrefix == _constants.eras.era_a.prefix then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/cargo/era_a_area1x10.mdl'
+			elseif _eraPrefix == _constants.eras.era_b.prefix then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/cargo/era_b_area1x10.mdl'
+			end
+			if result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/cargo/earth_area1x10.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/cargo/gravel_area1x10.mdl'
+			end
+			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, _terminalData, nTrackEdge, _eraPrefix,
 				10,
-				_constants[era .. 'slopedCargoArea1x10ModelFileName'],
+				modelId,
 				nil,
-				_constants[era .. 'groundFacesFillKey'],
+				_constants[_eraPrefix .. 'groundFacesFillKey'],
 				true
 			)
 		end,
@@ -48,7 +59,7 @@ function data()
 			local results = {}
 			for y = -5, 5 do
 				results[#results+1] = {
-					id = _constants.era_c_slopedCargoArea1x10ModelFileName,
+					id = 'lollo_freestyle_train_station/railroad/slopedSides/cargo/area1x10.mdl',
 					transf = {0, 1, 0, 0,  -1, 0, 0, 0,  0, 0, 1, 0,  0, y, 0, 1},
 				}
 			end
