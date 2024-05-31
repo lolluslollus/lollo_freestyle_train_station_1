@@ -121,6 +121,19 @@ local privateFuncs = {
 
         return result
     end,
+    getGroundFacesFillKey_cargo = function(result, nTerminal, eraPrefix)
+        local groundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+        if result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+            groundFacesFillKey = constants.earth_groundFacesFillKey
+        elseif result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+            groundFacesFillKey = constants.gravel_groundFacesFillKey
+        end
+
+        return groundFacesFillKey
+    end,
+    getGroundFacesFillKey_passengers = function(eraPrefix)
+        return constants[eraPrefix .. 'groundFacesFillKey']
+    end,
     getIsEndFillerEvery3 = function(nTrackEdge)
         -- this is for platform roofs and outside extensions, which have a slot every 3 track edge counts.
         -- to fill the last, if it is 4, 7, etc, we add an extra slot: this slot has a special behaviour,
@@ -964,14 +977,38 @@ privateFuncs.platformHeads = {
     getHeadModelId = function (eraPrefix, isCargo, isRight, width, platformStyleModuleFileName)
         if isCargo then
             if width < 10 then
-                return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_10m_wide_right.mdl'
-                or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_10m_wide_left.mdl'
+                if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_10m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_10m_wide_left.mdl'
+                elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_10m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_10m_wide_left.mdl'
+                else
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_10m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_10m_wide_left.mdl'
+                end
             elseif width < 20 then
-                return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_15m_wide_right.mdl'
-                or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_15m_wide_left.mdl'
+                if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_15m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_15m_wide_left.mdl'
+                elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_15m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_15m_wide_left.mdl'
+                else
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_15m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_15m_wide_left.mdl'
+                end
             else
-                return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_25m_wide_right.mdl'
-                or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_25m_wide_left.mdl'
+                if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_25m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_25m_wide_left.mdl'
+                elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_25m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_25m_wide_left.mdl'
+                else
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_25m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_25m_wide_left.mdl'
+                end
             end
         else
             if width < 5 then
@@ -1260,9 +1297,9 @@ privateFuncs.slopedAreas = {
     isSlopedAreaAllowed = function(cpf, areaWidth)
         return cpf.type == 0 or (cpf.type == 1 and areaWidth <= 2.5)
     end,
-    doTerrainFromCoordinates = function(result, nTerminal, groundFacesFillKey, terrainCoordinates)
+    doTerrainFromCoordinates = function(result, nTerminal, groundFacesFillKey, terrainCoordinates, isFlush)
         local faces = {}
-        local deltaZ = result.laneZs[nTerminal] -constants.stairsAndRampHeight
+        local deltaZ = isFlush and (result.laneZs[nTerminal] - 0.1) or (result.laneZs[nTerminal] -constants.stairsAndRampHeight) -- need 0.1 so the module can be removed
         for tc = 1, #terrainCoordinates do
             local face = { }
             for i = 1, 4 do
@@ -1409,6 +1446,9 @@ return {
                 }
             }
         }
+    end,
+    getGroundFacesFillKey_cargo = function(result, nTerminal, eraPrefix)
+        return privateFuncs.getGroundFacesFillKey_cargo(result, nTerminal, eraPrefix)
     end,
     getIsEndFillerEvery3 = function(nTrackEdge)
         return privateFuncs.getIsEndFillerEvery3(nTrackEdge)
@@ -1752,8 +1792,7 @@ return {
 
             local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
             local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
-            local _laneZ = result.laneZs[nTerminal]
-            local _zShift = _laneZ - constants.defaultPlatformHeight -- + constants.defaultPlatformHeight
+            local _zShift = 0
 
             local isFreeFromFlatAreas = false
             local occupiedWidth = 0
@@ -2502,7 +2541,7 @@ return {
                     }
                 }
             )
-
+-- LOLLO TODO head stations: station squares are not built
             local terrainAlignmentList = {
                 faces = { groundFace },
                 optional = true,
@@ -3378,12 +3417,16 @@ return {
             end
             _addLanes()
 
-            local _groundFacesFillKey = constants[_eraPrefix .. 'groundFacesFillKey']
+            local _groundFacesFillKey = _isCargoTerminal
+                and privateFuncs.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
+                or privateFuncs.getGroundFacesFillKey_passengers(_eraPrefix)
+            local _isTerrainFlush = (result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName)
+            local deltaZ = _isTerrainFlush and (-0.1) or (-constants.defaultPlatformHeight) -- need 0.1 so the module can be removed
 			local groundFace = { -- the ground faces ignore z, the alignment lists don't
-				{0, -_cpf.width * 0.5 - (_isRight and 0 or 5), -constants.defaultPlatformHeight, 1},
-				{0, _cpf.width * 0.5 + (_isRight and 5 or 0), -constants.defaultPlatformHeight, 1},
-				{_xSize * howMany4mChunks, _cpf.width * 0.5 + (_isRight and 5 or 0), -constants.defaultPlatformHeight, 1},
-				{_xSize * howMany4mChunks, -_cpf.width * 0.5 - (_isRight and 0 or 5), -constants.defaultPlatformHeight, 1},
+				{0, -_cpf.width * 0.5 - (_isRight and 0 or 5), deltaZ, 1},
+				{0, _cpf.width * 0.5 + (_isRight and 5 or 0), deltaZ, 1},
+				{_xSize * howMany4mChunks, _cpf.width * 0.5 + (_isRight and 5 or 0), deltaZ, 1},
+				{_xSize * howMany4mChunks, -_cpf.width * 0.5 - (_isRight and 0 or 5), deltaZ, 1},
 			}
 			modulesutil.TransformFaces(slotTransf, groundFace)
 			table.insert(
@@ -3435,6 +3478,7 @@ return {
             local _laneZ = result.laneZs[nTerminal]
             local _zShift = _laneZ - constants.defaultPlatformHeight
             local _modules = params.modules
+            local _isTerrainFlush = (result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName)
 
             local waitingAreaIndex = 0
             local nWaitingAreas = 0
@@ -3538,7 +3582,7 @@ return {
                                 end
                             end
 
-                            privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates)
+                            privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates, _isTerrainFlush)
                         end
                     else
                         isDecoBarred = true
@@ -3557,7 +3601,7 @@ return {
             end
 
             local terrainCoordinates = privateFuncs.slopedAreas.getTerrainCoordinates(result, params, nTerminal, terminalData, nTrackEdge, _isEndFiller, areaWidth, groundFacesFillKey)
-            privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates)
+            privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates, _isTerrainFlush)
 
             if waitingAreaModelId ~= nil and not(isDecoBarred) then
                 local cpl = terminalData.centrePlatformsRelative[nTrackEdge]

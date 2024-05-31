@@ -8,66 +8,69 @@ local transfUtilsUG = require "transf"
 
 
 function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "cargo-road-access", "cargo-road-access-axial", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("CargoStationSquarePlainName"),
+			description = _("CargoStationSquarePlainDesc"),
+			icon = "ui/lollo_freestyle_train_station/cargoStationSquarePlain.tga"
+		},
+		metadata = { },
+		order = {
+			value = 2, -- LOLLO NOTE put this first to speed up station configuration, since it has very few slots
+		},
+		type = _constants.cargoStationSquareModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			print('cargo station square has nTerminal =', tostring(nTerminal))
+			print('cargo station square has nTrackEdge =', tostring(nTrackEdge))
+			print('cargo station square has baseId =', tostring(baseId))
+			if not nTerminal or not nTrackEdge or not baseId then return end
 
-return {
-	availability = {
-		yearFrom = 0,
-		yearTo = 0
-	},
-	category = {
-		categories = { "cargo-road-access", },
-	},
-	cost = {
-		price = 0,
-	},
-	description = {
-		name = _("CargoStationSquarePlainName"),
-		description = _("CargoStationSquarePlainDesc"),
-		icon = "ui/lollo_freestyle_train_station/cargoStationSquarePlain.tga"
-	},
-	metadata = { },
-	order = {
-		value = 2, -- LOLLO NOTE put this first to speed up station configuration, since it has very few slots
-	},
-	type = _constants.cargoStationSquareModuleType,
-	updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
-		local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-		if not nTerminal or not nTrackEdge or not baseId then return end
+			local _eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
+			local groundFacesFillKey = moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
+			local groundFacesStrokeOuterKey = groundFacesFillKey
+			local modelId = nil
+			if _eraPrefix == moduleHelpers.eras.era_a.prefix then
+				modelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_square_plain.mdl'
+			elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then
+				modelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_square_plain.mdl'
+			else
+				modelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_square_plain.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = modelId,
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+			-- LOLLO TODO experiment to fix the station square on head stations
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
+				slotId = slotId,
+				transf = slotTransf,
+				tag = tag
+			}
+			print('cargo station square has transf =') debugPrint(slotTransf)
+			-- moduleHelpers.flatAreas.doTerrain4StationSquare(0, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
+		end,
 
-		local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-		local groundFacesFillKey = nil
-		local groundFacesStrokeOuterKey = nil
-		local modelId = nil
-		if eraPrefix == moduleHelpers.eras.era_a.prefix then
-			groundFacesFillKey = _constants.era_a_groundFacesFillKey
-			groundFacesStrokeOuterKey = _constants.era_a_groundFacesStrokeOuterKey
-			modelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_square_plain.mdl'
-		elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
-			groundFacesFillKey = _constants.era_b_groundFacesFillKey
-			groundFacesStrokeOuterKey = _constants.era_b_groundFacesStrokeOuterKey
-			modelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_square_plain.mdl'
-		else
-			groundFacesFillKey = _constants.era_c_groundFacesFillKey
-			groundFacesStrokeOuterKey = _constants.era_c_groundFacesStrokeOuterKey
-			modelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_square_plain.mdl'
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_square_plain.mdl',
+					transf = _constants.idTransf,
+				},
+			}
 		end
-		result.models[#result.models + 1] = {
-			id = modelId,
-			slotId = slotId,
-			transf = slotTransf,
-			tag = tag
-		}
-		moduleHelpers.flatAreas.doTerrain4StationSquare(0, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
-	end,
-
-	getModelsFn = function(params)
-		return {
-			{
-				id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_square_plain.mdl',
-				transf = _constants.idTransf,
-			},
-		}
-	end
-}
-
+	}
 end

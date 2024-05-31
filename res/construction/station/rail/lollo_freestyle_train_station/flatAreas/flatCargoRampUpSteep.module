@@ -36,10 +36,10 @@ function data()
 
 			local _terminalData = params.terminals[nTerminal]
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
-			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
-			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
-			local myModelId = _constants[era .. 'flatCargoRampUpSteepModelFileName']
+			local myGroundFacesFillKey = moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
+			local myModelId = _constants[_eraPrefix .. 'flatCargoRampUpSteepModelFileName']
 
 			result.models[#result.models + 1] = {
 				id = myModelId,

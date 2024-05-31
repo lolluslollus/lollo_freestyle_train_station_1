@@ -40,10 +40,10 @@ function data()
 			)
 
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
-			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
-			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
-			local myModelId = _constants[era .. 'flatCargoArea5x5ModelFileName']
+			local myGroundFacesFillKey = moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
+			local myModelId = _constants[_eraPrefix .. 'flatCargoArea5x5ModelFileName']
 
 			result.models[#result.models + 1] = {
 				id = myModelId,
@@ -52,7 +52,7 @@ function data()
 				tag = tag
 			}
 			local portalModelId = nil
-			if era == moduleHelpers.eras.era_a.prefix then
+			if _eraPrefix == moduleHelpers.eras.era_a.prefix then
 				portalModelId = 'lollo_freestyle_train_station/asset/cargo_portal_dark_4x4.mdl'
 			else
 				portalModelId = 'lollo_freestyle_train_station/asset/cargo_portal_4x4.mdl'

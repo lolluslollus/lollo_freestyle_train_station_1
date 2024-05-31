@@ -1,4 +1,4 @@
-local _constants = require('lollo_freestyle_train_station/constants')
+local _constants = require('lollo_freestyle_train_station.constants')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local helpers = {}
 

@@ -298,12 +298,12 @@ function data()
 				-- logger.print('set occupiedInfo.crossConnectorsWithSlopedAreas[t][i] =') logger.debugPrint(occupiedInfo.crossConnectorsWithSlopedAreas[t][i])
 				occupiedInfo.crossConnectorsWithSlopedAreas[t][i] = { id = newId, width = width or 0, yShift = yShift or 0 }
 			end
-			local _occupySlopedAreas = function(t, i, slotId, slotTypeId, yShift, slopedAreaWidth)
+			local _occupySlopedAreas = function(t, i, slotId, slotTypeId, yShift, slopedAreaWidth, terminalData)
 				if _modules[slotId] ~= nil then
 					if i > 1 then __setOccupiedInfo4SlopedAreas(t, i-1, slotTypeId, slopedAreaWidth, yShift) end
 					__setOccupiedInfo4SlopedAreas(t, i, slotTypeId, slopedAreaWidth, yShift)
-					if i+1 <= #params.terminals[t].centrePlatformsRelative then __setOccupiedInfo4SlopedAreas(t, i+1, slotTypeId, slopedAreaWidth, yShift) end
-					-- if i+2 <= #params.terminals[t].centrePlatformsRelative then __setOccupiedInfo4SlopedAreas(t, i+2, slotTypeId, slopedAreaWidth, yShift) end
+					if i+1 <= #terminalData.centrePlatformsRelative then __setOccupiedInfo4SlopedAreas(t, i+1, slotTypeId, slopedAreaWidth, yShift) end
+					-- if i+2 <= #terminalData.centrePlatformsRelative then __setOccupiedInfo4SlopedAreas(t, i+2, slotTypeId, slopedAreaWidth, yShift) end
 				end
 			end
 			result.getOccupiedInfo4PlatformHeads = function(t, i)
@@ -353,7 +353,9 @@ function data()
 
 			local topBottomTwinIndex = 1
 -- local timeMsec0 = os.clock() * 1000
-			for t = 1, #params.terminals do
+			local _paramsTerminals = params.terminals
+			local _numTerminals = #_paramsTerminals
+			for t = 1, _numTerminals do
 				local _terminalSlotId = result.mangleId(t, 0, _constants.idBases.terminalSlotId)
 				-- this is only a test to see if the transformation was ok. They match beautifully!
 				-- if #result.edgeLists > 0 then
@@ -363,7 +365,7 @@ function data()
 				-- 	logger.print('retransformed first edge =') logger.debugPrint(retransformedFirstEdge)
 				-- end
 
-				local _terminalData = params.terminals[t] -- write this away to speed up accesses to it
+				local _terminalData = _paramsTerminals[t] -- write this away to speed up accesses to it
 				local _cpfs = _terminalData.centrePlatformsFineRelative -- idem
 				local _isCargoTerminal = _terminalData.isCargo
 				if _isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
@@ -458,7 +460,7 @@ function data()
 									),
 									type = _constants.slopedPassengerArea1x2_5ModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess, 2.5)
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess, 2.5, _terminalData)
 							end
 						end
 						-- thick extensions only on ground or at tunnel entrances, never on bridges
@@ -479,7 +481,7 @@ function data()
 									),
 									type = _isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess, 5)
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess, 5, _terminalData)
 							end
 							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 10)
@@ -498,7 +500,7 @@ function data()
 									),
 									type = _isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess, 10)
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess, 10, _terminalData)
 							end
 							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 20)
@@ -517,7 +519,7 @@ function data()
 									),
 									type = _isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess, 20)
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess, 20, _terminalData)
 							end
 						end
 					end
@@ -1672,7 +1674,7 @@ function data()
 				local _makeCrossPlatformLinks = function()
 					local _getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom = function()
 						local results = {}
-						for t = 1, #params.terminals do
+						for t = 1, _numTerminals do
 							results[t] = {}
 							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
 							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] or {})
@@ -1684,7 +1686,7 @@ function data()
 
 					-- local _getAllPositions_UndergroundTop_GroundBottom = function()
 					-- 	local results = {}
-					-- 	for t = 1, #params.terminals do
+					-- 	for t = 1, _numTerminals do
 					-- 		results[t] = {}
 					-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
 					-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
@@ -1822,7 +1824,7 @@ function data()
 						-- sort the results so that the first index is always < the second index
 						if not(not(isOutputLog)) then print('#### _getSegmentsBetweenPos2Links_AcrossTerminals starting ' .. tostring(isOutputLog)) end
 
-						local _maxT = #params.terminals
+						local _maxT = _numTerminals
 						local _getMinDistanceSegments = function()
 							-- for each terminal, then for each connected point, 
 							-- get the connecting segments.
@@ -1998,7 +2000,7 @@ function data()
 						-- repeat with stairs 2 subway
 						-- not necessary, it can look ugly => we turn it off for now
 						-- local _linkAlong = function(positions)
-						-- 	for t = 1, #params.terminals do
+						-- 	for t = 1, _numTerminals do
 						-- 		local positionsInTerminal = positions[t]
 						-- 		if positionsInTerminal ~= nil and #positionsInTerminal > 1 then
 						-- 			local previousPosition = positionsInTerminal[1]
@@ -2026,7 +2028,7 @@ function data()
 						-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
 						local _linkedTerminals = {}
 						local function _linkAcross(segments, maxDistance, getModelId, linkedTerminals, maxSlope)
-							local maxT = #params.terminals
+							local maxT = _numTerminals
 							for _, segment in pairs(segments) do
 								if not(maxDistance) or segment.distance <= maxDistance then
 									if not(maxSlope) or math.abs((segment.pos2Link1[3] - segment.pos2Link2[3]) / segment.distance) <= maxSlope then
@@ -2116,7 +2118,7 @@ function data()
 					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, isCheck4Duplicates)
 						-- link platforms across terminals, on the ground, if they are close enough
 						local distanceX, distanceY, distanceZ = 0.0, 0.0, 0.0
-						local maxT = #params.terminals
+						local maxT = _numTerminals
 						for t = 1, maxT do
 							local positionsInT = positions[t]
 							if positionsInT ~= nil then
@@ -2175,7 +2177,7 @@ function data()
 					)
 					local _getAllHeadPositions = function()
 						local results = {}
-						for t = 1, #params.terminals do
+						for t = 1, _numTerminals do
 							results[t] = {}
 							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.autoStitchableInnerHeadPositions_by_T_I[t] or {})
 							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.autoStitchableOuterHeadPositions_by_T_I[t] or {})
@@ -2190,8 +2192,7 @@ function data()
 					local _linkHead2HeadPassengerPlatforms = function(maxLinkLength, modelId)
 						-- link platforms across terminals, on the ground, if they are close enough
 						local _getCentrePositionsAtTerminalEnds = function(t)
-							local _terminalData = params.terminals[t]
-							local _cpfs = _terminalData.centrePlatformsFineRelative
+							local _cpfs = _paramsTerminals[t].centrePlatformsFineRelative
 							local results = {
 								arrayUtils.cloneDeepOmittingFields(_cpfs[1].posTanX2[1][1]),
 								arrayUtils.cloneDeepOmittingFields(_cpfs[#_cpfs].posTanX2[2][1]),
@@ -2200,28 +2201,33 @@ function data()
 							results[2][3] = results[2][3] + result.laneZs[t]
 							return results
 						end
-						local maxT = #params.terminals
+						local maxT = _numTerminals
 						for t = 1, maxT do
-							local positionsInT = _getCentrePositionsAtTerminalEnds(t)
-							for tt = t + 1, maxT do
-								local positionsInTT = _getCentrePositionsAtTerminalEnds(tt)
-								for i = 1, #positionsInT do
-									for ii = 1, #positionsInTT do
-										if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i], positionsInTT[ii]) < maxLinkLength then
-											local tr = transfUtils.get1MLaneTransf(
-												positionsInT[i],
-												positionsInTT[ii]
-											)
-											result.models[#result.models+1] = {
-												id = modelId,
-												transf = tr
-											}
+							if not(_paramsTerminals[t].isCargo) then
+								local positionsInT = _getCentrePositionsAtTerminalEnds(t)
+								for tt = t + 1, maxT do
+									if not(_paramsTerminals[tt].isCargo) then
+										local positionsInTT = _getCentrePositionsAtTerminalEnds(tt)
+										for i = 1, #positionsInT do
+											for ii = 1, #positionsInTT do
+												if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i], positionsInTT[ii]) < maxLinkLength then
+													local tr = transfUtils.get1MLaneTransf(
+														positionsInT[i],
+														positionsInTT[ii]
+													)
+													result.models[#result.models+1] = {
+														id = modelId,
+														transf = tr
+													}
+												end
+											end
 										end
 									end
 								end
 							end
 						end
 					end
+
 					_linkHead2HeadPassengerPlatforms(
 						7.4, -- must be lower than (two narrow half platform widths + track width)
 						_constants.passengerLaneModelId
@@ -2247,7 +2253,7 @@ function data()
 									local minDistance = nil
 									local minDistanceI = nil
 									local minDistanceT = nil
-									for t = 1, #params.terminals do
+									for t = 1, _numTerminals do
 										if positions[t] ~= nil then
 											for i = 1, #positions[t] do
 												local distance = transfUtils.getPositionsDistance(subwayPos2Link, positions[t][i].pos2Link)
@@ -2422,8 +2428,8 @@ function data()
 						}
 					end
 
-					for t = 1, #params.terminals do
-						local isCargoTerminal = params.terminals[t].isCargo
+					for t = 1, _numTerminals do
+						local isCargoTerminal = _paramsTerminals[t].isCargo
 						table.insert(
 							result.terminalGroups,
 							{

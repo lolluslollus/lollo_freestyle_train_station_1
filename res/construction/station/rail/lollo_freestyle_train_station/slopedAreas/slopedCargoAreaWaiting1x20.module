@@ -45,7 +45,7 @@ function data()
 				20,
 				modelId,
 				_constants.cargoWaitingAreaCentredModelFileName,
-				_constants[_eraPrefix .. 'groundFacesFillKey'],
+				moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix),
 				true
 			)
 		end,

@@ -44,13 +44,13 @@ function data()
 			)
 
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
-			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
-			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
+			local myGroundFacesFillKey = moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
 			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station10x10_lower.mdl'
-			if eraPrefix == moduleHelpers.eras.era_a.prefix then
+			if _eraPrefix == moduleHelpers.eras.era_a.prefix then
 				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station10x10_lower.mdl'
-			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
+			elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then
 				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station10x10_lower.mdl'
 			end
 
