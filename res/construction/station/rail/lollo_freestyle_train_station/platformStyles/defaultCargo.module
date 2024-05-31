@@ -13,8 +13,8 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("PlatformStyleDefaultName"),
-			description = _("PlatformStyleDefaultDesc"),
+			name = _("PlatformStyleCargoDefaultName"),
+			description = _("PlatformStyleCargoDefaultDesc"),
 			icon = "ui/lollo_freestyle_train_station/platformStyleCargoDefault.tga"
 		},
 		metadata = { },
