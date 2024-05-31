@@ -31,9 +31,6 @@ function data()
 		type = _constants.cargoStationSquareModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
-			print('cargo station square has nTerminal =', tostring(nTerminal))
-			print('cargo station square has nTrackEdge =', tostring(nTrackEdge))
-			print('cargo station square has baseId =', tostring(baseId))
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local _eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
@@ -53,15 +50,13 @@ function data()
 				transf = slotTransf,
 				tag = tag
 			}
-			-- LOLLO TODO experiment to fix the station square on head stations
-			result.models[#result.models + 1] = {
-				id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
-				slotId = slotId,
-				transf = slotTransf,
-				tag = tag
-			}
-			print('cargo station square has transf =') debugPrint(slotTransf)
-			-- moduleHelpers.flatAreas.doTerrain4StationSquare(0, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
+			-- result.models[#result.models + 1] = {
+			-- 	id = 'lollo_freestyle_train_station/icon/red_huge.mdl',
+			-- 	slotId = slotId,
+			-- 	transf = slotTransf,
+			-- 	tag = tag
+			-- }
+			moduleHelpers.flatAreas.doTerrain4StationSquare(0, slotTransf, result, groundFacesFillKey, groundFacesStrokeOuterKey)
 		end,
 
 		getModelsFn = function(params)

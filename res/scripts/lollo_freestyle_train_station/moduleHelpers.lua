@@ -228,8 +228,7 @@ local privateFuncs = {
     getVariant = function(params, slotId)
         local _modules = params.modules
         local variant = 0
-        if type(params) == 'table'
-        and type(_modules) == 'table'
+        if type(_modules) == 'table'
         and type(_modules[slotId]) == 'table'
         and type(_modules[slotId].variant) == 'number' then
             variant = _modules[slotId].variant or 0
@@ -984,8 +983,8 @@ privateFuncs.platformHeads = {
                     return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_10m_wide_right.mdl'
                     or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_10m_wide_left.mdl'
                 else
-                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_10m_wide_right.mdl'
-                    or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_10m_wide_left.mdl'
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_10m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_10m_wide_left.mdl'
                 end
             elseif width < 20 then
                 if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
@@ -995,8 +994,8 @@ privateFuncs.platformHeads = {
                     return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_15m_wide_right.mdl'
                     or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_15m_wide_left.mdl'
                 else
-                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_15m_wide_right.mdl'
-                    or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_15m_wide_left.mdl'
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_15m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_15m_wide_left.mdl'
                 end
             else
                 if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
@@ -1006,8 +1005,8 @@ privateFuncs.platformHeads = {
                     return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_25m_wide_right.mdl'
                     or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_25m_wide_left.mdl'
                 else
-                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_25m_wide_right.mdl'
-                    or 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_25m_wide_left.mdl'
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_25m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_25m_wide_left.mdl'
                 end
             end
         else
@@ -1435,6 +1434,9 @@ return {
     getEraPrefix2 = function(params, nTerminal, terminalData, nTrackEdge)
         return privateFuncs.getEraPrefix(params, nTerminal, terminalData, nTrackEdge)
     end,
+    getFromVariant_FlatAreaHeight = function(variant, isFlush)
+        return privateFuncs.getFromVariant_FlatAreaHeight(variant, isFlush)
+    end,
     getGroundFace = function(face, key)
         return {
             face = face, -- LOLLO NOTE Z is ignored here
@@ -1798,7 +1800,7 @@ return {
             local occupiedWidth = 0
             local occupiedInfo4AxialAreas = result.getOccupiedInfo4AxialAreas(nTerminal, nTrackEdge)
             logger.print('occupiedInfo4AxialAreas =') logger.debugPrint(occupiedInfo4AxialAreas)
-            isFreeFromFlatAreas = occupiedInfo4AxialAreas == nil
+            isFreeFromFlatAreas = (occupiedInfo4AxialAreas == nil)
             if not(isFreeFromFlatAreas) then
                 occupiedWidth = occupiedInfo4AxialAreas.widthOnOwnTerminalHead
             end
@@ -2541,7 +2543,6 @@ return {
                     }
                 }
             )
--- LOLLO TODO head stations: station squares are not built
             local terrainAlignmentList = {
                 faces = { groundFace },
                 optional = true,

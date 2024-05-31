@@ -13,7 +13,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "cargo-road-access", "cargo-road-access-axial", },
+			categories = { "cargo-road-access" },
 		},
 		cost = {
 			price = 0,
@@ -29,7 +29,12 @@ function data()
 			moreCapacity = {
 				cargo = 80,
 				passenger = 0
-			}
+			},
+			-- stationSquareShiftXYZ = {
+			-- 	x = 17.2,
+			-- 	y = 7.5,
+			-- 	z = _constants.platformSideBitsZ -0.8
+			-- }
 		},
 		order = {
 			value = 35,
@@ -92,20 +97,18 @@ function data()
 			}
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {1, 1, 2, 2},
-				-- transf = transfUtilsUG.mul(
-				-- 	zAdjustedTransf, -- this model requires some z shift
-				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  17.2, 2.5, _constants.platformSideBitsZ -0.8, 1 }
-				-- ),
-				transf = transfUtils.getTransf_Shifted(
-					zAdjustedTransf,
-					{17.2, 2.5, _constants.platformSideBitsZ -0.8}
-				),
-				type = _constants.cargoStationSquareModuleType,
-			})
+			if baseId ~= _constants.idBases.axialStation0MSlotId then
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {1, 1, 2, 2},
+					transf = transfUtils.getTransf_Shifted(
+						zAdjustedTransf,
+						{17.2, 2.5, _constants.platformSideBitsZ -0.8}
+					),
+					type = _constants.cargoStationSquareModuleType,
+				})
+			end
 		end,
 
 		getModelsFn = function(params)

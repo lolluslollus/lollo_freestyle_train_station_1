@@ -91,7 +91,6 @@ function data()
 				}
 			)
 
-			-- print('buildingTransf =') debugPrint(buildingTransf)
 			table.insert(result.slots, {
 				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
 				shape = 1,
