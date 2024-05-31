@@ -833,6 +833,23 @@ function data()
 									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, station5mId) --, nCentrePlatformsRelative)
 								end
 							end
+							-- add slot for station square here coz it won't work in the module: the chain head - station - square is probably too long
+							local myModule5m = _modules[station5mId]
+							if myModule5m ~= nil then
+								local stationSquareShift_XYZ_rotZ = myModule5m.metadata ~= nil and myModule5m.metadata.stationSquareShift_XYZ_rotZ
+								if stationSquareShift_XYZ_rotZ ~= nil then
+									local variant = myModule5m.variant
+									local deltaZ = moduleHelpers.getFromVariant_FlatAreaHeight(variant, false)
+									table.insert(result.slots, {
+										id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.cargoStationSquareOuterSlotId),
+										shape = 1,
+										spacing = {1, 1, 2, 2},
+										transf = transfUtils.getTransf_Shifted(myTransfShifted2HeadEnd, {stationSquareShift_XYZ_rotZ.x, stationSquareShift_XYZ_rotZ.y, stationSquareShift_XYZ_rotZ.z + deltaZ}),
+										-- transf = transfUtils.getTransf_ZRotated_Shifted(myTransfShifted2HeadEnd, stationSquareShift_XYZ_rotZ.rotZ, {stationSquareShift_XYZ_rotZ.x, stationSquareShift_XYZ_rotZ.y, stationSquareShift_XYZ_rotZ.z + deltaZ}),
+										type = _isCargoTerminal and _constants.cargoStationSquareModuleType or _constants.passengerStationSquareModuleType,
+									})
+								end
+							end
 
 							if not(result.getOccupiedInfo4AxialAreas(t, cpf.leadingIndex))
 							or result.getOccupiedInfo4AxialAreas(t, cpf.leadingIndex).id == station0mId then
@@ -846,19 +863,20 @@ function data()
 									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, station0mId) --, nCentrePlatformsRelative)
 								end
 							end
-							-- add slot for station square here coz it won't work in the module, the chain head - station - square is probably too long
-							local myModule = _modules[station0mId]
-							if myModule ~= nil then
-								local stationSquareShiftXYZ = myModule.metadata ~= nil and myModule.metadata.stationSquareShiftXYZ
-								if stationSquareShiftXYZ ~= nil then
-									local variant = myModule.variant
+							-- add slot for station square here coz it won't work in the module: the chain head - station - square is probably too long
+							local myModule0m = _modules[station0mId]
+							if myModule0m ~= nil then
+								local stationSquareShift_XYZ_rotZ = myModule0m.metadata ~= nil and myModule0m.metadata.stationSquareShift_XYZ_rotZ
+								if stationSquareShift_XYZ_rotZ ~= nil then
+									local variant = myModule0m.variant
 									local deltaZ = moduleHelpers.getFromVariant_FlatAreaHeight(variant, false)
 									table.insert(result.slots, {
 										id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.cargoStationSquareOuterSlotId),
 										shape = 1,
 										spacing = {1, 1, 2, 2},
-										transf = transfUtils.getTransf_Shifted(myTransfShifted2HeadEnd, {stationSquareShiftXYZ.x, stationSquareShiftXYZ.y, stationSquareShiftXYZ.z + deltaZ}),
-										type = _constants.cargoStationSquareModuleType,
+										transf = transfUtils.getTransf_Shifted(myTransfShifted2HeadEnd, {stationSquareShift_XYZ_rotZ.x, stationSquareShift_XYZ_rotZ.y, stationSquareShift_XYZ_rotZ.z + deltaZ}),
+										-- transf = transfUtils.getTransf_ZRotated_Shifted(myTransfShifted2HeadEnd, stationSquareShift_XYZ_rotZ.rotZ, {stationSquareShift_XYZ_rotZ.x, stationSquareShift_XYZ_rotZ.y, stationSquareShift_XYZ_rotZ.z + deltaZ}),
+										type = _isCargoTerminal and _constants.cargoStationSquareModuleType or _constants.passengerStationSquareModuleType,
 									})
 								end
 							end

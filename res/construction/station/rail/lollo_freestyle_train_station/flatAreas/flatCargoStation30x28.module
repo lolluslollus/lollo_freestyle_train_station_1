@@ -13,7 +13,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "cargo-road-access" },
+			categories = { "cargo-road-access", "cargo-road-access-axial", },
 		},
 		cost = {
 			price = 0,
@@ -31,10 +31,11 @@ function data()
 				cargo = 180,
 				passenger = 0
 			},
-			-- stationSquareShiftXYZ = {
+			-- stationSquareShift_XYZ_rotZ = {
 			-- 	x = 22.8,
 			-- 	y = 12.5,
-			-- 	z = _constants.platformSideBitsZ
+			-- 	z = _constants.platformSideBitsZ,
+			--  rotZ = 0.0
 			-- }
 		},
 		order = {

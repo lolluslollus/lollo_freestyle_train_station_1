@@ -78,6 +78,12 @@ function data()
 				cargo = 0,
 				passenger = 90
 			},
+			-- stationSquareShift_XYZ_rotZ = {
+			-- 	x = 10.7, -- 13.2 2.5
+			-- 	y = 0.0,
+			-- 	z = -0.8,
+			-- 	rotZ = 0.0
+			-- }
 		},
 		order = {
 			value = 43,
@@ -159,16 +165,18 @@ function data()
 				}
 			)
 ]]
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-					buildingTransf,
-					{0, -20.7, 0}
-				),
-				type = _constants.passengerStationSquareModuleType,
-			})
+			if baseId ~= _constants.idBases.axialStation0MSlotId then
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {-1, 4, 4, 4},
+					transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+						buildingTransf,
+						{0, -20.7, 0}
+					),
+					type = _constants.passengerStationSquareModuleType,
+				})
+			end
 
 			local groundFace = {
 				{-1, -10.6, -0.8, 1},

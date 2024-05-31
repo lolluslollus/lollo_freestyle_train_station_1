@@ -28,10 +28,11 @@ function data()
 				cargo = 30,
 				passenger = 0
 			},
-			stationSquareShiftXYZ = {
+			stationSquareShift_XYZ_rotZ = {
 				x = 12.5,
-				y = 0,
-				z = -_constants.stairsAndRampHeight + _constants.platformSideBitsZ
+				y = 0.0,
+				z = -_constants.stairsAndRampHeight + _constants.platformSideBitsZ,
+				rotZ = 0.0
 			}
 		},
 		order = {
