@@ -73,7 +73,7 @@ function data()
             },
             polygon_offset = {
                 factor = 1,
-                forceDepthWrite = false,
+                forceDepthWrite = true,
                 units = 1,
             },
             two_sided = {
