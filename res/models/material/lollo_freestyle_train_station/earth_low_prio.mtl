@@ -4,12 +4,9 @@ function data()
         params = {
             albedo_scale = {
                 albedoScale = {
-                    -- 0.65,                      -- scale value of red color channel
-                    -- 0.64,                      -- scale value of green color channel
-                    -- 0.64                       -- scale value of blue color channel
-                    1.00,                      -- scale value of red color channel
-                    1.00,                      -- scale value of green color channel
-                    1.00                       -- scale value of blue color channel
+                    0.84,                      -- scale value of red color channel
+                    0.8,                      -- scale value of green color channel
+                    0.8                       -- scale value of blue color channel
                 }
             },
             fade_out_range = {
@@ -17,55 +14,62 @@ function data()
                 fadeOutStartDist = 10000,
             },
             map_albedo = {
-                -- fileName = "streets/country_old_large_paving_albedo.dds",
-                fileName = 'terrain/dirt_albedo.dds',
-                type = "TWOD",
-                wrapS = "REPEAT",
-                wrapT = "REPEAT",
+                fileName = 'streets/country_old_medium_paving_albedo.dds',
+                -- fileName = 'streets/country_old_large_paving_albedo.dds',
+                -- fileName = 'terrain/dirt_albedo.dds',
+                type = 'TWOD',
+                wrapS = 'REPEAT',
+                wrapT = 'REPEAT',
             },
             map_metal_gloss_ao = {
-                -- fileName = "streets/country_old_medium_paving_metal_gloss_ao.dds",
-                fileName = 'terrain/dirt_metal_gloss_ao_h.dds',
-                type = "TWOD",
-                wrapS = "REPEAT",
-                wrapT = "REPEAT",
+                -- fileName = 'streets/country_old_large_paving_metal_gloss_ao.dds',
+                fileName = 'streets/country_old_medium_paving_metal_gloss_ao.dds',
+                -- fileName = 'terrain/dirt_metal_gloss_ao_h.dds',
+                type = 'TWOD',
+                wrapS = 'REPEAT',
+                wrapT = 'REPEAT',
             },
             map_normal = {
-                -- fileName = "streets/country_old_medium_paving_normal.dds",
-                -- fileName = "ground_texture/farmland_brown_01_nrml.dds", -- gives plough stripes
-                fileName = "terrain/dirt_nrml.dds",
+                -- fileName = 'streets/country_old_large_paving_normal.dds',
+                fileName = 'streets/country_old_medium_paving_normal.dds',
+                -- fileName = 'ground_texture/farmland_brown_01_nrml.dds', -- gives plough stripes
+                -- fileName = 'terrain/dirt_nrml.dds',
                 redGreen = true,
-                type = "TWOD",
-                wrapS = "REPEAT",
-                wrapT = "REPEAT",
+                type = 'TWOD',
+                wrapS = 'REPEAT',
+                wrapT = 'REPEAT',
             },
             map_op_1 = {
-                fileName = "models/industry/overlay_textures/small_03.tga",
-                type = "TWOD",
-                wrapS = "REPEAT",
-                wrapT = "REPEAT",
+                -- fileName = 'models/industry/overlay_textures/small_03.dds',
+                fileName = 'models/industry/overlay_textures/small_08.dds',
+                -- fileName = 'terrain/overlay_0.dds',
+                type = 'TWOD',
+                wrapS = 'REPEAT',
+                wrapT = 'REPEAT',
             },
             map_op_2 = {
-                fileName = "streets/country_new_overlay.dds",
-                -- fileName = "terrain/overlay_0.dds",
-                type = "TWOD",
-                wrapS = "REPEAT",
-                wrapT = "REPEAT",
+                -- fileName = 'streets/country_new_overlay.dds',
+                fileName = 'terrain/overlay_0.dds',
+                -- fileName = 'models/industry/overlay_textures/big_02.dds',
+                type = 'TWOD',
+                wrapS = 'REPEAT',
+                wrapT = 'REPEAT',
             },
             normal_scale = {
-                normalScale = 1,
+                normalScale = 4,
             },
             operation_1 = {
-                mode = "WORLD_XY",
-                op = "OVERLAY",
-                opacity = 0.30000001192093,
-                scale = { 0.00062499998603016, 0.00062499998603016, },
+                mode = 'WORLD_XY',
+                -- op = 'OVERLAY',
+                op = 'NO_OP',
+                opacity = 0.1,
+                scale = { 0.4, 0.4, },
             },
             operation_2 = {
-                mode = "WORLD_XY",
-                op = "OVERLAY",
-                opacity = 0.30000001192093,
-                scale = { 0.0049999998882413, 0.0049999998882413, },
+                mode = 'WORLD_XY',
+                op = 'OVERLAY',
+                opacity = 0.3,
+                scale = { 0.01, 0.01, },
             },
             polygon_offset = {
                 factor = 1,
@@ -77,7 +81,6 @@ function data()
                 twoSided = false,
             },
         },
-        type = "PHYSICAL_NRML_MAP_OP",
+        type = 'PHYSICAL_NRML_MAP_OP',
     }
     end
-    
