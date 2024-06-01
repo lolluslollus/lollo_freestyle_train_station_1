@@ -68,7 +68,7 @@ function data()
             operation_2 = {
                 mode = 'WORLD_XY',
                 op = 'OVERLAY',
-                opacity = 0.3,
+                opacity = 0.6,
                 scale = { 0.01, 0.01, },
             },
             polygon_offset = {
