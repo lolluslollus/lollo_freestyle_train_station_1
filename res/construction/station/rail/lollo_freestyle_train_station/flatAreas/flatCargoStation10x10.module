@@ -66,6 +66,24 @@ function data()
 				tag = tag
 			}
 
+			local platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_platform_10x10.mdl'
+			if _eraPrefix == moduleHelpers.eras.era_b.prefix then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_platform_10x10.mdl'
+			elseif _eraPrefix == moduleHelpers.eras.era_a.prefix then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_platform_10x10.mdl'
+			end
+			if result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/earth_station_platform_10x10.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/gravel_station_platform_10x10.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = platformModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
+
 			if baseId == _constants.idBases.axialStation0MSlotId then
 				moduleHelpers.axialAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 			else

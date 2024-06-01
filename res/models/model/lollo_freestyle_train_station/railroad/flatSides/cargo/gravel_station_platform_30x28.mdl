@@ -37,7 +37,7 @@ function data()
 				},
 				static = false,
 				visibleFrom = 0,
-				visibleTo = 3500,
+				visibleTo = 1000,
 			},
 		},
 		metadata = {},

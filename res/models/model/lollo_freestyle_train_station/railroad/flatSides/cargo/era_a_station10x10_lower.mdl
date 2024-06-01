@@ -18,9 +18,6 @@ function data()
                     children = {
                         {
                             materials = {
-                                'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
-                                'lollo_freestyle_train_station/square_cobbles.mtl',
-                                'lollo_freestyle_train_station/square_cobbles.mtl',
                                 "lollo_freestyle_train_station/roof_tiles_schist.mtl",
                                 "lollo_freestyle_train_station/bricks_old.mtl",
                                 "lollo_freestyle_train_station/era_a_cargo_doors.mtl",

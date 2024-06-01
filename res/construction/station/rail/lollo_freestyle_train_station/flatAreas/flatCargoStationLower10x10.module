@@ -53,15 +53,32 @@ function data()
 			local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
 			local myGroundFacesFillKey = moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station10x10_lower.mdl'
+			local buildingModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station10x10_lower.mdl'
 			if _eraPrefix == moduleHelpers.eras.era_a.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station10x10_lower.mdl'
+				buildingModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station10x10_lower.mdl'
 			elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station10x10_lower.mdl'
+				buildingModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station10x10_lower.mdl'
 			end
-
 			result.models[#result.models + 1] = {
-				id = myModelId,
+				id = buildingModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
+
+			local platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_platform_10x10_lower.mdl'
+			if _eraPrefix == moduleHelpers.eras.era_b.prefix then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_platform_10x10_lower.mdl'
+			elseif _eraPrefix == moduleHelpers.eras.era_a.prefix then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_platform_10x10_lower.mdl'
+			end
+			if result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/earth_station_platform_10x10_lower.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/gravel_station_platform_10x10_lower.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = platformModelId,
 				slotId = slotId,
 				transf = zAdjustedTransf,
 				tag = tag

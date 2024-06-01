@@ -18,9 +18,6 @@ function data()
                     children = {
                         {
                             materials = {
-                                "lollo_freestyle_train_station/station_concrete_3.mtl",
-                                "lollo_freestyle_train_station/station_concrete_1.mtl",
-                                "lollo_freestyle_train_station/era_c_trainstation_darker_stripes.mtl",
                                 "lollo_freestyle_train_station/roof_tiles_4.mtl",
                                 -- "lollo_freestyle_train_station/roof_tiles_old.mtl",
                                 -- "lollo_freestyle_train_station/bricks.mtl",
@@ -39,34 +36,6 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 200,
-            },
-            {
-                node = {
-                    children = {
-                        {
-                            materials = {
-                                "lollo_freestyle_train_station/station_concrete_3.mtl",
-                                "lollo_freestyle_train_station/station_concrete_1.mtl",
-                                "lollo_freestyle_train_station/era_c_trainstation_darker_stripes.mtl",
-                                "lollo_freestyle_train_station/roof_tiles_4.mtl",
-                                -- "lollo_freestyle_train_station/roof_tiles_old.mtl",
-                                -- "lollo_freestyle_train_station/bricks.mtl",
-                                "lollo_freestyle_train_station/bricks_old.mtl",
-                                "lollo_freestyle_train_station/black_yellow_stripes.mtl",
-                                -- "lollo_freestyle_train_station/roof_concrete_2.mtl",
-                                "lollo_freestyle_train_station/concrete_and_windows.mtl",
-                            },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_station_10x10m_lower_lod0.msh',
-                            name = 'station_10x10_lower_lod1',
-                            transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
-                        },
-                    },
-                    name = 'RootNode',
-                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
-                },
-                static = false,
-                visibleFrom = 200,
                 visibleTo = 1000,
             },
         },
