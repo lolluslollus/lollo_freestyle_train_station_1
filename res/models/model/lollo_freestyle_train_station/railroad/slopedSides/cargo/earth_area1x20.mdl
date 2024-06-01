@@ -19,9 +19,9 @@ function data()
                 node = {
                     materials = {
                         'lollo_freestyle_train_station/earth.mtl',
-                        'lollo_freestyle_train_station/earth.mtl',
+                        'lollo_freestyle_train_station/wood_sawmill.mtl',
                         'lollo_freestyle_train_station/earth_z.mtl',
-                        'lollo_freestyle_train_station/earth_z.mtl',
+                        'lollo_freestyle_train_station/wood_sawmill_z.mtl',
                         'lollo_freestyle_train_station/earth_low_prio.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_a_platform_ext_1x20m.msh',

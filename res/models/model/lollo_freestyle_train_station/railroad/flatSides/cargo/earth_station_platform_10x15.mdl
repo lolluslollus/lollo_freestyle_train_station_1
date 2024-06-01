@@ -20,8 +20,8 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/earth.mtl',
                                 'lollo_freestyle_train_station/earth_z.mtl',
-                                'lollo_freestyle_train_station/earth.mtl',
-                                'lollo_freestyle_train_station/earth_z.mtl'
+                                'lollo_freestyle_train_station/wood_sawmill.mtl',
+                                'lollo_freestyle_train_station/wood_sawmill_z.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_platform_10x15_lod0.msh',
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },

@@ -75,9 +75,9 @@ local helpers = {}
     helpers.getPlatformTrackEarthCargoMaterials = function()
         return {
             'lollo_freestyle_train_station/earth.mtl',
-            'lollo_freestyle_train_station/earth.mtl',
+            'lollo_freestyle_train_station/wood_sawmill.mtl',
             'lollo_freestyle_train_station/earth_z.mtl',
-            'lollo_freestyle_train_station/earth_z.mtl',
+            'lollo_freestyle_train_station/wood_sawmill_z.mtl',
         }
     end
 
