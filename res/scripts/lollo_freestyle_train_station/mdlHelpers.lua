@@ -84,9 +84,9 @@ local helpers = {}
     helpers.getPlatformTrackGravelCargoMaterials = function()
         return {
             'lollo_freestyle_train_station/gravel.mtl',
-            'lollo_freestyle_train_station/gravel.mtl',
+            'lollo_freestyle_train_station/gravel_tiles.mtl',
             'lollo_freestyle_train_station/gravel_z.mtl',
-            'lollo_freestyle_train_station/gravel_z.mtl',
+            'lollo_freestyle_train_station/gravel_tiles_z.mtl',
         }
     end
 
