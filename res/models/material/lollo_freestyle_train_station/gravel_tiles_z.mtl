@@ -42,7 +42,7 @@ function data()
                 wrapT = 'REPEAT',
             },
             normal_scale = {
-                normalScale = -6,
+                normalScale = -4,
             },
             operation_1 = {
                 mode = 'WORLD_XY',
