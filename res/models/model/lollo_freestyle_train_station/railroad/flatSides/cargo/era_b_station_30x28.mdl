@@ -41,14 +41,6 @@ function data()
 									name = "main_building_s1_cargo_overlay",
 									transf = _adjTransf,
 								},
-								{
-									materials = {
-										'lollo_freestyle_train_station/station_concrete_3_low_prio.mtl',
-										'lollo_freestyle_train_station/square_marble_tiles_low_prio.mtl',
-									},
-									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
-									transf = _adjTransf,
-								},
 							},
 							name = "main_building_cargo_s1_lod0_exp",
 							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -88,14 +80,6 @@ function data()
 									name = "main_building_s1_cargo_overlay_2",
 									transf = _adjTransf,
 								},
-								{
-									materials = {
-										'lollo_freestyle_train_station/station_concrete_3_low_prio.mtl',
-										'lollo_freestyle_train_station/square_marble_tiles_low_prio.mtl',
-									},
-									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
-									transf = _adjTransf,
-								},
 							},
 							name = "main_building_cargo_s1_lod1_exp",
 							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -126,14 +110,6 @@ function data()
 									-- mesh = "station/water/era_a/main_building_s1_cargo/main_building_s1_cargo_3_lod2.msh",
 									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_s1_cargo_3_lod2.msh',
 									name = "main_building_s1_cargo_3",
-									transf = _adjTransf,
-								},
-								{
-									materials = {
-										'lollo_freestyle_train_station/station_concrete_3_low_prio.mtl',
-										'lollo_freestyle_train_station/square_marble_tiles_low_prio.mtl',
-									},
-									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
 									transf = _adjTransf,
 								},
 							},

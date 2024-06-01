@@ -1,0 +1,148 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 6480,
+					offset = 25508,
+				},
+				position = {
+					count = 6480,
+					offset = 38468,
+				},
+				tangent = {
+					count = 6480,
+					offset = 44948,
+				},
+				uv0 = {
+					count = 6480,
+					offset = 31988,
+				},
+			},
+			materials = {
+				"wall.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 1224,
+					offset = 51428,
+				},
+				position = {
+					count = 1224,
+					offset = 53876,
+				},
+				tangent = {
+					count = 1224,
+					offset = 55100,
+				},
+				uv0 = {
+					count = 1224,
+					offset = 52652,
+				},
+			},
+			materials = {
+				"roof.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 2568,
+					offset = 56324,
+				},
+				position = {
+					count = 2568,
+					offset = 61460,
+				},
+				tangent = {
+					count = 2568,
+					offset = 64028,
+				},
+				uv0 = {
+					count = 2568,
+					offset = 58892,
+				},
+			},
+			materials = {
+				"windows.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 1152,
+					offset = 66596,
+				},
+				position = {
+					count = 1152,
+					offset = 68900,
+				},
+				tangent = {
+					count = 1152,
+					offset = 70052,
+				},
+				uv0 = {
+					count = 1152,
+					offset = 67748,
+				},
+			},
+			materials = {
+				"roofEdge.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 864,
+					offset = 71204,
+				},
+				position = {
+					count = 864,
+					offset = 72932,
+				},
+				tangent = {
+					count = 864,
+					offset = 73796,
+				},
+				uv0 = {
+					count = 864,
+					offset = 72068,
+				},
+			},
+			materials = {
+				"borders.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 2748,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 8376,
+			numComp = 3,
+			offset = 7804,
+		},
+		tangent = {
+			count = 9328,
+			numComp = 4,
+			offset = 16180,
+		},
+		uv0 = {
+			count = 5056,
+			numComp = 2,
+			offset = 2748,
+		},
+	},
+}
+end

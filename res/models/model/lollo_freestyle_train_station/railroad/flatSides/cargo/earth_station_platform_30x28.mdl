@@ -1,0 +1,96 @@
+function data()
+	local _constants = require('lollo_freestyle_train_station.constants')
+	local _adjTransf = {0, -1, 0, 0,  1, 0, 0, 0,  0, 0, 1, 0,  10.2, 0, 0, 1}
+	return {
+		boundingInfo = {
+			bbMax = { 22.8, 15.0, 13.8, },
+			bbMin = { -2.5, -15.0, -2.0, },
+		},
+		collider = {
+			params = {
+				halfExtents = { 12.65, 15.0, 7.9, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 10.15, 0, 5.9, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{
+				node = {
+					children = {
+						{
+							children = {
+								{
+									materials = {
+										'lollo_freestyle_train_station/earth_low_prio.mtl',
+										'lollo_freestyle_train_station/earth_low_prio.mtl',
+									},
+									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
+									transf = _adjTransf,
+								},
+							},
+							name = "main_building_cargo_s1_lod0_exp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 0,
+				visibleTo = 100,
+			},
+			{
+				node = {
+					children = {
+						{
+							children = {
+								{
+									materials = {
+										'lollo_freestyle_train_station/earth_low_prio.mtl',
+										'lollo_freestyle_train_station/earth_low_prio.mtl',
+									},
+									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
+									transf = _adjTransf,
+								},
+							},
+							name = "main_building_cargo_s1_lod1_exp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 100,
+				visibleTo = 400,
+			},
+			{
+				node = {
+					children = {
+						{
+							children = {
+								{
+									materials = {
+										'lollo_freestyle_train_station/earth_low_prio.mtl',
+										'lollo_freestyle_train_station/earth_low_prio.mtl',
+									},
+									mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_large/main_building_base.msh',
+									transf = _adjTransf,
+								},
+							},
+							name = "main_building_cargo_s1_lod2_exp",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				static = false,
+				visibleFrom = 400,
+				visibleTo = 3500,
+			},
+		},
+		metadata = {},
+		version = 1,
+	}
+end

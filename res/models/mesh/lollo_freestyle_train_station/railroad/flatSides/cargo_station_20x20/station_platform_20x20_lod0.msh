@@ -1,0 +1,76 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 992,
+				},
+				position = {
+					count = 96,
+					offset = 1088,
+				},
+				tangent = {
+					count = 96,
+					offset = 896,
+				},
+				uv0 = {
+					count = 96,
+					offset = 800,
+				},
+			},
+			materials = {
+				"pavement.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 168,
+					offset = 1520,
+				},
+				position = {
+					count = 168,
+					offset = 1688,
+				},
+				tangent = {
+					count = 168,
+					offset = 1352,
+				},
+				uv0 = {
+					count = 168,
+					offset = 1184,
+				},
+			},
+			materials = {
+				"pavementEdge.001.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 72,
+			numComp = 3,
+			offset = 512,
+		},
+		position = {
+			count = 216,
+			numComp = 3,
+			offset = 584,
+		},
+		tangent = {
+			count = 64,
+			numComp = 4,
+			offset = 448,
+		},
+		uv0 = {
+			count = 448,
+			numComp = 2,
+			offset = 0,
+		},
+	},
+}
+end
