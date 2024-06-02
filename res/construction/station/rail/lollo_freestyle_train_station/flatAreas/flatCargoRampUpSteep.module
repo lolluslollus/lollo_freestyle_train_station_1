@@ -39,8 +39,18 @@ function data()
 			local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
 			local myGroundFacesFillKey = moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
-			local myModelId = _constants[_eraPrefix .. 'flatCargoRampUpSteepModelFileName']
 
+			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/ramp_up_steep.mdl'
+			if _eraPrefix == moduleHelpers.eras.era_b.prefix then
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_ramp_up_steep.mdl'
+			elseif _eraPrefix == moduleHelpers.eras.era_a.prefix then
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_ramp_up_steep.mdl'
+			end
+			if result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/earth_ramp_up_steep.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/gravel_ramp_up_steep.mdl'
+			end
 			result.models[#result.models + 1] = {
 				id = myModelId,
 				slotId = slotId,
@@ -89,7 +99,7 @@ function data()
 		getModelsFn = function(params)
 			return {
 				{
-					id = _constants.era_c_flatCargoRampUpSteepModelFileName,
+					id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/ramp_up_steep.mdl',
 					transf = _constants.idTransf,
 				},
 				moduleHelpers.flatAreas.getPreviewIcon(params),
