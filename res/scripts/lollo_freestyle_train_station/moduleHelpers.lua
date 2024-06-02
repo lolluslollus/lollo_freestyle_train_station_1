@@ -975,7 +975,7 @@ privateFuncs.openStairs = {
 privateFuncs.platformHeads = {
     getHeadModelId = function (eraPrefix, isCargo, isRight, width, platformStyleModuleFileName)
         if isCargo then
-            if width < 10 then
+			if width < 10 then
                 if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
                     return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_10m_wide_right.mdl'
                     or 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_10m_wide_left.mdl'
@@ -3108,6 +3108,9 @@ return {
             -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
             -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
             -- The former is a bit glitchy, the latter is prettier.
+            local _isCargoTerminal = terminalData.isCargo
+            if _isCargoTerminal and result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
+
             local _modules = params.modules
             local _maxIIMod10 = constants.maxPassengerWaitingAreaEdgeLength
 
@@ -3259,7 +3262,7 @@ return {
                     end
                 end
             end
-            local _isCargoTerminal = terminalData.isCargo
+
             local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
             local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
             local _cpfs = terminalData.centrePlatformsFineRelative
@@ -3317,6 +3320,8 @@ return {
 			local _xSize = 4
 
             local _addModel = function()
+                if _isCargoTerminal and result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
+
                 local _modelId = privateFuncs.platformHeads.getHeadModelId(_eraPrefix, _isCargoTerminal, _isRight, _cpf.width, _platformStyleModuleFileName)
                 local posTanX2 = nTrackEdge == 1 and transfUtils.getPosTanX2Reversed(_cpf.posTanX2) or _cpf.posTanX2
                 for hh = 1, howMany4mChunks do
@@ -3421,7 +3426,11 @@ return {
             local _groundFacesFillKey = _isCargoTerminal
                 and privateFuncs.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
                 or privateFuncs.getGroundFacesFillKey_passengers(_eraPrefix)
-            local _isTerrainFlush = (result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName)
+            local _isTerrainFlush = (
+                result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
+                or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
+                or (_isCargoTerminal and result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround)
+            )
             local deltaZ = _isTerrainFlush and (-0.1) or (-constants.defaultPlatformHeight) -- need 0.1 so the module can be removed
 			local groundFace = { -- the ground faces ignore z, the alignment lists don't
 				{0, -_cpf.width * 0.5 - (_isRight and 0 or 5), deltaZ, 1},
@@ -3479,7 +3488,12 @@ return {
             local _laneZ = result.laneZs[nTerminal]
             local _zShift = _laneZ - constants.defaultPlatformHeight
             local _modules = params.modules
-            local _isTerrainFlush = (result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName)
+            local _isCargoTerminal = terminalData.isCargo
+            local _isTerrainFlush = (
+                result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
+                or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
+                or (_isCargoTerminal and result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround)
+            )
 
             local waitingAreaIndex = 0
             local nWaitingAreas = 0

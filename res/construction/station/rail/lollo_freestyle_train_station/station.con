@@ -381,7 +381,7 @@ function data()
 					for _, modu in pairs({_modu0, _modu1}) do
 						if modu ~= nil then
 							for __, plh in pairs(platformHeights) do
-								if modu.name == plh.moduleFileName then return plh.aboveGround end
+								if modu.name == plh.moduleFileName and (_isCargoTerminal or not(plh.isOnlyCargo)) then return plh.aboveGround end
 							end
 							-- LOLLO TODO if you fumble enough, the edge connections might break and removeNeighbours might crash: check it
 							-- so far, 20cm crashes the game and 25cm is fine

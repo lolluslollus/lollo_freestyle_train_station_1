@@ -44,10 +44,15 @@ function data()
 				elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_b_trackCrossing.mdl'
 				else modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_c_trackCrossing.mdl'
 				end
-			else
+			elseif _laneZ > 0.6 then
 				if _eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_a_trackCrossing_low.mdl'
 				elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_b_trackCrossing_low.mdl'
 				else modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_c_trackCrossing_low.mdl'
+				end
+			else
+				if _eraPrefix == moduleHelpers.eras.era_a.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_a_trackCrossing_flat.mdl'
+				elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_b_trackCrossing_flat.mdl'
+				else modelId = 'lollo_freestyle_train_station/railroad/trackCrossing/era_c_trackCrossing_flat.mdl'
 				end
 			end
 			result.models[#result.models + 1] = {

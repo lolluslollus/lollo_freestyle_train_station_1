@@ -50,6 +50,7 @@ local constants = {
     defaultPlatformHeight = 1.2,
     platformHeights = { -- there must be a module for each record
     -- LOLLO TODO bridges may crash when lowering the platform to 20 cm (Purupuppertal). For now I do 25, I may have to raise it further: check it.
+        _0cm = {aboveRail = 0.0, aboveGround = 0.40, isOnlyCargo = true, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight0.module',},
         _25cm = {aboveRail = 0.25, aboveGround = 0.65, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight25.module',},
         _40cm = {aboveRail = 0.4, aboveGround = 0.8, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight40.module',},
         _60cm = {aboveRail = 0.6, aboveGround = 1.0, moduleFileName = 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight60.module',},
@@ -122,7 +123,9 @@ local constants = {
     era_b_groundFacesFillKey = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua', -- 'shared/asphalt_01.gtex.lua',
     era_c_groundFacesFillKey = 'lollo_freestyle_train_station/asphalt_02_high_priority.lua', -- 'shared/asphalt_02.gtex.lua',
     earth_groundFacesFillKey = 'lollo_freestyle_train_station/earth_high_priority.lua',
-    gravel_groundFacesFillKey = 'lollo_freestyle_train_station/gravel_02_high_priority.lua',
+    -- gravel_groundFacesFillKey = 'lollo_freestyle_train_station/gravel_02_high_priority.lua',
+    -- gravel_groundFacesFillKey = 'lollo_freestyle_train_station/gravel_01_high_priority.lua',
+    gravel_groundFacesFillKey = 'ballast.lua',
     era_a_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/gravel_03_high_priority.lua',
     era_b_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua',
     era_c_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_02_high_priority.lua',

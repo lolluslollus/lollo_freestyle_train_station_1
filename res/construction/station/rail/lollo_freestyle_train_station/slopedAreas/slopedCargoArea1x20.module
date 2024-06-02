@@ -46,6 +46,9 @@ function data()
 			elseif result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
 				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/cargo/gravel_area1x20.mdl'
 			end
+			if result.laneZs[nTerminal] == _constants.platformHeights._0cm.aboveGround then
+				modelId = 'lollo_freestyle_train_station/empty.mdl'
+			end
 			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, _terminalData, nTrackEdge, _eraPrefix,
 				20,
 				modelId,

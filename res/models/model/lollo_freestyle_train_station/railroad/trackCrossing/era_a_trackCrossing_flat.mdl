@@ -1,0 +1,26 @@
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    materials = {
+                        'lollo_freestyle_train_station/square_cobbles.mtl',
+                        'lollo_freestyle_train_station/square_cobbles_z.mtl',
+                        'lollo_freestyle_train_station/square_cobbles_low_prio.mtl',
+                    },
+                    mesh = 'lollo_freestyle_train_station/railroad/trackCrossing/track_crossing_flat_2_5_m_lod0.msh',
+                    -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end
