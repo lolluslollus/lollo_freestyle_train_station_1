@@ -31,7 +31,7 @@ function data()
                 wrapS = 'REPEAT',
                 wrapT = 'REPEAT',
             },
-            map_op_1 = {
+			map_op_1 = {
                 fileName = "models/industry/overlay_textures/big_05.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
@@ -52,7 +52,7 @@ function data()
                 -- op = "OVERLAY",
                 op = "NO_OP",
 				-- op = "MULTIPLICATION",
-                opacity = 0.075,
+                opacity = 0.3,
                 scale = { 0.1, 0.1, },
             },
             operation_2 = {
@@ -60,7 +60,7 @@ function data()
                 -- mode = "NORMAL",
                 -- op = "OVERLAY",
 				op = "MULTIPLICATION",
-                opacity = 0.4,
+                opacity = 0.8,
                 scale = { 1.5, 1.5, },
             },
             polygon_offset = {
@@ -76,3 +76,4 @@ function data()
         type = 'PHYSICAL_NRML_MAP_OP',
     }
 end
+ 
