@@ -171,6 +171,19 @@ local helpers = {}
         }
     end
 
+    helpers.getVoidLods = function ()
+        return {
+            {
+                node = {
+                    -- name = 'RootNode',
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100,
+            },
+        }
+    end
+
     helpers.subway = {
         getClaphamMediumTransportNetworkProvider = function()
             return {
