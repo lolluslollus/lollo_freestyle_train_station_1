@@ -128,6 +128,7 @@ local privateFuncs = {
         elseif result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
             groundFacesFillKey = constants.gravel_groundFacesFillKey
         end
+        if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then groundFacesFillKey = constants.gravel_groundFacesFillKey end
 
         return groundFacesFillKey
     end,
@@ -3109,7 +3110,7 @@ return {
             -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
             -- The former is a bit glitchy, the latter is prettier.
             local _isCargoTerminal = terminalData.isCargo
-            if _isCargoTerminal and result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
+            if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
 
             local _modules = params.modules
             local _maxIIMod10 = constants.maxPassengerWaitingAreaEdgeLength
@@ -3320,7 +3321,7 @@ return {
 			local _xSize = 4
 
             local _addModel = function()
-                if _isCargoTerminal and result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
+                if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
 
                 local _modelId = privateFuncs.platformHeads.getHeadModelId(_eraPrefix, _isCargoTerminal, _isRight, _cpf.width, _platformStyleModuleFileName)
                 local posTanX2 = nTrackEdge == 1 and transfUtils.getPosTanX2Reversed(_cpf.posTanX2) or _cpf.posTanX2
@@ -3429,7 +3430,7 @@ return {
             local _isTerrainFlush = (
                 result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
                 or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
-                or (_isCargoTerminal and result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround)
+                or result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround
             )
             local deltaZ = _isTerrainFlush and (-0.1) or (-constants.defaultPlatformHeight) -- need 0.1 so the module can be removed
 			local groundFace = { -- the ground faces ignore z, the alignment lists don't
@@ -3492,7 +3493,7 @@ return {
             local _isTerrainFlush = (
                 result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
                 or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
-                or (_isCargoTerminal and result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround)
+                or result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround
             )
 
             local waitingAreaIndex = 0
