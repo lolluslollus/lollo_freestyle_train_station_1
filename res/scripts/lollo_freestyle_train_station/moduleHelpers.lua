@@ -128,7 +128,7 @@ local privateFuncs = {
         elseif result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
             groundFacesFillKey = constants.gravel_groundFacesFillKey
         end
-        if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then groundFacesFillKey = constants.gravel_groundFacesFillKey end
+        -- if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then groundFacesFillKey = constants.gravel_groundFacesFillKey end
 
         return groundFacesFillKey
     end,

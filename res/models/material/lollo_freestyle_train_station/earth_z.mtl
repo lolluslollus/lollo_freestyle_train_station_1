@@ -3,11 +3,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = {
-                    0.84,                      -- scale value of red color channel
-                    0.8,                      -- scale value of green color channel
-                    0.8                       -- scale value of blue color channel
-                }
+                albedoScale = {0.65, 0.59, 0.62},
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
