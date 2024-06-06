@@ -36,15 +36,15 @@ function data()
 			elseif _eraPrefix == _constants.eras.era_b.prefix then
 				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_b_area1x10.mdl'
 			end
-			if result.platformStyles[nTerminal] == _constants.platformStyles.era_b_db.moduleFileName then
+			if result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_b_db.moduleFileName then
 				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_b_db_area1x10.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
 				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_c_db_1_stripe_area1x10.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
 				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_c_db_1_stripe_area1x10.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
 				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_c_db_1_stripe_area1x10.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
 				modelId = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/era_c_db_2_stripes_area1x10.mdl'
 			end
 			moduleHelpers.slopedAreas.addAll(result, tag, slotId, params, nTerminal, _terminalData, nTrackEdge, _eraPrefix,

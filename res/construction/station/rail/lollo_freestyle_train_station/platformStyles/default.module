@@ -13,15 +13,15 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("PlatformStyleDefaultName"),
-			description = _("PlatformStyleDefaultDesc"),
+			name = _("PlatformStylePassengersDefaultName"),
+			description = _("PlatformStylePassengersDefaultDesc"),
 			icon = "ui/lollo_freestyle_train_station/platformStylePassengersEraCDefault.tga"
 		},
 		metadata = { },
 		order = {
 			value = 11,
 		},
-		type = _constants.platformStyleModuleType,
+		type = _constants.passengersPlatformStyleModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			-- if not nTerminal or not baseId then return end

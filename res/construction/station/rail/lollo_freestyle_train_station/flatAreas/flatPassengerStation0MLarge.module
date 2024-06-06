@@ -31,6 +31,12 @@ function data()
 				cargo = 0,
 				passenger = 90
 			},
+			stationSquareShift_XYZ_rotZ = {
+				x = 8.25,
+				y = 0.0,
+				z = -_constants.stairsAndRampHeight,
+				rotZ = 0.0
+			}
 		},
 		order = {
 			value = 36,
@@ -91,17 +97,18 @@ function data()
 				}
 			)
 
-			-- print('buildingTransf =') debugPrint(buildingTransf)
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-					buildingTransf,
-					{0, -8.25, -_constants.stairsAndRampHeight}
-				),
-				type = _constants.passengerStationSquareModuleType,
-			})
+			if baseId ~= _constants.idBases.axialStation0MSlotId then
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {-1, 4, 4, 4},
+					transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+						buildingTransf,
+						{0, -8.25, -_constants.stairsAndRampHeight}
+					),
+					type = _constants.passengerStationSquareModuleType,
+				})
+			end
 
 			local groundFace = { -- the ground faces ignore z, the alignment lists don't. We lower the terrain a tad so it does not overpower the floor.
 				{-1, -15.2, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1},

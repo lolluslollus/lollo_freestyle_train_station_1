@@ -179,7 +179,12 @@ function data()
 						message = nil,
 						skipCollisionCheck = true,
 					},
-					[_constants.platformStyleModuleType] = {
+					[_constants.cargoPlatformStyleModuleType] = {
+						maxModules = -1,
+						message = nil,
+						skipCollisionCheck = true,
+					},
+					[_constants.passengersPlatformStyleModuleType] = {
 						maxModules = -1,
 						message = nil,
 						skipCollisionCheck = true,
@@ -238,7 +243,10 @@ function data()
 				if occupiedInfo.crossConnectorsWithFlatAreas[t] == nil then
 					occupiedInfo.crossConnectorsWithFlatAreas[t] = {}
 				end
-				occupiedInfo.crossConnectorsWithFlatAreas[t][i] = {id = newId, isEven = not(not(isEven))}
+				occupiedInfo.crossConnectorsWithFlatAreas[t][i] = {
+					id = newId,
+					isEven = not(not(isEven))
+				}
 			end
 			local _setOccupiedInfo4LargeFlatAreas = function(t, i, myId, iMax)
 				local nEvenSegmentPairs = _modules[myId].metadata.nEvenSegmentPairs or 0
@@ -293,12 +301,12 @@ function data()
 				-- logger.print('set occupiedInfo.crossConnectorsWithSlopedAreas[t][i] =') logger.debugPrint(occupiedInfo.crossConnectorsWithSlopedAreas[t][i])
 				occupiedInfo.crossConnectorsWithSlopedAreas[t][i] = { id = newId, width = width or 0, yShift = yShift or 0 }
 			end
-			local _occupySlopedAreas = function(t, i, slotId, slotTypeId, yShift, slopedAreaWidth)
+			local _occupySlopedAreas = function(t, i, slotId, slotTypeId, yShift, slopedAreaWidth, terminalData)
 				if _modules[slotId] ~= nil then
 					if i > 1 then __setOccupiedInfo4SlopedAreas(t, i-1, slotTypeId, slopedAreaWidth, yShift) end
 					__setOccupiedInfo4SlopedAreas(t, i, slotTypeId, slopedAreaWidth, yShift)
-					if i+1 <= #params.terminals[t].centrePlatformsRelative then __setOccupiedInfo4SlopedAreas(t, i+1, slotTypeId, slopedAreaWidth, yShift) end
-					-- if i+2 <= #params.terminals[t].centrePlatformsRelative then __setOccupiedInfo4SlopedAreas(t, i+2, slotTypeId, slopedAreaWidth, yShift) end
+					if i+1 <= #terminalData.centrePlatformsRelative then __setOccupiedInfo4SlopedAreas(t, i+1, slotTypeId, slopedAreaWidth, yShift) end
+					-- if i+2 <= #terminalData.centrePlatformsRelative then __setOccupiedInfo4SlopedAreas(t, i+2, slotTypeId, slopedAreaWidth, yShift) end
 				end
 			end
 			result.getOccupiedInfo4PlatformHeads = function(t, i)
@@ -348,7 +356,9 @@ function data()
 
 			local topBottomTwinIndex = 1
 -- local timeMsec0 = os.clock() * 1000
-			for t = 1, #params.terminals do
+			local _paramsTerminals = params.terminals
+			local _numTerminals = #_paramsTerminals
+			for t = 1, _numTerminals do
 				local _terminalSlotId = result.mangleId(t, 0, _constants.idBases.terminalSlotId)
 				-- this is only a test to see if the transformation was ok. They match beautifully!
 				-- if #result.edgeLists > 0 then
@@ -357,12 +367,21 @@ function data()
 				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
 				-- 	logger.print('retransformed first edge =') logger.debugPrint(retransformedFirstEdge)
 				-- end
+
+				local _terminalData = _paramsTerminals[t] -- write this away to speed up accesses to it
+				local _cpfs = _terminalData.centrePlatformsFineRelative -- idem
+				local _isCargoTerminal = _terminalData.isCargo
+				if _isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
+
+				local _isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
+
 				local _getPlatformHeight = function()
+					local platformHeights = _constants.platformHeights
 					local _modu0, _modu1 = _modules[result.mangleId(t, 0, _constants.idBases.platformHeightSlotId)], _modules[result.mangleId(t, 1, _constants.idBases.platformHeightSlotId)]
 					for _, modu in pairs({_modu0, _modu1}) do
 						if modu ~= nil then
-							for __, plh in pairs(_constants.platformHeights) do
-								if modu.name == plh.moduleFileName then return plh.aboveGround end
+							for __, plh in pairs(platformHeights) do
+								if modu.name == plh.moduleFileName and (_isCargoTerminal or not(plh.isOnlyCargo)) then return plh.aboveGround end
 							end
 							-- LOLLO TODO if you fumble enough, the edge connections might break and removeNeighbours might crash: check it
 							-- so far, 20cm crashes the game and 25cm is fine
@@ -374,10 +393,11 @@ function data()
 				local _laneZ = result.laneZs[t]
 
 				local _getPlatformStyle = function()
+					local platformStyles = _isCargoTerminal and _constants.cargoPlatformStyles or _constants.passengersPlatformStyles
 					local _modu0, _modu1 = _modules[result.mangleId(t, 0, _constants.idBases.platformStyleSlotId)], _modules[result.mangleId(t, 1, _constants.idBases.platformStyleSlotId)]
 					for _, modu in pairs({_modu0, _modu1}) do
 						if modu ~= nil then
-							for __, pls in pairs(_constants.platformStyles) do
+							for __, pls in pairs(platformStyles) do
 								if modu.name == pls.moduleFileName then return pls.moduleFileName end
 							end
 						end
@@ -385,13 +405,6 @@ function data()
 					return nil
 				end
 				result.platformStyles[t] = _getPlatformStyle()
-
-				local _terminalData = params.terminals[t] -- write this away to speed up accesses to it
-				local _cpfs = _terminalData.centrePlatformsFineRelative -- idem
-				local _isCargoTerminal = _terminalData.isCargo
-				if _isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
-
-				local _isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
 
 				local function _addCargoShelves()
 					if not(_isCargoTerminal) then return end
@@ -450,7 +463,7 @@ function data()
 									),
 									type = _constants.slopedPassengerArea1x2_5ModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess, 2.5)
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess, 2.5, _terminalData)
 							end
 						end
 						-- thick extensions only on ground or at tunnel entrances, never on bridges
@@ -471,7 +484,7 @@ function data()
 									),
 									type = _isCargoTerminal and _constants.slopedCargoArea1x5ModuleType or _constants.slopedPassengerArea1x5ModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess, 5)
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x5SlotId, yShiftOutside4StreetAccess, 5, _terminalData)
 							end
 							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x10SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 10)
@@ -490,7 +503,7 @@ function data()
 									),
 									type = _isCargoTerminal and _constants.slopedCargoArea1x10ModuleType or _constants.slopedPassengerArea1x10ModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess, 10)
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x10SlotId, yShiftOutside4StreetAccess, 10, _terminalData)
 							end
 							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x20SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 20)
@@ -509,7 +522,7 @@ function data()
 									),
 									type = _isCargoTerminal and _constants.slopedCargoArea1x20ModuleType or _constants.slopedPassengerArea1x20ModuleType,
 								})
-								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess, 20)
+								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x20SlotId, yShiftOutside4StreetAccess, 20, _terminalData)
 							end
 						end
 					end
@@ -534,7 +547,7 @@ function data()
 							)
 							if not(_isCargoTerminal) then
 								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatPassengerEdgeSlotId then
+								or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.flatPassengerEdgeSlotId then
 									local myId = result.mangleId(t, i, _constants.idBases.flatPassengerEdgeSlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -550,7 +563,7 @@ function data()
 							end
 							if cpl.type == 0 and cplP1.type == 0 then -- ground
 								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flushExitSlotId then
+								or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.flushExitSlotId then
 									local myId = result.mangleId(t, i, _constants.idBases.flushExitSlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -564,7 +577,7 @@ function data()
 									end
 								end
 								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStairsOrRampSlotId then
+								or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.flatStairsOrRampSlotId then
 									local myId = result.mangleId(t, i, _constants.idBases.flatStairsOrRampSlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -578,7 +591,7 @@ function data()
 									end
 								end
 								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea5x5SlotId then
+								or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.flatArea5x5SlotId then
 									local myId = result.mangleId(t, i, _constants.idBases.flatArea5x5SlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -592,7 +605,7 @@ function data()
 									end
 								end
 								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea8x5SlotId then
+								or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.flatArea8x5SlotId then
 									local myId = result.mangleId(t, i, _constants.idBases.flatArea8x5SlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -606,7 +619,7 @@ function data()
 									end
 								end
 								if not(result.getOccupiedInfo4FlatAreas(t, i))
-								or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatArea8x10SlotId then
+								or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.flatArea8x10SlotId then
 									local myId = result.mangleId(t, i, _constants.idBases.flatArea8x10SlotId)
 									table.insert(result.slots, {
 										-- height = 0,
@@ -621,7 +634,7 @@ function data()
 								end
 								if not(_isCargoTerminal) then
 									if not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStation0MSlotId then
+									or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.flatStation0MSlotId then
 										local myId = result.mangleId(t, i, _constants.idBases.flatStation0MSlotId)
 										table.insert(result.slots, {
 											-- height = 0,
@@ -635,7 +648,7 @@ function data()
 										end
 									end
 									if not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.flatStation5MSlotId then
+									or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.flatStation5MSlotId then
 										local myId = result.mangleId(t, i, _constants.idBases.flatStation5MSlotId)
 										table.insert(result.slots, {
 											-- height = 0,
@@ -652,7 +665,7 @@ function data()
 							elseif cpl.type == 1 and cplP1.type == 1 then -- bridge
 								if not(_isCargoTerminal) then
 									if not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.sideLiftSlotId then
+									or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.sideLiftSlotId then
 										local myId = result.mangleId(t, i, _constants.idBases.sideLiftSlotId)
 										table.insert(result.slots, {
 											-- height = 0,
@@ -667,7 +680,7 @@ function data()
 									end
 									if i < #_terminalData.centrePlatformsRelative
 									and (not(result.getOccupiedInfo4FlatAreas(t, i))
-									or result.getOccupiedInfo4FlatAreas(t, i) == _constants.idBases.platformLiftSlotId) then
+									or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.platformLiftSlotId) then
 										local xyZoomFactor = _isTrackOnPlatformLeft and 1 or -1
 										-- local myTransf_xy = transfUtilsUG.mul(
 										-- 	moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
@@ -695,8 +708,7 @@ function data()
 				_addFlatAreas()
 
 				local function _addAxialExits()
-					local ii_s = { 1, #_cpfs }
-					for _, ii in pairs(ii_s) do
+					for _, ii in pairs({ 1, #_cpfs }) do
 						local cpf = _cpfs[ii]
 						local adjacentPosTanX2 = (ii == 1)
 							and transfUtils.getPosTanX2Normalised(
@@ -745,7 +757,7 @@ function data()
 						logger.print('occupiedInfo4Head =') logger.debugPrint(occupiedInfo4Head)
 						local myTransfShifted2HeadEnd = transfUtils.getTransf_Shifted(myTransf, {occupiedInfo4Head.xShift, 0, occupiedInfo4Head.zShift})
 
-						-- adjust xShift if head available
+						-- adjust yShift if head available
 						if _modules[platformHeadId] ~= nil then
 							local halfPlatformWidth = _terminalData.centrePlatformsRelative[cpf.leadingIndex].width * 0.5
 							local yShift = (cpf.leadingIndex == 1)
@@ -806,51 +818,66 @@ function data()
 								type = _constants.platformWallModuleType,
 							})
 
-							local stationId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialStation0MSlotId)
+							local station0mId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialStation0MSlotId)
 							local station5mId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialStation5MSlotId)
-							if _isCargoTerminal then -- cargo stations
+
+							if not(result.getOccupiedInfo4AxialAreas(t, cpf.leadingIndex))
+							or result.getOccupiedInfo4AxialAreas(t, cpf.leadingIndex).id == station5mId then
 								table.insert(result.slots, {
-									-- height = 0,
 									id = station5mId,
 									spacing = {1, -0.5, 1, 1},
 									transf = myTransfShifted2HeadEnd,
-									type = _constants.flatCargoArea8x5ModuleType,
+									type = _isCargoTerminal and _constants.flatCargoArea8x5ModuleType or _constants.flatPassengerStation5MModuleType,
 								})
 								if _modules[station5mId] ~= nil then
 									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, station5mId) --, nCentrePlatformsRelative)
 								end
+							end
+							-- add slot for station square here coz it won't work in the module: the chain head - station - square is probably too long
+							local myModule5m = _modules[station5mId]
+							if myModule5m ~= nil then
+								local stationSquareShift_XYZ_rotZ = myModule5m.metadata ~= nil and myModule5m.metadata.stationSquareShift_XYZ_rotZ
+								if stationSquareShift_XYZ_rotZ ~= nil then
+									local variant = myModule5m.variant
+									local deltaZ = moduleHelpers.getFromVariant_FlatAreaHeight(variant, false)
+									table.insert(result.slots, {
+										id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.cargoStationSquareOuterSlotId),
+										shape = 1,
+										spacing = {1, 1, 2, 2},
+										transf = transfUtils.getTransf_Shifted(myTransfShifted2HeadEnd, {stationSquareShift_XYZ_rotZ.x, stationSquareShift_XYZ_rotZ.y, stationSquareShift_XYZ_rotZ.z + deltaZ}),
+										-- transf = transfUtils.getTransf_ZRotated_Shifted(myTransfShifted2HeadEnd, stationSquareShift_XYZ_rotZ.rotZ, {stationSquareShift_XYZ_rotZ.x, stationSquareShift_XYZ_rotZ.y, stationSquareShift_XYZ_rotZ.z + deltaZ}),
+										type = _isCargoTerminal and _constants.cargoStationSquareModuleType or _constants.passengerStationSquareModuleType,
+									})
+								end
+							end
 
+							if not(result.getOccupiedInfo4AxialAreas(t, cpf.leadingIndex))
+							or result.getOccupiedInfo4AxialAreas(t, cpf.leadingIndex).id == station0mId then
 								table.insert(result.slots, {
-									-- height = 0,
-									id = stationId,
+									id = station0mId,
 									spacing = {1, -0.5, 1, 1},
 									transf = myTransfShifted2HeadEnd,
-									type = _constants.flatCargoArea8x10ModuleType,
+									type = _isCargoTerminal and _constants.flatCargoArea8x10ModuleType or _constants.flatPassengerStation0MModuleType,
 								})
-								if _modules[stationId] ~= nil then
-									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, stationId) --, nCentrePlatformsRelative)
+								if _modules[station0mId] ~= nil then
+									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, station0mId) --, nCentrePlatformsRelative)
 								end
-							else -- passenger stations
-								table.insert(result.slots, {
-									-- height = 0,
-									id = stationId,
-									spacing = {1, -0.5, 1, 1},
-									transf = myTransfShifted2HeadEnd, -- must use the same transf as the others, will shift it in the module
-									type = _constants.flatPassengerStation0MModuleType,
-								})
-								if _modules[stationId] ~= nil then
-									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, stationId) --, nCentrePlatformsRelative)
-								end
-
-								table.insert(result.slots, {
-									-- height = 0,
-									id = station5mId,
-									spacing = {1, -0.5, 1, 1},
-									transf = myTransfShifted2HeadEnd, -- must use the same transf as the others, will shift it in the module
-									type = _constants.flatPassengerStation5MModuleType,
-								})
-								if _modules[station5mId] ~= nil then
-									_setOccupiedInfo4AxialAreas(t, cpf.leadingIndex, station5mId) --, nCentrePlatformsRelative)
+							end
+							-- add slot for station square here coz it won't work in the module: the chain head - station - square is probably too long
+							local myModule0m = _modules[station0mId]
+							if myModule0m ~= nil then
+								local stationSquareShift_XYZ_rotZ = myModule0m.metadata ~= nil and myModule0m.metadata.stationSquareShift_XYZ_rotZ
+								if stationSquareShift_XYZ_rotZ ~= nil then
+									local variant = myModule0m.variant
+									local deltaZ = moduleHelpers.getFromVariant_FlatAreaHeight(variant, false)
+									table.insert(result.slots, {
+										id = result.mangleId(t, cpf.leadingIndex, _constants.idBases.cargoStationSquareOuterSlotId),
+										shape = 1,
+										spacing = {1, 1, 2, 2},
+										transf = transfUtils.getTransf_Shifted(myTransfShifted2HeadEnd, {stationSquareShift_XYZ_rotZ.x, stationSquareShift_XYZ_rotZ.y, stationSquareShift_XYZ_rotZ.z + deltaZ}),
+										-- transf = transfUtils.getTransf_ZRotated_Shifted(myTransfShifted2HeadEnd, stationSquareShift_XYZ_rotZ.rotZ, {stationSquareShift_XYZ_rotZ.x, stationSquareShift_XYZ_rotZ.y, stationSquareShift_XYZ_rotZ.z + deltaZ}),
+										type = _isCargoTerminal and _constants.cargoStationSquareModuleType or _constants.passengerStationSquareModuleType,
+									})
 								end
 							end
 						end
@@ -1446,17 +1473,16 @@ function data()
 						})
 					end
 
+					-- Platform style, same as platform heights
+					local _platformStyleSlotId0 = result.mangleId(t, 0, _constants.idBases.platformStyleSlotId)
+					local _platformStyleSlotId1 = result.mangleId(t, 1, _constants.idBases.platformStyleSlotId)
 					if not(_isCargoTerminal) then
-						-- Platform style
-						-- the same as platform heights
-						local _platformStyleSlotId0 = result.mangleId(t, 0, _constants.idBases.platformStyleSlotId)
-						local _platformStyleSlotId1 = result.mangleId(t, 1, _constants.idBases.platformStyleSlotId)
 						table.insert(result.slots, {
 							id = _platformStyleSlotId0,
 							shape = 3,
 							spacing = {0, 0, 0, 0}, -- this can collide so we keep it zero
 							transf = myTransf,
-							type = _constants.platformStyleModuleType,
+							type = _constants.passengersPlatformStyleModuleType,
 						})
 						if _modules[_platformStyleSlotId0] ~= nil or _modules[_platformStyleSlotId1] ~= nil then
 							table.insert(result.slots, {
@@ -1464,7 +1490,24 @@ function data()
 								shape = 3,
 								spacing = {0, 0, 0, 0}, -- this can collide so we keep it zero
 								transf = myTransf,
-								type = _constants.platformStyleModuleType,
+								type = _constants.passengersPlatformStyleModuleType,
+							})
+						end
+					else
+						table.insert(result.slots, {
+							id = _platformStyleSlotId0,
+							shape = 3,
+							spacing = {0, 0, 0, 0}, -- this can collide so we keep it zero
+							transf = myTransf,
+							type = _constants.cargoPlatformStyleModuleType,
+						})
+						if _modules[_platformStyleSlotId0] ~= nil or _modules[_platformStyleSlotId1] ~= nil then
+							table.insert(result.slots, {
+								id = _platformStyleSlotId1,
+								shape = 3,
+								spacing = {0, 0, 0, 0}, -- this can collide so we keep it zero
+								transf = myTransf,
+								type = _constants.cargoPlatformStyleModuleType,
 							})
 						end
 					end
@@ -1648,7 +1691,7 @@ function data()
 				local _makeCrossPlatformLinks = function()
 					local _getAllPositions_UndergroundBottom_UndergroundTop_GroundBottom_LiftBottom = function()
 						local results = {}
-						for t = 1, #params.terminals do
+						for t = 1, _numTerminals do
 							results[t] = {}
 							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
 							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsBottomPositions[t] or {})
@@ -1660,7 +1703,7 @@ function data()
 
 					-- local _getAllPositions_UndergroundTop_GroundBottom = function()
 					-- 	local results = {}
-					-- 	for t = 1, #params.terminals do
+					-- 	for t = 1, _numTerminals do
 					-- 		results[t] = {}
 					-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.underpassPositionsOnGround[t] or {})
 					-- 		arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.tunnelStairsTopPositions[t] or {})
@@ -1798,7 +1841,7 @@ function data()
 						-- sort the results so that the first index is always < the second index
 						if not(not(isOutputLog)) then print('#### _getSegmentsBetweenPos2Links_AcrossTerminals starting ' .. tostring(isOutputLog)) end
 
-						local _maxT = #params.terminals
+						local _maxT = _numTerminals
 						local _getMinDistanceSegments = function()
 							-- for each terminal, then for each connected point, 
 							-- get the connecting segments.
@@ -1974,7 +2017,7 @@ function data()
 						-- repeat with stairs 2 subway
 						-- not necessary, it can look ugly => we turn it off for now
 						-- local _linkAlong = function(positions)
-						-- 	for t = 1, #params.terminals do
+						-- 	for t = 1, _numTerminals do
 						-- 		local positionsInTerminal = positions[t]
 						-- 		if positionsInTerminal ~= nil and #positionsInTerminal > 1 then
 						-- 			local previousPosition = positionsInTerminal[1]
@@ -2002,7 +2045,7 @@ function data()
 						-- Different terminals on bridges and on or under ground are not connected together: the user must build lifts.
 						local _linkedTerminals = {}
 						local function _linkAcross(segments, maxDistance, getModelId, linkedTerminals, maxSlope)
-							local maxT = #params.terminals
+							local maxT = _numTerminals
 							for _, segment in pairs(segments) do
 								if not(maxDistance) or segment.distance <= maxDistance then
 									if not(maxSlope) or math.abs((segment.pos2Link1[3] - segment.pos2Link2[3]) / segment.distance) <= maxSlope then
@@ -2092,7 +2135,7 @@ function data()
 					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, isCheck4Duplicates)
 						-- link platforms across terminals, on the ground, if they are close enough
 						local distanceX, distanceY, distanceZ = 0.0, 0.0, 0.0
-						local maxT = #params.terminals
+						local maxT = _numTerminals
 						for t = 1, maxT do
 							local positionsInT = positions[t]
 							if positionsInT ~= nil then
@@ -2151,7 +2194,7 @@ function data()
 					)
 					local _getAllHeadPositions = function()
 						local results = {}
-						for t = 1, #params.terminals do
+						for t = 1, _numTerminals do
 							results[t] = {}
 							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.autoStitchableInnerHeadPositions_by_T_I[t] or {})
 							arrayUtils.concatValues(results[t], result.terminateConstructionHookInfo.autoStitchableOuterHeadPositions_by_T_I[t] or {})
@@ -2166,8 +2209,7 @@ function data()
 					local _linkHead2HeadPassengerPlatforms = function(maxLinkLength, modelId)
 						-- link platforms across terminals, on the ground, if they are close enough
 						local _getCentrePositionsAtTerminalEnds = function(t)
-							local _terminalData = params.terminals[t]
-							local _cpfs = _terminalData.centrePlatformsFineRelative
+							local _cpfs = _paramsTerminals[t].centrePlatformsFineRelative
 							local results = {
 								arrayUtils.cloneDeepOmittingFields(_cpfs[1].posTanX2[1][1]),
 								arrayUtils.cloneDeepOmittingFields(_cpfs[#_cpfs].posTanX2[2][1]),
@@ -2176,28 +2218,33 @@ function data()
 							results[2][3] = results[2][3] + result.laneZs[t]
 							return results
 						end
-						local maxT = #params.terminals
+						local maxT = _numTerminals
 						for t = 1, maxT do
-							local positionsInT = _getCentrePositionsAtTerminalEnds(t)
-							for tt = t + 1, maxT do
-								local positionsInTT = _getCentrePositionsAtTerminalEnds(tt)
-								for i = 1, #positionsInT do
-									for ii = 1, #positionsInTT do
-										if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i], positionsInTT[ii]) < maxLinkLength then
-											local tr = transfUtils.get1MLaneTransf(
-												positionsInT[i],
-												positionsInTT[ii]
-											)
-											result.models[#result.models+1] = {
-												id = modelId,
-												transf = tr
-											}
+							if not(_paramsTerminals[t].isCargo) then
+								local positionsInT = _getCentrePositionsAtTerminalEnds(t)
+								for tt = t + 1, maxT do
+									if not(_paramsTerminals[tt].isCargo) then
+										local positionsInTT = _getCentrePositionsAtTerminalEnds(tt)
+										for i = 1, #positionsInT do
+											for ii = 1, #positionsInTT do
+												if maxLinkLength == nil or transfUtils.getPositionsDistance(positionsInT[i], positionsInTT[ii]) < maxLinkLength then
+													local tr = transfUtils.get1MLaneTransf(
+														positionsInT[i],
+														positionsInTT[ii]
+													)
+													result.models[#result.models+1] = {
+														id = modelId,
+														transf = tr
+													}
+												end
+											end
 										end
 									end
 								end
 							end
 						end
 					end
+
 					_linkHead2HeadPassengerPlatforms(
 						7.4, -- must be lower than (two narrow half platform widths + track width)
 						_constants.passengerLaneModelId
@@ -2223,7 +2270,7 @@ function data()
 									local minDistance = nil
 									local minDistanceI = nil
 									local minDistanceT = nil
-									for t = 1, #params.terminals do
+									for t = 1, _numTerminals do
 										if positions[t] ~= nil then
 											for i = 1, #positions[t] do
 												local distance = transfUtils.getPositionsDistance(subwayPos2Link, positions[t][i].pos2Link)
@@ -2398,8 +2445,8 @@ function data()
 						}
 					end
 
-					for t = 1, #params.terminals do
-						local isCargoTerminal = params.terminals[t].isCargo
+					for t = 1, _numTerminals do
+						local isCargoTerminal = _paramsTerminals[t].isCargo
 						table.insert(
 							result.terminalGroups,
 							{

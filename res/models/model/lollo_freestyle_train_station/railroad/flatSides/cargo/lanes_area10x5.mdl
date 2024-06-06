@@ -1,0 +1,52 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants') -- LOLLO NOTE this is critical: 0.5 or 0.6 will crash coz it will be at the same height as the platform-track
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = _mdlHelpers.getVoidLods(),
+        metadata = {
+            transportNetworkProvider = {
+                laneLists = {
+                    {
+                        linkable = false, -- false, --true,
+                        nodes = {
+                            {
+                                { 0, 0, 0 },
+                                { 2.5, 0, 0 },
+                                3.0,
+                            },
+                            {
+                                { 2.5, 0, 0 },
+                                { 2.5, 0, 0 },
+                                3.0,
+                            },
+                        },
+                        transportModes = { 'CARGO', 'PERSON', },
+                        speedLimit = 20,
+                    },
+                    {
+                        linkable = true, -- false, --true,
+                        nodes = {
+                            {
+                                { 2.5, 0, 0 },
+                                { 2.5, 0, 0 },
+                                2.0,
+                            },
+                            {
+                                { 5, 0, -_constants.stairsAndRampHeight },
+                                { 2.5, 0, 0 },
+                                2.0,
+                            },
+                        },
+                        transportModes = { 'CARGO', 'PERSON', },
+                        speedLimit = 20,
+                    },
+                },
+                runways = { },
+                terminals = { },
+            },
+        },
+        version = 1
+    }
+end

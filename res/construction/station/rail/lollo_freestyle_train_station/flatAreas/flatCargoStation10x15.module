@@ -27,6 +27,12 @@ function data()
 			moreCapacity = {
 				cargo = 30,
 				passenger = 0
+			},
+			stationSquareShift_XYZ_rotZ = {
+				x = 12.5,
+				y = 0.0,
+				z = -_constants.stairsAndRampHeight + _constants.platformSideBitsZ,
+				rotZ = 0.0
 			}
 		},
 		order = {
@@ -44,16 +50,34 @@ function data()
 			)
 
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
-			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
-			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_10x15.mdl'
-			if eraPrefix == moduleHelpers.eras.era_a.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_10x15.mdl'
+			local myGroundFacesFillKey = moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
+
+			local stationModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_10x15.mdl'
+			if _eraPrefix == moduleHelpers.eras.era_a.prefix then
+				stationModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_10x15.mdl'
 			end
-
 			result.models[#result.models + 1] = {
-				id = myModelId,
+				id = stationModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
+
+			local platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_station_platform_10x15.mdl'
+			if _eraPrefix == moduleHelpers.eras.era_b.prefix then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_station_platform_10x15.mdl'
+			elseif _eraPrefix == moduleHelpers.eras.era_a.prefix then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_station_platform_10x15.mdl'
+			end
+			if result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/earth_station_platform_10x15.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/gravel_station_platform_10x15.mdl'
+			end
+			result.models[#result.models + 1] = {
+				id = platformModelId,
 				slotId = slotId,
 				transf = zAdjustedTransf,
 				tag = tag
@@ -85,20 +109,22 @@ function data()
 			}
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
 
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {1, 1, 2, 2},
-				-- transf = transfUtilsUG.mul(
-				-- 	zAdjustedTransf,
-				-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, 0, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1 }
-				-- ),
-				transf = transfUtils.getTransf_Shifted(
-					zAdjustedTransf,
-					{7.5, 0, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ}
-				),
-				type = _constants.cargoStationSquareModuleType,
-			})
+			if baseId ~= _constants.idBases.axialStation0MSlotId then
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.cargoStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {1, 1, 2, 2},
+					-- transf = transfUtilsUG.mul(
+					-- 	zAdjustedTransf,
+					-- 	{ 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  7.5, 0, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ, 1 }
+					-- ),
+					transf = transfUtils.getTransf_Shifted(
+						zAdjustedTransf,
+						{7.5, 0, -_constants.stairsAndRampHeight + _constants.platformSideBitsZ}
+					),
+					type = _constants.cargoStationSquareModuleType,
+				})
+			end
 		end,
 
 		getModelsFn = function(params)

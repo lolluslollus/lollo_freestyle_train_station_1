@@ -1,0 +1,125 @@
+function data()
+return {
+	matConfigs = {
+		{
+			0, 0, 0, 0, 
+		}, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 984,
+				},
+				position = {
+					count = 48,
+					offset = 1032,
+				},
+				tangent = {
+					count = 48,
+					offset = 1080,
+				},
+				uv0 = {
+					count = 48,
+					offset = 1128,
+				},
+			},
+			materials = {
+				"low_prio.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 48,
+					offset = 1176,
+				},
+				position = {
+					count = 48,
+					offset = 1224,
+				},
+				tangent = {
+					count = 48,
+					offset = 1272,
+				},
+				uv0 = {
+					count = 48,
+					offset = 1320,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/flatSides/high_prio.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 120,
+					offset = 1368,
+				},
+				position = {
+					count = 120,
+					offset = 1488,
+				},
+				tangent = {
+					count = 120,
+					offset = 1608,
+				},
+				uv0 = {
+					count = 120,
+					offset = 1728,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/flatSides/edge_low_prio.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 120,
+					offset = 1848,
+				},
+				position = {
+					count = 120,
+					offset = 1968,
+				},
+				tangent = {
+					count = 120,
+					offset = 2088,
+				},
+				uv0 = {
+					count = 120,
+					offset = 2208,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/railroad/flatSides/edge_high_prio.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 48,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 336,
+			numComp = 3,
+			offset = 48,
+		},
+		tangent = {
+			count = 64,
+			numComp = 4,
+			offset = 384,
+		},
+		uv0 = {
+			count = 536,
+			numComp = 2,
+			offset = 448,
+		},
+	},
+}
+end

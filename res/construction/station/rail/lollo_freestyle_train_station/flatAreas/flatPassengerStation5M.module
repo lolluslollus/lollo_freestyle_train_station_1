@@ -28,6 +28,12 @@ function data()
 				cargo = 0,
 				passenger = 20
 			},
+			stationSquareShift_XYZ_rotZ = {
+				x = 4.75,
+				y = 0.0,
+				z = -5,
+				rotZ = 0.0
+			}
 		},
 		order = {
 			value = 32,
@@ -97,16 +103,18 @@ function data()
 				}
 			end
 
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-					buildingTransf,
-					{0, -4.75, -5}
-				),
-				type = _constants.passengerStationSquareModuleType,
-			})
+			if baseId ~= _constants.idBases.axialStation5MSlotId then
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {-1, 4, 4, 4},
+					transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+						buildingTransf,
+						{0, -4.75, -5}
+					),
+					type = _constants.passengerStationSquareModuleType,
+				})
+			end
 
 			local groundFace = { -- the ground faces ignore z, the alignment lists don't
 				{-1, -5.2, -5.0, 1},

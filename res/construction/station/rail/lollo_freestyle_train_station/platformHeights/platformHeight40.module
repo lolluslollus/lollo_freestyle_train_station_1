@@ -19,7 +19,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 40,
+			value = 50,
 		},
 		type = _constants.platformHeightModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)

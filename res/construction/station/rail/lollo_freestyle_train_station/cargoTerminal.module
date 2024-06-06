@@ -51,14 +51,14 @@ return {
 
 		local laneZ = result.laneZs[nTerminal]
 		local isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
-		local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, 1)
+		local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, 1)
 
-		local stationSignModelId = era == moduleHelpers.eras.era_c.prefix
+		local stationSignModelId = (eraPrefix == moduleHelpers.eras.era_c.prefix)
 			and 'lollo_freestyle_train_station/asset/era_c_cargo_station_sign.mdl'
 			or 'lollo_freestyle_train_station/asset/era_a_cargo_station_sign.mdl'
 		local lampsModelId = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_sodium.mdl'
-			if era == moduleHelpers.eras.era_a.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps.mdl'
-			elseif era == moduleHelpers.eras.era_b.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_b_cargo_lamps.mdl'
+			if eraPrefix == moduleHelpers.eras.era_a.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps.mdl'
+			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_b_cargo_lamps.mdl'
 			end
 
 		if logger.isExtendedLog() then
@@ -101,7 +101,7 @@ return {
 			}
 		end
 		-- start from 3 to avoid deco peeping out of the platform
-		for i = 3, #_cps - 1, 3 do
+		for i = 3, #_cps - 1, 6 do
 			local cpl = _cps[i]
 			local platformWidth = cpl.width
 			-- sign near the track
@@ -116,7 +116,7 @@ return {
 				tag = tag
 			}
 		end
-		for i = 4, #_cps - 1, 3 do
+		for i = 4, #_cps - 1, 6 do
 			local cpl = _cps[i]
 			local platformWidth = cpl.width
 			local yShift = isTrackOnPlatformLeft and platformWidth * 0.5 - 0.2 or -platformWidth * 0.5 + 0.2
@@ -144,7 +144,7 @@ return {
 				tag = tag
 			}
 		end
-		if era ~= moduleHelpers.eras.era_a.prefix then
+		if eraPrefix ~= moduleHelpers.eras.era_a.prefix then
 			for i = 4, #_cps - 1, 4 do
 				local cpl = _cps[i]
 				local platformWidth = cpl.width

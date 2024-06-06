@@ -21,7 +21,7 @@ function data()
 		order = {
 			value = 17,
 		},
-		type = _constants.platformStyleModuleType,
+		type = _constants.passengersPlatformStyleModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			-- if not nTerminal or not baseId then return end

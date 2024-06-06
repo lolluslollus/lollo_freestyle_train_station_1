@@ -72,6 +72,24 @@ local helpers = {}
         }
     end
 
+    helpers.getPlatformTrackEarthCargoMaterials = function()
+        return {
+            'lollo_freestyle_train_station/earth.mtl',
+            'lollo_freestyle_train_station/wood_sawmill.mtl',
+            'lollo_freestyle_train_station/earth_z.mtl',
+            'lollo_freestyle_train_station/wood_sawmill_z.mtl',
+        }
+    end
+
+    helpers.getPlatformTrackGravelCargoMaterials = function()
+        return {
+            'lollo_freestyle_train_station/gravel.mtl',
+            'lollo_freestyle_train_station/gravel_tiles.mtl',
+            'lollo_freestyle_train_station/gravel_z.mtl',
+            'lollo_freestyle_train_station/gravel_tiles_z.mtl',
+        }
+    end
+
     helpers.getPlatformTrackEraAPassengerMaterials = function()
         return {
             'lollo_freestyle_train_station/era_a_station_tiles_1.mtl',
@@ -150,6 +168,19 @@ local helpers = {}
         -- }
         return {
             type = 'NONE'
+        }
+    end
+
+    helpers.getVoidLods = function ()
+        return {
+            {
+                node = {
+                    -- name = 'RootNode',
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 100,
+            },
         }
     end
 

@@ -1,0 +1,79 @@
+function data()
+    return {
+        order = 0,
+        params = {
+            fade_out_range = {
+                fadeOutEndDist = 20000,
+                fadeOutStartDist = 10000,
+            },
+            map_albedo = {
+                -- fileName = "terrain/ballast_albedo.dds",
+                fileName = 'lollo_freestyle_train_station/gravel/ballast_albedo.dds',
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_metal_gloss_ao = {
+                -- fileName = "terrain/ballast_metal_gloss_ao_h.dds",
+                fileName = 'lollo_freestyle_train_station/gravel/ballast_metal_gloss_ao.dds',
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_normal = {
+                -- fileName = "ground_texture/farmland_brown_01_nrml.dds",
+                -- fileName = "terrain/scree_nrml.dds",
+                -- fileName = "terrain/ballast_nrml.dds",
+                -- fileName = "terrain/soil_01_nrml.dds",
+                fileName = 'lollo_freestyle_train_station/gravel/ballast_normal.dds',
+                redGreen = true,
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_1 = {
+                -- fileName = 'models/industry/overlay_textures/small_03.dds',
+                fileName = 'models/industry/overlay_textures/small_08.dds',
+                -- fileName = 'terrain/overlay_0.dds',
+                type = 'TWOD',
+                wrapS = 'REPEAT',
+                wrapT = 'REPEAT',
+            },
+            map_op_2 = {
+                -- fileName = 'streets/country_new_overlay.dds',
+                fileName = 'terrain/overlay_0.dds',
+                -- fileName = 'models/industry/overlay_textures/big_02.dds',
+                type = 'TWOD',
+                wrapS = 'REPEAT',
+                wrapT = 'REPEAT',
+            },
+            normal_scale = {
+                normalScale = 4,
+            },
+            operation_1 = {
+                mode = 'WORLD_XY',
+                -- op = 'OVERLAY',
+                op = 'NO_OP',
+                opacity = 0.1,
+                scale = { 0.4, 0.4, },
+            },
+            operation_2 = {
+                mode = 'WORLD_XY',
+                op = 'OVERLAY',
+                opacity = 0.3,
+                scale = { 0.01, 0.01, },
+            },
+            polygon_offset = {
+                factor = 0,
+                forceDepthWrite = false,
+                units = 0,
+            },
+            two_sided = {
+                flipNormal = false,
+                twoSided = false,
+            },
+        },
+        type = "PHYSICAL_NRML_MAP_OP",
+    }
+    end
+    

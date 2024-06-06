@@ -121,6 +121,20 @@ local privateFuncs = {
 
         return result
     end,
+    getGroundFacesFillKey_cargo = function(result, nTerminal, eraPrefix)
+        local groundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+        if result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+            groundFacesFillKey = constants.earth_groundFacesFillKey
+        elseif result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+            groundFacesFillKey = constants.gravel_groundFacesFillKey
+        end
+        -- if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then groundFacesFillKey = constants.gravel_groundFacesFillKey end
+
+        return groundFacesFillKey
+    end,
+    getGroundFacesFillKey_passengers = function(eraPrefix)
+        return constants[eraPrefix .. 'groundFacesFillKey']
+    end,
     getIsEndFillerEvery3 = function(nTrackEdge)
         -- this is for platform roofs and outside extensions, which have a slot every 3 track edge counts.
         -- to fill the last, if it is 4, 7, etc, we add an extra slot: this slot has a special behaviour,
@@ -215,8 +229,7 @@ local privateFuncs = {
     getVariant = function(params, slotId)
         local _modules = params.modules
         local variant = 0
-        if type(params) == 'table'
-        and type(_modules) == 'table'
+        if type(_modules) == 'table'
         and type(_modules[slotId]) == 'table'
         and type(_modules[slotId].variant) == 'number' then
             variant = _modules[slotId].variant or 0
@@ -963,38 +976,59 @@ privateFuncs.openStairs = {
 privateFuncs.platformHeads = {
     getHeadModelId = function (eraPrefix, isCargo, isRight, width, platformStyleModuleFileName)
         if isCargo then
-            if width < 10 then
-                if isRight then return 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_10m_wide_right.mdl'
-                else return 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_10m_wide_left.mdl'
+			if width < 10 then
+                if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_10m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_10m_wide_left.mdl'
+                elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_10m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_10m_wide_left.mdl'
+                else
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_10m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_10m_wide_left.mdl'
                 end
             elseif width < 20 then
-                if isRight then return 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_15m_wide_right.mdl'
-                else return 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_15m_wide_left.mdl'
+                if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_15m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_15m_wide_left.mdl'
+                elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_15m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_15m_wide_left.mdl'
+                else
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_15m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_15m_wide_left.mdl'
                 end
             else
-                if isRight then return 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_25m_wide_right.mdl'
-                else return 'lollo_freestyle_train_station/railroad/platformHeads/era_a_cargo_4m_long_25m_wide_left.mdl'
+                if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_25m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/earth_cargo_4m_long_25m_wide_left.mdl'
+                elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_25m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/gravel_cargo_4m_long_25m_wide_left.mdl'
+                else
+                    return isRight and 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_25m_wide_right.mdl'
+                    or 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'cargo_4m_long_25m_wide_left.mdl'
                 end
             end
         else
             if width < 5 then
-                if platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                if platformStyleModuleFileName == constants.passengersPlatformStyles.era_b_db.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_b_db_passengers_4m_long_7_5m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_b_db_passengers_4m_long_7_5m_wide_left.mdl'
-                elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_7_5m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_7_5m_wide_left.mdl'
-                elseif platformStyleModuleFileName == constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+                elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_7_5m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_7_5m_wide_left.mdl'
-                elseif platformStyleModuleFileName == constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+                elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_7_5m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_7_5m_wide_left.mdl'
-                elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+                elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_2s_passengers_4m_long_7_5m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_2s_passengers_4m_long_7_5m_wide_left.mdl'
@@ -1004,23 +1038,23 @@ privateFuncs.platformHeads = {
                         or 'lollo_freestyle_train_station/railroad/platformHeads/' .. eraPrefix .. 'passengers_4m_long_7_5m_wide_left.mdl'
                 end
             else
-                if platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                if platformStyleModuleFileName == constants.passengersPlatformStyles.era_b_db.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_b_db_passengers_4m_long_10m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_b_db_passengers_4m_long_10m_wide_left.mdl'
-                elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_10m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_10m_wide_left.mdl'
-                elseif platformStyleModuleFileName == constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+                elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_10m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_10m_wide_left.mdl'
-                elseif platformStyleModuleFileName == constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+                elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_10m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_1s_passengers_4m_long_10m_wide_left.mdl'
-                elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+                elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
                     return isRight
                         and 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_2s_passengers_4m_long_10m_wide_right.mdl'
                         or 'lollo_freestyle_train_station/railroad/platformHeads/era_c_db_2s_passengers_4m_long_10m_wide_left.mdl'
@@ -1263,9 +1297,9 @@ privateFuncs.slopedAreas = {
     isSlopedAreaAllowed = function(cpf, areaWidth)
         return cpf.type == 0 or (cpf.type == 1 and areaWidth <= 2.5)
     end,
-    doTerrainFromCoordinates = function(result, nTerminal, groundFacesFillKey, terrainCoordinates)
+    doTerrainFromCoordinates = function(result, nTerminal, groundFacesFillKey, terrainCoordinates, isFlush)
         local faces = {}
-        local deltaZ = result.laneZs[nTerminal] -constants.stairsAndRampHeight
+        local deltaZ = isFlush and (result.laneZs[nTerminal] - 0.1) or (result.laneZs[nTerminal] -constants.stairsAndRampHeight) -- need 0.1 so the module can be removed
         for tc = 1, #terrainCoordinates do
             local face = { }
             for i = 1, 4 do
@@ -1401,6 +1435,9 @@ return {
     getEraPrefix2 = function(params, nTerminal, terminalData, nTrackEdge)
         return privateFuncs.getEraPrefix(params, nTerminal, terminalData, nTrackEdge)
     end,
+    getFromVariant_FlatAreaHeight = function(variant, isFlush)
+        return privateFuncs.getFromVariant_FlatAreaHeight(variant, isFlush)
+    end,
     getGroundFace = function(face, key)
         return {
             face = face, -- LOLLO NOTE Z is ignored here
@@ -1412,6 +1449,9 @@ return {
                 }
             }
         }
+    end,
+    getGroundFacesFillKey_cargo = function(result, nTerminal, eraPrefix)
+        return privateFuncs.getGroundFacesFillKey_cargo(result, nTerminal, eraPrefix)
     end,
     getIsEndFillerEvery3 = function(nTrackEdge)
         return privateFuncs.getIsEndFillerEvery3(nTrackEdge)
@@ -1755,14 +1795,13 @@ return {
 
             local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
             local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
-            local _laneZ = result.laneZs[nTerminal]
-            local _zShift = _laneZ - constants.defaultPlatformHeight -- + constants.defaultPlatformHeight
+            local _zShift = 0
 
             local isFreeFromFlatAreas = false
             local occupiedWidth = 0
             local occupiedInfo4AxialAreas = result.getOccupiedInfo4AxialAreas(nTerminal, nTrackEdge)
             logger.print('occupiedInfo4AxialAreas =') logger.debugPrint(occupiedInfo4AxialAreas)
-            isFreeFromFlatAreas = occupiedInfo4AxialAreas == nil
+            isFreeFromFlatAreas = (occupiedInfo4AxialAreas == nil)
             if not(isFreeFromFlatAreas) then
                 occupiedWidth = occupiedInfo4AxialAreas.widthOnOwnTerminalHead
             end
@@ -2505,7 +2544,6 @@ return {
                     }
                 }
             )
-
             local terrainAlignmentList = {
                 faces = { groundFace },
                 optional = true,
@@ -3071,6 +3109,9 @@ return {
             -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
             -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
             -- The former is a bit glitchy, the latter is prettier.
+            local _isCargoTerminal = terminalData.isCargo
+            if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
+
             local _modules = params.modules
             local _maxIIMod10 = constants.maxPassengerWaitingAreaEdgeLength
 
@@ -3078,11 +3119,29 @@ return {
             previousLeadingIndex, currentLeadingIndex, nextLeadingIndex, platformStyleModuleFileName)
                 if isCargo then
                     if width < 10 then
-                        return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_5m_wide.mdl'
+                        if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                            return 'lollo_freestyle_train_station/railroad/platform/earth_cargo_platform_1m_base_5m_wide.mdl'
+                        elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                            return 'lollo_freestyle_train_station/railroad/platform/gravel_cargo_platform_1m_base_5m_wide.mdl'
+                        else
+                            return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_5m_wide.mdl'
+                        end
                     elseif width < 20 then
-                        return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_10m_wide.mdl'
+                        if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                            return 'lollo_freestyle_train_station/railroad/platform/earth_cargo_platform_1m_base_10m_wide.mdl'
+                        elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                            return 'lollo_freestyle_train_station/railroad/platform/gravel_cargo_platform_1m_base_10m_wide.mdl'
+                        else
+                            return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_10m_wide.mdl'
+                        end
                     else
-                        return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_20m_wide.mdl'
+                        if platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+                            return 'lollo_freestyle_train_station/railroad/platform/earth_cargo_platform_1m_base_20m_wide.mdl'
+                        elseif platformStyleModuleFileName == constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+                            return 'lollo_freestyle_train_station/railroad/platform/gravel_cargo_platform_1m_base_20m_wide.mdl'
+                        else
+                            return 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'cargo_platform_1m_base_20m_wide.mdl'
+                        end
                     end
                 else
                     local _underpassModule = _modules[result.mangleId(nTerminal, currentLeadingIndex, constants.idBases.underpassSlotId)]
@@ -3095,23 +3154,23 @@ return {
                         and arrayUtils.arrayHasValue(_underpassModule.metadata.holeIIs or { 3, 4, 7, 8 }, ii % _maxIIMod10)
                     if _isHole then
                         if width < 5 then
-                            if platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                            if platformStyleModuleFileName == constants.passengersPlatformStyles.era_b_db.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_fs_1s_passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_fs_1s_passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_uk_2s_passenger_platform_1m_base_3_1m_wide_hole_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_uk_2s_passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
                             return isTrackOnPlatformLeft
                                 and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_gap_left.mdl'
                                 or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_hole_stripe_gap_right.mdl'
@@ -3121,23 +3180,23 @@ return {
                                 or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_hole_stripe_right.mdl'
                             end
                         else
-                            if platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                            if platformStyleModuleFileName == constants.passengersPlatformStyles.era_b_db.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_fs_1s_passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_fs_1s_passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_uk_2s_passenger_platform_1m_base_5_6m_wide_hole_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_uk_2s_passenger_platform_1m_base_5_6m_wide_hole_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_gap_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_hole_stripe_gap_right.mdl'
@@ -3149,23 +3208,23 @@ return {
                         end
                     else
                         if width < 5 then
-                            if platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                            if platformStyleModuleFileName == constants.passengersPlatformStyles.era_b_db.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_fs_1s_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_fs_1s_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_uk_2s_passenger_platform_1m_base_3_1m_wide_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_uk_2s_passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_gap_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_3_1m_wide_stripe_gap_right.mdl'
@@ -3175,23 +3234,23 @@ return {
                                     or 'lollo_freestyle_train_station/railroad/platform/' .. eraPrefix .. 'passenger_platform_1m_base_3_1m_wide_stripe_right.mdl'
                             end
                         else
-                            if platformStyleModuleFileName == constants.platformStyles.era_b_db.moduleFileName then
+                            if platformStyleModuleFileName == constants.passengersPlatformStyles.era_b_db.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_b_db_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_db_1s_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_fs_1s_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_fs_1s_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_uk_2s_passenger_platform_1m_base_5_6m_wide_stripe_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_uk_2s_passenger_platform_1m_base_5_6m_wide_stripe_right.mdl'
-                            elseif platformStyleModuleFileName == constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+                            elseif platformStyleModuleFileName == constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
                                 return isTrackOnPlatformLeft
                                     and 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_gap_left.mdl'
                                     or 'lollo_freestyle_train_station/railroad/platform/era_c_passenger_platform_1m_base_5_6m_wide_stripe_gap_right.mdl'
@@ -3204,7 +3263,7 @@ return {
                     end
                 end
             end
-            local _isCargoTerminal = terminalData.isCargo
+
             local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
             local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
             local _cpfs = terminalData.centrePlatformsFineRelative
@@ -3262,6 +3321,8 @@ return {
 			local _xSize = 4
 
             local _addModel = function()
+                if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
+
                 local _modelId = privateFuncs.platformHeads.getHeadModelId(_eraPrefix, _isCargoTerminal, _isRight, _cpf.width, _platformStyleModuleFileName)
                 local posTanX2 = nTrackEdge == 1 and transfUtils.getPosTanX2Reversed(_cpf.posTanX2) or _cpf.posTanX2
                 for hh = 1, howMany4mChunks do
@@ -3363,12 +3424,20 @@ return {
             end
             _addLanes()
 
-            local _groundFacesFillKey = constants[_eraPrefix .. 'groundFacesFillKey']
+            local _groundFacesFillKey = _isCargoTerminal
+                and privateFuncs.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
+                or privateFuncs.getGroundFacesFillKey_passengers(_eraPrefix)
+            local _isTerrainFlush = (
+                result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
+                or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
+                or result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround
+            )
+            local deltaZ = _isTerrainFlush and (-0.1) or (-constants.defaultPlatformHeight) -- need 0.1 so the module can be removed
 			local groundFace = { -- the ground faces ignore z, the alignment lists don't
-				{0, -_cpf.width * 0.5 - (_isRight and 0 or 5), -constants.defaultPlatformHeight, 1},
-				{0, _cpf.width * 0.5 + (_isRight and 5 or 0), -constants.defaultPlatformHeight, 1},
-				{_xSize * howMany4mChunks, _cpf.width * 0.5 + (_isRight and 5 or 0), -constants.defaultPlatformHeight, 1},
-				{_xSize * howMany4mChunks, -_cpf.width * 0.5 - (_isRight and 0 or 5), -constants.defaultPlatformHeight, 1},
+				{0, -_cpf.width * 0.5 - (_isRight and 0 or 5), deltaZ, 1},
+				{0, _cpf.width * 0.5 + (_isRight and 5 or 0), deltaZ, 1},
+				{_xSize * howMany4mChunks, _cpf.width * 0.5 + (_isRight and 5 or 0), deltaZ, 1},
+				{_xSize * howMany4mChunks, -_cpf.width * 0.5 - (_isRight and 0 or 5), deltaZ, 1},
 			}
 			modulesutil.TransformFaces(slotTransf, groundFace)
 			table.insert(
@@ -3420,6 +3489,12 @@ return {
             local _laneZ = result.laneZs[nTerminal]
             local _zShift = _laneZ - constants.defaultPlatformHeight
             local _modules = params.modules
+            local _isCargoTerminal = terminalData.isCargo
+            local _isTerrainFlush = (
+                result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
+                or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
+                or result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround
+            )
 
             local waitingAreaIndex = 0
             local nWaitingAreas = 0
@@ -3523,7 +3598,7 @@ return {
                                 end
                             end
 
-                            privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates)
+                            privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates, _isTerrainFlush)
                         end
                     else
                         isDecoBarred = true
@@ -3542,7 +3617,7 @@ return {
             end
 
             local terrainCoordinates = privateFuncs.slopedAreas.getTerrainCoordinates(result, params, nTerminal, terminalData, nTrackEdge, _isEndFiller, areaWidth, groundFacesFillKey)
-            privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates)
+            privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates, _isTerrainFlush)
 
             if waitingAreaModelId ~= nil and not(isDecoBarred) then
                 local cpl = terminalData.centrePlatformsRelative[nTrackEdge]

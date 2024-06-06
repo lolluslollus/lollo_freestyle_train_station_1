@@ -39,30 +39,42 @@ function data()
 			)
 
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
-			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
+			local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 
-			local myGroundFacesFillKey = _constants[eraPrefix .. 'groundFacesFillKey']
-			local myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_area10x10.mdl'
-			if eraPrefix == moduleHelpers.eras.era_a.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_area10x10.mdl'
-			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then
-				myModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_area10x10.mdl'
+			local myGroundFacesFillKey = moduleHelpers.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
+			local platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_c_area10x10.mdl'
+			if _eraPrefix == moduleHelpers.eras.era_a.prefix then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_a_area10x10.mdl'
+			elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/era_b_area10x10.mdl'
 			end
-
+			if result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_earth.moduleFileName then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/earth_area10x10.mdl'
+			elseif result.platformStyles[nTerminal] == _constants.cargoPlatformStyles.cargo_gravel.moduleFileName then
+				platformModelId = 'lollo_freestyle_train_station/railroad/flatSides/cargo/gravel_area10x10.mdl'
+			end
 			result.models[#result.models + 1] = {
-				id = myModelId,
+				id = platformModelId,
 				slotId = slotId,
 				transf = zAdjustedTransf,
 				tag = tag
 			}
+
 			local portalModelId = nil
-			if eraPrefix == moduleHelpers.eras.era_a.prefix then
+			if _eraPrefix == moduleHelpers.eras.era_a.prefix then
 				portalModelId = 'lollo_freestyle_train_station/asset/cargo_portal_dark_4x4.mdl'
 			else
 				portalModelId = 'lollo_freestyle_train_station/asset/cargo_portal_4x4.mdl'
 			end
 			result.models[#result.models + 1] = {
 				id = portalModelId,
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
+
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/railroad/flatSides/cargo/lanes_area10x10.mdl',
 				slotId = slotId,
 				transf = zAdjustedTransf,
 				tag = tag

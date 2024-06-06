@@ -21,13 +21,11 @@ function data()
                             materials = {
                                 'station/rail/cargo/cargo_station_wall_1.mtl',
                                 'station/rail/cargo/cargo_station_roof_2.mtl',
-                                'lollo_freestyle_train_station/station_concrete_3.mtl', -- pavement
                                 'station/rail/cargo/cargo_station_windows_and_doors_1.mtl',
                                 'station/rail/cargo/cargo_station_borders_1.mtl',
                                 'station/rail/cargo/cargo_station_borders_2.mtl',
-                                'lollo_freestyle_train_station/square_marble_tiles.mtl', -- pavement edge
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_20x20/station_20x20_lod0.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_20x20/station_20x20_no_platform_lod0.msh',
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                         },
                     },
@@ -45,13 +43,11 @@ function data()
                             materials = {
                                 'station/rail/cargo/cargo_station_wall_1.mtl',
                                 'station/rail/cargo/cargo_station_roof_2.mtl',
-                                'lollo_freestyle_train_station/station_concrete_3.mtl', -- pavement
                                 'station/rail/cargo/cargo_station_windows_and_doors_1.mtl',
                                 'station/rail/cargo/cargo_station_borders_1.mtl',
                                 'station/rail/cargo/cargo_station_borders_2.mtl',
-                                'lollo_freestyle_train_station/square_marble_tiles.mtl', -- pavement edge
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_20x20/station_20x20_lod1.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/cargo_station_20x20/station_20x20_no_platform_lod1.msh',
                             name = 'station_3',
                             transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
                         },

@@ -63,7 +63,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
 - Station naming does not work properly.
 - 2.5 m platforms do not agree with bridges and tunnels. Ask UG to make trackDistance work.
-- Underpasses do not show underground. Ask UG to fix the terrain when snapping tracks alongside.
+- Underpasses do not show underground and 0 m platforms cannot be fully repainted. Ask UG to fix the terrain when snapping tracks alongside.
 - The bigger your station is, the longer it takes to add or remove a terminal. It can take over a minute, just wait.
 - Some modules can only be placed after some others, eg stairs exits after stairs, but the configuration menu does not refresh automatically. After placing the first set of stairs, you need to close and reopen the menu for stairs exits to appear.
 - Some track and signal mods are incompatible. As a general rule, avoid mods that overwrite or disable stock game tracks. Chances are you won't miss them anyway.
@@ -222,6 +222,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["PlatformHead16mDesc"] = "Platform and track head, 16 m long",
 			["PlatformHead20mName"] = "20 m platform head",
 			["PlatformHead20mDesc"] = "Platform and track head, 20 m long",
+			["PlatformHeight0Name"] = "No platform",
+			["PlatformHeight0Desc"] = "No platform, only for cargo. Repaint the ground with <shift> and a paint tool.",
 			["PlatformHeight25Name"] = "25 cm high platform",
 			["PlatformHeight25Desc"] = "Platform 25 cm above the track",
 			["PlatformHeight40Name"] = "40 cm high platform",
@@ -254,6 +256,12 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["PlatformRoofMetalGlassDesc"] = "Glass roof for passenger platforms",
 			["PlatformStyleDBEraBName"] = "DB era B floor",
 			["PlatformStyleDBEraBDesc"] = "DB era B passenger platform floor",
+			["PlatformStyleCargoDefaultName"] = "Default cargo floor",
+			["PlatformStyleCargoDefaultDesc"] = "Default cargo floor for the era",
+			["PlatformStyleCargoEarthName"] = "Earth cargo floor",
+			["PlatformStyleCargoEarthDesc"] = "Earth cargo floor",
+			["PlatformStyleCargoGravelName"] = "Gravel cargo floor",
+			["PlatformStyleCargoGravelDesc"] = "Gravel cargo floor",
 			["PlatformStyleEraCDBOneStripeName"] = "DB era C floor, one stripe",
 			["PlatformStyleEraCDBOneStripeDesc"] = "DB era C passenger platform floor, one stripe",
 			["PlatformStyleEraCDBTwoStripesName"] = "DB era C floor, two stripes",
@@ -262,8 +270,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["PlatformStyleEraCFSOneStripeDesc"] = "FS era C passenger platform floor, one stripe",
 			["PlatformStyleEraCUKTwoStripesName"] = "UK era C floor, two stripes",
 			["PlatformStyleEraCUKTwoStripesDesc"] = "UK era C passenger platform floor, two stripes",
-			["PlatformStyleDefaultName"] = "Default floor",
-			["PlatformStyleDefaultDesc"] = "Default floor for the era",
+			["PlatformStylePassengersDefaultName"] = "Default passengers floor",
+			["PlatformStylePassengersDefaultDesc"] = "Default passengers floor for the era",
 			["RestoreCargoTerminalName"] = "Restore cargo terminal",
 			["RestorePassengerTerminalName"] = "Restore passenger terminal",
 			["RestoreTerminalDesc"] = "Restore a deleted terminal before closing the configuration menu - it has no effect otherwise",
@@ -646,7 +654,8 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 [h1]Bekannte Probleme:[/h1]
 - Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
 - Die Benennung von Bahnhöfen funktioniert nicht richtig.
-- 2,5 m Bahnsteige stimmen nicht mit Brücken und Tunneln überein. Bitten UG, trackDistance zum Laufen zu bringen.
+- 2,5 m Bahnsteige passen nicht mit Brücken und Tunneln überein. Bitte UG, trackDistance zum Laufen zu bringen.
+- Unterführungen werden nicht bis ganz unten dargestellt und 0 m Bahnsteigen können nicht gut übermalt werden. Frage UG, damit sie den Boden beim Gleisen zusammenlegen reparieren.
 - Je größer ein Bahnhof ist, desto länger dauert es, ein Terminal hinzuzufügen oder zu entfernen. Es kann über eine Minute dauern. Warte einfach ab.
 - Einige Module können nur nach anderen platziert werden, z.B. Treppenausgänge nach Treppen, aber das Konfigurationsmenü wird nicht automatisch aktualisiert. Nachdem du die erste Treppe platziert hast, müsst du das Menü schließen und erneut öffnen, damit die Treppenausgänge erscheinen.
 - Einige Gleis- und Signalmods sind nicht kompatibel. Generell gilt: Vermeide Mods, die die Originalgleise des Spiels überschreiben oder deaktivieren. Du wirst sie nicht vermissen.
@@ -805,6 +814,8 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["PlatformHead16mDesc"] = "Bahnsteigs- und Gleiskopf, 16 m lang",
 			["PlatformHead20mName"] = "20 m Bahnsteigskopf",
 			["PlatformHead20mDesc"] = "Bahnsteigs- und Gleiskopf, 20 m lang",
+			["PlatformHeight0Name"] = "Kein Bahnsteig",
+			["PlatformHeight0Desc"] = "Kein Bahnsteig, nur für Fracht. Male den Boden mit <shift> und einem Malwerkzeug neu an.",
 			["PlatformHeight25Name"] = "25 cm hoher Bahnsteig",
 			["PlatformHeight25Desc"] = "Bahnsteig 25 cm über der Schienenoberkante",
 			["PlatformHeight40Name"] = "40 cm hoher Bahnsteig",
@@ -837,6 +848,12 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["PlatformRoofMetalGlassDesc"] = "Glasdach für Passagierbahnsteige",
 			["PlatformStyleDBEraBName"] = "DB Epoche B Boden",
 			["PlatformStyleDBEraBDesc"] = "DB Epoche B Passagiersteigboden",
+			["PlatformStyleCargoDefaultName"] = "Standard Boden für Fracht",
+			["PlatformStyleCargoDefaultDesc"] = "Standard Boden für die Epoche, für Fracht",
+			["PlatformStyleCargoEarthName"] = "Erde-Boden für Fracht",
+			["PlatformStyleCargoEarthDesc"] = "Erde-Boden für Fracht",
+			["PlatformStyleCargoGravelName"] = "Kies-Boden für Fracht",
+			["PlatformStyleCargoGravelDesc"] = "Kies-Boden für Fracht",
 			["PlatformStyleEraCDBOneStripeName"] = "DB Epoche C Boden, eine Streife",
 			["PlatformStyleEraCDBOneStripeDesc"] = "DB Epoche C Passagiersteigboden, eine Streife",
 			["PlatformStyleEraCDBTwoStripesName"] = "DB Epoche C Boden, zwei Streifen",
@@ -845,8 +862,8 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["PlatformStyleEraCFSOneStripeDesc"] = "FS Epoche C Passagiersteigboden, eine Streife",
 			["PlatformStyleEraCUKTwoStripesName"] = "UK Epoche C Boden, zwei Streifen",
 			["PlatformStyleEraCUKTwoStripesDesc"] = "UK Epoche C Passagiersteigboden, zwei Streifen",
-			["PlatformStyleDefaultName"] = "Standard Boden",
-			["PlatformStyleDefaultDesc"] = "Standard Boden für die Epoche",
+			["PlatformStylePassengersDefaultName"] = "Standard Boden für Passagiere",
+			["PlatformStylePassengersDefaultDesc"] = "Standard Boden für die Epoche, für Passagiere",
 			["RestoreCargoTerminalName"] = "Fracht-Terminal zurücksetzen",
 			["RestorePassengerTerminalName"] = "Passagier-Terminal zurücksetzen",
 			["RestoreTerminalDesc"] = "Setzt einen gelöschten Terminal zurück, bevor das Konfigurationsmenü geschlossen wird. Es hat sonst keine Wirkung.",

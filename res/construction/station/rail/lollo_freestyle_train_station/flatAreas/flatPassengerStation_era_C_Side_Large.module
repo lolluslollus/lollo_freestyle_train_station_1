@@ -100,6 +100,12 @@ function data()
 				cargo = 0,
 				passenger = 180
 			},
+			-- stationSquareShift_XYZ_rotZ = {
+			-- 	x = 33.7,
+			-- 	y = 0.0,
+			-- 	z = -0.8,
+			-- 	rotZ = 0.0
+			-- }
 		},
 		order = {
 			value = 45,
@@ -131,15 +137,15 @@ function data()
 				tag = tag
 			}
 			local perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_large/lollo_perron.mdl'
-			if result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_2_stripes.moduleFileName then
+			if result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_db_2_stripes.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_large/era_c_db_2s_lollo_perron.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_db_1_stripe.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_db_1_stripe.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_large/era_c_db_1s_lollo_perron.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_fs_1_stripe.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_fs_1_stripe.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_large/era_c_db_1s_lollo_perron.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_c_uk_2_stripes.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_c_uk_2_stripes.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_large/era_c_db_1s_lollo_perron.mdl'
-			elseif result.platformStyles[nTerminal] == _constants.platformStyles.era_b_db.moduleFileName then
+			elseif result.platformStyles[nTerminal] == _constants.passengersPlatformStyles.era_b_db.moduleFileName then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_large/era_c_db_1s_lollo_perron.mdl'
 			elseif eraPrefix ~= _constants.eras.era_c.prefix then
 				perronModelId = 'lollo_freestyle_train_station/railroad/flatSides/passengers/era_c_large/era_c_db_1s_lollo_perron.mdl'
@@ -181,36 +187,38 @@ function data()
 				}
 			)
 ]]
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge-1, _constants.idBases.passengerStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-					buildingTransf,
-					{-10, -33.7, 0}
-				),
-				type = _constants.passengerStationSquareModuleType,
-			})
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-					buildingTransf,
-					{0, -33.7, 0}
-				),
-				type = _constants.passengerStationSquareModuleType,
-			})
-			table.insert(result.slots, {
-				id = result.mangleId(nTerminal, nTrackEdge+1, _constants.idBases.passengerStationSquareOuterSlotId),
-				shape = 1,
-				spacing = {-1, 4, 4, 4},
-				transf = transfUtils.getTransf_ZRotatedM90_Shifted(
-					buildingTransf,
-					{10, -33.7, 0}
-				),
-				type = _constants.passengerStationSquareModuleType,
-			})
+			if baseId ~= _constants.idBases.axialStation0MSlotId then
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge-1, _constants.idBases.passengerStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {-1, 4, 4, 4},
+					transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+						buildingTransf,
+						{-10, -33.7, 0}
+					),
+					type = _constants.passengerStationSquareModuleType,
+				})
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge, _constants.idBases.passengerStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {-1, 4, 4, 4},
+					transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+						buildingTransf,
+						{0, -33.7, 0}
+					),
+					type = _constants.passengerStationSquareModuleType,
+				})
+				table.insert(result.slots, {
+					id = result.mangleId(nTerminal, nTrackEdge+1, _constants.idBases.passengerStationSquareOuterSlotId),
+					shape = 1,
+					spacing = {-1, 4, 4, 4},
+					transf = transfUtils.getTransf_ZRotatedM90_Shifted(
+						buildingTransf,
+						{10, -33.7, 0}
+					),
+					type = _constants.passengerStationSquareModuleType,
+				})
+			end
 
 			local groundFace = {
 				{-1, -21.2, -0.8, 1},

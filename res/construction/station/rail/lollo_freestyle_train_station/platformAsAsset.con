@@ -3,7 +3,8 @@ local constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
 
 local _platformHeightsSorted = {}
-for _, plh in pairs(constants.platformHeights) do
+local allPlatformHeights = constants.platformHeights
+for _, plh in pairs(allPlatformHeights) do
     _platformHeightsSorted[#_platformHeightsSorted+1] = plh
 end
 arrayUtils.sort(_platformHeightsSorted, 'aboveRail', true)

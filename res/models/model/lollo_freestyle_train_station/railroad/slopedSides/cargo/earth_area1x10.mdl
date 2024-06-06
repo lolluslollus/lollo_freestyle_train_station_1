@@ -1,0 +1,38 @@
+function data()
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = {
+            bbMax = { 4.9, 0.4, 4 },
+            bbMin = { -4.9, -0.4, 0 },
+        },
+        collider = {
+            params = {
+                halfExtents = { 4.9, 0.4, 2, },
+            },
+            transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 2, 1, },
+            type = 'BOX',
+        },
+        -- boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        -- collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    materials = {
+                        'lollo_freestyle_train_station/earth.mtl',
+                        'lollo_freestyle_train_station/wood_sawmill.mtl',
+                        'lollo_freestyle_train_station/earth_z.mtl',
+                        'lollo_freestyle_train_station/wood_sawmill_z.mtl',
+                        'lollo_freestyle_train_station/earth_low_prio.mtl',
+                    },
+                    mesh = 'lollo_freestyle_train_station/railroad/slopedSides/era_a_platform_ext_1x10m.msh',
+                    transf = {0, 1, 0, 0,  -_mdlHelpers.getSlopedPlatformStretchFactor(1, 10), 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end
