@@ -4536,8 +4536,7 @@ function data()
                         local isFakeEdgesPresent, _ = _utils.replaceFakeEdgesWithSnappy(arrayUtils.cloneDeepOmittingFields(conParams.modules, nil, true))
                         local nTerminalsToRemove = _utils.getNTerminalsToRemove(conParams)
                         if not(isFakeEdgesPresent) and #nTerminalsToRemove == 0 then _utils.sendHideProgress() return end
-                        -- LOLLO TODO if the user has changed a platform height, neighbouring streets and cons will have the wrong height
-                        -- and so they won't match anymore: fix it
+
                         args.streetEndEntities = m_conConfigMenu.args.streetEndEntities
                         args.trackEndEntities = m_conConfigMenu.args.trackEndEntities
                         args.nTerminalsToRemove = nTerminalsToRemove
@@ -4791,6 +4790,10 @@ function data()
                             local conId = tonumber(id:sub(34), 10)
                             if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
+                            -- LOLLO TODO if the user has changed a platform height, neighbouring streets and cons will have the wrong height
+                            -- and so they won't match anymore: fix it
+                            -- This is not easy because there is no way to associate frozen edges to terminals,
+                            -- 
                             local streetEndEntities = stationHelpers.getStationStreetEndEntities(conId, true)
                             local trackEndEntities = stationHelpers.getStationTrackEndEntities(conId, true)
                             if not(streetEndEntities) or not(trackEndEntities) then return end
