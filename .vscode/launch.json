@@ -5,6 +5,16 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Local Lua Debugger by Tom Blind",
+            "program": {
+                "file": "${file}",
+                "lua": "lua5.3",
+            },
+            "request": "launch",
+            "stopOnEntry": true,
+            "type": "lua-local"
+        },
+        {
             "arg": [],
             "name": "launch current",
             "program": "${file}",
