@@ -36,7 +36,7 @@ function data()
 			local _terminalData = params.terminals[nTerminal]
 			local zAdjustedTransf = transfUtils.getTransf_XShifted(
 				moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf),
-				2.3 -- 2.5 minus a bit for bends
+				2.5
 			)
 
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]

@@ -22,7 +22,7 @@ function data()
                                 'lollo_freestyle_train_station/gravel_tiles.mtl',
                                 'lollo_freestyle_train_station/gravel.mtl',
                             },
-                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_platform_ramp_steep_2m.msh',
+                            mesh = 'lollo_freestyle_train_station/railroad/flatSides/era_c_cargo_platform_ramp_up_steep_2m.msh',
                             transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  1.75, 0, 1.2, 1}
                         },
                     },

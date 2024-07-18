@@ -38,9 +38,9 @@ function data()
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
+			local exitPoleTransf = transfUtils.getTransf_ZShifted(slotTransf, -0.4) -- pull it down for platform height 0
+			moduleHelpers.flatAreas.addExitPole(result, exitPoleTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
-
-			moduleHelpers.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 		end,
 

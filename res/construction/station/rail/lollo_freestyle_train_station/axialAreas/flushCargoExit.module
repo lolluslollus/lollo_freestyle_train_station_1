@@ -34,7 +34,8 @@ function data()
 			if not nTerminal or not baseId then return end
 
             local _terminalData = params.terminals[nTerminal]
-			moduleHelpers.axialAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+			local exitPoleTransf = transfUtils.getTransf_ZShifted(slotTransf, -0.5) -- pull it down for platform height 0
+			moduleHelpers.axialAreas.addExitPole(result, exitPoleTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 		end,
 
 		getModelsFn = function(params)

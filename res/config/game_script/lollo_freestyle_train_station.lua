@@ -1039,8 +1039,11 @@ local _actions = {
                             _eventId,
                             successEventName,
                             {
-                                trackEndEntities = args.trackEndEntities,
+                                -- old args
+                                platformHeightProps_indexedByT  = args.platformHeightProps_indexedByT,
                                 streetEndEntities = args.streetEndEntities,
+                                trackEndEntities = args.trackEndEntities,
+                                -- new args
                                 newTerminalNeighbours = args.newTerminalNeighbours,
                                 nTerminal = args.nTerminal,
                                 stationConstructionId = stationConstructionId
@@ -2083,7 +2086,7 @@ logger.print('SIX')
                     -- logger.warn('_rebuildStationWithSnappyStreetEdgesOLD proposal =') logger.warningDebugPrint(proposal)
                     logger.warn('_rebuildStationWithSnappyStreetEdgesOLD result.resultProposalData =') logger.warningDebugPrint(result.resultProposalData)
                     _utils.sendHideProgress()
-                    _utils.buildWarningHint(transfUtils.transf2Position(conTransf_lua, true), _('UnsnappedCheckEdgeExits'), _('UnsnappedCheckEdgeExits'))
+                    _utils.buildWarningHint(transfUtils.transf2Position(conTransf_lua, true), _('Unsnapped_CheckEdgeExits_Or_RestoreDeletedTerminal'), _('Unsnapped_CheckEdgeExits_Or_RestoreDeletedTerminal'))
                 end
             end
         )
@@ -2230,22 +2233,39 @@ logger.print('FOUR')
             function(result, success)
                 logger.print('_rebuildStationWithLatestProperties callback, success =', success)
                 if success then
-                    if successEventName ~= nil then
-                        logger.print('_rebuildStationWithLatestProperties callback is about to send command ' .. successEventName)
-                        
-                        api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                            string.sub(debug.getinfo(1, 'S').source, 1),
-                            _eventId,
-                            successEventName,
-                            -- arrayUtils.cloneDeepOmittingFields(args)
-                            args
-                        ))
+                    if args.platformHeightProps_indexedByT ~= nil then
+                        local newPlatformHeightProps_indexedByT = stationHelpers.getPlatformHeightProps_indexedByT(args.stationConstructionId, true)
+                        if newPlatformHeightProps_indexedByT ~= nil then
+                            for nTerminal, oldHeightProps in pairs(args.platformHeightProps_indexedByT) do
+                                if oldHeightProps ~= nil and oldHeightProps.hasEdges then
+                                    local newHeightProps = newPlatformHeightProps_indexedByT[nTerminal]
+                                    if newHeightProps ~= nil and newHeightProps.hasEdges then
+                                        if type(newHeightProps.heightCm) == 'number' and newHeightProps.heightCm ~= oldHeightProps.heightCm then
+                                            logger.print('isHeightChanged = true')
+                                            logger.print('oldHeightCm = ' .. tostring(oldHeightProps.heightCm) .. '; newHeightCm = ' .. tostring(newHeightProps.heightCm))
+                                            -- _utils.buildWarningHint(transfUtils.transf2Position(conTransf_lua, true), _('UnsnappedMaybe_CheckEdgeExits'), _('UnsnappedMaybe_CheckEdgeExits'))
+                                            _utils.buildWarningHint(nil, _('UnsnappedMaybe_CheckEdgeExits'), _('UnsnappedMaybe_CheckEdgeExits'))
+                                            break
+                                        end
+                                    end
+                                end
+                            end
+                        end
                     end
+
+                    logger.print('_rebuildStationWithLatestProperties callback is about to send command ' .. successEventName)
+                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                        string.sub(debug.getinfo(1, 'S').source, 1),
+                        _eventId,
+                        successEventName,
+                        -- arrayUtils.cloneDeepOmittingFields(args)
+                        args
+                    ))
                 else
                     -- logger.warn('_rebuildStationWithLatestProperties proposal =') logger.warningDebugPrint(proposal)
                     logger.warn('_rebuildStationWithLatestProperties result.resultProposalData =') logger.warningDebugPrint(result.resultProposalData)
                     _utils.sendHideProgress()
-                    _utils.buildWarningHint(transfUtils.transf2Position(conTransf_lua, true), _('UnsnappedCheckEdgeExits'), _('UnsnappedCheckEdgeExits'))
+                    _utils.buildWarningHint(transfUtils.transf2Position(conTransf_lua, true), _('Unsnapped_CheckEdgeExits_Or_RestoreDeletedTerminal'), _('Unsnapped_CheckEdgeExits_Or_RestoreDeletedTerminal'))
                 end
             end
         )
@@ -4535,8 +4555,11 @@ function data()
                         local conParams = con.params
                         local isFakeEdgesPresent, _ = _utils.replaceFakeEdgesWithSnappy(arrayUtils.cloneDeepOmittingFields(conParams.modules, nil, true))
                         local nTerminalsToRemove = _utils.getNTerminalsToRemove(conParams)
+                        logger.print('isFakeEdgesPresent =', tostring(isFakeEdgesPresent))
+                        logger.print('#nTerminalsToRemove =', #nTerminalsToRemove)
                         if not(isFakeEdgesPresent) and #nTerminalsToRemove == 0 then _utils.sendHideProgress() return end
 
+                        args.platformHeightProps_indexedByT = m_conConfigMenu.args.platformHeightProps_indexedByT
                         args.streetEndEntities = m_conConfigMenu.args.streetEndEntities
                         args.trackEndEntities = m_conConfigMenu.args.trackEndEntities
                         args.nTerminalsToRemove = nTerminalsToRemove
@@ -4793,11 +4816,12 @@ function data()
                             -- LOLLO TODO if the user has changed a platform height, neighbouring streets and cons will have the wrong height
                             -- and so they won't match anymore: fix it
                             -- This is not easy because there is no way to associate frozen edges to terminals,
-                            -- 
+                            -- edgeUtils.getNearbyObjectIds(transf, 0.1, api.type.ComponentType.FIELD, pos.z -10, pos.z + 1)
                             local streetEndEntities = stationHelpers.getStationStreetEndEntities(conId, true)
                             local trackEndEntities = stationHelpers.getStationTrackEndEntities(conId, true)
-                            if not(streetEndEntities) or not(trackEndEntities) then return end
+                            if not(streetEndEntities) and not(trackEndEntities) then return end
 
+                            local platformHeightProps_indexedByT = stationHelpers.getPlatformHeightProps_indexedByT(conId, true)
                             m_guiConConfigMenu.openForConId = conId
                             logger.print('the con config menu was opened, about to send command CON_CONFIG_MENU_OPENED, conId = ' .. conId)
                             api.cmd.sendCommand(api.cmd.make.setGameSpeed(0)) -- pause the game when config menu opens
@@ -4809,6 +4833,7 @@ function data()
                                     {
                                         stationConstructionId = conId,
                                         -- lock the UI thread and write these away before preProcessFn() kicks in
+                                        platformHeightProps_indexedByT = platformHeightProps_indexedByT,
                                         streetEndEntities = streetEndEntities,
                                         trackEndEntities = trackEndEntities,
                                     }

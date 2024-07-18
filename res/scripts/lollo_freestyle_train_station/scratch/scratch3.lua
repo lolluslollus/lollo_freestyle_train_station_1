@@ -49,5 +49,23 @@ local test2 = transfUtils.getSkewTransf(posNW, posNE, posSE, posSW, newPosNW, ne
 
 logger.print('1', '2', 3)
 
+local platformHeightModuleNames = {
+    'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight0.module',
+    'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight25.module',
+    'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight40.module',
+    'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight60.module',
+    'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight80.module',
+    'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight100.module',
+    'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight110.module',
+    'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight125.module',
+}
+-- local regex = "/station\/rail\/lollo_freestyle_train_station\/platformHeights\/platformHeight(\d*)\.module/iu"
+for _, name in pairs(platformHeightModuleNames) do
+    local adj1 = string.gsub(name, 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight', '')
+    local adj = string.gsub(adj1, '.module', '')
+    local heightCm = tonumber(adj, 10)
+    print('heightCm =', heightCm)
+end
+
 logger.print('LOLLO')
 local dummy = 123

@@ -3,6 +3,7 @@ local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
+local slotHelpers = require('lollo_freestyle_train_station.slotHelpers')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local trackUtils = require('lollo_freestyle_train_station.trackHelpers')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
@@ -25,6 +26,8 @@ local _utils = {
 ---@alias edgeIdsProperties table<edgeIdProperties>
 ---@alias nodeIdProperties {nodeId: integer, position: {x: number, y: number, z: number}}
 ---@alias nodeIdsProperties table<nodeIdProperties>
+---@alias platformHeightProps {hasEdges: boolean, heightCm: integer}
+---@alias platformHeightsProps table<platformHeightProps>
 local helpers = {
     ---isReadEdgeObjects might disagree with isSortOutput
     ---@param edgeIds table<integer>
@@ -1719,7 +1722,8 @@ helpers.getStationTrackEndEntities4T = function(stationConstructionId, nTerminal
         return nil
     end
 
-    if type(nTerminal) ~= 'number' or nTerminal < 1 or nTerminal > #con.params.terminals then
+    local conParams = con.params
+    if type(nTerminal) ~= 'number' or nTerminal < 1 or nTerminal > #conParams.terminals then
         logger.warn('getStationTrackEndEntities4T received invalid nTerminal =')
         logger.warningDebugPrint(nTerminal)
         return nil
@@ -1733,7 +1737,7 @@ helpers.getStationTrackEndEntities4T = function(stationConstructionId, nTerminal
     for _, nodeId in pairs(con.frozenNodes) do
         frozenNodeIds_indexed[nodeId] = true
     end
-    local _terminalData = con.params.terminals[nTerminal] -- LOLLO NOTE addressing con, which is huge, can take 100's of msec, so we break it up
+    local _terminalData = conParams.terminals[nTerminal] -- LOLLO NOTE addressing con, which is huge, can take 100's of msec, so we break it up
     local _platformEdgeLists = _terminalData.platformEdgeLists
     local _trackEdgeLists = _terminalData.trackEdgeLists
     return _getStationTrackEndEntities4T(nTerminal, frozenEdgeIds_indexed, frozenNodeIds_indexed, _platformEdgeLists, _trackEdgeLists)
@@ -1793,6 +1797,77 @@ local _getPosTanX2ListIndex_Nearest2_Point = function(posTanX2List, position)
     end
 
     return result
+end
+
+---comment
+---@param stationConstructionId integer
+---@param isSkipLogging boolean
+---@return platformHeightsProps | nil
+helpers.getPlatformHeightProps_indexedByT = function(stationConstructionId, isSkipLogging)
+    if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
+        if isSkipLogging then return nil end
+        logger.err('getPlatformHeightProps_indexedByT received an invalid stationConstructionId')
+        logger.errorDebugPrint(stationConstructionId)
+        return nil
+    end
+
+    local _con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+    -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
+    -- logger.print('con =') logger.debugPrint(conData)
+    if not(_con) or _con.fileName ~= _constants.stationConFileName then
+        if isSkipLogging then return nil end
+        logger.err('getPlatformHeightProps_indexedByT con.fileName =')
+        logger.errorDebugPrint(_con.fileName)
+        return nil
+    end
+
+    local _defaultHeightCm = math.floor(_constants.platformHeights._80cm.aboveRail * 100)
+    local _getHeightCmFromModuleName = function (name)
+        local adj1 = string.gsub(name, 'station/rail/lollo_freestyle_train_station/platformHeights/platformHeight', '')
+        if type(adj1) ~= 'string' or adj1 == '' then return _defaultHeightCm end
+
+        local adj = string.gsub(adj1, '.module', '')
+        if type(adj) ~= 'string' or adj == '' then return _defaultHeightCm end
+
+        local heightCm = tonumber(adj, 10)
+        return heightCm
+    end
+
+    local _conParams = _con.params
+    local _numTerminals = #_conParams.terminals
+    local _modules = _conParams.modules
+    -- local _modules = arrayUtils.cloneDeepOmittingFields(_params.modules, nil, true)
+    local _terminalHeights_indexedByT = {}
+    for slotId, modu in pairs(_modules) do
+        local nTerminal, _, baseId = slotHelpers.demangleId(slotId)
+        if type(nTerminal) == 'number' then
+            if baseId == _constants.idBases.axialEdgeSlotId
+            or baseId == _constants.idBases.flatPassengerEdgeSlotId
+            then
+                if not(_terminalHeights_indexedByT[nTerminal]) then
+                    _terminalHeights_indexedByT[nTerminal] = {}
+                end
+                _terminalHeights_indexedByT[nTerminal].hasEdges = true
+            elseif baseId == _constants.idBases.platformHeightSlotId
+            then
+                if not(_terminalHeights_indexedByT[nTerminal]) then
+                    _terminalHeights_indexedByT[nTerminal] = {}
+                end
+                _terminalHeights_indexedByT[nTerminal].heightCm = _getHeightCmFromModuleName(modu.name)
+            end
+        end
+    end
+
+    for nTerminal = 1, _numTerminals, 1 do
+        if not(_terminalHeights_indexedByT[nTerminal]) then
+            _terminalHeights_indexedByT[nTerminal] = {}
+        end
+        if not(_terminalHeights_indexedByT[nTerminal].heightCm) then
+            _terminalHeights_indexedByT[nTerminal].heightCm = _defaultHeightCm
+        end
+    end
+
+    return _terminalHeights_indexedByT
 end
 
 helpers.getIsTrackAlongPlatformLeft = function(platformEdgeList, midTrackEdge)
