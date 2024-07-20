@@ -316,19 +316,19 @@ function data()
 					return occupiedInfo.platformHeads[t][i]
 				end
 			end
-			local _occupyPlatformHeads = function(t, i, slotId, transf)
+			local _occupyPlatformHeads = function(t, i, slotId, yRotatedTransf)
 				local module = _modules[slotId]
 				if module == nil then return end
 
 				if occupiedInfo.platformHeads[t] == nil then occupiedInfo.platformHeads[t] = {} end
 				local xShift = (module.metadata.howMany4mChunks or 1) * 4
-				local vectorStart123 = transfUtils.getVec123Transformed({0, 0, 0}, transf)
-				local vectorEnd123 = transfUtils.getVec123Transformed({xShift, 0, 0}, transf)
+				local vectorNear123 = transfUtils.getVec123Transformed({0, 0, 0}, yRotatedTransf)
+				local vectorFar123 = transfUtils.getVec123Transformed({xShift, 0, 0}, yRotatedTransf)
 
 				occupiedInfo.platformHeads[t][i] = {
 					id = slotId,
 					xShift = xShift,
-					zShift = vectorEnd123[3] - vectorStart123[3]
+					zShift = vectorFar123[3] - vectorNear123[3]
 				}
 			end
 
@@ -710,7 +710,7 @@ function data()
 				local function _addAxialExits()
 					for _, ii in pairs({ 1, #_cpfs }) do
 						local cpf = _cpfs[ii]
-						local adjacentPosTanX2 = (ii == 1)
+						local endPosTanX2 = (ii == 1)
 							and transfUtils.getPosTanX2Normalised(
 								transfUtils.getPosTanX2Reversed(
 									cpf.posTanX2
@@ -719,23 +719,22 @@ function data()
 							or transfUtils.getPosTanX2Normalised(
 								cpf.posTanX2
 							)
-						local adjacentYRotatedTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(adjacentPosTanX2)
-						local adjacentVerticalTransf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(adjacentPosTanX2)
-						local endPos = (ii == 1)
+						local yRotatedTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(endPosTanX2)
+						local verticalTransf = moduleHelpers.getPlatformObjectTransf_AlwaysVertical(endPosTanX2)
+						local endPos123 = (ii == 1)
 							and cpf.posTanX2[1][1]
 							or cpf.posTanX2[2][1]
 						local myTransf = transfUtils.getTransf_ZShifted(
 							{
-								adjacentVerticalTransf[1], adjacentVerticalTransf[2], adjacentVerticalTransf[3], adjacentVerticalTransf[4],
-								adjacentVerticalTransf[5], adjacentVerticalTransf[6], adjacentVerticalTransf[7], adjacentVerticalTransf[8],
-								adjacentVerticalTransf[9], adjacentVerticalTransf[10], adjacentVerticalTransf[11], adjacentVerticalTransf[12],
-								endPos[1], endPos[2], endPos[3], 1
+								verticalTransf[1], verticalTransf[2], verticalTransf[3], verticalTransf[4],
+								verticalTransf[5], verticalTransf[6], verticalTransf[7], verticalTransf[8],
+								verticalTransf[9], verticalTransf[10], verticalTransf[11], verticalTransf[12],
+								endPos123[1], endPos123[2], endPos123[3], 1
 							},
 							_laneZ
 						)
 
 						local platformHeadId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.platformHeadSlotId)
-						-- local platformHeadId = result.mangleId(t, ii == 1 and 0 or 1, _constants.idBases.platformHeadSlotId)
 						if _terminalData.trackEdgeListVehicleNode0Index ~= nil and _terminalData.trackEdgeListVehicleNode1Index ~= nil then
 							-- heads only on ground or bridges (they generate terrain, no bridges) and if the station is new enough (Jan 2024)
 							-- the spacing is adjusted so that I can add or remove a head even if an exit is already in place
@@ -748,7 +747,7 @@ function data()
 									type = _isCargoTerminal and _constants.cargoPlatformHeadModuleType or _constants.passengersPlatformHeadModuleType,
 								})
 								if _modules[platformHeadId] ~= nil then
-									_occupyPlatformHeads(t, cpf.leadingIndex, platformHeadId, adjacentYRotatedTransf)
+									_occupyPlatformHeads(t, cpf.leadingIndex, platformHeadId, yRotatedTransf)
 								end
 							end
 						end
@@ -1392,6 +1391,8 @@ function data()
 
 				local function _addWaitingAreas()
 					if _isCargoTerminal then
+						-- local _zShift = _laneZ + (_laneZ == _constants.platformHeights._0cm.aboveGround and -0.3 or 0)
+						local _zShift = _laneZ + moduleHelpers.getZShiftFor0mPlatform(result, t)
 						for _, cwas in pairs(_terminalData.cargoWaitingAreasRelative) do
 							for i = 1, #cwas do
 								local posTanX2 = cwas[i].posTanX2
@@ -1400,7 +1401,7 @@ function data()
 									result.models[#result.models+1] = {
 										id = _constants.cargoWaitingAreaModelId,
 										tag = slotHelpers.mangleModelTag(t, true),
-										transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _laneZ)
+										transf = transfUtils.getTransf_ZShifted(centreLaneTransf, _zShift)
 									}
 								end
 							end

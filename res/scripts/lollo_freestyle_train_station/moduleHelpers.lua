@@ -141,6 +141,13 @@ local privateFuncs = {
         -- ie it does not draw on the adjacent track edges
         return math.fmod(nTrackEdge, 3) == 1
     end,
+    getIsTerrainFlush = function (result, nTerminal)
+        return (
+            result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
+            or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
+            or result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround
+        )
+    end,
     getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
         -- logger.print('getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =') logger.debugPrint(posTanX2)
         local pos1 = posTanX2[1][1]
@@ -224,6 +231,12 @@ local privateFuncs = {
             -cosZ * sinY,   -sinZ * sinY,   cosY,       0,
             (pos1[1] + pos2[1]) * 0.5,  (pos1[2] + pos2[2]) * 0.5,  (pos1[3] + pos2[3]) * 0.5,  1
         }
+    end,
+    getZShiftFor0mPlatform = function (result, nTerminal)
+        if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then
+            return -0.3
+        end
+        return 0
     end,
     -- returns an integer starting at 0, it can be positive or negative
     getVariant = function(params, slotId)
@@ -324,7 +337,7 @@ privateFuncs.axialAreas = {
     end,
 }
 privateFuncs.deco = {
-    addWallAcross = function(cpf, isLowIEnd, result, tag, wallModelId, absDeltaY, isTrackOnPlatformLeft, wallTransf, ii, iMax)
+    addWallAcross = function(cpf, isLowIEnd, result, tag, wallModelId, absDeltaY, isTrackOnPlatformLeft, wallTransf, ii, iMax, wallBaseModelId)
         if absDeltaY <= 0 then return end
         local sideWallBase = (isLowIEnd ~= isTrackOnPlatformLeft)
             and {-0.5, 0, 0}
@@ -404,26 +417,41 @@ privateFuncs.deco = {
             )
             result.models[#result.models+1] = {
                 id = wallModelId,
+                tag = tag,
                 transf = transf4P,
-                tag = tag
             }
+            if wallBaseModelId ~= nil and cpf.type == 0 then -- only on ground
+                result.models[#result.models+1] = {
+                    id = wallBaseModelId,
+                    tag = tag,
+                    transf = transf4P,
+                }
+            end
             -- logger.print('transf 4 p = ') logger.debugPrint(transf4P)
         end
         -- close the last bit if it is shorter than 1 metre - remember walls are all 1 metre wide
         if lengthAcross > math.floor(absDeltaY) then
+            local myTransf = transfUtilsUG.mul(
+                {
+                    cosZ, sinZ, 0, 0,
+                    -sinZ, cosZ, 0, 0,
+                    0, 0, 1, 0,
+                    innerPos[1] + (lengthAcross-0.5) * cosZ, innerPos[2] + (lengthAcross-0.5) * sinZ, innerPos[3], 1
+                },
+                flipShiftTiltTransf
+            )
             result.models[#result.models+1] = {
                 id = wallModelId,
-                transf = transfUtilsUG.mul(
-                    {
-                        cosZ, sinZ, 0, 0,
-                        -sinZ, cosZ, 0, 0,
-                        0, 0, 1, 0,
-                        innerPos[1] + (lengthAcross-0.5) * cosZ, innerPos[2] + (lengthAcross-0.5) * sinZ, innerPos[3], 1
-                    },
-                    flipShiftTiltTransf
-                ),
-                tag = tag
+                tag = tag,
+                transf = myTransf,
             }
+            if wallBaseModelId ~= nil and cpf.type == 0 then -- only on ground
+                result.models[#result.models+1] = {
+                    id = wallBaseModelId,
+                    tag = tag,
+                    transf = myTransf,
+                }
+            end
         end
 --[[
         local testPegZ = 0
@@ -973,6 +1001,70 @@ privateFuncs.openStairs = {
         end
     end,
 }
+privateFuncs.platforms = {
+    doTerrainFromCoordinates = function(result, nTerminal, groundFacesFillKey, terrainCoordinates)
+        local faces = {}
+        for tc = 1, #terrainCoordinates do
+            local face = { }
+            for i = 1, 4 do
+                face[i] = {
+                    terrainCoordinates[tc][i][1],
+                    terrainCoordinates[tc][i][2],
+                    terrainCoordinates[tc][i][3],
+                    1
+                }
+            end
+            faces[#faces+1] = face
+            if groundFacesFillKey ~= nil then
+                result.groundFaces[#result.groundFaces + 1] = {
+                    face = face, -- Z is ignored here
+                    loop = true,
+                    modes = {
+                        {
+                            type = 'FILL',
+                            key = groundFacesFillKey,
+                        },
+                        {
+                            type = 'STROKE_OUTER',
+                            key = groundFacesFillKey
+                        }
+                    }
+                }
+            end
+        end
+    end,
+    getTerrainCoordinates = function(terminalData)
+        local terrainCoordinates = {}
+
+        local _cpfs = terminalData.centrePlatformsFineRelative
+        for ii = 1, #_cpfs do
+            local cpf = _cpfs[ii]
+            if cpf.type == 0 then -- only on ground
+                local platformWidth = cpf.width
+                local innerAreaEdgePosTanX2 = transfUtils.getParallelSidewaysCoarse(
+                    cpf.posTanX2,
+                    -platformWidth * 0.5
+                )
+                local outerAreaEdgePosTanX2 = transfUtils.getParallelSidewaysCoarse(
+                    cpf.posTanX2,
+                    platformWidth * 0.5
+                )
+                local pos1Inner = innerAreaEdgePosTanX2[1][1]
+                local pos2Inner = innerAreaEdgePosTanX2[2][1]
+                local pos2Outer = outerAreaEdgePosTanX2[2][1]
+                local pos1Outer = outerAreaEdgePosTanX2[1][1]
+                terrainCoordinates[#terrainCoordinates+1] = {
+                    pos1Inner,
+                    pos2Inner,
+                    pos2Outer,
+                    pos1Outer,
+                }
+            end
+        end
+        -- logger.print('terrainCoordinates =') logger.debugPrint(terrainCoordinates)
+        return terrainCoordinates
+    end,
+}
 privateFuncs.platformHeads = {
     getHeadModelId = function (eraPrefix, isCargo, isRight, width, platformStyleModuleFileName)
         if isCargo then
@@ -1069,7 +1161,7 @@ privateFuncs.platformHeads = {
 }
 privateFuncs.slopedAreas = {
     addSlopedCargoAreaDeco = function(result, tag, slotId, params, nTerminal, terminalData, nTrackEdge, eraPrefix, areaWidth, nWaitingAreas, verticalTransfAtPlatformCentre)
-        if areaWidth < 5 then return end
+        if areaWidth < 5 or nWaitingAreas < 4 then return end
 
         local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
         if isEndFiller then return end
@@ -1079,8 +1171,13 @@ privateFuncs.slopedAreas = {
         local cpl = terminalData.centrePlatformsRelative[nTrackEdge]
         local platformWidth = cpl.width
 
-        local xShift1 = nWaitingAreas <= 4 and -4.5 or -4.5
-        local xShift2 = nWaitingAreas <= 4 and 0.7 or 3.7
+        local xShift1 = -4.6
+        local xShift2 = 4.6
+        if (nWaitingAreas % 2) == 0 then
+            xShift1 = -3.1
+            xShift2 = 3.1
+        end
+
         local yShift = (-platformWidth -areaWidth) / 2
         if not(isTrackOnPlatformLeft) then yShift = -yShift end
 
@@ -1297,9 +1394,10 @@ privateFuncs.slopedAreas = {
     isSlopedAreaAllowed = function(cpf, areaWidth)
         return cpf.type == 0 or (cpf.type == 1 and areaWidth <= 2.5)
     end,
-    doTerrainFromCoordinates = function(result, nTerminal, groundFacesFillKey, terrainCoordinates, isFlush)
+    doTerrainFromCoordinates = function(result, nTerminal, groundFacesFillKey, terrainCoordinates, isTerrainFlush)
         local faces = {}
-        local deltaZ = isFlush and (result.laneZs[nTerminal] - 0.1) or (result.laneZs[nTerminal] -constants.stairsAndRampHeight) -- need 0.1 so the module can be removed
+        local deltaZ = isTerrainFlush and (result.laneZs[nTerminal] - 0.1) or (result.laneZs[nTerminal] -constants.stairsAndRampHeight) -- need 0.1 so the module can be removed
+        -- local deltaZ = isTerrainFlush and (result.laneZs[nTerminal]) or (result.laneZs[nTerminal] -constants.stairsAndRampHeight)
         for tc = 1, #terrainCoordinates do
             local face = { }
             for i = 1, 4 do
@@ -1339,7 +1437,6 @@ privateFuncs.slopedAreas = {
         end
     end,
     getTerrainCoordinates = function(result, params, nTerminal, terminalData, nTrackEdge, isEndFiller, areaWidth, groundFacesFillKey)
-        -- logger.print('_doTerrain4SlopedArea got groundFacesFillKey =', groundFacesFillKey)
         local terrainCoordinates = {}
 
         local i1 = isEndFiller and nTrackEdge or (nTrackEdge - 1)
@@ -1502,6 +1599,9 @@ return {
     getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
         return privateFuncs.getPlatformObjectTransf_WithYRotation(posTanX2)
     end,
+    getZShiftFor0mPlatform = function (result, nTerminal)
+        return privateFuncs.getZShiftFor0mPlatform(result, nTerminal)
+    end,
     cargoShelves = {
         doCargoShelf = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge,
             bracket5ModelId, bracket10ModelId, bracket20ModelId,
@@ -1516,7 +1616,7 @@ return {
             local _iMax = isEndFiller and nTrackEdge or (nTrackEdge + 1)
             local _cpfs = terminalData.centrePlatformsFineRelative
             local _laneZ = result.laneZs[nTerminal]
-            local _zShift = _laneZ - constants.defaultPlatformHeight
+            local _zShift = _laneZ - constants.defaultPlatformHeight + privateFuncs.getZShiftFor0mPlatform(result, nTerminal)
             for ii = 1, #_cpfs, privateConstants.cargoShelves.bracketStep do
                 local cpf = _cpfs[ii]
                 local leadingIndex = cpf.leadingIndex
@@ -1796,6 +1896,8 @@ return {
             local _eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, terminalData, 1)
             local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
             local _zShift = 0
+            local _laneZ = result.laneZs[nTerminal]
+            local wallBaseModelId = (_laneZ == constants.platformHeights._0cm.aboveGround) and privateFuncs.deco.getWallBaseModelId(params, _eraPrefix) or nil
 
             local isFreeFromFlatAreas = false
             local occupiedWidth = 0
@@ -1840,9 +1942,16 @@ return {
             for k = 1, math.floor(leftRightDistance) do
                 result.models[#result.models+1] = {
                     id = wallModelId,
+                    tag = tag,
                     transf = leftTransf,
-                    tag = tag
                 }
+                if wallBaseModelId ~= nil and _cpl.type == 0 then -- only on ground
+                    result.models[#result.models+1] = {
+                        id = wallBaseModelId,
+                        tag = tag,
+                        transf = leftTransf,
+                    }
+                end
                 leftTransf = transfUtils.getTransf_XShifted(leftTransf, 1)
             end
             -- close the last bit - remember walls are always 1m wide
@@ -1851,9 +1960,16 @@ return {
                 leftTransf = transfUtils.getTransf_XShifted(leftTransf, -leftover)
                 result.models[#result.models+1] = {
                     id = wallModelId,
+                    tag = tag,
                     transf = leftTransf,
-                    tag = tag
                 }
+                if wallBaseModelId ~= nil and _cpl.type == 0 then -- only on ground
+                    result.models[#result.models+1] = {
+                        id = wallBaseModelId,
+                        tag = tag,
+                        transf = leftTransf,
+                    }
+                end
             end
         end,
         doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge,
@@ -1875,6 +1991,7 @@ return {
             local _zShift = _laneZ - constants.defaultPlatformHeight
 
             -- local _isVertical = false
+            local wallBaseModelId = (_laneZ == constants.platformHeights._0cm.aboveGround) and privateFuncs.deco.getWallBaseModelId(params, _eraPrefix) or nil
             local wallBehindModelId
             if (privateFuncs.deco.getMNAdjustedValue_0Or1_Cycling(params, slotId) ~= 0) then
                 wallBehindModelId = privateFuncs.deco.getWallBehindModelId(wall_not_tunnel_5m_ModelId)
@@ -1937,12 +2054,6 @@ return {
                         end
                         if isCanDraw then
                             -- tunnels: do not raise the walls or they may cut through the ceiling. On second thoughts, I'll leave it as it is for now.
-                            -- local __laneZ = cpf.type ~= 2 and _laneZ or math.min(_laneZ, constants.defaultPlatformHeight)
-                            -- logger.print('_laneZ = ' .. tostring(_laneZ) .. ',__laneZ = ' .. tostring(__laneZ) .. ', cpf.type = ' .. tostring(cpf.type))
-                            -- local __zShift = cpf.type ~= 2 and _zShift or __laneZ - constants.defaultPlatformHeight
-                            local __laneZ = _laneZ
-                            local __zShift = _zShift
-
                             local widthAboveNil, slopedAreaWidth = _getWidthAbove_0m_BarePlatformWidth(cpf)
                             -- this would help if I take cpf.posTanX2, but then I'd get some ugly steps.
                             -- local yShift = _isTrackOnPlatformLeft and -cpf.width * 0.5 - slopedAreaWidth or cpf.width * 0.5 + slopedAreaWidth
@@ -1958,7 +2069,7 @@ return {
                             local wallTransf = transfUtils.getTransf_Scaled_Shifted(
                                 privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                                 {_transfXZoom * xScaleFactor, _transfYZoom, 1},
-                                {0, 0, __laneZ}
+                                {0, 0, _laneZ}
                             )
                             local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
                             if _isTrackOnPlatformLeft then skew = -skew end
@@ -1966,12 +2077,19 @@ return {
                             local wallModelId = cpf.type == 2 and wall_tunnel_ModelId or wall_not_tunnel_5m_ModelId
                             result.models[#result.models+1] = {
                                 id = wallModelId,
+                                tag = tag,
                                 transf = wallTransf,
-                                tag = tag
                             }
+                            if wallBaseModelId ~= nil and cpf.type == 0 then -- only on ground
+                                result.models[#result.models+1] = {
+                                    id = wallBaseModelId,
+                                    tag = tag,
+                                    transf = wallTransf,
+                                }
+                            end
 
                             if wallBehindModelId ~= nil and cpf.type == 0 then -- only on ground
-                                privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, __laneZ)
+                                privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, _laneZ)
                             end
 
                             -- extend wall along platform head extensions
@@ -2006,7 +2124,7 @@ return {
                                         transfUtils.getTransf_Scaled_Shifted(
                                             privateFuncs.getPlatformObjectTransf_AlwaysVertical(headWallPosTanX2),
                                             {headTransfXZoom * headWallxScaleFactor, headTransfYZoom, 1},
-                                            {0, 0, __laneZ}
+                                            {0, 0, _laneZ}
                                         ),
                                         headWallSkew
                                     )
@@ -2015,8 +2133,15 @@ return {
                                         tag = tag,
                                         transf = platformHeadExtensionTransf,
                                     }
+                                    if wallBaseModelId ~= nil and cpf.type == 0 then -- only on ground
+                                        result.models[#result.models+1] = {
+                                            id = wallBaseModelId,
+                                            tag = tag,
+                                            transf = platformHeadExtensionTransf,
+                                        }
+                                    end
                                     if wallBehindModelId ~= nil and cpf.type == 0 then -- only on ground
-                                        privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, platformHeadExtensionTransf, widthAboveNil, xScaleFactor, _eraPrefix, __laneZ)
+                                        privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, platformHeadExtensionTransf, widthAboveNil, xScaleFactor, _eraPrefix, _laneZ)
                                     end
                                 end
                             end
@@ -2054,7 +2179,7 @@ return {
                                 local pillarTransf = transfUtils.getTransf_Scaled_Shifted(
                                     privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                                     {_transfXZoom, _transfYZoom, 1},
-                                    {0, yShift4Pillar, constants.platformRoofZ + __zShift}
+                                    {0, yShift4Pillar, constants.platformRoofZ + _zShift}
                                 )
                                 result.models[#result.models+1] = {
                                     id = cpf.width < 5 and pillar2_5ModelId or pillar5ModelId,
@@ -2087,10 +2212,10 @@ return {
                                     if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
                                         if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
                                             -- logger.print('_ONE')
-                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
+                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                         else
                                             -- logger.print('_TWO')
-                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
+                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                         end
                                     end
                                 elseif ii == _iiMax then
@@ -2098,20 +2223,20 @@ return {
                                     if not(_modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
                                         if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
                                             -- logger.print('_THREE')
-                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
+                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                         else
                                             -- logger.print('_FOUR')
-                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
+                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                         end
                                     end
                                 elseif leadingIndex ~= cpfM1.leadingIndex then
                                     local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
                                         -- logger.print('_FIVE')
-                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
+                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                 elseif leadingIndex ~= cpfP1.leadingIndex then
                                     local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
                                     -- logger.print('_SIX')
-                                    privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax)
+                                    privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                 end
                             end
                         end
@@ -2155,10 +2280,6 @@ return {
                 if leadingIndex >= _i1 then
                     if isTunnelOk or ctf.type ~= 2 then -- ground or bridge, tunnel only if allowed
                         -- tunnels: do not raise the walls or they may cut through the ceiling. On second thoughts, I'll leave it as it is for now.
-                        -- local __laneZ = ctf.type ~= 2 and _laneZ or math.min(_laneZ, constants.defaultPlatformHeight)
-                        -- logger.print('_laneZ = ' .. tostring(_laneZ) .. ',__laneZ = ' .. tostring(__laneZ) .. ', ctf.type = ' .. tostring(ctf.type))
-                        local __laneZ = _laneZ
-
                         local widthAboveNil = ctf.width * 0.5
                         local wallPosTanX2 = transfUtils.getParallelSidewaysCoarse(
                             ctf.posTanX2,
@@ -2173,13 +2294,13 @@ return {
                         --         transfXZoom * xScaleFactor, 0, 0, 0,
                         --         0, transfYZoom, 0, 0,
                         --         0, 0, 1, 0,
-                        --         0, 0, __laneZ, 1
+                        --         0, 0, _laneZ, 1
                         --     }
                         -- )
                         local wallTransf = transfUtils.getTransf_Scaled_Shifted(
                             privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                             {transfXZoom * xScaleFactor, transfYZoom, 1},
-                            {0, 0, __laneZ}
+                            {0, 0, _laneZ}
                         )
                         -- if not(_isVertical) then
                             local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
@@ -2197,7 +2318,7 @@ return {
                             tag = tag
                         }
                         if wallBehindModelId ~= nil and ctf.type == 0 then -- only on ground
-                            privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, __laneZ)
+                            privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xScaleFactor, _eraPrefix, _laneZ)
                         end
                     end
                 end
@@ -3105,12 +3226,18 @@ return {
         end,
     },
     platforms = {
-        addPlatform = function(result, tag, slotId, params, nTerminal, terminalData)
+        addPlatform = function(result, tag, slotId, params, nTerminal, terminalData, eraPrefix)
             -- LOLLO NOTE I can use a platform-track or dedicated models for the platform.
             -- The former is simpler, the latter requires adding an invisible track so the platform fits in bridges or tunnels.
             -- The former is a bit glitchy, the latter is prettier.
             local _isCargoTerminal = terminalData.isCargo
-            if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then return end
+            if result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround then
+                local groundFacesFillKey = privateFuncs.getGroundFacesFillKey_cargo(result, nTerminal, eraPrefix)
+                local terrainCoordinates = privateFuncs.platforms.getTerrainCoordinates(terminalData)
+                -- I cannot raise the terrain above the invisible track, but I can paint it.
+                privateFuncs.platforms.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates)
+                return
+            end
 
             local _modules = params.modules
             local _maxIIMod10 = constants.maxPassengerWaitingAreaEdgeLength
@@ -3300,6 +3427,8 @@ return {
             local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
+            local headInfo = result.getOccupiedInfo4PlatformHeads(nTerminal, nTrackEdge)
+            if not(headInfo.id) then return end
 			-- result.models[#result.models + 1] = {
 			-- 	id = 'lollo_freestyle_train_station/icon/lilac.mdl',
 			-- 	slotId = slotId,
@@ -3424,47 +3553,48 @@ return {
             end
             _addLanes()
 
-            local _groundFacesFillKey = _isCargoTerminal
-                and privateFuncs.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
-                or privateFuncs.getGroundFacesFillKey_passengers(_eraPrefix)
-            local _isTerrainFlush = (
-                result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
-                or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
-                or result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround
-            )
-            local deltaZ = _isTerrainFlush and (-0.1) or (-constants.defaultPlatformHeight) -- need 0.1 so the module can be removed
-			local groundFace = { -- the ground faces ignore z, the alignment lists don't
-				{0, -_cpf.width * 0.5 - (_isRight and 0 or 5), deltaZ, 1},
-				{0, _cpf.width * 0.5 + (_isRight and 5 or 0), deltaZ, 1},
-				{_xSize * howMany4mChunks, _cpf.width * 0.5 + (_isRight and 5 or 0), deltaZ, 1},
-				{_xSize * howMany4mChunks, -_cpf.width * 0.5 - (_isRight and 0 or 5), deltaZ, 1},
-			}
-			modulesutil.TransformFaces(slotTransf, groundFace)
-			table.insert(
-				result.groundFaces,
-				{
-					face = groundFace,
-					modes = {
-						{
-							type = 'FILL',
-							key = _groundFacesFillKey
-						},
-						{
-						    type = 'STROKE_OUTER',
-						    key = _groundFacesFillKey
-						}
-					}
-				}
-			)
+            local _addTerrain = function ()
+                if _cpf.type ~= 0 then return end -- only on ground
 
-			local terrainAlignmentList = {
-				faces = { groundFace },
-				optional = true,
-				slopeHigh = constants.slopeHigh,
-				slopeLow = constants.slopeLow,
-				type = 'EQUAL',
-			}
-			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+                local _groundFacesFillKey = _isCargoTerminal
+                    and privateFuncs.getGroundFacesFillKey_cargo(result, nTerminal, _eraPrefix)
+                    or privateFuncs.getGroundFacesFillKey_passengers(_eraPrefix)
+                -- local zed = privateFuncs.getIsTerrainFlush(result, nTerminal) and (-0.1) or (-constants.defaultPlatformHeight) -- need 0.1 so the module can be removed
+                local zed = privateFuncs.getIsTerrainFlush(result, nTerminal) and (0.0) or (-constants.defaultPlatformHeight)
+                local groundFace = { -- the ground faces ignore z, the alignment lists don't
+                    {0, -_cpf.width * 0.5 - (_isRight and 0 or 5), zed, 1},
+                    {0, _cpf.width * 0.5 + (_isRight and 5 or 0), zed, 1},
+                    {_xSize * howMany4mChunks, _cpf.width * 0.5 + (_isRight and 5 or 0), zed + headInfo.zShift, 1},
+                    {_xSize * howMany4mChunks, -_cpf.width * 0.5 - (_isRight and 0 or 5), zed + headInfo.zShift, 1},
+                }
+                modulesutil.TransformFaces(slotTransf, groundFace)
+                table.insert(
+                    result.groundFaces,
+                    {
+                        face = groundFace,
+                        modes = {
+                            {
+                                type = 'FILL',
+                                key = _groundFacesFillKey
+                            },
+                            {
+                                type = 'STROKE_OUTER',
+                                key = _groundFacesFillKey
+                            }
+                        }
+                    }
+                )
+
+                local terrainAlignmentList = {
+                    faces = { groundFace },
+                    optional = true,
+                    slopeHigh = constants.slopeHigh,
+                    slopeLow = constants.slopeLow,
+                    type = 'EQUAL',
+                }
+                result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+            end
+            _addTerrain()
         end,
     },
     slopedAreas = {
@@ -3490,11 +3620,7 @@ return {
             local _zShift = _laneZ - constants.defaultPlatformHeight
             local _modules = params.modules
             local _isCargoTerminal = terminalData.isCargo
-            local _isTerrainFlush = (
-                result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_earth.moduleFileName
-                or result.platformStyles[nTerminal] == constants.cargoPlatformStyles.cargo_gravel.moduleFileName
-                or result.laneZs[nTerminal] == constants.platformHeights._0cm.aboveGround
-            )
+            local _isTerrainFlush = privateFuncs.getIsTerrainFlush(result, nTerminal)
 
             local waitingAreaIndex = 0
             local nWaitingAreas = 0
@@ -3537,7 +3663,7 @@ return {
                                     id = waitingAreaModelId,
                                     transf = transfUtilsUG.mul(
                                         myTransf,
-                                        { 0, _waitingAreaScaleFactor, 0, 0,  -_waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ + _zShift, 1 }
+                                        { 0, _waitingAreaScaleFactor, 0, 0,  -_waitingAreaScaleFactor, 0, 0, 0,  0, 0, 1, 0,  0, 0, _laneZ, 1 }
                                     ),
                                     tag = slotHelpers.mangleModelTag(nTerminal, isCargo),
                                 }
@@ -3571,33 +3697,44 @@ return {
                                 -- logger.print('posTanX2 before =') logger.debugPrint(platformHeadExtensionPosTanX2)
                                 platformHeadExtensionPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(platformHeadExtensionPosTanX2, 1)
                                 -- logger.print('posTanX2 after =') logger.debugPrint(platformHeadExtensionPosTanX2)
+                                local platformHeadExtensionTransf = transfUtils.getTransf_Scaled(
+                                    privateFuncs.getPlatformObjectTransf_WithYRotation(platformHeadExtensionPosTanX2),
+                                    {xScaleFactor, 1, 1}
+                                )
                                 result.models[#result.models+1] = {
-                                    id = modelId,
+                                    id = modelId, -- 'lollo_freestyle_train_station/empty.mdl'
+                                    -- id = 'lollo_freestyle_train_station/icon/red.mdl',
                                     tag = tag,
-                                    transf = transfUtils.getTransf_Scaled_Shifted(
-                                        privateFuncs.getPlatformObjectTransf_WithYRotation(platformHeadExtensionPosTanX2),
-                                        {xScaleFactor, 1, 1}, {0, 0, _zShift}
-                                    ),
+                                    transf = transfUtils.getTransf_ZShifted(platformHeadExtensionTransf, _zShift)
                                 }
                                 -- calc terrain coordinates
                                 if cpf.type == 0 then -- only on ground
-                                    local onePosTanX2 = transfUtils.getParallelSidewaysCoarse(
-                                        platformHeadExtensionPosTanX2,
-                                        -areaWidth * 0.5
-                                    )
-                                    local twoPosTanX2 = transfUtils.getParallelSidewaysCoarse(
-                                        platformHeadExtensionPosTanX2,
-                                        areaWidth * 0.5
-                                    )
+                                    local x0y0Pos123 = transfUtils.getVec123Transformed({0.0, -areaWidth * 0.5, 0}, platformHeadExtensionTransf)
+                                    local x0y1Pos123 = transfUtils.getVec123Transformed({0.0, areaWidth * 0.5, 0}, platformHeadExtensionTransf)
+                                    local x1y1Pos123 = transfUtils.getVec123Transformed({1.0, areaWidth * 0.5, 0}, platformHeadExtensionTransf)
+                                    local x1y0Pos123 = transfUtils.getVec123Transformed({1.0, -areaWidth * 0.5, 0}, platformHeadExtensionTransf)
                                     terrainCoordinates[#terrainCoordinates+1] = {
-                                        twoPosTanX2[1][1],
-                                        twoPosTanX2[2][1],
-                                        onePosTanX2[2][1],
-                                        onePosTanX2[1][1],
+                                        x0y0Pos123,
+                                        x0y1Pos123,
+                                        x1y1Pos123,
+                                        x1y0Pos123,
                                     }
+                                    -- local onePosTanX2 = transfUtils.getParallelSidewaysCoarse(
+                                    --     platformHeadExtensionPosTanX2,
+                                    --     -areaWidth * 0.5
+                                    -- )
+                                    -- local twoPosTanX2 = transfUtils.getParallelSidewaysCoarse(
+                                    --     platformHeadExtensionPosTanX2,
+                                    --     areaWidth * 0.5
+                                    -- )
+                                    -- terrainCoordinates[#terrainCoordinates+1] = {
+                                    --     twoPosTanX2[1][1],
+                                    --     twoPosTanX2[2][1],
+                                    --     onePosTanX2[2][1],
+                                    --     onePosTanX2[1][1],
+                                    -- }
                                 end
                             end
-
                             privateFuncs.slopedAreas.doTerrainFromCoordinates(result, nTerminal, groundFacesFillKey, terrainCoordinates, _isTerrainFlush)
                         end
                     else

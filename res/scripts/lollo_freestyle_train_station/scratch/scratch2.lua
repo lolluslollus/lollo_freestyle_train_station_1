@@ -2,6 +2,9 @@ package.path = package.path .. ';res/scripts/?.lua'
 
 print('scratch2 starting')
 
+print(4 % 2)
+print(5 % 2)
+
 local function get__()
     return -1, _, _
 end

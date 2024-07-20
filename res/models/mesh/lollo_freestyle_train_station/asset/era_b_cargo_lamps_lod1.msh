@@ -7,20 +7,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 1560,
-					offset = 10316,
+					count = 1068,
+					offset = 8324,
 				},
 				position = {
-					count = 1560,
-					offset = 8756,
+					count = 1068,
+					offset = 7256,
 				},
 				tangent = {
-					count = 1560,
-					offset = 7196,
+					count = 1068,
+					offset = 6188,
 				},
 				uv0 = {
-					count = 1560,
-					offset = 11876,
+					count = 1068,
+					offset = 5120,
 				},
 			},
 			materials = {
@@ -30,19 +30,19 @@ return {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 13724,
+					offset = 9824,
 				},
 				position = {
 					count = 144,
-					offset = 13580,
+					offset = 9680,
 				},
 				tangent = {
 					count = 144,
-					offset = 13436,
+					offset = 9536,
 				},
 				uv0 = {
 					count = 144,
-					offset = 13868,
+					offset = 9392,
 				},
 			},
 			materials = {
@@ -51,47 +51,47 @@ return {
 		}, {
 			indices = {
 				normal = {
-					count = 528,
-					offset = 15068,
+					count = 624,
+					offset = 11840,
 				},
 				position = {
-					count = 528,
-					offset = 14540,
+					count = 624,
+					offset = 11216,
 				},
 				tangent = {
-					count = 528,
-					offset = 14012,
+					count = 624,
+					offset = 10592,
 				},
 				uv0 = {
-					count = 528,
-					offset = 15596,
+					count = 624,
+					offset = 9968,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/asset/iron.mtl", 
+				"lollo_freestyle_train_station/asset/iron.003.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 1368,
+			count = 1224,
 			numComp = 3,
-			offset = 4652,
+			offset = 3896,
 		},
 		position = {
-			count = 1836,
+			count = 1416,
 			numComp = 3,
-			offset = 2816,
+			offset = 2480,
 		},
 		tangent = {
-			count = 2816,
+			count = 1648,
 			numComp = 4,
-			offset = 0,
+			offset = 832,
 		},
 		uv0 = {
-			count = 1176,
+			count = 832,
 			numComp = 2,
-			offset = 6020,
+			offset = 0,
 		},
 	},
 }

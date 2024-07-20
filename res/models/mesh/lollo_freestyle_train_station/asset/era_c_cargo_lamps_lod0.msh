@@ -1,26 +1,26 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 5088,
-					offset = 15152,
+					count = 4992,
+					offset = 30120,
 				},
 				position = {
-					count = 5088,
-					offset = 25328,
+					count = 4992,
+					offset = 25128,
 				},
 				tangent = {
-					count = 5088,
-					offset = 20240,
+					count = 4992,
+					offset = 20136,
 				},
 				uv0 = {
-					count = 5088,
-					offset = 30416,
+					count = 4992,
+					offset = 15144,
 				},
 			},
 			materials = {
@@ -30,46 +30,68 @@ return {
 			indices = {
 				normal = {
 					count = 144,
-					offset = 35504,
+					offset = 35544,
 				},
 				position = {
 					count = 144,
-					offset = 35792,
+					offset = 35400,
 				},
 				tangent = {
 					count = 144,
-					offset = 35648,
+					offset = 35256,
 				},
 				uv0 = {
 					count = 144,
-					offset = 35936,
+					offset = 35112,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/asset/cargo_lamps/light.000.mtl", 
 			},
+		}, {
+			indices = {
+				normal = {
+					count = 96,
+					offset = 35976,
+				},
+				position = {
+					count = 96,
+					offset = 35880,
+				},
+				tangent = {
+					count = 96,
+					offset = 35784,
+				},
+				uv0 = {
+					count = 96,
+					offset = 35688,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/asset/iron.mtl", 
+			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 2736,
+			count = 2568,
 			numComp = 3,
-			offset = 0,
+			offset = 12576,
 		},
 		position = {
 			count = 3552,
 			numComp = 3,
-			offset = 8224,
+			offset = 9024,
 		},
 		tangent = {
-			count = 5488,
+			count = 5584,
 			numComp = 4,
-			offset = 2736,
+			offset = 3440,
 		},
 		uv0 = {
-			count = 3376,
+			count = 3440,
 			numComp = 2,
-			offset = 11776,
+			offset = 0,
 		},
 	},
 }

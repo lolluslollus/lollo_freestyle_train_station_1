@@ -37,10 +37,11 @@ return {
 
 		local _terminalData = params.terminals[nTerminal]
 		local _cps = _terminalData.centrePlatformsRelative
+		local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, 1)
 
 		moduleHelpers.edges.addEdges(result, tag, params, nTerminal, _terminalData)
 		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
-		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal, _terminalData)
+		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal, _terminalData, _eraPrefix)
 
 		-- result.models[#result.models + 1] = {
 		-- 	id = _constants.terminalModelFileName,
@@ -51,14 +52,14 @@ return {
 
 		local laneZ = result.laneZs[nTerminal]
 		local isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
-		local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, 1)
+		-- local zShift = laneZ + moduleHelpers.getZShiftFor0mPlatform(result, nTerminal)
 
-		local stationSignModelId = (eraPrefix == moduleHelpers.eras.era_c.prefix)
+		local stationSignModelId = (_eraPrefix == moduleHelpers.eras.era_c.prefix)
 			and 'lollo_freestyle_train_station/asset/era_c_cargo_station_sign.mdl'
 			or 'lollo_freestyle_train_station/asset/era_a_cargo_station_sign.mdl'
 		local lampsModelId = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_sodium.mdl'
-			if eraPrefix == moduleHelpers.eras.era_a.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps.mdl'
-			elseif eraPrefix == moduleHelpers.eras.era_b.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_b_cargo_lamps.mdl'
+			if _eraPrefix == moduleHelpers.eras.era_a.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_a_cargo_lamps.mdl'
+			elseif _eraPrefix == moduleHelpers.eras.era_b.prefix then lampsModelId = 'lollo_freestyle_train_station/asset/era_b_cargo_lamps.mdl'
 			end
 
 		if logger.isExtendedLog() then
@@ -144,7 +145,7 @@ return {
 				tag = tag
 			}
 		end
-		if eraPrefix ~= moduleHelpers.eras.era_a.prefix then
+		if _eraPrefix ~= moduleHelpers.eras.era_a.prefix then
 			for i = 4, #_cps - 1, 4 do
 				local cpl = _cps[i]
 				local platformWidth = cpl.width

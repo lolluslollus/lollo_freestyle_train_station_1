@@ -24,6 +24,7 @@ function data()
 								materials = { 
 									'lollo_freestyle_train_station/asset/cargo_assets_1.mtl',
 									'lollo_freestyle_train_station/emissive/sodium-medium.mtl',
+									'lollo_freestyle_train_station/metal/rough_iron.mtl',
 								},
 								mesh = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_lod0.msh',
 								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
@@ -47,6 +48,7 @@ function data()
 						materials = { 
 							'lollo_freestyle_train_station/asset/cargo_assets_1.mtl',
 							'lollo_freestyle_train_station/emissive/sodium-medium.mtl',
+							'lollo_freestyle_train_station/metal/rough_iron.mtl',
 						},
 						mesh = 'lollo_freestyle_train_station/asset/era_c_cargo_lamps_lod1.msh',
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },

@@ -96,8 +96,8 @@ function data()
 			end
 
 			local groundFace = { -- this model requires some z shift
-				{-5.5, -11, _constants.platformSideBitsZ -0.8, 1},
-				{-5.5, 11, _constants.platformSideBitsZ -0.8, 1},
+				{-0.5, -11, _constants.platformSideBitsZ -0.8, 1},
+				{-0.5, 11, _constants.platformSideBitsZ -0.8, 1},
 				{18.5, 11, _constants.platformSideBitsZ -0.8, 1},
 				{18.5, -11, _constants.platformSideBitsZ -0.8, 1},
 			}
