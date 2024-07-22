@@ -16,14 +16,14 @@ function data()
 	t.shapeStep = 4.0 -- was 4, you can use 2 for smoother bends
 	t.shapeSleeperStep = 8.0 / 12.0
 
-	t.ballastHeight = .3
-	t.ballastCutOff = .1
+	t.ballastHeight = 0 --.3
+	t.ballastCutOff = 0 --.1
 
 	t.sleeperBase = t.ballastHeight
 	t.sleeperLength = .26
 	t.sleeperWidth = 1.3 -- was 2.6
-	t.sleeperHeight = .08
-	t.sleeperCutOff = .02
+	t.sleeperHeight = 0 --.08
+	t.sleeperCutOff = 0 --.02
 
 	t.railTrackWidth = 1.435
 	t.railBase = t.sleeperBase + t.sleeperHeight
