@@ -133,6 +133,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
             add('lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
             add('lollo_freestyle_train_station/platformWalls/tunnely/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
+            add('lollo_freestyle_train_station/platformWalls/tunnely_light/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/fence_wood/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
             add('lollo_freestyle_train_station/platformWalls/fence_bricks_stone/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
             add('lollo_freestyle_train_station/platformWalls/fence_mattoni/square_fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceMattoni.tga', _("WallFenceMattoniName"))
@@ -150,6 +151,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
             add('lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
             add('lollo_freestyle_train_station/platformWalls/tunnely/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
+            add('lollo_freestyle_train_station/platformWalls/tunnely_light/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/fence_wood/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
             add('lollo_freestyle_train_station/platformWalls/fence_bricks_stone/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
             add('lollo_freestyle_train_station/platformWalls/fence_mattoni/square_fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceMattoni.tga', _("WallFenceMattoniName"))
@@ -177,11 +179,13 @@ local privateFuncs = {
         if isWallTall then
             add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
             add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
+            add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyNLightame'))
             add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
             add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
         else
             add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
             add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
+            add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
             add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
         end

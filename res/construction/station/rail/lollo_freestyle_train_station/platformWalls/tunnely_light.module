@@ -20,13 +20,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("WallFenceBricksStoneName"),
-			description = _("WallFenceBricksStoneDesc"),
-			icon = "ui/lollo_freestyle_train_station/wallFenceBricksStone.tga"
+			name = _("WallTunnelyLightName"),
+			description = _("WallTunnelyLightDesc"),
+			icon = "ui/lollo_freestyle_train_station/wallTunnelyLight.tga"
 		},
 		metadata = { },
 		order = {
-			value = 37,
+			value = 35,
 		},
 		type = _constants.platformWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -36,7 +36,7 @@ function data()
 			local _terminalData = params.terminals[nTerminal]
 			if baseId == _constants.idBases.axialWallSlotId then
 				moduleHelpers.deco.doAxialWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
-				'lollo_freestyle_train_station/platformWalls/fence_bricks_stone/fence_5m.mdl'
+				'lollo_freestyle_train_station/platformWalls/tunnely_light/wall_low_5m.mdl'
 				)
 			else
 				local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
@@ -48,9 +48,9 @@ function data()
 				end
 
 				moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
-				-- 'lollo_freestyle_train_station/platformWalls/fence_bricks_stone/fence_5m.mdl',
+				-- 'lollo_freestyle_train_station/platformWalls/tunnely_light/wall_5m.mdl',
 				_eraPrefix == _constants.eras.era_c.prefix and 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_5m.mdl' or 'lollo_freestyle_train_station/platformWalls/tiled/platformWall_5m.mdl',
-				'lollo_freestyle_train_station/platformWalls/fence_bricks_stone/fence_5m.mdl',
+				'lollo_freestyle_train_station/platformWalls/tunnely_light/wall_low_5m.mdl',
 				pillar_2_5m_modelId, pillar_5m_modelId,
 				true)
 			end
@@ -60,12 +60,12 @@ function data()
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = 'lollo_freestyle_train_station/platformWalls/fence_bricks_stone/fence_5m.mdl',
+					id = 'lollo_freestyle_train_station/platformWalls/tunnely_light/wall_low_5m.mdl',
 					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
 			results[#results+1] = {
-				id = 'lollo_freestyle_train_station/roofs/concrete_modern/pillar_2_5m.mdl',
+				id = 'lollo_freestyle_train_station/roofs/iron/platformRoofPillar_2_5m.mdl',
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 1.4, -1.3, 1},
 			}
 			results[#results+1] = moduleHelpers.deco.getPreviewIcon(params)
