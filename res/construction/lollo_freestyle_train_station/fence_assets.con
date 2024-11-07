@@ -8,28 +8,6 @@ function data()
     local function _addGround(transf, result, zed, zShift, wallBehindModelId, isDoTerrain)
         if not(isDoTerrain) then return end
 
-        -- local _faceTransformed = wallBehindModelId == nil
-        --     and transfUtils.getFaceTransformed_FAST(
-        --         transf,
-        --         {
-        --             {-0.5, -0.2, _zed, 1.0},
-        --             {0.5, -0.2, _zed, 1.0},
-        --             {0.5, 0.5, _zed, 1.0},
-        --             {-0.5, 0.5, _zed, 1.0},
-        --             -- {x, positive outwards, z, 1}
-        --         }
-        --     )
-        --     or transfUtils.getFaceTransformed_FAST(
-        --         transf,
-        --         {
-        --             {-0.5, -0.2, _zed, 1.0},
-        --             {0.5, -0.2, _zed, 1.0},
-        --             {0.5, 1.0, _zed, 1.0},
-        --             {-0.5, 1.0, _zed, 1.0},
-        --             -- {x, positive outwards, z, 1}
-        --         }
-        --     )
-
         local _zed = math.max(zShift, 0) + zed -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
         local _faceTransformed = transfUtils.getFaceTransformed_FAST(
             transf,
@@ -140,7 +118,6 @@ function data()
 		params = fenceModelHelper.getConParams(),
 		updateFn = function(params)
             logger.print('fenceAssetsScript.updateFn firing, params =') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
-
             local _initParams = function()
                 local defaults = fenceModelHelper.getDefaultIndexes()
                 params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
