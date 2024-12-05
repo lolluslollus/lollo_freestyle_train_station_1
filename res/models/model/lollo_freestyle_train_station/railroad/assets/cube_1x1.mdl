@@ -1,0 +1,48 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        -- boundingInfo = {
+        --     bbMax = {
+        --         0.5, 0.5, 0.5
+        --     },
+        --     bbMin = {
+        --         -0.5, -0.5, -0.5
+        --     },
+        -- },
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        -- collider = {
+        --     params = {
+        --         halfExtents = {
+        --             0.5, 0.5, 0.5,
+        --         },
+        --     },
+        --     transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1, },
+        --     type = 'BOX',
+        -- },
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/icon/orange.mtl',
+                                'lollo_freestyle_train_station/icon/orange.mtl',
+                                'lollo_freestyle_train_station/icon/orange.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/assets/cube_1x1m.msh',
+                        },
+                    },
+                    name = 'RootNode',
+                    -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 200,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

@@ -1,5 +1,5 @@
 function data()
-	-- local _constants = require('lollo_freestyle_train_station.constants') -- this won't work
+	local _constants = require('lollo_freestyle_train_station.constants')
 	return {
 		en = {
 			["DESC"] = [[
@@ -9,7 +9,7 @@ A freestyle train station. It introduces some new special tracks, which will ser
 Lay platforms alongside normal tracks, then place a platform marker and a track marker where you want the platform and the track to end. Repeat at the other end.
 WAIT A MOMENT and let the computer think.
 Now you have built a terminal, trains will stop between your track markers.
-Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to 12 terminals in one station.
+Add more platforms, tracks and markers, a popup will ask you if you want to join your new terminal to the other ones. You can have up to ]] .. tostring(_constants.maxNTerminals) .. [[ terminals in one station.
 
 Now click your station to open the configuration menu and add some connections.
 - Adjacent platforms are connected together automatically. If they are too far apart, connect them with exits, stairs or underpasses. You can also connect two bridge exits with a suitable path - or a stairs or lift asset.
@@ -557,7 +557,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["TrackSplitterName"] = "Track splitter",
 			["TrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use <AltGr> + <L> to see its effect.",
 
-			-- platform as asset
+			-- platform as asset, terrain cube
 			["Bulldoze"] = "Bulldoze",
 			["Embankment"] = "Embankment",
 			["OnlyTerrain"] = "Only terrain",
@@ -571,6 +571,10 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["PlatformAsAsset_X1m"] = "X size, fine, m",
 			["PlatformAsAsset_Y10m"] = "Y size, coarse, m",
 			["PlatformAsAsset_Y1m"] = "Y size, fine, m",
+			["PlatformAsAsset_Z10m"] = "Z size, coarse, m",
+			["PlatformAsAsset_Z1m"] = "Z size, fine, m",
+			["TerrainCubeName"] = "Terrain cube",
+			["TerrainCubeDesc"] = "Terrain cube to build streets and tracks on",
 
 			["TilesHexagonClean"] = "Tiles hexagon, clean",
 
@@ -605,7 +609,7 @@ Ein Freestyle-Bahnhof. Er führt einige neue Spezialgleise ein, die als Bahnstei
 Lege Bahnsteigen entlang normaler Gleise und platziere dann eine Bahnsteig- und einen Gleismarker dort, wo die Bahnsteig und das Gleis enden sollen. Wiederhole den Vorgang am anderen Ende.
 WARTE einen Moment und lass den Computer nachdenken.
 Jetzt hast du einen Bahnhof gebaut, und die Züge werden zwischen den Gleismarker halten.
-Füge weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird dich fragen, ob du deinen neuen Terminal mit den anderen verbinden möchtest. Du kannst bis zu 12 Terminals in einem Bahnhof haben.
+Füge weitere Bahnsteige, Gleise und Markierungen hinzu. Ein Popup-Fenster wird dich fragen, ob du deinen neuen Terminal mit den anderen verbinden möchtest. Du kannst bis zu ]] .. tostring(_constants.maxNTerminals) .. [[ Terminals in einem Bahnhof haben.
 
 Klicke nun auf deinem Bahnhof, um das Konfigurationsmenü zu öffnen und einige Verbindungen hinzuzufügen.
 - Benachbarte Bahnsteige werden automatisch miteinander verbunden. Wenn sie zu weit voneinander entfernt sind, verbinde sie mit Ausgängen, Treppen oder Unterführungen. Du kannst auch zwei Brückenausgänge mit einem geeigneten Weg verbinden - oder eine Treppe oder eine Aufzugsanlage.
@@ -1152,7 +1156,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["TrackSplitterName"] = "Gleisteiler",
 			["TrackSplitterDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
 
-			-- Bahnsteige als Asset
+			-- Bahnsteige als Asset, Erdkubus
 			["Bulldoze"] = "Abreißen",
 			["Embankment"] = "Böschung",
 			["OnlyTerrain"] = "Nur Boden",
@@ -1166,6 +1170,10 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["PlatformAsAsset_X1m"] = "X Größe, fein, m",
 			["PlatformAsAsset_Y10m"] = "Y-Größe, grob, m",
 			["PlatformAsAsset_Y1m"] = "Y-Größe, fein, m",
+			["PlatformAsAsset_Z10m"] = "Z Größe, grob, m",
+			["PlatformAsAsset_Z1m"] = "Z Größe, fein, m",
+			["TerrainCubeName"] = "Erdkubus",
+			["TerrainCubeDesc"] = "Erdkubus, um darauf Straßen und Gleise zu bauen",
 
 			["TilesHexagonClean"] = "Kacheln Sechseck, sauber",
 

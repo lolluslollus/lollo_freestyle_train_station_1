@@ -1,0 +1,266 @@
+local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+local constants = require('lollo_freestyle_train_station.constants')
+local logger = require('lollo_freestyle_train_station.logger')
+
+local _platformHeightsSorted = {}
+for _, plh in pairs(constants.platformHeights) do
+    _platformHeightsSorted[#_platformHeightsSorted+1] = plh
+end
+arrayUtils.sort(_platformHeightsSorted, 'aboveRail', true)
+local _getZShiftDefaultIndex = function()
+    local index_base0 = 0
+    for _, plh in pairs(_platformHeightsSorted) do
+        if plh.aboveGround == constants.defaultPlatformHeight then return index_base0 end
+        index_base0 = index_base0 + 1
+    end
+    return 0
+end
+
+local _paramConstants = {
+    lollo_terrain_cube_x_10m = {
+        max = 40,
+        min = 0,
+        step = 10,
+    },
+    lollo_terrain_cube_y_10m = {
+        max = 40,
+        min = 0,
+        step = 10,
+    },
+    lollo_terrain_cube_z_10m = {
+        max = 40,
+        min = -40,
+        step = 10,
+    },
+    lollo_terrain_cube_x_1m = {
+        max = 10,
+        min = 1,
+        step = 1,
+    },
+    lollo_terrain_cube_y_1m = {
+        max = 10,
+        min = 1,
+        step = 1,
+    },
+    lollo_terrain_cube_z_1m = {
+        max = 10,
+        min = -10,
+        step = 1,
+    },
+}
+-- LOLLO TODO fix negative Z
+local _paramHelpers = {
+    MinusN2PlusN = {
+        getSliderValues = function(paramKey)
+            local max, step = _paramConstants[paramKey].max, _paramConstants[paramKey].step
+            local results = {}
+            for i = -max, max, step do
+                results[#results+1] = tostring(i)
+            end
+            return results
+        end,
+        getSliderMiddleValue = function(paramKey)
+            local max, step = _paramConstants[paramKey].max, _paramConstants[paramKey].step
+            return math.floor(max / step)
+        end,
+        getValueFromSliderParamValue = function(paramKey, paramValue)
+            local max, step = _paramConstants[paramKey].max, _paramConstants[paramKey].step
+            return -max + step * paramValue
+        end,
+    },
+    Nought2PlusN = {
+        getSliderValues = function(paramKey)
+            local max, min, step = _paramConstants[paramKey].max, _paramConstants[paramKey].min, _paramConstants[paramKey].step
+            local results = {}
+            for i = min, max, step do
+                results[#results+1] = tostring(i)
+            end
+            return results
+        end,
+        getSliderMiddleValue = function(paramKey)
+            local max, min, step = _paramConstants[paramKey].max, _paramConstants[paramKey].min, _paramConstants[paramKey].step
+            return math.floor((max - min) / step / 2)
+        end,
+        getValueFromSliderParamValue = function(paramKey, paramValue)
+            local min, step = _paramConstants[paramKey].min, _paramConstants[paramKey].step
+            return min + step * paramValue
+        end,
+    },
+    terrainAlignmentType = {
+        getValues = function()
+            return {'EQUAL', 'LESS', 'GREATER'}
+        end,
+    },
+    zShift = {
+        getActualValues = function()
+            local results = {}
+            for _, plh in pairs(_platformHeightsSorted) do
+                results[#results+1] = plh.aboveGround - constants.defaultPlatformHeight
+            end
+            return results
+        end,
+        getDisplayValues = function()
+            local results = {}
+            for _, plh in pairs(_platformHeightsSorted) do
+                results[#results+1] = ("%.3g m"):format(plh.aboveRail)
+            end
+            return results
+        end,
+    },
+}
+
+function data()
+    return {
+        type = 'ASSET_DEFAULT',
+        description = {
+            name = _('TerrainCubeName'),
+            description = _('TerrainCubeDesc')
+        },
+        availability = {
+            yearFrom = 0,
+            yearTo = 0
+        },
+        categories = { 'stairs' },
+        order = 1105,
+        autoRemovable = false,
+        -- buildMode = 'MULTI',
+		skipCollision = true,
+        params = {
+            {
+                key = 'lollo_terrain_cube_x_10m',
+                name = _('PlatformAsAsset_X10m'),
+                values = _paramHelpers.Nought2PlusN.getSliderValues('lollo_terrain_cube_x_10m'),
+                uiType = 'SLIDER',
+                defaultIndex = 1,
+                -- defaultIndex = _paramHelpers.Nought2PlusN.getSliderMiddleValue('lollo_terrain_cube_x_10m'),
+            },
+            {
+                key = 'lollo_terrain_cube_x_1m',
+                name = _('PlatformAsAsset_X1m'),
+                values = _paramHelpers.Nought2PlusN.getSliderValues('lollo_terrain_cube_x_1m'),
+                uiType = 'SLIDER',
+                -- defaultIndex = 0,
+            },
+            {
+                key = 'lollo_terrain_cube_y_10m',
+                name = _('PlatformAsAsset_Y10m'),
+                values = _paramHelpers.Nought2PlusN.getSliderValues('lollo_terrain_cube_y_10m'),
+                uiType = 'SLIDER',
+                -- defaultIndex = 0,
+            },
+            {
+                key = 'lollo_terrain_cube_y_1m',
+                name = _('PlatformAsAsset_Y1m'),
+                values = _paramHelpers.Nought2PlusN.getSliderValues('lollo_terrain_cube_y_1m'),
+                uiType = 'SLIDER',
+                defaultIndex = 3,
+                -- defaultIndex = 0,
+            },
+            {
+                key = 'lollo_terrain_cube_z_10m',
+                name = _('PlatformAsAsset_Z10m'),
+                values = _paramHelpers.MinusN2PlusN.getSliderValues('lollo_terrain_cube_z_10m'),
+                uiType = 'SLIDER',
+                defaultIndex = _paramHelpers.MinusN2PlusN.getSliderMiddleValue('lollo_terrain_cube_z_10m') + 1,
+            },
+            {
+                key = 'lollo_terrain_cube_z_1m',
+                name = _('PlatformAsAsset_Z1m'),
+                values = _paramHelpers.MinusN2PlusN.getSliderValues('lollo_terrain_cube_z_1m'),
+                uiType = 'SLIDER',
+                defaultIndex = _paramHelpers.MinusN2PlusN.getSliderMiddleValue('lollo_terrain_cube_z_1m') + 1,
+                -- defaultIndex = 0,
+            },
+            {
+                key = 'lollo_terrain_cube_terrain_alignment_type',
+                name = _('TerrainAlignmentType'),
+                values = _paramHelpers.terrainAlignmentType.getValues(),
+                uiType = 'BUTTON',
+            },
+        },
+        updateFn = function(params)
+            local result = {
+                colliders = {},
+                cost = 0,
+                models = {},
+            }
+
+            local _xHalfSize = (
+                _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_terrain_cube_x_10m', params.lollo_terrain_cube_x_10m) +
+                _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_terrain_cube_x_1m', params.lollo_terrain_cube_x_1m)
+            ) / 2
+            local _yHalfSize = (
+                _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_terrain_cube_y_10m', params.lollo_terrain_cube_y_10m) +
+                _paramHelpers.Nought2PlusN.getValueFromSliderParamValue('lollo_terrain_cube_y_1m', params.lollo_terrain_cube_y_1m)
+            ) / 2
+            local _zHalfSize = (
+                _paramHelpers.MinusN2PlusN.getValueFromSliderParamValue('lollo_terrain_cube_z_10m', params.lollo_terrain_cube_z_10m) +
+                _paramHelpers.MinusN2PlusN.getValueFromSliderParamValue('lollo_terrain_cube_z_1m', params.lollo_terrain_cube_z_1m)
+            ) / 2
+
+            logger.print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, 'z Size =', _zHalfSize * 2)
+
+            -- local _fileName = 'lollo_freestyle_train_station/railroad/assets/cube_1x1.mdl'
+            -- for x = -_xHalfSize, _xHalfSize, 1 do
+            --     for y = -_yHalfSize, _yHalfSize, 1 do
+            --         for z = 0, _zHalfSize * 2, 1 do
+            --             result.models[#result.models+1] = {
+            --                 id = _fileName,
+            --                 transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  x, y, z, 1}
+            --             }
+            --         end
+            --     end
+            -- end
+            local _fileName = 'lollo_freestyle_train_station/icon/orange.mdl'
+            local x, y, z = 0, 0, _zHalfSize
+            result.models[#result.models+1] = {
+                id = _fileName,
+                transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  x, y, z, 1}
+            }
+
+            local _flatGroundFaces = { {
+                {-_xHalfSize, -_yHalfSize, 2 * _zHalfSize},
+                {-_xHalfSize, _yHalfSize, 2 * _zHalfSize},
+                {_xHalfSize, _yHalfSize, 2 * _zHalfSize},
+                {_xHalfSize, -_yHalfSize, 2 * _zHalfSize}
+            } }
+            result.groundFaces = { -- the ground faces ignore z, the alignment lists don't
+                {
+                    face = _flatGroundFaces[1],
+                    loop = true,
+                    modes = {
+                        {
+                            key = 'none.lua',
+                            type = 'FILL',
+                        },
+                    }
+                }
+            }
+
+            local _terrainZ = 2 * _zHalfSize
+            logger.print('_terrainZ =') logger.debugPrint(_terrainZ)
+            local _flatTerrainFaces = { {
+                {-_xHalfSize, -_yHalfSize, _terrainZ},
+                {-_xHalfSize, _yHalfSize, _terrainZ},
+                {_xHalfSize, _yHalfSize, _terrainZ},
+                {_xHalfSize, -_yHalfSize, _terrainZ}
+            } }
+
+            local _terrainAlignmentTypeIndex = (params.lollo_terrain_cube_terrain_alignment_type or 0)
+            local _terrainAlignment = _paramHelpers.terrainAlignmentType.getValues()[_terrainAlignmentTypeIndex + 1]
+            result.terrainAlignmentLists = {
+                {
+                    type = _terrainAlignment,
+                    -- optional = true, -- set this to true if the alignment must not throw collision errors when competing against other terrain alignments in the same construction
+                    slopeLow = constants.slopeLow,
+                    slopeHigh = constants.slopeHigh,
+                    faces = _flatTerrainFaces,
+                },
+            }
+            return result
+        end,
+        upgradeFn = function(_)
+            return {}
+        end
+    }
+end
