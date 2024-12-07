@@ -1,0 +1,65 @@
+function data()
+return {
+	boundingInfo = {
+		bbMax = { 6, 0, 7, },
+		bbMin = { 0, -1.5, -1.26, },
+	},
+	collider = {
+		params = {
+			halfExtents = { 3, 0.75, 4.13, },
+		},
+		transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, -0.75, 2.87, 1, },
+		type = "BOX",
+	},
+	lods = {
+		{
+			node = {
+				children = {
+					{
+						children = {
+							{
+								name = "cement_bridge_bone_6m_start",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, -3, 0, 0, 1, },
+							},
+							{
+								name = "cement_bridge_bone_6m_end",
+								transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
+							},
+						},
+						skinMaterials = {
+							"lollo_freestyle_train_station/metal/copper_w_large_rivets_skinned.mtl",
+						},
+						skin = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_side_lod0.msh",
+						name = "cement_railing_rep_side",
+					},
+				},
+				name = "RootNode",
+				transf = { 1.01, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 0,
+			visibleTo = 200,
+		},
+		{
+			node = {
+				children = {
+					{
+						materials = {
+							"lollo_freestyle_train_station/metal/copper_w_large_rivets.mtl",
+						},
+						mesh = "lollo_freestyle_train_station/bridge/cement_glass/cement_railing_rep_side_lod1.msh",
+						name = "cement_railing_rep_side",
+					},
+				},
+				name = "RootNode",
+				transf = { 1.01, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 3, 0, 0, 1, },
+			},
+			static = false,
+			visibleFrom = 200,
+			visibleTo = 1000,
+		},
+	},
+	metadata = { },
+	version = 1,
+}
+end

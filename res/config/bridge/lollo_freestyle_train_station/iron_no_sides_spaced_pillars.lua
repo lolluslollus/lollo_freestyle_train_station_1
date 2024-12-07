@@ -2,7 +2,7 @@ local bridgeutil = require 'bridgeutil'
 local constants = require('lollo_freestyle_train_station.constants')
 
 function data()
-    local pillarDir = 'bridge/lollo_freestyle_train_station/iron_pillars/'
+    local pillarDir = 'bridge/lollo_freestyle_train_station/copper_pillars/'
     local railingDir = 'bridge/lollo_freestyle_train_station/iron_no_sides/'
     -- local stockIronDir = 'bridge/iron/'
     local stockSuspensionDir = 'bridge/suspension/'

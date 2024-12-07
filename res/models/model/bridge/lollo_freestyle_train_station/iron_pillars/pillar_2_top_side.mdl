@@ -16,8 +16,7 @@ return {
 			node = {
 				children = {
 					{
-						-- materials = { "bridge/suspension_2.mtl", },
-						materials = { "lollo_freestyle_train_station/bridge/suspension_2.mtl", },
+						materials = { "lollo_freestyle_train_station/bridge/suspension_2_iron.mtl", },
 						mesh = "bridge/suspension/pillar_2_top_side/pillar_2_top_side_lod0.msh",
 						name = "pillar_2_top_side",
 						transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },

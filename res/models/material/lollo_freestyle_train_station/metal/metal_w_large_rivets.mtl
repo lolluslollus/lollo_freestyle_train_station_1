@@ -45,9 +45,12 @@ function data()
                 normalScale = 2.0,
             },
             operation_1 = {
-                mode = "NORMAL",
+                mode = "WORLD_XY",
+                -- mode = "NORMAL",
                 op = "OVERLAY",
-                opacity = 0.7,
+				-- op = "MULTIPLICATION",
+                -- mode = "NORMAL",
+                opacity = 1.4,
                 scale = { 0.5, 0.5, },
             },
             operation_2 = {
