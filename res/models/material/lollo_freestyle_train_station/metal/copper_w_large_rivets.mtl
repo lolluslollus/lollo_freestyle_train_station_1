@@ -3,7 +3,7 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 0.3, 0.6, 0.45, },
+                albedoScale = { 0.22, 0.44, 0.39, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,
