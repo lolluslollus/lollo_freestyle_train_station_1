@@ -25,7 +25,7 @@ local private = {
         -- Skins and bones help bridges look better, they look segmented without them.
         -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
         -- Use the weight painting, then the gradient tool on every vertex group.
-        -- Don't forget to clean each vertex group after editing, like with meshes.
+        -- Don't forget to clean and normalise each vertex group after editing, like with meshes.
         return function(params)
             -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
             -- UG TODO
