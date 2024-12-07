@@ -303,6 +303,20 @@ function data()
                     end
                 end
             end
+
+            -- Add categories for bridges that haven't got any
+            -- local bridgeFileNames = api.res.bridgeTypeRep.getAll() -- already done
+            for bridgeTypeIndex, bridgeFileName in pairs(bridgeFileNames) do
+                if type(bridgeTypeIndex) == 'number' and bridgeTypeIndex > -1 and api.res.bridgeTypeRep.isVisible(bridgeTypeIndex)
+                and type(bridgeFileName) == 'string'
+                -- and not(_isStringContainsAny(bridgeFileName, _barredBridgeFileNameBits))
+                then
+                    local bridge = api.res.bridgeTypeRep.get(bridgeTypeIndex)
+                    if bridge ~= nil and bridge.name ~= nil and (bridge.categories == nil or #bridge.categories == 0) then --and _isFitsRail(bridge) then
+                        bridge.categories = {'misc'} -- misc is in the game already
+                    end
+                end
+            end
         end
     }
 end

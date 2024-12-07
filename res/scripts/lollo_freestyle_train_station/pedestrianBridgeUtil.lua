@@ -409,6 +409,7 @@ local public = {
             },
             noParallelStripSubdivision = true,
             -- updateFn = updateFn,
+            categories = {'bridges-pedestrian'},
             updateFn = newUpdateFn,
         }
     end,
@@ -530,6 +531,7 @@ local public = {
                 -- },
             },
             noParallelStripSubdivision = true,
+            categories = {'bridges-stone'},
             updateFn = newUpdateFn
         }
     end,
@@ -609,6 +611,7 @@ local public = {
                 -- },
             },
             noParallelStripSubdivision = true,
+            categories = {'bridges-large-rivets'},
             updateFn = newUpdateFn
         }
     end,

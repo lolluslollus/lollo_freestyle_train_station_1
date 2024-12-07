@@ -434,7 +434,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["era_c_PedestrianBasicBridgeNoPillarsNoSides"] = "Era C bridge with no pillars and no railing, for pedestrian paths and 2.5 m platforms",
 			["BrownStoneBridge"] = "Dark stone bridge, compatible with 2.5 m platforms",
 			["BrownStoneBridge_NoSides"] = "Dark stone bridge with no railing, compatible with 2.5 m platforms",
-			["GreyStoneBridge"] = "Better stone bridge, compatible with 2.5 m platforms",
+			["GreyStoneBridge"] = "Stone bridge, compatible with 2.5 m platforms",
 			["GreyStoneBridge_NoSides"] = "Stone bridge with no railing, compatible with 2.5 m platforms",
 			["OrangeStoneBridge"] = "Sandstone bridge, compatible with 2.5 m platforms",
 			["OrangeStoneBridge_NoSides"] = "Sandstone bridge with no railing, compatible with 2.5 m platforms",
@@ -442,6 +442,9 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["NewStationName"] = "New Station",
 
 			-- categories
+			["bridges-large-rivets"] = "Rivet bridges",
+			["bridges-pedestrian"] = "Pedestrian bridges",
+			["bridges-stone"] = "Stone bridges",
 			["bridge-type"] = "Bridge type",
 			["cargo-platform-extensions"] = "Cargo extensions",
 			["cargo-platform-tracks"] = "Cargo platforms to be laid as tracks",
@@ -1051,7 +1054,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["era_c_PedestrianBasicBridgeNoPillarsNoSides"] = "Brücke der Epoche C ohne Pfeiler und ohne Geländer, für Fußgängerwege und 2,5 m hohe Bahnsteige",
 			["BrownStoneBridge"] = "Dunkle Steinbrücke, kompatibel mit 2,5 m Bahnsteigen",
 			["BrownStoneBridge_NoSides"] = "Dunkle Steinbrücke ohne Pfeiler, kompatibel mit 2,5 m Bahnsteigen",
-			["GreyStoneBridge"] = "Bessere Steinbrücke, kompatibel mit 2,5 m Bahnsteigen",
+			["GreyStoneBridge"] = "Steinbrücke, kompatibel mit 2,5 m Bahnsteigen",
 			["GreyStoneBridge_NoSides"] = "Steinbrücke ohne Pfeiler, kompatibel mit 2,5 m Bahnsteigen",
 			["OrangeStoneBridge"] = "Sandsteinbrücke, kompatibel mit 2,5 m Bahnsteigen",
 			["OrangeStoneBridge_NoSides"] = "Sandsteinbrücke ohne Pfeiler, kompatibel mit 2,5 m Bahnsteigen",
@@ -1059,6 +1062,9 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["NewStationName"] = "Neuer Bahnhof",
 
 			-- Kategorien
+			["bridges-large-rivets"] = "Nietenbrücken",
+			["bridges-pedestrian"] = "Fußgängerbrücken",
+			["bridges-stone"] = "Steinbrücken",
 			["bridge-type"] = "BrückenTyp",
 			["cargo-platform-extensions"] = "Frachterweiterungen",
 			["cargo-platform-tracks"] = "Frachtplattformen, die als Gleise zu verlegen sind",
