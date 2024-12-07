@@ -3,7 +3,7 @@ return {
 	order = 0,
 	params = {
 		albedo_scale = {
-			albedoScale = { 0.4, 1, 1, },
+			albedoScale = { 0.36, 1, 1.2, },
 		},
 		map_albedo = {
 			fileName = "models/bridge/suspension_3_albedo_opacity.dds",

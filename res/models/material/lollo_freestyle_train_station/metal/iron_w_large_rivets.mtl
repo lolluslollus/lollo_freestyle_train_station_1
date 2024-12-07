@@ -17,7 +17,8 @@ function data()
                 wrapT = "REPEAT",
             },
             map_metal_gloss_ao = {
-                fileName = "lollo_freestyle_train_station/metal_w_large_rivets/metal_w_large_rivets_metal_gloss_ao.tga",
+                -- fileName = "lollo_freestyle_train_station/metal_w_large_rivets/metal_w_large_rivets_metal_gloss_ao.tga",
+                fileName = "lollo_freestyle_train_station/metal_w_large_rivets/metal_w_large_rivets_less_shiny_metal_gloss_ao.tga",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",

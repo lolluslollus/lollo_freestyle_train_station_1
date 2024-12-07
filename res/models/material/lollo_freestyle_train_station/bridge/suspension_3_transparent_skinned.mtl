@@ -3,7 +3,7 @@ return {
 	order = 0,
 	params = {
 		albedo_scale = {
-			albedoScale = { 0.4, 1, 1, },
+			albedoScale = { 0.36, 1, 1.2, },
 		},
 		alpha_scale = {
 			alphaScale = 1,
