@@ -442,7 +442,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["NewStationName"] = "New Station",
 
 			-- categories
-			["bridges-large-rivets"] = "Rivet bridges",
+			["bridges-large-rivets"] = "Large rivet bridges",
 			["bridges-pedestrian"] = "Pedestrian bridges",
 			["bridges-stone"] = "Stone bridges",
 			["bridge-type"] = "Bridge type",
@@ -1062,7 +1062,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["NewStationName"] = "Neuer Bahnhof",
 
 			-- Kategorien
-			["bridges-large-rivets"] = "Nietenbrücken",
+			["bridges-large-rivets"] = "Brücken mit großen Nieten",
 			["bridges-pedestrian"] = "Fußgängerbrücken",
 			["bridges-stone"] = "Steinbrücken",
 			["bridge-type"] = "BrückenTyp",
