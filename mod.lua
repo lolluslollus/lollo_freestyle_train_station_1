@@ -366,9 +366,11 @@ function data()
                 end
             end
 
-            -- try sorting the game table alphabetically: it does not work.
-            -- First, this table does not retain the changes; I could change the typeIndex to fix that.
-            -- The trouble is, bridge types are sorted by file name already, and their indexes do not reflect in the selection popup.
+            -- LOLLO NOTE
+            -- I tried sorting the bridge type table alphabetically: it does not work.
+            -- First try: this table does not retain the changes.
+            -- Second try: changing trackType.new crashes.
+            -- Bridge types are sorted by file name already, and their indexes do not reflect in the selection popup.
         end
     }
 end
