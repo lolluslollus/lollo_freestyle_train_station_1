@@ -67,19 +67,19 @@ function data()
             local platformFileNames = {}
             local trackFileNames = api.res.trackTypeRep.getAll()
             for trackTypeIndex, trackFileName in pairs(trackFileNames) do
-                local track = api.res.trackTypeRep.get(trackTypeIndex)
-                if _trackHelpers.isPlatform2(track) then
+                local trackType = api.res.trackTypeRep.get(trackTypeIndex)
+                if _trackHelpers.isPlatform2(trackType) then
                     platformFileNames[#platformFileNames+1] = trackFileName
                     -- local availability = _trackHelpers.getTrackAvailability(trackFileName)
-                    -- track.yearFrom = availability.yearFrom -- we just change the value of the existing ref
-                    -- -- track.yearTo = availability.yearTo -- idem
-                    -- track.yearTo = 0 -- as of version 1.75, platforms never expire
+                    -- trackType.yearFrom = availability.yearFrom -- we just change the value of the existing ref
+                    -- -- trackType.yearTo = availability.yearTo -- idem
+                    -- trackType.yearTo = 0 -- as of version 1.75, platforms never expire
                 else
-                    _trackHelpers.addCategory(track, _constants.trainTracksCategory)
+                    _trackHelpers.addCategory(trackType, _constants.trainTracksCategory)
                 end
             end
 
-            -- This is another way to do the same, to make life easier for some other mods
+            -- This is another way to clean the stock station construction menu, to make life easier for some other mods
             local moduleNames = api.res.moduleRep.getAll()
             for moduleIndex, moduleName in pairs(moduleNames) do
                 if _stringUtils.stringStartsWith(moduleName, 'trainstation_') then
@@ -139,6 +139,7 @@ function data()
                     and type(props.name) == 'string'
                     and props.desc ~= nil
                     and props.icon ~= nil
+                    and props.yearTo ~= -1
                     then
                         trackTypes_sorted[#trackTypes_sorted+1] = {
                             typeIndex = typeIndex,
@@ -204,7 +205,8 @@ function data()
             local bridgeFileNames = api.res.bridgeTypeRep.getAll()
             local bridgeTypes_sorted = {}
             for typeIndex, fileName in pairs(bridgeFileNames) do
-                if type(typeIndex) == 'number' and typeIndex > -1 and api.res.bridgeTypeRep.isVisible(typeIndex)
+                if type(typeIndex) == 'number' and typeIndex > -1
+                and api.res.bridgeTypeRep.isVisible(typeIndex)
                 and type(fileName) == 'string'
                 and not(_isStringContainsAny(fileName, _barredBridgeFileNameBits))
                 then
@@ -349,7 +351,6 @@ function data()
             end
 
             -- Add categories for bridges that haven't got any
-            -- local bridgeFileNames = api.res.bridgeTypeRep.getAll() -- already done
             for bridgeTypeIndex, bridgeFileName in pairs(bridgeFileNames) do
                 if type(bridgeTypeIndex) == 'number' and bridgeTypeIndex > -1
                 and api.res.bridgeTypeRep.isVisible(bridgeTypeIndex)
@@ -364,6 +365,10 @@ function data()
                     end
                 end
             end
+
+            -- try sorting the game table alphabetically: it does not work.
+            -- First, this table does not retain the changes; I could change the typeIndex to fix that.
+            -- The trouble is, bridge types are sorted by file name already, and their indexes do not reflect in the selection popup.
         end
     }
 end
