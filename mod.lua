@@ -355,13 +355,13 @@ function data()
                 if type(bridgeTypeIndex) == 'number' and bridgeTypeIndex > -1
                 and api.res.bridgeTypeRep.isVisible(bridgeTypeIndex)
                 then
-                    local bridge = api.res.bridgeTypeRep.get(bridgeTypeIndex)
-                    if bridge ~= nil
-                    -- and bridge.name ~= nil
-                    and (bridge.categories == nil or #bridge.categories == 0)
-                    --and _isFitsRail(bridge)
+                    local bridgeType = api.res.bridgeTypeRep.get(bridgeTypeIndex)
+                    if bridgeType ~= nil
+                    -- and bridgeType.name ~= nil
+                    and (bridgeType.categories == nil or #bridgeType.categories == 0)
+                    --and _isFitsRail(bridgeType)
                     then
-                        bridge.categories = {'misc'} -- misc is in the game already
+                        bridgeType.categories = {'misc'} -- misc is in the game already
                     end
                 end
             end
