@@ -179,6 +179,7 @@ function data()
                     -- module.order.value = 0 + 10 * (catenary and 1 or 0)
                     module.order.value = trackCount
                     trackCount = trackCount + 1
+
                     module.metadata = {
                         -- track = true,
                     }
@@ -241,8 +242,9 @@ function data()
                 module.description.icon = props.icon or 'ui/lollo_freestyle_train_station/none.tga'
 
                 module.type = _constants.bridgeTypeModuleType
-                bridgeCount = bridgeCount + 1
                 module.order.value = bridgeCount
+                bridgeCount = bridgeCount + 1
+
                 module.metadata = { }
                 module.category.categories = { "bridge-type", }
 
@@ -333,8 +335,10 @@ function data()
                 module.description.icon = props.icon or 'ui/lollo_freestyle_train_station/none.tga'
 
                 module.type = _constants.tunnelTypeModuleType
-                tunnelCount = tunnelCount + 1
+
                 module.order.value = tunnelCount
+                tunnelCount = tunnelCount + 1
+
                 module.metadata = { }
                 module.category.categories = { "tunnel-type", }
 
