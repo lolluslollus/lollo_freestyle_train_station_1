@@ -34,8 +34,6 @@ function data()
                             },
                             name = "container_6m",
                             skin = "bridge/suspension/railing_rep_rep/railing_rep_rep_lod0.msh",
-                            -- skin = "lollo_freestyle_train_station/bridge/iron_no_sides/railing_rep_rep_lod0.msh",
-                            -- skinMaterials = { "bridge/suspension_1_skinned.mtl", "bridge/suspension_3_transparent_skinned.mtl", },
                             skinMaterials = {
                                 "lollo_freestyle_train_station/bridge/suspension_1_skinned.mtl",
                                 "lollo_freestyle_train_station/bridge/suspension_3_transparent_skinned.mtl",
@@ -55,7 +53,6 @@ function data()
                         {
                             name = "container_6m",
                             mesh = "bridge/suspension/railing_rep_rep/railing_rep_rep_lod0.msh",
-                            -- materials = { "bridge/suspension_1.mtl", "bridge/suspension_3_transparent.mtl", },
                             materials = {
                                 "lollo_freestyle_train_station/bridge/suspension_1.mtl",
                                 "lollo_freestyle_train_station/bridge/suspension_3_transparent.mtl",

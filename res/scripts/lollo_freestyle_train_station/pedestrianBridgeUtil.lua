@@ -6,6 +6,26 @@ local mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
 
 local private = {
     getBetterUpdateFn = function(_pillarLength, _pillarWidth, _roadWidth, _oldUpdateFn)
+        -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
+        -- and a list of lanes and offsets,
+        -- then places them together depending on this information.
+        -- The bounding boxes explain why bridges have a less flexible file structure.
+
+        -- One problem is, platform-tracks < 5 m don't work well on stock bridges.
+        -- Either we rewrite the whole thing, or we adjust something and use the automatisms
+        -- => number two.
+        -- My dedicated *_rep_* models have a mesh and bounding box 0.5 m wide instead of 4.
+        -- This applies to railing and pillars.
+        -- bridgeutil uses more instances if required, stacked sideways;
+        -- otherwise, only one, and it is narrow enough for anything.
+        -- This allows for bridges under 2.5 m platform-tracks and narrow paths;
+        -- Sadly, any sorts of sides won't work with 2.5 m platforms
+        -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
+
+        -- Skins and bones help bridges look better, they look segmented without them.
+        -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
+        -- Use the weight painting, then the gradient tool on every vertex group.
+        -- Don't forget to clean and normalise each vertex group after editing, like with meshes.
         return function(params)
             -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
             -- UG TODO
@@ -181,28 +201,6 @@ local public = {
     ---@return table
     getData4CementOBSOLETE = function(isSides)
         local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_cement/'
-
-        -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
-        -- and a list of lanes and offsets,
-        -- then places them together depending on this information.
-        -- The bounding boxes explain why bridges have a less flexible file structure.
-
-        -- One problem is, platform-tracks < 5 m don't work well on stock bridges.
-        -- Either we rewrite the whole thing, or we adjust something and use the automatisms
-        -- => number two.
-        -- My dedicated *_rep_* models have a mesh and bounding box 0.5 m wide instead of 4.
-        -- This applies to railing and pillars.
-        -- bridgeutil uses more instances if required, stacked sideways;
-        -- otherwise, only one, and it is narrow enough for anything.
-        -- This allows for bridges under 2.5 m platform-tracks and narrow paths;
-        -- Sadly, any sorts of sides won't work with 2.5 m platforms
-        -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
-
-        -- Skins and bones help bridges look better, they look segmented without them.
-        -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
-        -- Use the weight painting, then the gradient tool on every vertex group.
-        -- Don't forget to clean each vertex group after editing, like with meshes.
-
         -- This particular bridge is for 1 metre roads, which are very bendy.
         -- See the notes below.
 
@@ -308,28 +306,6 @@ local public = {
     ---@return table
     getData4PedestrianBridge = function(era, isSides)
         local railingDir = 'bridge/lollo_freestyle_train_station/pedestrian_basic/' .. era.prefix
-
-        -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
-        -- and a list of lanes and offsets,
-        -- then places them together depending on this information.
-        -- The bounding boxes explain why bridges have a less flexible file structure.
-
-        -- One problem is, platform-tracks < 5 m don't work well on stock bridges.
-        -- Either we rewrite the whole thing, or we adjust something and use the automatisms
-        -- => number two.
-        -- My dedicated *_rep_* models have a mesh and bounding box 0.5 m wide instead of 4.
-        -- This applies to railing and pillars.
-        -- bridgeutil uses more instances if required, stacked sideways;
-        -- otherwise, only one, and it is narrow enough for anything.
-        -- This allows for bridges under 2.5 m platform-tracks and narrow paths;
-        -- Sadly, any sorts of sides won't work with 2.5 m platforms
-        -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
-
-        -- Skins and bones help bridges look better, they look segmented without them.
-        -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
-        -- Use the weight painting, then the gradient tool on every vertex group.
-        -- Don't forget to clean each vertex group after editing, like with meshes.
-
         -- This particular bridge is for 1 metre roads, which are very bendy.
         -- See the notes below.
 
@@ -433,6 +409,7 @@ local public = {
             },
             noParallelStripSubdivision = true,
             -- updateFn = updateFn,
+            categories = {'bridges-pedestrian'},
             updateFn = newUpdateFn,
         }
     end,
@@ -442,27 +419,6 @@ local public = {
     ---@param isSides boolean
     ---@return table
     getData4StoneLolloBridge = function(name, dir, isSides)
-        -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
-        -- and a list of lanes and offsets,
-        -- then places them together depending on this information.
-        -- The bounding boxes explain why bridges have a less flexible file structure.
-
-        -- One problem is, platform-tracks < 5 m don't work well on stock bridges.
-        -- Either we rewrite the whole thing, or we adjust something and use the automatisms
-        -- => number two.
-        -- My dedicated *_rep_* models have a mesh and bounding box 0.5 m wide instead of 4.
-        -- This applies to railing and pillars.
-        -- bridgeutil uses more instances if required, stacked sideways;
-        -- otherwise, only one, and it is narrow enough for anything.
-        -- This allows for bridges under 2.5 m platform-tracks and narrow paths;
-        -- Sadly, any sorts of sides won't work with 2.5 m platforms
-        -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
-
-        -- Skins and bones help bridges look better, they look segmented without them.
-        -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
-        -- Use the weight painting, then the gradient tool on every vertex group.
-        -- Don't forget to clean each vertex group after editing, like with meshes.
-
         -- This particular bridge is for 1 metre roads, which are very bendy.
         -- See the notes below.
 
@@ -575,6 +531,7 @@ local public = {
                 -- },
             },
             noParallelStripSubdivision = true,
+            categories = {'bridges-stone'},
             updateFn = newUpdateFn
         }
     end,
@@ -586,27 +543,6 @@ local public = {
     ---@param pillarTargetDist number
     ---@return table
     getData4CementGlassBridge = function(name, config, pillarMinDist, pillarMaxDist, pillarTargetDist)
-        -- LOLLO NOTE bridgeutil receives a list of models of bridge parts, each with its bounding box,
-        -- and a list of lanes and offsets,
-        -- then places them together depending on this information.
-        -- The bounding boxes explain why bridges have a less flexible file structure.
-
-        -- One problem is, platform-tracks < 5 m don't work well on stock bridges.
-        -- Either we rewrite the whole thing, or we adjust something and use the automatisms
-        -- => number two.
-        -- My dedicated *_rep_* models have a mesh and bounding box 0.5 m wide instead of 4.
-        -- This applies to railing and pillars.
-        -- bridgeutil uses more instances if required, stacked sideways;
-        -- otherwise, only one, and it is narrow enough for anything.
-        -- This allows for bridges under 2.5 m platform-tracks and narrow paths;
-        -- Sadly, any sorts of sides won't work with 2.5 m platforms
-        -- coz bridgeutil assumes tracks are 5 m wide (UG TODO the lane data is manky).
-
-        -- Skins and bones help bridges look better, they look segmented without them.
-        -- Blender 2.79 has them and they work with the old converter; they are done with vertex groups.
-        -- Use the weight painting, then the gradient tool on every vertex group.
-        -- Don't forget to clean each vertex group after editing, like with meshes.
-
         -- This particular bridge is for 1 metre roads, which are very bendy.
         -- See the notes below.
 
@@ -675,6 +611,7 @@ local public = {
                 -- },
             },
             noParallelStripSubdivision = true,
+            categories = {'bridges-large-rivets'},
             updateFn = newUpdateFn
         }
     end,

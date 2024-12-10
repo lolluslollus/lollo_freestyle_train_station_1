@@ -32,7 +32,6 @@ return {
 						},
 						name = "container_12m",
 						skin = "bridge/suspension/railing_rep_2_no_side_2/railing_rep_2_no_side_2_lod0.msh",
-						-- skinMaterials = { "bridge/suspension_3_skinned.mtl", "bridge/suspension_1_skinned.mtl", "bridge/suspension_3_transparent_skinned.mtl", },
 						skinMaterials = { 
 							"lollo_freestyle_train_station/bridge/suspension_3_skinned.mtl",
 							"lollo_freestyle_train_station/bridge/suspension_1_skinned.mtl",
@@ -53,7 +52,6 @@ return {
 					{
 						name = "container_12m",
 						mesh = "bridge/suspension/railing_rep_2_no_side_2/railing_rep_2_no_side_2_lod0.msh",
-						-- materials = { "bridge/suspension_3.mtl", "bridge/suspension_1.mtl", "bridge/suspension_3_transparent.mtl", },
 						materials = {
 							"lollo_freestyle_train_station/bridge/suspension_3.mtl",
 							"lollo_freestyle_train_station/bridge/suspension_1.mtl",

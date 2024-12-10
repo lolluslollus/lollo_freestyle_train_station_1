@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 288,
+					offset = 724,
+				},
+				position = {
+					count = 288,
+					offset = 1588,
+				},
+				tangent = {
+					count = 288,
+					offset = 1012,
+				},
+				uv0 = {
+					count = 288,
+					offset = 1300,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge/cement_glass/conc.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 108,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 192,
+			numComp = 3,
+			offset = 532,
+		},
+		tangent = {
+			count = 128,
+			numComp = 4,
+			offset = 108,
+		},
+		uv0 = {
+			count = 296,
+			numComp = 2,
+			offset = 236,
+		},
+	},
+}
+end

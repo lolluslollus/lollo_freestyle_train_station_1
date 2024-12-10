@@ -2,7 +2,7 @@
 local pedestrianBridgeUtil = require('lollo_freestyle_train_station.pedestrianBridgeUtil')
 
 function data()
-	local pillarDir = 'bridge/lollo_freestyle_train_station/iron_pillars_high/'
+	local pillarDir = 'bridge/lollo_freestyle_train_station/copper_pillars_high/'
 	local railingDir = 'bridge/lollo_freestyle_train_station/cement_glass/'
 
 	local railing = {
