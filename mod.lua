@@ -357,7 +357,7 @@ function data()
                 then
                     local bridge = api.res.bridgeTypeRep.get(bridgeTypeIndex)
                     if bridge ~= nil
-                    and bridge.name ~= nil
+                    -- and bridge.name ~= nil
                     and (bridge.categories == nil or #bridge.categories == 0)
                     --and _isFitsRail(bridge)
                     then
