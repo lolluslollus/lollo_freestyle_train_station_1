@@ -141,17 +141,17 @@ return {
 		}
 		local era_c_centreModelIds = {
 			'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
-			'station/rail/asset/era_c_trashcan.mdl',
+			'lollo_freestyle_train_station/asset/era_c_trashcan.mdl',
 			'lollo_freestyle_train_station/asset/era_c_two_chairs.mdl',
 		}
 		local era_b_centreModelIds = {
 			'lollo_freestyle_train_station/asset/era_b_two_chairs.mdl',
-			'station/rail/asset/era_b_trashcan.mdl',
+			'lollo_freestyle_train_station/asset/era_b_trashcan.mdl',
 			'lollo_freestyle_train_station/asset/era_b_two_chairs.mdl',
 		}
 		local era_a_centreModelIds = {
 			'lollo_freestyle_train_station/asset/era_a_two_chairs.mdl',
-			'station/rail/asset/era_a_trashcan.mdl',
+			'lollo_freestyle_train_station/asset/era_a_trashcan.mdl',
 			'lollo_freestyle_train_station/asset/era_a_two_chairs.mdl',
 		}
 		local _era_a_belly_5m_2m_modelId = 'lollo_freestyle_train_station/bridge_station/era_a_belly_5m_2m.mdl'

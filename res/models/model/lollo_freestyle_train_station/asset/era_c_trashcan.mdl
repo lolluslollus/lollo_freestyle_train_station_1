@@ -1,0 +1,39 @@
+function data()
+	local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+	return {
+		boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+		-- boundingInfo = {
+		-- 	bbMax = { 0.25, 0.58333331346512, 0.71856772899628, },
+		-- 	bbMin = { -0.25, -0.58333331346512, 2.2204460492503e-16, },
+		-- },
+		-- collider = {
+		-- 	params = {
+		-- 		halfExtents = { 0.25, 0.58333331346512, 0.35928386449814, },
+		-- 	},
+		-- 	transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+		-- 	type = "BOX",
+		-- },
+		lods = {
+			{
+				node = {
+					children = {
+						{
+							materials = { "station/rail/era_c/era_c_trainstation_details_1.mtl", },
+							mesh = "station/rail/asset/era_c_trashcan/era_c_trashcan_lod0.msh",
+							name = "era_c_trashcan",
+							-- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "era_c_trashcan_grp",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -0.3, 1, },
+				},
+				static = false,
+				visibleFrom = 0,
+				visibleTo = 187.89974975586,
+			},
+		},
+		metadata = { },
+		version = 1,
+	}
+end

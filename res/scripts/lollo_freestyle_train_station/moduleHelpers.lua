@@ -1226,15 +1226,15 @@ privateFuncs.slopedAreas = {
         local arrivalsModelId = nil
         if eraPrefix == constants.eras.era_a.prefix then
             chairsModelId = 'lollo_freestyle_train_station/asset/era_a_four_chairs.mdl'
-            binModelId = 'station/rail/asset/era_a_trashcan.mdl'
+            binModelId = 'lollo_freestyle_train_station/asset/era_a_trashcan.mdl'
             arrivalsModelId = 'lollo_freestyle_train_station/asset/era_a_arrivals_departures_column.mdl'
         elseif eraPrefix == constants.eras.era_b.prefix then
             chairsModelId = 'lollo_freestyle_train_station/asset/era_b_four_chairs.mdl'
-            binModelId = 'station/rail/asset/era_b_trashcan.mdl'
+            binModelId = 'lollo_freestyle_train_station/asset/era_b_trashcan.mdl'
             arrivalsModelId = 'lollo_freestyle_train_station/asset/era_b_arrivals_departures_column.mdl'
         else
             chairsModelId = 'lollo_freestyle_train_station/asset/era_c_four_chairs.mdl'
-            binModelId = 'station/rail/asset/era_c_trashcan.mdl'
+            binModelId = 'lollo_freestyle_train_station/asset/era_c_trashcan.mdl'
             arrivalsModelId = 'lollo_freestyle_train_station/asset/tabellone_standing.mdl'
         end
 
