@@ -162,8 +162,9 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
         end
 
         if #components > 0 then
-            local guiStationsTable = api.gui.comp.Table.new(#components, 'NONE')
-            guiStationsTable:setNumCols(5)
+            -- local guiStationsTable = api.gui.comp.Table.new(#components, 'NONE')
+            -- guiStationsTable:setNumCols(5)
+            local guiStationsTable = api.gui.comp.Table.new(5, 'NONE') -- num of columns, one of "NONE", "SELECTABLE" or "MULTI"
             for _, value in pairs(components) do
                 guiStationsTable:addRow(value)
             end
