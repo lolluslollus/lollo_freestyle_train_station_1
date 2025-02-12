@@ -5,6 +5,10 @@ local _liftHeights = {}
 for i = 8, 40, 2 do
     _liftHeights[#_liftHeights+1] = i
 end
+local _pedestrianBridgeHeights = {}
+for i = 1, 30, 1 do
+    _pedestrianBridgeHeights[#_pedestrianBridgeHeights+1] = i
+end
 
 local _paramHelpers = {
     getSliderValues = function(max, step)
@@ -27,6 +31,10 @@ local _paramHelpers = {
         heights = _liftHeights,
         eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
         baseModes = {-1, 0, 1, --[[2, 3,]]},
+    },
+    pedestrianBridgePillar = {
+        heights = _pedestrianBridgeHeights,
+        eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
     },
     stairs = {
         heights = {2, 4, 6, 8, 10},
@@ -88,6 +96,14 @@ local public = {
             end,
             getBaseTowardWest = function(params)
                 return _paramHelpers.lift_v2.baseModes[params.lift_base_mode_west + 1] or -1
+            end,
+        },
+        pedestrianBridgePillar = {
+            getHeight = function(params)
+                return _paramHelpers.pedestrianBridgePillar.heights[params.pedestrian_bridge_pillar_height + 1] or 8
+            end,
+            getEraPrefix = function(params)
+                return _paramHelpers.pedestrianBridgePillar.eraPrefixes[params.era_prefix + 1] or _paramHelpers.pedestrianBridgePillar.eraPrefixes[1]
             end,
         },
         stairs = {
@@ -179,6 +195,10 @@ local public = {
             lift_base_mode_east = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), --[[_('EdgeWithBridge'), _('SnappyEdgeWithBridge')]]},
             lift_base_mode_west = {_('SimpleConnection'), _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), --[[_('EdgeWithBridge'), _('SnappyEdgeWithBridge')]]},
             lift_height = _arrayUtils.map(_paramHelpers.lift_v2.heights, function(int) return tostring(int) .. 'm' end)
+        },
+        pedestrianBridgePillar = {
+            era_prefix = {'A', 'B', 'C'},
+            pedestrian_bridge_pillar_height = _arrayUtils.map(_paramHelpers.pedestrianBridgePillar.heights, function(int) return tostring(int) .. 'm' end)
         },
         stairs = {
             bridge_chunk_length = {_('NoRailing0'), '0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},

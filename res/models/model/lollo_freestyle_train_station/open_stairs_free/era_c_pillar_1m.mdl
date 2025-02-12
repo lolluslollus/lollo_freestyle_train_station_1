@@ -1,0 +1,29 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+
+function data()
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/open_stairs/open-stairs-pillar-1m.msh'
+                        },
+                    },
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, -0.2, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 400,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end
