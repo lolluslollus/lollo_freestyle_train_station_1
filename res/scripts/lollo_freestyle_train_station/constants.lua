@@ -82,6 +82,8 @@ local constants = {
     openStairsUpZ = 8,
     trackCrossingZ = 0.45,
     trackCrossingRaise = 0.25,
+    wallBaseHeight = 1.4, -- do not touch
+    wallHeight = 4.25, -- do not touch
 
     -- stairsEdgeSpacing = {-1, 3, 0.5, 0.5}, -- old
     -- stairsEdgeSpacing = {-0.2, 0.5, 0.4, 0.4}, -- touches the external edge

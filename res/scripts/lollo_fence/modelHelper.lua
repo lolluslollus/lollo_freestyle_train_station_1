@@ -242,6 +242,7 @@ return {
                 key = 'lolloFenceAssets_doTerrain',
                 name = _('DoTerrain'),
                 uiType = 'BUTTON',
+                -- values = {_('NO'), _('YES'), _('Raised')}
                 values = {_('NO'), _('YES')}
             },
             {
@@ -350,7 +351,8 @@ return {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_doTerrain,
                 key = 'lolloFenceAssets_doTerrain',
                 name = _('DoTerrain'),
-                uiType = 'CHECKBOX',
+                uiType = 'BUTTON',
+                -- values = {_('NO'), _('YES'), _('Raised')}
                 values = {_('NO'), _('YES')}
             },
             {
