@@ -1532,7 +1532,12 @@ function data()
 					end
 					if _terminalSlotId ~= nil then
 						table.insert(result.slots, {
-							-- height = 0,
+							id = result.mangleId(t, 0, _constants.idBases.removeDecoSlotId),
+							spacing = {0, 0, 0, 0}, -- this can collide so we keep it zero
+							transf = myTransf,
+							type = _constants.removeTerminalDecoModuleType,
+						})
+						table.insert(result.slots, {
 							id = _terminalSlotId,
 							spacing = {0, 0, 0, 0}, -- this can collide so we keep it zero
 							transf = myTransf,
@@ -2692,6 +2697,21 @@ function data()
 				elseif baseIdNew == _constants.idBases.platformStyleSlotId
 				then
 					_removePredecessorOfLast(nTerminalNew, {_constants.idBases.platformStyleSlotId})
+				elseif baseIdNew == _constants.idBases.removeDecoSlotId then
+					_removePredecessorOfLast(nTerminalNew, {_constants.idBases.removeDecoSlotId})
+					for slotId, modu in pairs(modules) do
+						local nTerminal, nTrackEdge, baseId = slotHelpers.demangleId(slotId)
+						if nTerminal == nTerminalNew then
+							if baseId == _constants.idBases.platformRoofSlotId
+							or baseId == _constants.idBases.platformWallSlotId
+							or baseId == _constants.idBases.trackWallSlotId
+							or baseId == _constants.idBases.axialWallSlotId
+							then
+								modules[slotId] = nil
+							end
+						end
+					end
+					return modules
 				elseif baseIdNew == _constants.idBases.restoreCargoTerminalSlotId then
 					local terminalSlotId = slotHelpers.mangleId(nTerminalNew, 0, _constants.idBases.terminalSlotId)
 					if modules[terminalSlotId] == nil then

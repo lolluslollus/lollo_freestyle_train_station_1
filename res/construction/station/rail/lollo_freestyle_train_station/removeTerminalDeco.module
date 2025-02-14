@@ -1,0 +1,32 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+
+function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "platform-deco", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _('RemoveTerminalDecoModuleType'),
+			description = _('RemoveTerminalDecoModuleType'),
+			icon = "ui/lollo_freestyle_train_station/none.tga"
+		},
+		metadata = { },
+		order = {
+			value = 1,
+		},
+		type = _constants.removeTerminalDecoModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+		end,
+
+		getModelsFn = function(params)
+			return {}
+		end
+	}
+end

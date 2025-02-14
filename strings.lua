@@ -438,6 +438,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["GreyStoneBridge_NoSides"] = "Stone bridge with no railing, compatible with 2.5 m platforms",
 			["OrangeStoneBridge"] = "Sandstone bridge with railing, compatible with 2.5 m platforms",
 			["OrangeStoneBridge_NoSides"] = "Sandstone bridge with no railing, compatible with 2.5 m platforms",
+			["RemoveTerminalDecoModuleType"] = "Remove terminal deco",
 
 			["NewStationName"] = "New Station",
 
@@ -1060,6 +1061,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["GreyStoneBridge_NoSides"] = "Steinbrücke mit Geländer und ohne Pfeiler, kompatibel mit 2,5 m Bahnsteigen",
 			["OrangeStoneBridge"] = "Sandsteinbrücke mit Geländer, kompatibel mit 2,5 m Bahnsteigen",
 			["OrangeStoneBridge_NoSides"] = "Sandsteinbrücke mit Geländer und ohne Pfeiler, kompatibel mit 2,5 m Bahnsteigen",
+			["RemoveTerminalDecoModuleType"] = "Entferne Bahnsteig Deko",
 
 			["NewStationName"] = "Neuer Bahnhof",
 

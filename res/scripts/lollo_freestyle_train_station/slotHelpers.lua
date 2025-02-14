@@ -1,7 +1,9 @@
 local _constants = require('lollo_freestyle_train_station.constants')
 local stringUtils = require('lollo_freestyle_train_station.stringUtils')
 local helpers = {}
-
+---comment returns nTerminal, nTrackEdge, baseId
+---@param slotId integer
+---@return integer|false, integer|false, integer|false
 helpers.demangleId = function(slotId)
     local function _getBaseId()
         local baseId = 0
