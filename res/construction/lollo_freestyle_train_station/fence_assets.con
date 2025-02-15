@@ -5,53 +5,57 @@ function data()
     local logger = require('lollo_freestyle_train_station.logger')
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
-    local function _addGround(transf, result, zed, zShift, wallBehindModelId, zDeltaOutward, isDoTerrain)
+    local function _addGround(transf, result, zStart, zShift, wallBehindModelId, zDeltaOutward, isDoTerrain, isLowerTerrain, isRaiseTerrain, isWallBehindThick)
         if not(isDoTerrain) then return end
 
-        local _yOutward = not(wallBehindModelId) and 0.5 or 1.0
-        local _zedInward = 2*math.max(zShift, 0) - zed -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
-        local _zedOutward = _zedInward + zDeltaOutward
-        logger.print('_zedInward = ' .. tostring(_zedInward) .. '; _zedOutward = ' .. tostring(_zedOutward))
-        local _facesTransformed = zDeltaOutward == 0
-        and {
-            transfUtils.getFaceTransformed_FAST(
-                transf,
-                {
-                    {-0.5, -0.2, _zedInward, 1.0},
-                    {0.5, -0.2, _zedInward, 1.0},
-                    {0.5, _yOutward, _zedInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    {-0.5, _yOutward, _zedInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    -- {x, positive outwards, z, 1}
-                }
-            )
-        } or {
-            transfUtils.getFaceTransformed_FAST(
-                transf,
-                {
-                    {-0.5, -0.2, _zedInward, 1.0},
-                    {0.5, -0.2, _zedInward, 1.0},
-                    {0.5, 0.1, _zedInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    {-0.5, 0.1, _zedInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    -- {x, positive outwards, z, 1}
-                }
-            ),
-            transfUtils.getFaceTransformed_FAST(
-                transf,
-                {
-                    {-0.5, 0.1, _zedOutward, 1.0},
-                    {0.5, 0.1, _zedOutward, 1.0},
-                    {0.5, _yOutward, _zedOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    {-0.5, _yOutward, _zedOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    -- {x, positive outwards, z, 1}
-                }
-            )
-        }
+        local _yInward = -0.2
+        local _yMiddle = isLowerTerrain and (not(wallBehindModelId) and 0.3 or (isWallBehindThick and 2.3 or 1.3)) or 0.1
+        local _yOutward = isLowerTerrain and (not(wallBehindModelId) and 0.7 or (isWallBehindThick and 2.7 or 1.7)) or (not(wallBehindModelId) and 0.5 or 1.0)
+        local _zInward = 2*math.max(zShift, 0) - zStart -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
+        local _zOutward = _zInward + zDeltaOutward
+        logger.print('_yInward = ' .. tostring(_yInward) .. '_yMiddle = ' .. tostring(_yMiddle) .. '_yOutward = ' .. tostring(_yOutward) .. '_zInward = ' .. tostring(_zInward) .. '; _zOutward = ' .. tostring(_zOutward))
+        local _facesTransformed = (isRaiseTerrain or isLowerTerrain)
+            and {
+                transfUtils.getFaceTransformed_FAST(
+                    transf,
+                    {
+                        {-0.5, _yInward, _zInward, 1.0},
+                        {0.5, _yInward, _zInward, 1.0},
+                        {0.5, _yMiddle, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                        {-0.5, _yMiddle, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                        -- {x, positive outwards, z, 1}
+                    }
+                ),
+                transfUtils.getFaceTransformed_FAST(
+                    transf,
+                    {
+                        -- {-0.5, _yMiddle, _zOutward, 1.0},
+                        -- {0.5, _yMiddle, _zOutward, 1.0},
+                        {-0.5, _yMiddle, _zInward, 1.0},
+                        {0.5, _yMiddle, _zInward, 1.0},
+                        {0.5, _yOutward, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                        {-0.5, _yOutward, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                        -- {x, positive outwards, z, 1}
+                    }
+                )
+            } or {
+                transfUtils.getFaceTransformed_FAST(
+                    transf,
+                    {
+                        {-0.5, _yInward, _zInward, 1.0},
+                        {0.5, _yInward, _zInward, 1.0},
+                        {0.5, _yOutward, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                        {-0.5, _yOutward, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                        -- {x, positive outwards, z, 1}
+                    }
+                )
+            }
 
-        for _, face in pairs(_facesTransformed) do
+        if not(isRaiseTerrain) then
             table.insert(
                 result.groundFaces,
                 {
-                    face = face,
+                    face = _facesTransformed[1],
                     loop = true,
                     modes = {
                         {
@@ -66,13 +70,44 @@ function data()
         table.insert(
             result.terrainAlignmentLists,
             {
-                faces =  _facesTransformed,
+                faces =  {_facesTransformed[1]},
                 optional = true,
                 slopeHigh = 9.9,
                 slopeLow = 9.6,
                 type = 'EQUAL',
             }
         )
+        if isRaiseTerrain then
+            table.insert(
+                result.terrainAlignmentLists,
+                {
+                    faces =  {_facesTransformed[2]},
+                    optional = true,
+                    slopeHigh = 9.9,
+                    -- slopeHigh = 0.9,
+                    -- slopeLow = 9.6,
+                    slopeLow = 0.1,
+                    -- type = 'EQUAL',
+                    -- type = 'LESS',
+                    type = 'GREATER',
+                }
+            )
+        elseif isLowerTerrain then
+            table.insert(
+                result.terrainAlignmentLists,
+                {
+                    faces =  {_facesTransformed[2]},
+                    optional = true,
+                    slopeHigh = 9.9,
+                    -- slopeHigh = 0.9,
+                    -- slopeLow = 9.6,
+                    slopeLow = 0.3,
+                    -- type = 'EQUAL',
+                    type = 'LESS',
+                    -- type = 'GREATER',
+                }
+            )
+        end
     end
 
     local function _addWall(transf, result, wallMainModelId, wallBaseModelId, zShift)
@@ -147,6 +182,7 @@ function data()
             local _initParams = function()
                 local defaults = fenceModelHelper.getDefaultIndexes()
                 params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
+                params.lolloFenceAssets_isWallBehindThick = params.lolloFenceAssets_isWallBehindThick or defaults.lolloFenceAssets_isWallBehindThick
                 params.lolloFenceAssets_isWallTall = params.lolloFenceAssets_isWallTall or defaults.lolloFenceAssets_isWallTall
                 params.lolloFenceAssets_length = params.lolloFenceAssets_length or defaults.lolloFenceAssets_length
                 params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.lolloFenceAssets_model
@@ -176,15 +212,25 @@ function data()
             end
 
             local function _getWallBehindBaseModelId()
-                if not(fenceModelHelper.getWallBehindModels()[params.lolloFenceAssets_wallBehindModel + 1].fileName) then return nil end
+                if not(fenceModelHelper.getWallBehindModels(false, params.lolloFenceAssets_isWallBehindThick == 1)[params.lolloFenceAssets_wallBehindModel + 1].fileName) then return nil end
 
                 local modelId = nil
-                if params.lolloFenceAssets_wallEraPrefix == 1 then
-                    modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_a_wall_base_5m.mdl'
-                elseif params.lolloFenceAssets_wallEraPrefix == 2 then
-                    modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_b_wall_base_5m.mdl'
-                elseif params.lolloFenceAssets_wallEraPrefix == 3 then
-                    modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_c_wall_base_5m.mdl'
+                if (params.lolloFenceAssets_isWallBehindThick == 1) then
+                    if params.lolloFenceAssets_wallEraPrefix == 1 then
+                        modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_a_wall_base_5m_2m_thick.mdl'
+                    elseif params.lolloFenceAssets_wallEraPrefix == 2 then
+                        modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_b_wall_base_5m_2m_thick.mdl'
+                    elseif params.lolloFenceAssets_wallEraPrefix == 3 then
+                        modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_c_wall_base_5m_2m_thick.mdl'
+                    end
+                else
+                    if params.lolloFenceAssets_wallEraPrefix == 1 then
+                        modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_a_wall_base_5m.mdl'
+                    elseif params.lolloFenceAssets_wallEraPrefix == 2 then
+                        modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_b_wall_base_5m.mdl'
+                    elseif params.lolloFenceAssets_wallEraPrefix == 3 then
+                        modelId = 'lollo_freestyle_train_station/trackWalls/behind/era_c_wall_base_5m.mdl'
+                    end
                 end
                 return modelId
             end
@@ -252,12 +298,14 @@ function data()
             }
 
             local function _addModels()
-                local isDoTerrain = params.lolloFenceAssets_doTerrain == 1 or params.lolloFenceAssets_doTerrain == 2
+                local isDoTerrain = params.lolloFenceAssets_doTerrain == 1 or params.lolloFenceAssets_doTerrain == 2 or params.lolloFenceAssets_doTerrain == 3
                 local isRaiseTerrain = params.lolloFenceAssets_doTerrain == 2
+                local isLowerTerrain = params.lolloFenceAssets_doTerrain == 3
+                local isWallBehindThick = (params.lolloFenceAssets_isWallBehindThick == 1)
                 local wallMainModelId = fenceModelHelper.getModels(params.lolloFenceAssets_isWallTall == 1)[params.lolloFenceAssets_model + 1].fileName
                 local wallBaseModelId = _getWallBaseModelId()
                 local wallBehindBaseModelId = _getWallBehindBaseModelId()
-                local wallBehindModelId = fenceModelHelper.getWallBehindModels(params.lolloFenceAssets_isWallTall == 1)[params.lolloFenceAssets_wallBehindModel + 1].fileName
+                local wallBehindModelId = fenceModelHelper.getWallBehindModels(params.lolloFenceAssets_isWallTall == 1, params.lolloFenceAssets_isWallBehindThick == 1)[params.lolloFenceAssets_wallBehindModel + 1].fileName
                 logger.print('_addModels got isDoTerrain =', isDoTerrain,
                     'wallMainModelId =', wallMainModelId or 'NIL',
                     'wallBaseModelId =', wallBaseModelId or 'NIL',
@@ -276,30 +324,33 @@ function data()
                     return
                 end
 
-                local yStart = _getYStart()
-                local zShift = fenceModelHelper.getZShiftActualValues()[params.lolloFenceAssets_zShift + 1] -- it is 0 when the platform height is 0.8, which is the default
+                local _yStart = _getYStart()
+                local _zShift = fenceModelHelper.getZShiftActualValues()[params.lolloFenceAssets_zShift + 1] -- it is 0 when the platform height is 0.8, which is the default
                 -- the wall base is 1.4m tall, so we sink all by 20cm. This is level with freestyle stations and looks good.
-                local zStart = ((wallBaseModelId == nil) and -0.2 or constants.defaultPlatformHeight) + zShift
-                local zDeltaOutward = isRaiseTerrain and (constants.wallHeight + (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) or 0
-                local xShift, yShift, zRotRad = _getZRotationParameters()
+                local _zStart = ((wallBaseModelId == nil) and -0.2 or constants.defaultPlatformHeight) + _zShift
+                local _zDeltaOutward = 0
+                if isLowerTerrain then _zDeltaOutward = (-constants.wallHeight - (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) +0.3 --adjusted to smooth it out a bit
+                elseif isRaiseTerrain then _zDeltaOutward = (constants.wallHeight + (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -0.3 --adjusted to smooth it out a bit
+                end
+                local _xShift, _yShift, _zRotRad = _getZRotationParameters()
                 local zDelta = _getZDelta()
-                logger.print('_addModels got zRotRad =', 180 / math.pi * zRotRad, ', yShift =', yShift, ', xShift =', xShift, ', zDelta =', zDelta, ', zShift =', zShift, ', zStart =', zStart)
+                logger.print('_addModels got zRotRad =', 180 / math.pi * _zRotRad, ', xShift =', _xShift, ', yShift =', _yShift, ', yStart =', _yStart, ', zDelta =', zDelta, ', zShift =', _zShift, ', zStart =', _zStart)
 
                 local transf = {
                     1, 0, 0, 0,
                     0, 1, 0, 0,
                     0, 0, 1, 0,
-                    0, yStart, zStart, 1
+                    0, _yStart, _zStart, 1
                 }
                 for i = 1, params.lolloFenceAssets_length + 1, 1 do
                     local skewedTransf = transfUtils.getTransf_XSkewedOnZ(transf, zDelta)
-                    _addWall(skewedTransf, result, wallMainModelId, wallBaseModelId, zShift)
-                    _addGround(skewedTransf, result, zStart, zShift, wallBehindModelId, zDeltaOutward, isDoTerrain)
-                    _addWallBehind(transf, result, zDelta, zRotRad, wallBehindModelId, wallBehindBaseModelId, zShift)
+                    _addWall(skewedTransf, result, wallMainModelId, wallBaseModelId, _zShift)
+                    _addGround(skewedTransf, result, _zStart, _zShift, wallBehindModelId, _zDeltaOutward, isDoTerrain, isLowerTerrain, isRaiseTerrain, isWallBehindThick)
+                    _addWallBehind(transf, result, zDelta, _zRotRad, wallBehindModelId, wallBehindBaseModelId, _zShift)
                     transf = transfUtils.getTransf_ZRotated_Shifted(
                         transf,
-                        zRotRad,
-                        {xShift, yShift, zDelta * xShift}
+                        _zRotRad,
+                        {_xShift, _yShift, zDelta * _xShift}
                     )
                 end
             end

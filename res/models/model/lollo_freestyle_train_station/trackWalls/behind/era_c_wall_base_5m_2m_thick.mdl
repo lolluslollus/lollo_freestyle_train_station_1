@@ -13,7 +13,7 @@ function data()
                         'lollo_freestyle_train_station/station_concrete_1_z.mtl',
                         'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
                     },
-                    mesh = 'lollo_freestyle_train_station/trackWalls/wall_base_5m_lod0.msh',
+                    mesh = 'lollo_freestyle_train_station/trackWalls/behind/wall_base_5m_2m_thick_lod0.msh',
                 },
                 static = false,
                 visibleFrom = 0,
