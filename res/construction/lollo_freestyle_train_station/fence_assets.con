@@ -9,7 +9,7 @@ function data()
         if not(isDoTerrain) then return end
 
         local _yInward = -0.2
-        local _yMiddle = isLowerTerrain and (not(wallBehindModelId) and 0.3 or (isWallBehindThick and 2.3 or 1.3)) or 0.1
+        local _yMiddle = isLowerTerrain and (not(wallBehindModelId) and 0.3 or (isWallBehindThick and 2.3 or 1.3)) or 0.2
         local _yOutward = isLowerTerrain and (not(wallBehindModelId) and 0.7 or (isWallBehindThick and 2.7 or 1.7)) or (not(wallBehindModelId) and 0.5 or 1.0)
         local _zInward = 2*math.max(zShift, 0) - zStart -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
         local _zOutward = _zInward + zDeltaOutward
