@@ -58,6 +58,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Walls around tracks are only available on terminals built with version 1.99 or newer.
 - Minor version 1.115 removed links from flush exits at the end of platforms, to avoid crashes. It also replaced older lifts and twin stairs (assets) with new ones.
 - Minor Version 1.141 introduces head stations. Older platforms have no head option unless you destroy and rebuild them.
+- Minor Version 1.156 introduces thick walls and dams. Existing station walls or fences might suddenly receive a thick wall and cause trouble. Use the new module "Remove Terminal Deco" on ALL terminals and then rebuild your deco.
 
 [h1]Known issues:[/h1]
 - Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
@@ -318,38 +319,44 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["UnderpassDesc"] = "When on the ground, it connects passenger platforms to subway entrances, lifts to bridges and other ground underpasses. When on a bridge instead, it connects to lifts to bridges, other bridge underpasses, platform stairs and lifts that are close enough.",
 			["UnderpassStairsName"] = "Underpass",
 			["UnderpassStairsDesc"] = "When on the ground, it connects passenger platforms to subway entrances, lifts to bridges and other ground underpasses. When on a bridge instead, it connects to lifts to bridges, other bridge underpasses, platform stairs and lifts that are close enough.",
+			["WallArchedFranzGlassCopperName"] = "Half arch with copper and glass",
+			["WallArchedFranzGlassCopperDesc"] = "Half arch with copper and glass. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallArchedFranzGlassMetal001Name"] = "Half arch with iron and glass",
+			["WallArchedFranzGlassMetal001Desc"] = "Half arch with iron and glass. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallArchedFranzGlassMetal002Name"] = "Half arch with light iron and glass",
+			["WallArchedFranzGlassMetal002Desc"] = "Half arch with light iron and glass. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallArcoMattoniName"] = "Brick wall with arches",
 			["WallArcoMattoniDesc"] = "Brick wall with arches, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallBricksName"] = "Brick wall",
-			["WallBricksDesc"] = "Brick wall, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallBricksDesc"] = "Brick wall, bricks in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallConcreteModernName"] = "Concrete wall, modern",
 			["WallConcreteModernDesc"] = "Concrete wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallConcretePlainName"] = "Concrete wall, plain",
-			["WallConcretePlainDesc"] = "Concrete wall, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallConcretePlainDesc"] = "Concrete wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallFenceBricksStoneName"] = "Brick and stone fence",
 			["WallFenceBricksStoneDesc"] = "Brick and stone fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallFenceMattoniName"] = "Brick fence",
 			["WallFenceMattoniDesc"] = "Brick fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallFenceWoodName"] = "Wooden fence",
-			["WallFenceWoodDesc"] = "Wooden fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallFenceWoodDesc"] = "Wooden fence, coarse brick wall in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallIronName"] = "Iron fence",
-			["WallIronDesc"] = "Iron fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
-			["WallIronGlassCopperName"] = "Iron and glass wall",
-			["WallIronGlassCopperDesc"] = "Iron and glass wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallIronDesc"] = "Iron fence, iron cover in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallIronGlassCopperName"] = "Copper and glass wall",
+			["WallIronGlassCopperDesc"] = "Copper and glass wall, copper cover in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallMetalGlassName"] = "Glass wall",
 			["WallMetalGlassDesc"] = "Glass wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallStaccionataFsName"] = "1.4m concrete fence",
-			["WallStaccionataFsDesc"] = "1.4m concrete fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallStaccionataFsDesc"] = "1.4m concrete fence, coarse brick wall in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallStaccionataFsTallName"] = "2m concrete fence",
 			["WallStaccionataFsTallDesc"] = "2m concrete fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallTiledName"] = "Tiled wall, older",
 			["WallTiledDesc"] = "Tiled wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallTiledWLargeStripesName"] = "Tiled wall, newer",
 			["WallTiledWLargeStripesDesc"] = "Tiled wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
-			["WallTunnelyName"] = "Coarse Brick Wall with arches",
-			["WallTunnelyDesc"] = "Coarse Brick Wall with arches, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
-			["WallTunnelyLightName"] = "Coarse Light Brick Wall with arches",
-			["WallTunnelyLightDesc"] = "Coarse Light mBrick Wall with arches, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallTunnelyName"] = "Coarse brick wall with arches",
+			["WallTunnelyDesc"] = "Coarse brick wall with arches, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallTunnelyLightName"] = "Coarse light brick wall with arches",
+			["WallTunnelyLightDesc"] = "Coarse light brick wall with arches, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["EraACargoPlatform5MName"] = "5 m cargo platform, era A",
 			["EraACargoPlatform5MDesc"] = "Cargo platforms to be laid as tracks, 5 m wide, era A. They are in fact slow train tracks; they are not meant to be crossed.",
 			["EraACargoPlatform10MName"] = "10 m cargo platform, era A",
@@ -608,10 +615,10 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FenceAssetsDesc"] = "Walls and fences to match freestyle stations. Adjust them with the Construction Mover.",
 			["fenceModelName"] = "Wall top",
 			["isWallBehindThick"] = "Thick supporting wall",
-			["IsWallTall"] = "Tall Wall",
+			["IsWallTall"] = "Tunnel Wall",
 			["OutdatedConstruction"] = "This construction is outdated, destroy it and rebuild it",
 			["wallEraPrefix_0IsNoWall"] = "Wall bottom era",
-			["NoWall"] = "No wall bottom",
+			["NoWall"] = "Only in tunnels",
 			["Length"] = "Length m",
 			["Lower"] = "Lower",
 			["Raise"] = "Raise",
@@ -627,6 +634,9 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 
 			-- pin with message
 			["UnsnappedSomethingMessage"] = "Message: broken connection",
+
+			-- tunnel
+			["EraATunnel"] = "Era A Tunnel",
 		},
 		de = {
 			["DESC"] = [[
@@ -684,6 +694,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 - Mauern um Gleise sind nur auf Terminals verfügbar, die mit Version 1.99 oder neuer gebaut wurden.
 - Mit der Minor-Version 1.115 werden bündige Ausgänge an den Bahnsteigenden nicht mehr verbunden, um Abstürze zu vermeiden. Ältere Aufzug- und Zwillingstreppen-Assets wurden auch ersetzt.
 - Mit der Minor-Version 1.141 werden Kopfbahnhöfe hinzugefügt. Ältere Terminals bekommen keine Kopf-Option, wenn du sie nicht abreisst und neu baust.
+- Mit der Minor-Version 1.156 werden dicke Mauer hinzugefügt. Bestehende Bahnhofsmauer oder -Zäune bekommen möglicherweise eine dicke Wand und verursachen weitere Probleme. Verwende das neue Modul "Entferne Bahnsteig Deko" auf ALLEN Bahnsteigen und baue deine Deko dann wieder.
 
 [h1]Bekannte Probleme:[/h1]
 - Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
@@ -944,28 +955,34 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["UnderpassDesc"] = "Wenn sie auf dem Boden liegt, verbindet sie die Bahnsteige mit den U-Bahn-Eingängen, die Aufzüge mit den Brücken und anderen Unterführungen auf dem Boden. Wenn sie stattdessen auf einer Brücke steht, verbindet sie Aufzüge zu Brücken, andere Brückenunterführungen, Bahnsteigtreppen und Aufzüge, die nahe genug sind.",
 			["UnderpassStairsName"] = "Unterführung",
 			["UnderpassStairsDesc"] = "Wenn sie auf dem Boden liegt, verbindet sie Passagierbahnsteige mit U-Bahn-Eingängen, Aufzügen mit Brücken und anderen Unterführungen am Boden. Wenn sie stattdessen auf einer Brücke steht, verbindet sie Aufzüge zu Brücken, andere Brückenunterführungen, Bahnsteigtreppen und Aufzüge, die nahe genug sind.",
+			["WallArchedFranzGlassCopperName"] = "Halbbogen aus Kupfer und Glas",
+			["WallArchedFranzGlassCopperDesc"] = "Halbbogen aus Kupfer und Glas. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallArchedFranzGlassMetal001Name"] = "Halbbogen aus Eisen und Glas",
+			["WallArchedFranzGlassMetal001Desc"] = "Halbbogen aus Eisen und Glas. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallArchedFranzGlassMetal002Name"] = "Halbbogen aus hellem Eisen und Glas",
+			["WallArchedFranzGlassMetal002Desc"] = "Halbbogen aus hellem Eisen und Glas. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallArcoMattoniName"] = "Backsteinmauer mit Bögen",
 			["WallArcoMattoniDesc"] = "Backsteinmauer mit Bögen, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallBricksName"] = "Backsteinmauer",
-			["WallBricksDesc"] = "Backsteinmauer, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallBricksDesc"] = "Backsteinmauer, Backstein in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallConcreteModernName"] = "Betonwand, modern",
 			["WallConcreteModernDesc"] = "Betonwand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallConcretePlainName"] = "Betonwand, schlicht",
-			["WallConcretePlainDesc"] = "Betonwand, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallConcretePlainDesc"] = "Betonwand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallFenceBricksStoneName"] = "Backstein- und Steinzaun",
 			["WallFenceBricksStoneDesc"] = "Backstein- und Steinzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallFenceMattoniName"] = "Backsteinzaun",
 			["WallFenceMattoniDesc"] = "Backsteinzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallFenceWoodName"] = "Holzzaun",
-			["WallFenceWoodDesc"] = "Holzzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallFenceWoodDesc"] = "Holzzaun, raue Backsteinmauer in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallIronName"] = "Eisenzaun",
-			["WallIronDesc"] = "Eisenzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallIronDesc"] = "Eisenzaun, Eisenstruktur in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallIronGlassCopperName"] = "Wand aus Eisen und Glas",
-			["WallIronGlassCopperDesc"] = "Eisen- und Glaswand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallIronGlassCopperDesc"] = "Eisen- und Glaswand, Kupferstruktur in Tunnels. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallMetalGlassName"] = "Glaswand",
 			["WallMetalGlassDesc"] = "Glaswand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallStaccionataFsName"] = "1,4m Betonzaun",
-			["WallStaccionataFsDesc"] = "1,4m Betonzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallStaccionataFsDesc"] = "1,4m Betonzaun, raue Backsteinmauer in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallStaccionataFsTallName"] = "2m Betonzaun",
 			["WallStaccionataFsTallDesc"] = "2m Betonzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallTiledName"] = "Geflieste Wand, älter",
@@ -973,9 +990,9 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["WallTiledWLargeStripesName"] = "Geflieste Wand, neuere",
 			["WallTiledWLargeStripesDesc"] = "Geflieste Wand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallTunnelyName"] = "Raue Backsteinmauer mit Bögen",
-			["WallTunnelyDesc"] = "Raue Backsteinmauer mit Bögen, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallTunnelyDesc"] = "Raue Backsteinmauer mit Bögen, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallTunnelyLightName"] = "Raue helle Backsteinmauer mit Bögen",
-			["WallTunnelyLightDesc"] = "Raue helle Backsteinmauer mit Bögen, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallTunnelyLightDesc"] = "Raue helle Backsteinmauer mit Bögen, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["EraACargoPlatform5MName"] = "5 m Frachtplattform, Epoche A",
 			["EraACargoPlatform5MDesc"] = "Frachtplattformen, die als Gleise zu verlegen sind, 5 m breit, Epoche A. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
 			["EraACargoPlatform10MName"] = "10 m Frachtplattform, Epoche A",
@@ -1234,10 +1251,10 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["FenceAssetsDesc"] = "Mauern und Zäune, die zu den Freestyle-Bahnhöfen passen. Passe sie mit dem \"Construction Mover\" an.",
 			["fenceModelName"] = "Mauer oben",
 			["isWallBehindThick"] = "Dicke Stützwand",
-			["IsWallTall"] = "Hohe Mauer",
+			["IsWallTall"] = "Tunnelmauer",
 			["OutdatedConstruction"] = "Diese Konstruktion is obsolet, zerstöre sie und baue sie erneut",
 			["wallEraPrefix_0IsNoWall"] = "Wand unten Epoche",
-			["NoWall"] = "Keine Wand unten",
+			["NoWall"] = "Nur in Tunnels",
 			["Length"] = "Länge m",
 			["Lower"] = "Senken",
 			["Raise"] = "Heben",
@@ -1253,6 +1270,9 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 
 			-- pin with message
 			["UnsnappedSomethingMessage"] = "Meldung: kaputte Verbindung",
+
+			-- tunnel
+			["EraATunnel"] = "Epoche A Tunnel",
 		},
 	}
 end

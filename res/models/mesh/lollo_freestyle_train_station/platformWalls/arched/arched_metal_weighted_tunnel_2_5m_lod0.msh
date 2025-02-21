@@ -1,0 +1,63 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				jointWeights = {
+					count = 408,
+					offset = 1884,
+				},
+				normal = {
+					count = 408,
+					offset = 3108,
+				},
+				position = {
+					count = 408,
+					offset = 2292,
+				},
+				tangent = {
+					count = 408,
+					offset = 1476,
+				},
+				uv0 = {
+					count = 408,
+					offset = 2700,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/metal/copper_w_large_rivets.mtl",
+			},
+		}, 
+	},
+	vertexAttr = {
+		jointWeights = {
+			count = 32,
+			numComp = 4,
+			offset = 336,
+		},
+		normal = {
+			count = 324,
+			numComp = 3,
+			offset = 1152,
+		},
+		position = {
+			count = 360,
+			numComp = 3,
+			offset = 368,
+		},
+		tangent = {
+			count = 336,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 424,
+			numComp = 2,
+			offset = 728,
+		},
+	},
+}
+end

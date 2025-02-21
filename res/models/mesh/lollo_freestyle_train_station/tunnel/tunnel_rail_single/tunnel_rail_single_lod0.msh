@@ -1,0 +1,94 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0 },
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 19992,
+					offset = 147920,
+				},
+				position = {
+					count = 19992,
+					offset = 107936,
+				},
+				tangent = {
+					count = 19992,
+					offset = 167912,
+				},
+				uv0 = {
+					count = 19992,
+					offset = 127928,
+				},
+			},
+			materials = { "railroad/tunnel_rail_double_wall.mtl", },
+		},
+		{
+			indices = {
+				normal = {
+					count = 3360,
+					offset = 194624,
+				},
+				position = {
+					count = 3360,
+					offset = 187904,
+				},
+				tangent = {
+					count = 3360,
+					offset = 197984,
+				},
+				uv0 = {
+					count = 3360,
+					offset = 191264,
+				},
+			},
+			materials = { "railroad/tunnel_rail_all_detail.mtl", },
+		},
+		{
+			indices = {
+				normal = {
+					count = 9504,
+					offset = 220352,
+				},
+				position = {
+					count = 9504,
+					offset = 201344,
+				},
+				tangent = {
+					count = 9504,
+					offset = 229856,
+				},
+				uv0 = {
+					count = 9504,
+					offset = 210848,
+				},
+			},
+			materials = { "tunnel_all_stone.mtl", },
+		},
+	},
+	vertexAttr = {
+		normal = {
+			count = 9924,
+			numComp = 3,
+			offset = 36748,
+		},
+		position = {
+			count = 17364,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 61264,
+			numComp = 4,
+			offset = 46672,
+		},
+		uv0 = {
+			count = 19384,
+			numComp = 2,
+			offset = 17364,
+		},
+	},
+}
+end

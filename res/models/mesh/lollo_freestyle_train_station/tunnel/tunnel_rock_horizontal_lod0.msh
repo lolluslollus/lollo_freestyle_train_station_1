@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 3084,
+					offset = 16596,
+				},
+				position = {
+					count = 3084,
+					offset = 10428,
+				},
+				tangent = {
+					count = 3084,
+					offset = 13512,
+				},
+				uv0 = {
+					count = 3084,
+					offset = 7344,
+				},
+			},
+			materials = {
+				"tunnel_all_stone.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 1824,
+			numComp = 3,
+			offset = 5520,
+		},
+		position = {
+			count = 1824,
+			numComp = 3,
+			offset = 1232,
+		},
+		tangent = {
+			count = 2464,
+			numComp = 4,
+			offset = 3056,
+		},
+		uv0 = {
+			count = 1232,
+			numComp = 2,
+			offset = 0,
+		},
+	},
+}
+end

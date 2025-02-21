@@ -1,0 +1,89 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				jointWeights = {
+					count = 552,
+					offset = 3640,
+				},
+				normal = {
+					count = 552,
+					offset = 2536,
+				},
+				position = {
+					count = 552,
+					offset = 4192,
+				},
+				tangent = {
+					count = 552,
+					offset = 4744,
+				},
+				uv0 = {
+					count = 552,
+					offset = 3088,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/metal/copper_w_large_rivets.mtl",
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 444,
+					offset = 6184,
+				},
+				normal = {
+					count = 444,
+					offset = 5296,
+				},
+				position = {
+					count = 444,
+					offset = 6628,
+				},
+				tangent = {
+					count = 444,
+					offset = 7072,
+				},
+				uv0 = {
+					count = 444,
+					offset = 5740,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/metal/copper_w_large_rivets.mtl",
+			},
+		}, 
+	},
+	vertexAttr = {
+		jointWeights = {
+			count = 32,
+			numComp = 4,
+			offset = 1416,
+		},
+		normal = {
+			count = 528,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 528,
+			numComp = 3,
+			offset = 1448,
+		},
+		tangent = {
+			count = 560,
+			numComp = 4,
+			offset = 1976,
+		},
+		uv0 = {
+			count = 888,
+			numComp = 2,
+			offset = 528,
+		},
+	},
+}
+end

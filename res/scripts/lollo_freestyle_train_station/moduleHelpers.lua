@@ -680,6 +680,12 @@ privateFuncs.deco = {
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arched/franz_glass_copper_2_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m_2m_thick.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arched/franz_glass_metal_001_2_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m_2m_thick.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arched/franz_glass_metal_002_2_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m_2m_thick.mdl'
             end
         else
             if wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl' then
@@ -714,6 +720,12 @@ privateFuncs.deco = {
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arched/franz_glass_copper_2_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arched/franz_glass_metal_001_2_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arched/franz_glass_metal_002_2_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
             end
         end
 
@@ -2030,10 +2042,10 @@ return {
             end
         end,
         doPlatformWall = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge,
-            wall_tunnel_ModelId,
+            wall_in_tunnel_ModelId,
             wall_outside_tunnel_5m_ModelId,
             pillar2_5ModelId, pillar5ModelId,
-            isTunnelOk
+            isTunnelOk, endWallModelId
         )
             local _modules = params.modules
             local _cpfs = terminalData.centrePlatformsFineRelative
@@ -2134,7 +2146,7 @@ return {
                             local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
                             if _isTrackOnPlatformLeft then skew = -skew end
                             wallTransf = transfUtils.getTransf_XSkewedOnZ(wallTransf, skew)
-                            local wallModelId = cpf.type == 2 and wall_tunnel_ModelId or wall_outside_tunnel_5m_ModelId
+                            local wallModelId = cpf.type == 2 and wall_in_tunnel_ModelId or wall_outside_tunnel_5m_ModelId
                             result.models[#result.models+1] = {
                                 id = wallModelId,
                                 tag = tag,
@@ -2263,6 +2275,7 @@ return {
                             end
 
                             -- add walls across
+                            local _wallAcrossModelId = type(endWallModelId) == 'string' and endWallModelId or wallModelId
                             if cpf.type ~= 2 then
                                 -- whenever getting in or out of a tunnel, skip altogether
                                 local cpfM1 = ii ~= 1 and _cpfs[ii-1] or nil
@@ -2272,10 +2285,10 @@ return {
                                     if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
                                         if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
                                             -- logger.print('_ONE')
-                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                         else
                                             -- logger.print('_TWO')
-                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                         end
                                     end
                                 elseif ii == _iiMax then
@@ -2283,20 +2296,20 @@ return {
                                     if not(_modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
                                         if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
                                             -- logger.print('_THREE')
-                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                         else
                                             -- logger.print('_FOUR')
-                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                         end
                                     end
                                 elseif leadingIndex ~= cpfM1.leadingIndex then
                                     local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
                                         -- logger.print('_FIVE')
-                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                 elseif leadingIndex ~= cpfP1.leadingIndex then
                                     local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
                                     -- logger.print('_SIX')
-                                    privateFuncs.deco.addWallAcross(cpf, false, result, tag, wallModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                    privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                 end
                             end
                         end

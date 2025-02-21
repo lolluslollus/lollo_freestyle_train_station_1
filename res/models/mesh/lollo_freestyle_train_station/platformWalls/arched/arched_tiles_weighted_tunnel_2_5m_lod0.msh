@@ -1,0 +1,115 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				jointWeights = {
+					count = 216,
+					offset = 1600,
+				},
+				normal = {
+					count = 216,
+					offset = 2248,
+				},
+				position = {
+					count = 216,
+					offset = 1816,
+				},
+				tangent = {
+					count = 216,
+					offset = 1384,
+				},
+				uv0 = {
+					count = 216,
+					offset = 2032,
+				},
+			},
+			materials = {
+				'lollo_freestyle_train_station/tube_tiles_creamy.mtl',
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 48,
+					offset = 2512,
+				},
+				normal = {
+					count = 48,
+					offset = 2656,
+				},
+				position = {
+					count = 48,
+					offset = 2560,
+				},
+				tangent = {
+					count = 48,
+					offset = 2464,
+				},
+				uv0 = {
+					count = 48,
+					offset = 2608,
+				},
+			},
+			materials = {
+				'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl', -- bricked edge
+			},
+		}, {
+			indices = {
+				jointWeights = {
+					count = 192,
+					offset = 2896,
+				},
+				normal = {
+					count = 192,
+					offset = 3472,
+				},
+				position = {
+					count = 192,
+					offset = 3088,
+				},
+				tangent = {
+					count = 192,
+					offset = 2704,
+				},
+				uv0 = {
+					count = 192,
+					offset = 3280,
+				},
+			},
+			materials = {
+				'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl', -- bricked edge
+			},
+		}, 
+	},
+	vertexAttr = {
+		jointWeights = {
+			count = 32,
+			numComp = 4,
+			offset = 208,
+		},
+		normal = {
+			count = 348,
+			numComp = 3,
+			offset = 1036,
+		},
+		position = {
+			count = 420,
+			numComp = 3,
+			offset = 240,
+		},
+		tangent = {
+			count = 208,
+			numComp = 4,
+			offset = 0,
+		},
+		uv0 = {
+			count = 376,
+			numComp = 2,
+			offset = 660,
+		},
+	},
+}
+end

@@ -1,0 +1,54 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 96,
+					offset = 612,
+				},
+				position = {
+					count = 96,
+					offset = 420,
+				},
+				tangent = {
+					count = 96,
+					offset = 516,
+				},
+				uv0 = {
+					count = 96,
+					offset = 708,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 60,
+			numComp = 3,
+			offset = 176,
+		},
+		position = {
+			count = 96,
+			numComp = 3,
+			offset = 0,
+		},
+		tangent = {
+			count = 80,
+			numComp = 4,
+			offset = 96,
+		},
+		uv0 = {
+			count = 184,
+			numComp = 2,
+			offset = 236,
+		},
+	},
+}
+end
