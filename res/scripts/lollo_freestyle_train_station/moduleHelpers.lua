@@ -601,11 +601,11 @@ privateFuncs.deco = {
     ---@param params any
     ---@param slotId integer
     ---@return 0|1|2
-    getMNAdjustedValue_0_To_2_Cycling = function(params, slotId)
+    getMNAdjustedValue_0_1_2_Cycling = function(params, slotId)
         local variant = privateFuncs.getVariant(params, slotId)
-        local result = privateFuncs.getFromVariant_0_to_1(variant, 3) * 2
-        -- logger.print('getMNAdjustedValue_0_To_2_Cycling; variant = ' .. tostring(variant) .. '; result = ' .. tostring(result))
-        return result or 0
+        local result = math.ceil(privateFuncs.getFromVariant_0_to_1(variant, 3) * 2)
+        -- logger.print('_getMNAdjustedValue_0_1_2_Cycling; variant = ' .. tostring(variant) .. '; result = ' .. tostring(result))
+        return result
     end,
     getStationSignFineIndexes = function(params, nTerminal, terminalData)
         local results = {}
@@ -1753,7 +1753,7 @@ return {
         end,
         getPreviewIcon = function(params)
 			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
-			local zeroOneOrTwo = privateFuncs.getFromVariant_0_to_1(variant, 3) * 2
+			local zeroOneOrTwo = math.ceil(privateFuncs.getFromVariant_0_to_1(variant, 3) * 2)
             -- logger.print('getPreviewIcon variant = ' .. tostring(variant) .. '; zeroOneOrTwo = ' .. tostring(zeroOneOrTwo))
             local arrowModelId = 'lollo_freestyle_train_station/icon/perpendicular_wall.mdl'
             local arrowModelTransf = {0.5, 0, 0, 0,  0, 0.5, 0, 0,  0, 0, 0.5, 0,  2, 5, 2, 1}
@@ -2057,12 +2057,13 @@ return {
             local _isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
             -- logger.print('_isEndFiller =', _isEndFiller)
             local _laneZ = result.laneZs[nTerminal]
-            local _zShift = _laneZ - constants.defaultPlatformHeight
+            local _defaultLaneZ = constants.defaultPlatformHeight
+            local _zShift = _laneZ - _defaultLaneZ
 
             -- local _isVertical = false
             local wallBaseModelId = (_laneZ == constants.platformHeights._0cm.aboveGround) and privateFuncs.deco.getWallBaseModelId(params, _eraPrefix) or nil
             local wallBehindModelId
-            local _wallThickness = privateFuncs.deco.getMNAdjustedValue_0_To_2_Cycling(params, slotId) -- 0, 1, 2
+            local _wallThickness = privateFuncs.deco.getMNAdjustedValue_0_1_2_Cycling(params, slotId) -- 0, 1, 2
             if (_wallThickness == 1) then
                 wallBehindModelId = privateFuncs.deco.getWallBehindModelId(wall_outside_tunnel_5m_ModelId, false)
             elseif (_wallThickness == 2) then
@@ -2141,7 +2142,7 @@ return {
                             local wallTransf = transfUtils.getTransf_Scaled_Shifted(
                                 privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                                 {_transfXZoom * xScaleFactor, _transfYZoom, 1},
-                                {0, 0, _laneZ}
+                                {0, 0, cpf.type == 2 and _defaultLaneZ or _laneZ} -- make sure the wall fills tunnels to the top with any platform height
                             )
                             local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
                             if _isTrackOnPlatformLeft then skew = -skew end
@@ -2333,12 +2334,13 @@ return {
             local transfYZoom = isTrackOnPlatformLeft and 1 or -1 -- -1 or 1
             local isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
             local _laneZ = result.laneZs[nTerminal]
+            local _defaultLaneZ = constants.defaultPlatformHeight
 
             -- query the first platform segment coz track segments, unlike platform segments,
             -- have no knowledge of the era: they only have leadingIndex, posTanX2, type and width.
             local wallBaseModelId = privateFuncs.deco.getWallBaseModelId(params, _eraPrefix)
             local wallBehindModelId
-            local _wallThickness = privateFuncs.deco.getMNAdjustedValue_0_To_2_Cycling(params, slotId) -- 0, 1, 2
+            local _wallThickness = privateFuncs.deco.getMNAdjustedValue_0_1_2_Cycling(params, slotId) -- 0, 1, 2
             if (_wallThickness == 1) then
                 wallBehindModelId = privateFuncs.deco.getWallBehindModelId(wall_not_tunnel_5m_ModelId, false)
             elseif (_wallThickness == 2) then
@@ -2376,7 +2378,7 @@ return {
                         local wallTransf = transfUtils.getTransf_Scaled_Shifted(
                             privateFuncs.getPlatformObjectTransf_AlwaysVertical(wallPosTanX2),
                             {transfXZoom * xScaleFactor, transfYZoom, 1},
-                            {0, 0, _laneZ}
+                            {0, 0, ctf.type == 2 and _defaultLaneZ or _laneZ} -- make sure the wall fills tunnels to the top with any platform height
                         )
                         -- if not(_isVertical) then
                             local skew = wallPosTanX2[2][1][3] - wallPosTanX2[1][1][3]
@@ -2756,6 +2758,10 @@ return {
         getMNAdjustedTransf = function(params, slotId, slotTransf, isFlush)
             return privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, isFlush)
         end,
+        ---@param params any
+        ---@param slotId integer
+        ---@param nSteps integer
+        ---@return number
         getMNAdjustedValue_0To1_Cycling = function(params, slotId, nSteps)
             local variant = privateFuncs.getVariant(params, slotId)
             return privateFuncs.getFromVariant_0_to_1(variant, nSteps)
