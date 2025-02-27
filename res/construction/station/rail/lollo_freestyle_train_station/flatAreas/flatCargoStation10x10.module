@@ -45,7 +45,7 @@ function data()
 
 			local _terminalData = params.terminals[nTerminal]
 			local zAdjustedTransf = transfUtils.getTransf_XShifted(
-				moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf),
+				moduleHelpers.flatAreas.getMNZShiftedTransf(params, slotId, slotTransf),
 				5
 			)
 

@@ -44,16 +44,16 @@ function data()
                 wrapT = "REPEAT",
             },
 			normal_scale = {
-				normalScale = 2,
+				normalScale = -1,
 			},
 			operation_1 = {
                 mode = "WORLD_XY",
                 -- mode = "NORMAL",
                 -- op = "OVERLAY",
-                op = "NO_OP",
-				-- op = "MULTIPLICATION",
+                -- op = "NO_OP",
+				op = "MULTIPLICATION",
                 opacity = 0.075,
-                scale = { 0.1, 0.1, },
+                scale = { 4, 4, },
             },
             operation_2 = {
                 mode = "WORLD_XY",

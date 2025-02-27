@@ -2548,92 +2548,10 @@ function data()
 			To get around this, we replace all edges with fake non-edges whenever the user opens the con config menu
 			and replace them all with real (snappy to avoid collisions) edges whenever the con config menu closes.
 ]]
---[[
-			local _convertStreetEdgesToSnappy_ExceptCurrent = function(modules_, change_)
-				if modules_ == nil then return end
-
-				local slotIdToBeLeftAlone = nil -- do not replace the module if the user is placing it
-				if change_ ~= nil and change_.added ~= nil and change_.module ~= nil then
-					if change_.module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module'
-					or change_.module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
-					or change_.module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module'
-					then
-						slotIdToBeLeftAlone = change_.slotId
-					end
-				end
-
-				for slotId, module in pairs(modules_) do
-					if module ~= nil then
-						if module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module' then
-							if (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
-								module.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module'
-							end
-						elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module' then
-							if (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
-								module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
-							end
-						elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module' then
-							if (slotIdToBeLeftAlone == nil or slotId ~= slotIdToBeLeftAlone) then
-								module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
-							end
-						end
-					end
-				end
-			end
-			local _convertStreetEdgesToSnappy = function(modules_)
-				if modules_ ~= nil then
-					for slotId, module in pairs(modules_) do
-						if module then
-							if module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
-							end
-						end
-					end
-				end
-			end
-			local _convertStreetEdgesToNonSnappy = function(modules_)
-				if modules_ ~= nil then
-					for slotId, module in pairs(modules_) do
-						if module then
-							if module.name == 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge.module'
-							elseif module.name == 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module' then
-								module.name = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module'
-							end
-						end
-					end
-				end
-			end
-			local _logStreetEdges = function(modules_)
-				print('_logStreetEdges starting')
-				if modules_ ~= nil then
-					for slotId, module in pairs(modules_) do
-						if module then
-							print('module =') debugPrint(module)
-							-- local moduSample = {
-							--     metadata = { },
-							--     name = "station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module",
-							--     updateScript = {
-							--       fileName = "",
-							--       params = { },
-							--     },
-							--     variant = 0,
-							-- }
-						end
-					end
-				end
-			end
-			-- _logStreetEdges(modules)
-]]
 			local _convertStreetEdgesToFake = function(modules_)
 				-- local _startSec = os.clock()
 				local _edgeModuleFileNames = _constants.edgeModuleFileNames
+				local _edgeModuleFileNamesV2 = _constants.edgeModuleFileNamesV2
 				if modules_ ~= nil then
 					for slotId, module in pairs(modules_) do
 						if module then
@@ -2649,6 +2567,18 @@ function data()
 								module.name = _edgeModuleFileNames.fake.flatArea
 							elseif module.name == _edgeModuleFileNames.snappy.openStairs then
 								module.name = _edgeModuleFileNames.fake.openStairs
+							elseif module.name == _edgeModuleFileNamesV2.plain.axialArea then
+								module.name = _edgeModuleFileNamesV2.fake.axialArea
+							elseif module.name == _edgeModuleFileNamesV2.plain.flatArea then
+								module.name = _edgeModuleFileNamesV2.fake.flatArea
+							elseif module.name == _edgeModuleFileNamesV2.plain.openStairs then
+								module.name = _edgeModuleFileNamesV2.fake.openStairs
+							elseif module.name == _edgeModuleFileNamesV2.snappy.axialArea then
+								module.name = _edgeModuleFileNamesV2.fake.axialArea
+							elseif module.name == _edgeModuleFileNamesV2.snappy.flatArea then
+								module.name = _edgeModuleFileNamesV2.fake.flatArea
+							elseif module.name == _edgeModuleFileNamesV2.snappy.openStairs then
+								module.name = _edgeModuleFileNamesV2.fake.openStairs
 							end
 						end
 					end

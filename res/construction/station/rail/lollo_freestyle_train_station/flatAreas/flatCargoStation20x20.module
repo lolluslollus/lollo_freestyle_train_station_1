@@ -53,7 +53,7 @@ function data()
 				slotTransf = transfUtils.getTransf_YShifted(slotTransf, yShift)
 			end
 
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNZShiftedTransf(params, slotId, slotTransf)
 
 			local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 

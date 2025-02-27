@@ -33,7 +33,7 @@ function data()
 			if not nTerminal or not baseId then return end
 
 			local _terminalData = params.terminals[nTerminal]
-			local adjustedTransf = moduleHelpers.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local adjustedTransf = moduleHelpers.axialAreas.getMNTiltedTransf(params, slotId, slotTransf)
 			local era = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 			local myGroundFacesFillKey = _constants[era .. 'groundFacesFillKey']
 			local myModelId = _constants[era .. 'flatPassengerStairsDownSmoothModelFileName']

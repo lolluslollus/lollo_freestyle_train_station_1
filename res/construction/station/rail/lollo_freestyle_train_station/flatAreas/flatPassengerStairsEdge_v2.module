@@ -1,0 +1,41 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+
+
+function data()
+	return {
+		availability = {
+			yearFrom = 0,
+			yearTo = 0
+		},
+		category = {
+			categories = { "passenger-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("FlatPassengerStairsEdgeName"),
+			description = _("FlatPassengerStairsEdgeDesc"),
+			icon = "ui/lollo_freestyle_train_station/exitWithEdge2m.tga"
+		},
+		metadata = { },
+		order = {
+			value = 10,
+		},
+		type = _constants.flatPassengerEdgeModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			return moduleHelpers.flatAreas.exitWithEdgeModuleV2_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false)
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/open_stairs/bridge_chunk_2m.mdl',
+					transf = _constants.idTransf,
+				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
+			}
+		end
+	}
+end

@@ -5,8 +5,8 @@ local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
 function data()
 	return {
 		availability = {
-			yearFrom = 0,
-			yearTo = 0
+			yearFrom = -1,
+			yearTo = -1
 		},
 		category = {
 			categories = { "passenger-road-access", },

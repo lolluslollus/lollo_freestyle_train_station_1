@@ -44,7 +44,7 @@ function data()
 			if not nTerminal or not nTrackEdge or not baseId then return end
 
 			local _terminalData = params.terminals[nTerminal]
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNZShiftedTransf(params, slotId, slotTransf)
 			local buildingTransf = transfUtils.getTransf_ZRotatedP90(zAdjustedTransf)
 
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]

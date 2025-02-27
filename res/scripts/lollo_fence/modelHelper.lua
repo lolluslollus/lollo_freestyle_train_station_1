@@ -188,28 +188,28 @@ local privateFuncs = {
                 add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyNLightame'))
-                add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
-                add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+                add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindBricks.tga', _('WallBricksName'))
+                add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcretePlain.tga', _("WallConcretePlainName"))
             else
                 add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyLightName'))
-                add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
-                add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+                add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindBricks.tga', _('WallBricksName'))
+                add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcretePlain.tga', _("WallConcretePlainName"))
             end
         else
             if isWallTall then
                 add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyNLightame'))
-                add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
-                add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+                add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindBricks.tga', _('WallBricksName'))
+                add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcretePlain.tga', _("WallConcretePlainName"))
             else
                 add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyLightName'))
-                add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
-                add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+                add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindBricks.tga', _('WallBricksName'))
+                add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcretePlain.tga', _("WallConcretePlainName"))
             end
         end
         return results

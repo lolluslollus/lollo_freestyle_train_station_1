@@ -1,0 +1,42 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+
+-- LOLLO NOTE after build 35716, we need this to avoid the station throwing collisions whenever an external edge is connected.
+-- It is inconvenient to place, so we hide it and replace it quietly.
+function data()
+	return {
+		availability = {
+			yearFrom = -1,
+			yearTo = -1,
+		},
+		category = {
+			categories = { "passenger-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("FlatPassengerStairsSnappyEdgeName"),
+			description = _("FlatPassengerStairsSnappyEdgeDesc"),
+			icon = "ui/lollo_freestyle_train_station/exitWithSnappyEdge2m.tga"
+		},
+		metadata = { },
+		order = {
+			value = 10,
+		},
+		type = _constants.flatPassengerEdgeModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			return moduleHelpers.flatAreas.exitWithEdgeModuleV2_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, true)
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/open_stairs/bridge_chunk_2m.mdl',
+					transf = _constants.idTransf,
+				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
+			}
+		end
+	}
+end

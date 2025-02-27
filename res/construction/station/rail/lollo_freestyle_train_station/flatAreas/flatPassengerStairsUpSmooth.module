@@ -36,7 +36,7 @@ function data()
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNTiltedTransf(params, slotId, slotTransf)
 
 			local _terminalData = params.terminals[nTerminal]
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]

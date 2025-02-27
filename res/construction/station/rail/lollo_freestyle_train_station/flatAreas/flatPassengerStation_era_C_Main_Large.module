@@ -131,7 +131,7 @@ function data()
 				slotTransf = transfUtils.getTransf_YShifted(slotTransf, yShift)
 			end
 
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNZShiftedTransf(params, slotId, slotTransf)
 			local buildingTransf = transfUtils.getTransf_ZRotated_Shifted(zAdjustedTransf, math.pi * 0.5, {-2.5, 0, -0.8})
 
 			local eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)

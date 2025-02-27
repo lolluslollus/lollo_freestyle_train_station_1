@@ -33,7 +33,7 @@ function data()
 			if not nTerminal or not baseId then return end
 
 			local zAdjustedTransf = transfUtils.getTransf_XShifted(
-				moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf),
+				moduleHelpers.flatAreas.getMNZShiftedTransf(params, slotId, slotTransf),
 				2.3 -- 2.5 minus a bit for bends
 			)
 

@@ -164,6 +164,23 @@ local constants = {
             openStairs = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
         },
     },
+    edgeModuleFileNamesV2 = {
+        fake = {
+            axialArea = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsFakeEdge.module',
+            flatArea = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsFakeEdge_v2.module',
+            openStairs = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithFakeEdge_2m_v2.module'
+        },
+        plain = {
+            axialArea = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsEdge.module',
+            flatArea = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsEdge_v2.module',
+            openStairs = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithEdge_2m_v2.module'
+        },
+        snappy = {
+            axialArea = 'station/rail/lollo_freestyle_train_station/axialAreas/flatPassengerStairsSnappyEdge.module',
+            flatArea = 'station/rail/lollo_freestyle_train_station/flatAreas/flatPassengerStairsSnappyEdge_v2.module',
+            openStairs = 'station/rail/lollo_freestyle_train_station/openStairs/openStairsExitWithSnappyEdge_2m_v2.module'
+        },
+    },
     axialCargoExitModuleType = 'freestyleTrainStationAxialCargoExit',
     axialFlushCargoExitModuleType = 'freestyleTrainStationAxialFlushCargoExit',
     axialFlushPassengerExitModuleType = 'freestyleTrainStationAxialFlushPassengerExit',

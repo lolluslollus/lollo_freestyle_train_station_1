@@ -138,6 +138,7 @@ local _utils = {
     ---@return table
     replaceFakeEdgesWithSnappy = function (oldModules)
         local _edgeModuleFileNames = _constants.edgeModuleFileNames
+        local _edgeModuleFileNamesV2 = _constants.edgeModuleFileNamesV2
         local isSomethingChanged = false
         local newModules = {}
         for slotId, modu in pairs(oldModules) do
@@ -149,6 +150,15 @@ local _utils = {
                 isSomethingChanged = true
             elseif modu.name == _edgeModuleFileNames.fake.openStairs then
                 modu.name = _edgeModuleFileNames.snappy.openStairs
+                isSomethingChanged = true
+            elseif modu.name == _edgeModuleFileNamesV2.fake.axialArea then
+                modu.name = _edgeModuleFileNamesV2.snappy.axialArea
+                isSomethingChanged = true
+            elseif modu.name == _edgeModuleFileNamesV2.fake.flatArea then
+                modu.name = _edgeModuleFileNamesV2.snappy.flatArea
+                isSomethingChanged = true
+            elseif modu.name == _edgeModuleFileNamesV2.fake.openStairs then
+                modu.name = _edgeModuleFileNamesV2.snappy.openStairs
                 isSomethingChanged = true
             end
             newModules[slotId] = modu

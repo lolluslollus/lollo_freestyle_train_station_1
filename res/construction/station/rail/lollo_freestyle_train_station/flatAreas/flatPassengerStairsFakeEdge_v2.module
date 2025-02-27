@@ -1,0 +1,43 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+
+-- LOLLO NOTE we need this to avoid the street edges trying to snap to each other while configuring.
+-- After build 35716, non-snappy edges will throw collision when they are connected to the road network and the user opens the config menu,
+-- so we force all edges to snappy.
+function data()
+	return {
+		availability = {
+			yearFrom = -1,
+			yearTo = -1,
+		},
+		category = {
+			categories = { "passenger-road-access", },
+		},
+		cost = {
+			price = 0,
+		},
+		description = {
+			name = _("FlatPassengerStairsSnappyEdgeName"),
+			description = _("FlatPassengerStairsSnappyEdgeDesc"),
+			icon = "ui/lollo_freestyle_train_station/exitWithSnappyEdge2m.tga"
+		},
+		metadata = { },
+		order = {
+			value = 10,
+		},
+		type = _constants.flatPassengerEdgeModuleType,
+		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
+			return moduleHelpers.flatAreas.exitWithEdgeModuleV2_updateFn(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, false, true)
+		end,
+
+		getModelsFn = function(params)
+			return {
+				{
+					id = 'lollo_freestyle_train_station/open_stairs/bridge_chunk_2m.mdl',
+					transf = _constants.idTransf,
+				},
+				moduleHelpers.flatAreas.getPreviewIcon(params),
+			}
+		end
+	}
+end

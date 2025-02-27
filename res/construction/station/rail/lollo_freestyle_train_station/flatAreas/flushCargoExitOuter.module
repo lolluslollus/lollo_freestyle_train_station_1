@@ -40,7 +40,7 @@ function data()
 
 			local exitPoleTransf = transfUtils.getTransf_ZShifted(slotTransf, -0.4) -- pull it down for platform height 0
 			moduleHelpers.flatAreas.addExitPole(result, exitPoleTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
-			local zAdjustedTransf = moduleHelpers.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+			local zAdjustedTransf = moduleHelpers.flatAreas.getMNZShiftedTransf(params, slotId, slotTransf)
 			moduleHelpers.flatAreas.addCargoLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
 		end,
 

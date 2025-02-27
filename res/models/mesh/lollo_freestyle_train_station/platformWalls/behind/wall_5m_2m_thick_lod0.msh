@@ -10,7 +10,7 @@ return {
 			indices = {
 				normal = {
 					count = 96,
-					offset = 816,
+					offset = 528,
 				},
 				position = {
 					count = 96,
@@ -22,7 +22,7 @@ return {
 				},
 				uv0 = {
 					count = 96,
-					offset = 528,
+					offset = 816,
 				},
 			},
 			materials = {
@@ -32,20 +32,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 72,
-					offset = 1128,
+					count = 48,
+					offset = 912,
 				},
 				position = {
-					count = 72,
-					offset = 984,
+					count = 48,
+					offset = 960,
 				},
 				tangent = {
-					count = 72,
-					offset = 1056,
+					count = 48,
+					offset = 1008,
 				},
 				uv0 = {
-					count = 72,
-					offset = 912,
+					count = 48,
+					offset = 1056,
 				},
 			},
 			materials = {
@@ -55,20 +55,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 24,
-					offset = 1272,
+					count = 48,
+					offset = 1104,
 				},
 				position = {
-					count = 24,
-					offset = 1224,
+					count = 48,
+					offset = 1152,
 				},
 				tangent = {
-					count = 24,
-					offset = 1248,
+					count = 48,
+					offset = 1200,
 				},
 				uv0 = {
-					count = 24,
-					offset = 1200,
+					count = 48,
+					offset = 1248,
 				},
 			},
 			materials = {
@@ -79,7 +79,7 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 1368,
+					offset = 1296,
 				},
 				position = {
 					count = 24,
@@ -91,18 +91,18 @@ return {
 				},
 				uv0 = {
 					count = 24,
-					offset = 1296,
+					offset = 1368,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/platformWalls/behind/horizontal_medium_prio.mtl", 
+				"lollo_freestyle_train_station/platformWalls/behind/horizontal_high_prio.mtl", 
 			},
 		},
 		{
 			indices = {
 				normal = {
 					count = 24,
-					offset = 1464,
+					offset = 1392,
 				},
 				position = {
 					count = 24,
@@ -114,11 +114,11 @@ return {
 				},
 				uv0 = {
 					count = 24,
-					offset = 1392,
+					offset = 1464,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/platformWalls/behind/horizontal_high_prio.mtl", 
+				"lollo_freestyle_train_station/platformWalls/behind/horizontal_medium_prio.mtl", 
 			},
 		}, 
 	},
@@ -126,22 +126,22 @@ return {
 		normal = {
 			count = 96,
 			numComp = 3,
-			offset = 432,
+			offset = 0,
 		},
 		position = {
 			count = 144,
 			numComp = 3,
-			offset = 176,
+			offset = 96,
 		},
 		tangent = {
 			count = 112,
 			numComp = 4,
-			offset = 320,
+			offset = 240,
 		},
 		uv0 = {
 			count = 176,
 			numComp = 2,
-			offset = 0,
+			offset = 352,
 		},
 	},
 }

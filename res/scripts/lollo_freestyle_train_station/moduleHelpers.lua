@@ -329,10 +329,9 @@ privateFuncs.axialAreas = {
             tag = tag
         }
     end,
-    getMNAdjustedTransf = function(params, slotId, slotTransf)
+    getMNTiltedTransf = function(params, slotId, slotTransf)
         local variant = privateFuncs.getVariant(params, slotId)
         local tilt = privateFuncs.getFromVariant_AxialAreaTilt(variant)
-        -- return transfUtilsUG.mul(slotTransf, transfUtilsUG.rotY(tilt))
         return transfUtils.getTransf_YRotated(slotTransf, tilt)
     end,
 }
@@ -1010,10 +1009,15 @@ privateFuncs.flatAreas = {
             tag = tag
         }
     end,
-    getMNAdjustedTransf = function(params, slotId, slotTransf, isFlush)
+    getMNZShiftedTransf = function(params, slotId, slotTransf, isFlush)
         local variant = privateFuncs.getVariant(params, slotId)
         local deltaZ = privateFuncs.getFromVariant_FlatAreaHeight(variant, isFlush)
         return transfUtils.getTransf_ZShifted(slotTransf, deltaZ)
+    end,
+    getMNTiltedTransf = function(params, slotId, slotTransf, isFlush)
+        local variant = privateFuncs.getVariant(params, slotId)
+        local tilt = privateFuncs.getFromVariant_AxialAreaTilt(variant)
+        return transfUtils.getTransf_YRotated(slotTransf, tilt)
     end,
 }
 privateFuncs.openStairs = {
@@ -2589,7 +2593,7 @@ return {
 			if not nTerminal or not baseId then return end
 
             local _terminalData = params.terminals[nTerminal]
-            local adjustedTransf = privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+            local adjustedTransf = privateFuncs.axialAreas.getMNTiltedTransf(params, slotId, slotTransf)
 
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
 
@@ -2691,8 +2695,8 @@ return {
 			}
 			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
         end,
-        getMNAdjustedTransf = function(params, slotId, slotTransf)
-            return privateFuncs.axialAreas.getMNAdjustedTransf(params, slotId, slotTransf)
+        getMNTiltedTransf = function(params, slotId, slotTransf)
+            return privateFuncs.axialAreas.getMNTiltedTransf(params, slotId, slotTransf)
         end,
         getPreviewIcon = function(params)
 			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
@@ -2755,8 +2759,11 @@ return {
         getFromVariant_0_to_1 = function(variant, nSteps)
             return privateFuncs.getFromVariant_0_to_1(variant, nSteps)
         end,
-        getMNAdjustedTransf = function(params, slotId, slotTransf, isFlush)
-            return privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, isFlush)
+        getMNZShiftedTransf = function(params, slotId, slotTransf, isFlush)
+            return privateFuncs.flatAreas.getMNZShiftedTransf(params, slotId, slotTransf, isFlush)
+        end,
+        getMNTiltedTransf = function(params, slotId, slotTransf, isFlush)
+            return privateFuncs.flatAreas.getMNTiltedTransf(params, slotId, slotTransf, isFlush)
         end,
         ---@param params any
         ---@param slotId integer
@@ -2805,7 +2812,84 @@ return {
 			-- in base_config.lua
 			-- Set it into the models, so the game knows what module they belong to.
 
-			local zAdjustedTransf = privateFuncs.flatAreas.getMNAdjustedTransf(params, slotId, slotTransf, false)
+			local zAdjustedTransf = privateFuncs.flatAreas.getMNZShiftedTransf(params, slotId, slotTransf, false)
+
+			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
+			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
+
+			-- local myGroundFacesFillKey = constants[eraPrefix .. 'groundFacesFillKey']
+			result.models[#result.models + 1] = {
+				id = 'lollo_freestyle_train_station/railroad/flatSides/passengers/' .. eraPrefix .. 'stairs_edge.mdl',
+				slotId = slotId,
+				transf = zAdjustedTransf,
+				tag = tag
+			}
+            privateFuncs.flatAreas.addExitPole(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+
+			-- this connects the platform to its outer edge (ie border)
+			privateFuncs.flatAreas.addPassengerLaneToSelf(result, zAdjustedTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge)
+
+            if not(isFake) then
+                local _autoBridgePathsRefData = autoBridgePathsHelper.getData4Era(eraPrefix)
+                table.insert(
+                    result.edgeLists,
+                    {
+                        alignTerrain = false, -- only align on ground and in tunnels
+                        edges = transfUtils.getPosTanX2Transformed(
+                            {
+                                { { 0.5, 0, 0 }, { 1, 0, 0 } },  -- node 0 pos, tan
+                                { { 1.5, 0, 0 }, { 1, 0, 0 } },  -- node 1 pos, tan
+                            },
+                            zAdjustedTransf
+                        ),
+                        -- better make it a bridge to avoid ugly autolinks between nearby modules
+                        edgeType = 'BRIDGE',
+                        edgeTypeName = _autoBridgePathsRefData.bridgeTypeName_withRailing,
+                        freeNodes = { 1 },
+                        params = {
+                            hasBus = true,
+                            tramTrackType  = 'NO',
+                            type = _autoBridgePathsRefData.streetTypeName_noBridge,
+                        },
+                        snapNodes = isSnap and { 1 } or {},
+                        -- tag2nodes = {},
+                        tag2nodes = {
+                            [tag] = { 0, 1 } -- list of base 0 indexes of nodes
+                        },
+                        type = 'STREET'
+                    }
+                )
+            end
+
+			local terrainAlignmentList = {
+				faces = {
+                    transfUtils.getFaceTransformed_FAST(
+                        zAdjustedTransf,
+                        {
+                            {-1, -2, constants.platformSideBitsZ, 1},
+                            {-1, 2, constants.platformSideBitsZ, 1},
+                            {1.0, 2, constants.platformSideBitsZ, 1},
+                            {1.0, -2, constants.platformSideBitsZ, 1},
+                        }
+                    )
+				},
+				optional = true,
+				slopeHigh = constants.slopeHigh,
+				slopeLow = constants.slopeLow,
+				type = 'LESS',
+			}
+			result.terrainAlignmentLists[#result.terrainAlignmentLists + 1] = terrainAlignmentList
+		end,
+        exitWithEdgeModuleV2_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams, isSnap, isFake)
+			local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
+			if not nTerminal or not baseId then return end
+
+            local _terminalData = params.terminals[nTerminal]
+			-- LOLLO NOTE tag looks like '__module_201030', never mind what you write into it, the game overwrites it
+			-- in base_config.lua
+			-- Set it into the models, so the game knows what module they belong to.
+
+			local zAdjustedTransf = privateFuncs.flatAreas.getMNTiltedTransf(params, slotId, slotTransf, false)
 
 			local cpl = _terminalData.centrePlatformsRelative[nTrackEdge]
 			local eraPrefix = privateFuncs.getEraPrefix(params, nTerminal, _terminalData, nTrackEdge)
