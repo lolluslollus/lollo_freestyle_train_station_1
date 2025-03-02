@@ -183,6 +183,7 @@ function data()
                 -- allow adding new params to old cons that did not have them
                 local defaults = fenceModelHelper.getDefaultIndexes()
                 params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
+                params.lolloFenceAssets_isTunnelWallLikeOutside = params.lolloFenceAssets_isTunnelWallLikeOutside or defaults.lolloFenceAssets_isTunnelWallLikeOutside
                 params.lolloFenceAssets_isWallBehindThick = params.lolloFenceAssets_isWallBehindThick or defaults.lolloFenceAssets_isWallBehindThick
                 params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.lolloFenceAssets_model
                 params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.lolloFenceAssets_wallEraPrefix
@@ -233,6 +234,7 @@ function data()
                 } },
             }
 
+            local isTunnelWallLikeOutside = params.lolloFenceAssets_isTunnelWallLikeOutside == 1
             local isWallBehindInTunnels = params.lolloFenceAssets_wallBehindInTunnels == 1
             local isWallBehindOnBridges = params.lolloFenceAssets_wallBehindOnBridges == 1
             local isWallBehindThick = (params.lolloFenceAssets_isWallBehindThick == 1)
@@ -317,9 +319,9 @@ function data()
             logger.print('_yStart = ' .. tostring(_yStart) .. '; _zShift = ' .. tostring(_zShift) .. '; _zStart = ' .. tostring(_zStart))
             for _, transfData in pairs(params.transfs_ground) do
                 if not(transfData.hasLevelCrossing) then
-                    if transfData.groundBridgeTunnel_012 == 2 then -- tunnel
+                    if transfData.groundBridgeTunnel_012 == 2 and not(isTunnelWallLikeOutside) then -- tunnel
                         _addWall(transfData.transf, result, _yStart, _zStart_Tunnel, wallMainModelId_Tunnel, wallBaseModelId_Tunnel)
-                    else -- ground or bridge
+                    else -- ground, bridge or tunnel like outside
                         _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
                     end
                     if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then -- ground
@@ -329,10 +331,12 @@ function data()
             end
             for _, transfData in pairs(params.transfs_wallBehind) do
                 if not(transfData.hasLevelCrossing) then
-                    if transfData.groundBridgeTunnel_012 == 0
-                    or (transfData.groundBridgeTunnel_012 == 1 and isWallBehindOnBridges) then
+                    if transfData.groundBridgeTunnel_012 == 0 -- ground
+                    or (transfData.groundBridgeTunnel_012 == 1 and isWallBehindOnBridges) -- bridge
+                    or (transfData.groundBridgeTunnel_012 == 2 and isTunnelWallLikeOutside and isWallBehindInTunnels) -- tunnel
+                    then
                         _addWallBehind(transfData.transf, result, _yStart,_zStart, wallBehindModelId, wallBehindBaseModelId)
-                    elseif (transfData.groundBridgeTunnel_012 == 2 and isWallBehindInTunnels) then
+                    elseif (transfData.groundBridgeTunnel_012 == 2 and isWallBehindInTunnels) then -- tunnel
                         _addWallBehind(transfData.transf, result, _yStart,_zStart_Tunnel, wallBehindModelId_Tunnel, wallBehindBaseModelId_Tunnel)
                     end
                 end

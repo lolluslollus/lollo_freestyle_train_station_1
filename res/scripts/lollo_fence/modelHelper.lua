@@ -26,6 +26,7 @@ local privateValues = {
 privateValues.defaults = {
     -- lolloFenceAssets_buildOnFrozenEdges = 0,
     lolloFenceAssets_doTerrain = 1,
+    lolloFenceAssets_isTunnelWallLikeOutside = 0,
     lolloFenceAssets_isWallBehindThick = 0,
     -- lolloFenceAssets_isWallTall = 0,
     lolloFenceAssets_length = 9,
@@ -136,6 +137,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
             add('lollo_freestyle_train_station/platformWalls/arched/copper_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
             add('lollo_freestyle_train_station/platformWalls/arched/iron_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
+            add('lollo_freestyle_train_station/platformWalls/arched/metal_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronCream.tga', _("WallIronCreamName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_light_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
@@ -157,6 +159,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
             add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
             add('lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
+            add('lollo_freestyle_train_station/platformWalls/iron_cream/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronCream.tga', _("WallIronCreamName"))
             add('lollo_freestyle_train_station/platformWalls/tunnely/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
             add('lollo_freestyle_train_station/platformWalls/tunnely_light/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/fence_wood/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
@@ -264,7 +267,7 @@ return {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_isWallBehindThick,
                 key = 'lolloFenceAssets_isWallBehindThick',
                 name = _('isWallBehindThick'),
-                uiType = 'BUTTON',
+                uiType = 'CHECKBOX',
                 values = {_('NO'), _('YES')},
             },
             {
@@ -320,7 +323,7 @@ return {
             --     defaultIndex = privateValues.defaults.lolloFenceAssets_isWallTall,
             --     key = 'lolloFenceAssets_isWallTall',
             --     name = _('IsWallTall'),
-            --     uiType = 'BUTTON',
+            --     uiType = 'CHECKBOX',
             --     values = {_('NO'), _('YES')}
             -- },
         }
@@ -366,7 +369,7 @@ return {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_isWallBehindThick,
                 key = 'lolloFenceAssets_isWallBehindThick',
                 name = _('isWallBehindThick'),
-                uiType = 'BUTTON',
+                uiType = 'CHECKBOX',
                 values = {_('NO'), _('YES')},
             },
             {
@@ -380,6 +383,13 @@ return {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_wallBehindInTunnels,
                 key = 'lolloFenceAssets_wallBehindInTunnels',
                 name = _('wallBehind_isInTunnels'),
+                uiType = 'CHECKBOX',
+                values = {_('NO'), _('YES')}
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_isTunnelWallLikeOutside,
+                key = 'lolloFenceAssets_isTunnelWallLikeOutside',
+                name = _('isTunnelWallLikeOutside'),
                 uiType = 'CHECKBOX',
                 values = {_('NO'), _('YES')}
             },

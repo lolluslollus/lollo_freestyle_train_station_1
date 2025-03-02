@@ -72,7 +72,10 @@ return {
                     if type(paramMetadata.tooltip) == 'string' and paramMetadata.tooltip:len() > 0 then
                         paramNameTextBox:setTooltip(paramMetadata.tooltip)
                     end
-                    layout:addItem(paramNameTextBox)
+                    local textBoxLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
+                    textBoxLayout:addItem(paramNameTextBox)
+                    layout:addItem(textBoxLayout)
+
                     local _valueIndexBase0 = paramValue or (paramMetadata.defaultIndex or 0)
                     logger.print('_valueIndexBase0 =', _valueIndexBase0)
                     if paramMetadata.uiType == 'ICON_BUTTON' then
@@ -136,6 +139,20 @@ return {
                         sliderLayout:addItem(sliderValueView)
 
                         layout:addItem(sliderLayout)
+                    elseif paramMetadata.uiType == 'CHECKBOX' then
+                        -- print('paramKey = ' .. tostring(paramKey))
+                        -- print('paramMetadata =') debugPrint(paramMetadata)
+                        -- print('paramValue = ' .. tostring(paramValue))
+                        local checkbox = api.gui.comp.CheckBox.new('', 'ui/design/components/checkbox_invalid.tga', 'ui/design/components/checkbox_valid.tga')
+                        checkbox:setGravity(0.5, 0) -- center horizontally
+                        checkbox:onToggle(
+                            function(isSelected)
+                                -- print('checkbox selected = ' .. tostring(isSelected))
+                                onParamValueChanged(entityId, paramsMetadataSorted, paramKey, isSelected and 1 or 0)
+                            end
+                        )
+                        checkbox:setSelected(paramValue == 1, false)
+                        textBoxLayout:addItem(checkbox)
                     else -- BUTTON or anything else
                         -- logger.print('button clicked')
                         local buttonRowLayout = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
