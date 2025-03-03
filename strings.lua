@@ -640,6 +640,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 
 			-- tunnel
 			["EraATunnel"] = "Era A Tunnel",
+			["EraBTunnel"] = "Era B Tunnel",
 		},
 		de = {
 			["DESC"] = [[
@@ -1279,6 +1280,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 
 			-- tunnel
 			["EraATunnel"] = "Epoche A Tunnel",
+			["EraBTunnel"] = "Epoche B Tunnel",
 		},
 	}
 end
