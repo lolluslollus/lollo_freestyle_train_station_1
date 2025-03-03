@@ -352,7 +352,7 @@ return {
                 key = 'lolloFenceAssets_wallEraPrefix',
                 name = _('wallEraPrefix_0IsNoWall'),
                 uiType = 'BUTTON',
-                values = {_('NoWall'), 'A', 'B', 'C'},
+                values = {_('NoWallAuto'), 'A', 'B', 'C'},
             },
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_wallBehindModel,
@@ -405,7 +405,7 @@ return {
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_yShiftFine,
                 key = 'lolloFenceAssets_yShiftFine',
-                name = _('YShift'),
+                name = _('YShiftAuto'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getYShiftFineDisplayValues(),
             },
