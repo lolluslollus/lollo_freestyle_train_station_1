@@ -8,11 +8,11 @@ function data()
             {
                 node = {
                     materials = {
-                        'lollo_freestyle_train_station/station_concrete_1.mtl',
-                        'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
-                        'lollo_freestyle_train_station/station_concrete_1_z.mtl',
-                        'lollo_freestyle_train_station/station_concrete_1_world_dirt_z.mtl',
-                        'lollo_freestyle_train_station/station_concrete_1_world_dirt.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark_low_prio.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark_z.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark_world_dirt_z.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark_world_dirt.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/platformWalls/behind/wall_5m_lod0.msh',
                 },

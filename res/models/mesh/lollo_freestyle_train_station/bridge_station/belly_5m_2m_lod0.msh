@@ -1,30 +1,74 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, }, 
+		{ 0, 0, 0, }, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 120,
-					offset = 508,
+					count = 72,
+					offset = 452,
 				},
 				position = {
-					count = 120,
-					offset = 748,
+					count = 72,
+					offset = 524,
 				},
 				tangent = {
-					count = 120,
-					offset = 628,
+					count = 72,
+					offset = 596,
 				},
 				uv0 = {
-					count = 120,
-					offset = 388,
+					count = 72,
+					offset = 668,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/roofs/wall.mtl", 
+				"lollo_freestyle_train_station/bridge_station/wall_high_prio.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 72,
+					offset = 740,
+				},
+				position = {
+					count = 72,
+					offset = 812,
+				},
+				tangent = {
+					count = 72,
+					offset = 884,
+				},
+				uv0 = {
+					count = 72,
+					offset = 956,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/roofs/wall_medium_prio.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 48,
+					offset = 1028,
+				},
+				position = {
+					count = 48,
+					offset = 1076,
+				},
+				tangent = {
+					count = 48,
+					offset = 1124,
+				},
+				uv0 = {
+					count = 48,
+					offset = 1172,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge_station/wall_low_prio.mtl", 
 			},
 		}, 
 	},
@@ -32,22 +76,22 @@ return {
 		normal = {
 			count = 60,
 			numComp = 3,
-			offset = 168,
+			offset = 0,
 		},
 		position = {
-			count = 96,
+			count = 144,
 			numComp = 3,
-			offset = 292,
+			offset = 60,
 		},
 		tangent = {
 			count = 64,
 			numComp = 4,
-			offset = 228,
+			offset = 204,
 		},
 		uv0 = {
-			count = 168,
+			count = 184,
 			numComp = 2,
-			offset = 0,
+			offset = 268,
 		},
 	},
 }

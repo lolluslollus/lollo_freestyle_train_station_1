@@ -46,13 +46,10 @@ return {
 			normalScale = -1,
 		},
 		operation_1 = {
-			mode = "TEXCOORD",
-			-- op = "LINEAR_BURN",
-			-- op = "MULTIPLICATION",
-			-- op = "NO_OP",
+			mode = "NORMAL",
 			op = "OVERLAY",
-			opacity = 1.5,
-			scale = { 0.6, 0.6, },
+			opacity = 1.0,
+			scale = { 0.05, 0.05, },
 		},
 		operation_2 = {
 			-- mode = "TEXCOORD",

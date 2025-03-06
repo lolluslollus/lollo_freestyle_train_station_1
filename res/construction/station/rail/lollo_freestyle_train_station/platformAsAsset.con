@@ -1,3 +1,5 @@
+-- LOLLO OBSOLETE moved outside the station folder to prevent crashes when reconfiguring and leaving the config menu
+
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')
@@ -163,8 +165,8 @@ function data()
             description = _('PlatformAsAssetDesc')
         },
         availability = {
-            yearFrom = 0,
-            yearTo = 0
+            yearFrom = -1,
+            yearTo = -1
         },
         categories = { 'stairs' },
         order = 1104,

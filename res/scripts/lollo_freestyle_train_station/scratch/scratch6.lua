@@ -2,6 +2,7 @@ package.path = package.path .. ';res/scripts/?.lua'
 package.path = package.path .. ';C:/Program Files (x86)/Steam/steamapps/common/Transport Fever 2/res/scripts/?.lua'
 
 print('scratch6 starting')
+debugPrint = function(anything) end
 
 local constants = require('lollo_freestyle_train_station.constants')
 local logger = require('lollo_freestyle_train_station.logger')

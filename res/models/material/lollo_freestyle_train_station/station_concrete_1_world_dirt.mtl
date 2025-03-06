@@ -60,8 +60,8 @@ function data()
                 -- mode = "NORMAL",
                 -- op = "OVERLAY",
 				op = "MULTIPLICATION",
-                opacity = 0.8,
-                scale = { 1.5, 1.5, },
+                opacity = 1.0,
+                scale = { 0.05, 0.05, },
             },
             polygon_offset = {
                 factor = 0,

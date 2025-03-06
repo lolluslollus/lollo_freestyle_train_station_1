@@ -8,9 +8,9 @@ function data()
             {
                 node = {
                     materials = {
-                        'lollo_freestyle_train_station/bricks_old.mtl',
-                        'lollo_freestyle_train_station/bricks_old_high_prio.mtl',
-                        'lollo_freestyle_train_station/bricks_old_low_prio.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large_high_prio.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large_low_prio.mtl',
                         'lollo_freestyle_train_station/square_marble_tiles.mtl',
                         'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
                         'lollo_freestyle_train_station/square_marble_tiles_low_prio.mtl',
@@ -24,9 +24,9 @@ function data()
             {
                 node = {
                     materials = {
-                        'lollo_freestyle_train_station/bricks_old.mtl',
-                        'lollo_freestyle_train_station/bricks_old_high_prio.mtl',
-                        'lollo_freestyle_train_station/bricks_old_low_prio.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large_high_prio.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large_low_prio.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/platformWalls/fence_mattoni/modelled_square_fence_5m_lod1.msh',
                 },

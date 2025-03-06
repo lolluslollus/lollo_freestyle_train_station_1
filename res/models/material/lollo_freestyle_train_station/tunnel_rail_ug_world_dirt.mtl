@@ -3,7 +3,7 @@ function data()
 		order = 0,
 		params = {
 			albedo_scale = {
-				albedoScale = { 0.6, 0.56, 0.5, },
+				albedoScale = { 0.48, 0.45, 0.44, },
 				-- albedoScale = { 0.75, 0.7, 0.6, },
 				-- albedoScale = { 0.95, 1, 1.1, },
 				-- albedoScale = { 1.14, 1.2, 1.32, },
@@ -14,16 +14,16 @@ function data()
 			},
 			map_albedo = {
 				-- fileName = "tracks/tunnel_rail_wall_01_albedo.dds",
-				-- fileName = "lollo_freestyle_train_station/fences/tunnel_rail_wallB_512_albedo.dds",
-				fileName = "lollo_freestyle_train_station/fences/tunnel_rail_repeat_wall_01_albedo.dds",
+				-- fileName = "lollo_freestyle_train_station/wall_tunnely/tunnel_rail_wallB_512_albedo.dds",
+				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_albedo_bc1.dds",
 				type = "TWOD",
 				wrapS = "REPEAT",
 				wrapT = "REPEAT",
 			},
 			map_metal_gloss_ao = {
 				-- fileName = "tracks/tunnel_rail_wall_01_metal_gloss_ao.dds",
-				-- fileName = "lollo_freestyle_train_station/fences/tunnel_rail_wallB_512_metal_gloss_ao.dds",
-				fileName = "lollo_freestyle_train_station/fences/tunnel_rail_repeat_wall_01_metal_gloss_ao.dds",
+				-- fileName = "lollo_freestyle_train_station/wall_tunnely/tunnel_rail_wallB_512_metal_gloss_ao.dds",
+				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_metal_gloss_ao_bc1.dds",
 				type = "TWOD",
 				wrapS = "REPEAT",
 				wrapT = "REPEAT",
@@ -31,8 +31,8 @@ function data()
 			map_normal = {
 				-- fileName = "tracks/tunnel_rail_wall_01_normal.dds",
 				-- fileName = "lollo_freestyle_train_station/tunnel_rail_wall_01_normal.dds",
-				-- fileName = "lollo_freestyle_train_station/fences/tunnel_rail_wallB_512_inverse_normal.dds",
-				fileName = "lollo_freestyle_train_station/fences/tunnel_rail_repeat_wall_01_normal.dds",
+				-- fileName = "lollo_freestyle_train_station/wall_tunnely/tunnel_rail_wallB_512_inverse_normal.dds",
+				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_normal_bc5.dds",
 				redGreen = true,
 				type = "TWOD",
 				wrapS = "REPEAT",
@@ -66,8 +66,8 @@ function data()
                 -- mode = "NORMAL",
                 -- op = "OVERLAY",
 				op = "MULTIPLICATION",
-                opacity = 0.4,
-                scale = { 3.0, 3.0, },
+                opacity = 1.0,
+                scale = { 0.05, 0.05, },
             },
 			polygon_offset = {
 				factor = 0,

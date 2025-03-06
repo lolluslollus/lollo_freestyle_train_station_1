@@ -148,6 +148,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFs.tga', _("WallStaccionataFsName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFsTall.tga', _("WallStaccionataFsTallName"))
             add('lollo_freestyle_train_station/platformWalls/arched/concrete_plain_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+            add('lollo_freestyle_train_station/platformWalls/arched/concrete_rough_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteRough.tga', _("WallConcreteRoughName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tiled_large_stripes_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga', _("WallTiledWLargeStripesName"))
             add('lollo_freestyle_train_station/platformWalls/arched/concrete_modern_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteModern.tga', _("WallConcreteModernName"))
             add('lollo_freestyle_train_station/platformWalls/arched/metal_glass_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalGlass.tga', _("WallMetalGlassName"))
@@ -170,6 +171,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFs.tga', _("WallStaccionataFsName"))
             add('lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFsTall.tga', _("WallStaccionataFsTallName"))
             add('lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
+            add('lollo_freestyle_train_station/platformWalls/concrete_rough/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteRough.tga', _("WallConcreteRoughName"))
             add('lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga', _("WallTiledWLargeStripesName"))
             add('lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteModern.tga', _("WallConcreteModernName"))
             add('lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalGlass.tga', _("WallMetalGlassName"))
@@ -350,7 +352,7 @@ return {
                 key = 'lolloFenceAssets_wallEraPrefix',
                 name = _('wallEraPrefix_0IsNoWall'),
                 uiType = 'BUTTON',
-                values = {_('NoWall'), 'A', 'B', 'C'},
+                values = {_('NoWallAuto'), 'A', 'B', 'C'},
             },
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_wallBehindModel,
@@ -403,7 +405,7 @@ return {
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_yShiftFine,
                 key = 'lolloFenceAssets_yShiftFine',
-                name = _('YShift'),
+                name = _('YShiftAuto'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getYShiftFineDisplayValues(),
             },

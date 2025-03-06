@@ -333,6 +333,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["WallConcreteModernDesc"] = "Concrete wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallConcretePlainName"] = "Concrete wall, plain",
 			["WallConcretePlainDesc"] = "Concrete wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
+			["WallConcreteRoughName"] = "Concrete wall, rough",
+			["WallConcreteRoughDesc"] = "Concrete wall, also suitable for tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallFenceBricksStoneName"] = "Brick and stone fence",
 			["WallFenceBricksStoneDesc"] = "Brick and stone fence, tiles in tunnels. On ground along the tracks, add/remove supporting wall with <m> and <n>.",
 			["WallFenceMattoniName"] = "Brick fence",
@@ -402,7 +404,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["PlatformWaypointName"] = "Platform end marker",
 			["PlatformWaypointDesc"] = "Marks the ends of a platform that will become part of a freestyle station. The direction does not matter; if there is already a split nearby, it will take priority; if the platform ends nearby, that end will take a higher priority.",
 			["SplitterWaypointName"] = "Track Splitter",
-			["SplitterWaypointDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use <AltGr> + <L> to see its effect.",
+			["SplitterWaypointDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). You can also use the track splitter construction. Use <AltGr> + <L> to see its effect.",
 			["TrackWaypointName"] = "Track End Marker",
 			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter; if there is already a split nearby, it will take priority; if the track ends nearby, that end will take a higher priority. Nearby semaphores can interfere, you may want to remove them and put them back once the station is laid out.",
 
@@ -588,7 +590,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 
 			-- track splitter
 			["TrackSplitterName"] = "Track splitter",
-			["TrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). Use <AltGr> + <L> to see its effect.",
+			["TrackSplitterDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). You can also use the track splitter waypoint. Use <AltGr> + <L> to see its effect.",
 
 			-- platform as asset, terrain cube
 			["Bulldoze"] = "Bulldoze",
@@ -607,7 +609,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["PlatformAsAsset_Z10m"] = "Z size, coarse, m",
 			["PlatformAsAsset_Z1m"] = "Z size, fine, m",
 			["TerrainCubeName"] = "Terrain cube",
-			["TerrainCubeDesc"] = "Terrain cube to build streets and tracks on",
+			["TerrainCubeDesc"] = "Terrain cube to build streets and tracks on - or under. Adjust it with the Construction Mover.",
 
 			["TilesHexagonClean"] = "Tiles hexagon, clean",
 
@@ -621,7 +623,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["IsWallTall"] = "Tunnel Wall",
 			["OutdatedConstruction"] = "This construction is outdated, destroy it and rebuild it",
 			["wallEraPrefix_0IsNoWall"] = "Wall bottom era",
-			["NoWall"] = "Only in tunnels",
+			["NoWall"] = "No wall",
+			["NoWallAuto"] = "Only in tunnels",
 			["Length"] = "Length m",
 			["Lower"] = "Lower",
 			["Raise"] = "Raise",
@@ -630,6 +633,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["wallBehind_isOnBridges"] = "Supporting walls on bridges",
 			["wallWithNoModelsHere"] = "Here is a wall with no parts, configure it or bulldoze it",
 			["YShift"] = "Shift m",
+			["YShiftAuto"] = "Shift outside tunnels m",
 			["YShiftFine"] = "Fine shift m",
 			["ZDelta"] = "Slope",
 			["ZRotation"] = "Bending",
@@ -640,6 +644,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 
 			-- tunnel
 			["EraATunnel"] = "Era A Tunnel",
+			["EraBTunnel"] = "Era B Tunnel",
 		},
 		de = {
 			["DESC"] = [[
@@ -972,6 +977,8 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["WallConcreteModernDesc"] = "Betonwand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallConcretePlainName"] = "Betonwand, schlicht",
 			["WallConcretePlainDesc"] = "Betonwand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
+			["WallConcreteRoughName"] = "Betonwand, rau",
+			["WallConcreteRoughDesc"] = "Betonwand, auch für Tunnels geeignet. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallFenceBricksStoneName"] = "Backstein- und Steinzaun",
 			["WallFenceBricksStoneDesc"] = "Backstein- und Steinzaun, Fliesen in Tunneln. Auf Erdboden entlang der Gleise, Stützwand mit <m> und <n> einstellen.",
 			["WallFenceMattoniName"] = "Backsteinzaun",
@@ -1041,7 +1048,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["PlatformWaypointName"] = "Bahnsteigmarker",
 			["PlatformWaypointDesc"] = "Markiert die Enden eines Bahnsteigs, der Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Bahnsteig in der Nähe endet, hat dieses Ende eine höhere Priorität.",
 			["SplitterWaypointName"] = "Gleisteiler",
-			["SplitterWaypointDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
+			["SplitterWaypointDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Du kannst sonst die Gleisteiler-Konstruktion verwenden. Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
 			["TrackWaypointName"] = "Gleismarker",
 			["TrackWaypointDesc"] = "Markiert die Enden eines Gleises, das Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Track in der Nähe endet, hat dieses Ende eine höhere Priorität. Nahegelegene Signalmasten können stören: entferne sie und füge sie wieder ein, sobald der Bahnhof angelegt ist.",
 
@@ -1227,7 +1234,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 
 			-- Gleisteiler
 			["TrackSplitterName"] = "Gleisteiler",
-			["TrackSplitterDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
+			["TrackSplitterDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Du kannst sonst den Gleisteiler Waypoint verwenden. Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
 
 			-- Bahnsteige als Asset, Erdkubus
 			["Bulldoze"] = "Abreißen",
@@ -1246,7 +1253,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["PlatformAsAsset_Z10m"] = "Z Größe, grob, m",
 			["PlatformAsAsset_Z1m"] = "Z Größe, fein, m",
 			["TerrainCubeName"] = "Erdkubus",
-			["TerrainCubeDesc"] = "Erdkubus, um darauf Straßen und Gleise zu bauen",
+			["TerrainCubeDesc"] = "Erdkubus, um darauf  - oder darunter - Straßen und Gleise zu bauen. Pass ihn mit dem \"Construction Mover\" an.",
 
 			["TilesHexagonClean"] = "Kacheln Sechseck, sauber",
 
@@ -1260,7 +1267,8 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["IsWallTall"] = "Tunnelmauer",
 			["OutdatedConstruction"] = "Diese Konstruktion is obsolet, zerstöre sie und baue sie erneut",
 			["wallEraPrefix_0IsNoWall"] = "Wand unten Epoche",
-			["NoWall"] = "Nur in Tunnels",
+			["NoWall"] = "Keine Wand",
+			["NoWallAuto"] = "Nur in Tunnels",
 			["Length"] = "Länge m",
 			["Lower"] = "Senken",
 			["Raise"] = "Heben",
@@ -1269,6 +1277,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["wallBehind_isOnBridges"] = "Stützwand auf Brücken",
 			["wallWithNoModelsHere"] = "Hier steht eine Mauer ohne Teile, konfiguriere sie oder reiße sie ab.",
 			["YShift"] = "Versetzung m",
+			["YShiftAuto"] = "Versetzung außer Tunnels, m",
 			["YShiftFine"] = "Versetzung fein, m",
 			["ZDelta"] = "Steigung",
 			["ZRotation"] = "Biegung",
@@ -1279,6 +1288,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 
 			-- tunnel
 			["EraATunnel"] = "Epoche A Tunnel",
+			["EraBTunnel"] = "Epoche B Tunnel",
 		},
 	}
 end

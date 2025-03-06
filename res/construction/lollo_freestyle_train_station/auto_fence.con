@@ -320,7 +320,7 @@ function data()
             for _, transfData in pairs(params.transfs_ground) do
                 if not(transfData.hasLevelCrossing) then
                     if transfData.groundBridgeTunnel_012 == 2 and not(isTunnelWallLikeOutside) then -- tunnel
-                        _addWall(transfData.transf, result, _yStart, _zStart_Tunnel, wallMainModelId_Tunnel, wallBaseModelId_Tunnel)
+                        _addWall(transfData.transf, result, 0, _zStart_Tunnel, wallMainModelId_Tunnel, wallBaseModelId_Tunnel)
                     else -- ground, bridge or tunnel like outside
                         _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
                     end
@@ -337,7 +337,7 @@ function data()
                     then
                         _addWallBehind(transfData.transf, result, _yStart,_zStart, wallBehindModelId, wallBehindBaseModelId)
                     elseif (transfData.groundBridgeTunnel_012 == 2 and isWallBehindInTunnels) then -- tunnel
-                        _addWallBehind(transfData.transf, result, _yStart,_zStart_Tunnel, wallBehindModelId_Tunnel, wallBehindBaseModelId_Tunnel)
+                        _addWallBehind(transfData.transf, result, 0,_zStart_Tunnel, wallBehindModelId_Tunnel, wallBehindBaseModelId_Tunnel)
                     end
                 end
             end

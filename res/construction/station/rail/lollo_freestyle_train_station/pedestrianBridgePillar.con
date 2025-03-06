@@ -1,3 +1,5 @@
+-- LOLLO OBSOLETE moved outside the station folder to prevent crashes when reconfiguring and leaving the config menu
+
 function data()
     local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
@@ -20,8 +22,8 @@ function data()
             icon = 'ui/construction/lollo_freestyle_train_station/pedestrianBridgePillar.tga'
 		},
 		availability = {
-			yearFrom = 0,
-			yearTo = 0,
+			yearFrom = -1,
+			yearTo = -1,
 		},
         categories = { 'stairs' },
 		order = 999,

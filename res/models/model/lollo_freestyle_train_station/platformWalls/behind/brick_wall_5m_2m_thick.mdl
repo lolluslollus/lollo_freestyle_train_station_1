@@ -8,11 +8,11 @@ function data()
             {
                 node = {
                     materials = {
-                        'lollo_freestyle_train_station/bricks_old.mtl',
-                        'lollo_freestyle_train_station/bricks_old_low_prio.mtl',
-                        'lollo_freestyle_train_station/bricks_old_high_prio.mtl',
-                        'lollo_freestyle_train_station/bricks_old_world_dirt_high_prio.mtl',
-                        'lollo_freestyle_train_station/bricks_old_world_dirt.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large_low_prio.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large_high_prio.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large_world_dirt_high_prio.mtl',
+                        'lollo_freestyle_train_station/bricks_old_large_world_dirt.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/platformWalls/behind/wall_5m_2m_thick_lod0.msh',
                 },

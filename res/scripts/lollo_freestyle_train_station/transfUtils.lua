@@ -1067,6 +1067,17 @@ utils.getParallelSideways = function(posTanX2, sideShift)
     local _newPos1 = { _oldPos1[1] + sinZ1 * sideShift, _oldPos1[2] + cosZ1 * sideShift, _oldPos1[3] }
     local _newPos2 = { _oldPos2[1] + sinZ2 * sideShift, _oldPos2[2] + cosZ2 * sideShift, _oldPos2[3] }
 
+    -- local _oldDistancePower2 = (_oldPos1[1] - _oldPos2[1])^2 + (_oldPos1[2] - _oldPos2[2])^2
+    -- local _newDistancePower2 = (_newPos1[1] - _newPos2[1])^2 + (_newPos1[2] - _newPos2[2])^2
+    -- local _lengthRatio = math.sqrt(_newDistancePower2 / _oldDistancePower2)
+    -- local _newTan1 = { posTanX2[1][2][1] * _lengthRatio, posTanX2[1][2][2] * _lengthRatio, posTanX2[1][2][3] }
+    -- local _newTan2 = { posTanX2[2][2][1] * _lengthRatio, posTanX2[2][2][2] * _lengthRatio, posTanX2[2][2][3] }
+    -- print('_lengthRatio = ' .. tostring(_lengthRatio), ', positions = ')
+    -- debugPrint(_oldPos1)
+    -- debugPrint(_oldPos2)
+    -- debugPrint(_newPos1)
+    -- debugPrint(_newPos2)
+
     local xRatio = (_oldPos2[1] ~= _oldPos1[1]) and math.abs((_newPos2[1] - _newPos1[1]) / (_oldPos2[1] - _oldPos1[1])) or nil
     local yRatio = (_oldPos2[2] ~= _oldPos1[2]) and math.abs((_newPos2[2] - _newPos1[2]) / (_oldPos2[2] - _oldPos1[2])) or nil
     if not(xRatio) or not(yRatio) then xRatio, yRatio = 1, 1 end -- vertical or horizontal posTanX2

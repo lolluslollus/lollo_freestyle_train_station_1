@@ -50,8 +50,7 @@ function data()
 				moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
 				'lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl',
 				'lollo_freestyle_train_station/platformWalls/fence_wood/fence_5m.mdl',
-				pillar_2_5m_modelId, pillar_5m_modelId,
-				true)
+				pillar_2_5m_modelId, pillar_5m_modelId)
 			end
 		end,
 

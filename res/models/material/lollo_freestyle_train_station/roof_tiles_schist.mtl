@@ -29,13 +29,13 @@ function data()
                 wrapT = "REPEAT",
             },
             map_op_1 = {
-                fileName = "models/industry/overlay_textures/big_02.tga",
+                fileName = "models/industry/overlay_textures/big_02.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",
             },
             map_op_2 = {
-                fileName = "models/industry/overlay_textures/small_08.tga",
+                fileName = "models/industry/overlay_textures/small_08.dds",
                 type = "TWOD",
                 wrapS = "REPEAT",
                 wrapT = "REPEAT",

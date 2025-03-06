@@ -1,0 +1,2 @@
+Never mind how large the image is, 2x2 m will cover the whole square - with default Blender settings.
+So I made the critical images, such as this one, foursomes of repeatable images. This way, they properly cover wall chunks, which are typically 1 m.

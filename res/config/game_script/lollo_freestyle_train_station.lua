@@ -2618,6 +2618,7 @@ local _guiActions = {
                 -- and the construction is a station, freestyle or otherwise
                 if con ~= nil then
                     if (type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName) then
+                        logger.print('validateWaypointBuilt about to search for stationTrackEndEntities, conId = ' .. tostring(conId))
                         local stationEndEntities = stationHelpers.getStationTrackEndEntities(conId)
                         -- logger.print('stationEndEntities =') logger.debugPrint(stationEndEntities)
                         -- if any end nodes are too close to my waypoint
@@ -4199,7 +4200,8 @@ function data()
                                 -- logger.print('construction built, construction id =') logger.debugPrint(conId)
                                 if not(con) then return end
 
-                                if con.fileName == 'station/rail/lollo_freestyle_train_station/track_splitter.con'
+                                -- if con.fileName == 'station/rail/lollo_freestyle_train_station/track_splitter.con'
+                                if con.fileName == 'lollo_freestyle_train_station/track_splitter.con'
                                 and con.transf ~= nil
                                 then
                                     api.cmd.sendCommand(
@@ -4327,6 +4329,7 @@ function data()
                             -- and so they won't match anymore: fix it
                             -- This is not easy because there is no way to associate frozen edges to terminals,
                             -- edgeUtils.getNearbyObjectIds(transf, 0.1, api.type.ComponentType.FIELD, pos.z -10, pos.z + 1)
+                            logger.print('idAdded fired, conId = ' .. tostring(conId))
                             local streetEndEntities = stationHelpers.getStationStreetEndEntities(conId, true)
                             local trackEndEntities = stationHelpers.getStationTrackEndEntities(conId, true)
                             if not(streetEndEntities) and not(trackEndEntities) then return end

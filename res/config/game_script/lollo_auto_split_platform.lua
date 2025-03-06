@@ -85,8 +85,8 @@ local _actions = {
                 },
             },
         }
-        local newPosTanX2_1, xRatio_1, yRatio_1 = transfUtils.getParallelSideways(oldPosTanX2, 1.25)
-        local newPosTanX2_2, xRatio_2, yRatio_2 = transfUtils.getParallelSideways(oldPosTanX2, -1.25)
+        local newPosTanX2_1 = transfUtils.getParallelSideways(oldPosTanX2, 1.25)
+        local newPosTanX2_2 = transfUtils.getParallelSideways(oldPosTanX2, -1.25)
 
         local proposal = api.type.SimpleProposal.new()
         local nNewEntities = -1

@@ -35,8 +35,32 @@ function data()
                 -- wrapS = 'CLAMP_TO_EDGE',            -- maps to GL_TEXTURE_WRAP_S: REPEAT, CLAMP_TO_EDGE
                 -- wrapT = 'CLAMP_TO_EDGE',            -- maps to GL_TEXTURE_WRAP_T: REPEAT, CLAMP_TO_EDGE
             },
+            map_op_1 = {
+                fileName = "models/industry/overlay_textures/big_05.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
+            map_op_2 = {
+                fileName = "models/industry/overlay_textures/big_04.dds",
+                type = "TWOD",
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
+            },
             normal_scale = {
                 normalScale = 1,
+            },
+            operation_1 = {
+                mode = "NORMAL",
+                op = "OVERLAY",
+                opacity = 0.6,
+                scale = { 0.10000000149012, 0.10000000149012, },
+            },
+            operation_2 = {
+                mode = "NORMAL",
+                op = "OVERLAY",
+                opacity = 0.30000001192093,
+                scale = { 0.050000000745058, 0.050000000745058, },
             },
             polygon_offset = {
                 factor = 0,
@@ -48,6 +72,6 @@ function data()
                 twoSided = true,
             },
         },
-        type = 'PHYS_TRANSPARENT_NRML_MAP',
+        type = 'PHYS_TRANSPARENT_NRML_MAP_OP',
     }
 end
