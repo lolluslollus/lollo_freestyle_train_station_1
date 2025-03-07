@@ -169,7 +169,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FlatPassengerStationLargeName"] = "Ornate passenger station",
 			["FlatPassengerStationLargeDesc"] = "Ornate passenger station with underpass inside. Adjust its height with <m> and <n>.",
 			["LookUndergroundName"] = "Look Underground",
-			["LookUndergroundDesc"] = "Hover or build this to look underground, remove it when done.",
+			["LookUndergroundDesc"] = "Hover or build this to look underground, remove it when done. An alternative is the asset \"Terrain Cube\"",
 			["NoBridge"] = "No bridge",
 			["OpenLiftName"] = "Lift up for overground platforms",
 			["OpenLiftDesc"] = "Connects overground passenger platforms to their siblings, to nearby bridge underpasses or, if you add an exit and a pedestrian bridge, to the road network.",
@@ -609,7 +609,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["PlatformAsAsset_Z10m"] = "Z size, coarse, m",
 			["PlatformAsAsset_Z1m"] = "Z size, fine, m",
 			["TerrainCubeName"] = "Terrain cube",
-			["TerrainCubeDesc"] = "Terrain cube to build streets and tracks on - or under. Adjust it with the Construction Mover.",
+			["TerrainCubeDesc"] = "Terrain cube to build streets and tracks on - or under. With negative height, it is an alternative to the track construction \"Look Underground\". Adjust it with the Construction Mover.",
 
 			["TilesHexagonClean"] = "Tiles hexagon, clean",
 
@@ -813,7 +813,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["FlatPassengerStationLargeName"] = "Verschnörkelter Personenbahnhof",
 			["FlatPassengerStationLargeDesc"] = "Verzierter Personenbahnhof mit Unterführung im Inneren. Passe seine Höhe mit <m> und <n> an.",
 			["LookUndergroundName"] = "Unterirdisch aussehen",
-			["LookUndergroundDesc"] = "Schwebe oder baue dies, um unterirdisch reinzugucken, entferne es, wenn du fertig bist",
+			["LookUndergroundDesc"] = "Schwebe oder baue dies, um unterirdisch reinzugucken, entferne es, wenn du fertig bist. Alternativ gibt es den \"Erdkubus\" Asset.",
 			["NoBridge"] = "Keine Brücke",
 			["OpenLiftName"] = "Aufzug nach oben für Freiluftbahnsteige",
 			["OpenLiftDesc"] = "Verbindet Freiluftbahnsteige mit ihren Geschwistern, mit nahegelegenen Brückenunterführungen oder, wenn du einen Ausgang hinzufügst, mit dem Straßennetz.",
@@ -1253,7 +1253,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["PlatformAsAsset_Z10m"] = "Z Größe, grob, m",
 			["PlatformAsAsset_Z1m"] = "Z Größe, fein, m",
 			["TerrainCubeName"] = "Erdkubus",
-			["TerrainCubeDesc"] = "Erdkubus, um darauf  - oder darunter - Straßen und Gleise zu bauen. Pass ihn mit dem \"Construction Mover\" an.",
+			["TerrainCubeDesc"] = "Erdkubus, um darauf  - oder darunter - Straßen und Gleise zu bauen. Mit negativer Höhe, ist er eine Alternative zu der Gleiskonstruktion \"Unterirdisch aussehen\". Pass ihn mit dem \"Construction Mover\" an.",
 
 			["TilesHexagonClean"] = "Kacheln Sechseck, sauber",
 

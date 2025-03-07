@@ -4,18 +4,18 @@ local logger = require('lollo_freestyle_train_station.logger')
 function data()
     local _paramConstants = {
         lollo_terrain_cube_x_10m = {
-            max = 40,
+            max = 90,
             min = 0,
             step = 10,
         },
         lollo_terrain_cube_y_10m = {
-            max = 40,
+            max = 90,
             min = 0,
             step = 10,
         },
         lollo_terrain_cube_z_10m = {
-            max = 40,
-            min = -40,
+            max = 90,
+            min = -90,
             step = 10,
         },
         lollo_terrain_cube_x_1m = {
