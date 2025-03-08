@@ -26,7 +26,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 54,
+			value = 74,
 		},
 		type = _constants.platformWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -41,9 +41,11 @@ function data()
 			else
 				local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 				moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
-				'lollo_freestyle_train_station/platformWalls/arched/concrete_modern_wall_tunnel_2_5m.mdl',
-				'lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl',
-				'lollo_freestyle_train_station/roofs/concrete_modern/pillar_2_5m.mdl', 'lollo_freestyle_train_station/roofs/concrete_modern/pillar_5m.mdl')
+					'lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl',
+					'lollo_freestyle_train_station/roofs/concrete_modern/pillar_2_5m.mdl',
+					'lollo_freestyle_train_station/roofs/concrete_modern/pillar_5m.mdl',
+					nil, false
+				)
 			end
 		end,
 

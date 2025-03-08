@@ -1,6 +1,6 @@
 function data()
 	return {
 		name = _("track-deco"),
-		order = 62,
+		order = 61,
 	}
 end

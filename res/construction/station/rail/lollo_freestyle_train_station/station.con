@@ -164,7 +164,17 @@ function data()
 						message = nil,
 						skipCollisionCheck = true,
 					},
+					[_constants.platformWallInTunnelModuleType] = {
+						maxModules = -1,
+						message = nil,
+						skipCollisionCheck = true,
+					},
 					[_constants.trackWallModuleType] = {
+						maxModules = -1,
+						message = nil,
+						skipCollisionCheck = true,
+					},
+					[_constants.trackWallInTunnelModuleType] = {
 						maxModules = -1,
 						message = nil,
 						skipCollisionCheck = true,
@@ -370,10 +380,41 @@ function data()
 
 				local _terminalData = _paramsTerminals[t] -- write this away to speed up accesses to it
 				local _cpfs = _terminalData.centrePlatformsFineRelative -- idem
+				local _cpls = _terminalData.centrePlatformsRelative -- idem
 				local _isCargoTerminal = _terminalData.isCargo
 				if _isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
-
 				local _isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
+				local _getIsAnyCpfMeetsTypeCondition_indexedByI = function(iss_indexedByI, isAllowCargoTerminals, isTypeConditionMet)
+					local results_indexedByI = {}
+					if isAllowCargoTerminals or not(_isCargoTerminal) then
+						local _iiMax= #_cpfs
+						for ii = 1, _iiMax do
+							local cpf = _cpfs[ii]
+							local leadingIndexEvery3 = 0
+							if iss_indexedByI[cpf.leadingIndex - 1] then leadingIndexEvery3 = cpf.leadingIndex - 1
+							elseif iss_indexedByI[cpf.leadingIndex] then leadingIndexEvery3 = cpf.leadingIndex
+							elseif iss_indexedByI[cpf.leadingIndex + 1] then leadingIndexEvery3 = cpf.leadingIndex + 1
+							end
+							if leadingIndexEvery3 ~= 0
+							and not(results_indexedByI[leadingIndexEvery3])
+							-- and cpf.type ~= 2
+							and isTypeConditionMet(cpf.type)
+							then
+								results_indexedByI[leadingIndexEvery3] = true
+							end
+						end
+					end
+					return results_indexedByI
+				end
+				local _getIsAnyCpfInTunnel_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
+					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ == 2 end)
+				end
+				local _getIsAnyCpfOutsideTunnel_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
+					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ ~= 2 end)
+				end
+				local _getIsAnyCpfOnGround_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
+					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ == 0 end)
+				end
 
 				local _getPlatformHeight = function()
 					local platformHeights = _constants.platformHeights
@@ -410,16 +451,16 @@ function data()
 					if not(_isCargoTerminal) then return end
 
 					local _decoSpacing = {-0.1, 2, -1.1, 2}
-					local _iMax = #_terminalData.centrePlatformsRelative
+					local _iMax = #_cpls
 					local iss = {}
 					for i = 2, _iMax, 3 do iss[#iss+1] = i end
 					-- fill the last if any
 					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
 
 					for _, i in pairs(iss) do
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+						local cpl = _cpls[i]
+						local cplM1 = _cpls[i-1] or {type = cpl.type}
+						local cplP1 = _cpls[i+1] or {type = cpl.type}
 						if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no cargo shelves in tunnels unless we are at the entrance
 							table.insert(result.slots, {
 								-- height = 0,
@@ -434,19 +475,28 @@ function data()
 				_addCargoShelves()
 
 				local function _addSlopedAreas()
-					local _iMax = #_terminalData.centrePlatformsRelative
+					local _iMax = #_cpls
 					local iss = {}
-					for i = 2, _iMax, 3 do iss[#iss+1] = i end
+					local iss_indexedByI = {}
+					for i = 2, _iMax, 3 do
+						iss[#iss+1] = i
+						iss_indexedByI[i] = true
+					end
 					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
+					if moduleHelpers.getIsEndFillerEvery3(_iMax) then
+						iss[#iss+1] = _iMax
+						iss_indexedByI[_iMax] = true -- [2, 5, 7] or [2, 5, 8]
+					end
+					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCpfOutsideTunnel_indexedByI(iss_indexedByI, false)
+					local isAnyCpfOnGround_indexedByI = _getIsAnyCpfOnGround_indexedByI(iss_indexedByI, false)
 
 					for _, i in pairs(iss) do
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+						local cpl = _cpls[i]
+						-- local cplM1 = _cpls[i-1] or {type = cpl.type}
+						-- local cplP1 = _cpls[i+1] or {type = cpl.type}
 						local cplTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
-						-- no thin extensions in tunnels unless we are at the entrance
-						if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) and not(_isCargoTerminal) then
+						-- if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) and not(_isCargoTerminal) then -- no thin extensions in tunnels unless we are at the entrance
+						if isAnyCpfOutsideTunnel_indexedByI[i] then -- no thin extensions in tunnels unless we are at the entrance
 							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x2_5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 2.5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x2_5SlotId)
@@ -466,8 +516,8 @@ function data()
 								_occupySlopedAreas(t, i, myId, _constants.idBases.slopedArea1x2_5SlotId, yShiftOutside4StreetAccess, 2.5, _terminalData)
 							end
 						end
-						-- thick extensions only on ground or at tunnel entrances, never on bridges
-						if cpl.type == 0 or (cpl.type == 2 and cplM1.type == 0) or (cpl.type == 2 and cplP1.type == 0) then
+						-- if cpl.type == 0 or (cpl.type == 2 and cplM1.type == 0) or (cpl.type == 2 and cplP1.type == 0) then -- thick extensions only on ground or at tunnel entrances, never on bridges
+						if isAnyCpfOnGround_indexedByI[i] then -- no thick extensions info tunnels or bridges
 							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x5SlotId)
@@ -530,13 +580,13 @@ function data()
 				_addSlopedAreas()
 
 				local function _addFlatAreas()
-					local nCentrePlatformsRelative = #_terminalData.centrePlatformsRelative
+					local nCentrePlatformsRelative = #_cpls
 					local _iMin = 2
 					local _iMax = nCentrePlatformsRelative -1
 					for i = _iMin, _iMax, 1 do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						-- local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+						local cpl = _cpls[i]
+						-- local cplM1 = _cpls[i-1] or {type = cpl.type}
+						local cplP1 = _cpls[i+1] or {type = cpl.type}
 						if cpl.type ~= 2 and cplP1.type ~= 2 then -- no tunnels
 							local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[i].posTanX2
 							local yShift = cpl.width + result.getOccupiedInfo4SlopedAreas(t, i).yShift
@@ -678,7 +728,7 @@ function data()
 											_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.sideLiftSlotId)
 										end
 									end
-									if i < #_terminalData.centrePlatformsRelative
+									if i < #_cpls
 									and (not(result.getOccupiedInfo4FlatAreas(t, i))
 									or result.getOccupiedInfo4FlatAreas(t, i).id == _constants.idBases.platformLiftSlotId) then
 										local xyZoomFactor = _isTrackOnPlatformLeft and 1 or -1
@@ -758,7 +808,7 @@ function data()
 
 						-- adjust yShift if head available
 						if _modules[platformHeadId] ~= nil then
-							local halfPlatformWidth = _terminalData.centrePlatformsRelative[cpf.leadingIndex].width * 0.5
+							local halfPlatformWidth = _cpls[cpf.leadingIndex].width * 0.5
 							local yShift = (cpf.leadingIndex == 1)
 								and (_terminalData.isTrackOnPlatformLeft and -halfPlatformWidth or halfPlatformWidth)
 								or (_terminalData.isTrackOnPlatformLeft and halfPlatformWidth or -halfPlatformWidth)
@@ -887,22 +937,34 @@ function data()
 				local function _addPlatformRoofsAndWalls()
 					local _roofSpacing = _isTrackOnPlatformLeft and {-1.1, 2, -0.1, 0.9} or {2, -1.1, 0.9, -0.1}
 					local _wallSpacing = _isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
+					-- local _tunnelWallSpacing = _isTrackOnPlatformLeft and {2.1, -3, -0.1, 0.9} or {-3, 2.1, 0.9, -0.1}
+					local _tunnelWallSpacing = _isTrackOnPlatformLeft and {1.1, -2, 0.9, -0.1} or {-2, 1.1, -0.1, 0.9}
 					-- make indexes
-					local _iMax = #_terminalData.centrePlatformsRelative
+					local _iMax = #_cpls
 					local iss = {}
-					for i = 2, _iMax, 3 do iss[#iss+1] = i end
+					local iss_indexedByI = {}
+					for i = 2, _iMax, 3 do
+						iss[#iss+1] = i
+						iss_indexedByI[i] = true
+					end
 					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
+					if moduleHelpers.getIsEndFillerEvery3(_iMax) then
+						iss[#iss+1] = _iMax
+						iss_indexedByI[_iMax] = true -- [2, 5, 7] or [2, 5, 8]
+					end
+					local isAnyCpfInTunnel_indexedByI = _getIsAnyCpfInTunnel_indexedByI(iss_indexedByI, false)
+					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCpfOutsideTunnel_indexedByI(iss_indexedByI, false)
 
 					for _, i in pairs(iss) do
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplM1 = _terminalData.centrePlatformsRelative[i-1] or {type = cpl.type}
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+						local cpl = _cpls[i]
+						-- local cplM1 = _cpls[i-1] or {type = cpl.type}
+						-- local cplP1 = _cpls[i+1] or {type = cpl.type}
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
 						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
 						myTransf = transfUtils.getTransf_ZShifted(myTransf, 3)
 						if not(_isCargoTerminal) then
-							if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
+							-- if cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2 then -- no platform roofs in tunnels unless we are at the entrance
+							if isAnyCpfOutsideTunnel_indexedByI[i] then -- no platform roofs in tunnels unless we are at the entrance
 								table.insert(result.slots, {
 									id = result.mangleId(t, i, _constants.idBases.platformRoofSlotId),
 									spacing = _roofSpacing,
@@ -912,28 +974,41 @@ function data()
 							end
 						end
 
-						if (
-							not(result.getOccupiedInfo4FlatAreas(t, i-1))
-							or not(result.getOccupiedInfo4FlatAreas(t, i))
-							or not(result.getOccupiedInfo4FlatAreas(t, i+1))
-							or not(result.getOccupiedInfo4FlatAreas(t, i+2)) -- check 1 bit ahead because of the shift between flat areas and deco
-							-- or (_isTrackOnPlatformLeft and not(result.getOccupiedInfo4FlatAreas(t, i+2)) or not(result.getOccupiedInfo4FlatAreas(t, i-2))) -- check 1 bit ahead because of the shift between flat areas and deco
-						)
-						then
-							local wallTransf = myTransf
-							local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(t, i).width
-							if slopedAreaWidth ~= 0 then
-								local platformWidth = _terminalData.centrePlatformsRelative[i].width
-								local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5)
-								local yShiftAreaBorder = _isTrackOnPlatformLeft and -baseYShift4AreaBorder or baseYShift4AreaBorder
-								-- I need the transf here, merely shifting isPlatform2 cheap but wrong
-								wallTransf = transfUtils.getTransf_YShifted(myTransf, yShiftAreaBorder)
+						-- walls outside tunnels
+						if isAnyCpfOutsideTunnel_indexedByI[i] then
+							if (
+								not(result.getOccupiedInfo4FlatAreas(t, i-1))
+								or not(result.getOccupiedInfo4FlatAreas(t, i))
+								or not(result.getOccupiedInfo4FlatAreas(t, i+1))
+								or not(result.getOccupiedInfo4FlatAreas(t, i+2)) -- check 1 bit ahead because of the shift between flat areas and deco
+								-- or (_isTrackOnPlatformLeft and not(result.getOccupiedInfo4FlatAreas(t, i+2)) or not(result.getOccupiedInfo4FlatAreas(t, i-2))) -- check 1 bit ahead because of the shift between flat areas and deco
+							)
+							then
+								local wallTransf = myTransf
+								local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(t, i).width
+								if slopedAreaWidth ~= 0 then
+									local platformWidth = _cpls[i].width
+									local baseYShift4AreaBorder = (slopedAreaWidth + platformWidth * 0.5)
+									local yShiftAreaBorder = _isTrackOnPlatformLeft and -baseYShift4AreaBorder or baseYShift4AreaBorder
+									-- I need the transf here, merely shifting isPlatform2 cheap but wrong
+									wallTransf = transfUtils.getTransf_YShifted(myTransf, yShiftAreaBorder)
+								end
+								table.insert(result.slots, {
+									id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
+									spacing = _wallSpacing,
+									transf = wallTransf,
+									type = _constants.platformWallModuleType,
+								})
 							end
+						end
+
+						-- walls in tunnels
+						if isAnyCpfInTunnel_indexedByI[i] then
 							table.insert(result.slots, {
-								id = result.mangleId(t, i, _constants.idBases.platformWallSlotId),
-								spacing = _wallSpacing,
-								transf = wallTransf,
-								type = _constants.platformWallModuleType,
+								id = result.mangleId(t, i, _constants.idBases.platformWallInTunnelSlotId),
+								spacing = _tunnelWallSpacing,
+								transf = myTransf,
+								type = _constants.platformWallInTunnelModuleType,
 							})
 						end
 					end
@@ -946,23 +1021,47 @@ function data()
 
 					-- do not confuse the tracks array with the platforms array: they are similar but different
 					local _wallSpacing = _isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
+					-- local _tunnelWallSpacing = _isTrackOnPlatformLeft and {2.1, -3, -0.1, 0.9} or {-3, 2.1, 0.9, -0.1}
+					local _tunnelWallSpacing = _isTrackOnPlatformLeft and {1.1, -2, 0.9, -0.1} or {-2, 1.1, -0.1, 0.9}
+					-- make indexes
 					local _iMax = #_terminalData.centreTracksRelative
 					local iss = {}
-					for i = 2, _iMax, 3 do iss[#iss+1] = i end
+					local iss_indexedByI = {}
+					for i = 2, _iMax, 3 do
+						iss[#iss+1] = i
+						iss_indexedByI[i] = true
+					end
 					-- fill the last if any
-					if moduleHelpers.getIsEndFillerEvery3(_iMax) then iss[#iss+1] = _iMax end
+					if moduleHelpers.getIsEndFillerEvery3(_iMax) then
+						iss[#iss+1] = _iMax
+						iss_indexedByI[_iMax] = true -- [2, 5, 7] or [2, 5, 8]
+					end
+					local isAnyCpfInTunnel_indexedByI = _getIsAnyCpfInTunnel_indexedByI(iss_indexedByI, false)
+					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCpfOutsideTunnel_indexedByI(iss_indexedByI, false)
 
 					for _, i in pairs(iss) do
 						local ctl = _terminalData.centreTracksRelative[i]
 						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(ctl.posTanX2)
-						-- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
 
-						table.insert(result.slots, {
-							id = result.mangleId(t, i, _constants.idBases.trackWallSlotId),
-							spacing = _wallSpacing,
-							transf = transfUtils.getTransf_ZShifted(myTransf, 3),
-							type = _constants.trackWallModuleType,
-						})
+						-- walls outside tunnels
+						if isAnyCpfOutsideTunnel_indexedByI[i] then
+							table.insert(result.slots, {
+								id = result.mangleId(t, i, _constants.idBases.trackWallSlotId),
+								spacing = _wallSpacing,
+								transf = transfUtils.getTransf_ZShifted(myTransf, 3), -- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
+								type = _constants.trackWallModuleType,
+							})
+						end
+
+						-- walls in tunnels
+						if isAnyCpfInTunnel_indexedByI[i] then
+							table.insert(result.slots, {
+								id = result.mangleId(t, i, _constants.idBases.trackWallInTunnelSlotId),
+								spacing = _tunnelWallSpacing,
+								transf = transfUtils.getTransf_ZShifted(myTransf, 3), -- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
+								type = _constants.trackWallInTunnelModuleType,
+							})
+						end
 					end
 				end
 				_addTrackWalls()
@@ -971,11 +1070,11 @@ function data()
 					if _isCargoTerminal then return end
 
 					local _mySpacing = {3, -0.1, 1, 1}
-					local _iMax = #_terminalData.centrePlatformsRelative - 1
+					local _iMax = #_cpls - 1
 					local _iMin = 2
 					for i = _iMin, _iMax, 1 do
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+						local cpl = _cpls[i]
+						local cplP1 = _cpls[i+1] or {type = cpl.type}
 						local era = moduleHelpers.getEraPrefix2(params, t, _terminalData, i)
 						local myTransf = transfUtils.getTransf_ZShifted(
 							moduleHelpers.getPlatformObjectTransf_AlwaysVertical(cpl.posTanX2),
@@ -1081,7 +1180,7 @@ function data()
 					local _iiMin = 4 -- idem
 					for ii = _iiMin, _iiMax do
 						local cpf = _cpfs[ii]
-						local cpl = _terminalData.centrePlatformsRelative[cpf.leadingIndex]
+						local cpl = _cpls[cpf.leadingIndex]
 						local cpfPrevious = _cpfs[ii-1]
 						if cpf.leadingIndex ~= cpfPrevious.leadingIndex then
 							local i = cpf.leadingIndex
@@ -1126,7 +1225,7 @@ function data()
 				local function _addLanesAcross()
 					if _isCargoTerminal then return end
 
-					for i = 2, #_terminalData.centrePlatformsRelative do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
+					for i = 2, #_cpls do -- cross connectors, which are nodes, are 1 more then centre platforms, which are edges, so I go on until the end
 						local crossConnectorPosTanX2 = _terminalData.crossConnectorsRelative[i].posTanX2
 						result.models[#result.models+1] = {
 							id = _constants.passengerLaneModelId,
@@ -1139,7 +1238,7 @@ function data()
 						-- With sloped areas (aka extensions), if the player wants to stitch platforms together, they must set their own flush exits.
 						if not(result.getOccupiedInfo4SlopedAreas(t, i).id) then
 							if result.terminateConstructionHookInfo.autoStitchablePositions[t] == nil then result.terminateConstructionHookInfo.autoStitchablePositions[t] = {} end
-							local cpl = _terminalData.centrePlatformsRelative[i]
+							local cpl = _cpls[i]
 							table.insert(
 								result.terminateConstructionHookInfo.autoStitchablePositions[t],
 								{
@@ -1180,11 +1279,11 @@ function data()
 					if _isCargoTerminal then return end
 
 					local _iMin = 1 -- 2
-					local _iMax = #_terminalData.centrePlatformsRelative -- - 1
+					local _iMax = #_cpls -- - 1
 					for i = _iMin, _iMax do -- we used to skip the outermost edges to avoid collisions (the game can be picky here);
 						-- now we try the whole stretch, so we can connect platforms head to head
-						local cpl = _terminalData.centrePlatformsRelative[i]
-						local cplP1 = _terminalData.centrePlatformsRelative[i+1] or {type = cpl.type}
+						local cpl = _cpls[i]
+						local cplP1 = _cpls[i+1] or {type = cpl.type}
 						-- local isInTunnel = cpl.type == 2 and cplP1.type == 2
 						local isOnBridge = cpl.type == 1 and cplP1.type == 1
 						local isPlatformLift = _modules[result.mangleId(t, i, _constants.idBases.platformLiftSlotId)] ~= nil
@@ -2634,7 +2733,9 @@ function data()
 						if nTerminal == nTerminalNew then
 							if baseId == _constants.idBases.platformRoofSlotId
 							or baseId == _constants.idBases.platformWallSlotId
+							or baseId == _constants.idBases.platformWallInTunnelSlotId
 							or baseId == _constants.idBases.trackWallSlotId
+							or baseId == _constants.idBases.trackWallInTunnelSlotId
 							or baseId == _constants.idBases.axialWallSlotId
 							then
 								modules[slotId] = nil

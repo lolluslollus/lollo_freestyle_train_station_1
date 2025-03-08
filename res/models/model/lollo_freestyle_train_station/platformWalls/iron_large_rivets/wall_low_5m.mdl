@@ -1,0 +1,25 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    materials = {
+                        'lollo_freestyle_train_station/metal/iron_w_large_rivets.mtl',
+                        'lollo_freestyle_train_station/metal/iron_w_large_rivets_low_prio.mtl',
+                    },
+                    mesh = 'lollo_freestyle_train_station/platformWalls/large_rivets/wall_low_5m_lod0.msh',
+                    -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

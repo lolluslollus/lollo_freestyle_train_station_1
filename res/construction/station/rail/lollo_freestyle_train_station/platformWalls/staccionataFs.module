@@ -26,7 +26,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 42,
+			value = 62,
 		},
 		type = _constants.platformWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -48,9 +48,10 @@ function data()
 				end
 
 				moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
-				'lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl',
-				'lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl',
-				pillar_2_5m_modelId, pillar_5m_modelId)
+					'lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl',
+					pillar_2_5m_modelId, pillar_5m_modelId,
+					nil, false
+				)
 			end
 		end,
 

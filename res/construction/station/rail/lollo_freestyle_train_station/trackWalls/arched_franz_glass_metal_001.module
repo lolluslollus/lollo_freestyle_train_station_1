@@ -26,7 +26,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 22,
+			value = 12,
 		},
 		type = _constants.trackWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -35,8 +35,9 @@ function data()
 
 			local _terminalData = params.terminals[nTerminal]
 			moduleHelpers.deco.doTrackWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
-			'lollo_freestyle_train_station/platformWalls/arched/franz_glass_metal_001_tunnel_2_5m.mdl',
-			'lollo_freestyle_train_station/platformWalls/arched/franz_glass_metal_001_2_5m.mdl')
+				'lollo_freestyle_train_station/platformWalls/arched/franz_glass_metal_001_2_5m.mdl',
+				false
+			)
 		end,
 
 		getModelsFn = function(params)

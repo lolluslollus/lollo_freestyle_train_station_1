@@ -7,7 +7,7 @@ function data()
 			yearTo = 0
 		},
 		category = {
-			categories = { "platform-deco", },
+			categories = { 'platform-deco', 'platform-deco-in-tunnel', 'track-deco', 'track-deco-in-tunnel', },
 		},
 		cost = {
 			price = 0,
@@ -15,7 +15,7 @@ function data()
 		description = {
 			name = _('RemoveTerminalDecoModuleType'),
 			description = _('RemoveTerminalDecoModuleType'),
-			icon = "ui/lollo_freestyle_train_station/none.tga"
+			icon = 'ui/lollo_freestyle_train_station/none.tga'
 		},
 		metadata = { },
 		order = {

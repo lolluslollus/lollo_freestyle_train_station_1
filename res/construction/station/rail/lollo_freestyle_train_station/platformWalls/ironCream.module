@@ -26,7 +26,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 34,
+			value = 44,
 		},
 		type = _constants.platformWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -41,10 +41,11 @@ function data()
 			else
 				local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, nTrackEdge)
 				moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
-				'lollo_freestyle_train_station/platformWalls/arched/metal_large_rivets_wall_tunnel_2_5m.mdl',
-				'lollo_freestyle_train_station/platformWalls/iron_cream/wall_5m.mdl',
-				'lollo_freestyle_train_station/roofs/iron/platformRoofPillarDeco_2_5m.mdl',
-				'lollo_freestyle_train_station/roofs/iron/platformRoofPillarDeco_5m.mdl')
+					'lollo_freestyle_train_station/platformWalls/iron_cream/wall_5m.mdl',
+					'lollo_freestyle_train_station/roofs/iron_light/platformRoofPillarDeco_2_5m.mdl',
+					'lollo_freestyle_train_station/roofs/iron_light/platformRoofPillarDeco_5m.mdl',
+					nil, false
+				)
 			end
 		end,
 
@@ -57,7 +58,7 @@ function data()
 				}
 			end
 			results[#results+1] = {
-				id = 'lollo_freestyle_train_station/roofs/iron/platformRoofPillarDeco_2_5m.mdl',
+				id = 'lollo_freestyle_train_station/roofs/iron_light/platformRoofPillarDeco_2_5m.mdl',
 				transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  0, 1.4, -1.3, 1},
 			}
 			results[#results+1] = moduleHelpers.deco.getPreviewIcon(params)
