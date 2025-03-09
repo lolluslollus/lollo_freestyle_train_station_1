@@ -36,6 +36,7 @@ function data()
 			local _terminalData = params.terminals[nTerminal]
 			moduleHelpers.deco.doTrackWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
 				'lollo_freestyle_train_station/platformWalls/iron_large_rivets/wall_low_5m.mdl',
+				'lollo_freestyle_train_station/platformWalls/iron_large_rivets/wall_low_5m.mdl',
 				false
 			)
 		end,

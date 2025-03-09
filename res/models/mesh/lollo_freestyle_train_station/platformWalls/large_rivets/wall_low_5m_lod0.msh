@@ -8,81 +8,81 @@ return {
 			indices = {
 				jointWeights = {
 					count = 72,
-					offset = 480,
+					offset = 532,
 				},
 				normal = {
 					count = 72,
-					offset = 552,
+					offset = 748,
 				},
 				position = {
 					count = 72,
-					offset = 696,
+					offset = 460,
 				},
 				tangent = {
 					count = 72,
-					offset = 408,
+					offset = 604,
 				},
 				uv0 = {
 					count = 72,
-					offset = 624,
+					offset = 676,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/metal/copper_w_large_rivets.mtl",
+				"lollo_freestyle_train_station/metal/copper_w_large_rivets.mtl", 
 			},
 		}, {
 			indices = {
 				jointWeights = {
 					count = 72,
-					offset = 840,
+					offset = 892,
 				},
 				normal = {
 					count = 72,
-					offset = 912,
+					offset = 1108,
 				},
 				position = {
 					count = 72,
-					offset = 1056,
+					offset = 820,
 				},
 				tangent = {
 					count = 72,
-					offset = 768,
+					offset = 964,
 				},
 				uv0 = {
 					count = 72,
-					offset = 984,
+					offset = 1036,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/metal/copper_w_large_rivets.mtl",
+				"lollo_freestyle_train_station/metal/copper_w_large_rivets.mtl", 
 			},
 		}, 
 	},
 	vertexAttr = {
 		jointWeights = {
-			count = 32,
+			count = 64,
 			numComp = 4,
-			offset = 80,
+			offset = 120,
 		},
 		normal = {
-			count = 72,
+			count = 60,
 			numComp = 3,
-			offset = 112,
+			offset = 400,
 		},
 		position = {
-			count = 96,
+			count = 120,
 			numComp = 3,
-			offset = 312,
+			offset = 0,
 		},
 		tangent = {
 			count = 80,
 			numComp = 4,
-			offset = 0,
+			offset = 184,
 		},
 		uv0 = {
-			count = 128,
+			count = 136,
 			numComp = 2,
-			offset = 184,
+			offset = 264,
 		},
 	},
 }

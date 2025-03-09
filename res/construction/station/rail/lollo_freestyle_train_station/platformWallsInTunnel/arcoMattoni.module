@@ -47,7 +47,7 @@ function data()
 				end
 
 				moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
-					'lollo_freestyle_train_station/platformWalls/arched/bricks_wall_tunnel_2_5m.mdl',
+					'lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl',
 					pillar_2_5m_modelId, pillar_5m_modelId,
 					'lollo_freestyle_train_station/platformWalls/arco_mattoni/wall_5m.mdl',
 					true
@@ -59,7 +59,7 @@ function data()
 			local results = {}
 			for x = -2, 2 do
 				results[#results+1] = {
-					id = 'lollo_freestyle_train_station/platformWalls/arched/bricks_wall_tunnel_2_5m.mdl',
+					id = 'lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl',
 					transf = {-1, 0, 0, 0,  0, -1, 0, 0,  0, 0, 1, 0,  x, 0, 0, 1},
 				}
 			end
