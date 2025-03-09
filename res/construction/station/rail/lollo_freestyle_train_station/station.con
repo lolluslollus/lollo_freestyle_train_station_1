@@ -385,67 +385,63 @@ function data()
 				local _isCargoTerminal = _terminalData.isCargo
 				if _isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
 				local _isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
-				local _getIsAnyCpfMeetsTypeCondition_indexedByI = function(iss_indexedByI, isAllowCargoTerminals, isTypeConditionMet)
+				local _getIsAnyCpfMeetsTypeCondition_indexedByI = function(iss_indexedByI, isTypeConditionMet)
 					local results_indexedByI = {}
-					if isAllowCargoTerminals or not(_isCargoTerminal) then
-						local _iiMax= #_cpfs
-						for ii = 1, _iiMax do
-							local cpf = _cpfs[ii]
-							local leadingIndexEvery3 = 0
-							if iss_indexedByI[cpf.leadingIndex - 1] then leadingIndexEvery3 = cpf.leadingIndex - 1
-							elseif iss_indexedByI[cpf.leadingIndex] then leadingIndexEvery3 = cpf.leadingIndex
-							elseif iss_indexedByI[cpf.leadingIndex + 1] then leadingIndexEvery3 = cpf.leadingIndex + 1
-							end
-							if leadingIndexEvery3 ~= 0
-							and not(results_indexedByI[leadingIndexEvery3])
-							-- and cpf.type ~= 2
-							and isTypeConditionMet(cpf.type)
-							then
-								results_indexedByI[leadingIndexEvery3] = true
-							end
+					local _iiMax= #_cpfs
+					for ii = 1, _iiMax do
+						local cpf = _cpfs[ii]
+						local leadingIndexEvery3 = 0
+						if iss_indexedByI[cpf.leadingIndex - 1] then leadingIndexEvery3 = cpf.leadingIndex - 1
+						elseif iss_indexedByI[cpf.leadingIndex] then leadingIndexEvery3 = cpf.leadingIndex
+						elseif iss_indexedByI[cpf.leadingIndex + 1] then leadingIndexEvery3 = cpf.leadingIndex + 1
+						end
+						if leadingIndexEvery3 ~= 0
+						and not(results_indexedByI[leadingIndexEvery3])
+						-- and cpf.type ~= 2
+						and isTypeConditionMet(cpf.type)
+						then
+							results_indexedByI[leadingIndexEvery3] = true
 						end
 					end
 					return results_indexedByI
 				end
-				local _getIsAnyCpfInTunnel_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
-					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ == 2 end)
+				local _getIsAnyCpfInTunnel_indexedByI = function(iss_indexedByI)
+					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, function(type_) return type_ == 2 end)
 				end
-				local _getIsAnyCpfOutsideTunnel_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
-					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ ~= 2 end)
+				local _getIsAnyCpfOutsideTunnel_indexedByI = function(iss_indexedByI)
+					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, function(type_) return type_ ~= 2 end)
 				end
-				local _getIsAnyCpfOnGround_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
-					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ == 0 end)
+				local _getIsAnyCpfOnGround_indexedByI = function(iss_indexedByI)
+					return _getIsAnyCpfMeetsTypeCondition_indexedByI(iss_indexedByI, function(type_) return type_ == 0 end)
 				end
-				local _getIsAnyCtMeetsTypeCondition_indexedByI = function(iss_indexedByI, isAllowCargoTerminals, isTypeConditionMet)
+				local _getIsAnyCtMeetsTypeCondition_indexedByI = function(iss_indexedByI, isTypeConditionMet)
 					local results_indexedByI = {}
-					if isAllowCargoTerminals or not(_isCargoTerminal) then
-						local _iMax= #_cts
-						for i = 1, _iMax do
-							local ct = _cts[i]
-							local leadingIndexEvery3 = 0
-							if iss_indexedByI[i - 1] then leadingIndexEvery3 = i - 1
-							elseif iss_indexedByI[i] then leadingIndexEvery3 = i
-							elseif iss_indexedByI[i + 1] then leadingIndexEvery3 = i + 1
-							end
-							if leadingIndexEvery3 ~= 0
-							and not(results_indexedByI[leadingIndexEvery3])
-							-- and cpf.type ~= 2
-							and isTypeConditionMet(ct.type)
-							then
-								results_indexedByI[leadingIndexEvery3] = true
-							end
+					local _iMax= #_cts
+					for i = 1, _iMax do
+						local ct = _cts[i]
+						local leadingIndexEvery3 = 0
+						if iss_indexedByI[i - 1] then leadingIndexEvery3 = i - 1
+						elseif iss_indexedByI[i] then leadingIndexEvery3 = i
+						elseif iss_indexedByI[i + 1] then leadingIndexEvery3 = i + 1
+						end
+						if leadingIndexEvery3 ~= 0
+						and not(results_indexedByI[leadingIndexEvery3])
+						-- and cpf.type ~= 2
+						and isTypeConditionMet(ct.type)
+						then
+							results_indexedByI[leadingIndexEvery3] = true
 						end
 					end
 					return results_indexedByI
 				end
-				local _getIsAnyCtInTunnel_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
-					return _getIsAnyCtMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ == 2 end)
+				local _getIsAnyCtInTunnel_indexedByI = function(iss_indexedByI)
+					return _getIsAnyCtMeetsTypeCondition_indexedByI(iss_indexedByI, function(type_) return type_ == 2 end)
 				end
-				local _getIsAnyCtOutsideTunnel_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
-					return _getIsAnyCtMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ ~= 2 end)
+				local _getIsAnyCtOutsideTunnel_indexedByI = function(iss_indexedByI)
+					return _getIsAnyCtMeetsTypeCondition_indexedByI(iss_indexedByI, function(type_) return type_ ~= 2 end)
 				end
-				local _getIsAnyCtOnGround_indexedByI = function(iss_indexedByI, isAllowCargoTerminals)
-					return _getIsAnyCtMeetsTypeCondition_indexedByI(iss_indexedByI, isAllowCargoTerminals, function(type_) return type_ == 0 end)
+				local _getIsAnyCtOnGround_indexedByI = function(iss_indexedByI)
+					return _getIsAnyCtMeetsTypeCondition_indexedByI(iss_indexedByI, function(type_) return type_ == 0 end)
 				end
 
 				local _getPlatformHeight = function()
@@ -519,8 +515,8 @@ function data()
 						iss[#iss+1] = _iMax
 						iss_indexedByI[_iMax] = true -- [2, 5, 7] or [2, 5, 8]
 					end
-					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCpfOutsideTunnel_indexedByI(iss_indexedByI, false)
-					local isAnyCpfOnGround_indexedByI = _getIsAnyCpfOnGround_indexedByI(iss_indexedByI, false)
+					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCpfOutsideTunnel_indexedByI(iss_indexedByI)
+					local isAnyCpfOnGround_indexedByI = _getIsAnyCpfOnGround_indexedByI(iss_indexedByI)
 
 					for _, i in pairs(iss) do
 						local cpl = _cpls[i]
@@ -984,8 +980,8 @@ function data()
 						iss[#iss+1] = _iMax
 						iss_indexedByI[_iMax] = true -- [2, 5, 7] or [2, 5, 8]
 					end
-					local isAnyCpfInTunnel_indexedByI = _getIsAnyCpfInTunnel_indexedByI(iss_indexedByI, false)
-					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCpfOutsideTunnel_indexedByI(iss_indexedByI, false)
+					local isAnyCpfInTunnel_indexedByI = _getIsAnyCpfInTunnel_indexedByI(iss_indexedByI)
+					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCpfOutsideTunnel_indexedByI(iss_indexedByI)
 
 					for _, i in pairs(iss) do
 						local cpl = _cpls[i]
@@ -1068,8 +1064,8 @@ function data()
 						iss[#iss+1] = _iMax
 						iss_indexedByI[_iMax] = true -- [2, 5, 7] or [2, 5, 8]
 					end
-					local isAnyCtInTunnel_indexedByI = _getIsAnyCtInTunnel_indexedByI(iss_indexedByI, false)
-					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCtOutsideTunnel_indexedByI(iss_indexedByI, false)
+					local isAnyCtInTunnel_indexedByI = _getIsAnyCtInTunnel_indexedByI(iss_indexedByI)
+					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCtOutsideTunnel_indexedByI(iss_indexedByI)
 
 					for _, i in pairs(iss) do
 						local ctl = _cts[i]
@@ -1097,8 +1093,8 @@ function data()
 					end
 
 					local _endIss = {[1] = true, [_iMax] = true}
-					local isAnyCtEndInTunnel_indexedByI = _getIsAnyCtInTunnel_indexedByI(_endIss, false)
-					local isAnyCtEndOutsideTunnel_indexedByI = _getIsAnyCtOutsideTunnel_indexedByI(_endIss, false)
+					local isAnyCtEndInTunnel_indexedByI = _getIsAnyCtInTunnel_indexedByI(_endIss)
+					local isAnyCtEndOutsideTunnel_indexedByI = _getIsAnyCtOutsideTunnel_indexedByI(_endIss)
 					for i, _ in pairs(_endIss) do
 						local ct = _cts[i]
 						 -- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
