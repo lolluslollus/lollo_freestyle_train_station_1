@@ -10,11 +10,11 @@ return {
 			indices = {
 				normal = {
 					count = 468,
-					offset = 4184,
+					offset = 3248,
 				},
 				position = {
 					count = 468,
-					offset = 3248,
+					offset = 4184,
 				},
 				tangent = {
 					count = 468,
@@ -33,11 +33,11 @@ return {
 			indices = {
 				normal = {
 					count = 408,
-					offset = 5936,
+					offset = 5120,
 				},
 				position = {
 					count = 408,
-					offset = 5120,
+					offset = 5936,
 				},
 				tangent = {
 					count = 408,
@@ -56,11 +56,11 @@ return {
 			indices = {
 				normal = {
 					count = 816,
-					offset = 8384,
+					offset = 6752,
 				},
 				position = {
 					count = 816,
-					offset = 6752,
+					offset = 8384,
 				},
 				tangent = {
 					count = 816,
@@ -79,11 +79,11 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 10064,
+					offset = 10016,
 				},
 				position = {
 					count = 24,
-					offset = 10016,
+					offset = 10064,
 				},
 				tangent = {
 					count = 24,
@@ -102,11 +102,11 @@ return {
 			indices = {
 				normal = {
 					count = 24,
-					offset = 10160,
+					offset = 10112,
 				},
 				position = {
 					count = 24,
-					offset = 10112,
+					offset = 10160,
 				},
 				tangent = {
 					count = 24,
@@ -126,17 +126,17 @@ return {
 		normal = {
 			count = 588,
 			numComp = 3,
-			offset = 1628,
+			offset = 0,
 		},
 		position = {
 			count = 972,
 			numComp = 3,
-			offset = 0,
+			offset = 1244,
 		},
 		tangent = {
 			count = 656,
 			numComp = 4,
-			offset = 972,
+			offset = 588,
 		},
 		uv0 = {
 			count = 1032,

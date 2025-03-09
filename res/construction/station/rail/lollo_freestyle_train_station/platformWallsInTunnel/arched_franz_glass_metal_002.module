@@ -51,7 +51,7 @@ function data()
 				moduleHelpers.deco.doPlatformWall(result, slotTransf, tag, slotId, params, nTerminal, _terminalData, nTrackEdge,
 					'lollo_freestyle_train_station/platformWalls/arched/franz_glass_metal_002_tunnel_2_5m.mdl',
 					pillar_2_5m_modelId, pillar_5m_modelId,
-					'lollo_freestyle_train_station/platformWalls/arched_ends/franz_glass_metal_002_low_5m.mdl',
+					'lollo_freestyle_train_station/platformWalls/arched_ends/franz_glass_metal_002_5m.mdl',
 					true
 				)
 			end

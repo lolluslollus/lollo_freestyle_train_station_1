@@ -2304,41 +2304,39 @@ return {
 
                             -- add walls across
                             local _wallAcrossModelId = type(endWallModelId) == 'string' and endWallModelId or wallModelId
-                            if cpf.type ~= 2 then -- whenever getting in or out of a tunnel, skip altogether
-                                if ii == 1 then
-                                    -- skip near platform head
-                                    if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
-                                        if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                            -- logger.print('_ONE')
-                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
-                                        else
-                                            -- logger.print('_TWO')
-                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
-                                        end
+                            if ii == 1 then
+                                -- skip near platform head
+                                if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
+                                    if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
+                                        -- logger.print('_ONE')
+                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                    else
+                                        -- logger.print('_TWO')
+                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                     end
-                                elseif ii == _iiMax then
-                                    -- skip near platform head
-                                    if not(_modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
-                                        if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                            -- logger.print('_THREE')
-                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
-                                        else
-                                            -- logger.print('_FOUR')
-                                            privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
-                                        end
+                                end
+                            elseif ii == _iiMax then
+                                -- skip near platform head
+                                if not(_modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
+                                    if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
+                                        -- logger.print('_THREE')
+                                        privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                    else
+                                        -- logger.print('_FOUR')
+                                        privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                     end
-                                else
-                                    local cpfM1 = _cpfs[ii-1]
-                                    local cpfP1 = _cpfs[ii+1]
-                                    if leadingIndex ~= cpfM1.leadingIndex then
-                                        local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
-                                            -- logger.print('_FIVE')
-                                            privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
-                                    elseif leadingIndex ~= cpfP1.leadingIndex then
-                                        local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
-                                        -- logger.print('_SIX')
-                                        privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
-                                    end
+                                end
+                            else
+                                local cpfM1 = _cpfs[ii-1]
+                                local cpfP1 = _cpfs[ii+1]
+                                if leadingIndex ~= cpfM1.leadingIndex then
+                                    local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
+                                        -- logger.print('_FIVE')
+                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
+                                elseif leadingIndex ~= cpfP1.leadingIndex then
+                                    local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
+                                    -- logger.print('_SIX')
+                                    privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId)
                                 end
                             end
                         end
