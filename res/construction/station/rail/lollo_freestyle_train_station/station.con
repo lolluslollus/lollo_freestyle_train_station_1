@@ -524,7 +524,7 @@ function data()
 						-- local cplP1 = _cpls[i+1] or {type = cpl.type}
 						local cplTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(cpl.posTanX2)
 						-- if (cpl.type ~= 2 or cplM1.type ~= 2 or cplP1.type ~= 2) and not(_isCargoTerminal) then -- no thin extensions in tunnels unless we are at the entrance
-						if isAnyCpfOutsideTunnel_indexedByI[i] then -- no thin extensions in tunnels unless we are at the entrance
+						if isAnyCpfOutsideTunnel_indexedByI[i] and not(_isCargoTerminal) then -- no thin extensions in tunnels unless we are at the entrance
 							if not(result.getOccupiedInfo4SlopedAreas(t, i).id) or result.getOccupiedInfo4SlopedAreas(t, i).id == _constants.idBases.slopedArea1x2_5SlotId then
 								local yShiftOutside, yShiftOutside4StreetAccess = moduleHelpers.slopedAreas.getYShift(params, t, _terminalData, i, 2.5)
 								local myId = result.mangleId(t, i, _constants.idBases.slopedArea1x2_5SlotId)
