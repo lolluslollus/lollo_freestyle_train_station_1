@@ -499,6 +499,7 @@ local _guiActions = {
             fenceWaypoint1Id = fenceWaypointIds[1],
             fenceWaypoint2Id = fenceWaypointIds[2],
             fenceWaypointMidTransf = fenceWaypointMidTransf,
+            -- isPreciseMarker = false,
             isWaypoint2ArrowAgainstTrackDirection = lastWaypointData.isWaypointArrowAgainstTrackDirection,
         }
 
@@ -512,6 +513,7 @@ local _guiActions = {
     handleValidFenceMarkerBuilt = function(lastWaypointData)
         -- local lastWaypointData = {
         --     autoFenceMarkerEdgeIds_indexedByConId
+        --     isPreciseMarker = true
         --     isWaypointArrowAgainstTrackDirection = isWaypointArrowAgainstTrackDirection,
         --     newWaypointId = newWaypointId,
         --     twinWaypointId = twinWaypointId
@@ -571,6 +573,7 @@ local _guiActions = {
             -- fenceWaypoint1Id = conIds[1],
             -- fenceWaypoint2Id = conIds[2],
             fenceWaypointMidTransf = fenceWaypointMidTransf,
+            isPreciseMarker = lastWaypointData.isPreciseMarker,
             isWaypoint2ArrowAgainstTrackDirection = lastWaypointData.isWaypointArrowAgainstTrackDirection,
         }
 
@@ -779,7 +782,8 @@ local _guiActions = {
     validateFenceMarkerBuilt = function(newConId)
         -- first of all, we check if we have plopped a marker of ours
         -- we must not interfere with other mods
-        if _utils.getConFileName(newConId) ~= _constants.autoFenceMarkerConFileName then return false end
+        local fileName = _utils.getConFileName(newConId)
+        if fileName ~= _constants.autoFenceMarkerConFileName and fileName ~= _constants.autoFenceMarkerPreciseConFileName then return false end
 
         local newEdgeId = _utils.getNearestEdgeToCon(newConId)
         logger.print('fence marker edgeId =') logger.debugPrint(newEdgeId)
@@ -817,7 +821,8 @@ local _guiActions = {
         -- api.engine.forEachEntityWithComponent(
         --     function(entityId)
         --         print(entityId)
-        --         if _utils.getConFileName(entityId) == _constants.autoFenceMarkerConFileName then
+        --         if _utils.getConFileName(entityId) == fileName
+        --         then
         --             similarConIds[#similarConIds+1] = entityId
         --         end
         --     end,
@@ -830,7 +835,7 @@ local _guiActions = {
                 radius = 99999
             },
             {
-                fileName = _constants.autoFenceMarkerConFileName,
+                fileName = fileName,
                 includeData = false,
                 type = 'CONSTRUCTION'
             }
@@ -1015,6 +1020,7 @@ local _guiActions = {
         autoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
         return {
             autoFenceMarkerEdgeIds_indexedByConId = autoFenceMarkerEdgeIds_indexedByConId,
+            isPreciseMarker = (fileName == _constants.autoFenceMarkerPreciseConFileName),
             isWaypointArrowAgainstTrackDirection = isWaypointArrowAgainstTrackDirection,
             newWaypointId = newConId,
             twinWaypointId = twinConId
@@ -1056,6 +1062,7 @@ function data()
                         --     fenceWaypoint1Id = fenceWaypointIds[1], -- the first waypoint placed (if using waypoints)
                         --     fenceWaypoint2Id = fenceWaypointIds[2], -- the second waypoint placed (if using waypoints)
                         --     fenceWaypointMidTransf = fenceWaypointMidTransf,
+                        --     isPreciseMarker = true, (if using precise marker constructions)
                         --     isWaypoint2ArrowAgainstTrackDirection = true
                         -- }
                         logger.print('args =') logger.debugPrint(args)
@@ -1085,11 +1092,9 @@ function data()
                                 print('second waypoint edge\'s node1 pos =') debugPrint(args.edge2Node1Pos)
                             end
 
-                            local isEdge1NearMarker1 = true
                             if args.isWaypoint2ArrowAgainstTrackDirection then
                                 logger.print('reversing trackEdgeList')
                                 trackEdgeList_Ordered = stationHelpers.reversePosTanX2ListInPlace(trackEdgeList_Ordered)
-                                isEdge1NearMarker1 = false
                                 -- yShift = -yShift -- NO!
                             end
                             logger.print('trackEdgeList =') logger.debugPrint(trackEdgeList_Ordered)
@@ -1100,8 +1105,61 @@ function data()
                                 false,
                                 true
                             )
-                            -- logger.print('trackEdgeListFine =') logger.debugPrint(trackEdgeListFine)
+                            -- precise markers: cull the bits on the marker edges but outside the markers
                             if #trackEdgeListFine > 0 then
+                                if args.isPreciseMarker then
+                                    local marker1Pos = _utils.getConPosition(args.fenceMarkerCon1Id)
+                                    local marker2Pos = _utils.getConPosition(args.fenceMarkerCon2Id)
+                                    local maxII = #trackEdgeListFine
+
+                                    if transfUtils.getPositionsDistance_onlyXY(trackEdgeListFine[1].posTanX2[1][1], marker1Pos)
+                                    > transfUtils.getPositionsDistance_onlyXY(trackEdgeListFine[maxII].posTanX2[2][1], marker1Pos)
+                                    then
+                                        marker1Pos, marker2Pos = marker2Pos, marker1Pos
+                                    end
+                                    if (logger.isExtendedLog()) then
+                                        logger.print('marker1Pos =') logger.debugPrint(marker1Pos)
+                                        logger.print('marker2Pos =') logger.debugPrint(marker2Pos)
+                                        logger.print('trackEdgeListFine[1].posTanX2[1][1] = ') logger.debugPrint(trackEdgeListFine[1].posTanX2[1][1])
+                                        logger.print('trackEdgeListFine[maxII].posTanX2[2][1] = ') logger.debugPrint(trackEdgeListFine[maxII].posTanX2[2][1])
+                                        logger.print('maxII = ' .. tostring(maxII))
+                                    end
+                                    local minDistance = 9999
+                                    local nearestII = 0
+                                    for ii = 1, maxII, 1 do
+                                        local currentDistance = transfUtils.getPositionsDistance_onlyXY(trackEdgeListFine[ii].posTanX2[1][1], marker1Pos)
+                                        if type(currentDistance) == 'number' and currentDistance < minDistance then
+                                            minDistance = currentDistance
+                                            nearestII = ii
+                                        else
+                                            break
+                                        end
+                                    end
+                                    logger.print('maxII = ' .. tostring(maxII))
+                                    logger.print('nearestII = ' .. tostring(nearestII))
+                                    for ii = 1, nearestII - 1, 1 do
+                                        table.remove(trackEdgeListFine, 1)
+                                    end
+
+                                    maxII = #trackEdgeListFine
+                                    minDistance = 9999
+                                    nearestII = maxII
+                                    for ii = maxII, 1, -1 do
+                                        local currentDistance = transfUtils.getPositionsDistance_onlyXY(trackEdgeListFine[ii].posTanX2[2][1], marker2Pos)
+                                        if type(currentDistance) == 'number' and currentDistance < minDistance then
+                                            minDistance = currentDistance
+                                            nearestII = ii
+                                        else
+                                            break
+                                        end
+                                    end
+                                    logger.print('maxII = ' .. tostring(maxII))
+                                    logger.print('nearestII = ' .. tostring(nearestII))
+                                    for ii = nearestII + 1, maxII, 1 do
+                                        table.remove(trackEdgeListFine, nearestII + 1)
+                                    end
+                                end
+
                                 local yShift_main = trackEdgeList_Ordered[1].width * 0.5
                                 local yShift_WallBehind = trackEdgeList_Ordered[1].width * 0.5 + 1 -- walls behind are 1m or 2m thick and they have y backed up by 0.5
                                 local transfs = arrayUtils.map(

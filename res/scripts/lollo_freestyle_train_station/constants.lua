@@ -135,6 +135,7 @@ local constants = {
 
     autoFenceConFileName = 'lollo_freestyle_train_station/auto_fence.con',
     autoFenceMarkerConFileName = 'lollo_freestyle_train_station/auto_fence_marker.con',
+    autoFenceMarkerPreciseConFileName = 'lollo_freestyle_train_station/auto_fence_marker_precise.con',
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
     subwayConFileNames = {

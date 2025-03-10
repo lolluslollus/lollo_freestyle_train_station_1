@@ -406,8 +406,6 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["EraCPassengerPlatform5MAutoSplitDesc"] = "Passenger platforms to be laid as tracks, 5 m wide, era C, not for tunnels. They are in fact slow train tracks; they are not meant to be crossed. Once built, they split into two 2.5 m platforms; for complex constructions, lay a 5m platform first and turn it into this with the magic wand.",
 			["EraCPassengerPlatform2_5MName"] = "2.5 m passenger platform, era C",
 			["EraCPassengerPlatform2_5MDesc"] = "Passenger platforms to be laid as tracks, 2.5 m wide, era C, not for tunnels. They are in fact slow train tracks; they are not meant to be crossed.",
-			["FenceWaypointName"] = "Fence end marker",
-			["FenceWaypointDesc"] = "Marks the ends of a fence / wall that will be drawn along a track. It does not work on tracks, which are part of a construction (eg a station); you can do that with the asset or the configuration menu. The direction of the second marker sets the side the fence / wall will be on. Once done, click the fence to configure it.",
 			["PlatformWaypointName"] = "Platform end marker",
 			["PlatformWaypointDesc"] = "Marks the ends of a platform that will become part of a freestyle station. The direction does not matter; if there is already a split nearby, it will take priority; if the platform ends nearby, that end will take a higher priority.",
 			["SplitterWaypointName"] = "Track Splitter",
@@ -627,7 +625,11 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 
 			-- fence assets
 			["AutoFenceMarkerName"] = "Fence end marker",
-			["AutoFenceMarkerDesc"] = "Marks the ends of a fence / wall that will be drawn along a track. The direction of the second marker sets the side the fence / wall will be on. Once done, click the fence to configure it.",
+			["AutoFenceMarkerDesc"] = "Marks the ends of a fence / wall that will be drawn along a track. The fence fully covers the tracks where the markers stand. The direction of the second marker sets the side of the fence. Once done, click the fence to configure it.",
+			["AutoFenceMarkerPreciseName"] = "Precise fence end marker",
+			["AutoFenceMarkerPreciseDesc"] = "Marks the ends of a fence / wall that will be drawn along a track. The fence starts and ends near the markers. The direction of the second marker sets the side of the fence. Once done, click the fence to configure it.",
+			["FenceWaypointName"] = "Fence end marker",
+			["FenceWaypointDesc"] = "Marks the ends of a fence / wall that will be drawn along a track. The fence fully covers the tracks where the markers stand. It does not work on tracks, which are part of a construction (eg a station); you can do that with my assets or the configuration menu. The direction of the second marker sets the side of the fence. Once done, click the fence to configure it.",
 			["DoTerrain"] = "Align terrain",
 			["FenceAssetsName"] = "Walls and fences",
 			["FenceAssetsDesc"] = "Walls and fences to match freestyle stations. Adjust them with the Construction Mover.",
@@ -1064,8 +1066,6 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["EraCPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwende zuerst den 5 m Bahnsteig, dann wandel ihn in diesen mit dem Zauberstab um.",
 			["EraCPassengerPlatform2_5MName"] = "2,5 m Personenbahnsteig, Epoche C",
 			["EraCPassengerPlatform2_5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 2,5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
-			["FenceWaypointName"] = "Zaunmarker",
-			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Es funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof); dafür gibt es ein Asset oder das Konfigurationsmenü. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
 			["PlatformWaypointName"] = "Bahnsteigmarker",
 			["PlatformWaypointDesc"] = "Markiert die Enden eines Bahnsteigs, der Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Bahnsteig in der Nähe endet, hat dieses Ende eine höhere Priorität.",
 			["SplitterWaypointName"] = "Gleisteiler",
@@ -1285,7 +1285,11 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 
 			-- Zaun-Assets
 			["AutoFenceMarkerName"] = "Zaunmarker",
-			["AutoFenceMarkerDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
+			["AutoFenceMarkerDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Der Zaun deckt die ganze Gleise, wo die Marker stehen. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
+			["AutoFenceMarkerPreciseName"] = "Präziser Zaunmarker",
+			["AutoFenceMarkerPreciseDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Der Zaun startet und endet bei den Markern. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
+			["FenceWaypointName"] = "Zaunmarker",
+			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Der Zaun deckt die ganze Gleise, wo die Marker stehen. Es funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof); dafür gibt es meine Assets oder das Konfigurationsmenü. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
 			["DoTerrain"] = "Boden ausgleichen",
 			["FenceAssetsName"] = "Mauern und Zäune",
 			["FenceAssetsDesc"] = "Mauern und Zäune, die zu den Freestyle-Bahnhöfen passen. Passe sie mit dem \"Construction Mover\" an.",
