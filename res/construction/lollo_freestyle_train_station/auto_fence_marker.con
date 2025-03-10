@@ -5,8 +5,8 @@ function data()
         -- type = 'TRACK_CONSTRUCTION', -- this prevent snapping
         type = 'ASSET_DEFAULT', -- this allows snapping
         description = {
-            name = _('FenceWaypointName'),
-            description = _('FenceWaypointDesc')
+            name = _('AutoFenceMarkerName'),
+            description = _('AutoFenceMarkerDesc')
         },
         availability = {
             yearFrom = 0,
@@ -14,7 +14,7 @@ function data()
         },
         -- buildMode = 'SINGLE',
         categories = { 'stairs' },
-        order = 1109,
+        order = 101,
         autoRemovable = true,
         skipCollision = true,
         -- useless with type = 'TRACK_CONSTRUCTION'

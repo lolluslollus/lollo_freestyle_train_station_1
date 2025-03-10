@@ -13,7 +13,7 @@ function data()
             yearTo = 0
         },
         categories = { 'stairs' },
-        order = 999,
+        order = 105,
         autoRemovable = true,
         skipCollision = true,
         -- useless with type = 'TRACK_CONSTRUCTION'

@@ -12,7 +12,7 @@ function data()
 			yearFrom = 0,
 			yearTo = 0,
 		},
-		order = 1103,
+		order = 1111,
 		autoRemovable = false,
         buildMode = "MULTI",
 		skipCollision = true,
