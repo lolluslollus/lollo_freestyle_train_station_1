@@ -16,7 +16,6 @@ local transfUtilsUG = require('transf')
 
 local _eventId = _constants.eventData.autoFence.eventId
 local _eventNames = _constants.eventData.autoFence.eventNames
-local _guiAutoFenceMarkerEdgeIds_indexedByConId = {}
 local _guiFenceWaypointModelId = nil
 local _guiTexts = {
     differentPlatformWidths = '',
@@ -512,17 +511,18 @@ local _guiActions = {
     end,
     handleValidFenceMarkerBuilt = function(lastWaypointData)
         -- local lastWaypointData = {
+        --     autoFenceMarkerEdgeIds_indexedByConId
         --     isWaypointArrowAgainstTrackDirection = isWaypointArrowAgainstTrackDirection,
         --     newWaypointId = newWaypointId,
         --     twinWaypointId = twinWaypointId
         -- }
         logger.print('_handleValidFenceMarkerBuilt starting, lastWaypointData =')
         logger.debugPrint(lastWaypointData)
-        local markerCount = arrayUtils.getCount(_guiAutoFenceMarkerEdgeIds_indexedByConId, true)
+        local markerCount = arrayUtils.getCount(lastWaypointData.autoFenceMarkerEdgeIds_indexedByConId, true)
         if markerCount ~= 2 then return end
 
         local conIds = {}
-        for conId, _ in pairs(_guiAutoFenceMarkerEdgeIds_indexedByConId) do
+        for conId, _ in pairs(lastWaypointData.autoFenceMarkerEdgeIds_indexedByConId) do
             conIds[#conIds+1] = conId
         end
         -- sort the ids, the sequence matters here
@@ -537,8 +537,8 @@ local _guiActions = {
             return
         end
 
-        local edge1Id = _guiAutoFenceMarkerEdgeIds_indexedByConId[conIds[1]]
-        local edge2Id = _guiAutoFenceMarkerEdgeIds_indexedByConId[conIds[2]]
+        local edge1Id = lastWaypointData.autoFenceMarkerEdgeIds_indexedByConId[conIds[1]]
+        local edge2Id = lastWaypointData.autoFenceMarkerEdgeIds_indexedByConId[conIds[2]]
         if not(edgeUtils.isValidAndExistingId(edge1Id)) or not(edgeUtils.isValidAndExistingId(edge2Id)) then
             logger.err('_handleValidFenceWaypointBuilt cannot find the fence waypoint edges')
             return
@@ -796,6 +796,10 @@ local _guiActions = {
         }
     end,
     validateFenceMarkerBuilt = function(newConId)
+        -- first of all, we check if we have plopped a marker of ours
+        -- we must not interfere with other mods
+        if _utils.getConFileName(newConId) ~= _constants.autoFenceMarkerConFileName then return false end
+
         local newEdgeId = _utils.getNearestEdgeToCon(newConId)
         logger.print('fence marker edgeId =') logger.debugPrint(newEdgeId)
         if not(edgeUtils.isValidAndExistingId(newEdgeId)) then
@@ -826,39 +830,47 @@ local _guiActions = {
             return false
         end
 
-        -- make sure the edge is not too far from the pin
-        local baseEdge = api.engine.getComponent(newEdgeId, api.type.ComponentType.BASE_EDGE)
-        local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
-        local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
-        local distanceFromEdge = transfUtils.getDistanceBetweenPointAndStraight(node0.position, node1.position, newConPosition)
-        if type(distanceFromEdge) ~= 'number' or distanceFromEdge > 5 then
-            guiHelpers.showWarningWithGoto(_guiTexts.invalidPosition, newConId)
-            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                string.sub(debug.getinfo(1, 'S').source, 1),
-                _eventId,
-                _eventNames.AUTO_FENCE_MARKER_BULLDOZE_REQUESTED,
-                {
-                    conId = newConId
-                }
-            ))
-            return false
-        end
-
-        -- refresh similar constructions
-        logger.print('similarObjectsIdsInAnyEdges before =') logger.debugPrint(_guiAutoFenceMarkerEdgeIds_indexedByConId)
-        for oldConId, _ in pairs(_guiAutoFenceMarkerEdgeIds_indexedByConId) do
-            local fileName = _utils.getConFileName(oldConId)
-            if fileName ~= _constants.autoFenceMarkerConFileName then
-                _guiAutoFenceMarkerEdgeIds_indexedByConId[oldConId] = nil
+        -- read all similar marker constructions
+        -- api.engine.forEachEntityWithComponent(function(entityId) print(entityId) end, api.type.ComponentType.CONSTRUCTION)
+        -- local similarConIds = {}
+        -- api.engine.forEachEntityWithComponent(
+        --     function(entityId)
+        --         print(entityId)
+        --         if _utils.getConFileName(entityId) == _constants.autoFenceMarkerConFileName then
+        --             similarConIds[#similarConIds+1] = entityId
+        --         end
+        --     end,
+        --     api.type.ComponentType.CONSTRUCTION
+        -- )
+        -- this is the old api but it is much faster
+        local similarConIds = game.interface.getEntities(
+            {
+                pos = transfUtils.getVec123Transformed({0, 0, 0}, _constants.idTransf),
+                radius = 99999
+            },
+            {
+                fileName = _constants.autoFenceMarkerConFileName,
+                includeData = false,
+                type = 'CONSTRUCTION'
+            }
+        )
+        logger.print('similarConIds =') logger.debugPrint(similarConIds)
+        local autoFenceMarkerEdgeIds_indexedByConId = {}
+        for _, oldConId in pairs(similarConIds) do
+            if oldConId ~= newConId and edgeUtils.isValidAndExistingId(oldConId) then
+                local oldEdgeId = _utils.getNearestEdgeToCon(oldConId)
+                if edgeUtils.isValidAndExistingId(oldEdgeId) then
+                    autoFenceMarkerEdgeIds_indexedByConId[oldConId] = oldEdgeId
+                end
             end
         end
-        logger.print('similarObjectsIdsInAnyEdges after =') logger.debugPrint(_guiAutoFenceMarkerEdgeIds_indexedByConId)
+        logger.print('similarObjectsIdsInAnyEdges after =') logger.debugPrint(autoFenceMarkerEdgeIds_indexedByConId)
 
         -- forbid building more then two markers of the same type
-        local markerCount = arrayUtils.getCount(_guiAutoFenceMarkerEdgeIds_indexedByConId, true)
+        local markerCount = arrayUtils.getCount(autoFenceMarkerEdgeIds_indexedByConId, true)
         if markerCount > 1 then
             local conIds = {}
-            for conId, _ in pairs(_guiAutoFenceMarkerEdgeIds_indexedByConId) do
+            for conId, _ in pairs(autoFenceMarkerEdgeIds_indexedByConId) do
                 conIds[#conIds+1] = conId
             end
             guiHelpers.showWarningWithGoto(_guiTexts.waypointAlreadyBuilt, newConId, conIds)
@@ -874,7 +886,7 @@ local _guiActions = {
         end
 
         if markerCount ~= 1 then
-            _guiAutoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
+            autoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
             -- not ready yet
             -- guiHelpers.showWarningWithGoto(_guiTexts.buildMoreWaypoints), newWaypointId)
             return false
@@ -882,16 +894,16 @@ local _guiActions = {
 
         -- now we check the twin
         local twinConId = nil
-        for oldConId, oldEdgeId in pairs(_guiAutoFenceMarkerEdgeIds_indexedByConId) do
+        for oldConId, oldEdgeId in pairs(autoFenceMarkerEdgeIds_indexedByConId) do
             if oldConId ~= newConId then twinConId = oldConId end
         end
         local twinConPosition = _utils.getConPosition(twinConId)
         logger.print('twinMarkerPosition =') logger.debugPrint(twinConPosition)
-        local twinEdgeId = _guiAutoFenceMarkerEdgeIds_indexedByConId[twinConId]
-
+        local twinEdgeId = autoFenceMarkerEdgeIds_indexedByConId[twinConId]
+        -- no twin or no useful twin
         if not(twinConPosition) or not(edgeUtils.isValidAndExistingId(twinConId)) or not(edgeUtils.isValidAndExistingId(twinEdgeId)) then
-            if twinConId ~= nil then _guiAutoFenceMarkerEdgeIds_indexedByConId[twinConId] = nil end
-            _guiAutoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
+            if twinConId ~= nil then autoFenceMarkerEdgeIds_indexedByConId[twinConId] = nil end
+            autoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                 string.sub(debug.getinfo(1, 'S').source, 1),
                 _eventId,
@@ -903,7 +915,7 @@ local _guiActions = {
             return false
         end
 
-        -- forbid building waypoints too close
+        -- forbid building markers too close
         local markerDistance = transfUtils.getPositionsDistance(newConPosition, twinConPosition)
         if markerDistance < 1 then
             guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooClose, newConId)
@@ -918,11 +930,11 @@ local _guiActions = {
             return false
         end
 
-        -- forbid building waypoints too far apart, which would make the fence too long
+        -- forbid building markers too far apart, which would make the fence too long
         local distance = transfUtils.getPositionsDistance(newConPosition, twinConPosition)
         if type(distance) ~= 'number' or distance > _constants.maxFenceWaypointDistance then
             local conIds = {}
-            for conId, _ in pairs(_guiAutoFenceMarkerEdgeIds_indexedByConId) do
+            for conId, _ in pairs(autoFenceMarkerEdgeIds_indexedByConId) do
                 conIds[#conIds+1] = conId
             end
             guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooFar, newConId, conIds)
@@ -948,7 +960,7 @@ local _guiActions = {
         -- make sure the waypoints are on connected tracks
         if #contiguousTrackEdgeIds < 1 then
             local conIds = {}
-            for conId, _ in pairs(_guiAutoFenceMarkerEdgeIds_indexedByConId) do
+            for conId, _ in pairs(autoFenceMarkerEdgeIds_indexedByConId) do
                 conIds[#conIds+1] = conId
             end
             guiHelpers.showWarningWithGoto(_guiTexts.waypointsNotConnected, newConId, conIds)
@@ -1004,6 +1016,9 @@ local _guiActions = {
         local newConTransf = _utils.getConTransf(newConId)
         local vec000Transformed = transfUtils.getVec123Transformed({0, 0, 0}, newConTransf)
         local vec100Transformed = transfUtils.getVec123Transformed({1, 0, 0}, newConTransf)
+        local baseEdge = api.engine.getComponent(newEdgeId, api.type.ComponentType.BASE_EDGE)
+        local node0 = api.engine.getComponent(baseEdge.node0, api.type.ComponentType.BASE_NODE)
+        local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
         local distance000 = transfUtils.getPositionsDistance(node0.position, vec000Transformed)
         local distance100 = transfUtils.getPositionsDistance(node0.position, vec100Transformed)
         local isWaypointArrowAgainstTrackDirection = (distance100 < distance000)
@@ -1016,8 +1031,9 @@ local _guiActions = {
             print('isWaypointArrowAgainstTrackDirection = ' .. tostring(isWaypointArrowAgainstTrackDirection))
         end
 
-        _guiAutoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
+        autoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
         return {
+            autoFenceMarkerEdgeIds_indexedByConId = autoFenceMarkerEdgeIds_indexedByConId,
             isWaypointArrowAgainstTrackDirection = isWaypointArrowAgainstTrackDirection,
             newWaypointId = newConId,
             twinWaypointId = twinConId
