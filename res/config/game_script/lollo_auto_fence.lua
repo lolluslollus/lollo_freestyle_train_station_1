@@ -1047,14 +1047,14 @@ function data()
                     logger.print('lollo_auto_fence.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
                     if name == _eventNames.FENCE_WAYPOINTS_BUILT then
                         -- fence waypoints built, eventArgs = {
-                        --     edge1Id = edge1Id,
-                        --     edge2Id = edge2Id,
+                        --     edge1Id = edge1Id, -- the edge where the first marker was placed
+                        --     edge2Id = edge2Id, -- the edge where the second marker was placed
                         --     edge2Node0Pos = edge2Node0Pos,
                         --     edge2Node1Pos = edge2Node1Pos,
-                        --     fenceMarkerCon1Id
-                        --     fenceMarkerCon2Id
-                        --     fenceWaypoint1Id = fenceWaypointIds[1],
-                        --     fenceWaypoint2Id = fenceWaypointIds[2],
+                        --     fenceMarkerCon1Id -- the first marker placed (if using marker constructions)
+                        --     fenceMarkerCon2Id -- the second marker placed (if using marker constructions)
+                        --     fenceWaypoint1Id = fenceWaypointIds[1], -- the first waypoint placed (if using waypoints)
+                        --     fenceWaypoint2Id = fenceWaypointIds[2], -- the second waypoint placed (if using waypoints)
                         --     fenceWaypointMidTransf = fenceWaypointMidTransf,
                         --     isWaypoint2ArrowAgainstTrackDirection = true
                         -- }
@@ -1085,9 +1085,11 @@ function data()
                                 print('second waypoint edge\'s node1 pos =') debugPrint(args.edge2Node1Pos)
                             end
 
+                            local isEdge1NearMarker1 = true
                             if args.isWaypoint2ArrowAgainstTrackDirection then
                                 logger.print('reversing trackEdgeList')
                                 trackEdgeList_Ordered = stationHelpers.reversePosTanX2ListInPlace(trackEdgeList_Ordered)
+                                isEdge1NearMarker1 = false
                                 -- yShift = -yShift -- NO!
                             end
                             logger.print('trackEdgeList =') logger.debugPrint(trackEdgeList_Ordered)
