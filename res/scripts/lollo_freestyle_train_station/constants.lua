@@ -10,6 +10,7 @@ local constants = {
         autoFence = {
             eventId = '__lolloAutoFence__',
             eventNames = {
+                AUTO_FENCE_MARKER_BULLDOZE_REQUESTED = 'autoFenceMarkerBulldozeRequested',
                 BULLDOZE_CON_REQUESTED = 'bulldozeConRequested',
                 CON_PARAMS_UPDATED = 'conParamsUpdated',
                 FENCE_WAYPOINTS_BUILT = 'fenceWaypointsBuilt',
@@ -133,6 +134,7 @@ local constants = {
     era_c_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_02_high_priority.lua',
 
     autoFenceConFileName = 'lollo_freestyle_train_station/auto_fence.con',
+    autoFenceMarkerConFileName = 'lollo_freestyle_train_station/auto_fence_marker.con',
     platformMarkerConName = 'station/rail/lollo_freestyle_train_station/platform_marker.con',
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
     subwayConFileNames = {
