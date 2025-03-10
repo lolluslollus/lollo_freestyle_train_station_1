@@ -68,7 +68,8 @@ local _utils = {
         local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(
             conTransfLua,
             conTransfLua[15] + _constants.splitterZShift - _constants.splitterZToleranceM,
-            conTransfLua[15] + _constants.splitterZShift + _constants.splitterZToleranceM
+            conTransfLua[15] + _constants.splitterZShift + _constants.splitterZToleranceM,
+            logger
         )
 
         return nearestEdgeId

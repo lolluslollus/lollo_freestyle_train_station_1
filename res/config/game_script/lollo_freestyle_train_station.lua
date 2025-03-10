@@ -3969,7 +3969,8 @@ function data()
                                 local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(
                                     conTransf,
                                     conTransf[15] + _constants.splitterZShift - _constants.splitterZToleranceM,
-                                    conTransf[15] + _constants.splitterZShift + _constants.splitterZToleranceM
+                                    conTransf[15] + _constants.splitterZShift + _constants.splitterZToleranceM,
+                                    logger
                                 )
                                 logger.print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
                                 if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then
