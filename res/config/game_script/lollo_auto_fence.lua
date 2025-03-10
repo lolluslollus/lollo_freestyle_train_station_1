@@ -525,14 +525,14 @@ local _guiActions = {
         for conId, _ in pairs(lastWaypointData.autoFenceMarkerEdgeIds_indexedByConId) do
             conIds[#conIds+1] = conId
         end
-        -- sort the ids, the sequence matters here
+        -- sort the ids, the sequence matters here because the second marker commands the orientation
         if conIds[1] == lastWaypointData.newWaypointId then
             conIds[1], conIds[2] = conIds[2], conIds[1]
         end
         -- set a place to build the fence con
-        local fenceWaypoint1Pos = _utils.getConPosition(conIds[1])
-        local fenceWaypoint2Pos = _utils.getConPosition(conIds[2])
-        if fenceWaypoint1Pos == nil or fenceWaypoint2Pos == nil then
+        local marker1Pos = _utils.getConPosition(conIds[1])
+        local marker2Pos = _utils.getConPosition(conIds[2])
+        if marker1Pos == nil or marker2Pos == nil then
             logger.err('_handleValidFenceWaypointBuilt cannot find the fence waypoint positions')
             return
         end
@@ -545,9 +545,9 @@ local _guiActions = {
         end
 
         local fenceWaypointMidTransf = transfUtils.position2Transf({
-            (fenceWaypoint1Pos[1] + fenceWaypoint2Pos[1]) * 0.5,
-            (fenceWaypoint1Pos[2] + fenceWaypoint2Pos[2]) * 0.5,
-            (fenceWaypoint1Pos[3] + fenceWaypoint2Pos[3]) * 0.5,
+            (marker1Pos[1] + marker2Pos[1]) * 0.5,
+            (marker1Pos[2] + marker2Pos[2]) * 0.5,
+            (marker1Pos[3] + marker2Pos[3]) * 0.5,
         })
 
         local baseEdge1 = api.engine.getComponent(edge1Id, api.type.ComponentType.BASE_EDGE)
@@ -560,25 +560,6 @@ local _guiActions = {
         -- convert userdata.XYZ to table.123
         local edge2Node0Pos = transfUtils.xYZ2OneTwoThree(api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE).position)
         local edge2Node1Pos = transfUtils.xYZ2OneTwoThree(api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE).position)
-
-        -- useless
-        -- local edgeObject1Side, edgeObject2Side
-        -- for _, obj in pairs(baseEdge1.objects) do
-        --     if obj[1] == fenceWaypointIds[1] then
-        --         edgeObject1Side = obj[2]
-        --         break
-        --     end
-        -- end
-        -- for _, obj in pairs(baseEdge2.objects) do
-        --     if obj[1] == fenceWaypointIds[2] then
-        --         edgeObject2Side = obj[2]
-        --         break
-        --     end
-        -- end
-        -- if not(edgeObject1Side) or not(edgeObject2Side) then
-        --     logger.err('_handleValidFenceWaypointBuilt cannot find edge object sides')
-        --     return
-        -- end
 
         local eventArgs = {
             edge1Id = edge1Id,
@@ -1120,7 +1101,7 @@ function data()
                             -- logger.print('trackEdgeListFine =') logger.debugPrint(trackEdgeListFine)
                             if #trackEdgeListFine > 0 then
                                 local yShift_main = trackEdgeList_Ordered[1].width * 0.5
-                                local yShift_WallBehind = trackEdgeList_Ordered[1].width * 0.5 + 1 -- walls behind are 1m thick
+                                local yShift_WallBehind = trackEdgeList_Ordered[1].width * 0.5 + 1 -- walls behind are 1m or 2m thick and they have y backed up by 0.5
                                 local transfs = arrayUtils.map(
                                     trackEdgeListFine,
                                     function(tel)
