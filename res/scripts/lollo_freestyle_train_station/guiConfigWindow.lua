@@ -263,7 +263,13 @@ return {
             -- window:setAttached(false)
             window:setPinned(false)
 
-            guiHelpers.setWindowPosition(window, {x = api.gui.util.getGameUI():getContentRect().w - size.w})
+            local gameGUI = api.gui.util.getGameUI()
+            if gameGUI and gameGUI.getContentRect then
+                local contentRect = gameGUI:getContentRect()
+                if contentRect and type(contentRect.w) == 'number' then
+                    guiHelpers.setWindowPosition(window, {x = contentRect.w - size.w})
+                end
+            end
         end
         self.isShowingWarning = self.privateData.isShowingWarning
         ---@param text string

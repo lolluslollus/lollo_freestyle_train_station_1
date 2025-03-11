@@ -59,7 +59,6 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 - Minor version 1.115 removed links from flush exits at the end of platforms, to avoid crashes. It also replaced older lifts and twin stairs (assets) with new ones.
 - Minor Version 1.141 introduces head stations. Older platforms have no head option unless you destroy and rebuild them.
 - Minor Version 1.156 introduces thick walls and dams. Existing station walls or fences might suddenly receive a thick wall and cause trouble. Use the new module "Remove Terminal Deco" on ALL terminals and then rebuild your deco.
-- Minor Version 1.163 uncouples walls between ground and tunnel. Existing station walls that happen wo be in tunnels will bne destroyed. Just build them again.
 
 [h1]Known issues:[/h1]
 - Module placement is rather free, the player is allowed to do some unrealistic things. Proper checks would be too expensive.
@@ -406,12 +405,10 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["EraCPassengerPlatform5MAutoSplitDesc"] = "Passenger platforms to be laid as tracks, 5 m wide, era C, not for tunnels. They are in fact slow train tracks; they are not meant to be crossed. Once built, they split into two 2.5 m platforms; for complex constructions, lay a 5m platform first and turn it into this with the magic wand.",
 			["EraCPassengerPlatform2_5MName"] = "2.5 m passenger platform, era C",
 			["EraCPassengerPlatform2_5MDesc"] = "Passenger platforms to be laid as tracks, 2.5 m wide, era C, not for tunnels. They are in fact slow train tracks; they are not meant to be crossed.",
-			["FenceWaypointName"] = "Fence end marker",
-			["FenceWaypointDesc"] = "Marks the ends of a fence / wall that will be drawn along a track. The direction of the second marker sets the side the fence / wall will be on. Click the fence to configure it.",
 			["PlatformWaypointName"] = "Platform end marker",
 			["PlatformWaypointDesc"] = "Marks the ends of a platform that will become part of a freestyle station. The direction does not matter; if there is already a split nearby, it will take priority; if the platform ends nearby, that end will take a higher priority.",
 			["SplitterWaypointName"] = "Track Splitter",
-			["SplitterWaypointDesc"] = "Splits a track in two sections. Does not work on tracks, which are part of a construction (eg a station). You can also use the track splitter construction. Use <AltGr> + <L> to see its effect.",
+			["SplitterWaypointDesc"] = "Splits a track in two sections. It does not work on tracks, which are part of a construction (eg a station). You can also use the track splitter construction. Use <AltGr> + <L> to see its effect.",
 			["TrackWaypointName"] = "Track End Marker",
 			["TrackWaypointDesc"] = "Marks the ends of a track that will become part of a freestyle station. The direction does not matter; if there is already a split nearby, it will take priority; if the track ends nearby, that end will take a higher priority. Nearby semaphores can interfere, you may want to remove them and put them back once the station is laid out.",
 
@@ -501,7 +498,10 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["ErrorRemovingTerminalHere"] = "Error removing terminal here",
 			["GoBack"] = "Go back",
 			["GoThere"] = "Go there",
+			["InvalidEdge"] = "Invalid Track",
+			["InvalidPosition"] = "Invalid Position",
 			["Join"] = "Join",
+			["MarkersNotConnected"] = "Cannot connect this marker to its twin.",
 			["NeedAdjust4Snap"] = "Some street connections have unsnapped: make any change to the station configuration to fix this",
 			["NoJoin"] = "Do not join",
 			["RebuildNeighboursInProgress"] = "Rebuilding platforms, tracks and neighbours...",
@@ -515,7 +515,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["TrackWaypointBuiltOnPlatform"] = "You can only build track markers on tracks and platform markers on platforms",
 			["TrackWaypointsMissing"] = "Build two track markers first",
 			["UndergroundTrainDepotName"] = "Underground Train depot",
-			["UndergroundTrainDepotDesc"] = "Used to buy/sell trains. The 'Look Underground' track construction helps to snap it to the track.",
+			["UndergroundTrainDepotDesc"] = "Used to buy/sell trains. After plopping this, touch the terrain with any terrain tool to remove artifacts.",
 			["UnsnappedMaybe_CheckEdgeExits"] = "Some connections may have been cut; rebuild the external connections to the auto bridges.",
 			["Unsnapped_CheckEdgeExits_Or_RestoreDeletedTerminal"] = "Some connections have been cut; rebuild the external connections to the auto bridges, or open the configuration and remove the last auto bridges or restore the terminal you deleted.",
 			["UnsnappedNeighbouringConstruction"] = "Some connections to stairs or lifts have been cut, check them with <AltGr> + <L>",
@@ -531,8 +531,8 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["WaypointDistanceWindowTitle"] = "Air Distance",
 			["WaypointsNotConnected"] = "This marker is not connected to its twin, or there is a station / joint / semaphore between, or it is too close to a station / joint / semaphore",
 			["WaypointsTooCloseToStation"] = "Too close to an existing station or depot. Cut the track with a splitter if you need to get close. The platform heads will connect automatically if they are closer than 7 metres",
+			["WaypointsTooClose"] = "Too close to its twin",
 			["WaypointsTooFar"] = "Too far from its twin",
-			["WaypointsTooNear"] = "Too close to its twin",
 			["WaypointsWrong"] = "Place two markers on the same platform and two on the same track",
 			["WrongTrack"] = "The track and / or platform is too irregular, lay it again cleanly.",
 
@@ -623,6 +623,14 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["TilesHexagonClean"] = "Tiles hexagon, clean",
 
 			-- fence assets
+			["AutoFenceMarkerName"] = "Fence end marker",
+			["AutoFenceMarkerDesc"] = "Marks the first and last bits of track, along which a fence / wall will be built. The direction of the second marker sets the side of the fence. Once done, click the fence to configure it.",
+			["AutoFenceMarkerPreciseName"] = "Precise fence end marker",
+			["AutoFenceMarkerPreciseDesc"] = "Marks the ends of a fence / wall that will be built along a track. The direction of the second marker sets the side of the fence. Once done, click the fence to configure it.",
+			["FenceWaypointName"] = "Fence end marker",
+			["FenceWaypointDesc"] = "Marks the first and last bits of track, along which a fence / wall will be built. The direction of the second marker sets the side of the fence. Once done, click the fence to configure it. To work on stations, use the marker asset or the station configuration menu.",
+			["FenceWaypointPreciseName"] = "Precise fence end marker",
+			["FenceWaypointPreciseDesc"] = "Marks the ends of a fence / wall that will be built along a track. The direction of the second marker sets the side of the fence. Once done, click the fence to configure it. To work on stations, use the marker asset or the station configuration menu.",
 			["DoTerrain"] = "Align terrain",
 			["FenceAssetsName"] = "Walls and fences",
 			["FenceAssetsDesc"] = "Walls and fences to match freestyle stations. Adjust them with the Construction Mover.",
@@ -712,7 +720,6 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 - Mit der Minor-Version 1.115 werden bündige Ausgänge an den Bahnsteigenden nicht mehr verbunden, um Abstürze zu vermeiden. Ältere Aufzug- und Zwillingstreppen-Assets wurden auch ersetzt.
 - Mit der Minor-Version 1.141 werden Kopfbahnhöfe hinzugefügt. Ältere Terminals bekommen keine Kopf-Option, wenn du sie nicht abreisst und neu baust.
 - Mit der Minor-Version 1.156 werden dicke Mauer hinzugefügt. Bestehende Bahnhofsmauer oder -Zäune bekommen möglicherweise eine dicke Wand und verursachen weitere Probleme. Verwende das neue Modul "Entferne Bahnsteig Deko" auf ALLEN Bahnsteigen und baue deine Deko dann wieder.
-- Minor Version 1.163 entkoppelt Wände zwischen Boden und Tunnel. Bestehende Bahnhofswände, die in Tunnels stehen, werden zerstört. Baue sie einfach wieder.
 
 [h1]Bekannte Probleme:[/h1]
 - Die Platzierung der Module ist ziemlich frei, der Spieler darf einige unrealistische Dinge tun. Richtige Kontrollen wären zu teuer.
@@ -1059,12 +1066,10 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["EraCPassengerPlatform5MAutoSplitDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen. Nach dem Verlegen trennen sie sich automatisch in zwei 2,5 m Bahnsteige; für komplexe Konstruktionen verwende zuerst den 5 m Bahnsteig, dann wandel ihn in diesen mit dem Zauberstab um.",
 			["EraCPassengerPlatform2_5MName"] = "2,5 m Personenbahnsteig, Epoche C",
 			["EraCPassengerPlatform2_5MDesc"] = "Personenbahnsteige, die als Gleise zu verlegen sind, 2,5 m breit, Epoche C, nicht für Tunnels. Sie sind eigentlich Langsamfahrgleise, die nicht mit Bü überquert werden sollen.",
-			["FenceWaypointName"] = "Zaunmarker",
-			["FenceWaypointDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
 			["PlatformWaypointName"] = "Bahnsteigmarker",
 			["PlatformWaypointDesc"] = "Markiert die Enden eines Bahnsteigs, der Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Bahnsteig in der Nähe endet, hat dieses Ende eine höhere Priorität.",
 			["SplitterWaypointName"] = "Gleisteiler",
-			["SplitterWaypointDesc"] = "Teilt ein Gleis in zwei Abschnitte. Funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Du kannst sonst die Gleisteiler-Konstruktion verwenden. Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
+			["SplitterWaypointDesc"] = "Teilt ein Gleis in zwei Abschnitte. Es funktioniert nicht bei Gleisen, die Teil einer Konstruktion sind (z.B. ein Bahnhof). Du kannst sonst die Gleisteiler-Konstruktion verwenden. Verwende <AltGr> + <L>, um die Wirkung zu sehen.",
 			["TrackWaypointName"] = "Gleismarker",
 			["TrackWaypointDesc"] = "Markiert die Enden eines Gleises, das Teil eines Freestyle-Bahnhofs wird. Die Richtung spielt keine Rolle; wenn es in der Nähe bereits einen Teiler gibt, hat dieser Vorrang; wenn der Track in der Nähe endet, hat dieses Ende eine höhere Priorität. Nahegelegene Signalmasten können stören: entferne sie und füge sie wieder ein, sobald der Bahnhof angelegt ist.",
 
@@ -1154,7 +1159,10 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["ErrorRemovingTerminalHere"] = "Fehler beim Löschen eines Terminals hier",
 			["GoBack"] = "Zurück",
 			["GoThere"] = "Guck da",
+			["InvalidEdge"] = "Ungültiges Gleis",
+			["InvalidPosition"] = "Ungültige Stelle",
 			["Join"] = "Beitreten",
+			["MarkersNotConnected"] = "Dieser Marker kann nicht mit seinem Gegenstück verbunden werden.",
 			["NeedAdjust4Snap"] = "Einige Straßenverbindungen haben sich gelöst: nimm eine Änderung an der Bahnhofskonfiguration vor, um dies zu beheben",
 			["NoJoin"] = "Nicht verbinden",
 			["RebuildNeighboursInProgress"] = "Wiederaufbau von Bahnsteigen, Gleisen und Nachbarn...",
@@ -1168,7 +1176,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["TrackWaypointBuiltOnPlatform"] = "Du kannst Gleismarker nur auf Gleisen und Bahnsteigmarker nur auf Bahnsteigen bauen",
 			["TrackWaypointsMissing"] = "Baue zuerst zwei Gleismarker",
 			["UndergroundTrainDepotName"] = "U-Bahn-Depot",
-			["UndergroundTrainDepotDesc"] = "Wird zum Kauf/Verkauf von Zügen verwendet. Die Gleiskonstruktion 'Look Underground' hilft beim Einrasten auf dem Gleis.",
+			["UndergroundTrainDepotDesc"] = "Wird zum Kauf/Verkauf von Zügen verwendet. Nach dem Bauen, verwende kurz irgendwelches Terrain Werkzeug um die Artifakte loszuwerden.",
 			["UnsnappedMaybe_CheckEdgeExits"] = "Einige Verbindungen sind jetzt vielleicht getrennt; baue die Verbindungen zu den Auto-Brücken wieder zurück.",
 			["Unsnapped_CheckEdgeExits_Or_RestoreDeletedTerminal"] = "Einige Verbindungen sind jetzt getrennt; baue die Verbindungen zu den Auto-Brücken wieder zurück, oder öffne die Konfiguration und lösche die letzten Auto-Brücken oder setze den gelöschten Terminal wieder zurück.",
 			["UnsnappedNeighbouringConstruction"] = "Einige Verbindungen zu Aufzügen oder Treppen sind jetzt getrennt, überprüfe sie mit <AltGr> + <L>",
@@ -1184,8 +1192,8 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["WaypointDistanceWindowTitle"] = "Luftentfernung",
 			["WaypointsNotConnected"] = "Dieser Marker ist nicht mit seinem Gegenstück verbunden, oder es liegt ein Bahnhof / eine Verbindung / ein Signalmast dazwischen, oder er ist zu nahe an einem Bahnhof / einer Verbindung / einem Signalmast",
 			["WaypointsTooCloseToStation"] = "Zu nahe an einem bestehenden Bahnhof oder Depot. Schneide das Gleis mit einem Gleisteiler, wenn du näher herankommen musst. Die Bahnsteigköpfe verbinden sich automatisch, wenn sie näher als 7 Meter sind",
+			["WaypointsTooClose"] = "Zu nah an seinem Gegenstück",
 			["WaypointsTooFar"] = "Zu weit von seinem Gegenstück entfernt",
-			["WaypointsTooNear"] = "Zu nah an seinem Gegenstück",
 			["WaypointsWrong"] = "Platziere zwei Marker auf demselben Bahnsteig und zwei auf demselben Gleis",
 			["WrongTrack"] = "Bahnsteig und / oder Gleis sind nicht sauber, verlege sie neu.",
 
@@ -1276,6 +1284,14 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["TilesHexagonClean"] = "Kacheln Sechseck, sauber",
 
 			-- Zaun-Assets
+			["AutoFenceMarkerName"] = "Zaunmarker",
+			["AutoFenceMarkerDesc"] = "Markiert das erste und letze Gleisstück, entlang deren ein Zaun gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
+			["AutoFenceMarkerPreciseName"] = "Präziser Zaunmarker",
+			["AutoFenceMarkerPreciseDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren.",
+			["FenceWaypointName"] = "Zaunmarker",
+			["FenceWaypointDesc"] = "Markiert das erste und letze Gleisstück, entlang deren ein Zaun gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren. Um in Bahnhöfen zu arbeiten, verwende mein Marker-Asset oder das Bahnhof-Konfigurationsmenü.",
+			["FenceWaypointPreciseName"] = "Präziser Zaunmarker",
+			["FenceWaypointPreciseDesc"] = "Markiert die Enden eines Zauns, der entlang eines Gleises gebaut wird. Die Richtung des zweiten Markers setzt die Seite fest, wo der Zaun entsteht. Klicke dann darauf, um den Zaun zu konfigurieren. Um in Bahnhöfen zu arbeiten, verwende mein Marker-Asset oder das Bahnhof-Konfigurationsmenü.",
 			["DoTerrain"] = "Boden ausgleichen",
 			["FenceAssetsName"] = "Mauern und Zäune",
 			["FenceAssetsDesc"] = "Mauern und Zäune, die zu den Freestyle-Bahnhöfen passen. Passe sie mit dem \"Construction Mover\" an.",

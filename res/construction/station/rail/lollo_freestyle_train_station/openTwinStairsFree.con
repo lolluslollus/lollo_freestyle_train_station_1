@@ -27,7 +27,7 @@ function data()
 			yearTo = -1,
 		},
         categories = { 'stairs' },
-		order = 999,
+		order = 505,
 		autoRemovable = false,
         -- buildMode = 'MULTI',
 		skipCollision = false, -- true,

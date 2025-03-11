@@ -2355,22 +2355,47 @@ logger.print('FOUR')
 
     rebuildUndergroundDepotWithoutHole = function(oldConId)
         -- LOLLO NOTE programmatically adding a depot works, but as soon as you click the depot, the game will crash
-        logger.print('_rebuildUndergroundDepotWithoutHole starting, oldConId =', oldConId or 'NIL')
-        local oldCon = edgeUtils.isValidAndExistingId(oldConId)
-            and api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
-            or nil
-        if not(oldCon) then return end
+        -- This is why we use the old upgrade instead.
+        -- Upgrade works, but leaves some traces of invisible terrail. Touch a terrain tool and it will go away.
+        logger.print('_rebuildUndergroundDepotWithoutHole starting, oldConId = ' .. tostring(oldConId))
+        local oldCon = edgeUtils.isValidAndExistingId(oldConId) and api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
+        if not(oldCon) or not(oldCon.fileName) then return end
+
+        if oldCon.fileName ~= _constants.undergroundDepotConFileName then return end
 
         logger.print('oldCon =') logger.debugPrint(oldCon)
-
+        local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
+        logger.print('paramsBak_NoSeed = ') logger.debugPrint(paramsBak_NoSeed)
+        xpcall(
+            function()
+                -- UG TODO there is no such thing in the new api,
+                -- nor an upgrade event, both would be useful
+                -- collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                logger.print('attempting to upgrade the depot')
+                local upgradedConId = game.interface.upgradeConstruction(
+                    oldConId,
+                    oldCon.fileName,
+                    paramsBak_NoSeed
+                )
+                collectgarbage('collect')
+                logger.print('depot upgraded, collect garbage done')
+            end,
+            function(error)
+                logger.warn('depot upgrade failed')
+                logger.warn(error)
+                collectgarbage('collect')
+                logger.print('collect garbage done')
+            end
+        )
+--[[
         local newParams = arrayUtils.cloneDeepOmittingFields(oldCon.params, nil, true)
-        if newParams.isShowUnderground == 0 then return end
+        -- if newParams.isShowUnderground == 0 then return end
 
-        newParams.isShowUnderground = 0 -- this is what this is all about: once built, stop showing underground
+        -- newParams.isShowUnderground = 0 -- this is what this is all about: once built, stop showing underground
         newParams.seed = newParams.seed + 1
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = oldCon.fileName
+        newCon.fileName = _constants.undergroundDepotConFileName -- this is what it is all about
         newCon.params = newParams
         newCon.playerEntity = api.engine.util.getPlayer()
         newCon.transf = oldCon.transf
@@ -2380,10 +2405,13 @@ logger.print('FOUR')
         local proposal = api.type.SimpleProposal.new()
         proposal.constructionsToAdd[1] = newCon
         proposal.constructionsToRemove = { oldConId }
-        -- proposal.old2new = { -- makes trouble
-        --     -- oldConId, 0
-        --     oldConId, 1
-        -- }
+        proposal.old2new = { -- makes trouble
+            -- oldConId, 0 -- silent crash
+            -- oldConId, 1 -- silent crash
+            -- [oldConId] = 1 -- silent crash
+            [oldConId] = 0 -- right type but crashes when clicking
+            -- {oldConId, 1} -- wrong type
+        }
 
         logger.print('proposal =') logger.debugPrint(proposal)
 
@@ -2405,9 +2433,12 @@ logger.print('FOUR')
                 else
                     local newConId = result.resultEntities[1]
                     logger.print('_rebuildUndergroundDepotWithoutHole succeeded, conId = ', newConId)
+                    local newNewCon = api.engine.getComponent(newConId, api.type.ComponentType.CONSTRUCTION)
+                    logger.debugPrint(newNewCon)
                 end
             end
         )
+]]
     end,
 }
 
@@ -3244,7 +3275,7 @@ function data()
             _guiTexts.waypointsCrossStation = _('WaypointsCrossStation')
             _guiTexts.waypointsTooCloseToStation = _('WaypointsTooCloseToStation')
             _guiTexts.waypointsTooFar = _('WaypointsTooFar')
-            _guiTexts.waypointsTooNear = _('WaypointsTooNear')
+            _guiTexts.waypointsTooNear = _('WaypointsTooClose')
             _guiTexts.waypointsNotConnected = _('WaypointsNotConnected')
             _guiTexts.waypointsWrong = _('WaypointsWrong')
             -- make param window resizable coz our parameters are massive
@@ -3294,8 +3325,7 @@ function data()
                     elseif name == _eventNames.ALLOW_PROGRESS then
                         m_state.isHideProgress = false
                     elseif name == _eventNames.HIDE_HOLE_REQUESTED then
-                        -- LOLLO NOTE programmatically adding a depot works, but as soon as you click the depot, the game will crash
-                        -- _actions.rebuildUndergroundDepotWithoutHole(args.conId)
+                        _actions.rebuildUndergroundDepotWithoutHole(args.conId)
                     elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
                         _actions.bulldozeCon(args.platformMarkerConstructionEntityId)
                     elseif name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
@@ -3963,66 +3993,70 @@ function data()
                     elseif name == _eventNames.TRACK_SPLIT_REQUESTED then
                         if args ~= nil and args.conId ~= nil then
                             if edgeUtils.isValidAndExistingId(args.conId) then
-                                local conTransf = api.engine.getComponent(args.conId, api.type.ComponentType.CONSTRUCTION).transf
-                                conTransf = transfUtilsUG.new(conTransf:cols(0), conTransf:cols(1), conTransf:cols(2), conTransf:cols(3))
-                                logger.print('type(conTransf) =', type(conTransf)) logger.debugPrint(conTransf)
-                                local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(
-                                    conTransf,
-                                    conTransf[15] + _constants.splitterZShift - _constants.splitterZToleranceM,
-                                    conTransf[15] + _constants.splitterZShift + _constants.splitterZToleranceM
-                                )
-                                logger.print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
-                                if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then
-                                    local averageZ = _utils.getAverageZ(nearestEdgeId)
-                                    logger.print('averageZ =', averageZ or 'NIL')
-                                    if type(averageZ) == 'number' then
-                                        local nodeBetween = edgeUtils.getNodeBetweenByPosition(
-                                            nearestEdgeId,
-                                            {
-                                                x = conTransf[13],
-                                                y = conTransf[14],
-                                                z = averageZ,
-                                            },
-                                            true,
-                                            logger.isExtendedLog()
-                                        )
-                                        logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
-                                        if nodeBetween == nil then return end
+                                local con = api.engine.getComponent(args.conId, api.type.ComponentType.CONSTRUCTION)
+                                if con and con.transf then
+                                    local conTransfSol = con.transf
+                                    local conTransfLua = transfUtilsUG.new(conTransfSol:cols(0), conTransfSol:cols(1), conTransfSol:cols(2), conTransfSol:cols(3))
+                                    logger.print('type(conTransf) =', type(conTransfLua)) logger.debugPrint(conTransfLua)
+                                    local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(
+                                        conTransfLua,
+                                        conTransfLua[15] + _constants.splitterZShift - _constants.splitterZToleranceM,
+                                        conTransfLua[15] + _constants.splitterZShift + _constants.splitterZToleranceM,
+                                        logger
+                                    )
+                                    logger.print('track splitter got nearestEdge =', nearestEdgeId or 'NIL')
+                                    if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then
+                                        local averageZ = _utils.getAverageZ(nearestEdgeId)
+                                        logger.print('averageZ =', averageZ or 'NIL')
+                                        if type(averageZ) == 'number' then
+                                            local nodeBetween = edgeUtils.getNodeBetweenByPosition(
+                                                nearestEdgeId,
+                                                {
+                                                    x = conTransfLua[13],
+                                                    y = conTransfLua[14],
+                                                    z = averageZ,
+                                                },
+                                                true,
+                                                logger.isExtendedLog()
+                                            )
+                                            logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                            if nodeBetween == nil then return end
 
-                                        _actions.splitEdgeRemovingObject(
-                                            nearestEdgeId,
-                                            nodeBetween,
-                                            nil,
-                                            nil,
-                                            nil,
-                                            nil,
-                                            true
-                                        )
+                                            _actions.splitEdgeRemovingObject(
+                                                nearestEdgeId,
+                                                nodeBetween,
+                                                nil,
+                                                nil,
+                                                nil,
+                                                nil,
+                                                true
+                                            )
+                                        end
+                                        -- this is a little more accurate, but it's also harder to use with tunnels and bridges.
+                                        -- a user error can throw it out of whack more than the averageZ does.
+                                        -- local nodeBetween = edgeUtils.getNodeBetweenByPosition(
+                                        --     nearestEdgeId,
+                                        --     {
+                                        --         x = conTransf[13],
+                                        --         y = conTransf[14],
+                                        --         z = conTransf[15] + _constants.splitterZShift,
+                                        --     },
+                                        --     true,
+                                        --     logger.isExtendedLog()
+                                        -- )
+                                        -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
+                                        -- if nodeBetween == nil then return end
+                                        --
+                                        -- _actions.splitEdgeRemovingObject(
+                                        --     nearestEdgeId,
+                                        --     nodeBetween,
+                                        --     nil,
+                                        --     nil,
+                                        --     nil,
+                                        --     nil,
+                                        --     true
+                                        -- )
                                     end
-                                    -- this is a little more accurate, but it's also harder to use with tunnels and bridges.
-                                    -- a user error can throw it out of whack more than the averageZ does.
-                                    -- local nodeBetween = edgeUtils.getNodeBetweenByPosition(
-                                    --     nearestEdgeId,
-                                    --     {
-                                    --         x = conTransf[13],
-                                    --         y = conTransf[14],
-                                    --         z = conTransf[15] + _constants.splitterZShift,
-                                    --     },
-                                    --     true,
-                                    --     logger.isExtendedLog()
-                                    -- )
-                                    -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
-                                    -- if nodeBetween == nil then return end
-                                    --
-                                    -- _actions.splitEdgeRemovingObject(
-                                    --     nearestEdgeId,
-                                    --     nodeBetween,
-                                    --     nil,
-                                    --     nil,
-                                    --     nil,
-                                    --     nil,
-                                    --     true
-                                    -- )
                                 end
                             end
                             _actions.bulldozeConstruction(args.conId)
@@ -4198,12 +4232,9 @@ function data()
                                 local conId = args.result[1]
                                 local con = _guiActions.getCon(conId)
                                 -- logger.print('construction built, construction id =') logger.debugPrint(conId)
-                                if not(con) then return end
+                                if not(con) or not(con.fileName) or not(con.transf) then return end
 
-                                -- if con.fileName == 'station/rail/lollo_freestyle_train_station/track_splitter.con'
-                                if con.fileName == 'lollo_freestyle_train_station/track_splitter.con'
-                                and con.transf ~= nil
-                                then
+                                if con.fileName == 'lollo_freestyle_train_station/track_splitter.con' then
                                     api.cmd.sendCommand(
                                         api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -4212,17 +4243,15 @@ function data()
                                             { conId = conId }
                                         )
                                     )
-                                -- elseif con.fileName == _constants.undergroundDepotConFileName
-                                -- and con.transf ~= nil
-                                -- then
-                                --     api.cmd.sendCommand(
-                                --         api.cmd.make.sendScriptEvent(
-                                --             string.sub(debug.getinfo(1, 'S').source, 1),
-                                --             _eventId,
-                                --             _eventNames.HIDE_HOLE_REQUESTED,
-                                --             { conId = conId }
-                                --         )
-                                --     )
+                                elseif con.fileName == _constants.undergroundDepotConFileName then
+                                    api.cmd.sendCommand(
+                                        api.cmd.make.sendScriptEvent(
+                                            string.sub(debug.getinfo(1, 'S').source, 1),
+                                            _eventId,
+                                            _eventNames.HIDE_HOLE_REQUESTED,
+                                            { conId = conId }
+                                        )
+                                    )
                                 else
                                     _guiActions.tryJoinSubway(conId, con)
                                 end

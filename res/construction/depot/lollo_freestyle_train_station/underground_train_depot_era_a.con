@@ -13,25 +13,13 @@ function data()
 			name = _('UndergroundTrainDepotName'),
 			description = _('UndergroundTrainDepotDesc')
 		},
-		availability = { },
+		availability = {
+            yearFrom = 0,
+            yearTo = 0
+        },
 		params = {
 			paramsutil.makeTrackTypeParam(),
 			paramsutil.makeTrackCatenaryParam(),
-			-- LOLLO NOTE it would be nice to show underground while building and
-			-- close the view underground once built,
-			-- but this involves upgrading or rebuilding the depot programmatically,
-			-- which fails.
-            -- {
-            --     key = 'isShowUnderground',
-            --     name = _('ShowUnderground'),
-			-- 	tooltip = _('ShowUndergroundTooltip'), -- useless with the checkbox
-            --     uiType = 'BUTTON',
-			-- 	-- uiType = 'CHECKBOX',
-            --     values = {
-            --         _('NO'), _('YES')
-            --     },
-            --     defaultIndex = 1,
-            -- },
 		},
 		updateFn = function(params)
 			logger.print('updateFn starting, params.upgrade =', params.upgrade or 'NIL') -- this is always nil
@@ -69,23 +57,22 @@ function data()
 						snapNodes = { 0, },
 					}
 				},
-				groundFaces = { },
-				-- groundFaces = { -- dummy ground faces so this is treated as a proper construction, and the construction mover can adjust it
-				-- 	{
-				-- 		face = {
-				-- 			{0.1, -0.1, 0.0, 1.0},
-				-- 			{0.1, 0.1, 0.0, 1.0},
-				-- 			{-0.1, 0.1, 0.0, 1.0},
-				-- 			{-0.1, -0.1, 0.0, 1.0},
-				-- 		},
-				-- 		modes = {
-				-- 			{
-				-- 				type = 'FILL',
-				-- 				key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
-				-- 			}
-				-- 		}
-				-- 	},
-				-- },
+				groundFaces = { -- dummy ground faces so this is treated as a proper construction, and it won't say hello there
+					{
+						face = {
+							{0.1, -0.1, 0.0, 1.0},
+							{0.1, 0.1, 0.0, 1.0},
+							{-0.1, 0.1, 0.0, 1.0},
+							{-0.1, -0.1, 0.0, 1.0},
+						},
+						modes = {
+							{
+								type = 'FILL',
+								key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+							}
+						}
+					},
+				},
 				models = {
 					{
 						id = 'lollo_freestyle_train_station/depot/underground_train_depot_era_a.mdl',
@@ -99,7 +86,7 @@ function data()
 				} }
 			}
 
-			if params.isShowUnderground == 1 then
+			if not(params.upgrade) then
 				local xSize = 25
 				local ySize = 100
 				local face = {

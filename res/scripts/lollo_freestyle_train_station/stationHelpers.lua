@@ -1074,15 +1074,18 @@ local helpers = {
             for _, nodeId in pairs(nodeIds) do
                 -- only take track nodes with at least one edge attached
                 if edgeUtils.isValidAndExistingId(nodeId) and #_map[nodeId] > 0 then
-                    local nodePosition = api.engine.getComponent(nodeId, api.type.ComponentType.BASE_NODE).position
-                    local distance = transfUtils.getPositionsDistance(refPosition, nodePosition)
-                    if distance and distance < shortestDistance then
-                        shortestDistance = distance
-                        nearestNodeId = nodeId
-                    elseif distance == shortestDistance then
-                        -- LOLLO TODO what if there are multiple nodes in the same position? It's academic, but how do I make sure it will take the best one?
-                        -- after build 35716, this should never happen; it'd be nice to know the game tolerance for "same position".
-                        logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got two nodes at') logger.warningDebugPrint(refPosition)
+                    local node = api.engine.getComponent(nodeId, api.type.ComponentType.BASE_NODE)
+                    if node ~= nil and node.position ~= nil then
+                        local nodePosition = node.position
+                        local distance = transfUtils.getPositionsDistance(refPosition, nodePosition)
+                        if distance and distance < shortestDistance then
+                            shortestDistance = distance
+                            nearestNodeId = nodeId
+                        elseif distance == shortestDistance then
+                            -- LOLLO TODO what if there are multiple nodes in the same position? It's academic, but how do I make sure it will take the best one?
+                            -- after build 35716, this should never happen; it'd be nice to know the game tolerance for "same position".
+                            logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got two nodes at') logger.warningDebugPrint(refPosition)
+                        end
                     end
                 end
             end
@@ -1143,7 +1146,10 @@ local helpers = {
 
         local result = 0
         for _, stationId in pairs(stationGroupData.stations) do
-            result = result + #(api.engine.getComponent(stationId, api.type.ComponentType.STATION).terminals)
+            local station = api.engine.getComponent(stationId, api.type.ComponentType.STATION)
+            if station ~= nil and station.terminals ~= nil then
+                result = result + #(station.terminals)
+            end
         end
         return result
     end,
@@ -1169,7 +1175,8 @@ helpers.getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnl
                 local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                 if con ~= nil and con.fileName == _constants.stationConFileName then
                     -- logger.print('construction.name =') logger.debugPrint(con.name) nil
-                    local isCargo = api.engine.getComponent(stationId, api.type.ComponentType.STATION).cargo or false
+                    local station = api.engine.getComponent(stationId, api.type.ComponentType.STATION)
+                    local isCargo = (station ~= nil and station.cargo) or false
                     -- logger.print('isCargo =', isCargo)
                     -- logger.print('isOnlyPassengers =', isOnlyPassengers)
                     if not(isCargo) or not(isOnlyPassengers) then
@@ -1309,11 +1316,14 @@ local _getStationStreetEndNodes = function(frozenEdgeIds_indexed, frozenNodeIds_
 
     local freeNodes = {}
     local _addNode = function(nodeId, edgeId)
-        freeNodes[#freeNodes+1] = {
-            nodeId = nodeId,
-            edgeId = edgeId,
-            nodePosition = edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(nodeId, api.type.ComponentType.BASE_NODE).position)
-        }
+        local node = api.engine.getComponent(nodeId, api.type.ComponentType.BASE_NODE)
+        if node ~= nil and node.position ~= nil then
+            freeNodes[#freeNodes+1] = {
+                nodeId = nodeId,
+                edgeId = edgeId,
+                nodePosition = edgeUtils.getPositionTableFromUserdata(node.position)
+            }
+        end
     end
     for edgeId, _ in pairs(frozenEdgeIds_indexed) do
         if edgeUtils.isValidAndExistingId(edgeId) then
@@ -1528,17 +1538,25 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
     local endNodeIds4T = _getTrackEndNodeIds4T(nTerminal, frozenEdgeIds_indexed, frozenNodeIds_indexed, platformEdgeLists, trackEdgeLists)
     -- logger.print('endNodeIds4T =') logger.debugPrint(endNodeIds4T)
     -- I cannot clone these, for some reason: it dumps
-    local platformNode1Position = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node1Id)
-        and edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(endNodeIds4T.platforms.node1Id, api.type.ComponentType.BASE_NODE).position)
+    local tempNode = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node1Id)
+        and api.engine.getComponent(endNodeIds4T.platforms.node1Id, api.type.ComponentType.BASE_NODE)
+    local platformNode1Position = (tempNode ~= nil and tempNode.position ~= nil)
+        and edgeUtils.getPositionTableFromUserdata(tempNode.position)
         or nil
-    local platformNode2Position = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node2Id)
-        and edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(endNodeIds4T.platforms.node2Id, api.type.ComponentType.BASE_NODE).position)
+    tempNode = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node2Id)
+        and api.engine.getComponent(endNodeIds4T.platforms.node2Id, api.type.ComponentType.BASE_NODE)
+    local platformNode2Position = (tempNode ~= nil and tempNode.position ~= nil)
+        and edgeUtils.getPositionTableFromUserdata(tempNode.position)
         or nil
-    local trackNode1Position = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node1Id)
-        and edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(endNodeIds4T.tracks.node1Id, api.type.ComponentType.BASE_NODE).position)
+    tempNode = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node1Id)
+        and api.engine.getComponent(endNodeIds4T.tracks.node1Id, api.type.ComponentType.BASE_NODE)
+    local trackNode1Position = (tempNode ~= nil and tempNode.position ~= nil)
+        and edgeUtils.getPositionTableFromUserdata(tempNode.position)
         or nil
-    local trackNode2Position = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node2Id)
-        and edgeUtils.getPositionTableFromUserdata(api.engine.getComponent(endNodeIds4T.tracks.node2Id, api.type.ComponentType.BASE_NODE).position)
+    tempNode = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node2Id)
+        and api.engine.getComponent(endNodeIds4T.tracks.node2Id, api.type.ComponentType.BASE_NODE)
+    local trackNode2Position = (tempNode ~= nil and tempNode.position ~= nil)
+        and edgeUtils.getPositionTableFromUserdata(tempNode.position)
         or nil
 
     local result = {

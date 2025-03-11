@@ -165,7 +165,7 @@ function data()
 			description = _('FenceAssetsDesc'),
             icon = 'ui/construction/lollo_freestyle_train_station/fence_assets.tga',
 		},
-		order = 1110,
+		order = 103,
 		autoRemovable = false,
         -- buildMode = 'MULTI',
 		skipCollision = true,

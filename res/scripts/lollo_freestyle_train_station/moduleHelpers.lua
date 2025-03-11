@@ -2090,6 +2090,8 @@ return {
             local _laneZ = result.laneZs[nTerminal]
             local _defaultLaneZ = constants.defaultPlatformHeight
             local _zShift = _laneZ - _defaultLaneZ
+            local _, _, _baseId = slotHelpers.demangleId(slotId)
+            local _isWallEnd = (_baseId == constants.idBases.platformWallEndSlotId or _baseId == constants.idBases.platformWallEndInTunnelSlotId)
 
             -- local _isVertical = false
             local wallBaseModelId = (_laneZ == constants.platformHeights._0cm.aboveGround) and privateFuncs.deco.getWallBaseModelId(params, _eraPrefix) or nil
@@ -2178,74 +2180,79 @@ return {
                             if _isTrackOnPlatformLeft then skew = -skew end
                             wallTransf = transfUtils.getTransf_XSkewedOnZ(wallTransf, skew)
 
-                            result.models[#result.models+1] = {
-                                id = wallModelId,
-                                tag = tag,
-                                transf = wallTransf,
-                            }
-                            if wallBaseModelId ~= nil and cpf.type == 0 then -- only on ground
+                            local canDrawVsWallEnd = (ii == 1 and nTrackEdge == 1) or (ii ~= 1  and nTrackEdge ~= 1)
+                            -- add walls along
+                            if not(_isWallEnd) then
                                 result.models[#result.models+1] = {
-                                    id = wallBaseModelId,
+                                    id = wallModelId,
                                     tag = tag,
                                     transf = wallTransf,
                                 }
-                            end
-
-                            if wallBehindModelId ~= nil and cpf.type == 0 then -- only on ground
-                                -- print('doPlatformWall about to call addWallBehind with xRatio = ' .. tostring(xRatio) .. ', yRatio = ' .. tostring(yRatio) .. ', widthAboveNil = ' .. tostring(widthAboveNil) .. ', slopedAreaWidth = ' .. tostring(slopedAreaWidth))
-                                privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xRatio, _eraPrefix, _laneZ, _wallThickness)
+                                if wallBaseModelId ~= nil and cpf.type == 0 then -- only on ground
+                                    result.models[#result.models+1] = {
+                                        id = wallBaseModelId,
+                                        tag = tag,
+                                        transf = wallTransf,
+                                    }
+                                end
+                                if wallBehindModelId ~= nil and cpf.type == 0 then -- only on ground
+                                    -- print('doPlatformWall about to call addWallBehind with xRatio = ' .. tostring(xRatio) .. ', yRatio = ' .. tostring(yRatio) .. ', widthAboveNil = ' .. tostring(widthAboveNil) .. ', slopedAreaWidth = ' .. tostring(slopedAreaWidth))
+                                    privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, wallTransf, widthAboveNil, xRatio, _eraPrefix, _laneZ, _wallThickness)
+                                end
                             end
 
                             -- extend wall along platform head extensions
-                            local howMany1mChunks = nil
-                            local headWallPosTanX2 = nil
-                            local headTransfXZoom, headTransfYZoom = _transfXZoom, _transfYZoom
-                            if ii == 1 then
-                                local platformHeadModule = _modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]
-                                if platformHeadModule ~= nil then
-                                    howMany1mChunks = platformHeadModule.metadata.howMany4mChunks * 4
-                                    headWallPosTanX2 = transfUtils.getPosTanX2Reversed(wallPosTanX2)
-                                    -- here, the wall is inside out
-                                    headTransfXZoom = -headTransfXZoom
-                                    headTransfYZoom = -headTransfYZoom
+                            if not(_isWallEnd) then
+                                local howMany1mChunks = nil
+                                local headWallPosTanX2 = nil
+                                local headTransfXZoom, headTransfYZoom = _transfXZoom, _transfYZoom
+                                if ii == 1 then
+                                    local platformHeadModule = _modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]
+                                    if platformHeadModule ~= nil then
+                                        howMany1mChunks = platformHeadModule.metadata.howMany4mChunks * 4
+                                        headWallPosTanX2 = transfUtils.getPosTanX2Reversed(wallPosTanX2)
+                                        -- here, the wall is inside out
+                                        headTransfXZoom = -headTransfXZoom
+                                        headTransfYZoom = -headTransfYZoom
+                                    end
+                                elseif ii == _iiMax then
+                                    local platformHeadModule = _modules[result.mangleId(nTerminal, cpf.leadingIndex, constants.idBases.platformHeadSlotId)]
+                                    if platformHeadModule ~= nil then
+                                        howMany1mChunks = platformHeadModule.metadata.howMany4mChunks * 4
+                                        headWallPosTanX2 = arrayUtils.cloneDeepOmittingFields(wallPosTanX2)
+                                    end
                                 end
-                            elseif ii == _iiMax then
-                                local platformHeadModule = _modules[result.mangleId(nTerminal, cpf.leadingIndex, constants.idBases.platformHeadSlotId)]
-                                if platformHeadModule ~= nil then
-                                    howMany1mChunks = platformHeadModule.metadata.howMany4mChunks * 4
-                                    headWallPosTanX2 = arrayUtils.cloneDeepOmittingFields(wallPosTanX2)
-                                end
-                            end
-                            if howMany1mChunks ~= nil then
-                                local headWallxScaleFactor = 1 --xRatio
-                                -- headTransfXZoom and headTransfYZoom are -1 or 1
-                                for hh = 1, howMany1mChunks do
-                                    headWallPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(headWallPosTanX2, 1)
-                                    local headWallSkew = headWallPosTanX2[2][1][3] - headWallPosTanX2[1][1][3]
-                                    if _isTrackOnPlatformLeft then headWallSkew = -headWallSkew end
-                                    if ii == 1 then headWallSkew = -headWallSkew end
-                                    local platformHeadExtensionTransf = transfUtils.getTransf_XSkewedOnZ(
-                                        transfUtils.getTransf_Scaled_Shifted(
-                                            privateFuncs.getPlatformObjectTransf_AlwaysVertical(headWallPosTanX2),
-                                            {headTransfXZoom * headWallxScaleFactor, headTransfYZoom, 1},
-                                            {0, 0, _laneZ}
-                                        ),
-                                        headWallSkew
-                                    )
-                                    result.models[#result.models+1] = {
-                                        id = wallModelId,
-                                        tag = tag,
-                                        transf = platformHeadExtensionTransf,
-                                    }
-                                    if wallBaseModelId ~= nil and cpf.type == 0 then -- only on ground
+                                if howMany1mChunks ~= nil then
+                                    local headWallxScaleFactor = 1 --xRatio
+                                    -- headTransfXZoom and headTransfYZoom are -1 or 1
+                                    for hh = 1, howMany1mChunks do
+                                        headWallPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(headWallPosTanX2, 1)
+                                        local headWallSkew = headWallPosTanX2[2][1][3] - headWallPosTanX2[1][1][3]
+                                        if _isTrackOnPlatformLeft then headWallSkew = -headWallSkew end
+                                        if ii == 1 then headWallSkew = -headWallSkew end
+                                        local platformHeadExtensionTransf = transfUtils.getTransf_XSkewedOnZ(
+                                            transfUtils.getTransf_Scaled_Shifted(
+                                                privateFuncs.getPlatformObjectTransf_AlwaysVertical(headWallPosTanX2),
+                                                {headTransfXZoom * headWallxScaleFactor, headTransfYZoom, 1},
+                                                {0, 0, _laneZ}
+                                            ),
+                                            headWallSkew
+                                        )
                                         result.models[#result.models+1] = {
-                                            id = wallBaseModelId,
+                                            id = wallModelId,
                                             tag = tag,
                                             transf = platformHeadExtensionTransf,
                                         }
-                                    end
-                                    if wallBehindModelId ~= nil and cpf.type == 0 then -- only on ground
-                                        privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, platformHeadExtensionTransf, widthAboveNil, xRatio, _eraPrefix, _laneZ, _wallThickness)
+                                        if wallBaseModelId ~= nil and cpf.type == 0 then -- only on ground
+                                            result.models[#result.models+1] = {
+                                                id = wallBaseModelId,
+                                                tag = tag,
+                                                transf = platformHeadExtensionTransf,
+                                            }
+                                        end
+                                        if wallBehindModelId ~= nil and cpf.type == 0 then -- only on ground
+                                            privateFuncs.deco.addWallBehind(result, tag, wallBehindBaseModelId, wallBehindModelId, platformHeadExtensionTransf, widthAboveNil, xRatio, _eraPrefix, _laneZ, _wallThickness)
+                                        end
                                     end
                                 end
                             end
@@ -2260,6 +2267,7 @@ return {
 
                             -- add pillars
                             if cpf.type ~= 2
+                            and not(_isWallEnd)
                             and not(_isSkipPillars)
                             and isFreeFromOpenStairsLeft[leadingIndex] and isFreeFromOpenStairsRight[leadingIndex]
                             and math.fmod(ii, privateConstants.deco.numberSignPeriod) == 0
@@ -2308,29 +2316,33 @@ return {
 
                             -- add walls across
                             local _wallAcrossModelId = type(endWallModelId) == 'string' and endWallModelId or wallModelId
-                            if ii == 1 then
-                                -- skip near platform head
-                                if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
-                                    if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                        -- logger.print('_ONE')
-                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
-                                    else
-                                        -- logger.print('_TWO')
-                                        privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
+                            if _isWallEnd then
+                                if canDrawVsWallEnd then
+                                    if ii == 1 then
+                                        -- skip near platform head
+                                        if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
+                                            if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
+                                                -- logger.print('_ONE')
+                                                privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
+                                            else
+                                                -- logger.print('_TWO')
+                                                privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
+                                            end
+                                        end
+                                    elseif ii == _iiMax then
+                                        -- skip near platform head
+                                        if not(_modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
+                                            if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
+                                                -- logger.print('_THREE')
+                                                privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
+                                            else
+                                                -- logger.print('_FOUR')
+                                                privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
+                                            end
+                                        end
                                     end
                                 end
-                            elseif ii == _iiMax then
-                                -- skip near platform head
-                                if not(_modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
-                                    if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                        -- logger.print('_THREE')
-                                        privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
-                                    else
-                                        -- logger.print('_FOUR')
-                                        privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
-                                    end
-                                end
-                            else
+                            elseif ii ~= 1 and ii ~= _iiMax then
                                 local cpfM1 = _cpfs[ii-1]
                                 local cpfP1 = _cpfs[ii+1]
                                 if leadingIndex ~= cpfM1.leadingIndex then

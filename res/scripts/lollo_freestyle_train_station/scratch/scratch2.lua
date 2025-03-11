@@ -174,6 +174,11 @@ local d5 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 0}, {1, 1}
 local e0 = transfUtils.getDistanceBetweenPointAndStraight({808, -997}, {792, -990}, {800, -994}) -- 0.458
 local e1 = transfUtils.getDistanceBetweenPointAndStraight({808 - 808, -997}, {792 - 808, -990}, {800 - 808, -994}) -- 0.458
 local e2 = transfUtils.getDistanceBetweenPointAndStraight({808 - 808, -997 - 997}, {792 - 808, -990 - 997}, {800 - 808, -994 - 997}) -- 0.458
+
+local f0 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {1, 0}) -- 0.707
+local f1 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {0, 1}) -- 0.707
+local f2 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {-1, 0}) -- 0.707
+local f3 = transfUtils.getDistanceBetweenPointAndStraight({0, 0}, {1, 1}, {0, -1}) -- 0.707
 local dummy = 123
 
 --  id = 24148,

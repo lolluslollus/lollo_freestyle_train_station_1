@@ -381,7 +381,7 @@ function data()
 				local _terminalData = _paramsTerminals[t] -- write this away to speed up accesses to it
 				local _cpfs = _terminalData.centrePlatformsFineRelative -- idem
 				local _cpls = _terminalData.centrePlatformsRelative -- idem
-				local _cts = _terminalData.centreTracksRelative -- idem
+				local _ctrs = _terminalData.centreTracksRelative -- idem
 				local _isCargoTerminal = _terminalData.isCargo
 				if _isCargoTerminal then result.terminateConstructionHookInfo.isAnyCargoTerminal = true else result.terminateConstructionHookInfo.isAnyPassengerTerminal = true end
 				local _isTrackOnPlatformLeft = _terminalData.isTrackOnPlatformLeft
@@ -416,9 +416,9 @@ function data()
 				end
 				local _getIsAnyCtMeetsTypeCondition_indexedByI = function(iss_indexedByI, isTypeConditionMet)
 					local results_indexedByI = {}
-					local _iMax= #_cts
+					local _iMax= #_ctrs
 					for i = 1, _iMax do
-						local ct = _cts[i]
+						local ctr = _ctrs[i]
 						local leadingIndexEvery3 = 0
 						if iss_indexedByI[i - 1] then leadingIndexEvery3 = i - 1
 						elseif iss_indexedByI[i] then leadingIndexEvery3 = i
@@ -427,7 +427,7 @@ function data()
 						if leadingIndexEvery3 ~= 0
 						and not(results_indexedByI[leadingIndexEvery3])
 						-- and cpf.type ~= 2
-						and isTypeConditionMet(ct.type)
+						and isTypeConditionMet(ctr.type)
 						then
 							results_indexedByI[leadingIndexEvery3] = true
 						end
@@ -965,6 +965,7 @@ function data()
 				local function _addPlatformRoofsAndWalls()
 					local _roofSpacing = _isTrackOnPlatformLeft and {-1.1, 2, -0.1, 0.9} or {2, -1.1, 0.9, -0.1}
 					local _wallSpacing = _isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
+					local _wallEndSpacing = _isTrackOnPlatformLeft and {0.1, -1, -0.1, 0.9} or {-1, 0.1, 0.9, -0.1}
 					-- local _tunnelWallSpacing = _isTrackOnPlatformLeft and {2.1, -3, -0.1, 0.9} or {-3, 2.1, 0.9, -0.1}
 					local _tunnelWallSpacing = _isTrackOnPlatformLeft and {1.1, -2, 0.9, -0.1} or {-2, 1.1, -0.1, 0.9}
 					-- make indexes
@@ -1040,19 +1041,55 @@ function data()
 							})
 						end
 					end
+
+					-- walls across at platform ends
+					local _endIss = {[1] = true, [_iMax] = true}
+					local isAnyCpfEndInTunnel_indexedByI = _getIsAnyCpfInTunnel_indexedByI(_endIss)
+					local isAnyCpfEndOutsideTunnel_indexedByI = _getIsAnyCpfOutsideTunnel_indexedByI(_endIss)
+					for i, _ in pairs(_endIss) do
+						local cpf = (i == 1 and _cpfs[1] or _cpfs[#_cpfs])
+						local myTransf = transfUtils.getTransf_ZShifted(
+							moduleHelpers.getPlatformObjectTransf_WithYRotation(cpf.posTanX2),
+							5
+						)
+
+						-- walls outside tunnels - if available, platform heads will take over
+						if not(result.getOccupiedInfo4PlatformHeads(t, i).id) then
+							if isAnyCpfEndOutsideTunnel_indexedByI[i] then
+								table.insert(result.slots, {
+									id = result.mangleId(t, i, _constants.idBases.platformWallEndSlotId),
+									shape = 2,
+									spacing = _wallEndSpacing,
+									transf = myTransf,
+									type = _constants.platformWallModuleType,
+								})
+							end
+						end
+
+						-- walls in tunnels - no platform heads in tunnels
+						if isAnyCpfEndInTunnel_indexedByI[i] then
+							table.insert(result.slots, {
+								id = result.mangleId(t, i, _constants.idBases.platformWallEndInTunnelSlotId),
+								shape = 2,
+								spacing = _wallEndSpacing,
+								transf = myTransf,
+								type = _constants.platformWallInTunnelModuleType,
+							})
+						end
+					end
 				end
 				_addPlatformRoofsAndWalls()
 
 				local function _addTrackWalls()
 					-- check this coz it was added later
-					if type(_cts) ~= 'table' then return end
+					if type(_ctrs) ~= 'table' then return end
 
 					-- do not confuse the tracks array with the platforms array: they are similar but different
 					local _wallSpacing = _isTrackOnPlatformLeft and {1.1, -2, -0.1, 0.9} or {-2, 1.1, 0.9, -0.1}
 					local _tunnelWallSpacing = _isTrackOnPlatformLeft and {1.1, -2, 0.9, -0.1} or {-2, 1.1, -0.1, 0.9}
 					local _wallEndSpacing = _isTrackOnPlatformLeft and {0.1, -1, -0.1, 0.9} or {-1, 0.1, 0.9, -0.1}
 					-- make indexes
-					local _iMax = #_cts
+					local _iMax = #_ctrs
 					local iss = {}
 					local iss_indexedByI = {}
 					for i = 2, _iMax, 3 do
@@ -1068,8 +1105,8 @@ function data()
 					local isAnyCpfOutsideTunnel_indexedByI = _getIsAnyCtOutsideTunnel_indexedByI(iss_indexedByI)
 
 					for _, i in pairs(iss) do
-						local ctl = _cts[i]
-						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(ctl.posTanX2)
+						local ctr = _ctrs[i]
+						local myTransf = moduleHelpers.getPlatformObjectTransf_WithYRotation(ctr.posTanX2)
 
 						-- walls outside tunnels
 						if isAnyCpfOutsideTunnel_indexedByI[i] then
@@ -1092,14 +1129,15 @@ function data()
 						end
 					end
 
+					-- walls across at track ends
 					local _endIss = {[1] = true, [_iMax] = true}
 					local isAnyCtEndInTunnel_indexedByI = _getIsAnyCtInTunnel_indexedByI(_endIss)
 					local isAnyCtEndOutsideTunnel_indexedByI = _getIsAnyCtOutsideTunnel_indexedByI(_endIss)
 					for i, _ in pairs(_endIss) do
-						local ct = _cts[i]
+						local ctr = _ctrs[i]
 						 -- raise to avoid collisions, this is not critical anyway. It must be higher than lifts.
 						local myTransf = transfUtils.getTransf_ZShifted(
-							moduleHelpers.getPlatformObjectTransf_WithYRotation(ct.posTanX2),
+							moduleHelpers.getPlatformObjectTransf_WithYRotation(ctr.posTanX2),
 							5
 						)
 
@@ -1107,7 +1145,7 @@ function data()
 						if isAnyCtEndOutsideTunnel_indexedByI[i] then
 							table.insert(result.slots, {
 								id = result.mangleId(t, i, _constants.idBases.trackWallEndSlotId),
-								shape = 3,
+								shape = 2,
 								spacing = _wallEndSpacing,
 								transf = myTransf,
 								type = _constants.trackWallModuleType,
@@ -1118,7 +1156,7 @@ function data()
 						if isAnyCtEndInTunnel_indexedByI[i] then
 							table.insert(result.slots, {
 								id = result.mangleId(t, i, _constants.idBases.trackWallEndInTunnelSlotId),
-								shape = 3,
+								shape = 2,
 								spacing = _wallEndSpacing,
 								transf = myTransf,
 								type = _constants.trackWallInTunnelModuleType,
@@ -2796,6 +2834,8 @@ function data()
 							if baseId == _constants.idBases.platformRoofSlotId
 							or baseId == _constants.idBases.platformWallSlotId
 							or baseId == _constants.idBases.platformWallInTunnelSlotId
+							or baseId == _constants.idBases.platformWallEndSlotId
+							or baseId == _constants.idBases.platformWallEndInTunnelSlotId
 							or baseId == _constants.idBases.trackWallSlotId
 							or baseId == _constants.idBases.trackWallInTunnelSlotId
 							or baseId == _constants.idBases.trackWallEndSlotId

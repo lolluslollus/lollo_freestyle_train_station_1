@@ -2,7 +2,8 @@ local constants = require('lollo_freestyle_train_station.constants')
 
 function data()
     return {
-        type = 'TRACK_CONSTRUCTION',
+        -- type = 'TRACK_CONSTRUCTION', -- this prevent snapping
+        type = 'ASSET_DEFAULT', -- this allows snapping
         description = {
             name = _('TrackSplitterName'),
             description = _('TrackSplitterDesc')
@@ -11,15 +12,16 @@ function data()
             yearFrom = 0,
             yearTo = 0
         },
-        order = 1102,
+        categories = { 'stairs' },
+        order = 105,
         autoRemovable = true,
         skipCollision = true,
-        -- useless
-        -- snapping = {
-        --     rail = true,
-        --     road = false,
-        --     water = false,
-        -- },
+        -- useless with type = 'TRACK_CONSTRUCTION'
+        snapping = {
+            rail = true,
+            road = false,
+            water = false,
+        },
         updateFn = function(params)
             -- print('lollo track splitter updateFn starting, params =') debugPrint(params)
             local result = {}
