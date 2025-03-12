@@ -148,7 +148,9 @@ local _actions = {
                             local newConId = result.resultEntities[1]
                             logger.print('updateConstruction succeeded, stationConId = ', newConId)
                             -- UG TODO there is no such thing in the new api, nor an upgrade event, both would be useful
+                            -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
                             collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                            -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                             logger.print('lollo_open_lifts_open_stairs_free - collect garbage done')
                             logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
                             local upgradedConId = game.interface.upgradeConstruction(
@@ -156,11 +158,17 @@ local _actions = {
                                 oldCon.fileName,
                                 paramsBak_NoSeed
                             )
+                            -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
+                            -- collectgarbage()
+                            -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                             logger.print('updateConstruction upgraded con =') logger.debugPrint(upgradedConId)
                         end,
                         function(error)
                             logger.warn('updateConstruction failed to upgrade con')
                             logger.warn(error)
+                            -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
+                            -- collectgarbage()
+                            -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                         end
                     )
                 end

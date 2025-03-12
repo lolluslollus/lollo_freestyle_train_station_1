@@ -15,15 +15,19 @@ local transfUtilsUG = require('transf')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
--- LOLLO NOTE you can only update the state from the worker thread
-local m_state = {}
--- LOLLO NOTE block parallel actions on the global variable. Maybe overkill.
+-- LOLLO NOTE you can only update the state from the worker thread but you can read it from the GUI thread, which reads it periodically
+local m_state = {
+    isBusy = false, -- a sort of semaphore to tell the station is working on itself
+    isHideProgress = false,
+    warningText = nil,
+}
+-- this can only be read and written to in the worker thread
 local m_conConfigMenu = { -- also this is for the worker thread only
-    isBusy = false, -- a sort of semaphore
-    isOpen = false, -- another sort of semaphore
+    isOpen = false, -- another sort of semaphore to tell if the config menu was opened at least once, probably redundant
+---@type {stationConstructionId: integer, streetEndEntities: any, trackEndEntities: any, platformHeightProps_indexedByT: table<integer, platformHeightProps>|nil}
     args = nil, -- the data
 }
-
+-- this can only be read and written to in the GUI thread
 local m_guiConConfigMenu = {
     openForConId = nil
 }
@@ -58,6 +62,26 @@ local _guiTexts = {
     waypointsWrong = '',
 }
 
+local _guiUtils = {
+    sendAllowProgress = function()
+        api.cmd.sendCommand(
+            api.cmd.make.sendScriptEvent(
+                string.sub(debug.getinfo(1, 'S').source, 1),
+                _eventId,
+                _eventNames.ALLOW_PROGRESS
+            )
+        )
+    end,
+    sendHideWarnings = function()
+        api.cmd.sendCommand(
+            api.cmd.make.sendScriptEvent(
+                string.sub(debug.getinfo(1, 'S').source, 1),
+                _eventId,
+                _eventNames.HIDE_WARNINGS
+            )
+        )
+    end,
+}
 local _utils = {
     ---build a post with a message for the user to see where things are not right
     ---@param pos {x: number, y: number, z: number} | boolean | nil
@@ -67,10 +91,10 @@ local _utils = {
             return
         end
 
-        local _removeWarningHints = function()
+        local _removeNearbyWarningHints = function()
             local nearbyConIds = edgeUtils.getNearbyObjectIds(
                 transfUtils.position2Transf(pos),
-                0.001,
+                10, -- .001
                 api.type.ComponentType.CONSTRUCTION
             )
             if #nearbyConIds == 0 then return end
@@ -79,7 +103,7 @@ local _utils = {
             local conIdsToRemove = nearbyConIds
             api.cmd.sendCommand(api.cmd.make.buildProposal(proposal, nil, true))
         end
-        _removeWarningHints()
+        _removeNearbyWarningHints()
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = _constants.unsnappedSomethingMessageConFileName
@@ -111,7 +135,6 @@ local _utils = {
             end
         )
     end,
-
     getAverageZ = function(edgeId)
         if not(edgeUtils.isValidAndExistingId(edgeId)) then return nil end
 
@@ -423,31 +446,13 @@ local _utils = {
         return results
         -- return result_indexed --, nTerminals - arrayUtils.getCount(nTerminalsToRemove_indexed)  -- cannot pass indexed tables as args
     end,
-    sendAllowProgress = function()
-        api.cmd.sendCommand(
-            api.cmd.make.sendScriptEvent(
-                string.sub(debug.getinfo(1, 'S').source, 1),
-                _eventId,
-                _eventNames.ALLOW_PROGRESS
-            )
-        )
-    end,
     sendHideProgress = function()
-        m_conConfigMenu.isBusy = false
+        m_state.isBusy = false
         api.cmd.sendCommand(
             api.cmd.make.sendScriptEvent(
                 string.sub(debug.getinfo(1, 'S').source, 1),
                 _eventId,
                 _eventNames.HIDE_PROGRESS
-            )
-        )
-    end,
-    sendHideWarnings = function()
-        api.cmd.sendCommand(
-            api.cmd.make.sendScriptEvent(
-                string.sub(debug.getinfo(1, 'S').source, 1),
-                _eventId,
-                _eventNames.HIDE_WARNINGS
             )
         )
     end,
@@ -599,6 +604,7 @@ local _utils = {
         local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
         logger.print('oldCon.fileName =') logger.debugPrint(oldCon and oldCon.fileName or 'NIL')
         if not(oldCon)
+        or not(oldCon.params)
         or not(arrayUtils.arrayHasValue(
             {
                 _constants.stationConFileName,
@@ -610,7 +616,6 @@ local _utils = {
             },
             oldCon.fileName
         ))
-        or not(oldCon.params)
         then return false end
 
         local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
@@ -619,7 +624,9 @@ local _utils = {
             function()
                 -- UG TODO there is no such thing in the new api,
                 -- nor an upgrade event, both would be useful
+                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
                 collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 logger.print('_tryUpgradeStationOrStairsOrLiftConstruction - collect garbage done')
                 logger.print('oldConId =') logger.debugPrint(oldConId)
                 logger.print('oldCon.fileName =') logger.debugPrint(oldCon.fileName)
@@ -629,12 +636,18 @@ local _utils = {
                     paramsBak_NoSeed
                 )
                 logger.print('_tryUpgradeStationOrStairsOrLiftConstruction succeeded, upgradedConId =') logger.debugPrint(upgradedConId)
+                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
+                -- collectgarbage()
+                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 return conTransf_lua
             end,
             function(error)
                 logger.warn('_tryUpgradeStationOrStairsOrLiftConstruction failed')
                 m_state.warningText = _('NeedAdjust4Snap')
                 logger.warn(error)
+                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
+                -- collectgarbage()
+                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 return conTransf_lua
             end
         )
@@ -765,36 +778,6 @@ local _actions = {
             end
         )
     end,
-
-    bulldozeCon = function(conId)
-        if not(edgeUtils.isValidAndExistingId(conId)) then return end
-
-        -- local oldCon = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-        -- logger.print('oldCon =') logger.debugPrint(oldCon)
-        -- if not(oldCon) then return end
-
-        local proposal = api.type.SimpleProposal.new()
-        -- LOLLO NOTE there are asymmetries how different tables are handled.
-        -- This one requires this system, UG says they will document it or amend it.
-        proposal.constructionsToRemove = { conId }
-        -- proposal.constructionsToRemove[1] = constructionId -- fails to add
-        -- proposal.constructionsToRemove:add(constructionId) -- fails to add
-
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        -- context.cleanupStreetGraph = true -- default is false
-        -- context.gatherBuildings = true  -- default is false
-        -- context.gatherFields = true -- default is true
-        -- context.player = api.engine.util.getPlayer() -- default is -1
-        api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-            function(result, success)
-                logger.print('LOLLO bulldozeMarker success = ', success)
-                -- logger.print('LOLLO bulldozeMarker result = ') logger.debugPrint(result)
-            end
-        )
-    end,
-
     buildStation = function(successEventName, args)
         local conTransf = args.platformWaypointMidTransf
 
@@ -1012,7 +995,6 @@ local _actions = {
             end
         )
     end,
-
     rebuildNeighboursOLD = function(args)
         -- LOLLO TODO join two lifts with a bridge and halve it: one of the halves won't be rebuilt.
         -- The problem is caused by two different proposals attempting to build nodes in the same location
@@ -1280,7 +1262,6 @@ local _actions = {
             end
         )
     end,
-
     rebuildNeighbourEdges = function(args)
         logger.print('_rebuildNeighbourEdges starting, args =') logger.debugPrint(args)
 
@@ -1488,25 +1469,22 @@ local _actions = {
         end
         _rebuildEdge(_rebuildEdge)
     end,
-
     rebuildNeighbourCons = function(args)
-        logger.print('_rebuildNeighbourCons started')
-        local constructionsProposal = api.type.SimpleProposal.new()
-        local isAnyConToBeRebuilt = false
+        logger.print('_rebuildNeighbourCons started') -- logger.debugPrint(args)
+    -- LOLLO NOTE sometimes the stairs, which were attached directly to the station, cannot be rebuilt.
+    -- It helps if the faraway end is not snappy.
+    -- Newly, I rebuild the cons one by one to ease the pain.
+        local neighbourCons_indexedByConId = {}
         if args.streetEndEntities ~= nil then
-            local neighbourConIds = {}
             for _, endEntity in pairs(args.streetEndEntities) do
                 for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
-                    if not(arrayUtils.arrayHasValue(neighbourConIds, conId)) then -- make sure you don't do the same con twice
-                        neighbourConIds[#neighbourConIds+1] = conId
-
+                    if not(neighbourCons_indexedByConId[conId]) then -- make sure you don't do the same con twice
                         local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
                         newParams.seed = conProps.params.seed + 1
                         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
                         newCon.fileName = conProps.fileName
                         newCon.params = newParams
                         newCon.playerEntity = api.engine.util.getPlayer()
-                        -- newCon.transf = oldCon.transf
                         newCon.transf = api.type.Mat4f.new(
                             api.type.Vec4f.new(conProps.transf[1], conProps.transf[2], conProps.transf[3], conProps.transf[4]),
                             api.type.Vec4f.new(conProps.transf[5], conProps.transf[6], conProps.transf[7], conProps.transf[8]),
@@ -1514,14 +1492,13 @@ local _actions = {
                             api.type.Vec4f.new(conProps.transf[13], conProps.transf[14], conProps.transf[15], conProps.transf[16])
                         )
 
-                        constructionsProposal.constructionsToAdd[#constructionsProposal.constructionsToAdd+1] = newCon
-                        isAnyConToBeRebuilt = true
+                        neighbourCons_indexedByConId[conId] = newCon
                     end
                 end
             end
         end
 
-        if not(isAnyConToBeRebuilt) then
+        if arrayUtils.getCount(neighbourCons_indexedByConId, true) < 1 then
             _utils.sendHideProgress()
             return
         end
@@ -1532,54 +1509,62 @@ local _actions = {
         -- context.gatherBuildings = true  -- default is false
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
-        api.cmd.sendCommand(
-            api.cmd.make.buildProposal(constructionsProposal, context, true),
-            function(result, success)
-                logger.print('_rebuildNeighbourCons success = ', success)
-                local stationCon = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
-                local stationConPositionXYZ = (stationCon ~= nil and stationCon.fileName == _constants.stationConFileName)
-                    and transfUtils.transf2Position(
-                        transfUtilsUG.new(stationCon.transf:cols(0), stationCon.transf:cols(1), stationCon.transf:cols(2), stationCon.transf:cols(3)),
-                        true
-                    )
-                if success then
-                    -- Write away the adjoining constructions
-                    if result.resultEntities == nil then -- this should never happen
-                        _utils.sendHideProgress()
-                        logger.warn('_rebuildNeighbourCons rebuilt some cons but failed to read their ids, result.resultEntities == nil')
-                        _utils.buildWarningHint(stationConPositionXYZ, _('UnsnappedNeighbouringConstruction'), _('UnsnappedNeighbouringConstruction'))
-                        return
-                    end
 
-                    local newConIds = {}
-                    for _, conId in pairs(result.resultEntities) do
-                        newConIds[#newConIds+1] = conId
-                    end
-                    logger.print('newConIds =') logger.debugPrint(newConIds)
-                    if #newConIds == 0 then -- this should never happen
-                        _utils.sendHideProgress()
-                        logger.warn('_rebuildNeighbourCons rebuilt some cons but failed to read their ids, result.resultEntities == empty')
-                        _utils.buildWarningHint(stationConPositionXYZ, _('UnsnappedNeighbouringConstruction'), _('UnsnappedNeighbouringConstruction'))
-                        return
-                    end
+        local conProposals = {}
+        for _, conProps in pairs(neighbourCons_indexedByConId) do
+            conProposals[#conProposals+1] = conProps
+        end
+        local conIndex = 1
+        local isSomethingWrong = false
 
-                    _utils.sendHideProgress()
-                    -- upgrade the neighbour cons in a separate event, so the neighbours will stay rebuilt if the upgrade fails
-                    api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
-                        string.sub(debug.getinfo(1, 'S').source, 1),
-                        _eventId,
-                        _eventNames.UPGRADE_NEIGHBOUR_CONS,
-                        {
-                            conIds = newConIds
-                        }
-                    ))
-                else
-                    _utils.sendHideProgress()
-                    logger.warn('_rebuildNeighbourCons failed to rebuild some constructions, result.resultProposalData =') logger.warningDebugPrint(result.resultProposalData)
-                    _utils.buildWarningHint(stationConPositionXYZ, _('UnsnappedNeighbouringConstruction'), _('UnsnappedNeighbouringConstruction'))
+        local _rebuildCon = function(nextFunc)
+            local newCon = conProposals[conIndex]
+            if not(newCon) then
+                if isSomethingWrong then
+                    local stationCon = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
+                    local stationConPositionXYZ = (stationCon ~= nil and stationCon.fileName == _constants.stationConFileName)
+                        and transfUtils.transf2Position(
+                            transfUtilsUG.new(stationCon.transf:cols(0), stationCon.transf:cols(1), stationCon.transf:cols(2), stationCon.transf:cols(3)),
+                            true
+                        )
+                        _utils.buildWarningHint(stationConPositionXYZ, _('UnsnappedNeighbouringConstruction'), _('UnsnappedNeighbouringConstruction'))
                 end
+                _utils.sendHideProgress()
+                return
             end
-        )
+
+            local simpleProposal = api.type.SimpleProposal.new()
+            simpleProposal.constructionsToAdd[1] = conProposals[conIndex]
+            api.cmd.sendCommand(
+                api.cmd.make.buildProposal(simpleProposal, context, true),
+                function(result, success)
+                    conIndex = conIndex + 1
+                    if success then
+                        -- print('result.resultEntities =') debugPrint(result.resultEntities)
+                        -- {
+                        --     [1] = 32873,
+                        -- }
+                        if result and result.resultEntities and result.resultEntities[1] then
+                            api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
+                                string.sub(debug.getinfo(1, 'S').source, 1),
+                                _eventId,
+                                _eventNames.UPGRADE_NEIGHBOUR_CONS,
+                                {
+                                    conIds = {result.resultEntities[1]}
+                                }
+                            ))
+                        end
+                    else
+                        isSomethingWrong = true
+                        logger.warn('_rebuildNeighbourCons failed to rebuild some constructions, proposal and result.resultProposalData =')
+                        debugPrint(simpleProposal)
+                        debugPrint(result.resultProposalData)
+                    end
+                    nextFunc(nextFunc)
+                end
+            )
+        end
+        _rebuildCon(_rebuildCon)
     end,
     --- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap. It calls an old routine that may crash uncatchable, so call it last.
     upgradeNeighbourCons = function(args)
@@ -1808,7 +1793,6 @@ logger.print('FOUR')
             end
         )
     end,
-
     removeNeighbours = function(successEventName, args)
         logger.print('_removeNeighbours starting, successEventName = ' .. (successEventName or 'NIL'))
         -- logger.print('args =') logger.debugPrint(args)
@@ -2022,7 +2006,6 @@ logger.print('FOUR')
             end
         )
     end,
-
     replaceEdgeWithSameRemovingObject = function(objectIdToRemove)
         logger.print('_replaceEdgeWithSameRemovingObject starting')
         if not(edgeUtils.isValidAndExistingId(objectIdToRemove)) then return end
@@ -2094,7 +2077,6 @@ logger.print('FOUR')
             end
         )
     end,
-
     splitEdgeRemovingObject = function(wholeEdgeId, nodeBetween, objectIdToRemove, successEventName, successEventArgs, newArgName, mustSplit)
         -- logger.print('splitEdgeRemovingObject starting, wholeEdgeId =', wholeEdgeId or 'NIL')
         if not(edgeUtils.isValidAndExistingId(wholeEdgeId)) or type(nodeBetween) ~= 'table' then return end
@@ -2352,7 +2334,6 @@ logger.print('FOUR')
             end
         )
     end,
-
     rebuildUndergroundDepotWithoutHole = function(oldConId)
         -- LOLLO NOTE programmatically adding a depot works, but as soon as you click the depot, the game will crash
         -- This is why we use the old upgrade instead.
@@ -2368,22 +2349,27 @@ logger.print('FOUR')
         logger.print('paramsBak_NoSeed = ') logger.debugPrint(paramsBak_NoSeed)
         xpcall(
             function()
-                -- UG TODO there is no such thing in the new api,
-                -- nor an upgrade event, both would be useful
-                -- collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
                 logger.print('attempting to upgrade the depot')
+                -- UG TODO there is no such thing in the new api, nor an upgrade event, both would be useful
+                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
+                collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 local upgradedConId = game.interface.upgradeConstruction(
                     oldConId,
                     oldCon.fileName,
                     paramsBak_NoSeed
                 )
-                collectgarbage('collect')
-                logger.print('depot upgraded, collect garbage done')
+                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
+                -- collectgarbage()
+                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
+                logger.print('depot upgraded')
             end,
             function(error)
                 logger.warn('depot upgrade failed')
                 logger.warn(error)
-                collectgarbage('collect')
+                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
+                -- collectgarbage()
+                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 logger.print('collect garbage done')
             end
         )
@@ -2511,10 +2497,10 @@ local _guiActions = {
                 _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
                 _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED,
                 eventArgs, -- join2StationConId will be added by the popup
-                function() guiHelpers.showProgress(_guiTexts.buildInProgress, _guiTexts.modName, _utils.sendAllowProgress) end
+                function() guiHelpers.showProgress(_guiTexts.buildInProgress, _guiTexts.modName, _guiUtils.sendAllowProgress) end
             )
         else
-            guiHelpers.showProgress(_guiTexts.buildInProgress, _guiTexts.modName, _utils.sendAllowProgress)
+            guiHelpers.showProgress(_guiTexts.buildInProgress, _guiTexts.modName, _guiUtils.sendAllowProgress)
             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                 string.sub(debug.getinfo(1, 'S').source, 1),
                 _eventId,
@@ -2555,7 +2541,7 @@ local _guiActions = {
                 subwayConstructionId = conId
                 -- join2StationConId will be added by the popup
             },
-            function() guiHelpers.showProgress(_guiTexts.buildSubwayInProgress, _guiTexts.modName, _utils.sendAllowProgress) end
+            function() guiHelpers.showProgress(_guiTexts.buildSubwayInProgress, _guiTexts.modName, _guiUtils.sendAllowProgress) end
         )
 
         return true
@@ -3308,7 +3294,7 @@ function data()
                     logger.print('### lollo_freestyle_station.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
                     -- logger.print('args =') logger.debugPrint(args)
                     logger.print('state =') logger.debugPrint(m_state)
-                    logger.print('isBusy = ' .. tostring(m_conConfigMenu.isBusy or false))
+                    logger.print('isBusy = ' .. tostring(m_state.isBusy or false))
                     -- LOLLO NOTE ONLY SOMETIMES, it can crash when calling game.interface.getEntity(stationId).
                     -- Things are better now, it seems that the error came after a fast loop of calling split and raising the event, then calling split again.
                     -- That looks like a race, difficult to handle here.
@@ -3327,7 +3313,7 @@ function data()
                     elseif name == _eventNames.HIDE_HOLE_REQUESTED then
                         _actions.rebuildUndergroundDepotWithoutHole(args.conId)
                     elseif name == _eventNames.BULLDOZE_MARKER_REQUESTED then
-                        _actions.bulldozeCon(args.platformMarkerConstructionEntityId)
+                        _actions.bulldozeConstruction(args.platformMarkerConstructionEntityId)
                     elseif name == _eventNames.WAYPOINT_BULLDOZE_REQUESTED then
                         _actions.replaceEdgeWithSameRemovingObject(args.waypointId)
                     elseif name == _eventNames.TRACK_WAYPOINT_1_SPLIT_REQUESTED then
@@ -3957,7 +3943,7 @@ function data()
                     elseif name == _eventNames.REBUILD_NEIGHBOURS_ALL then
                         _actions.rebuildNeighbourEdges(args)
                         if type(args.nRemainingTerminals) == 'number' and args.nRemainingTerminals < 1 then
-                            -- two process running at the same time, it's all right coz they are independent
+                            -- two processes running at the same time, it's all right coz they are independent
                             logger.print('_rebuildNeighbourEdges running, no more terminals left, about to bulldoze the station')
                             _utils.sendHideProgress()
                             _actions.bulldozeConstruction(args.stationConstructionId)
@@ -3970,9 +3956,9 @@ function data()
                         _utils.sendHideProgress()
                         _actions.bulldozeConstruction(args.stationConstructionId)
                     elseif name == _eventNames.SUBWAY_JOIN_REQUESTED then
-                        if m_conConfigMenu.isBusy then return end
+                        if m_state.isBusy then return end
 
-                        m_conConfigMenu.isBusy = true
+                        m_state.isBusy = true
                         if not(edgeUtils.isValidAndExistingId(args.join2StationConId)) then
                             logger.err('SUBWAY_JOIN_REQUESTED got args.join2StationConId is invalid')
                             _utils.sendHideProgress()
@@ -4073,7 +4059,7 @@ function data()
                     --     end
                     --     _actions.buildSnappyStreetEdges(args.stationConstructionId)
                     elseif name == _eventNames.CON_CONFIG_MENU_OPENED then
-                        if m_conConfigMenu.isBusy then return end -- do not overwrite conConfigMenu.args
+                        if m_state.isBusy then return end -- do not overwrite conConfigMenu.args
 
                         -- make a note of the neighbours before the edge modules are replaced with fakes
                         -- Save these into the state? It would be slow but help if there is a crash during config
@@ -4085,10 +4071,10 @@ function data()
                         logger.print('conConfigMenu.args.streetEndEntities =') logger.debugPrint(m_conConfigMenu.args.streetEndEntities)
                         logger.print('conConfigMenu.args.trackEndEntities =') logger.debugPrint(m_conConfigMenu.args.trackEndEntities)
                     elseif name == _eventNames.CON_CONFIG_MENU_CLOSED then
-                        if m_conConfigMenu.isBusy then return end
+                        if m_state.isBusy then return end
 
                         if not(m_conConfigMenu.isOpen) then _utils.sendHideProgress() return end
-                        m_conConfigMenu.isBusy = true
+                        m_state.isBusy = true
 
                         if args.stationConstructionId ~= m_conConfigMenu.args.stationConstructionId then _utils.sendHideProgress() return end
                         if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then _utils.sendHideProgress() return end
@@ -4220,7 +4206,7 @@ function data()
                         elseif name == 'builder.apply' then
                             guiHelpers.hideWarningWithGoTo()
                             guiHelpers.hideWarning(
-                                _utils.sendHideWarnings
+                                _guiUtils.sendHideWarnings
                             )
                             -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =')
                             if id == 'bulldozer' then -- we don't catch the bulldozer anymore coz it interferes with something, probably preProcessFn.
@@ -4359,6 +4345,9 @@ function data()
                             -- This is not easy because there is no way to associate frozen edges to terminals,
                             -- edgeUtils.getNearbyObjectIds(transf, 0.1, api.type.ComponentType.FIELD, pos.z -10, pos.z + 1)
                             logger.print('idAdded fired, conId = ' .. tostring(conId))
+                            local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
+                            if not(con) or con.fileName ~= _constants.stationConFileName then return end
+
                             local streetEndEntities = stationHelpers.getStationStreetEndEntities(conId, true)
                             local trackEndEntities = stationHelpers.getStationTrackEndEntities(conId, true)
                             if not(streetEndEntities) and not(trackEndEntities) then return end
@@ -4396,7 +4385,7 @@ function data()
                             if _ingameMenu ~= nil and _ingameMenu:isVisible() then return end
 
                             logger.print('the con config menu was closed, about to send command CON_CONFIG_MENU_CLOSED, conId = ' .. conId)
-                            guiHelpers.showProgress(_guiTexts.rebuildNeighboursInProgress, _guiTexts.modName, _utils.sendAllowProgress)
+                            guiHelpers.showProgress(_guiTexts.rebuildNeighboursInProgress, _guiTexts.modName, _guiUtils.sendAllowProgress)
                             api.cmd.sendCommand(
                                 api.cmd.make.sendScriptEvent(
                                     string.sub(debug.getinfo(1, 'S').source, 1),
@@ -4417,7 +4406,7 @@ function data()
                             elseif m_state.warningText ~= nil then
                                 logger.warn('about to save a game but a warning is open, so a freestyle station is not finalised => closing the ingame menu')
                                 userMessage = _guiTexts.awaitFinalisationBeforeSaving
-                            elseif m_conConfigMenu.isBusy then
+                            elseif m_state.isBusy then
                                 logger.warn('about to save a game but the mod is busy, so a freestyle station is not finalised => closing the ingame menu')
                                 userMessage = _guiTexts.awaitFinalisationBeforeSaving
                             end
@@ -4450,18 +4439,18 @@ function data()
             -- Both restore the pre-notice state when closed, so future notices will show up.
             if m_state.warningText == nil then
                 guiHelpers.hideWarning(
-                    -- _utils.sendHideWarnings -- do not set the state here, it might interfere and it's redundant anyway
+                    -- _guiUtils.sendHideWarnings -- do not set the state here, it might interfere and it's redundant anyway
                 )
             elseif not(guiHelpers.isShowingWarning) then -- the if () avoids rendering many times
                 guiHelpers.showWarning(
                     m_state.warningText,
-                    _utils.sendHideWarnings
+                    _guiUtils.sendHideWarnings
                 )
             end
 
             if m_state.isHideProgress then
                 guiHelpers.hideProgress(
-                    _utils.sendAllowProgress
+                    _guiUtils.sendAllowProgress
                 )
             end
         end,
@@ -4474,12 +4463,14 @@ function data()
                 -- with not(api.gui), loadedState is the last saved state from the save file (eg lollo-test-01.sav.lua)
                 -- use it to reset the state if it gets stuck, which should never happen
                 m_state = {
+                    isBusy = false,
                     isHideProgress = false,
                     warningText = nil,
                 }
                 logger.print('script.load firing from the worker thread, state =') logger.debugPrint(m_state)
             else
                 m_state = {
+                    isBusy = loadedState.isBusy or false,
                     isHideProgress = loadedState.isHideProgress or false,
                     warningText = loadedState.warningText or nil,
                 }
@@ -4488,6 +4479,7 @@ function data()
         save = function()
             -- only fires when the worker thread changes the state
             if m_state == nil then m_state = {} end
+            if not(m_state.isBusy) then m_state.isBusy = false end
             if not(m_state.isHideProgress) then m_state.isHideProgress = false end
             if m_state.warningText == '' then m_state.warningText = nil end
             return m_state

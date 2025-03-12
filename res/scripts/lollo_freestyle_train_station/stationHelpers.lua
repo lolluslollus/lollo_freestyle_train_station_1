@@ -27,7 +27,6 @@ local _utils = {
 ---@alias nodeIdProperties {nodeId: integer, position: {x: number, y: number, z: number}}
 ---@alias nodeIdsProperties table<nodeIdProperties>
 ---@alias platformHeightProps {hasEdges: boolean, heightCm: integer}
----@alias platformHeightsProps table<platformHeightProps>
 local helpers = {
     ---isReadEdgeObjects might disagree with isSortOutput
     ---@param edgeIds table<integer>
@@ -1820,7 +1819,7 @@ end
 ---comment
 ---@param stationConstructionId integer
 ---@param isSkipLogging boolean
----@return platformHeightsProps | nil
+---@return table<integer, platformHeightProps> | nil
 helpers.getPlatformHeightProps_indexedByT = function(stationConstructionId, isSkipLogging)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         if isSkipLogging then return nil end

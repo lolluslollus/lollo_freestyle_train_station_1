@@ -4,12 +4,13 @@ local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
 local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
-
+-- these are for any thread
 local _eventId = '__lolloAutoSplitPlatform__'
 local _eventProperties = {
     splitPlatformRequested = { eventName = 'splitPlatformRequested'},
 }
-local trackTypes = {
+-- this is for the GUI thread
+local guiTrackTypes = {
     eraA = {
         autoSplitTrackId = nil,
         autoSplitTrackName = 'lollo_freestyle_train_station/era_a_passenger_platform_5m_auto_split.lua',
@@ -29,19 +30,7 @@ local trackTypes = {
         narrowTrackName = 'lollo_freestyle_train_station/era_c_passenger_platform_2_5m.lua',
     },
 }
-
-local _utils = {
-    guiInit = function()
-        trackTypes.eraA.autoSplitTrackId = api.res.trackTypeRep.find(trackTypes.eraA.autoSplitTrackName)
-        trackTypes.eraB.autoSplitTrackId = api.res.trackTypeRep.find(trackTypes.eraB.autoSplitTrackName)
-        trackTypes.eraC.autoSplitTrackId = api.res.trackTypeRep.find(trackTypes.eraC.autoSplitTrackName)
-
-        trackTypes.eraA.narrowTrackId = api.res.trackTypeRep.find(trackTypes.eraA.narrowTrackName)
-        trackTypes.eraB.narrowTrackId = api.res.trackTypeRep.find(trackTypes.eraB.narrowTrackName)
-        trackTypes.eraC.narrowTrackId = api.res.trackTypeRep.find(trackTypes.eraC.narrowTrackName)
-    end,
-}
-
+-- these are for the worker thread
 local _actions = {
     replaceEdgeWithParallelNarrowTracks = function(oldEdgeId, newTrackTypeId)
         logger.print('replaceEdgeWithParallelNarrowTracks starting, oldEdgeId =', oldEdgeId, 'newTrackTypeId =', newTrackTypeId)
@@ -188,11 +177,15 @@ local _actions = {
 function data()
     return {
         guiInit = function()
-            _utils.guiInit()
-            logger.print('trackTypes =') logger.debugPrint(trackTypes)
+            guiTrackTypes.eraA.autoSplitTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraA.autoSplitTrackName)
+            guiTrackTypes.eraB.autoSplitTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraB.autoSplitTrackName)
+            guiTrackTypes.eraC.autoSplitTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraC.autoSplitTrackName)
+
+            guiTrackTypes.eraA.narrowTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraA.narrowTrackName)
+            guiTrackTypes.eraB.narrowTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraB.narrowTrackName)
+            guiTrackTypes.eraC.narrowTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraC.narrowTrackName)
+            logger.print('trackTypes =') logger.debugPrint(guiTrackTypes)
         end,
-        -- guiUpdate = function()
-        -- end,
         guiHandleEvent = function(id, name, args)
             -- args can have different types, even boolean, depending on the event id and name
             if (name == 'builder.apply') then
@@ -214,9 +207,9 @@ function data()
                                 and addedSegment.trackEdge ~= nil
                                 and addedSegment.trackEdge.trackType ~= nil
                                 and (
-                                    addedSegment.trackEdge.trackType == trackTypes.eraA.autoSplitTrackId
-                                    or addedSegment.trackEdge.trackType == trackTypes.eraB.autoSplitTrackId
-                                    or addedSegment.trackEdge.trackType == trackTypes.eraC.autoSplitTrackId
+                                    addedSegment.trackEdge.trackType == guiTrackTypes.eraA.autoSplitTrackId
+                                    or addedSegment.trackEdge.trackType == guiTrackTypes.eraB.autoSplitTrackId
+                                    or addedSegment.trackEdge.trackType == guiTrackTypes.eraC.autoSplitTrackId
                                 )
                                 and edgeUtils.isValidAndExistingId(addedSegment.entity)
                                 then
@@ -224,7 +217,7 @@ function data()
                                     local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(addedSegment.entity)
                                     if not(edgeUtils.isValidId(conId)) then -- do not touch frozen segments
                                         -- local newTrackTypeId = nil
-                                        for key, value in pairs(trackTypes) do
+                                        for key, value in pairs(guiTrackTypes) do
                                             logger.print('key =') logger.debugPrint(key)
                                             logger.print('value =') logger.debugPrint(value)
                                             if addedSegment.trackEdge.trackType == value.autoSplitTrackId then
@@ -235,12 +228,12 @@ function data()
                                                 break
                                             end
                                         end
-                                        -- if addedSegment.trackEdge.trackType == trackTypes.eraA.autoSplitTrackId then
-                                        --     newTrackTypeId = trackTypes.eraA.narrowTrackId
-                                        -- elseif addedSegment.trackEdge.trackType == trackTypes.eraB.autoSplitTrackId then
-                                        --     newTrackTypeId = trackTypes.eraB.narrowTrackId
-                                        -- elseif addedSegment.trackEdge.trackType == trackTypes.eraC.autoSplitTrackId then
-                                        --     newTrackTypeId = trackTypes.eraC.narrowTrackId
+                                        -- if addedSegment.trackEdge.trackType == guiTrackTypes.eraA.autoSplitTrackId then
+                                        --     newTrackTypeId = guiTrackTypes.eraA.narrowTrackId
+                                        -- elseif addedSegment.trackEdge.trackType == guiTrackTypes.eraB.autoSplitTrackId then
+                                        --     newTrackTypeId = guiTrackTypes.eraB.narrowTrackId
+                                        -- elseif addedSegment.trackEdge.trackType == guiTrackTypes.eraC.autoSplitTrackId then
+                                        --     newTrackTypeId = guiTrackTypes.eraC.narrowTrackId
                                         -- end
                                         -- if newTrackTypeId ~= nil then
                                         --     eventParams[#eventParams+1] = {
@@ -281,24 +274,5 @@ function data()
                 logger.xpErrorHandler
             )
         end,
-        -- update = function()
-        -- end,
-        -- save = function()
-        --     -- only fires when the worker thread changes the state
-        --     if not state then state = {} end
-        --     if not state.isErrorReplacingConWithSnappyCopy then state.isErrorReplacingConWithSnappyCopy = false end
-        --     return state
-        -- end,
-        -- load = function(loadedState)
-        --     -- fires once in the worker thread, at game load, and many times in the UI thread
-        --     if loadedState then
-        --         state = {}
-        --         state.isErrorReplacingConWithSnappyCopy = loadedState.isErrorReplacingConWithSnappyCopy or false
-        --     else
-        --         state = {
-        --             isErrorReplacingConWithSnappyCopy = false,
-        --         }
-        --     end
-        -- end,
     }
 end

@@ -31,7 +31,7 @@ return {
     ---ctor
     ---@param configLayoutIdPrefix string
     ---@param warningWindowWithGotoId string
-    ---@param texts table
+    ---@param texts table<string, string>
     ---@param extraHeight4Title? number
     ---@param extraHeight4Param? number
     ---@param windowXShift? number
@@ -192,24 +192,29 @@ return {
                         addParam(paramMetadata.key, paramMetadata, paramMetadata.defaultIndex)
                     end
                 end
-        --[[
+
                 if type(onBulldozeClicked) == 'function' then
                     local bulldozeButtonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
                     bulldozeButtonLayout:addItem(api.gui.comp.ImageView.new('ui/cursors/bulldoze.tga'))
-                    bulldozeButtonLayout:addItem(api.gui.comp.TextView.new(_constants.texts.bulldoze))
+                    bulldozeButtonLayout:addItem(api.gui.comp.TextView.new(self.privateData.texts.bulldoze))
                     local bulldozeButton = api.gui.comp.Button.new(bulldozeButtonLayout, true)
                     bulldozeButton:onClick(
                         function()
                             if type(onBulldozeClicked) == 'function' then
+                                local gameUI = api.gui.util.getGameUI()
+                                if gameUI and gameUI.playSoundEffect then
+                                    -- gameUI:playSoundEffect('bulldozeMedium')
+                                    gameUI:playSoundEffect('bulldozeLarge')
+                                end
                                 onBulldozeClicked(entityId)
                                 -- window:setVisible(false, false) NO!
                             end
                         end
                     )
-                    bulldozeButton:setGravity(0.5, 0)
+                    bulldozeButton:setGravity(0.5, 0.0)
                     layout:addItem(bulldozeButton)
                 end
-        ]]
+
                 return layout
             end,
             moveCamera = function(position)

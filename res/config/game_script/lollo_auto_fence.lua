@@ -31,7 +31,7 @@ local _guiTexts = {
     waypointsTooFar = '',
     waypointsNotConnected = '',
 }
-
+-- these can be called by any thread
 local _utils = {
     getConFileName = function(conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then return nil end
@@ -76,6 +76,7 @@ local _utils = {
         return nearestEdgeId
     end
 }
+-- these are for the worker thread
 local _actions = {
     buildFence = function(trackRecords, yShift, conTransf, isWaypoint2ArrowAgainstTrackDirection)
         logger.print('_buildFence starting, args =')
@@ -232,32 +233,6 @@ local _actions = {
             end
         )
     end,
---[[
-    bulldozeCon = function(conId)
-        if not(edgeUtils.isValidAndExistingId(conId)) then return end
-
-        local proposal = api.type.SimpleProposal.new()
-        -- LOLLO NOTE there are asymmetries how different tables are handled.
-        -- This one requires this system, UG says they will document it or amend it.
-        proposal.constructionsToRemove = { conId }
-        -- proposal.constructionsToRemove[1] = constructionId -- fails to add
-        -- proposal.constructionsToRemove:add(constructionId) -- fails to add
-
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        -- context.cleanupStreetGraph = true -- default is false
-        -- context.gatherBuildings = true  -- default is false
-        -- context.gatherFields = true -- default is true
-        -- context.player = api.engine.util.getPlayer() -- default is -1
-        api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
-            function(result, success)
-                logger.print('_bulldozeCon success = ', success)
-                -- logger.print('_bulldozeCon result = ') logger.debugPrint(result)
-            end
-        )
-    end,
-]]
     bulldozeConstruction = function(conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
@@ -315,7 +290,6 @@ local _actions = {
             end
         )
     end,
-
     updateConstruction = function(oldConId, paramKey, newParamValueIndexBase0)
         logger.print('_updateConstruction starting, conId =', oldConId or 'NIL', 'paramKey =', paramKey or 'NIL', 'newParamValueIndexBase0 =', newParamValueIndexBase0 or 'NIL')
 
@@ -372,7 +346,7 @@ local _actions = {
         )
     end,
 }
-
+-- these are for the GUI thread
 local _guiActions = {
     getCon = function(constructionId)
         if not(edgeUtils.isValidAndExistingId(constructionId)) then return nil end
@@ -1262,8 +1236,8 @@ function data()
                         _actions.bulldozeConstruction(args.fenceMarkerCon2Id)
                     elseif name == _eventNames.CON_PARAMS_UPDATED then
                         _actions.updateConstruction(args.conId, args.paramKey, args.newParamValueIndexBase0)
-                    -- elseif name == _eventNames.BULLDOZE_CON_REQUESTED then -- unused
-                    --     _actions.bulldozeCon(args.conId)
+                    elseif name == _eventNames.BULLDOZE_CON_REQUESTED then -- unused
+                        _actions.bulldozeConstruction(args.conId)
                     elseif name == _eventNames.AUTO_FENCE_MARKER_BULLDOZE_REQUESTED then
                         _actions.bulldozeConstruction(args.conId)
                     end
