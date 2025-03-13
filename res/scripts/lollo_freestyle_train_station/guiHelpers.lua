@@ -11,6 +11,7 @@ local _waypointDistanceWindowId = 'lollo_freestyle_station_waypoint_distance_win
 local _saveWarningWindowId = 'lollo_freestyle_station_workflow_warning_window'
 
 local _texts = {
+    bulldozeAll = _('BulldozeAll'),
     goBack = _('GoBack'),
     goThere = _('GoThere'), -- cannot put this directly inside the loop for some reason
     join = _('Join'),
@@ -330,7 +331,7 @@ end
 ---@param text string
 ---@param wrongObjectId? integer
 ---@param similarObjectsIds? table<integer>
-guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds)
+guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds, removeAllFunc)
     logger.print('guiHelpers.showWarningWithGoto starting, text =', text or 'NIL')
     guiHelpers.isShowingWarningWithGoTo = true
 
@@ -379,6 +380,7 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
             end
         end
     end
+
     local function addGoBackToWrongObjectButton()
         if not(edgeUtils.isValidAndExistingId(wrongObjectId)) then return end
 
@@ -403,8 +405,32 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
             layout:addItem(button)
         end
     end
+
+    local function addBulldozeAllObjectsButton()
+        if type(removeAllFunc) ~= 'function' then return end
+
+        local bulldozeButtonLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
+        bulldozeButtonLayout:addItem(api.gui.comp.ImageView.new('ui/cursors/bulldoze.tga'))
+        bulldozeButtonLayout:addItem(api.gui.comp.TextView.new(_texts.bulldozeAll))
+        local bulldozeButton = api.gui.comp.Button.new(bulldozeButtonLayout, true)
+        bulldozeButton:onClick(
+            function()
+                if type(removeAllFunc) == 'function' then
+                    local gameUI = api.gui.util.getGameUI()
+                    if gameUI and gameUI.playSoundEffect then
+                        -- gameUI:playSoundEffect('bulldozeMedium')
+                        gameUI:playSoundEffect('bulldozeLarge')
+                    end
+                    removeAllFunc()
+                    -- window:setVisible(false, false) NO!
+                end
+            end
+        )
+        layout:addItem(bulldozeButton)
+    end
     addGotoOtherObjectsButtons()
     addGoBackToWrongObjectButton()
+    addBulldozeAllObjectsButton()
 
     window:setHighlighted(true)
     local position = api.gui.util.getMouseScreenPos()

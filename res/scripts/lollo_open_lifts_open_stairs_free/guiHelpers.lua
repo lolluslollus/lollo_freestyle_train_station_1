@@ -6,6 +6,7 @@ return guiConfigWindow.new(
     'lollo_stairs_warning_window_with_goto',
     {
         bulldoze = _('Bulldoze'),
+        bulldozeAll = _('BulldozeAll'),
         conConfigWindowTitle = _('ConConfigWindowTitle'),
         goBack = _('GoBack'),
         goThere = _('GoThere'), -- cannot put this directly inside the loop for some reason

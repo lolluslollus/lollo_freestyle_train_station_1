@@ -183,6 +183,7 @@ function data()
                 -- allow adding new params to old cons that did not have them
                 local defaults = fenceModelHelper.getDefaultIndexes()
                 params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
+                params.lolloFenceAssets_isYFlipped = params.lolloFenceAssets_isYFlipped or defaults.lolloFenceAssets_isYFlipped
                 params.lolloFenceAssets_isTunnelWallLikeOutside = params.lolloFenceAssets_isTunnelWallLikeOutside or defaults.lolloFenceAssets_isTunnelWallLikeOutside
                 params.lolloFenceAssets_isWallBehindThick = params.lolloFenceAssets_isWallBehindThick or defaults.lolloFenceAssets_isWallBehindThick
                 params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.lolloFenceAssets_model
@@ -195,6 +196,8 @@ function data()
                 params.transfs = params.transfs or {} -- obsolete, it was an early release, newer releases have transfs_ground instead
                 params.transfs_ground = params.transfs_ground or {}
                 params.transfs_wallBehind = params.transfs_wallBehind or {}
+                params.transfs_ground_yFlipped = params.transfs_ground_yFlipped or {}
+                params.transfs_wallBehind_yFlipped = params.transfs_wallBehind_yFlipped or {}
             end
             _initParams()
 
@@ -234,6 +237,7 @@ function data()
                 } },
             }
 
+            local isFlipped = params.lolloFenceAssets_isYFlipped == 1 and #params.transfs_ground_yFlipped > 0 -- I try to be compatible with outdated versions
             local isTunnelWallLikeOutside = params.lolloFenceAssets_isTunnelWallLikeOutside == 1
             local isWallBehindInTunnels = params.lolloFenceAssets_wallBehindInTunnels == 1
             local isWallBehindOnBridges = params.lolloFenceAssets_wallBehindOnBridges == 1
@@ -317,7 +321,8 @@ function data()
             elseif isRaiseTerrain then _zDeltaOutward = (constants.wallHeight + (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -0.3 --adjusted to smooth it out a bit
             end
             logger.print('_yStart = ' .. tostring(_yStart) .. '; _zShift = ' .. tostring(_zShift) .. '; _zStart = ' .. tostring(_zStart))
-            for _, transfData in pairs(params.transfs_ground) do
+            local _transfs_ground = isFlipped and params.transfs_ground_yFlipped or params.transfs_ground
+            for _, transfData in pairs(_transfs_ground) do
                 if not(transfData.hasLevelCrossing) then
                     if transfData.groundBridgeTunnel_012 == 2 and not(isTunnelWallLikeOutside) then -- tunnel
                         _addWall(transfData.transf, result, 0, _zStart_Tunnel, wallMainModelId_Tunnel, wallBaseModelId_Tunnel)
@@ -329,7 +334,8 @@ function data()
                     end
                 end
             end
-            for _, transfData in pairs(params.transfs_wallBehind) do
+            local _transfs_wallBehind = isFlipped and params.transfs_wallBehind_yFlipped or params.transfs_wallBehind
+            for _, transfData in pairs(_transfs_wallBehind) do
                 if not(transfData.hasLevelCrossing) then
                     if transfData.groundBridgeTunnel_012 == 0 -- ground
                     or (transfData.groundBridgeTunnel_012 == 1 and isWallBehindOnBridges) -- bridge

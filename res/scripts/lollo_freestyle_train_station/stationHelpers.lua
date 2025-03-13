@@ -1965,15 +1965,8 @@ helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
     return result
 end
 
-helpers.reversePosTanX2ListInPlace = function(posTanX2List)
-    if type(posTanX2List) ~= 'table' then return posTanX2List end
-
-    local result = {}
-    for i = #posTanX2List, 1, -1 do
-        result[#result+1] = posTanX2List[i]
-    end
-
-    for i = 1, #posTanX2List do
+local _getReversedPosTanX2List = function(result)
+    for i = 1, #result do
         -- LOLLO NOTE lua does not need the third variable for swapping since the assignments take place at the same time
         result[i].posTanX2[1], result[i].posTanX2[2] = result[i].posTanX2[2], result[i].posTanX2[1]
         for ii = 1, 2 do
@@ -1984,6 +1977,28 @@ helpers.reversePosTanX2ListInPlace = function(posTanX2List)
     end
 
     return result
+end
+
+helpers.reversePosTanX2ListInPlace = function(posTanX2List)
+    if type(posTanX2List) ~= 'table' then return posTanX2List end
+
+    local result = {}
+    for i = #posTanX2List, 1, -1 do
+        result[#result+1] = posTanX2List[i]
+    end
+
+    return _getReversedPosTanX2List(result)
+end
+
+helpers.getReversedPosTanX2List = function(posTanX2List)
+    if type(posTanX2List) ~= 'table' then return arrayUtils.cloneDeepOmittingFields(posTanX2List) end
+
+    local result = {}
+    for i = #posTanX2List, 1, -1 do
+        result[#result+1] = arrayUtils.cloneDeepOmittingFields(posTanX2List[i])
+    end
+
+    return _getReversedPosTanX2List(result)
 end
 
 return helpers

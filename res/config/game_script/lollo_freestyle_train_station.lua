@@ -32,8 +32,8 @@ local m_guiConConfigMenu = {
     openForConId = nil
 }
 
-local _eventId = _constants.eventData.eventId
-local _eventNames = _constants.eventData.eventNames
+local _eventId = _constants.eventData.lolloFreestyleTrainStation.eventId
+local _eventNames = _constants.eventData.lolloFreestyleTrainStation.eventNames
 local _guiPlatformWaypointModelId = nil
 local _guiSplitterWaypointModelId = nil
 local _guiTrackWaypointModelId = nil
@@ -1500,6 +1500,7 @@ local _actions = {
 
         if arrayUtils.getCount(neighbourCons_indexedByConId, true) < 1 then
             _utils.sendHideProgress()
+            collectgarbage() -- LOLLO TODO collect if error too
             return
         end
 
@@ -1530,6 +1531,7 @@ local _actions = {
                         _utils.buildWarningHint(stationConPositionXYZ, _('UnsnappedNeighbouringConstruction'), _('UnsnappedNeighbouringConstruction'))
                 end
                 _utils.sendHideProgress()
+                collectgarbage() -- LOLLO TODO collect if error too
                 return
             end
 

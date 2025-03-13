@@ -1,9 +1,9 @@
-local constants = require('lollo_freestyle_train_station.constants')
-
 function data()
+    -- LOLLO NOTE when building underground, the bottom parts of the models disappear, never mind using a very high prio material.
     return {
         -- type = 'TRACK_CONSTRUCTION', -- this prevent snapping
         type = 'ASSET_DEFAULT', -- this allows snapping
+        -- type = 'ASSET_TRACK', -- this allows snapping
         description = {
             name = _('AutoFenceMarkerName'),
             description = _('AutoFenceMarkerDesc')
@@ -15,7 +15,7 @@ function data()
         buildMode = 'SINGLE',
         categories = { 'stairs' },
         order = 101,
-        autoRemovable = false,
+        autoRemovable = true,
         skipCollision = true,
         -- useless with type = 'TRACK_CONSTRUCTION'
         snapping = {
@@ -25,39 +25,55 @@ function data()
         },
         updateFn = function(params)
             local result = {}
+
+            local _xSize, _ySize = 50, 50
+            local _face = {
+                {-_xSize, -_ySize, 0, 1}, {_xSize, -_ySize, 0, 1}, {_xSize, _ySize, 0, 1}, {-_xSize, _ySize, 0, 1}
+            }
+
             result.colliders = {}
             result.cost = 0
             result.edgeLists = {}
-            -- result.groundFaces = {}
-            result.groundFaces = { -- dummy ground faces so this finds the nearest edge
-                {
-                    face = {
-                        {0.1, -0.1, 0.0, 1.0},
-                        {0.1, 0.1, 0.0, 1.0},
-                        {-0.1, 0.1, 0.0, 1.0},
-                        {-0.1, -0.1, 0.0, 1.0},
+            result.groundFaces = {{ -- I need ground faces so the api can work with the construction
+                face = _face, -- and transparent so I can see underground
+                loop = true,
+                modes = {
+                    {
+                        -- key = 'lollo_freestyle_train_station/hole.lua',
+                        key = 'hole.lua',
+                        type = 'FILL',
                     },
-                    modes = {
-                        {
-                            type = 'FILL',
-                            key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
-                        }
-                    }
-                },
-            }
+                }
+            }}
+            -- result.groundFaces = {{ -- dummy ground faces so the api can work with the construction
+            --     face = {
+            --         {0.1, -0.1, 0.0, 1.0},
+            --         {0.1, 0.1, 0.0, 1.0},
+            --         {-0.1, 0.1, 0.0, 1.0},
+            --         {-0.1, -0.1, 0.0, 1.0},
+            --     },
+            --     loop = true,
+            --     modes = {
+            --         {
+            --             key = 'shared/asphalt_01.gtex.lua', --'shared/gravel_03.gtex.lua'
+            --             type = 'FILL',
+            --         }
+            --     }
+            -- }}
+            -- result.groundFaces = {}
             result.models = {
                 {
                     id = 'lollo_freestyle_train_station/railroad/auto_fence_marker.mdl',
                     autoRemovable = true,
                     skipCollision = true,
-                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, constants.splitterZShift, 1}
+                    transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
                 }
             }
-            -- LOLLO NOTE this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
-            result.terrainAlignmentLists = { {
+            -- this thing with the empty faces is required , otherwise the game will make its own alignments, with spikes and all on bridges or tunnels.
+            result.terrainAlignmentLists = { { -- and it will throw collisions too in this case
                 type = 'EQUAL',
                 optional = true,
-                faces =  { }
+                faces =  { _face }
             } }
             --		result.h0 = {}
             --		result.h1 = {}

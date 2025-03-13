@@ -26,6 +26,7 @@ local privateValues = {
 privateValues.defaults = {
     -- lolloFenceAssets_buildOnFrozenEdges = 0,
     lolloFenceAssets_doTerrain = 1,
+    lolloFenceAssets_isYFlipped = 0,
     lolloFenceAssets_isTunnelWallLikeOutside = 0,
     lolloFenceAssets_isWallBehindThick = 0,
     -- lolloFenceAssets_isWallTall = 0,
@@ -398,6 +399,14 @@ return {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_isTunnelWallLikeOutside,
                 key = 'lolloFenceAssets_isTunnelWallLikeOutside',
                 name = _('isTunnelWallLikeOutside'),
+                uiType = 'CHECKBOX',
+                values = {_('NO'), _('YES')}
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_isYFlipped,
+                key = 'lolloFenceAssets_isYFlipped',
+                name = _('isFlipped'),
+                tooltip = _('isFlippedTooltip'),
                 uiType = 'CHECKBOX',
                 values = {_('NO'), _('YES')}
             },
