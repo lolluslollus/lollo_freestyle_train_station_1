@@ -181,7 +181,8 @@ function data()
             --         end
             --     end
             -- end
-            local _fileName = 'lollo_freestyle_train_station/icon/orange.mdl'
+            -- local _fileName = 'lollo_freestyle_train_station/icon/orange.mdl'
+            local _fileName = 'lollo_freestyle_train_station/icon/orange_huge.mdl'
             result.models[#result.models+1] = {
                 id = _fileName,
                 transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, _zHalfSize, 1}

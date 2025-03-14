@@ -253,6 +253,7 @@ local _actions = {
                 else
                     logger.warn('_buildFence failed, result =') logger.warningDebugPrint(result)
                 end
+                collectgarbage()
             end
         )
     end,
