@@ -3409,11 +3409,15 @@ function data()
                         or not(edgeUtils.isValidAndExistingId(args.splitTrackNode1Id))
                         or not(edgeUtils.isValidAndExistingId(args.splitTrackNode2Id))
                         then
-                            if args == nil then logger.warn('TRACK_BULLDOZE_REQUESTED got args == NIL')
+                            if args == nil then
+                                logger.warn('TRACK_BULLDOZE_REQUESTED got args == NIL')
                             else
-                                logger.warn('TRACK_BULLDOZE_REQUESTED got some missing or invalid data; args.splitTrackNode1Id =') logger.warningDebugPrint(args.splitTrackNode1Id)
-                                logger.warn('args.splitTrackNode2Id =') logger.warningDebugPrint(args.splitTrackNode2Id)
+                                logger.warn('TRACK_BULLDOZE_REQUESTED got some missing or invalid data; args.splitTrackNode1Id =')
+                                logger.warningDebugPrint(args.splitTrackNode1Id)
+                                logger.warn('args.splitTrackNode2Id =')
+                                logger.warningDebugPrint(args.splitTrackNode2Id)
                             end
+                            if not(m_state.warningText) then m_state.warningText = _('CannotMakeStation') end
                             return
                         end
 
@@ -3427,6 +3431,7 @@ function data()
                         -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                         if #trackEdgeIdsBetweenNodeIds == 0 then
                             logger.err('#trackEdgeIdsBetweenNodeIds == 0')
+                            if not(m_state.warningText) then m_state.warningText = _('CannotMakeStation') end
                             return
                         end
                         if #trackEdgeIdsBetweenNodeIds == 1 then
@@ -3464,6 +3469,7 @@ function data()
                         -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                         if #platformEdgeIdsBetweenNodeIds == 0 then
                             logger.err('#platformEdgeIdsBetweenNodeIds == 0')
+                            if not(m_state.warningText) then m_state.warningText = _('CannotMakeStation') end
                             return
                         end
                         if #platformEdgeIdsBetweenNodeIds == 1 then
@@ -4439,7 +4445,7 @@ function data()
             -- Warnings are shown when the state wants so, and closed by hand or when building something.
             -- Progress info is shown when the GUI is at the right point, and closed when the operation chain has completed.
             -- Both restore the pre-notice state when closed, so future notices will show up.
-            if m_state.warningText == nil then
+            if not(m_state.warningText) then
                 guiHelpers.hideWarning(
                     -- _guiUtils.sendHideWarnings -- do not set the state here, it might interfere and it's redundant anyway
                 )
