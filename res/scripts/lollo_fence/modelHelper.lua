@@ -31,7 +31,7 @@ privateValues.defaults = {
     lolloFenceAssets_isWallBehindThick = 0,
     -- lolloFenceAssets_isWallTall = 0,
     lolloFenceAssets_length = 9,
-    lolloFenceAssets_model = 15,
+    lolloFenceAssets_model = 19,
     lolloFenceAssets_wallEraPrefix = 1,
     lolloFenceAssets_wallBehindModel = 0,
     lolloFenceAssets_wallBehindInTunnels = 0,
@@ -145,9 +145,9 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_light_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
-            add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
-            add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceMattoni.tga', _("WallFenceMattoniName"))
-            add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
+            add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
+            add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceMattoni.tga', _("WallFenceMattoniName"))
+            add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
             add('lollo_freestyle_train_station/platformWalls/arched/bricks_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFs.tga', _("WallStaccionataFsName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFsTall.tga', _("WallStaccionataFsTallName"))

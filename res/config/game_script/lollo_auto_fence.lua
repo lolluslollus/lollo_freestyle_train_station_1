@@ -1,6 +1,6 @@
-local _constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
+local constants = require('lollo_freestyle_train_station.constants')
 local guiHelpers = require('lollo_fence.guiHelpers')
 local edgeUtils = require('lollo_freestyle_train_station.edgeUtils')
 local logger = require('lollo_freestyle_train_station.logger')
@@ -14,8 +14,8 @@ local transfUtilsUG = require('transf')
 -- LOLLO NOTE to avoid collisions when combining several parallel tracks,
 -- cleanupStreetGraph is false everywhere.
 
-local _eventId = _constants.eventData.autoFence.eventId
-local _eventNames = _constants.eventData.autoFence.eventNames
+local _eventId = constants.eventData.autoFence.eventId
+local _eventNames = constants.eventData.autoFence.eventNames
 local _guiFenceWaypointModelId = nil
 local _guiFenceWaypointPreciseModelId = nil
 local _guiTexts = {
@@ -68,8 +68,8 @@ local _utils = {
         local conTransfLua = transfUtilsUG.new(con.transf:cols(0), con.transf:cols(1), con.transf:cols(2), con.transf:cols(3))
         local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(
             conTransfLua,
-            conTransfLua[15] - _constants.splitterZToleranceM,
-            conTransfLua[15] + _constants.splitterZToleranceM,
+            conTransfLua[15] - constants.splitterZToleranceM,
+            conTransfLua[15] + constants.splitterZToleranceM,
             logger
         )
 
@@ -83,7 +83,7 @@ local _actions = {
         if not(trackRecords) or #trackRecords == 0 then return end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = _constants.autoFenceConFileName
+        newCon.fileName = constants.autoFenceConFileName
 
         local _mainTransf = arrayUtils.cloneDeepOmittingFields(conTransf)
         local _inverseMainTransf = transfUtils.getInverseTransf(_mainTransf)
@@ -323,7 +323,7 @@ local _actions = {
             return
         end
         local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
-        if oldCon == nil or oldCon.fileName ~= _constants.autoFenceConFileName then
+        if oldCon == nil or oldCon.fileName ~= constants.autoFenceConFileName then
             logger.print('_updateConstruction cannot get the con, or it is not one of mine')
             return
         end
@@ -393,8 +393,8 @@ local _guiActions = {
         for _, objectId in pairs(objectIds) do
             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                 string.sub(debug.getinfo(1, 'S').source, 1),
-                _constants.eventData.lolloFreestyleTrainStation.eventId,
-                _constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                constants.eventData.lolloFreestyleTrainStation.eventId,
+                constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
                 {
                     waypointId = objectId
                 }
@@ -414,7 +414,7 @@ local _guiActions = {
         end
 
         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-        if con == nil or con.fileName ~= _constants.autoFenceConFileName then
+        if con == nil or con.fileName ~= constants.autoFenceConFileName then
             logger.print('_handleParamValueChanged cannot get the con or it is not one of mine')
             return
         end
@@ -438,7 +438,7 @@ local _guiActions = {
         end
 
         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-        if con == nil or con.fileName ~= _constants.autoFenceConFileName then
+        if con == nil or con.fileName ~= constants.autoFenceConFileName then
             logger.print('_handleBulldozeClicked cannot get the con or it is not one of mine')
             return
         end
@@ -651,8 +651,8 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
         guiHelpers.showWarningWithGoto(_guiTexts.waypointAlreadyBuilt, newWaypointId, similarObjectIdsInAnyEdges, bulldozeAllWaypointsFunc)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             string.sub(debug.getinfo(1, 'S').source, 1),
-            _constants.eventData.lolloFreestyleTrainStation.eventId,
-            _constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+            constants.eventData.lolloFreestyleTrainStation.eventId,
+            constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
             {
                 waypointId = newWaypointId
             }
@@ -669,8 +669,8 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
     if not(newWaypointPosition) then
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             string.sub(debug.getinfo(1, 'S').source, 1),
-            _constants.eventData.lolloFreestyleTrainStation.eventId,
-            _constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+            constants.eventData.lolloFreestyleTrainStation.eventId,
+            constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
             {
                 waypointId = newWaypointId
             }
@@ -688,8 +688,8 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
     if not(twinWaypointPosition) then
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             string.sub(debug.getinfo(1, 'S').source, 1),
-            _constants.eventData.lolloFreestyleTrainStation.eventId,
-            _constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+            constants.eventData.lolloFreestyleTrainStation.eventId,
+            constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
             {
                 waypointId = twinWaypointId
             }
@@ -699,24 +699,24 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
 
     local waypointDistance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition)
     -- forbid building waypoints too close
-    if type(waypointDistance) ~= 'number' or waypointDistance < _constants.minFenceWaypointDistance then
+    if type(waypointDistance) ~= 'number' or waypointDistance < constants.minFenceWaypointDistance then
         guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooClose, newWaypointId, similarObjectIdsInAnyEdges, bulldozeAllWaypointsFunc)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             string.sub(debug.getinfo(1, 'S').source, 1),
-            _constants.eventData.lolloFreestyleTrainStation.eventId,
-            _constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+            constants.eventData.lolloFreestyleTrainStation.eventId,
+            constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
             {
                 waypointId = newWaypointId
             }
         ))
         return false
     -- forbid building waypoints too far apart, which would make the fence too long
-    elseif waypointDistance > _constants.maxFenceWaypointDistance then
+    elseif waypointDistance > constants.maxFenceWaypointDistance then
         guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooFar, newWaypointId, similarObjectIdsInAnyEdges, bulldozeAllWaypointsFunc)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             string.sub(debug.getinfo(1, 'S').source, 1),
-            _constants.eventData.lolloFreestyleTrainStation.eventId,
-            _constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+            constants.eventData.lolloFreestyleTrainStation.eventId,
+            constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
             {
                 waypointId = newWaypointId
             }
@@ -727,7 +727,7 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
     local contiguousTrackEdgeIds = edgeUtils.track.getTrackEdgeIdsBetweenEdgeIds(
         api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
         api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId),
-        _constants.maxFenceWaypointDistance,
+        constants.maxFenceWaypointDistance,
         true,
         logger.isExtendedLog()
     )
@@ -737,8 +737,8 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
         guiHelpers.showWarningWithGoto(_guiTexts.markersNotConnected, newWaypointId, similarObjectIdsInAnyEdges, bulldozeAllWaypointsFunc)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             string.sub(debug.getinfo(1, 'S').source, 1),
-            _constants.eventData.lolloFreestyleTrainStation.eventId,
-            _constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+            constants.eventData.lolloFreestyleTrainStation.eventId,
+            constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
             {
                 waypointId = newWaypointId,
             }
@@ -762,8 +762,8 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
                 guiHelpers.showWarningWithGoto(_guiTexts.differentPlatformWidths, newWaypointId, similarObjectIdsInAnyEdges, bulldozeAllWaypointsFunc)
                 api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                     string.sub(debug.getinfo(1, 'S').source, 1),
-                    _constants.eventData.lolloFreestyleTrainStation.eventId,
-                    _constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
+                    constants.eventData.lolloFreestyleTrainStation.eventId,
+                    constants.eventData.lolloFreestyleTrainStation.eventNames.WAYPOINT_BULLDOZE_REQUESTED,
                     {
                         waypointId = newWaypointId,
                     }
@@ -785,7 +785,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     -- first of all, we check if we have plopped a marker of ours
     -- we must not interfere with other mods
     local fileName = _utils.getConFileName(newConId)
-    if fileName ~= _constants.autoFenceMarkerConFileName and fileName ~= _constants.autoFenceMarkerPreciseConFileName then return false end
+    if fileName ~= constants.autoFenceMarkerConFileName and fileName ~= constants.autoFenceMarkerPreciseConFileName then return false end
 
     local newEdgeId = _utils.getNearestEdgeToCon(newConId)
     logger.print('validateFenceMarkerBuilt starting, fence marker edgeId = ' .. tostring(newEdgeId) .. ', conId = ' .. tostring(newConId))
@@ -833,7 +833,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     -- this is the old api but it is much faster
     local similarConIds = game.interface.getEntities(
         {
-            pos = transfUtils.getVec123Transformed({0, 0, 0}, _constants.idTransf),
+            pos = {0, 0, 0},
             radius = 99999
         },
         {
@@ -911,7 +911,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
 
     local markerDistance = transfUtils.getPositionsDistance(newConPosition, twinConPosition)
     -- forbid building markers too close
-    if type(markerDistance) ~= 'number' or markerDistance < _constants.minFenceWaypointDistance then
+    if type(markerDistance) ~= 'number' or markerDistance < constants.minFenceWaypointDistance then
         guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooClose, newConId, {}, bulldozeAllMarkersFunc)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -923,7 +923,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
         ))
         return false
     -- forbid building markers too far apart, which would make the fence too long
-    elseif markerDistance > _constants.maxFenceWaypointDistance then
+    elseif markerDistance > constants.maxFenceWaypointDistance then
         guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooFar, newConId, otherConIds, bulldozeAllMarkersFunc)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -939,7 +939,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     local contiguousTrackEdgeIds = edgeUtils.track.getTrackEdgeIdsBetweenEdgeIds(
         newEdgeId,
         twinEdgeId,
-        _constants.maxFenceWaypointDistance,
+        constants.maxFenceWaypointDistance,
         true,
         logger.isExtendedLog()
     )
@@ -980,7 +980,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     otherAutoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
     return {
         autoFenceMarkerEdgeIds_indexedByConId = otherAutoFenceMarkerEdgeIds_indexedByConId,
-        isPrecise = (fileName == _constants.autoFenceMarkerPreciseConFileName),
+        isPrecise = (fileName == constants.autoFenceMarkerPreciseConFileName),
         isWaypointArrowAgainstTrackDirection = isWaypointArrowAgainstTrackDirection,
         newWaypointId = newConId,
         twinWaypointId = twinConId
@@ -991,8 +991,8 @@ function data()
     return {
         guiInit = function()
             -- read variables
-            _guiFenceWaypointModelId = api.res.modelRep.find(_constants.fenceWaypointModelId)
-            _guiFenceWaypointPreciseModelId = api.res.modelRep.find(_constants.fenceWaypointPreciseModelId)
+            _guiFenceWaypointModelId = api.res.modelRep.find(constants.fenceWaypointModelId)
+            _guiFenceWaypointPreciseModelId = api.res.modelRep.find(constants.fenceWaypointPreciseModelId)
             -- read texts
             _guiTexts.differentPlatformWidths = _('DifferentPlatformWidths')
             _guiTexts.invalidEdge = _('InvalidEdge')
@@ -1028,7 +1028,7 @@ function data()
                         -- }
                         logger.print('args =') logger.debugPrint(args)
                         local trackEdgeIdsBetweenEdgeIds = edgeUtils.track.getTrackEdgeIdsBetweenEdgeIds(
-                            args.edge1Id, args.edge2Id, _constants.maxFenceWaypointDistance, true, logger.isExtendedLog()
+                            args.edge1Id, args.edge2Id, constants.maxFenceWaypointDistance, true, logger.isExtendedLog()
                         )
                         if #trackEdgeIdsBetweenEdgeIds > 0 then
                             local trackEdgeList_Ordered = stationHelpers.getEdgeIdsProperties(trackEdgeIdsBetweenEdgeIds, true, false, true, true)
@@ -1249,7 +1249,7 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
                         local con = _guiActions.getCon(conId)
-                        if not(con) or con.fileName ~= _constants.autoFenceConFileName then return end
+                        if not(con) or con.fileName ~= constants.autoFenceConFileName then return end
 
                         logger.print('selected one of my fences, it has conId =', conId, 'and con.fileName =', con.fileName)
                         guiHelpers.addEntityConfigToWindow(
