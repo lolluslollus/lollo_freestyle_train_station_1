@@ -8,11 +8,11 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo openStairsFree.con ERROR: ', err)
+        print('lollo openStairsFree_v2.con ERROR: ', err)
     end
 
-    local _paramValues = _openLiftOpenStairsHelpers.paramValues.stairs_v1
-    local _paramReaders = _openLiftOpenStairsHelpers.paramReaders.stairs_v1
+    local _paramValues = _openLiftOpenStairsHelpers.paramValues.stairs_v2
+    local _paramReaders = _openLiftOpenStairsHelpers.paramReaders.stairs_v2
 
 	return {
         type = 'ASSET_DEFAULT',
@@ -22,19 +22,20 @@ function data()
             icon = 'ui/construction/station/rail/lollo_freestyle_train_station/openStairsFree.tga',
 		},
 		availability = {
-			yearFrom = -1,
-			yearTo = -1,
+			yearFrom = 0,
+			yearTo = 0,
 		},
         categories = { 'stairs' },
-		order = 500,
+		order = 501,
 		autoRemovable = false,
         -- buildMode = 'MULTI',
 		skipCollision = false, -- true,
-        params = _openLiftOpenStairsHelpers.getOpenStairsParamsMetadata(),
+        params = _openLiftOpenStairsHelpers.getOpenStairsParamsMetadata_v2(),
 		updateFn = function(params)
-            logger.print('openStairsFree.updateFn firing, params =') logger.debugPrint(_arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+            logger.print('openStairsFree_v2.updateFn firing, params =') logger.debugPrint(_arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
             local _height = _paramReaders.getHeight(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
+            logger.print('### _bridgeChunkLength = ' .. tostring(_bridgeChunkLength))
             local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
@@ -51,11 +52,11 @@ function data()
             end
 
             local topLanesModelId = ''
-            if _bridgeChunkLength == -1 or _bridgeChunkLength == -2 then -- no bridge
+            if _bridgeChunkLength < 0 then -- no bridge
                 topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_linkable_'.. _height ..'m.mdl'
-            elseif _bridgeChunkLength == 0 or _bridgeChunkLength == 1 or _bridgeChunkLength == 2 or _bridgeChunkLength == 3 then -- edge or bridge, snappy or not
+            elseif _bridgeChunkLength >= 100 then -- edge or bridge, snappy or not
                 topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_fork_'.. _height ..'m.mdl'
-            else -- model
+            else -- modelled bridge
                 topLanesModelId = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_top_unlinkable_'.. _height ..'m.mdl'
             end
 
@@ -122,30 +123,23 @@ function data()
                     --     }
                     -- }
                 },
-                labelText = {
-                    [0] = { _('OutdatedConstruction'), _('OutdatedConstruction') }
-                },
                 models = {
                     {
-                        id = _constants.yellowMessageModelFileName,
-                        transf = _constants.idTransf
+                        id = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. (_bridgeChunkLength == -2 and 'open_stairs_no_top_railing_' or 'open_stairs_').. _height ..'m.mdl',
+                        transf = _constants.idTransf,
                     },
-                    -- {
-                    --     id = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. (_bridgeChunkLength == -2 and 'open_stairs_no_top_railing_' or 'open_stairs_').. _height ..'m.mdl',
-                    --     transf = _constants.idTransf,
-                    -- },
-                    -- {
-                    --     id = baseLanesModelId,
-                    --     transf = _constants.idTransf,
-                    -- },
-                    -- {
-                    --     id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
-                    --     transf = _constants.idTransf,
-                    -- },
-                    -- {
-                    --     id = topLanesModelId,
-                    --     transf = _constants.idTransf,
-                    -- },
+                    {
+                        id = baseLanesModelId,
+                        transf = _constants.idTransf,
+                    },
+                    {
+                        id = 'lollo_freestyle_train_station/open_stairs_free_passenger_lanes/passenger_lane_free_open_stairs_'.. _height ..'m.mdl',
+                        transf = _constants.idTransf,
+                    },
+                    {
+                        id = topLanesModelId,
+                        transf = _constants.idTransf,
+                    },
                 },
                 terrainAlignmentLists = {
                     {
@@ -157,7 +151,6 @@ function data()
                     },
                 },
             }
-            if true then return result end
 
             -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
 
@@ -267,7 +260,7 @@ function data()
             end
 
             local _addBridge = function()
-                if _bridgeChunkLength == 0 or _bridgeChunkLength == 1 then -- edge or snappy edge
+                if _bridgeChunkLength == 100 or _bridgeChunkLength == 101 then -- edge or snappy edge
                     local _bridgeLen = 2
                     local _zShift = _bridgeLen * _paramReaders.getSinYAngle(params)
                     table.insert(
@@ -283,12 +276,12 @@ function data()
                                 tramTrackType  = 'NO',
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
-                            snapNodes = _bridgeChunkLength == 0 and { } or { 1 },
+                            snapNodes = _bridgeChunkLength == 100 and { } or { 1 },
                             -- tag2nodes = {},
                             type = 'STREET'
                         }
                     )
-                elseif _bridgeChunkLength == 2 or _bridgeChunkLength == 3 then -- bridge or snappy bridge
+                elseif _bridgeChunkLength == 102 or _bridgeChunkLength == 103 then -- bridge or snappy bridge
                     local _bridgeLen = 2
                     local _zShift = _bridgeLen * _paramReaders.getSinYAngle(params)
                     table.insert(
@@ -306,7 +299,7 @@ function data()
                                 tramTrackType  = 'NO',
                                 type = _autoBridgePathsRefData.streetTypeName_noBridge,
                             },
-                            snapNodes = _bridgeChunkLength == 2 and { } or { 1 },
+                            snapNodes = _bridgeChunkLength == 102 and { } or { 1 },
                             -- tag2nodes = {},
                             type = 'STREET'
                         }
@@ -331,7 +324,7 @@ function data()
                     --         faces =  { }
                     --     }
                     -- )
-                elseif _bridgeChunkLength >= 4 then -- model
+                elseif _bridgeChunkLength >= 4 then -- modelled bridge except the shortest one
                     local modelId = 'lollo_freestyle_train_station/open_stairs/' .. _era_prefix .. 'bridge_chunk_' .. tostring(_bridgeChunkLength) .. 'm.mdl'
                     local transf = _transfUtilsUG.mul(
                         _transfUtilsUG.rotZ(math.rad(_paramReaders.getBridgeChunkZAngle(params))),

@@ -611,6 +611,7 @@ local _utils = {
                 -- 'station/rail/lollo_freestyle_train_station/openLiftFree.con',
                 'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con',
                 'station/rail/lollo_freestyle_train_station/openStairsFree.con',
+                'station/rail/lollo_freestyle_train_station/openStairsFree_v2.con',
                 -- 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con',
                 'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con',
             },
@@ -4096,7 +4097,11 @@ function data()
                         local nTerminalsToRemove = _utils.getNTerminalsToRemove(conParams)
                         logger.print('isFakeEdgesPresent =', tostring(isFakeEdgesPresent))
                         logger.print('#nTerminalsToRemove =', #nTerminalsToRemove)
-                        if not(isFakeEdgesPresent) and #nTerminalsToRemove == 0 then _utils.sendHideProgress() return end
+                        if not(isFakeEdgesPresent) and #nTerminalsToRemove == 0 then 
+                            _utils.sendHideProgress()
+                            collectgarbage()
+                            return
+                        end
 
                         args.platformHeightProps_indexedByT = m_conConfigMenu.args.platformHeightProps_indexedByT
                         args.streetEndEntities = m_conConfigMenu.args.streetEndEntities
@@ -4393,6 +4398,7 @@ function data()
                             if _ingameMenu ~= nil and _ingameMenu:isVisible() then return end
 
                             logger.print('the con config menu was closed, about to send command CON_CONFIG_MENU_CLOSED, conId = ' .. conId)
+                            collectgarbage()
                             guiHelpers.showProgress(_guiTexts.rebuildNeighboursInProgress, _guiTexts.modName, _guiUtils.sendAllowProgress)
                             api.cmd.sendCommand(
                                 api.cmd.make.sendScriptEvent(

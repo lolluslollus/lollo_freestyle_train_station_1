@@ -78,6 +78,9 @@ local _paramHelpers = {
                 'passengers/era_c_db_2_stripes_cube_1x1.mdl',
                 'passengers/era_c_db_1_stripe_cube_1x1.mdl',
                 'passengers/era_c_db_1_stripe_cube_1x1.mdl',
+                'path/era_a_cube_1x1.mdl',
+                'path/era_b_cube_1x1.mdl',
+                'path/era_c_cube_1x1.mdl',
             }
         end,
         getDisplayValues = function()
@@ -93,6 +96,9 @@ local _paramHelpers = {
                 _('PassengersEraCDB'),
                 _('PassengersEraCFS'),
                 _('PassengersEraCUK'),
+                _('PathEraADefault'),
+                _('PathEraBDefault'),
+                _('PathEraCDefault'),
             }
         end,
     },

@@ -1,0 +1,32 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles.mtl',
+                                'lollo_freestyle_train_station/square_marble_tiles_low_prio.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/railroad/assets/platform_cube_1x1m.msh',
+                            -- transf = {0, 1, 0, 0,  -_mdlHelpers.getSlopedPlatformStretchFactor(1, 5), 0, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
+                        },
+                    },
+                    name = 'RootNode',
+                    -- transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

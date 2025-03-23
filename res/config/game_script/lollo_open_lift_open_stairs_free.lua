@@ -12,16 +12,18 @@ local _eventProperties = {
     conBuilt = {eventName = 'conBuilt'},
     conParamsUpdated = {eventName = 'conParamsUpdated'},
     -- openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree.con', eventName = 'openLiftBuilt' },
-    openLiftBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con', eventName = 'openLiftBuilt' },
-    openStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openStairsFree.con', eventName = 'openStairsBuilt' },
+    openLiftSelected = { conName = 'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con', eventName = 'openLiftSelected' },
+    openStairsSelected = { conName = 'station/rail/lollo_freestyle_train_station/openStairsFree.con', eventName = 'openStairsSelected' },
+    openStairsSelected_v2 = { conName = 'station/rail/lollo_freestyle_train_station/openStairsFree_v2.con', eventName = 'openStairsSelected_v2' },
     -- openTwinStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openTwinStairsFree.con', eventName = 'openTwinStairsBuilt' },
-    openTwinStairsBuilt = { conName = 'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con', eventName = 'openTwinStairsBuilt' },
+    openTwinStairsSelected = { conName = 'station/rail/lollo_freestyle_train_station/openTwinStairsFree_v2.con', eventName = 'openTwinStairsSelected' },
 }
 
 -- only accessible in the UI thread
 local _guiData = {
     conOpenLiftParamsMetadataSorted = {},
     conOpenStairsParamsMetadataSorted = {},
+    conOpenStairsParamsMetadataSorted_v2 = {},
     conOpenTwinStairsParamsMetadataSorted = {},
     isExperimentalParamsMenu = true,
 }
@@ -223,24 +225,39 @@ function data()
                         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
                         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-                        if con == nil or not(arrayUtils.arrayHasValue({_eventProperties.openLiftBuilt.conName, _eventProperties.openStairsBuilt.conName, _eventProperties.openTwinStairsBuilt.conName}, con.fileName)) then return end
+                        if con == nil or not(arrayUtils.arrayHasValue(
+                            {
+                                _eventProperties.openLiftSelected.conName,
+                                _eventProperties.openStairsSelected.conName,
+                                _eventProperties.openStairsSelected_v2.conName,
+                                _eventProperties.openTwinStairsSelected.conName
+                            },
+                            con.fileName
+                        )) then return end
 
                         logger.print('selected open stairs or lift, it has conId =', conId, 'and con.fileName =', con.fileName)
-                        if con.fileName == _eventProperties.openLiftBuilt.conName then
+                        if con.fileName == _eventProperties.openLiftSelected.conName then
                             if not(_guiData.conOpenLiftParamsMetadataSorted) then
                                 logger.warn('_guiData.conOpenLiftParamsMetadataSorted is not available')
                                 return
                             end
 
                             guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenLiftParamsMetadataSorted, con.params)
-                        elseif con.fileName == _eventProperties.openStairsBuilt.conName then
+                        elseif con.fileName == _eventProperties.openStairsSelected.conName then
                             if not(_guiData.conOpenStairsParamsMetadataSorted) then
                                 logger.warn('_guiData.conOpenStairsParamsMetadataSorted is not available')
                                 return
                             end
 
                             guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenStairsParamsMetadataSorted, con.params)
-                        elseif con.fileName == _eventProperties.openTwinStairsBuilt.conName then
+                        elseif con.fileName == _eventProperties.openStairsSelected_v2.conName then
+                            if not(_guiData.conOpenStairsParamsMetadataSorted_v2) then
+                                logger.warn('_guiData.conOpenStairsParamsMetadataSorted_v2 is not available')
+                                return
+                            end
+
+                            guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenStairsParamsMetadataSorted_v2, con.params)
+                        elseif con.fileName == _eventProperties.openTwinStairsSelected.conName then
                             if not(_guiData.conOpenTwinStairsParamsMetadataSorted) then
                                 logger.warn('_guiData.conOpenTwinStairsParamsMetadataSorted is not available')
                                 return
@@ -257,6 +274,7 @@ function data()
             -- logger.print('guiInit starting')
             _guiData.conOpenLiftParamsMetadataSorted = openStairsHelpers.getOpenLiftParamsMetadata()
             _guiData.conOpenStairsParamsMetadataSorted = openStairsHelpers.getOpenStairsParamsMetadata()
+            _guiData.conOpenStairsParamsMetadataSorted_v2 = openStairsHelpers.getOpenStairsParamsMetadata_v2()
             _guiData.conOpenTwinStairsParamsMetadataSorted = openStairsHelpers.getOpenTwinStairsParamsMetadata()
             -- logger.print('guiInit ending')
         end,

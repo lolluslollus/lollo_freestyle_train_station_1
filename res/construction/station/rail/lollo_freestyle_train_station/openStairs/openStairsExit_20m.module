@@ -19,13 +19,13 @@ function data()
 			price = 0,
 		},
 		description = {
-			name = _("OpenStairsExitName_64m"),
+			name = _("OpenStairsExitName_20m"),
 			description = _("OpenStairsExitDesc"),
-			icon = "ui/lollo_freestyle_train_station/openStairsExit64m.tga"
+			icon = "ui/lollo_freestyle_train_station/openStairsExit20m.tga"
 		},
 		metadata = { },
 		order = {
-			value = 73,
+			value = 68,
 		},
 		type = _constants.openStairsExitModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
@@ -33,7 +33,7 @@ function data()
 			if not nTerminal or not baseId then return end
 
 			local eraPrefix = moduleHelpers.getEraPrefix(params, nTerminal, nTrackEdge)
-			local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(64, eraPrefix)
+			local modelId = moduleHelpers.openStairs.getPedestrianBridgeModelId(20, eraPrefix)
 
 			result.models[#result.models + 1] = {
 				id = modelId,
@@ -53,7 +53,7 @@ function data()
 		getModelsFn = function(params)
 			return {
 				{
-					id = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_64m.mdl',
+					id = 'lollo_freestyle_train_station/open_stairs/era_c_bridge_chunk_20m.mdl',
 					transf = _constants.idTransf,
 				},
 				moduleHelpers.openStairs.getPreviewIcon(params),
