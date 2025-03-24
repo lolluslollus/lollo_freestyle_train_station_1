@@ -532,6 +532,7 @@ local _utils = {
         ))
         then return false end
 
+        -- this is very expensive if it tries to upgrade another freestyle station
         local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
         local conTransf_lua = transfUtilsUG.new(oldCon.transf:cols(0), oldCon.transf:cols(1), oldCon.transf:cols(2), oldCon.transf:cols(3))
         return xpcall(
@@ -1071,7 +1072,7 @@ local _actions = {
                 for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
                     if not(arrayUtils.arrayHasValue(neighbourConIds, conId)) then -- make sure you don't do the same con twice
                         neighbourConIds[#neighbourConIds+1] = conId
-
+                        -- this is very expensive if the neighbouring con is a freestyle station
                         local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
                         newParams.seed = conProps.params.seed + 1
                         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
@@ -1375,6 +1376,7 @@ local _actions = {
             for _, endEntity in pairs(args.streetEndEntities) do
                 for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
                     if not(neighbourCons_indexedByConId[conId]) then -- make sure you don't do the same con twice
+                        -- this is very expensive if the neighbouring con is a freestyle station
                         local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
                         newParams.seed = conProps.params.seed + 1
                         local newCon = api.type.SimpleProposal.ConstructionEntity.new()

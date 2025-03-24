@@ -1378,6 +1378,7 @@ local _getStationStreetEndEntities = function(frozenEdgeIds_indexed, frozenNodeI
             endEntity.jointNeighbourNode.conProps[conId] = {
                 conId = conId,
                 fileName = neighbourCon.fileName,
+                -- this is very expensive if the neighbouring con is a freestyle station
                 params = arrayUtils.cloneDeepOmittingFields(neighbourCon.params, nil, true),
                 -- playerEntity = api.engine.util.getPlayer(),  
                 transf = transfUtilsUG.new(
