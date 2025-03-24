@@ -1,7 +1,7 @@
 package.path = package.path .. ';res/scripts/?.lua'
 --package.path = package.path .. ';C:/Program Files (x86)/Steam/steamapps/common/Transport Fever 2/res/scripts/?.lua'
 
-print('scratch8 starting')
+print('scratch10 starting')
 
 local logger = require('lollo_freestyle_train_station.logger')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
@@ -20,6 +20,15 @@ local getTab2 = function()
         [225] = true
     }
 end
+
+debugPrint = function(whatever)
+    print('debugPrint =', whatever)
+end
+-- logger.printInfoSkippingNils('lollo =', function(a) return a end, {1, 2, 3}, {a = 1, b = 2, c = 3}, nil, true, false, 123.456)
+-- logger.printWarningsSkippingNils('lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456)
+logger.infoOut({'lollo =', function(a) return a end, {1, 2, 3}, {a = 1, b = 2, c = 3}, nil, true, false, 123.456})
+logger.warningsOut({'lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456})
+logger.errorsOut({'lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456})
 
 local conc = arrayUtils.concatKeysValues(getTab1(), getTab2())
 local tab1 = getTab1()

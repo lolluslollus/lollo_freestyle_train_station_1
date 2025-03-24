@@ -644,11 +644,8 @@ local _utils = {
             end,
             function(error)
                 logger.warn('_tryUpgradeStationOrStairsOrLiftConstruction failed')
+                debugPrint(error)
                 m_state.warningText = _('NeedAdjust4Snap')
-                logger.warn(error)
-                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
-                -- collectgarbage()
-                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 return conTransf_lua
             end
         )
@@ -2356,24 +2353,16 @@ logger.print('FOUR')
                 -- UG TODO there is no such thing in the new api, nor an upgrade event, both would be useful
                 -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
                 collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
-                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 local upgradedConId = game.interface.upgradeConstruction(
                     oldConId,
                     oldCon.fileName,
                     paramsBak_NoSeed
                 )
-                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
-                -- collectgarbage()
-                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 logger.print('depot upgraded')
             end,
             function(error)
                 logger.warn('depot upgrade failed')
-                logger.warn(error)
-                -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
-                -- collectgarbage()
-                -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
-                logger.print('collect garbage done')
+                debugPrint(error)
             end
         )
 --[[
