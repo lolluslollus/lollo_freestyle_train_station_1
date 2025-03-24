@@ -7,15 +7,14 @@ local _isTimersActive = true
 ---@param value any
 ---@return string
 local _printOneThing = function(outString, value)
-    local valueString = tostring(value)
-    if valueString:sub(0, 10) == 'function: ' or valueString:sub(0, 7) == 'table: ' then
+    local typ = type(value)
+    if typ == 'function' or typ == 'table' then
         if outString ~= '' then print(outString) end
-        outString = ''
         debugPrint(value)
+        return ''
     else
-        outString = outString .. ' ' .. valueString
+        return outString .. ' ' .. tostring(value)
     end
-    return outString
 end
 ---@param outString string
 ---@param tab table<any>
@@ -35,20 +34,21 @@ local _printThings = function(outString, tab)
         return
     end
 
+    local newOutString = outString
     for i = 1, nTab, 1 do
-        local newOutString = _printOneThing(outString, tab[i])
-        if newOutString ~= '' then print(newOutString) end
+        newOutString = _printOneThing(newOutString, tab[i])
     end
+    if newOutString ~= '' then print(newOutString) end
 end
 local _printThingsSkippingNils = function(outString, ...)
     for _, value in pairs({...}) do
-        local valueString = tostring(value)
-        if valueString:sub(0, 10) == 'function: ' or valueString:sub(0, 7) == 'table: ' then
-            print(outString)
-            outString = ''
+        local typ = type(value)
+        if typ == 'function' or typ == 'table' then
+            if outString ~= '' then print(outString) end
             debugPrint(value)
+            outString = ''
         else
-            outString = outString .. ' ' .. valueString
+            outString = outString .. ' ' .. tostring(value)
         end
     end
     print(outString)
