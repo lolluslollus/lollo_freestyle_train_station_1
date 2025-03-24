@@ -460,7 +460,7 @@ return {
 			end
 		end
 
-		-- logger.print('passengerTerminal.module.updateFn ending')
+		-- logger.infoOut('passengerTerminal.module.updateFn ending')
 	end,
 
 	getModelsFn = function(params)

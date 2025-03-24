@@ -253,7 +253,7 @@ function data()
                                 ))
                             end
                         end,
-                        logger.xpErrorHandler
+                        logger.errorOut
                     )
                 end
             end
@@ -269,7 +269,7 @@ function data()
                         _actions.replaceEdgeWithParallelNarrowTracks(args.edgeId, args.newTrackTypeId)
                     end
                 end,
-                logger.xpErrorHandler
+                logger.errorOut
             )
         end,
     }

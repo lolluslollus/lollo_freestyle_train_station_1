@@ -79,7 +79,7 @@ local _utils = {
 -- these are for the worker thread
 local _actions = {
     buildFence = function(trackRecords, trackRecords_yFlipped, yShift, conTransf, isWaypoint2ArrowAgainstTrackDirection)
-        logger.print('_buildFence starting')
+        logger.infoOut('_buildFence starting')
         if not(trackRecords) or #trackRecords == 0 then return end
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
@@ -263,19 +263,19 @@ local _actions = {
         )
     end,
     replaceEdgeWithSameRemovingObject = function(objectIdToRemove)
-        logger.print('_replaceEdgeWithSameRemovingObject starting')
+        logger.infoOut('_replaceEdgeWithSameRemovingObject starting')
         if not(edgeUtils.isValidAndExistingId(objectIdToRemove)) then return end
 
-        logger.print('_replaceEdgeWithSameRemovingObject found, the edge object id is valid')
+        logger.infoOut('_replaceEdgeWithSameRemovingObject found, the edge object id is valid')
         local oldEdgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(objectIdToRemove)
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
 
-        logger.print('_replaceEdgeWithSameRemovingObject found, the old edge id is valid')
+        logger.infoOut('_replaceEdgeWithSameRemovingObject found, the old edge id is valid')
         -- replaces a track segment with an identical one, without destroying the buildings
         local proposal = stationHelpers.getProposal2ReplaceEdgeWithSameRemovingObject(oldEdgeId, objectIdToRemove)
         if not(proposal) then return end
 
-        logger.print('_replaceEdgeWithSameRemovingObject likes the proposal')
+        logger.infoOut('_replaceEdgeWithSameRemovingObject likes the proposal')
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -295,12 +295,12 @@ local _actions = {
         logger.infoOut('_updateConstruction starting, conId =', oldConId, 'paramKey =', paramKey, 'newParamValueIndexBase0 =', newParamValueIndexBase0)
 
         if not(edgeUtils.isValidAndExistingId(oldConId)) then
-            logger.warn('_updateConstruction received an invalid conId')
+            logger.warningOut('_updateConstruction received an invalid conId')
             return
         end
         local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
         if oldCon == nil or oldCon.fileName ~= constants.autoFenceConFileName then
-            logger.print('_updateConstruction cannot get the con, or it is not one of mine')
+            logger.infoOut('_updateConstruction cannot get the con, or it is not one of mine')
             return
         end
 
@@ -380,13 +380,13 @@ local _guiActions = {
     handleParamValueChanged = function(conId, paramsMetadata, paramKey, newParamValueIndexBase0)
         logger.infoOut('handleParamValueChanged starting for conId =', conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then
-            logger.warn('_handleParamValueChanged got no con or no valid con')
+            logger.warningOut('_handleParamValueChanged got no con or no valid con')
             return
         end
 
         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
         if con == nil or con.fileName ~= constants.autoFenceConFileName then
-            logger.print('_handleParamValueChanged cannot get the con or it is not one of mine')
+            logger.infoOut('_handleParamValueChanged cannot get the con or it is not one of mine')
             return
         end
 
@@ -404,13 +404,13 @@ local _guiActions = {
     handleBulldozeClicked = function(conId) -- unused
         logger.infoOut('_handleBulldozeClicked starting for conId =', conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then
-            logger.warn('_handleBulldozeClicked got no con or no valid con')
+            logger.warningOut('_handleBulldozeClicked got no con or no valid con')
             return
         end
 
         local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
         if con == nil or con.fileName ~= constants.autoFenceConFileName then
-            logger.print('_handleBulldozeClicked cannot get the con or it is not one of mine')
+            logger.infoOut('_handleBulldozeClicked cannot get the con or it is not one of mine')
             return
         end
 
@@ -442,14 +442,14 @@ local _guiActions = {
         local fenceWaypoint1Pos = edgeUtils.getObjectPosition(fenceWaypointIds[1])
         local fenceWaypoint2Pos = edgeUtils.getObjectPosition(fenceWaypointIds[2])
         if fenceWaypoint1Pos == nil or fenceWaypoint2Pos == nil then
-            logger.err('_handleValidFenceWaypointBuilt cannot find the fence waypoint positions')
+            logger.errorOut('_handleValidFenceWaypointBuilt cannot find the fence waypoint positions')
             return
         end
 
         local edge1Id = api.engine.system.streetSystem.getEdgeForEdgeObject(fenceWaypointIds[1])
         local edge2Id = api.engine.system.streetSystem.getEdgeForEdgeObject(fenceWaypointIds[2])
         if not(edgeUtils.isValidAndExistingId(edge1Id)) or not(edgeUtils.isValidAndExistingId(edge2Id)) then
-            logger.err('_handleValidFenceWaypointBuilt cannot find the fence waypoint edges')
+            logger.errorOut('_handleValidFenceWaypointBuilt cannot find the fence waypoint edges')
             return
         end
 
@@ -462,14 +462,14 @@ local _guiActions = {
         local baseEdge1 = api.engine.getComponent(edge1Id, api.type.ComponentType.BASE_EDGE)
         local baseEdge2 = api.engine.getComponent(edge2Id, api.type.ComponentType.BASE_EDGE)
         if not(baseEdge1) or not(baseEdge2) or not(baseEdge1.objects) or not(baseEdge2.objects) then
-            logger.err('_handleValidFenceWaypointBuilt cannot find edge data')
+            logger.errorOut('_handleValidFenceWaypointBuilt cannot find edge data')
             return
         end
 
         local edge2Node0 = api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE)
         local edge2Node1 = api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE)
         if not(edge2Node0) or not(edge2Node0.position) or not(edge2Node1) or not(edge2Node1.position) then
-            logger.err('_handleValidFenceWaypointBuilt cannot find node data')
+            logger.errorOut('_handleValidFenceWaypointBuilt cannot find node data')
             return
         end
         -- convert userdata.XYZ to table.123
@@ -491,7 +491,7 @@ local _guiActions = {
         --     end
         -- end
         -- if not(edgeObject1Side) or not(edgeObject2Side) then
-        --     logger.err('_handleValidFenceWaypointBuilt cannot find edge object sides')
+        --     logger.errorOut('_handleValidFenceWaypointBuilt cannot find edge object sides')
         --     return
         -- end
 
@@ -540,14 +540,14 @@ local _guiActions = {
         local marker1Pos = _utils.getConPosition(conIds[1])
         local marker2Pos = _utils.getConPosition(conIds[2])
         if marker1Pos == nil or marker2Pos == nil then
-            logger.err('_handleValidFenceWaypointBuilt cannot find the fence waypoint positions')
+            logger.errorOut('_handleValidFenceWaypointBuilt cannot find the fence waypoint positions')
             return
         end
 
         local edge1Id = lastWaypointData.autoFenceMarkerEdgeIds_indexedByConId[conIds[1]]
         local edge2Id = lastWaypointData.autoFenceMarkerEdgeIds_indexedByConId[conIds[2]]
         if not(edgeUtils.isValidAndExistingId(edge1Id)) or not(edgeUtils.isValidAndExistingId(edge2Id)) then
-            logger.err('_handleValidFenceWaypointBuilt cannot find the fence waypoint edges')
+            logger.errorOut('_handleValidFenceWaypointBuilt cannot find the fence waypoint edges')
             return
         end
 
@@ -560,14 +560,14 @@ local _guiActions = {
         local baseEdge1 = api.engine.getComponent(edge1Id, api.type.ComponentType.BASE_EDGE)
         local baseEdge2 = api.engine.getComponent(edge2Id, api.type.ComponentType.BASE_EDGE)
         if not(baseEdge1) or not(baseEdge2) or not(baseEdge1.objects) or not(baseEdge2.objects) then
-            logger.err('_handleValidFenceWaypointBuilt cannot find edge data')
+            logger.errorOut('_handleValidFenceWaypointBuilt cannot find edge data')
             return
         end
 
         local edge2Node0 = api.engine.getComponent(baseEdge2.node0, api.type.ComponentType.BASE_NODE)
         local edge2Node1 = api.engine.getComponent(baseEdge2.node1, api.type.ComponentType.BASE_NODE)
         if not(edge2Node0) or not(edge2Node0.position) or not(edge2Node1) or not(edge2Node1.position) then
-            logger.err('_handleValidFenceWaypointBuilt cannot find node data')
+            logger.errorOut('_handleValidFenceWaypointBuilt cannot find node data')
             return
         end
         -- convert userdata.XYZ to table.123
@@ -598,9 +598,9 @@ local _guiActions = {
 }
 _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWaypointId, waypointEdgeId, isWaypointArrowAgainstTrackDirection, trackTypeIndex)
     logger.infoOut('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
-    if not(edgeUtils.isValidAndExistingId(newWaypointId)) then logger.err('newWaypointId not valid') return false end
-    if not(edgeUtils.isValidAndExistingId(waypointEdgeId)) then logger.err('waypointEdgeId not valid') return false end
-    if not(edgeUtils.isValidId(trackTypeIndex)) then logger.err('trackTypeIndex not valid') return false end
+    if not(edgeUtils.isValidAndExistingId(newWaypointId)) then logger.errorOut('newWaypointId not valid') return false end
+    if not(edgeUtils.isValidAndExistingId(waypointEdgeId)) then logger.errorOut('waypointEdgeId not valid') return false end
+    if not(edgeUtils.isValidId(trackTypeIndex)) then logger.errorOut('trackTypeIndex not valid') return false end
 
     logger.infoOut('waypointEdgeId =', waypointEdgeId)
     local lastBuiltBaseEdge = api.engine.getComponent(waypointEdgeId, api.type.ComponentType.BASE_EDGE)
@@ -647,7 +647,7 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
     local twinWaypointId = (newWaypointId == similarObjectIdsInAnyEdges[1])
         and similarObjectIdsInAnyEdges[2]
         or similarObjectIdsInAnyEdges[1]
-    if not(edgeUtils.isValidAndExistingId(twinWaypointId)) then logger.err('twinWaypointId not valid') return false end
+    if not(edgeUtils.isValidAndExistingId(twinWaypointId)) then logger.errorOut('twinWaypointId not valid') return false end
 
     local twinWaypointPosition = edgeUtils.getObjectPosition(twinWaypointId)
     -- no twin or no useful twin
@@ -814,7 +814,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     for _, oldConId in pairs(similarConIds) do
         logger.infoOut('looping over oldConId = ', oldConId)
         if oldConId ~= newConId and edgeUtils.isValidAndExistingId(oldConId) then
-            logger.print('loop TWO')
+            logger.infoOut('loop TWO')
             local oldEdgeId = _utils.getNearestEdgeToCon(oldConId)
             logger.infoOut('loop got oldEdgeId = ', oldEdgeId)
             if edgeUtils.isValidAndExistingId(oldEdgeId) then
@@ -1006,12 +1006,12 @@ function data()
                                 args.edge2Node1Pos
                             )
                             then
-                                logger.print('isWaypoint2ArrowAgainstTrackDirection does not need reversing')
+                                logger.infoOut('isWaypoint2ArrowAgainstTrackDirection does not need reversing')
                             elseif comparisonUtils.is123sSame(
                                 trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[1][1],
                                 args.edge2Node1Pos
                             ) then
-                                logger.print('reversing isWaypoint2ArrowAgainstTrackDirection')
+                                logger.infoOut('reversing isWaypoint2ArrowAgainstTrackDirection')
                                 args.isWaypoint2ArrowAgainstTrackDirection = not(args.isWaypoint2ArrowAgainstTrackDirection)
                             else
                                 logger.warningOut(
@@ -1024,7 +1024,7 @@ function data()
                             end
 
                             if args.isWaypoint2ArrowAgainstTrackDirection then
-                                logger.print('reversing trackEdgeList')
+                                logger.infoOut('reversing trackEdgeList')
                                 trackEdgeList_Ordered = stationHelpers.reversePosTanX2ListInPlace(trackEdgeList_Ordered)
                                 -- yShift = -yShift -- NO!
                             end
@@ -1039,7 +1039,7 @@ function data()
                             -- precise markers: cull the bits on the marker edges but outside the markers
                             if #trackEdgeListFine > 0 then
                                 if args.isPrecise then
-                                    logger.print('isPrecise, about to cull the bits beyond the markers')
+                                    logger.infoOut('isPrecise, about to cull the bits beyond the markers')
                                     local maxII = #trackEdgeListFine
                                     local endPos1, endPos2
                                     if args.fenceMarkerCon1Id and args.fenceMarkerCon2Id then
@@ -1155,7 +1155,7 @@ function data()
                         _actions.bulldozeConstruction(args.conId)
                     end
                 end,
-                logger.xpErrorHandler
+                logger.errorOut
             )
         end,
         guiHandleEvent = function(id, name, args)
@@ -1187,14 +1187,14 @@ function data()
                             end
                         end
                     end,
-                    logger.xpErrorHandler
+                    logger.errorOut
                 )
             elseif (name == 'builder.apply' and id == 'constructionBuilder') then
                 if not args or not args.result or not args.result[1] then return end
 
                 local conId = args.result[1]
 
-                logger.print('some construction was built')
+                logger.infoOut('some construction was built')
                 local waypointData = _guiActions.validateFenceMarkerBuilt(conId)
                 logger.infoOut('fenceWaypointData =', waypointData)
                 if not(waypointData) then return end
@@ -1237,7 +1237,7 @@ function data()
                         --     _guiActions.handleBulldozeClicked
                         -- )
                     end,
-                    logger.xpErrorHandler
+                    logger.errorOut
                 )
             end
         end,

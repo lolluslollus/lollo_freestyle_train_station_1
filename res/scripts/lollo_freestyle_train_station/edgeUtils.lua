@@ -1346,7 +1346,7 @@ local nodeBetween = {
             if baseEdge ~= nil and api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK) ~= nil then
                 local nEdgesAttached2Node0 = #(_map[baseEdge.node0] or {})
                 if nEdgesAttached2Node0 == 0 then -- should never happen
-                    logger.warn('should never happen: 0 edges are attached to node ' .. baseEdge.node0)
+                    logger.warningOut('should never happen: 0 edges are attached to node ' .. baseEdge.node0)
                     sharedNodeIds_indexed[baseEdge.node0] = true
                 elseif nEdgesAttached2Node0 == 1 then
                     if isIncludeOuterEndNodes then
@@ -1357,7 +1357,7 @@ local nodeBetween = {
                 end
                 local nEdgesAttached2Node1 = #(_map[baseEdge.node1] or {})
                 if nEdgesAttached2Node1 == 0 then -- should never happen
-                    logger.warn('should never happen: 0 edges are attached to node ' .. baseEdge.node1)
+                    logger.warningOut('should never happen: 0 edges are attached to node ' .. baseEdge.node1)
                     sharedNodeIds_indexed[baseEdge.node1] = true
                 elseif nEdgesAttached2Node1 == 1 then
                     if isIncludeOuterEndNodes then

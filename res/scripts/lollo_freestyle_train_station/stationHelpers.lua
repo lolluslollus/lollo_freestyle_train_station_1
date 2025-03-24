@@ -159,7 +159,7 @@ local helpers = {
                             if newEdgeObject.param < 0 then newEdgeObject.param = 0 elseif newEdgeObject.param > 1 then newEdgeObject.param = 1 end
                         else
                             newEdgeObject.param = 0.5
-                            logger.warn('getEdgeIdsProperties found edge ' .. edgeId .. ' has length 0')
+                            logger.warningOut('getEdgeIdsProperties found edge ' .. edgeId .. ' has length 0')
                         end
 
                         newEdgeObject.modelFileName = api.res.modelRep.getName(modelInstanceList.fatInstances[1].modelId)
@@ -194,7 +194,7 @@ local helpers = {
 
                                 isEdgeObjectOneWay = (signal.type == 1)
                             else
-                                logger.warn('getEdgeIdsProperties found no signal list for edge ' .. edgeId)
+                                logger.warningOut('getEdgeIdsProperties found no signal list for edge ' .. edgeId)
                             end
                         end
                         newEdgeObject.isLeft = isEdgeObjectLeft
@@ -274,12 +274,12 @@ local helpers = {
             return counter < 2
         end
 
-        logger.print('one')
+        logger.infoOut('one')
         if type(contiguousEdgeIds) ~= 'table' or #contiguousEdgeIds < 1 then return {} end
-        logger.print('two')
+        logger.infoOut('two')
         if #contiguousEdgeIds == 1 then
             local _baseEdge = api.engine.getComponent(contiguousEdgeIds[1], api.type.ComponentType.BASE_EDGE)
-            logger.print('three')
+            logger.infoOut('three')
             return { _baseEdge.node0, _baseEdge.node1 }
         end
 
@@ -302,7 +302,7 @@ local helpers = {
     end,
 
     getCentralEdgePositions_AllBounds_UNUSED_BUT_KEEP_IT = function(edgeLists, maxEdgeLength, isAddTerrainHeight)
-        -- logger.print('getCentralEdgePositions_AllBounds starting')
+        -- logger.infoOut('getCentralEdgePositions_AllBounds starting')
         if type(edgeLists) ~= 'table' then return {} end
 
         local leadingIndex = 0
@@ -312,7 +312,7 @@ local helpers = {
             -- local edgeLength = (transfUtils.getVectorLength(refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(refEdge.posTanX2[2][2])) * 0.5
             local edgeLength, isEdgeLengthUsable, isEdgeLengthAccurate = edgeUtils.getEdgeLength(refEdge.edgeId)
             if edgeLength == nil then
-                logger.err('getCentralEdgePositions_OnlyOuterBounds could not find length of edge ' .. (refEdge.edgeId or 'NIL') .. ', leaving')
+                logger.errorOut('getCentralEdgePositions_OnlyOuterBounds could not find length of edge ' .. (refEdge.edgeId or 'NIL') .. ', leaving')
                 return {}
             end
             local nModelsInEdge = math.ceil(edgeLength / maxEdgeLength)
@@ -491,7 +491,7 @@ local helpers = {
         end
 
         if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
-            logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
+            logger.errorOut('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
             return {}
         end
         if logger.isExtendedLog() then
@@ -517,7 +517,7 @@ local helpers = {
             -- local _refEdgeLength = (transfUtils.getVectorLength(_refEdge.posTanX2[1][2]) + transfUtils.getVectorLength(_refEdge.posTanX2[2][2])) * 0.5
             local _refEdgeLength, isUsable, isAccurate = edgeUtils.getEdgeLength(_refEdge.edgeId, logger.isExtendedLog())
             if _refEdgeLength == nil then
-                logger.err('getCentralEdgePositions_OnlyOuterBounds could not find length of edge ' .. (_refEdge.edgeId or 'NIL') .. ', leaving')
+                logger.errorOut('getCentralEdgePositions_OnlyOuterBounds could not find length of edge ' .. (_refEdge.edgeId or 'NIL') .. ', leaving')
                 return {}
             end
             if firstRefEdge == nil and _refEdgeLength > 0 then
@@ -532,7 +532,7 @@ local helpers = {
                 local _nextStepPercent = stepLength / _refEdgeLength
                 logger.infoOut('_refEdgeLength, _firstStep, firstStepPercent, nextStepPercent =', _refEdgeLength, _firstStep, _firstStepPercent, _nextStepPercent)
                 if _firstStepPercent < 0 then
-                    logger.err('firstStep cannot be < 0; _refEdgeLength, lengthUncovered =', _refEdgeLength, lengthUncovered)
+                    logger.errorOut('firstStep cannot be < 0; _refEdgeLength, lengthUncovered =', _refEdgeLength, lengthUncovered)
                     return {}
                 end
 
@@ -554,8 +554,8 @@ local helpers = {
                         return {}
                     end
                     -- local newEdgeLength = nodeBetween.refDistance0 - lastCoveredLengthInEdge
-                    -- logger.print('nodeBetween.refDistance0 - lastCoveredLengthInEdge =', nodeBetween.refDistance0 - lastCoveredLengthInEdge)
-                    -- logger.print('lastCoveredLengthInEdge =', lastCoveredLengthInEdge)
+                    -- logger.infoOut('nodeBetween.refDistance0 - lastCoveredLengthInEdge =', nodeBetween.refDistance0 - lastCoveredLengthInEdge)
+                    -- logger.infoOut('lastCoveredLengthInEdge =', lastCoveredLengthInEdge)
                     if previousNodeBetween == nil then
                         newEdgeResults[#newEdgeResults+1] = {
                             posTanX2 = {
@@ -636,7 +636,7 @@ local helpers = {
         end
         -- now we see to the remaining bit, which may have rounding errors: if we can, we force the last result to the original edge end...
         if #results == 0 then -- if the step is longer than the segments, there will be no results
-            logger.print('the step is longer than the segments')
+            logger.infoOut('the step is longer than the segments')
             if firstRefEdge ~= nil and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
                 results = {
                     {
@@ -709,7 +709,7 @@ local helpers = {
                 }
                 _addExtraProps(previousRefEdge, results[#results])
             else
-                logger.err('getCentralEdgePositions_OnlyOuterBounds: there is a piece missing')
+                logger.errorOut('getCentralEdgePositions_OnlyOuterBounds: there is a piece missing')
             end
         end
         if logger.isExtendedLog() then
@@ -722,7 +722,7 @@ local helpers = {
     calcCentralEdgePositions_GroupByMultiple = function(edgeLists, multiple, isAddTerrainHeight, isAddExtraProps)
         logger.infoOut('getCentralEdgePositions_GroupByMultiple starting, multiple =', multiple, 'edgeLists =')
         if type(edgeLists) ~= 'table' or type(multiple) ~= 'number' or math.floor(multiple) < 2 then
-            logger.err('getCentralEdgePositions_GroupByMultiple got wrong parameters, leaving')
+            logger.errorOut('getCentralEdgePositions_GroupByMultiple got wrong parameters, leaving')
             return {}
         end
         multiple = math.floor(multiple)
@@ -932,7 +932,7 @@ local helpers = {
             end
         -- if b grows too much, I lose precision, so I approximate it with the y axis
         else
-            -- logger.print('alpha =', alpha, 'b =', b)
+            -- logger.infoOut('alpha =', alpha, 'b =', b)
             if edgeObjPosition[1] > nodeBetween.position.x then
                 edgeObjPosition_assignTo = 0
             else
@@ -1001,8 +1001,8 @@ local helpers = {
             newEdge.trackEdge.catenary = false
         end
 
-        -- logger.print('edgeUtils.isValidId(objectIdToRemove) =', edgeUtils.isValidId(objectIdToRemove))
-        -- logger.print('edgeUtils.isValidAndExistingId(objectIdToRemove) =', edgeUtils.isValidAndExistingId(objectIdToRemove))
+        -- logger.infoOut('edgeUtils.isValidId(objectIdToRemove) =', edgeUtils.isValidId(objectIdToRemove))
+        -- logger.infoOut('edgeUtils.isValidAndExistingId(objectIdToRemove) =', edgeUtils.isValidAndExistingId(objectIdToRemove))
         if edgeUtils.isValidId(objectIdToRemove) then
             local edgeObjects = {}
             for _, edgeObj in pairs(oldEdge.objects) do
@@ -1014,14 +1014,14 @@ local helpers = {
                 newEdge.comp.objects = edgeObjects -- LOLLO NOTE cannot insert directly into edge0.comp.objects
                 -- logger.infoOut('replaceEdgeWithSameRemovingObject: newEdge.comp.objects =', newEdge.comp.objects})
             else
-                -- logger.print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
+                -- logger.infoOut('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
             end
         else
             logger.infoOut('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is', objectIdToRemove)
             newEdge.comp.objects = oldEdge.objects
         end
 
-        -- logger.print('newEdge.comp.objects:')
+        -- logger.infoOut('newEdge.comp.objects:')
         -- for key, value in pairs(newEdge.comp.objects) do
         --     logger.infoOut('key =', key, 'value =', value})
         -- end
@@ -1037,7 +1037,7 @@ local helpers = {
     end,
 
     getNeighbourNodeIdsOfBulldozedTerminal = function(platformEdgeLists, trackEdgeLists)
-        logger.print('getNeighbourNodeIdsOfBulldozedTerminal starting')
+        logger.infoOut('getNeighbourNodeIdsOfBulldozedTerminal starting')
 
         local result = {
             platforms = {
@@ -1139,7 +1139,7 @@ local helpers = {
 }
 
 helpers.getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnlyPassengers, isCheckMaxTerminals)
-    logger.print('getNearbyFreestyleStationConsList starting')
+    logger.infoOut('getNearbyFreestyleStationConsList starting')
     if type(transf) ~= 'table' then return {} end
     if tonumber(searchRadius) == nil then searchRadius = _constants.searchRadius4NearbyStation2Join end
 
@@ -1394,7 +1394,7 @@ local _getStationStreetEndEntities = function(frozenEdgeIds_indexed, frozenNodeI
 end
 
 local _getTrackEndNodeIds4T = function(nTerminal, frozenEdgeIds_indexed, frozenNodeIds_indexed, platformEdgeLists, trackEdgeLists)
-    -- logger.print('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
+    -- logger.infoOut('getStationEndNodesUnsorted starting, nTerminal =', nTerminal)
     -- we may want to respect frozen edges and nodes of other constructions, too, so we import them
     -- instead of picking them from the current station.
     local _tolerance = 0.001
@@ -1849,7 +1849,7 @@ helpers.getPlatformHeightProps_indexedByT = function(stationConstructionId, isSk
 end
 
 helpers.getIsTrackAlongPlatformLeft = function(platformEdgeList, midTrackEdge)
-    logger.print('getIsTrackAlongPlatformLeft starting')
+    logger.infoOut('getIsTrackAlongPlatformLeft starting')
     -- logger.infoOut('platformEdgeList =', platformEdgeList})
     -- platform and track may have different lengths, so I check the central track segment,
     -- which is where the train bellies will stop.
@@ -1868,7 +1868,7 @@ helpers.getIsTrackAlongPlatformLeft = function(platformEdgeList, midTrackEdge)
     local _platformWidth = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid].width
     local _leftPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, _platformWidth * 0.5)
     local _rightPlatforms = helpers.getShiftedEdgePositions(_centrePlatforms, -_platformWidth * 0.5)
-    -- logger.print('eee')
+    -- logger.infoOut('eee')
 
     local _midLeftPlatformPoint = transfUtils.getPositionsMiddle(
         _leftPlatforms[_centrePlatformIndex_Nearest2_TrackMid].posTanX2[1][1],
@@ -1892,7 +1892,7 @@ helpers.getIsTrackAlongPlatformLeft = function(platformEdgeList, midTrackEdge)
 end
 
 helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
-    logger.print('getIsTrackNorthOfPlatform starting')
+    logger.infoOut('getIsTrackNorthOfPlatform starting')
     -- logger.infoOut('platformEdgeList =', platformEdgeList})
     -- platform and track may have different lengths, so I check the central track segment,
     -- which is where the train bellies will stop.

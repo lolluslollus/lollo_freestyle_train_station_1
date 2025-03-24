@@ -37,9 +37,9 @@ local _guiData = {
 
 local _utils = {
     getIsProposalOK = function(proposal, context)
-        logger.print('_getIsProposalOK starting')
-        if not(proposal) then logger.err('_getIsProposalOK got no proposal') return false end
-        if not(context) then logger.err('_getIsProposalOK got no context') return false end
+        logger.infoOut('_getIsProposalOK starting')
+        if not(proposal) then logger.errorOut('_getIsProposalOK got no proposal') return false end
+        if not(context) then logger.errorOut('_getIsProposalOK got no context') return false end
 
         local isErrorsOtherThanCollision = false
         local isWarnings = false
@@ -51,7 +51,7 @@ local _utils = {
 
                 if proposalData.errorState ~= nil then
                     if proposalData.errorState.critical == true then
-                        logger.print('proposalData.errorState.critical is true')
+                        logger.infoOut('proposalData.errorState.critical is true')
                         logger.infoOut('proposalData.errorState =', proposalData.errorState)
                         isErrorsOtherThanCollision = true
                     else
@@ -90,12 +90,12 @@ local _actions = {
         logger.infoOut('updateConstruction starting, conId =', oldConId)
 
         if not(edgeUtils.isValidAndExistingId(oldConId)) then
-            logger.warn('updateConstruction received an invalid conId')
+            logger.warningOut('updateConstruction received an invalid conId')
             return
         end
         local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
         if not(oldCon) then
-            logger.warn('updateConstruction cannot get the con')
+            logger.warningOut('updateConstruction cannot get the con')
             return
         end
 
@@ -127,7 +127,7 @@ local _actions = {
         context.player = api.engine.util.getPlayer()
         -- Sometimes, the game fails in the following; UG does not handle the failure graacefully and the game crashes with "an error just occurred" and no useful info.
         if not(_utils.getIsProposalOK(proposal, context)) then
-            logger.warn('updateConstruction made a dangerous proposal')
+            logger.warningOut('updateConstruction made a dangerous proposal')
             -- LOLLO TODO give feedback
             return
         end
@@ -137,7 +137,7 @@ local _actions = {
             function(result, success)
                 logger.infoOut('updateConstruction callback, success =', success)
                 if not(success) then
-                    logger.warn('updateConstruction callback failed')
+                    logger.warningOut('updateConstruction callback failed')
                     logger.thingOut('updateConstruction proposal =', proposal)
                     logger.thingOut('updateConstruction result =', result)
                     -- LOLLO TODO give feedback
@@ -174,7 +174,7 @@ local _handlers = {
         logger.thingOut('paramKey =', paramKey)
         logger.thingOut('newParamValueIndexBase0 =', newParamValueIndexBase0)
         if not(edgeUtils.isValidAndExistingId(conId)) then
-            logger.warn('guiHandleParamValueChanged got no con or no valid con')
+            logger.warningOut('guiHandleParamValueChanged got no con or no valid con')
         end
 
         xpcall(
@@ -190,7 +190,7 @@ local _handlers = {
                     }
                 ))
             end,
-            logger.xpErrorHandler
+            logger.errorOut
         )
     end,
 }
@@ -224,45 +224,45 @@ function data()
                         logger.infoOut('selected open stairs or lift, it has conId =', conId, 'and con.fileName =', con.fileName)
                         if con.fileName == _eventProperties.openLiftSelected.conName then
                             if not(_guiData.conOpenLiftParamsMetadataSorted) then
-                                logger.warn('_guiData.conOpenLiftParamsMetadataSorted is not available')
+                                logger.warningOut('_guiData.conOpenLiftParamsMetadataSorted is not available')
                                 return
                             end
 
                             guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenLiftParamsMetadataSorted, con.params)
                         elseif con.fileName == _eventProperties.openStairsSelected.conName then
                             if not(_guiData.conOpenStairsParamsMetadataSorted) then
-                                logger.warn('_guiData.conOpenStairsParamsMetadataSorted is not available')
+                                logger.warningOut('_guiData.conOpenStairsParamsMetadataSorted is not available')
                                 return
                             end
 
                             guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenStairsParamsMetadataSorted, con.params)
                         elseif con.fileName == _eventProperties.openStairsSelected_v2.conName then
                             if not(_guiData.conOpenStairsParamsMetadataSorted_v2) then
-                                logger.warn('_guiData.conOpenStairsParamsMetadataSorted_v2 is not available')
+                                logger.warningOut('_guiData.conOpenStairsParamsMetadataSorted_v2 is not available')
                                 return
                             end
 
                             guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenStairsParamsMetadataSorted_v2, con.params)
                         elseif con.fileName == _eventProperties.openTwinStairsSelected.conName then
                             if not(_guiData.conOpenTwinStairsParamsMetadataSorted) then
-                                logger.warn('_guiData.conOpenTwinStairsParamsMetadataSorted is not available')
+                                logger.warningOut('_guiData.conOpenTwinStairsParamsMetadataSorted is not available')
                                 return
                             end
 
                             guiHelpers.addEntityConfigToWindow(conId, _handlers.guiHandleParamValueChanged, _guiData.conOpenTwinStairsParamsMetadataSorted, con.params)
                         end
                     end,
-                    logger.xpErrorHandler
+                    logger.errorOut
                 )
             end
         end,
         guiInit = function()
-            -- logger.print('guiInit starting')
+            -- logger.infoOut('guiInit starting')
             _guiData.conOpenLiftParamsMetadataSorted = openStairsHelpers.getOpenLiftParamsMetadata()
             _guiData.conOpenStairsParamsMetadataSorted = openStairsHelpers.getOpenStairsParamsMetadata()
             _guiData.conOpenStairsParamsMetadataSorted_v2 = openStairsHelpers.getOpenStairsParamsMetadata_v2()
             _guiData.conOpenTwinStairsParamsMetadataSorted = openStairsHelpers.getOpenTwinStairsParamsMetadata()
-            -- logger.print('guiInit ending')
+            -- logger.infoOut('guiInit ending')
         end,
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
@@ -278,7 +278,7 @@ function data()
                     end
                 end,
                 function(error)
-                    logger.xpErrorHandler(error)
+                    logger.errorOut(error)
                 end
             )
         end,

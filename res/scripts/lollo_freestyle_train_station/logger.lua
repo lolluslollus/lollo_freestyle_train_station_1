@@ -72,84 +72,48 @@ local _printThingsVararg = function(outString, ...)
     end
 end
 
--- func = function(...) print('arg', type(arg)) print('...', type(...), ...) for k, v in pairs({...}) do print('k= ', k, ', v= ', v) end end
--- func = function(...) debugPrint(getmetatable(...)) print('arg has type ', type(arg)) print('... has type ', type(...), 'and num records ', #{...}) debugPrint(getmetatable({...})) for k, v in pairs({...}) do print('k= ', k, ', v= ', v) end end
--- func = function(...) print('... has type ', type(...), ' and num records ', #{...}) local tab = {...} for i=1, #tab, 1 do print('i= ', i, ', v= ', tab[i]) end end
 return {
     isExtendedLog = function()
         return _isExtendedLogActive
     end,
-    ---@param tab table<any>
-    thingsOut = function(tab)
-        _printThings('', tab)
-    end,
+    -- ---@param tab table<any>
+    -- thingsOut = function(tab)
+    --     _printThings('', tab)
+    -- end,
     ---@param ... unknown
     thingOut = function(...)
         _printThingsVararg('', ...)
     end,
-    print = function(...)
-        if not(_isExtendedLogActive) then return end
-        print('lollo_freestyle_train_station INFO: ', ...)
-    end,
-    ---@param tab table<any>
-    infozOut = function(tab)
-        if not(_isExtendedLogActive) then return end
-        _printThings('lollo_freestyle_train_station INFO: ', tab)
-    end,
+    -- ---@param tab table<any>
+    -- infozOut = function(tab)
+    --     if not(_isExtendedLogActive) then return end
+    --     _printThings('lollo_freestyle_train_station INFO: ', tab)
+    -- end,
     ---@param ... unknown
     infoOut = function(...)
         if not(_isExtendedLogActive) then return end
         _printThingsVararg('lollo_freestyle_train_station INFO: ', ...)
-    end,
-    warn = function(label, ...)
-        if not(_isWarningLogActive) then return end
-        print('lollo_freestyle_train_station WARNING: ' .. label, ...)
     end,
     ---@param ... unknown
     warningOut = function(...)
         if not(_isWarningLogActive) then return end
         _printThingsVararg('lollo_freestyle_train_station WARNING: ', ...)
     end,
-    ---@param tab table<any>
-    warningsOut = function(tab)
-        if not(_isWarningLogActive) then return end
-        _printThings('lollo_freestyle_train_station WARNING: ', tab)
-    end,
-    err = function(label, ...)
-        if not(_isErrorLogActive) then return end
-        print('lollo_freestyle_train_station ERROR: ' .. label, ...)
-    end,
+    -- ---@param tab table<any>
+    -- warningsOut = function(tab)
+    --     if not(_isWarningLogActive) then return end
+    --     _printThings('lollo_freestyle_train_station WARNING: ', tab)
+    -- end,
     ---@param ... unknown
     errorOut = function(...)
         if not(_isErrorLogActive) then return end
         _printThingsVararg('lollo_freestyle_train_station ERROR: ', ...)
     end,
-    ---@param tab table<any>
-    errorsOut = function(tab)
-        if not(_isErrorLogActive) then return end
-        _printThings('lollo_freestyle_train_station ERROR: ', tab)
-    end,
-    ---obsolete
-    ---@param whatever any
-    debugPrint = function(whatever)
-        if not(_isExtendedLogActive) then return end
-        if not(debugPrint) then print('lollo_freestyle_train_station no debugPrint available') return end
-        debugPrint(whatever)
-    end,
-    ---obsolete
-    ---@param whatever any
-    warningDebugPrint = function(whatever)
-        if not(_isWarningLogActive) then return end
-        if not(debugPrint) then print('lollo_freestyle_train_station no debugPrint available') return end
-        debugPrint(whatever)
-    end,
-    ---obsolete
-    ---@param whatever any
-    errorDebugPrint = function(whatever)
-        if not(_isErrorLogActive) then return end
-        if not(debugPrint) then print('lollo_freestyle_train_station no debugPrint available') return end
-        debugPrint(whatever)
-    end,
+    -- ---@param tab table<any>
+    -- errorsOut = function(tab)
+    --     if not(_isErrorLogActive) then return end
+    --     _printThings('lollo_freestyle_train_station ERROR: ', tab)
+    -- end,
     profile = function(label, func)
         if _isTimersActive then
             local results
@@ -163,16 +127,8 @@ return {
             return func()
         end
     end,
-    xpInfoHandler = function(error)
-        if not(_isExtendedLogActive) then return end
-        _printThings('lollo_freestyle_train_station INFO: ', {error})
-    end,
-    xpWarningHandler = function(error)
-        if not(_isWarningLogActive) then return end
-        _printThings('lollo_freestyle_train_station WARNING: ', {error})
-    end,
-    xpErrorHandler = function(error)
-        if not(_isErrorLogActive) then return end
-        _printThings('lollo_freestyle_train_station ERROR: ', {error})
-    end,
+    -- xpErrorHandler = function(error)
+    --     if not(_isErrorLogActive) then return end
+    --     _printThings('lollo_freestyle_train_station ERROR: ', {error})
+    -- end,
 }

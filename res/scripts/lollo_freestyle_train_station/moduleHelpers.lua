@@ -60,7 +60,7 @@ local privateFuncs = {
         local tilt = -variant * 0.025
         local _maxRadAbs = 0.36
         if tilt > _maxRadAbs then tilt = _maxRadAbs elseif tilt < -_maxRadAbs then tilt = -_maxRadAbs end
-        -- logger.print('getFromVariant_AxialAreaTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
+        -- logger.infoOut('getFromVariant_AxialAreaTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
         return tilt, -_maxRadAbs, _maxRadAbs
     end,
     ---@param variant integer
@@ -69,7 +69,7 @@ local privateFuncs = {
         local tilt = variant * 0.0125
         local _maxRadAbs = 0.36
         if tilt > _maxRadAbs then tilt = _maxRadAbs elseif tilt < -_maxRadAbs then tilt = -_maxRadAbs end
-        -- logger.print('getFromVariant_BridgeTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
+        -- logger.infoOut('getFromVariant_BridgeTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
         -- LOLLO TODO in a future major release, return -tilt instead of tilt
         return tilt, -_maxRadAbs, _maxRadAbs
     end,
@@ -79,7 +79,7 @@ local privateFuncs = {
         local zShift = variant * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
         local _maxValueAbs = 1.2
         if zShift > _maxValueAbs then zShift = _maxValueAbs elseif zShift < -_maxValueAbs then zShift = -_maxValueAbs end
-        -- logger.print('_getFromVariant_FlatAreaHeight returning', zShift, -_maxValueAbs, _maxValueAbs)
+        -- logger.infoOut('_getFromVariant_FlatAreaHeight returning', zShift, -_maxValueAbs, _maxValueAbs)
         return zShift, -_maxValueAbs, _maxValueAbs
     end,
     ---@param variant integer
@@ -96,7 +96,7 @@ local privateFuncs = {
         elseif variant >= 1 then
             deltaZ = 5
         end
-        -- logger.print('getFromVariant_LiftHeight returning', deltaZ, -10, 10)
+        -- logger.infoOut('getFromVariant_LiftHeight returning', deltaZ, -10, 10)
         return deltaZ, -10, 10
     end,
     ---get era prefix of current terminal bit and overwrite it with the era module if present
@@ -388,7 +388,7 @@ privateFuncs.deco = {
         --         sinX = -sinX -- invert
         --     end
         -- end
-        -- logger.print('sinX, cosX =', sinX, cosX)
+        -- logger.infoOut('sinX, cosX =', sinX, cosX)
 
         local tunnelYShift = (cpf.type == 2) and 0.5 or 0
         -- print('(isLowIEnd == isTrackOnPlatformLeft)' .. tostring((isLowIEnd == isTrackOnPlatformLeft)))
@@ -610,7 +610,7 @@ privateFuncs.deco = {
     getMNAdjustedValue_0_1_2_Cycling = function(params, slotId)
         local variant = privateFuncs.getVariant(params, slotId)
         local result = math.ceil(privateFuncs.getFromVariant_0_to_1(variant, 3) * 2)
-        -- logger.print('_getMNAdjustedValue_0_1_2_Cycling; variant = ' .. tostring(variant) .. '; result = ' .. tostring(result))
+        -- logger.infoOut('_getMNAdjustedValue_0_1_2_Cycling; variant = ' .. tostring(variant) .. '; result = ' .. tostring(result))
         return result
     end,
     getStationSignFineIndexes = function(params, nTerminal, terminalData)
@@ -781,10 +781,10 @@ privateFuncs.edges = {
             local vnNIndex = math.max(terminalData.trackEdgeListVehicleNode0Index, terminalData.trackEdgeListVehicleNode1Index)
             local telVn1 = terminalData.trackEdgeLists[vn1Index]
             local telVnN = terminalData.trackEdgeLists[vnNIndex]
-            if telVn1 == nil or telVnN == nil then logger.warn('telVn1 == nil or telVnN == nil') return nil end
+            if telVn1 == nil or telVnN == nil then logger.warningOut('telVn1 == nil or telVnN == nil') return nil end
             local tel1 = terminalData.trackEdgeLists[1]
             local telN = terminalData.trackEdgeLists[#terminalData.trackEdgeLists]
-            if tel1 == nil or telN == nil then logger.warn('tel1 == nil or telN == nil') return nil end
+            if tel1 == nil or telN == nil then logger.warningOut('tel1 == nil or telN == nil') return nil end
             local tel1Pos = transfUtils.getPosTanX2Transformed(tel1.posTanX2, _inverseMainTransf)[1][1]
             local telNPos = transfUtils.getPosTanX2Transformed(telN.posTanX2, _inverseMainTransf)[2][1]
 
@@ -1391,7 +1391,7 @@ privateFuncs.slopedAreas = {
             xM = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
             yM = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
         else
-            logger.warn('cannot get inner degree')
+            logger.warningOut('cannot get inner degree')
             return privateConstants.slopedAreasOLD.innerDegrees.neutral
         end
     
@@ -1400,13 +1400,13 @@ privateFuncs.slopedAreas = {
             {x2, y2, 0},
             {xM, yM, 0}
         )
-        -- logger.print('segmentHunch =', segmentHunch)
+        -- logger.infoOut('segmentHunch =', segmentHunch)
     
         -- local segmentLength = transfUtils.getPositionsDistance(
         --     centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
         --     centrePlatforms[nTrackEdge + 1].posTanX2[1][1]
         -- )
-        -- logger.print('segmentLength =', segmentLength)
+        -- logger.infoOut('segmentLength =', segmentLength)
         -- if segmentHunch / segmentLength < privateConstants.slopedAreas.hunchLengthRatioToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
         if segmentHunch < privateConstants.slopedAreasOLD.hunchToClaimBend then return privateConstants.slopedAreasOLD.innerDegrees.neutral end
     
@@ -1426,7 +1426,7 @@ privateFuncs.slopedAreas = {
         local innerSign = comparisonUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
     
         if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
-        -- logger.print('terminal', nTerminal, 'innerSign =', innerSign)
+        -- logger.infoOut('terminal', nTerminal, 'innerSign =', innerSign)
         return innerSign
     end,
     _getSlopedAreaTweakFactorsOLD = function(innerDegree, areaWidth)
@@ -1487,8 +1487,8 @@ privateFuncs.slopedAreas = {
                 xScaleFactor = 1.25
             end
         end
-        -- logger.print('xScaleFactor =', xScaleFactor)
-        -- logger.print('angleYFactor =', angleYFactor)
+        -- logger.infoOut('xScaleFactor =', xScaleFactor)
+        -- logger.infoOut('angleYFactor =', angleYFactor)
     
         return waitingAreaScaleFactor, xScaleFactor
     end,
@@ -1787,7 +1787,7 @@ return {
         getPreviewIcon = function(params)
 			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
 			local zeroOneOrTwo = math.ceil(privateFuncs.getFromVariant_0_to_1(variant, 3) * 2)
-            -- logger.print('getPreviewIcon variant = ' .. tostring(variant) .. '; zeroOneOrTwo = ' .. tostring(zeroOneOrTwo))
+            -- logger.infoOut('getPreviewIcon variant = ' .. tostring(variant) .. '; zeroOneOrTwo = ' .. tostring(zeroOneOrTwo))
             local arrowModelId = 'lollo_freestyle_train_station/icon/perpendicular_wall.mdl'
             local arrowModelTransf = {0.5, 0, 0, 0,  0, 0.5, 0, 0,  0, 0, 0.5, 0,  2, 5, 2, 1}
             if zeroOneOrTwo == 1 then
@@ -2087,7 +2087,7 @@ return {
             local _transfXZoom = _isTrackOnPlatformLeft and -1 or 1
             local _transfYZoom = _isTrackOnPlatformLeft and -1 or 1
             local _isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            -- logger.print('_isEndFiller =', _isEndFiller)
+            -- logger.infoOut('_isEndFiller =', _isEndFiller)
             local _laneZ = result.laneZs[nTerminal]
             local _defaultLaneZ = constants.defaultPlatformHeight
             local _zShift = _laneZ - _defaultLaneZ
@@ -2140,7 +2140,7 @@ return {
             end
 
             local _iiMax = #_cpfs
-            -- logger.print('############')
+            -- logger.infoOut('############')
             if not(_isWallEnd) then
                 for ii = 1, _iiMax, privateConstants.deco.ceilingStep do
                     local cpf = _cpfs[ii]
@@ -2155,10 +2155,10 @@ return {
                                 isCanDrawVsFlatAreas = not(cpfAheadByDeco2FlatAreaShift)
                                     or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex]
                                     or not(isLookAhead[cpfAheadByDeco2FlatAreaShift.leadingIndex])
-                                -- logger.print('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
+                                -- logger.infoOut('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
                             else
                                 isCanDrawVsFlatAreas = isFreeFromFlatAreas[cpf.leadingIndex]
-                                -- logger.print('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
+                                -- logger.infoOut('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
                             end
                             if isCanDrawVsFlatAreas then
                                 -- tunnels: do not raise the walls or they may cut through the ceiling.
@@ -2317,11 +2317,11 @@ return {
                                     local cpfP1 = _cpfs[ii+1]
                                     if leadingIndex ~= cpfM1.leadingIndex then
                                         local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
-                                            -- logger.print('_FIVE')
+                                            -- logger.infoOut('_FIVE')
                                             privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                     elseif leadingIndex ~= cpfP1.leadingIndex then
                                         local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
-                                        -- logger.print('_SIX')
+                                        -- logger.infoOut('_SIX')
                                         privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                     end
                                 end
@@ -2343,10 +2343,10 @@ return {
                                 isCanDrawVsFlatAreas = not(cpfAheadByDeco2FlatAreaShift)
                                     or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex]
                                     or not(isLookAhead[cpfAheadByDeco2FlatAreaShift.leadingIndex])
-                                -- logger.print('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
+                                -- logger.infoOut('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
                             else
                                 isCanDrawVsFlatAreas = isFreeFromFlatAreas[cpf.leadingIndex]
-                                -- logger.print('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
+                                -- logger.infoOut('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
                             end
                             if isCanDrawVsFlatAreas then
                                 -- tunnels: do not raise the walls or they may cut through the ceiling.
@@ -2377,10 +2377,10 @@ return {
                                         -- skip near platform head
                                         if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
                                             if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                                -- logger.print('_ONE')
+                                                -- logger.infoOut('_ONE')
                                                 privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                             else
-                                                -- logger.print('_TWO')
+                                                -- logger.infoOut('_TWO')
                                                 privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                             end
                                         end
@@ -2388,10 +2388,10 @@ return {
                                         -- skip near platform head
                                         if not(_modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
                                             if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                                -- logger.print('_THREE')
+                                                -- logger.infoOut('_THREE')
                                                 privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                             else
-                                                -- logger.print('_FOUR')
+                                                -- logger.infoOut('_FOUR')
                                                 privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                             end
                                         end
@@ -2507,13 +2507,13 @@ cpf =
                                 if pp == 1 then
                                     -- skip near platform head
                                     if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
-                                        -- logger.print('_ONE')
+                                        -- logger.infoOut('_ONE')
                                         privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, ctf.width + cpf.width, _isTrackOnPlatformLeft, wallTransf, pp, _ppMax, wallBaseModelId, ctf.width)
                                     end
                                 elseif pp == _ppMax then
                                     -- skip near platform head
                                     if not(_modules[result.mangleId(nTerminal, _cpfs[pp].leadingIndex, constants.idBases.platformHeadSlotId)]) then
-                                        -- logger.print('_THREE')
+                                        -- logger.infoOut('_THREE')
                                         privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, ctf.width + cpf.width, _isTrackOnPlatformLeft, wallTransf, pp, _ppMax, wallBaseModelId, ctf.width)
                                     end
                                 end
@@ -2542,10 +2542,10 @@ cpf =
                                     -- skip near platform head
                                     if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
                                         -- if not(result.getOccupiedInfo4AxialAreas(nTerminal, ctf.leadingIndex)) then
-                                            -- logger.print('_ONE')
+                                            -- logger.infoOut('_ONE')
                                             privateFuncs.deco.addWallAcross(ctf, true, result, tag, _wallAcrossModelId, ctf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                         -- else
-                                        --     -- logger.print('_TWO')
+                                        --     -- logger.infoOut('_TWO')
                                         --     privateFuncs.deco.addWallAcross(ctf, true, result, tag, _wallAcrossModelId, 0, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                         -- end
                                     end
@@ -2553,10 +2553,10 @@ cpf =
                                     -- skip near platform head
                                     if not(_modules[result.mangleId(nTerminal, _ctfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
                                         -- if not(result.getOccupiedInfo4AxialAreas(nTerminal, ctf.leadingIndex)) then
-                                            -- logger.print('_THREE')
+                                            -- logger.infoOut('_THREE')
                                             privateFuncs.deco.addWallAcross(ctf, false, result, tag, _wallAcrossModelId, ctf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                         -- else
-                                        --     -- logger.print('_FOUR')
+                                        --     -- logger.infoOut('_FOUR')
                                         --     privateFuncs.deco.addWallAcross(ctf, false, result, tag, _wallAcrossModelId, 0, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                         -- end
                                     end
@@ -3811,7 +3811,7 @@ cpf =
 			-- 	tag = tag
 			-- }
 
-			logger.print('### platformHeadModule')
+			logger.infoOut('### platformHeadModule')
 			local _terminalData = params.terminals[nTerminal]
 			local _cpfs = _terminalData.centrePlatformsFineRelative
 			local _laneZ = result.laneZs[nTerminal]
@@ -4020,7 +4020,7 @@ cpf =
                         local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(centreAreaPosTanX2)
                         local xScaleFactor = math.max(xRatio * yRatio, 1.05) -- this is a bit crude but it's cheap
                         -- local xScaleFactor = xRatio * 1.05 -- dx/dl -- no good here
-                        -- logger.print('xScaleFactor w ratios =', xScaleFactor)
+                        -- logger.infoOut('xScaleFactor w ratios =', xScaleFactor)
                         result.models[#result.models+1] = {
                             id = modelId,
                             -- transf = transfUtils.getTransf_XScaled(myTransf, xScaleFactor),

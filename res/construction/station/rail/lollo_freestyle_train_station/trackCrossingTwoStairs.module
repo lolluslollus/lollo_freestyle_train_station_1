@@ -105,7 +105,7 @@ function data()
 			-- With cargo, at present, we cannot get a full connection between far away station sides.
 			local trackCentrePos = transfUtils.getPositionRaisedBy(transfUtils.transf2Position(slotTransf), _constants.trackCrossingZ)
 			if not(trackCentrePos) then
-				logger.warn('trackCrossingTwoStairs: trackCentrePos is NIL')
+				logger.warningOut('trackCrossingTwoStairs: trackCentrePos is NIL')
 				return
 			end
 			local oppositeCrossConnectorPos = {

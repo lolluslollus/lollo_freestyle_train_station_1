@@ -66,7 +66,7 @@ function data()
             -- }
         },
 		updateFn = function(params)
-			logger.print('station.con updateFn starting')
+			logger.infoOut('station.con updateFn starting')
 			-- logger.infoOut('station.con updateFn starting, params.modules =', params.modules})
 			local _modules = params.modules or {}
 
@@ -1864,10 +1864,10 @@ function data()
 					if _modules[slotId] ~= nil then
 						local extraData = params.subways[slotId]
 						if extraData == nil then
-							logger.err('subway[' .. (slotId or 'NIL') .. '] not found')
+							logger.errorOut('subway[' .. (slotId or 'NIL') .. '] not found')
 						else
 							if extraData.transf == nil then
-								logger.err('subway[' .. (slotId or 'NIL') .. '] has no transf')
+								logger.errorOut('subway[' .. (slotId or 'NIL') .. '] has no transf')
 							else
 								-- logger.infoOut('extraData =', extraData})
 								table.insert(result.slots, {
@@ -1881,14 +1881,14 @@ function data()
 						end
 					end
 				end
-				logger.print('_addSubwaySlots ending')
+				logger.infoOut('_addSubwaySlots ending')
 			end
 			_addSubwaySlots()
 
 			-- logger.infoOut('params.upgrade =', params.upgrade})
 
 			result.terminateConstructionHook = function()
-				logger.print('terminateConstructionHook starting')
+				logger.infoOut('terminateConstructionHook starting')
 		-- xpcall(
 		-- 	function()
 -- local timeMsec0 = os.clock() * 1000
@@ -2334,7 +2334,7 @@ function data()
 						_linkAcross(shortSegmentsInTheEarth)
 					end
 					_linkUnderpassesAndStairs()
-					logger.print('passengers and stairs linked')
+					logger.infoOut('passengers and stairs linked')
 
 					local _linkNearbyPassengerPlatforms = function(maxLinkLength, positions, modelId, isCheck4Duplicates)
 						-- link platforms across terminals, on the ground, if they are close enough
@@ -2453,7 +2453,7 @@ function data()
 						7.4, -- must be lower than (two narrow half platform widths + track width)
 						_constants.passengerLaneModelId
 					)
-					logger.print('passenger platforms linked')
+					logger.infoOut('passenger platforms linked')
 
 					local _linkSubways = function()
 						if not(params.subways) then return end
@@ -2464,9 +2464,9 @@ function data()
 							local links_slotId = {}
 							for slotId, subway in pairs(params.subways) do
 								if subway == nil then
-									logger.err('subway[' .. (slotId or 'NIL') .. '] not found')
+									logger.errorOut('subway[' .. (slotId or 'NIL') .. '] not found')
 								elseif subway.transf == nil then
-									logger.err('subway[' .. (slotId or 'NIL') .. '] has no transf')
+									logger.errorOut('subway[' .. (slotId or 'NIL') .. '] has no transf')
 								elseif _modules[slotId] ~= nil then
 									local subwayPos2Link = transfUtils.transf2Position(transfUtilsUG.mul(params.inverseMainTransf, subway.transf2Link))
 									local isThisSubwayConnected = false
@@ -2575,10 +2575,10 @@ function data()
 													-- print('definitely not shortening', refSlotId, 'to attach to', checkSlotId, ', minDistance2PlatformAcrossNeighbour =', minDistance2Twin, 'checkLink.distance2Platform + distance2Twin =', checkLink.distance2Platform + distance2Twin)
 												end
 											else
-												logger.warn('checkLink == nil or checkLink.distance2Platform == nil')
+												logger.warningOut('checkLink == nil or checkLink.distance2Platform == nil')
 											end
 										elseif distance2Twin == nil then
-											logger.warn('distance2Twin is NIL')
+											logger.warningOut('distance2Twin is NIL')
 										end
 									end
 									if twin2LinkSlotId ~= nil then
@@ -2586,7 +2586,7 @@ function data()
 										refLink.endPos2Link = links_slotId_WDistances2Twins[twin2LinkSlotId].subwayPos2Link
 									end
 								else
-									logger.warn('refLink or refLink.distance2Platform are not available')
+									logger.warningOut('refLink or refLink.distance2Platform are not available')
 								end
 							end
 							-- print('links_slotId_WDistances2Twins SHORTENED =') debugPrint(links_slotId_WDistances2Twins)
@@ -2615,13 +2615,13 @@ function data()
 -- print('_linkSubways2 took ' .. (timeMsec1 - timeMsec0) .. ' mSec') -- about 5 ms with a large station
 					end
 					_linkSubways()
-					logger.print('subways linked')
+					logger.infoOut('subways linked')
 				end
 				_makeCrossPlatformLinks()
 -- local timeMsec1 = os.clock() * 1000
 -- print('_makeCrossPlatformLinks took ' .. (timeMsec1 - timeMsec0) .. ' mSec') -- about 35 ms with a large station
 		-- 	end,
-		-- 	logger.xpErrorHandler
+		-- 	logger.errorOut
 		-- )
 				-- LOLLO NOTE stations with mixed cargo and passengers seem impossible by design.
 				-- There are some assertions, like allPersonEdgesHaveTransportModePerson != allPersonEdgesHaveTransportModeCargo,
@@ -2682,7 +2682,7 @@ function data()
 				_groupTerminals()
 -- local timeMsec2 = os.clock() * 1000
 -- print('_groupTerminals took ' .. (timeMsec2 - timeMsec1) .. ' mSec') -- about 35 ms with a large station
-				logger.print('terminals grouped')
+				logger.infoOut('terminals grouped')
 
 				-- it should output something like (this example has one terminal made of two adjacent bits)
 				-- stock result.stations =
@@ -2704,19 +2704,19 @@ function data()
 				-- 	}
 				-- }
 
-				-- logger.print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
+				-- logger.infoOut('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
 				-- logger.infoOut('LOLLO result.stations = ', result.stations})
 				-- logger.infoOut('LOLLO result.models = ', result.models})
 				-- logger.infoOut('LOLLO result.terminalGroups = ', result.terminalGroups})
 			end -- end of terminateConstructionHook()
 
-			-- logger.print('freestyleTrainStation.updateFn about to return')
+			-- logger.infoOut('freestyleTrainStation.updateFn about to return')
 			-- logger.infoOut('freestyleTrainStation result.terrainAlignmentLists =', result.terrainAlignmentLists})
 			return result
 		end,
  		preProcessFn = function(modules, change, three)
 			-- this fires when the user adds or removes a module
-			-- logger.print('preProcessFn starting')
+			-- logger.infoOut('preProcessFn starting')
 			-- logger.infoOut('modules =', modules})
 			-- logger.infoOut('change =', change})
 			-- logger.infoOut('three =', three})
@@ -2885,10 +2885,10 @@ function data()
 					local terminalSlotId = slotHelpers.mangleId(nTerminalNew, 0, _constants.idBases.terminalSlotId)
 					-- ... if their terminal is present
 					if modules[terminalSlotId] ~= nil then
-						-- logger.print('barring removal of modules for upgrading tracks')
+						-- logger.infoOut('barring removal of modules for upgrading tracks')
 						return modules
 					-- else
-						-- logger.print('allowing removal of modules for upgrading tracks coz terminal does not exist')
+						-- logger.infoOut('allowing removal of modules for upgrading tracks coz terminal does not exist')
 					end
 				end
 				modules[change.slotId] = nil
@@ -2966,7 +2966,7 @@ function data()
 						end
 					else
 						newModuleFileName = _constants.trackElectrificationYesModuleFileName
-						logger.warn('upgradeFn could not find the old module, args.catenaryToggle == 1')
+						logger.warningOut('upgradeFn could not find the old module, args.catenaryToggle == 1')
 					end
 
 					upgradeResults[#upgradeResults+1] = { slotId, newModuleFileName }
@@ -2985,7 +2985,7 @@ function data()
 						end
 					else
 						newModuleFileName = _constants.trackSpeedFastModuleFileName
-						logger.warn('upgradeFn could not find the old module, args.trackTypeToggle == 1')
+						logger.warningOut('upgradeFn could not find the old module, args.trackTypeToggle == 1')
 					end
 
 					upgradeResults[#upgradeResults+1] = { slotId, newModuleFileName }

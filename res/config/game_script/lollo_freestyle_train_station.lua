@@ -209,7 +209,7 @@ local _utils = {
                 innerNodeId = _baseEdge.node1
                 connectedEdgeIds = edgeUtils.track.getConnectedEdgeIds({innerNodeId})
                 if arrayUtils.arrayHasValue(connectedEdgeIds, nextEdgeId) then
-                    logger.err('getAdjacentTracks failed to retrieve adjacent edges, edgeId =', thisEdgeId)
+                    logger.errorOut('getAdjacentTracks failed to retrieve adjacent edges, edgeId =', thisEdgeId)
                     return {}, nil, false
                 end
             end
@@ -225,7 +225,7 @@ local _utils = {
         logger.infoOut('_getNeighbours got trackEdgeList =', trackEdgeList)
         local numEdges = #trackEdgeList
         if type(trackEdgeList) ~= 'table' or #trackEdgeList < 2 or trackEdgeList[1].edgeId == trackEdgeList[numEdges].edgeId then
-            logger.err('trackEdgeList too short or nil')
+            logger.errorOut('trackEdgeList too short or nil')
             return {
                 edgeIds = {},
                 edges = {},
@@ -505,7 +505,7 @@ local _utils = {
                     end
                 end
             end,
-            logger.xpErrorHandler
+            logger.errorOut
         )
     end,
     ---Try to upgrade a construction such as stairs or a lift. This might crash and there is no way to catch it UG TODO, so call it last.
@@ -577,14 +577,14 @@ local _actions = {
 
         local oldCon = api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
         if oldCon == nil then
-            logger.err('_addSubway found no station con')
+            logger.errorOut('_addSubway found no station con')
             _utils.sendHideProgress()
             return
         end
 
         local subwayCon = api.engine.getComponent(args.subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
         if not(subwayCon) or not(subwayCon.transf) then
-            logger.err('_addSubway found no subway con')
+            logger.errorOut('_addSubway found no subway con')
             _utils.sendHideProgress()
             return
         end
@@ -614,7 +614,7 @@ local _actions = {
                 if newParams.modules[testResult] == nil then return testResult end
             end
 
-            logger.warn('cannot find an available slot for a subway')
+            logger.warningOut('cannot find an available slot for a subway')
             return false
         end
         local newSubway_Key = _getNextAvailableSlotId()
@@ -1139,8 +1139,8 @@ local _actions = {
                             api.cmd.make.buildProposal(proposal, context, true),
                             function(result_1, success_1)
                                 logger.infoOut('_rebuildNeighbours success_1 = ', success_1)
-                                if not(success_1) then logger.warn('cannot rebuild all the edge objects ONE') end
-                                if result_1.resultProposalData.errorState.critical then logger.warn('cannot rebuild all the edge objects ONE_TWO') end
+                                if not(success_1) then logger.warningOut('cannot rebuild all the edge objects ONE') end
+                                if result_1.resultProposalData.errorState.critical then logger.warningOut('cannot rebuild all the edge objects ONE_TWO') end
                             end
                         )
                     end
@@ -1478,7 +1478,7 @@ local _actions = {
         end
         if not(isAnyUpgradeFailed) then return end
 
-        logger.warn('_upgradeNeighbourCons: some construction upgrades failed')
+        logger.warningOut('_upgradeNeighbourCons: some construction upgrades failed')
         m_state.warningText = _('UnsnappedRoads')
     end,
     rebuildStationWithLatestProperties = function(oldCon, successEventName, args)
@@ -1976,7 +1976,7 @@ logger.infoOut('FOUR')
         if node0 == nil or node1 == nil then return end
 
         if not(comparisonUtils.isXYZsSame(nodeBetween.refPosition0, node0.position)) and not(comparisonUtils.isXYZsSame(nodeBetween.refPosition0, node1.position)) then
-            logger.err('splitEdge cannot find the nodes')
+            logger.errorOut('splitEdge cannot find the nodes')
             return
         end
 
@@ -2058,7 +2058,7 @@ logger.infoOut('FOUR')
                             _utils.sendHideProgress()
                         end
                     else
-                        logger.err('splitEdgeRemovingObject failed, this should never happen')
+                        logger.errorOut('splitEdgeRemovingObject failed, this should never happen')
                         m_state.warningText = 'splitEdgeRemovingObject failed, this should never happen'
                         _utils.sendHideProgress()
                     end
@@ -2198,7 +2198,7 @@ logger.infoOut('FOUR')
                         _utils.sendHideProgress()
                     end
                 else
-                    logger.err('Error splitting tracks, this should never happen')
+                    logger.errorOut('Error splitting tracks, this should never happen')
                     m_state.warningText = 'Error splitting tracks, this should never happen'
                     _utils.sendHideProgress()
                 end
@@ -2273,7 +2273,7 @@ local _guiActions = {
         local platformWaypoint1Pos = edgeUtils.getObjectPosition(platformWaypointIds[1])
         local platformWaypoint2Pos = edgeUtils.getObjectPosition(platformWaypointIds[2])
         if platformWaypoint1Pos == nil or platformWaypoint2Pos == nil then
-            logger.err('handleValidWaypointBuilt cannot find the platform waypoint positions')
+            logger.errorOut('handleValidWaypointBuilt cannot find the platform waypoint positions')
             return
         end
 
@@ -2382,9 +2382,9 @@ local _guiActions = {
         -- UG TODO this is empty, ask UG to fix this: can't we have the waypointId in args.result?
         -- The problem persists with build 33345
 
-        if not(edgeUtils.isValidAndExistingId(newWaypointId)) then logger.err('newWaypointId not valid') return false end
-        if not(edgeUtils.isValidAndExistingId(waypointEdgeId)) then logger.err('waypointEdgeId not valid') return false end
-        if not(edgeUtils.isValidId(trackTypeIndex)) then logger.err('trackTypeIndex not valid') return false end
+        if not(edgeUtils.isValidAndExistingId(newWaypointId)) then logger.errorOut('newWaypointId not valid') return false end
+        if not(edgeUtils.isValidAndExistingId(waypointEdgeId)) then logger.errorOut('waypointEdgeId not valid') return false end
+        if not(edgeUtils.isValidId(trackTypeIndex)) then logger.errorOut('trackTypeIndex not valid') return false end
 
         logger.infoOut('waypointEdgeId =', waypointEdgeId)
         local lastBuiltBaseEdge = api.engine.getComponent(
@@ -2734,7 +2734,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
         end
     else
         isAnyPlatformFailed = true
-        logger.warn('could not build snappy platforms for terminal', t or 'NIL')
+        logger.warningOut('could not build snappy platforms for terminal', t or 'NIL')
         -- move on to the next terminal
         _actions.buildSnappyPlatforms(stationConstructionId, t + 1, tMax)
     end
@@ -2748,7 +2748,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
 
     local allEndEntities = stationHelpers.getStationStreetEndEntities(stationConId)
     if allEndEntities == nil then
-        logger.err('_buildSnappyStreetEdges cannot find the station end entities')
+        logger.errorOut('_buildSnappyStreetEdges cannot find the station end entities')
         return
     end
 
@@ -2809,7 +2809,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
                 )
             else
                 state.warningText = _('UnsnappedRoads')
-                logger.warn('invalid disjointNeighbourEdgeId in _buildSnappyStreetEdges, edgeId = ' .. (edgeId or 'NIL'))
+                logger.warningOut('invalid disjointNeighbourEdgeId in _buildSnappyStreetEdges, edgeId = ' .. (edgeId or 'NIL'))
                 return
             end
         end
@@ -2820,7 +2820,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
             if edgeUtils.isValidAndExistingId(conId) then
                 neighbourConIds_indexed[conId] = true
             else
-                logger.warn('invalid disjointNeighbourNodeId.conId in _buildSnappyStreetEdges, conId = ' .. (conId or 'NIL'))
+                logger.warningOut('invalid disjointNeighbourNodeId.conId in _buildSnappyStreetEdges, conId = ' .. (conId or 'NIL'))
             end
         end
     end
@@ -3018,7 +3018,7 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
         end
     else
         isAnyTrackFailed = true
-        logger.warn('could not build snappy tracks for terminal', t or 'NIL')
+        logger.warningOut('could not build snappy tracks for terminal', t or 'NIL')
         -- move on to the next terminal
         _actions.buildSnappyTracks(stationConstructionId, t + 1, tMax)
     end
@@ -3205,7 +3205,7 @@ function data()
                         or not(edgeUtils.isValidAndExistingId(args.splitTrackNode2Id))
                         then
                             if args == nil then
-                                logger.warn('TRACK_BULLDOZE_REQUESTED got args == NIL')
+                                logger.warningOut('TRACK_BULLDOZE_REQUESTED got args == NIL')
                             else
                                 logger.warningOut(
                                     'TRACK_BULLDOZE_REQUESTED got some missing or invalid data; args.splitTrackNode1Id =',
@@ -3227,7 +3227,7 @@ function data()
                         -- LOLLO NOTE I need this, or a station with only one track edge will dump with
                         -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                         if #trackEdgeIdsBetweenNodeIds == 0 then
-                            logger.err('#trackEdgeIdsBetweenNodeIds == 0')
+                            logger.errorOut('#trackEdgeIdsBetweenNodeIds == 0')
                             if not(m_state.warningText) then m_state.warningText = _('CannotMakeStation') end
                             return
                         end
@@ -3267,7 +3267,7 @@ function data()
                         -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
                         -- Assertion `std::find(frozenNodes.begin(), frozenNodes.end(), result.entity) != frozenNodes.end()' failed
                         if #platformEdgeIdsBetweenNodeIds == 0 then
-                            logger.err('#platformEdgeIdsBetweenNodeIds == 0')
+                            logger.errorOut('#platformEdgeIdsBetweenNodeIds == 0')
                             if not(m_state.warningText) then m_state.warningText = _('CannotMakeStation') end
                             return
                         end
@@ -3360,7 +3360,7 @@ function data()
                             else
                                 logger.infoOut('no track edge is close enough to the given point, going to add a split. iAcrossSplit =', iAcrossSplit)
                                 if iAcrossSplit < 1 then
-                                    logger.err('trouble finding a track split point')
+                                    logger.errorOut('trouble finding a track split point')
                                     logger.thingOut('totalLength =', totalLength, 'trackLengths =', trackLengths, 'lengthAtSplit =', lengthAtSplit, 'lengthSoFar =', lengthSoFar)
                                     return -1, nil, nil
                                 end
@@ -3382,7 +3382,7 @@ function data()
                                 local edgeLength = edgeUtils.getEdgeLength(trackEdgeList[iAcrossSplit].edgeId, logger.isExtendedLog())
                                 logger.infoOut('split edge length =', edgeLength)
                                 if not(edgeLength) then
-                                    logger.err('cannot get split edge length')
+                                    logger.errorOut('cannot get split edge length')
                                     return -1, nil, nil
                                 end
 
@@ -3397,7 +3397,7 @@ function data()
                                 )
                                 logger.infoOut('nodeBetween around track split =', nodeBetween)
                                 if nodeBetween == nil then
-                                    logger.warn('cannot get nodeBetween around track split')
+                                    logger.warningOut('cannot get nodeBetween around track split')
                                     return -1, nil, nil
                                 end
                                 -- LOLLO NOTE it seems fixed, but keep checking it:
@@ -3527,7 +3527,7 @@ function data()
                                         break
                                     end
                                 end
-                                if not(isMidNodeFound) then logger.warn('_reverseScrambledTracksAndPlatforms could not find the mid node') end
+                                if not(isMidNodeFound) then logger.warningOut('_reverseScrambledTracksAndPlatforms could not find the mid node') end
                                 logger.infoOut('eventArgs.trackEdgeListMidIndex is adjusted to ', eventArgs.trackEdgeListMidIndex)
 
                                 local isVehicleNode0Found = false
@@ -3539,7 +3539,7 @@ function data()
                                         break
                                     end
                                 end
-                                if not(isVehicleNode0Found) then logger.warn('_reverseScrambledTracksAndPlatforms could not find vehicle node 0') end
+                                if not(isVehicleNode0Found) then logger.warningOut('_reverseScrambledTracksAndPlatforms could not find vehicle node 0') end
                                 logger.infoOut('eventArgs.trackEdgeListVehicleNode0Index is adjusted to ', eventArgs.trackEdgeListVehicleNode0Index)
 
                                 local isVehicleNode1Found = false
@@ -3551,7 +3551,7 @@ function data()
                                         break
                                     end
                                 end
-                                if not(isVehicleNode1Found) then logger.warn('_reverseScrambledTracksAndPlatforms could not find vehicle node 1') end
+                                if not(isVehicleNode1Found) then logger.warningOut('_reverseScrambledTracksAndPlatforms could not find vehicle node 1') end
                                 logger.infoOut('eventArgs.trackEdgeListVehicleNode1Index is adjusted to ', eventArgs.trackEdgeListVehicleNode1Index)
 
                                 -- now we try again
@@ -3559,7 +3559,7 @@ function data()
                                     eventArgs.platformEdgeList,
                                     eventArgs.trackEdgeList[eventArgs.trackEdgeListMidIndex]
                                 )
-                                if not(result) then logger.warn('_reverseScrambledTracksAndPlatforms could not reverse') end
+                                if not(result) then logger.warningOut('_reverseScrambledTracksAndPlatforms could not reverse') end
 
                                 return result
                             end
@@ -3662,7 +3662,7 @@ function data()
                             return true
                         end
                         if not(_trySetPlatformProps(eventArgs.platformEdgeList)) then
-                            logger.err('cannot set platform props')
+                            logger.errorOut('cannot set platform props')
                             return
                         end
 
@@ -3700,7 +3700,7 @@ function data()
                             return true
                         end
                         if not(_trySetTrackProps(eventArgs.trackEdgeList)) then
-                            logger.err('cannot set track props')
+                            logger.errorOut('cannot set track props')
                             return
                         end
 
@@ -3744,12 +3744,12 @@ function data()
 
                         m_state.isBusy = true
                         if not(edgeUtils.isValidAndExistingId(args.join2StationConId)) then
-                            logger.err('SUBWAY_JOIN_REQUESTED got args.join2StationConId is invalid')
+                            logger.errorOut('SUBWAY_JOIN_REQUESTED got args.join2StationConId is invalid')
                             _utils.sendHideProgress()
                             return
                         end
                         if not(edgeUtils.isValidAndExistingId(args.subwayConstructionId)) then
-                            logger.err('SUBWAY_JOIN_REQUESTED got args.subwayConstructionId is invalid')
+                            logger.errorOut('SUBWAY_JOIN_REQUESTED got args.subwayConstructionId is invalid')
                             _utils.sendHideProgress()
                             return
                         end
@@ -3832,12 +3832,12 @@ function data()
                         end
                     -- elseif name == _eventNames.BUILD_SNAPPY_STREET_EDGES_REQUESTED then
                     --     if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
-                    --         logger.err('args.stationConstructionId not valid')
+                    --         logger.errorOut('args.stationConstructionId not valid')
                     --         return
                     --     end
                     --     local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
                     --     if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
-                    --         logger.err('construction', args.stationConstructionId, 'is not a freestyle station, I cannot build its snappy street edges')
+                    --         logger.errorOut('construction', args.stationConstructionId, 'is not a freestyle station, I cannot build its snappy street edges')
                     --         return
                     --     end
                     --     _actions.buildSnappyStreetEdges(args.stationConstructionId)
@@ -3887,14 +3887,14 @@ function data()
                     elseif name == _eventNames.REBUILD_STATION_WITH_LATEST_PROPERTIES then
                         logger.infoOut('REBUILD_STATION_WITH_LATEST_PROPERTIES fired, args =', args)
                         if not(edgeUtils.isValidAndExistingId(args.stationConstructionId)) then
-                            logger.err('REBUILD_STATION_WITH_LATEST_PROPERTIES got an invalid args.stationConstructionId')
+                            logger.errorOut('REBUILD_STATION_WITH_LATEST_PROPERTIES got an invalid args.stationConstructionId')
                             _utils.sendHideProgress()
                             return
                         end
 
                         local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
                         if con == nil or con.fileName ~= _constants.stationConFileName then
-                            logger.err('REBUILD_STATION_WITH_LATEST_PROPERTIES found no station or a non-freestyle station')
+                            logger.errorOut('REBUILD_STATION_WITH_LATEST_PROPERTIES found no station or a non-freestyle station')
                             _utils.sendHideProgress()
                             return
                         end
@@ -3923,7 +3923,7 @@ function data()
                 end,
                 function(error)
                     _utils.sendHideProgress()
-                    logger.xpErrorHandler(error)
+                    logger.errorOut(error)
                     m_state.warningText = error
                 end
             )
@@ -4183,18 +4183,18 @@ function data()
                             -- bar saving the game if a station is not finalised
                             local userMessage = nil
                             if m_guiConConfigMenu.openForConId ~= nil then
-                                logger.warn('about to save a game but the construction config menu is open, so a freestyle station is not finalised => closing the ingame menu')
+                                logger.warningOut('about to save a game but the construction config menu is open, so a freestyle station is not finalised => closing the ingame menu')
                                 userMessage = _guiTexts.closeConConfigBeforeSaving
                             elseif m_state.warningText ~= nil then
-                                logger.warn('about to save a game but a warning is open, so a freestyle station is not finalised => closing the ingame menu')
+                                logger.warningOut('about to save a game but a warning is open, so a freestyle station is not finalised => closing the ingame menu')
                                 userMessage = _guiTexts.awaitFinalisationBeforeSaving
                             elseif m_state.isBusy then
-                                logger.warn('about to save a game but the mod is busy, so a freestyle station is not finalised => closing the ingame menu')
+                                logger.warningOut('about to save a game but the mod is busy, so a freestyle station is not finalised => closing the ingame menu')
                                 userMessage = _guiTexts.awaitFinalisationBeforeSaving
                             end
                             if userMessage ~= nil then
                                 if guiHelpers.isAllowSaving then
-                                    logger.warn('force-saving a game with a possibly unready station')
+                                    logger.warningOut('force-saving a game with a possibly unready station')
                                 else
                                     local _ingameMenu = api.gui.util.getById('ingameMenu')
                                     if _ingameMenu ~= nil and _ingameMenu:isVisible() then
@@ -4205,7 +4205,7 @@ function data()
                             end
                         end
                     end,
-                    logger.xpErrorHandler
+                    logger.errorOut
                 )
             -- end
             if isHideDistance then guiHelpers.hideWaypointDistance() end

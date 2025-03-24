@@ -142,7 +142,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             joinButton:onClick(
                 function()
                     if type(onClickJoinFunc) == 'function' then onClickJoinFunc() end
-                    logger.print('guiHelpers 120')
+                    logger.infoOut('guiHelpers 120')
                     if not(stringUtils.isNullOrEmptyString(joinEventName)) then
                         eventArgs.join2StationConId = station.id
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -183,7 +183,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 3) =') debugPrint(string.sub(debug.getinfo(3, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 4) =') debugPrint(string.sub(debug.getinfo(4, 'S').source, 1))
                 -- if type(onClickJoinFunc) == 'function' then onClickJoinFunc() end
-                logger.print('guiHelpers 160')
+                logger.infoOut('guiHelpers 160')
                 if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -240,7 +240,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
 
     window:onClose(
         function()
-            logger.print('guiHelpers 215')
+            logger.infoOut('guiHelpers 215')
             -- do not do anything!
             -- if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
             --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -437,7 +437,7 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
-            logger.print('guiHelpers.showWarningWithGoto closing')
+            logger.infoOut('guiHelpers.showWarningWithGoto closing')
             guiHelpers.isShowingWarningWithGoTo = false
             window:setVisible(false, false)
         end
@@ -471,7 +471,7 @@ guiHelpers.showWaypointDistance = function(distance)
 
     window:onClose(
         function()
-            logger.print('guiHelpers 374')
+            logger.infoOut('guiHelpers 374')
             guiHelpers.isShowingWaypointDistance = false
             window:setVisible(false, false)
         end
@@ -528,7 +528,7 @@ guiHelpers.hideWaypointDistance = function()
 
         local window = api.gui.util.getById(_waypointDistanceWindowId)
         if window ~= nil then
-            logger.print('guiHelpers 431')
+            logger.infoOut('guiHelpers 431')
             window:setVisible(false, false)
         end
     end

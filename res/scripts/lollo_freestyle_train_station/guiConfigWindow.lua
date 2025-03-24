@@ -152,7 +152,7 @@ return {
                         checkbox:setSelected(paramValue == 1, false)
                         textBoxLayout:addItem(checkbox)
                     else -- BUTTON or anything else
-                        -- logger.print('button clicked')
+                        -- logger.infoOut('button clicked')
                         local buttonRowLayout = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
                         buttonRowLayout:setGravity(0.5, 0) -- center horizontally
                         buttonRowLayout:setOneButtonMustAlwaysBeSelected(true)
@@ -224,9 +224,9 @@ return {
             local conWindowId = 'temp.view.entity_' .. entityId
             logger.infoOut('conWindowId = \'', conWindowId, '\'')
             local window = api.gui.util.getById(conWindowId) -- eg temp.view.entity_26372
-            if window == nil then logger.err('cannot get config window by id') return end
+            if window == nil then logger.errorOut('cannot get config window by id') return end
             local windowContent = window:getContent()
-            if windowContent == nil then logger.err('cannot get config window content') return end
+            if windowContent == nil then logger.errorOut('cannot get config window content') return end
             -- depending on the entity type, I attach my child to the window content (station group) or to its layout (construction)
             local isParentWindowContentLayout = type(windowContent.getName) == 'function' and windowContent:getName() == 'ConstructionContent'
             logger.infoOut('isParentWindowContentLayout =', isParentWindowContentLayout)
@@ -237,14 +237,14 @@ return {
             for i = 0, parentLayout:getNumItems() - 1, 1 do
                 local item = parentLayout:getItem(i)
                 if item ~= nil and type(item.getId) == 'function' and stringUtils.stringStartsWith(item:getId() or '', self.privateData.conConfigLayoutIdPrefix) then
-                    logger.print('one of my menus is already in the window, about to remove it')
+                    logger.infoOut('one of my menus is already in the window, about to remove it')
                     parentLayout:removeItem(item)
-                    logger.print('about to reset its id')
-                    if type(item.setId) == 'function' then item:setId('') else logger.err('cannot set config window id') end
-                    logger.print('about to call destroy')
+                    logger.infoOut('about to reset its id')
+                    if type(item.setId) == 'function' then item:setId('') else logger.errorOut('cannot set config window id') end
+                    logger.infoOut('about to call destroy')
                     -- api.gui.util.destroyLater(item) -- this errors out
                     item:destroy()
-                    logger.print('called destroy')
+                    logger.infoOut('called destroy')
                 end
             end
 
@@ -382,7 +382,7 @@ return {
             -- window:addHideOnCloseHandler()
             window:onClose(
                 function()
-                    logger.print('guiHelpers.showWarningWithGoto closing')
+                    logger.infoOut('guiHelpers.showWarningWithGoto closing')
                     self.privateData.isShowingWarning = false
                     window:setVisible(false, false)
                 end

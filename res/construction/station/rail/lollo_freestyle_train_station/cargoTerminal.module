@@ -161,7 +161,7 @@ return {
 			end
 		end
 
-		logger.print('cargoTerminal.module.updateFn ending')
+		logger.infoOut('cargoTerminal.module.updateFn ending')
 	end,
 
 	getModelsFn = function(params)

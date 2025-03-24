@@ -63,7 +63,7 @@ local _actions = {
         and newEdge.comp.type == oldEdge.type
         and newEdge.comp.typeIndex == oldEdge.typeIndex
         then
-            logger.print('nothing changed, leaving')
+            logger.infoOut('nothing changed, leaving')
             return
         end
 
@@ -146,7 +146,7 @@ function data()
                                 end
                             end
                         end,
-                        logger.xpErrorHandler
+                        logger.errorOut
                     )
                 end
             end
@@ -165,7 +165,7 @@ function data()
                         end
                     end
                 end,
-                logger.xpErrorHandler
+                logger.errorOut
             )
         end,
         -- update = function()
