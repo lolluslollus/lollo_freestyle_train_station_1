@@ -59,6 +59,13 @@ logger.warningOut(123.456)
 print('--------')
 logger.warningOut('lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456)
 
+xpcall(
+    function ()
+        assert(true == false, 'belandi')
+    end,
+    logger.errorOut
+)
+
 -- they both take the same
 -- logger.profile('### tab', function() for i = 1, 10000 do logger.warningsOut({'lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456}) end end)
 -- logger.profile('### vararg', function() for i = 1, 10000 do logger.warningOut('lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456) end end)
