@@ -3,6 +3,20 @@ local _isWarningLogActive = true
 local _isErrorLogActive = true
 local _isTimersActive = true
 
+---@param param any
+---@return boolean
+local _checkIsString = function(param)
+    if type(param) == 'string' then return true end
+
+    print('outString must be a string at ')
+    -- local info1 = debug.getinfo(1)
+    -- if info1 then debugPrint(info1) end
+    local info2 = debug.getinfo(2)
+    if info2 then debugPrint(info2) end
+    local info3 = debug.getinfo(3)
+    if info3 then debugPrint(info3) end
+    return false
+end
 ---@param outString string
 ---@param value any
 ---@return string
@@ -19,6 +33,7 @@ end
 ---@param outString string
 ---@param tab table<any>
 local _printThings = function(outString, tab)
+    if not(_checkIsString(outString)) then return end
     if type(tab) ~= 'table' then
         -- local newOutString = _printOneThing(outString, tab)
         -- if newOutString ~= '' then print(newOutString) end
@@ -41,31 +56,19 @@ local _printThings = function(outString, tab)
     if newOutString ~= '' then print(newOutString) end
 end
 local _printThingsVararg = function(outString, ...)
-    -- this skips the last consecutive nil values
-    -- arg is null and ... is numerical; both have no metatable
-    if type(outString) ~= 'string' then
-        print('outString must be a string at ')
-        -- local info1 = debug.getinfo(1)
-        -- if info1 then debugPrint(info1) end
-        local info2 = debug.getinfo(2)
-        if info2 then debugPrint(info2) end
-        local info3 = debug.getinfo(3)
-        if info3 then debugPrint(info3) end
-        return
-    end
+    -- arg is null (obsolete) and ... is numerical; both have no metatable
+    if not(_checkIsString(outString)) then return end
 
     local tab = {...}
-    local nTab = #tab
-    local isLooped = false
+    local nTab = select('#', ...) -- LOLLO NOTE not #tab because it will skip the last consecutive nils. select is for varargs, it is NOT a table item counter.
     local newOutString = outString
     for i = 1, nTab, 1 do
         newOutString = _printOneThing(newOutString, tab[i])
-        isLooped = true
     end
-    if isLooped then
+    if nTab > 0 then
         if newOutString ~= '' then print(newOutString) end
     else
-        print(newOutString .. ' one or more NILs')
+        print(newOutString .. ' no args were processed')
     end
 end
 
@@ -78,12 +81,12 @@ return {
     end,
     ---@param tab table<any>
     thingsOut = function(tab)
-        return _printThings('', tab)
+        _printThings('', tab)
     end,
-    -- ---@param ... unknown
-    -- thingOut = function(...)
-    --     _printThingsVararg('', ...)
-    -- end,
+    ---@param ... unknown
+    thingOut = function(...)
+        _printThingsVararg('', ...)
+    end,
     print = function(...)
         if not(_isExtendedLogActive) then return end
         print('lollo_freestyle_train_station INFO: ', ...)
@@ -91,53 +94,41 @@ return {
     ---@param tab table<any>
     infozOut = function(tab)
         if not(_isExtendedLogActive) then return end
-        return _printThings('lollo_freestyle_train_station INFO: ', tab)
+        _printThings('lollo_freestyle_train_station INFO: ', tab)
     end,
-    -- ---@param ... unknown
-    -- infoOut = function(...)
-    --     if not(_isExtendedLogActive) then return end
-    --     _printThingsVararg('lollo_freestyle_train_station INFO: ', ...)
-    -- end,
-    -- printInfoSkippingNils = function(...)
-    --     if not(_isExtendedLogActive) then return end
-    --     return _printThingsSkippingNils('lollo_freestyle_train_station INFO: ', ...)
-    -- end,
+    ---@param ... unknown
+    infoOut = function(...)
+        if not(_isExtendedLogActive) then return end
+        _printThingsVararg('lollo_freestyle_train_station INFO: ', ...)
+    end,
     warn = function(label, ...)
         if not(_isWarningLogActive) then return end
         print('lollo_freestyle_train_station WARNING: ' .. label, ...)
     end,
-    -- ---@param ... unknown
-    -- warningOut = function(...)
-    --     if not(_isWarningLogActive) then return end
-    --     _printThingsVararg('lollo_freestyle_train_station WARNING: ', ...)
-    -- end,
+    ---@param ... unknown
+    warningOut = function(...)
+        if not(_isWarningLogActive) then return end
+        _printThingsVararg('lollo_freestyle_train_station WARNING: ', ...)
+    end,
     ---@param tab table<any>
     warningsOut = function(tab)
         if not(_isWarningLogActive) then return end
-        return _printThings('lollo_freestyle_train_station WARNING: ', tab)
+        _printThings('lollo_freestyle_train_station WARNING: ', tab)
     end,
-    -- printWarningsSkippingNils = function(...)
-    --     if not(_isWarningLogActive) then return end
-    --     return _printThingsSkippingNils('lollo_freestyle_train_station WARNING: ', ...)
-    -- end,
     err = function(label, ...)
         if not(_isErrorLogActive) then return end
         print('lollo_freestyle_train_station ERROR: ' .. label, ...)
     end,
-    -- ---@param ... unknown
-    -- errorOut = function(...)
-    --     if not(_isErrorLogActive) then return end
-    --     _printThingsVararg('lollo_freestyle_train_station ERROR: ', ...)
-    -- end,
+    ---@param ... unknown
+    errorOut = function(...)
+        if not(_isErrorLogActive) then return end
+        _printThingsVararg('lollo_freestyle_train_station ERROR: ', ...)
+    end,
     ---@param tab table<any>
     errorsOut = function(tab)
         if not(_isErrorLogActive) then return end
-        return _printThings('lollo_freestyle_train_station ERROR: ', tab)
+        _printThings('lollo_freestyle_train_station ERROR: ', tab)
     end,
-    -- printErrorsSkippingNils = function(...)
-    --     if not(_isErrorLogActive) then return end
-    --     return _printThingsSkippingNils('lollo_freestyle_train_station ERROR: ', ...)
-    -- end,
     ---obsolete
     ---@param whatever any
     debugPrint = function(whatever)
@@ -174,14 +165,14 @@ return {
     end,
     xpInfoHandler = function(error)
         if not(_isExtendedLogActive) then return end
-        return _printThings('lollo_freestyle_train_station INFO: ', {error})
+        _printThings('lollo_freestyle_train_station INFO: ', {error})
     end,
     xpWarningHandler = function(error)
         if not(_isWarningLogActive) then return end
-        return _printThings('lollo_freestyle_train_station WARNING: ', {error})
+        _printThings('lollo_freestyle_train_station WARNING: ', {error})
     end,
     xpErrorHandler = function(error)
         if not(_isErrorLogActive) then return end
-        return _printThings('lollo_freestyle_train_station ERROR: ', {error})
+        _printThings('lollo_freestyle_train_station ERROR: ', {error})
     end,
 }
