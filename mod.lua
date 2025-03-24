@@ -47,7 +47,6 @@ function data()
                     if data and data.metadata and data.metadata.streetTerminal then
                         data.boundingInfo = _mdlHelpers.getVoidBoundingInfo()
                         data.collider = _mdlHelpers.getVoidCollider()
-                        -- print('LOLLO bounding reset, filename =', fileName)
                     end
                     return data
                 end

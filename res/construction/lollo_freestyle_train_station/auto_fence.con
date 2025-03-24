@@ -176,9 +176,14 @@ function data()
 		},
 		params = {},
 		updateFn = function(params)
-            logger.print('auto_fence.updateFn firing, params =')
-            logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state', 'transfs', 'transfs_ground', 'transfs_wallBehind'}, true))
-
+            logger.infoOut({
+                'auto_fence.updateFn firing, params =',
+                arrayUtils.cloneDeepOmittingFields(
+                    params,
+                    {'state', 'transfs', 'transfs_ground', 'transfs_wallBehind'},
+                    true
+                )
+            })
             local _initParams = function()
                 -- allow adding new params to old cons that did not have them
                 local defaults = fenceModelHelper.getDefaultIndexes()
@@ -287,7 +292,7 @@ function data()
                     or 'lollo_freestyle_train_station/trackWalls/behind/tunnely_wall_base_5m.mdl')
 
             -- make sure something appears even if the models are all nil, so the costruction will not stay around as a ghost
-            logger.print('wallMainModelId =', wallMainModelId, 'wallBaseModelId =', wallBaseModelId, 'wallBehindModelId =', wallBehindModelId)
+            logger.infoOut({'wallMainModelId =', wallMainModelId, 'wallBaseModelId =', wallBaseModelId, 'wallBehindModelId =', wallBehindModelId})
             if not(wallMainModelId) and not(wallBaseModelId) and not(wallBehindModelId) then
                 result.labelText = {
                     [0] = { _('wallWithNoModelsHere'), _('wallWithNoModelsHere') }

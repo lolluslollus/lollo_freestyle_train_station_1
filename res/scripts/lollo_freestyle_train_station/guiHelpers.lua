@@ -44,16 +44,13 @@ guiHelpers.setWindowPosition = function(window, initialPosition)
     local gameContentRect = api.gui.util.getGameUI():getContentRect()
     local windowContentRect = window:getContentRect()
     local windowMinimumSize = window:calcMinimumSize()
-    logger.print('### gameContentRect =') logger.debugPrint(gameContentRect)
-    logger.print('### windowContentRect =') logger.debugPrint(windowContentRect)
-    logger.print('### windowMinimumSize =') logger.debugPrint(windowMinimumSize)
+    logger.infoOut({'### gameContentRect =', gameContentRect, ', windowContentRect =', windowContentRect, ', windowMinimumSize =', windowMinimumSize})
 
     local windowHeight = math.max(windowContentRect.h, windowMinimumSize.h)
     local windowWidth = math.max(windowContentRect.w, windowMinimumSize.w)
     local positionX = (initialPosition ~= nil and initialPosition.x) or math.max(0, (gameContentRect.w - windowWidth) * 0.5)
     local positionY = (initialPosition ~= nil and initialPosition.y) or math.max(0, (gameContentRect.h - windowHeight) * 0.5)
-
-    logger.print('### positionX = ' .. tostring(positionX) .. ', positionY = ' .. tostring(positionY))
+    logger.infoOut({'### positionX = ', positionX, ', positionY = ', positionY})
 
     if (positionX + windowWidth) > gameContentRect.w then
         positionX = math.max(0, gameContentRect.w - windowWidth)
@@ -61,7 +58,7 @@ guiHelpers.setWindowPosition = function(window, initialPosition)
     if (positionY + windowHeight) > gameContentRect.h then
         positionY = math.max(0, gameContentRect.h - windowHeight -100)
     end
-    logger.print('### final position x = ' .. tostring(positionX) .. ', y = ' .. tostring(positionY))
+    logger.infoOut({'### final position x = ', positionX, ', y = ', positionY})
     window:setPosition(math.floor(positionX), math.floor(positionY))
 end
 ---@param text string
@@ -332,7 +329,7 @@ end
 ---@param wrongObjectId? integer
 ---@param similarObjectsIds? table<integer>
 guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds, removeAllFunc)
-    logger.print('guiHelpers.showWarningWithGoto starting, text =', text or 'NIL')
+    logger.infoOut({'guiHelpers.showWarningWithGoto starting, text =', text})
     guiHelpers.isShowingWarningWithGoTo = true
 
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
@@ -340,11 +337,11 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
     if window == nil then
         window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
         window:setId(_warningWindowWithGotoId)
-        logger.print('the window does not exist yet, _warningWindowWithGotoId =', _warningWindowWithGotoId)
+        logger.infoOut({'the window does not exist yet, _warningWindowWithGotoId =', _warningWindowWithGotoId})
     else
         window:setContent(layout)
         window:setVisible(true, false)
-        logger.print('the window exists already, _warningWindowWithGotoId =', _warningWindowWithGotoId)
+        logger.infoOut({'the window exists already, _warningWindowWithGotoId =', _warningWindowWithGotoId})
     end
 
     layout:addItem(api.gui.comp.TextView.new(text))

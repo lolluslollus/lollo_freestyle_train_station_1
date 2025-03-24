@@ -201,7 +201,6 @@ function data()
     return {
         guiHandleEvent = function(id, name, args)
             if not(_guiData.isExperimentalParamsMenu) then return end
-            -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') -- logger.debugPrint(args)
             -- LOLLO NOTE param can have different types, even boolean, depending on the event id and name
             if (name == 'select' and id == 'mainView') then
                 -- select happens after idAdded, which looks like:

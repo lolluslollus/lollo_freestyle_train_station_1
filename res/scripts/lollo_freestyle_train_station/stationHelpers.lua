@@ -501,7 +501,7 @@ local helpers = {
             end
         end
 
-        logger.print('getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'first 3 and last 3 edgeLists =') -- logger.debugPrint(edgeLists)
+        logger.infoOut({'getCentralEdgePositions_OnlyOuterBounds starting, stepLength =', stepLength, 'first 3 and last 3 edgeLists ='}) -- logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(stepLength) ~= 'number' or stepLength <= 0 then
             logger.err('getCentralEdgePositions_OnlyOuterBounds got wrong parameters, leaving')
             return {}
@@ -543,7 +543,7 @@ local helpers = {
                 local _firstStep = stepLength - lengthUncovered
                 local _firstStepPercent = _firstStep / _refEdgeLength
                 local _nextStepPercent = stepLength / _refEdgeLength
-                logger.print('_refEdgeLength, _firstStep, firstStepPercent, nextStepPercent =', _refEdgeLength, _firstStep, _firstStepPercent, _nextStepPercent)
+                logger.infoOut({'_refEdgeLength, _firstStep, firstStepPercent, nextStepPercent =', _refEdgeLength, _firstStep, _firstStepPercent, _nextStepPercent})
                 if _firstStepPercent < 0 then
                     logger.err('firstStep cannot be < 0; _refEdgeLength, lengthUncovered =', _refEdgeLength, lengthUncovered)
                     return {}
@@ -642,7 +642,7 @@ local helpers = {
                 end
                 lengthUncovered = lengthUncovered + _refEdgeLength
 
-                logger.print('currentStepPercent =', currentStepPercent, 'lengthUncovered =', lengthUncovered)
+                logger.infoOut({'currentStepPercent =', currentStepPercent, 'lengthUncovered =', lengthUncovered})
 
                 previousRefEdge = _refEdge
                 previousRefEdgeLength = _refEdgeLength
@@ -736,7 +736,7 @@ local helpers = {
     end,
 
     calcCentralEdgePositions_GroupByMultiple = function(edgeLists, multiple, isAddTerrainHeight, isAddExtraProps)
-        logger.print('getCentralEdgePositions_GroupByMultiple starting, multiple =', multiple, 'edgeLists =') --logger.debugPrint(edgeLists)
+        logger.infoOut({'getCentralEdgePositions_GroupByMultiple starting, multiple =', multiple, 'edgeLists ='}) --logger.debugPrint(edgeLists)
         if type(edgeLists) ~= 'table' or type(multiple) ~= 'number' or math.floor(multiple) < 2 then
             logger.err('getCentralEdgePositions_GroupByMultiple got wrong parameters, leaving')
             return {}
@@ -1033,7 +1033,7 @@ local helpers = {
                 -- logger.print('replaceEdgeWithSameRemovingObject: newEdge.comp.objects = not changed')
             end
         else
-            logger.print('replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is') logger.debugPrint(objectIdToRemove)
+            logger.infoOut({'replaceEdgeWithSameRemovingObject: objectIdToRemove is no good, it is', objectIdToRemove})
             newEdge.comp.objects = oldEdge.objects
         end
 
@@ -1181,7 +1181,7 @@ helpers.getNearbyFreestyleStationConsList = function(transf, searchRadius, isOnl
                     if not(isCargo) or not(isOnlyPassengers) then
                         local stationGroupId = api.engine.system.stationGroupSystem.getStationGroup(stationId)
                         local howManyTerminalsInStationGroup = helpers.getHowManyTerminalsInStationGroup(stationGroupId)
-                        logger.print('howManyTerminalsInStationGroup =', howManyTerminalsInStationGroup)
+                        logger.infoOut({'howManyTerminalsInStationGroup =', howManyTerminalsInStationGroup})
                         if howManyTerminalsInStationGroup >= 0 and (howManyTerminalsInStationGroup < _constants.maxNTerminals or not(isCheckMaxTerminals)) then
                             local isTwinCargo = false
                             local isTwinPassenger = false
@@ -1684,7 +1684,7 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
 end
 
 helpers.getStationTrackEndEntities = function(stationConstructionId, isSkipLogging, nRemovedTerminal)
-    logger.print('_getStationTrackEndEntities started, conId =', stationConstructionId or 'NIL')
+    logger.infoOut({'_getStationTrackEndEntities started, conId =', stationConstructionId})
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         if isSkipLogging then return nil end
         logger.err('getStationTrackEndEntities invalid stationConstructionId') logger.errorDebugPrint(stationConstructionId)
@@ -1925,7 +1925,7 @@ helpers.getIsTrackAlongPlatformLeft = function(platformEdgeList, midTrackEdge)
         _midTrackPoint,
         _midRightPlatformPoint
     )
-    logger.print('getIsTrackAlongPlatformLeft is returning', result)
+    logger.infoOut({'getIsTrackAlongPlatformLeft is returning', result})
 
     return result
 end
@@ -1938,7 +1938,7 @@ helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
 
     -- not the centre but the first of the two (nodes in the edge) is going to be my vehicleNode
     local _midTrackPos123 = arrayUtils.cloneDeepOmittingFields(midTrackEdge.posTanX2[1][1])
-    logger.print('_midTrackPos =') logger.debugPrint(_midTrackPos123)
+    logger.infoOut({'_midTrackPos =', _midTrackPos123})
     local _centrePlatforms = helpers.getCentralEdgePositions_OnlyOuterBounds(
         platformEdgeList,
         20 -- was 40, 20 is more accurate
@@ -1946,21 +1946,21 @@ helpers.getIsTrackNorthOfPlatform = function(platformEdgeList, midTrackEdge)
 
     -- logger.print('_centrePlatforms =') logger.debugPrint(_centrePlatforms)
     local _centrePlatformIndex_Nearest2_TrackMid = _getPosTanX2ListIndex_Nearest2_Point(_centrePlatforms, _midTrackPos123)
-    logger.print('_centrePlatformIndex_Nearest2_TrackMid =', tostring(_centrePlatformIndex_Nearest2_TrackMid))
+    logger.infoOut({'_centrePlatformIndex_Nearest2_TrackMid =', _centrePlatformIndex_Nearest2_TrackMid})
 
     local _midPlatformSegment = _centrePlatforms[_centrePlatformIndex_Nearest2_TrackMid]
-    logger.print('_midPlatformSegment =') logger.debugPrint(_midPlatformSegment)
+    logger.infoOut({'_midPlatformSegment =', _midPlatformSegment})
     -- Now, I draw a perpendicular line from midTrackPos to midPlatformSegment.
     -- If it works, I check its intersection with midPlatformSegment;
     -- Otherwise, I use the segment mid point as fallback
     local _intersection123 = transfUtils.getPointToSegmentNormalIntersection_2D(_midTrackPos123, _midPlatformSegment.posTanX2[1][1], _midPlatformSegment.posTanX2[2][1])
     or transfUtils.getPositionsMiddle(_midPlatformSegment.posTanX2[1][1], _midPlatformSegment.posTanX2[2][1])
-    logger.print('_intersection123 =') logger.debugPrint(_intersection123)
+    logger.infoOut({'_intersection123 =', _intersection123})
 
     local result = (_midTrackPos123[2] == _intersection123[2])
         and (_midTrackPos123[1] < _intersection123[1])
         or (_midTrackPos123[2] > _intersection123[2])
-    logger.print('getIsTrackNorthOfPlatform is returning', result)
+    logger.infoOut({'getIsTrackNorthOfPlatform is returning', result})
 
     return result
 end

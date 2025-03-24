@@ -67,8 +67,7 @@ function data()
         },
 		updateFn = function(params)
 			logger.print('station.con updateFn starting')
-			-- logger.print('updateFn starting, params =') logger.debugPrint(params)
-			-- logger.print('station.con updateFn starting, params.modules =') logger.debugPrint(params.modules)
+			-- logger.infoOut({'station.con updateFn starting, params.modules =', params.modules})
 			local _modules = params.modules or {}
 
 			-- LOLLO NOTE I cannot call the api from here, sigh. api is there, but api.res is NIL. Also game is there, but game.interface is NIL
@@ -1945,15 +1944,15 @@ function data()
 						local dY = y1 - y0
 						local _isOutputLog = false
 						if _isOutputLog then
-							print('_isNorth received posTanX2 =') debugPrint(posTanX2)
-							print(', pos =') debugPrint(pos)
-							print(', dX =', dX, 'dY =', dY)
-							print(', distance =', distance or 'NIL')
+							logger.thingsOut({'_isNorth received posTanX2 =', posTanX2})
+							logger.thingsOut({', pos =', pos})
+							logger.thingsOut({', dX =', dX, 'dY =', dY})
+							logger.thingsOut({', distance =', distance})
 						end
 						if dX == 0 then
 							local isNorthResult = pos[1] < x0
 							if _isOutputLog then
-								print('_isNorth has calculated result = ', isNorthResult)
+								logger.thingsOut({'_isNorth has calculated result = ', isNorthResult})
 							end
 							return isNorthResult
 						end
@@ -1961,8 +1960,8 @@ function data()
 						local a = y0 - b * x0
 						local isNorthResult = a + b * pos[1] < pos[2]
 						if _isOutputLog then
-							print('_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult)
-							print('a + b * x0 =', a + b * x0, 'y0 =', y0, 'a + b * x1 =', a + b * x1, 'y1 =', y1, 'a + b * pos[1] =', a + b * pos[1], 'pos[2] =', pos[2])
+							logger.thingsOut({'_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult})
+							logger.thingsOut({'a + b * x0 =', a + b * x0, 'y0 =', y0, 'a + b * x1 =', a + b * x1, 'y1 =', y1, 'a + b * pos[1] =', a + b * pos[1], 'pos[2] =', pos[2]})
 						end
 						return isNorthResult
 					end

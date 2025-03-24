@@ -3,19 +3,42 @@ local _isWarningLogActive = true
 local _isErrorLogActive = true
 local _isTimersActive = true
 
-local _printThings = function(outString, tab)
-    for i = 1, #tab, 1 do
-        local value = tab[i]
-        local valueString = tostring(value)
-        if valueString:sub(0, 10) == 'function: ' or valueString:sub(0, 7) == 'table: ' then
-            print(outString)
-            outString = ''
-            debugPrint(value)
-        else
-            outString = outString .. ' ' .. valueString
-        end
+---@param outString string
+---@param value any
+---@return string
+local _printOneThing = function(outString, value)
+    local valueString = tostring(value)
+    if valueString:sub(0, 10) == 'function: ' or valueString:sub(0, 7) == 'table: ' then
+        if outString ~= '' then print(outString) end
+        outString = ''
+        debugPrint(value)
+    else
+        outString = outString .. ' ' .. valueString
     end
-    print(outString)
+    return outString
+end
+---@param outString string
+---@param tab any
+local _printThings = function(outString, tab)
+    if type(tab) ~= 'table' then
+        -- local newOutString = _printOneThing(outString, tab)
+        -- if newOutString ~= '' then print(newOutString) end
+        print(outString .. 'cannot output non-tab values')
+        return
+    end
+
+    local nTab = #tab
+    if nTab == 0 then --indexed table
+        -- if outString ~= '' then print(outString) end
+        -- debugPrint(tab)
+        print(outString .. 'cannot output an indexed or empty table. If you want to output a single value or an indexed table, enclose them in curly brackets.')
+        return
+    end
+
+    for i = 1, nTab, 1 do
+        local newOutString = _printOneThing(outString, tab[i])
+        if newOutString ~= '' then print(newOutString) end
+    end
 end
 local _printThingsSkippingNils = function(outString, ...)
     for _, value in pairs({...}) do

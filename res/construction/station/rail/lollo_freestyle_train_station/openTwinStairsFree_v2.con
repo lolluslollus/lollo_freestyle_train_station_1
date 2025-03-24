@@ -8,7 +8,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo openTwinStairsFree_v2.con ERROR: ', err)
+        logger.thingsOut({'lollo openTwinStairsFree_v2.con ERROR: ', err})
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs_v2
@@ -205,11 +205,9 @@ function data()
                 },
             }
 
-            -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
-
             local _addBase = function(isEast, leftOrRightTransf)
                 local stairsBase = isEast and _stairsBaseEast or _stairsBaseWest
-                logger.print('stairsBase =', stairsBase)
+                logger.infoOut({'stairsBase =', stairsBase})
                 if stairsBase == -1 then
                     -- do nothing
                 elseif stairsBase == 0 or stairsBase == 1 or stairsBase == 2 or stairsBase == 3 then -- edge or snappy edge

@@ -250,7 +250,7 @@ function data()
 
             local _fileName = (_paramHelpers.eraPrefix.getActualValues())[(params.lollo_platform_as_asset_era_prefix or 0) + 1]
             local _isOnlyTerrain = type(_fileName) ~= 'string' or _fileName:len() == 0
-            logger.print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax, '_zShift =', _zShift)
+            logger.infoOut({'x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax, '_zShift =', _zShift})
             if _isOnlyTerrain then
                 result.models[#result.models+1] = {
                     id = 'lollo_freestyle_train_station/railroad/assets/cargo/era_a_cube_1x1.mdl',

@@ -15,7 +15,7 @@ local _eventProperties = {
 
 local _actions = {
     replaceEdgeWithSameOnBridge = function(oldEdgeId, bridgeTypeId)
-        logger.print('replaceEdgeWithSameOnBridge starting, oldEdgeId =', oldEdgeId, 'bridgeTypeId =', bridgeTypeId)
+        logger.infoOut({'replaceEdgeWithSameOnBridge starting, oldEdgeId =', oldEdgeId, 'bridgeTypeId =', bridgeTypeId})
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
 
         local oldEdge = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE)
@@ -103,7 +103,7 @@ function data()
                 if id == 'streetBuilder' or id == 'streetTrackModifier' then
                     xpcall(
                         function()
-                            -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+                            -- logger.infoOut({'guiHandleEvent caught id =', id, 'name =', name, 'args =', args})
                             if not(args) or not(args.proposal) or not(args.proposal.proposal)
                             or not(args.proposal.proposal.addedSegments)
                             or not(args.data) or not(args.data.entity2tn) then return end
@@ -157,7 +157,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.print('lollo_auto_bridge_paths.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+                    logger.infoOut({'lollo_auto_bridge_paths.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =', args})
 
                     if name == _eventProperties.buildBridgeRequested.eventName then
                         if edgeUtils.isValidAndExistingId(args.edgeId) and edgeUtils.isValidId(args.bridgeTypeId) then

@@ -33,7 +33,7 @@ local guiTrackTypes = {
 -- these are for the worker thread
 local _actions = {
     replaceEdgeWithParallelNarrowTracks = function(oldEdgeId, newTrackTypeId)
-        logger.print('replaceEdgeWithParallelNarrowTracks starting, oldEdgeId =', oldEdgeId, 'newTrackTypeId =', newTrackTypeId)
+        logger.infoOut({'replaceEdgeWithParallelNarrowTracks starting, oldEdgeId =', oldEdgeId, 'newTrackTypeId =', newTrackTypeId})
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
         if not(edgeUtils.isValidId(newTrackTypeId)) then return end
 
@@ -192,7 +192,7 @@ function data()
                 if id == 'trackBuilder' or id == 'streetTrackModifier' then
                     xpcall(
                         function()
-                            logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+                            logger.infoOut({'guiHandleEvent caught id =', id, 'name =', name, 'args =', args})
                             if not(args) or not(args.proposal) or not(args.proposal.proposal)
                             or not(args.proposal.proposal.addedSegments)
                             or not(args.data)
@@ -202,7 +202,7 @@ function data()
 
                             local eventParams = {}
                             for _, addedSegment in pairs(args.proposal.proposal.addedSegments) do
-                                logger.print('addedSegment =') logger.debugPrint(addedSegment)
+                                logger.infoOut({'addedSegment =', addedSegment})
                                 if addedSegment
                                 and addedSegment.trackEdge ~= nil
                                 and addedSegment.trackEdge.trackType ~= nil
@@ -265,8 +265,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.print('lollo_auto_split_platform.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
-
+                    logger.infoOut({'lollo_auto_split_platform.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =', args})
                     if name == _eventProperties.splitPlatformRequested.eventName then
                         _actions.replaceEdgeWithParallelNarrowTracks(args.edgeId, args.newTrackTypeId)
                     end

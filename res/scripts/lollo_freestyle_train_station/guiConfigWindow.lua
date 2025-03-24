@@ -66,7 +66,7 @@ return {
                 end
 
                 local function addParam(paramKey, paramMetadata, paramValue)
-                    logger.print('addParam starting, paramKey =', paramKey or 'NIL')
+                    logger.infoOut({'addParam starting, paramKey =', paramKey})
                     if not(paramKey) or not(paramMetadata) or not(paramMetadata.values) or not(paramValue) then return end
 
                     local paramNameTextBox = api.gui.comp.TextView.new(paramMetadata.name)
@@ -78,7 +78,7 @@ return {
                     layout:addItem(textBoxLayout)
 
                     local _valueIndexBase0 = paramValue or (paramMetadata.defaultIndex or 0)
-                    logger.print('_valueIndexBase0 =', _valueIndexBase0)
+                    logger.infoOut({'_valueIndexBase0 =', _valueIndexBase0})
                     if paramMetadata.uiType == 'ICON_BUTTON' then
                         local buttonRowLayout = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
                         buttonRowLayout:setGravity(0.5, 0) -- center horizontally
@@ -111,13 +111,13 @@ return {
                         end
                         comboBox:onIndexChanged(
                             function(indexBase0)
-                                logger.print('comboBox:onIndexChanged firing, one =') logger.debugPrint(indexBase0)
+                                logger.infoOut({'comboBox:onIndexChanged firing, one =', indexBase0})
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, indexBase0)
                             end
                         )
                         layout:addItem(comboBox)
                     elseif paramMetadata.uiType == 'SLIDER' then
-                        logger.print('paramMetadata =') logger.debugPrint(paramMetadata)
+                        logger.infoOut({'paramMetadata =', paramMetadata})
                         local sliderValueView = api.gui.comp.TextView.new(tostring(paramMetadata.values[_valueIndexBase0 + 1]))
                         sliderValueView:setGravity(0.5, 0) -- center horizontally
                         local slider = api.gui.comp.Slider.new(true) -- true means horizontal
@@ -128,7 +128,7 @@ return {
                         slider:setValue(_valueIndexBase0, false)
                         slider:onValueChanged(
                             function(newValueIndexBase0)
-                                logger.print('slider emitted newValue =', newValueIndexBase0)
+                                logger.infoOut({'slider emitted newValue =', newValueIndexBase0})
                                 sliderValueView:setText(tostring(paramMetadata.values[newValueIndexBase0 + 1]))
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, newValueIndexBase0)
                             end
@@ -162,7 +162,7 @@ return {
                         buttonRowLayout:setEmitSignal(false)
                         buttonRowLayout:onCurrentIndexChanged(
                             function(newIndexBase0)
-                                -- logger.print('buttonRowLayout:onCurrentIndexChanged, newIndexBase0 =', newIndexBase0 or 'NIL')
+                                -- logger.infoOut({'buttonRowLayout:onCurrentIndexChanged, newIndexBase0 =', newIndexBase0})
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, newIndexBase0)
                             end
                         )
@@ -189,7 +189,7 @@ return {
                     end
                     -- allow adding new params to old cons that did not have them
                     if not(isFound) and paramMetadata ~= nil and paramMetadata.key ~= nil then
-                        logger.print('new param found, paramMetadata.key =', paramMetadata.key)
+                        logger.infoOut({'new param found, paramMetadata.key =', paramMetadata.key})
                         addParam(paramMetadata.key, paramMetadata, paramMetadata.defaultIndex)
                     end
                 end
@@ -233,7 +233,7 @@ return {
             if windowContent == nil then logger.err('cannot get config window content') return end
             -- depending on the entity type, I attach my child to the window content (station group) or to its layout (construction)
             local isParentWindowContentLayout = type(windowContent.getName) == 'function' and windowContent:getName() == 'ConstructionContent'
-            logger.print('isParentWindowContentLayout =', isParentWindowContentLayout)
+            logger.infoOut({'isParentWindowContentLayout =', isParentWindowContentLayout})
             local parentLayout = isParentWindowContentLayout and windowContent:getLayout() or windowContent
             local configureButtonIndex = isParentWindowContentLayout and 0 or 1
             parentLayout:getItem(configureButtonIndex):setVisible(false, false) -- hide the "configure' button" without emitting a signal
@@ -282,7 +282,7 @@ return {
         ---@param wrongObjectId? integer
         ---@param similarObjectsIds? table<integer>
         self.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds, removeAllFunc)
-            logger.print('guiHelpers.showWarningWithGoto starting, text =', text or 'NIL')
+            logger.infoOut({'guiHelpers.showWarningWithGoto starting, text =', text})
             self.privateData.isShowingWarning = true
 
             local layout = api.gui.layout.BoxLayout.new('VERTICAL')
@@ -290,11 +290,11 @@ return {
             if window == nil then
                 window = api.gui.comp.Window.new(self.privateData.texts.warningWindowTitle, layout)
                 window:setId(self.privateData.warningWindowWithGotoId)
-                logger.print('the window does not exist yet, _warningWindowWithGotoId =', self.privateData.warningWindowWithGotoId)
+                logger.infoOut({'the window does not exist yet, _warningWindowWithGotoId =', self.privateData.warningWindowWithGotoId})
             else
                 window:setContent(layout)
                 window:setVisible(true, false)
-                logger.print('the window exists already, _warningWindowWithGotoId =', self.privateData.warningWindowWithGotoId)
+                logger.infoOut({'the window exists already, _warningWindowWithGotoId =', self.privateData.warningWindowWithGotoId})
             end
 
             layout:addItem(api.gui.comp.TextView.new(text))
