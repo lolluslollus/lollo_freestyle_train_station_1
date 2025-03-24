@@ -115,16 +115,22 @@ return {
     --     if not(_isErrorLogActive) then return end
     --     return _printThingsSkippingNils('lollo_freestyle_train_station ERROR: ', ...)
     -- end,
+    ---obsolete
+    ---@param whatever any
     debugPrint = function(whatever)
         if not(_isExtendedLogActive) then return end
         if not(debugPrint) then print('lollo_freestyle_train_station no debugPrint available') return end
         debugPrint(whatever)
     end,
+    ---obsolete
+    ---@param whatever any
     warningDebugPrint = function(whatever)
         if not(_isWarningLogActive) then return end
         if not(debugPrint) then print('lollo_freestyle_train_station no debugPrint available') return end
         debugPrint(whatever)
     end,
+    ---obsolete
+    ---@param whatever any
     errorDebugPrint = function(whatever)
         if not(_isErrorLogActive) then return end
         if not(debugPrint) then print('lollo_freestyle_train_station no debugPrint available') return end
@@ -145,14 +151,14 @@ return {
     end,
     xpInfoHandler = function(error)
         if not(_isExtendedLogActive) then return end
-        print('lollo_freestyle_train_station INFO:') debugPrint(error)
+        return _printThings('lollo_freestyle_train_station INFO: ', {error})
     end,
     xpWarningHandler = function(error)
         if not(_isWarningLogActive) then return end
-        print('lollo_freestyle_train_station WARNING:') debugPrint(error)
+        return _printThings('lollo_freestyle_train_station WARNING: ', {error})
     end,
     xpErrorHandler = function(error)
         if not(_isErrorLogActive) then return end
-        print('lollo_freestyle_train_station ERROR:') debugPrint(error)
+        return _printThings('lollo_freestyle_train_station ERROR: ', {error})
     end,
 }

@@ -2675,7 +2675,7 @@ _actions.buildSnappyPlatforms = function(stationConstructionId, t, tMax)
     -- The second time it has a new id, so I can only snap it if I reread the station end entities, in a tidy queue.
 
     logger.print('buildSnappyPlatforms starting for terminal =', t or 'NIL')
-    if type(t) ~= 'number' or type(tMax) ~= 'number' then logger.warn('buildSnappyPlatforms received wrong t or tMax') logger.warningDebugPrint(t) logger.warningDebugPrint(tMax) return end
+    if type(t) ~= 'number' or type(tMax) ~= 'number' then logger.warningsOut({'buildSnappyPlatforms received wrong t or tMax', t, tMax) return end
     if t > tMax then logger.print('tMax reached, leaving') return end
 
     local endEntities4T = stationHelpers.getStationTrackEndEntities4T(stationConstructionId, t)
@@ -2961,9 +2961,7 @@ _actions.buildSnappyTracks = function(stationConstructionId, t, tMax)
     -- see the comments in buildSnappyPlatforms
     logger.print('buildSnappyTracks starting for terminal =', t or 'NIL')
     if type(t) ~= 'number' or type(tMax) ~= 'number' then
-        logger.warn('buildSnappyTracks received wrong t or tMax')
-        logger.warningDebugPrint(t)
-        logger.warningDebugPrint(tMax)
+        logger.warningsOut({'buildSnappyTracks received wrong t or tMax', t, tMax})
         return
     end
     if t > tMax then logger.print('tMax reached, leaving') return end
@@ -3772,7 +3770,7 @@ function data()
                                         conTransfLua,
                                         conTransfLua[15] + _constants.splitterZShift - _constants.splitterZToleranceM,
                                         conTransfLua[15] + _constants.splitterZShift + _constants.splitterZToleranceM,
-                                        logger
+                                        logger.isExtendedLog()
                                     )
                                     logger.infozOut({'track splitter got nearestEdge =', nearestEdgeId})
                                     if edgeUtils.isValidAndExistingId(nearestEdgeId) and not(edgeUtils.isEdgeFrozen(nearestEdgeId)) then

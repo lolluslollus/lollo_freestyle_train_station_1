@@ -70,7 +70,7 @@ local _utils = {
             conTransfLua,
             conTransfLua[15] - constants.splitterZToleranceM,
             conTransfLua[15] + constants.splitterZToleranceM,
-            logger
+            logger.isExtendedLog()
         )
 
         return nearestEdgeId
