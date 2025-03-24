@@ -38,10 +38,10 @@ function data()
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
 			-- local nTerminal, nTrackEdge, baseId = result.demangleId(slotId)
 			logger.print('subway.module.updateFn starting')
-			logger.infozOut({'slotId =', slotId, 'subway.module.updateScriptParams =', updateScriptParams})
-			-- logger.infozOut({'params.subways =', params.subways})
+			logger.infoOut('slotId =', slotId, 'subway.module.updateScriptParams =', updateScriptParams)
+			-- logger.infoOut('params.subways =', params.subways})
 			local subwayConFileName = params and params.subways and params.subways[slotId] and params.subways[slotId].subwayConFileName
-			logger.infozOut({'subwayConFileName =', subwayConFileName})
+			logger.infoOut('subwayConFileName =', subwayConFileName)
 
 			-- test code BEGIN
 			-- result.models[#result.models+1] = {

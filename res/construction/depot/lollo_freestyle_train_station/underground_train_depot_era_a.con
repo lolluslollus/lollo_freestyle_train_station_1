@@ -22,7 +22,7 @@ function data()
 			paramsutil.makeTrackCatenaryParam(),
 		},
 		updateFn = function(params)
-			logger.infozOut({'updateFn starting, params.upgrade =', params.upgrade})
+			logger.infoOut('updateFn starting, params.upgrade =', params.upgrade)
 			local trackHeight = params.state.track.railBase + params.state.track.railHeight
             -- LOLLO NOTE If some edges are not free, I will need a dummy model,
             -- otherwise the game will say "hello there" or "easter egg" or other rubbish,

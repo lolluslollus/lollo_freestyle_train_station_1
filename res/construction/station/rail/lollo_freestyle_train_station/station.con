@@ -67,7 +67,7 @@ function data()
         },
 		updateFn = function(params)
 			logger.print('station.con updateFn starting')
-			-- logger.infozOut({'station.con updateFn starting, params.modules =', params.modules})
+			-- logger.infoOut('station.con updateFn starting, params.modules =', params.modules})
 			local _modules = params.modules or {}
 
 			-- LOLLO NOTE I cannot call the api from here, sigh. api is there, but api.res is NIL. Also game is there, but game.interface is NIL
@@ -260,14 +260,14 @@ function data()
 			local _setOccupiedInfo4LargeFlatAreas = function(t, i, myId, iMax)
 				local nEvenSegmentPairs = _modules[myId].metadata.nEvenSegmentPairs or 0
 				_setOccupiedInfo4FlatAreas(t, i, _constants.idBases.flatArea8x10SlotId, nEvenSegmentPairs ~= 0)
-				logger.infozOut({'occupying i = ', i, ' on terminal ', t})
+				logger.infoOut('occupying i = ', i, ' on terminal ', t)
 				if nEvenSegmentPairs == 0 then
 					local nSegments2Minus = _modules[myId].metadata.nSegments2Minus or 0
 					local nSegments2Plus = _modules[myId].metadata.nSegments2Plus or 0
 					for k = 1, nSegments2Minus, 1 do
 						if (i-k) > 0 then
 							_setOccupiedInfo4FlatAreas(t, i-k, _constants.idBases.flatArea8x5SlotId)
-							logger.infozOut({'occupying Minus ', i-k, ' on terminal ', t})
+							logger.infoOut('occupying Minus ', i-k, ' on terminal ', t)
 						else
 							break
 						end
@@ -275,7 +275,7 @@ function data()
 					for k = 1, nSegments2Plus, 1 do
 						if (i+k) <= iMax then
 							_setOccupiedInfo4FlatAreas(t, i+k, _constants.idBases.flatArea8x5SlotId)
-							logger.infozOut({'occupying Plus ', i+k, ' on terminal ', t})
+							logger.infoOut('occupying Plus ', i+k, ' on terminal ', t)
 						else
 							break
 						end
@@ -284,13 +284,13 @@ function data()
 					for k = 1, nEvenSegmentPairs, 1 do
 						if (i-k) > 0 then
 							_setOccupiedInfo4FlatAreas(t, i-k, _constants.idBases.flatArea8x5SlotId, true)
-							logger.infozOut({'occupying for even area minus = ', i-k, ' on terminal ', t})
+							logger.infoOut('occupying for even area minus = ', i-k, ' on terminal ', t)
 						end
 					end
 					for k = 1, nEvenSegmentPairs-1, 1 do
 						if (i+k) <= iMax then
 							_setOccupiedInfo4FlatAreas(t, i+k, _constants.idBases.flatArea8x5SlotId, true)
-							logger.infozOut({'occupying for even area plus = ', i+k, ' on terminal ', t})
+							logger.infoOut('occupying for even area plus = ', i+k, ' on terminal ', t)
 						end
 					end
 				end
@@ -370,9 +370,9 @@ function data()
 				-- this is only a test to see if the transformation was ok. They match beautifully!
 				-- if #result.edgeLists > 0 then
 				-- 	local firstPosTanX2 = result.edgeLists[1].edges
-				-- logger.infozOut({'firstPosTanX2 =', firstPosTanX2})
+				-- logger.infoOut('firstPosTanX2 =', firstPosTanX2})
 				-- 	local retransformedFirstEdge = transfUtils.getPosTanX2Transformed(firstPosTanX2, params.myTransf)
-				-- logger.infozOut({'retransformed first edge =', retransformedFirstEdge})
+				-- logger.infoOut('retransformed first edge =', retransformedFirstEdge})
 				-- end
 
 				local _terminalData = _paramsTerminals[t] -- write this away to speed up accesses to it
@@ -828,7 +828,7 @@ function data()
 						end
 
 						local occupiedInfo4Head = result.getOccupiedInfo4PlatformHeads(t, cpf.leadingIndex)
-						logger.infozOut({'occupiedInfo4Head =', occupiedInfo4Head})
+						logger.infoOut('occupiedInfo4Head =', occupiedInfo4Head)
 						local myTransfShifted2HeadEnd = transfUtils.getTransf_Shifted(myTransf, {occupiedInfo4Head.xShift, 0, occupiedInfo4Head.zShift})
 
 						-- adjust yShift if head available
@@ -1548,7 +1548,7 @@ function data()
 									}
 								)
 							elseif (isOpenStairsUpLeft or isOpenStairsUpRight or isOpenLift) then
-								-- logger.infozOut({
+								-- logger.infoOut(
 								-- 	'openLiftModule =', openLiftModule.name,
 								-- 	'openStairsUpLeftModule =', openStairsUpLeftModule.name,
 								-- 	'openStairsUpRightModule =', openStairsUpRightModule.name
@@ -1857,7 +1857,7 @@ function data()
 -- local timeMsec1 = os.clock() * 1000
 -- print('loop over terminals took ' .. (timeMsec1 - timeMsec0) .. ' mSec') -- about 35 ms with a large station
 			local _addSubwaySlots = function()
-				-- logger.infozOut({'_addSubwaySlots starting, params.subways =', params.subways})
+				-- logger.infoOut('_addSubwaySlots starting, params.subways =', params.subways})
 				if not(params.subways) then return end
 
 				for slotId, subway in pairs(params.subways) do
@@ -1869,7 +1869,7 @@ function data()
 							if extraData.transf == nil then
 								logger.err('subway[' .. (slotId or 'NIL') .. '] has no transf')
 							else
-								-- logger.infozOut({'extraData =', extraData})
+								-- logger.infoOut('extraData =', extraData})
 								table.insert(result.slots, {
 									-- height = 0,
 									id = slotId,
@@ -1885,7 +1885,7 @@ function data()
 			end
 			_addSubwaySlots()
 
-			-- logger.infozOut({'params.upgrade =', params.upgrade})
+			-- logger.infoOut('params.upgrade =', params.upgrade})
 
 			result.terminateConstructionHook = function()
 				logger.print('terminateConstructionHook starting')
@@ -1944,15 +1944,15 @@ function data()
 						local dY = y1 - y0
 						local _isOutputLog = false
 						if _isOutputLog then
-							logger.thingsOut({'_isNorth received posTanX2 =', posTanX2})
-							logger.thingsOut({', pos =', pos})
-							logger.thingsOut({', dX =', dX, 'dY =', dY})
-							logger.thingsOut({', distance =', distance})
+							logger.thingOut('_isNorth received posTanX2 =', posTanX2)
+							logger.thingOut(', pos =', pos)
+							logger.thingOut(', dX =', dX, 'dY =', dY)
+							logger.thingOut(', distance =', distance)
 						end
 						if dX == 0 then
 							local isNorthResult = pos[1] < x0
 							if _isOutputLog then
-								logger.thingsOut({'_isNorth has calculated result = ', isNorthResult})
+								logger.thingOut('_isNorth has calculated result = ', isNorthResult)
 							end
 							return isNorthResult
 						end
@@ -1960,8 +1960,8 @@ function data()
 						local a = y0 - b * x0
 						local isNorthResult = a + b * pos[1] < pos[2]
 						if _isOutputLog then
-							logger.thingsOut({'_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult})
-							logger.thingsOut({'a + b * x0 =', a + b * x0, 'y0 =', y0, 'a + b * x1 =', a + b * x1, 'y1 =', y1, 'a + b * pos[1] =', a + b * pos[1], 'pos[2] =', pos[2]})
+							logger.thingOut('_isNorth has calculated a =', a, ', b =', b, ', result = ', isNorthResult)
+							logger.thingOut('a + b * x0 =', a + b * x0, 'y0 =', y0, 'a + b * x1 =', a + b * x1, 'y1 =', y1, 'a + b * pos[1] =', a + b * pos[1], 'pos[2] =', pos[2])
 						end
 						return isNorthResult
 					end
@@ -2316,21 +2316,21 @@ function data()
 							false
 						)
 
-						logger.infozOut({'shortSegmentsOpenStairsOrLifts =', shortSegmentsOpenStairsOrLifts})
+						logger.infoOut('shortSegmentsOpenStairsOrLifts =', shortSegmentsOpenStairsOrLifts)
 						_linkAcross(shortSegmentsOpenStairsOrLifts, 99.0, moduleHelpers.openStairs.getPedestrianBridgeModelId_Compressed)
 
-						logger.infozOut({'shortSegmentsInBridgeBelly =', shortSegmentsInBridgeBelly})
+						logger.infoOut('shortSegmentsInBridgeBelly =', shortSegmentsInBridgeBelly)
 						-- bridge underpasses can connect to other lifts on other terminals, even if they are far away and there is an S bend:
 						-- we try to avoid this with maxDistance
 						_linkAcross(shortSegmentsInBridgeBelly, 40.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
 
-						logger.infozOut({'shortSegmentsStairsOrLifts2Bridges =', shortSegmentsStairsOrLifts2Bridges})
+						logger.infoOut('shortSegmentsStairsOrLifts2Bridges =', shortSegmentsStairsOrLifts2Bridges)
 						_linkAcross(shortSegmentsStairsOrLifts2Bridges, 22.0, moduleHelpers.tubeBridge.getPedestrianBridgeModelId_Compressed, nil, 0.25)
 
-						-- logger.infozOut({'shortSegmentsTunnelTops2LiftBottoms =', shortSegmentsTunnelTops2LiftBottoms})
+						-- logger.infoOut('shortSegmentsTunnelTops2LiftBottoms =', shortSegmentsTunnelTops2LiftBottoms})
 						-- _linkAcross(shortSegmentsTunnelTops2LiftBottoms)
 
-						logger.infozOut({'shortSegmentsInTheEarth =', shortSegmentsInTheEarth})
+						logger.infoOut('shortSegmentsInTheEarth =', shortSegmentsInTheEarth)
 						_linkAcross(shortSegmentsInTheEarth)
 					end
 					_linkUnderpassesAndStairs()
@@ -2486,9 +2486,9 @@ function data()
 											end
 										end
 									end
-									-- logger.infozOut({'terminal t = ', minDistanceT, 'about to link to subway'})
+									-- logger.infoOut('terminal t = ', minDistanceT, 'about to link to subway'})
 									if minDistanceT ~= nil and minDistanceI ~= nil then
-										-- logger.infozOut({'allPositionsUnderground[minDistanceT][minDistanceI] =', allPositionsUnderground[minDistanceT][minDistanceI]})
+										-- logger.infoOut('allPositionsUnderground[minDistanceT][minDistanceI] =', allPositionsUnderground[minDistanceT][minDistanceI]})
 										links_slotId[slotId] = {
 											t = minDistanceT,
 											i = minDistanceI,
@@ -2507,7 +2507,7 @@ function data()
 									end
 								end
 							end
-							-- logger.infozOut({'links_slotId =', links_slotId})
+							-- logger.infoOut('links_slotId =', links_slotId})
 							local links_T_I = {}
 							for slotId, link in pairs(links_slotId) do
 								if not(links_T_I[link.t]) then links_T_I[link.t] = {} end
@@ -2705,21 +2705,21 @@ function data()
 				-- }
 
 				-- logger.print('LOLLO lollo_freestyle_train_station leaving terminateConstructionHook')
-				-- logger.infozOut({'LOLLO result.stations = ', result.stations})
-				-- logger.infozOut({'LOLLO result.models = ', result.models})
-				-- logger.infozOut({'LOLLO result.terminalGroups = ', result.terminalGroups})
+				-- logger.infoOut('LOLLO result.stations = ', result.stations})
+				-- logger.infoOut('LOLLO result.models = ', result.models})
+				-- logger.infoOut('LOLLO result.terminalGroups = ', result.terminalGroups})
 			end -- end of terminateConstructionHook()
 
 			-- logger.print('freestyleTrainStation.updateFn about to return')
-			-- logger.infozOut({'freestyleTrainStation result.terrainAlignmentLists =', result.terrainAlignmentLists})
+			-- logger.infoOut('freestyleTrainStation result.terrainAlignmentLists =', result.terrainAlignmentLists})
 			return result
 		end,
  		preProcessFn = function(modules, change, three)
 			-- this fires when the user adds or removes a module
 			-- logger.print('preProcessFn starting')
-			-- logger.infozOut({'modules =', modules})
-			-- logger.infozOut({'change =', change})
-			-- logger.infozOut({'three =', three})
+			-- logger.infoOut('modules =', modules})
+			-- logger.infoOut('change =', change})
+			-- logger.infoOut('three =', three})
 
 			-- default behaviour
 			-- if change.added then
@@ -2923,20 +2923,20 @@ function data()
 			-- catenary = 1,
 			-- trackTypeToggle = 1,
 			-- trackType = 1,
-			-- logger.infozOut({'LOLLO upgradeFn starting, args.slotId =', args.slotId})
+			-- logger.infoOut('LOLLO upgradeFn starting, args.slotId =', args.slotId})
 
 			-- LOLLO NOTE when hovering on a station with the track upgrade tool,
 			-- some terminals are recognised and others are not (ie args.slotId = -1)
 			-- This makes upgrading tracks impossible.
 			-- Workaround: let's upgrade them all!
 
-			-- logger.infozOut({'args.catenaryToggle =', args.catenaryToggle, 'args.catenary =', args.catenary, 'args.trackTypeToggle =', args.trackTypeToggle, 'args.trackType =', args.trackType})
-			-- logger.infozOut({'### args without modules and terminals =', arrayUtils.cloneOmittingFields(args, {'modules', 'terminals'}, true)})
+			-- logger.infoOut('args.catenaryToggle =', args.catenaryToggle, 'args.catenary =', args.catenary, 'args.trackTypeToggle =', args.trackTypeToggle, 'args.trackType =', args.trackType})
+			-- logger.infoOut('### args without modules and terminals =', arrayUtils.cloneOmittingFields(args, {'modules', 'terminals'}, true)})
 
 			-- if args.slotId == nil or args.slotId < 0 then return {} end
 
 			local affectedTerminals = {}
-			-- logger.infozOut({'args.slotId =', args.slotId})
+			-- logger.infoOut('args.slotId =', args.slotId})
 			if type(args.slotId) == 'number' and args.slotId > 0 then
 				local nTerminal, _, _ = slotHelpers.demangleId(args.slotId)
 				if nTerminal == nil then return {} end
@@ -2946,7 +2946,7 @@ function data()
 					affectedTerminals[t] = t
 				end
 			end
-			-- logger.infozOut({'affectedTerminals =', affectedTerminals})
+			-- logger.infoOut('affectedTerminals =', affectedTerminals})
 
 			local upgradeResults = {}
 			for _, nTerminal in pairs(affectedTerminals) do
@@ -2954,7 +2954,7 @@ function data()
 				if args.catenaryToggle == 1 then
 					local slotId = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackElectrificationSlotId)
 					local oldModuleValue = args.modules[slotId]
-					-- logger.infozOut({'oldModuleValue =', oldModuleValue})
+					-- logger.infoOut('oldModuleValue =', oldModuleValue})
 
 					if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
 						if oldModuleValue.name == _constants.trackElectrificationNoModuleFileName
@@ -2973,7 +2973,7 @@ function data()
 				elseif args.trackTypeToggle == 1 then
 					local slotId = slotHelpers.mangleId(nTerminal, 0, _constants.idBases.trackSpeedSlotId)
 					local oldModuleValue = args.modules[slotId]
-					-- logger.infozOut({'oldModuleValue =', oldModuleValue})
+					-- logger.infoOut('oldModuleValue =', oldModuleValue})
 
 					if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
 						if oldModuleValue.name == _constants.trackSpeedSlowModuleFileName
@@ -2992,7 +2992,7 @@ function data()
 				end
 			end
 
-			-- logger.infozOut({'results =', upgradeResults})
+			-- logger.infoOut('results =', upgradeResults})
 			return upgradeResults
 
 			-- The return structure is a list like:

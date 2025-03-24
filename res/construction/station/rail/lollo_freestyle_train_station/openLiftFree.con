@@ -6,7 +6,7 @@ function data()
     local _openLiftOpenStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
 
     local function _myErrorHandler(err)
-        logger.thingsOut({'lollo openLiftFree.con ERROR: ', err})
+        logger.thingOut('lollo openLiftFree.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.lift_v1
@@ -66,7 +66,7 @@ function data()
             },
         },
 		updateFn = function(params)
-            logger.infozOut({'openLiftFree.updateFn firing, params = ', params})
+            logger.infoOut('openLiftFree.updateFn firing, params = ', params)
             local _bridgeMode = _paramReaders.getBridgeMode(params)
             local _baseMode = _paramReaders.getBaseMode(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
@@ -324,7 +324,7 @@ function data()
                 end,
                 _myErrorHandler
             )
-            -- logger.infozOut({'result.models =', result.models})
+            -- logger.infoOut('result.models =', result.models})
 			return result
 		end,
 

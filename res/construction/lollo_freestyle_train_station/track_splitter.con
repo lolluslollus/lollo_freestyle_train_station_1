@@ -24,7 +24,7 @@ function data()
             water = false,
         },
         updateFn = function(params)
-            logger.infozOut({'lollo track splitter updateFn starting, params =', params})
+            logger.infoOut('lollo track splitter updateFn starting, params =', params)
             local result = {}
             result.colliders = {}
             result.cost = 0

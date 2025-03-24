@@ -183,10 +183,10 @@ local _actions = {
         local newTransfs_wallBehind = getNewTransfs_wallBehind(inverseTransfs)
         local newTransfs_wallBehind_yFlipped = getNewTransfs_wallBehind(inverseTransfs_yFlipped)
 
-        logger.infozOut({'first 3 newTransfs_ground =', newTransfs_ground[1], newTransfs_ground[2], newTransfs_ground[3]})
-        logger.infozOut({'first 3 transfs_wallBehind =', newTransfs_wallBehind[1], newTransfs_wallBehind[2], newTransfs_wallBehind[3]})
-        logger.infozOut({'first 3 newTransfs_ground_yFlipped =', newTransfs_ground_yFlipped[1], newTransfs_ground_yFlipped[2], newTransfs_ground_yFlipped[3]})
-        logger.infozOut({'first 3 transfs_wallBehind_yFlipped =', newTransfs_wallBehind_yFlipped[1], newTransfs_wallBehind_yFlipped[2], newTransfs_wallBehind_yFlipped[3]})
+        logger.infoOut('first 3 newTransfs_ground =', newTransfs_ground[1], newTransfs_ground[2], newTransfs_ground[3])
+        logger.infoOut('first 3 transfs_wallBehind =', newTransfs_wallBehind[1], newTransfs_wallBehind[2], newTransfs_wallBehind[3])
+        logger.infoOut('first 3 newTransfs_ground_yFlipped =', newTransfs_ground_yFlipped[1], newTransfs_ground_yFlipped[2], newTransfs_ground_yFlipped[3])
+        logger.infoOut('first 3 transfs_wallBehind_yFlipped =', newTransfs_wallBehind_yFlipped[1], newTransfs_wallBehind_yFlipped[2], newTransfs_wallBehind_yFlipped[3])
 
         local newParams = {
             inverseMainTransf = _inverseMainTransf,
@@ -199,10 +199,10 @@ local _actions = {
             transfs_wallBehind_yFlipped = newTransfs_wallBehind_yFlipped,
         }
         local paramsMetadata = modelHelper.getChangeableParamsMetadata()
-        -- logger.infozOut({'paramsMetadata =', paramsMetadata})
-        -- logger.infozOut({'modelHelper.getDefaultIndexes() =', modelHelper.getDefaultIndexes()})
+        -- logger.infoOut('paramsMetadata =', paramsMetadata})
+        -- logger.infoOut('modelHelper.getDefaultIndexes() =', modelHelper.getDefaultIndexes()})
         for _, pm in pairs(paramsMetadata) do
-            -- logger.infozOut({'pm.key =', pm.key})
+            -- logger.infoOut('pm.key =', pm.key})
             newParams[pm.key] = modelHelper.getDefaultIndexes()[pm.key]
         end
         newCon.params = newParams
@@ -230,16 +230,16 @@ local _actions = {
             function(result, success)
                 if success then
                     local fenceConstructionId = result.resultEntities[1]
-                    logger.infozOut({'_buildFence succeeded, conId = ', fenceConstructionId})
+                    logger.infoOut('_buildFence succeeded, conId = ', fenceConstructionId)
                 else
-                    logger.warningsOut({'_buildFence failed, result =', result})
+                    logger.warningOut('_buildFence failed, result =', result)
                 end
                 collectgarbage()
             end
         )
     end,
     bulldozeConstruction = function(conId)
-        logger.infozOut({'bulldozeConstruction starting, conId = ', conId})
+        logger.infoOut('bulldozeConstruction starting, conId = ', conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
         local proposal = api.type.SimpleProposal.new()
@@ -258,7 +258,7 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.infozOut({'LOLLO _bulldozeConstruction success = ', success})
+                logger.infoOut('LOLLO _bulldozeConstruction success = ', success)
             end
         )
     end,
@@ -287,12 +287,12 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true),
             function(result, success)
-                logger.infozOut({'LOLLO _replaceEdgeWithSameRemovingObject success = ', success})
+                logger.infoOut('LOLLO _replaceEdgeWithSameRemovingObject success = ', success)
             end
         )
     end,
     updateConstruction = function(oldConId, paramKey, newParamValueIndexBase0)
-        logger.infozOut({'_updateConstruction starting, conId =', oldConId, 'paramKey =', paramKey, 'newParamValueIndexBase0 =', newParamValueIndexBase0})
+        logger.infoOut('_updateConstruction starting, conId =', oldConId, 'paramKey =', paramKey, 'newParamValueIndexBase0 =', newParamValueIndexBase0)
 
         if not(edgeUtils.isValidAndExistingId(oldConId)) then
             logger.warn('_updateConstruction received an invalid conId')
@@ -330,13 +330,13 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.infozOut({'_updateConstruction callback, success =', success})
+                logger.infoOut('_updateConstruction callback, success =', success)
                 if not(success) then
-                    logger.warningsOut({'_updateConstruction callback failed', '_updateConstruction proposal =', proposal, '_updateConstruction result =', result})
+                    logger.warningOut('_updateConstruction callback failed', '_updateConstruction proposal =', proposal, '_updateConstruction result =', result)
                     -- LOLLO TODO give feedback
                 else
                     local newConId = result.resultEntities[1]
-                    logger.infozOut({'_updateConstruction succeeded, stationConId = ', newConId})
+                    logger.infoOut('_updateConstruction succeeded, stationConId = ', newConId)
                 end
             end
         )
@@ -378,7 +378,7 @@ local _guiActions = {
         return api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
     end,
     handleParamValueChanged = function(conId, paramsMetadata, paramKey, newParamValueIndexBase0)
-        logger.infozOut({'handleParamValueChanged starting for conId =', conId})
+        logger.infoOut('handleParamValueChanged starting for conId =', conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then
             logger.warn('_handleParamValueChanged got no con or no valid con')
             return
@@ -402,7 +402,7 @@ local _guiActions = {
         ))
     end,
     handleBulldozeClicked = function(conId) -- unused
-        logger.infozOut({'_handleBulldozeClicked starting for conId =', conId})
+        logger.infoOut('_handleBulldozeClicked starting for conId =', conId)
         if not(edgeUtils.isValidAndExistingId(conId)) then
             logger.warn('_handleBulldozeClicked got no con or no valid con')
             return
@@ -430,7 +430,7 @@ local _guiActions = {
         --     newWaypointId = newWaypointId,
         --     twinWaypointId = twinWaypointId
         -- }
-        logger.infozOut({'_handleValidFenceWaypointBuilt starting, lastWaypointData =', lastWaypointData})
+        logger.infoOut('_handleValidFenceWaypointBuilt starting, lastWaypointData =', lastWaypointData)
         local fenceWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(lastWaypointData.isPrecise and _guiFenceWaypointPreciseModelId or _guiFenceWaypointModelId)
         if #fenceWaypointIds ~= 2 then return end
 
@@ -524,7 +524,7 @@ local _guiActions = {
         --     newWaypointId = newWaypointId,
         --     twinWaypointId = twinWaypointId
         -- }
-        logger.infozOut({'_handleValidFenceMarkerBuilt starting, lastWaypointData =', lastWaypointData})
+        logger.infoOut('_handleValidFenceMarkerBuilt starting, lastWaypointData =', lastWaypointData)
         local markerCount = arrayUtils.getCount(lastWaypointData.autoFenceMarkerEdgeIds_indexedByConId, true)
         if markerCount ~= 2 then return end
 
@@ -597,20 +597,20 @@ local _guiActions = {
     end,
 }
 _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWaypointId, waypointEdgeId, isWaypointArrowAgainstTrackDirection, trackTypeIndex)
-    logger.infozOut({'LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!'})
+    logger.infoOut('LOLLO waypoint with target modelId', targetWaypointModelId, 'built, validation started!')
     if not(edgeUtils.isValidAndExistingId(newWaypointId)) then logger.err('newWaypointId not valid') return false end
     if not(edgeUtils.isValidAndExistingId(waypointEdgeId)) then logger.err('waypointEdgeId not valid') return false end
     if not(edgeUtils.isValidId(trackTypeIndex)) then logger.err('trackTypeIndex not valid') return false end
 
-    logger.infozOut({'waypointEdgeId =', waypointEdgeId})
+    logger.infoOut('waypointEdgeId =', waypointEdgeId)
     local lastBuiltBaseEdge = api.engine.getComponent(waypointEdgeId, api.type.ComponentType.BASE_EDGE)
     if not(lastBuiltBaseEdge) then return false end
 
     local similarObjectIdsInAnyEdges = stationHelpers.getAllEdgeObjectsWithModelId(targetWaypointModelId)
-    logger.infozOut({'similarObjectsIdsInAnyEdges =', similarObjectIdsInAnyEdges})
+    logger.infoOut('similarObjectsIdsInAnyEdges =', similarObjectIdsInAnyEdges)
     -- forbid building more then two waypoints of the same type
     local bulldozeAllWaypointsFunc = function()
-        logger.thingsOut({'bulldozeAllWaypointsFunc starting'})
+        logger.thingOut('bulldozeAllWaypointsFunc starting')
         _guiActions.bulldozeWaypoints(similarObjectIdsInAnyEdges)
     end
     if #similarObjectIdsInAnyEdges > 2 then
@@ -697,7 +697,7 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
         true,
         logger.isExtendedLog()
     )
-    logger.infozOut({'contiguous track edge ids =', contiguousTrackEdgeIds})
+    logger.infoOut('contiguous track edge ids =', contiguousTrackEdgeIds)
     -- make sure the waypoints are on connected tracks
     if #contiguousTrackEdgeIds < 1 then
         guiHelpers.showWarningWithGoto(_guiTexts.markersNotConnected, newWaypointId, similarObjectIdsInAnyEdges, bulldozeAllWaypointsFunc)
@@ -754,7 +754,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     if fileName ~= constants.autoFenceMarkerConFileName and fileName ~= constants.autoFenceMarkerPreciseConFileName then return false end
 
     local newEdgeId = _utils.getNearestEdgeToCon(newConId)
-    logger.infozOut({'validateFenceMarkerBuilt starting, fence marker edgeId = ', newEdgeId, ', conId = ', newConId})
+    logger.infoOut('validateFenceMarkerBuilt starting, fence marker edgeId = ', newEdgeId, ', conId = ', newConId)
     if not(edgeUtils.isValidAndExistingId(newEdgeId)) then
         guiHelpers.showWarningWithGoto(_guiTexts.invalidEdge, newConId)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -769,7 +769,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     end
 
     local newConPosition = _utils.getConPosition(newConId)
-    logger.infozOut({'fence marker position =', newConPosition})
+    logger.infoOut('fence marker position =', newConPosition)
     if not(type(newConPosition) == 'table') then
         guiHelpers.showWarningWithGoto(_guiTexts.invalidPosition, newConId)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -808,15 +808,15 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
             type = 'CONSTRUCTION'
         }
     )
-    logger.infozOut({'similarConIds =', similarConIds})
+    logger.infoOut('similarConIds =', similarConIds)
     local bulldozeAllMarkersFunc = function() _guiActions.bulldozeConstructions(similarConIds) end
     local otherAutoFenceMarkerEdgeIds_indexedByConId = {}
     for _, oldConId in pairs(similarConIds) do
-        logger.infozOut({'looping over oldConId = ', oldConId})
+        logger.infoOut('looping over oldConId = ', oldConId)
         if oldConId ~= newConId and edgeUtils.isValidAndExistingId(oldConId) then
             logger.print('loop TWO')
             local oldEdgeId = _utils.getNearestEdgeToCon(oldConId)
-            logger.infozOut({'loop got oldEdgeId = ', oldEdgeId})
+            logger.infoOut('loop got oldEdgeId = ', oldEdgeId)
             if edgeUtils.isValidAndExistingId(oldEdgeId) then
                 otherAutoFenceMarkerEdgeIds_indexedByConId[oldConId] = oldEdgeId
             end
@@ -826,11 +826,11 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     for conId, _ in pairs(otherAutoFenceMarkerEdgeIds_indexedByConId) do
         otherConIds[#otherConIds+1] = conId
     end
-    logger.infozOut({'autoFenceMarkerEdgeIds_indexedByConId after =', otherAutoFenceMarkerEdgeIds_indexedByConId})
+    logger.infoOut('autoFenceMarkerEdgeIds_indexedByConId after =', otherAutoFenceMarkerEdgeIds_indexedByConId)
 
     -- forbid building more then two markers of the same type
     local markerCount = arrayUtils.getCount(otherAutoFenceMarkerEdgeIds_indexedByConId, true)
-    logger.infozOut({'markerCount = ', markerCount})
+    logger.infoOut('markerCount = ', markerCount)
     if markerCount > 1 then
         guiHelpers.showWarningWithGoto(_guiTexts.waypointAlreadyBuilt, newConId, otherConIds, bulldozeAllMarkersFunc)
         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -857,10 +857,10 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     local twinConPosition = _utils.getConPosition(twinConId)
     local twinEdgeId = otherAutoFenceMarkerEdgeIds_indexedByConId[twinConId]
     if logger.isExtendedLog() then
-        logger.infozOut({'newConId, twinConId =', newConId, ',', twinConId})
-        logger.infozOut({'newEdgeId, twinEdgeId =', newEdgeId, ',', twinEdgeId})
-        logger.infozOut({'fence marker position =', newConPosition})
-        logger.infozOut({'twin marker position =', twinConPosition})
+        logger.infoOut('newConId, twinConId =', newConId, ',', twinConId)
+        logger.infoOut('newEdgeId, twinEdgeId =', newEdgeId, ',', twinEdgeId)
+        logger.infoOut('fence marker position =', newConPosition)
+        logger.infoOut('twin marker position =', twinConPosition)
     end
     -- no twin or no useful twin
     if not(twinConPosition) or not(edgeUtils.isValidAndExistingId(twinConId)) or not(edgeUtils.isValidAndExistingId(twinEdgeId)) then
@@ -909,7 +909,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
         true,
         logger.isExtendedLog()
     )
-    logger.infozOut({'contiguous track edge ids =', contiguousTrackEdgeIds})
+    logger.infoOut('contiguous track edge ids =', contiguousTrackEdgeIds)
     -- make sure the waypoints are on connected tracks
     if #contiguousTrackEdgeIds < 1 then
         guiHelpers.showWarningWithGoto(_guiTexts.markersNotConnected, newConId, otherConIds, bulldozeAllMarkersFunc)
@@ -935,14 +935,14 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     local distance100 = transfUtils.getPositionsDistance(node0.position, vec100Transformed)
     local isWaypointArrowAgainstTrackDirection = (distance100 < distance000)
     if logger.isExtendedLog() then
-        logger.infozOut({
+        logger.infoOut(
             'marker con transf =', newConTransf,
             'vector 000 transformed =', vec000Transformed,
             'vector 100 transformed =', vec100Transformed,
             'node0 position =', node0.position,
             'node1 position =', node1.position,
             'isWaypointArrowAgainstTrackDirection = ', isWaypointArrowAgainstTrackDirection
-        })
+        )
     end
 
     otherAutoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
@@ -979,7 +979,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.infozOut({'lollo_auto_fence.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args ='})
+                    logger.infoOut('lollo_auto_fence.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =')
                     if name == _eventNames.FENCE_WAYPOINTS_BUILT then
                         -- fence waypoints built, eventArgs = {
                         --     edge1Id = edge1Id, -- the edge where the first marker was placed
@@ -994,7 +994,7 @@ function data()
                         --     isPrecise = true, (if using precise marker constructions or waypoints)
                         --     isWaypoint2ArrowAgainstTrackDirection = true
                         -- }
-                        logger.infozOut({'args =', args})
+                        logger.infoOut('args =', args)
                         local trackEdgeIdsBetweenEdgeIds = edgeUtils.track.getTrackEdgeIdsBetweenEdgeIds(
                             args.edge1Id, args.edge2Id, constants.maxFenceWaypointDistance, true, logger.isExtendedLog()
                         )
@@ -1014,13 +1014,13 @@ function data()
                                 logger.print('reversing isWaypoint2ArrowAgainstTrackDirection')
                                 args.isWaypoint2ArrowAgainstTrackDirection = not(args.isWaypoint2ArrowAgainstTrackDirection)
                             else
-                                logger.warningsOut({
+                                logger.warningOut(
                                     'cannot find the right direction to build my fence',
                                     'last track\'s start position =', trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[1][1],
                                     'last track\'s end position =', trackEdgeList_Ordered[#trackEdgeList_Ordered].posTanX2[2][1],
                                     'second waypoint edge\'s node0 pos =', args.edge2Node0Pos,
                                     'second waypoint edge\'s node1 pos =', args.edge2Node1Pos
-                                })
+                                )
                             end
 
                             if args.isWaypoint2ArrowAgainstTrackDirection then
@@ -1028,7 +1028,7 @@ function data()
                                 trackEdgeList_Ordered = stationHelpers.reversePosTanX2ListInPlace(trackEdgeList_Ordered)
                                 -- yShift = -yShift -- NO!
                             end
-                            logger.infozOut({'trackEdgeList =', trackEdgeList_Ordered})
+                            logger.infoOut('trackEdgeList =', trackEdgeList_Ordered)
                             local trackEdgeListFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 trackEdgeList_Ordered,
                                 1,
@@ -1060,13 +1060,13 @@ function data()
                                                 endPos1, endPos2 = endPos2, endPos1
                                             end
                                             if (logger.isExtendedLog()) then
-                                                logger.infozOut({
+                                                logger.infoOut(
                                                     'endPos1 =', endPos1,
                                                     'endPos2 =', endPos2,
                                                     'trackEdgeListFine[1].posTanX2[1][1] = ', trackEdgeListFine[1].posTanX2[1][1],
                                                     'trackEdgeListFine[maxII].posTanX2[2][1] = ', trackEdgeListFine[maxII].posTanX2[2][1],
                                                     'maxII = ', maxII
-                                                })
+                                                )
                                             end
                                             local minDistance = 9999
                                             local nearestII = 0
@@ -1079,7 +1079,7 @@ function data()
                                                     break
                                                 end
                                             end
-                                            logger.infozOut({'maxII = ', maxII, 'nearestII = ', nearestII})
+                                            logger.infoOut('maxII = ', maxII, 'nearestII = ', nearestII)
                                             for ii = 1, nearestII - 1, 1 do
                                                 table.remove(trackEdgeListFine, 1)
                                             end
@@ -1096,7 +1096,7 @@ function data()
                                                     break
                                                 end
                                             end
-                                            logger.infozOut({'maxII = ', maxII, 'nearestII = ', nearestII})
+                                            logger.infoOut('maxII = ', maxII, 'nearestII = ', nearestII)
                                             for ii = nearestII + 1, maxII, 1 do
                                                 table.remove(trackEdgeListFine, nearestII + 1)
                                             end
@@ -1132,8 +1132,8 @@ function data()
                                 end
                                 local transfs = getTransfs(trackEdgeListFine)
                                 local transfs_yFlipped = getTransfs(trackEdgeListFine_yFlipped)
-                                logger.infozOut({'transfs, first 3 records =', transfs[1], transfs[2], transfs[3]})
-                                logger.infozOut({'transfs_yFlipped, first 3 records =', transfs_yFlipped[1], transfs_yFlipped[2], transfs_yFlipped[3]})
+                                logger.infoOut('transfs, first 3 records =', transfs[1], transfs[2], transfs[3])
+                                logger.infoOut('transfs_yFlipped, first 3 records =', transfs_yFlipped[1], transfs_yFlipped[2], transfs_yFlipped[3])
                                 if #transfs > 0 then
                                     _actions.buildFence(
                                         transfs,
@@ -1172,7 +1172,7 @@ function data()
                             -- LOLLO NOTE as I added an edge object, I have NOT split the edge
                             local newModelId = args.proposal.proposal.edgeObjectsToAdd[1].modelInstance.modelId
                             if newModelId == _guiFenceWaypointModelId or newModelId == _guiFenceWaypointPreciseModelId then
-                                logger.infozOut({'args.proposal.proposal.edgeObjectsToAdd[1] =', args.proposal.proposal.edgeObjectsToAdd[1]})
+                                logger.infoOut('args.proposal.proposal.edgeObjectsToAdd[1] =', args.proposal.proposal.edgeObjectsToAdd[1])
                                 local waypointData = _guiActions.validateFenceWaypointBuilt(
                                     newModelId,
                                     args.proposal.proposal.edgeObjectsToAdd[1].resultEntity,
@@ -1180,7 +1180,7 @@ function data()
                                     args.proposal.proposal.edgeObjectsToAdd[1].left or false,
                                     args.proposal.proposal.addedSegments[1].trackEdge.trackType
                                 )
-                                logger.infozOut({'fenceWaypointData =', waypointData})
+                                logger.infoOut('fenceWaypointData =', waypointData)
                                 if not(waypointData) then return end
 
                                 _guiActions.handleValidFenceWaypointBuilt(waypointData)
@@ -1196,7 +1196,7 @@ function data()
 
                 logger.print('some construction was built')
                 local waypointData = _guiActions.validateFenceMarkerBuilt(conId)
-                logger.infozOut({'fenceWaypointData =', waypointData})
+                logger.infoOut('fenceWaypointData =', waypointData)
                 if not(waypointData) then return end
 
                 _guiActions.handleValidFenceMarkerBuilt(waypointData)
@@ -1206,14 +1206,14 @@ function data()
                 -- id =	temp.view.entity_26372	name =	idAdded
                 xpcall(
                     function()
-                        logger.infozOut({'guiHandleEvent caught id =', id, 'name =', name, 'args =', args})
+                        logger.infoOut('guiHandleEvent caught id =', id, 'name =', name, 'args =', args)
                         local conId = args
                         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
                         local con = _guiActions.getCon(conId)
                         if not(con) or con.fileName ~= constants.autoFenceConFileName then return end
 
-                        logger.infozOut({'selected one of my fences, it has conId =', conId, 'and con.fileName =', con.fileName})
+                        logger.infoOut('selected one of my fences, it has conId =', conId, 'and con.fileName =', con.fileName)
                         guiHelpers.addEntityConfigToWindow(
                             conId,
                             _guiActions.handleParamValueChanged,

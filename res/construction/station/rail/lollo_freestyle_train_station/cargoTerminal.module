@@ -40,7 +40,7 @@ return {
 		local _eraPrefix = moduleHelpers.getEraPrefix2(params, nTerminal, _terminalData, 1)
 
 		moduleHelpers.edges.addEdges(result, tag, params, nTerminal, _terminalData)
-		-- logger.infozOut({'freestyleTrainStation result.edgeLists =', result.edgeLists})
+		-- logger.infoOut('freestyleTrainStation result.edgeLists =', result.edgeLists})
 		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal, _terminalData, _eraPrefix)
 
 		-- result.models[#result.models + 1] = {

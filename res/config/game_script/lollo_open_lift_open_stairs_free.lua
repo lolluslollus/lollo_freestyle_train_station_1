@@ -52,22 +52,22 @@ local _utils = {
                 if proposalData.errorState ~= nil then
                     if proposalData.errorState.critical == true then
                         logger.print('proposalData.errorState.critical is true')
-                        logger.infozOut({'proposalData.errorState =', proposalData.errorState})
+                        logger.infoOut('proposalData.errorState =', proposalData.errorState)
                         isErrorsOtherThanCollision = true
                     else
                         for _, message in pairs(proposalData.errorState.messages or {}) do
-                            logger.infozOut({'looping over messages, message found =', message})
+                            logger.infoOut('looping over messages, message found =', message)
                             if message ~= 'Collision' then
                                 isErrorsOtherThanCollision = true
-                                logger.infozOut({'found message', message})
+                                logger.infoOut('found message', message)
                                 break
                             end
                         end
                         for _, warning in pairs(proposalData.errorState.warnings or {}) do
-                            logger.infozOut({'looping over warnings, warning found =', warning})
+                            logger.infoOut('looping over warnings, warning found =', warning)
                             if warning ~= 'Main connection will be interrupted' then
                                 isWarnings = true
-                                logger.infozOut({'found warning', warning})
+                                logger.infoOut('found warning', warning)
                                 break
                             end
                         end
@@ -76,18 +76,18 @@ local _utils = {
             end,
             function(error)
                 isErrorsOtherThanCollision = true
-                logger.warningsOut({'_getIsProposalOK caught an exception', error})
+                logger.warningOut('_getIsProposalOK caught an exception', error)
             end
         )
-        logger.infozOut({'_getIsProposalOK isErrorsOtherThanCollision =', isErrorsOtherThanCollision})
-        logger.infozOut({'_getIsProposalOK isWarnings =', isWarnings})
+        logger.infoOut('_getIsProposalOK isErrorsOtherThanCollision =', isErrorsOtherThanCollision)
+        logger.infoOut('_getIsProposalOK isWarnings =', isWarnings)
         return not(isErrorsOtherThanCollision) -- and not(isWarnings)
     end,
 }
 
 local _actions = {
     updateConstruction = function(oldConId, paramKey, newParamValueIndexBase0)
-        logger.infozOut({'updateConstruction starting, conId =', oldConId})
+        logger.infoOut('updateConstruction starting, conId =', oldConId)
 
         if not(edgeUtils.isValidAndExistingId(oldConId)) then
             logger.warn('updateConstruction received an invalid conId')
@@ -101,14 +101,14 @@ local _actions = {
 
         local newCon = api.type.SimpleProposal.ConstructionEntity.new()
         newCon.fileName = oldCon.fileName
-        logger.infozOut({'updateConstruction found oldCon.fileName =', oldCon.fileName})
+        logger.infoOut('updateConstruction found oldCon.fileName =', oldCon.fileName)
         local newParams = arrayUtils.cloneDeepOmittingFields(oldCon.params, nil, true)
         newParams[paramKey] = newParamValueIndexBase0 -- this is what this func is all about
         newParams.seed = newParams.seed + 1 -- otherwise the game complains
         local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(newParams, {'seed'})
         newCon.params = newParams
-        logger.infozOut({'oldCon.params =', oldCon.params})
-        logger.infozOut({'newCon.params =', newCon.params})
+        logger.infoOut('oldCon.params =', oldCon.params)
+        logger.infoOut('newCon.params =', newCon.params)
         newCon.playerEntity = api.engine.util.getPlayer()
         newCon.transf = oldCon.transf
         -- local conTransf_lua = transfUtilsUG.new(newCon.transf:cols(0), newCon.transf:cols(1), newCon.transf:cols(2), newCon.transf:cols(3))
@@ -135,17 +135,17 @@ local _actions = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
-                logger.infozOut({'updateConstruction callback, success =', success})
+                logger.infoOut('updateConstruction callback, success =', success)
                 if not(success) then
                     logger.warn('updateConstruction callback failed')
-                    logger.thingsOut({'updateConstruction proposal =', proposal})
-                    logger.thingsOut({'updateConstruction result =', result})
+                    logger.thingOut('updateConstruction proposal =', proposal)
+                    logger.thingOut('updateConstruction result =', result)
                     -- LOLLO TODO give feedback
                 else
                     return xpcall(
                         function()
                             local newConId = result.resultEntities[1]
-                            logger.infozOut({'updateConstruction succeeded, stationConId = ', newConId})
+                            logger.infoOut('updateConstruction succeeded, stationConId = ', newConId)
                             -- UG TODO there is no such thing in the new api, nor an upgrade event, both would be useful
                             -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
                             collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
@@ -155,10 +155,10 @@ local _actions = {
                                 oldCon.fileName,
                                 paramsBak_NoSeed
                             )
-                            logger.infozOut({'updateConstruction upgraded con =', upgradedConId})
+                            logger.infoOut('updateConstruction upgraded con =', upgradedConId)
                         end,
                         function(error)
-                            logger.warningsOut({'updateConstruction failed to upgrade con', error})
+                            logger.warningOut('updateConstruction failed to upgrade con', error)
                         end
                     )
                 end
@@ -169,10 +169,10 @@ local _actions = {
 
 local _handlers = {
     guiHandleParamValueChanged = function(conId, paramsMetadata, paramKey, newParamValueIndexBase0)
-        logger.infozOut({'guiHandleParamValueChanged firing, conId =', conId})
-        logger.infozOut({'paramsMetadata =', paramsMetadata})
-        logger.infozOut({'paramKey =', paramKey})
-        logger.infozOut({'newParamValueIndexBase0 =', newParamValueIndexBase0})
+        logger.infoOut('guiHandleParamValueChanged firing, conId =', conId)
+        logger.thingOut('paramsMetadata =', paramsMetadata)
+        logger.thingOut('paramKey =', paramKey)
+        logger.thingOut('newParamValueIndexBase0 =', newParamValueIndexBase0)
         if not(edgeUtils.isValidAndExistingId(conId)) then
             logger.warn('guiHandleParamValueChanged got no con or no valid con')
         end
@@ -206,7 +206,7 @@ function data()
                 -- id =	temp.view.entity_26372	name =	idAdded
                 xpcall(
                     function()
-                        logger.infozOut({'guiHandleEvent caught id =', id, 'name =', name, 'args =', args})
+                        logger.infoOut('guiHandleEvent caught id =', id, 'name =', name, 'args =', args)
                         local conId = args
                         if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
@@ -221,7 +221,7 @@ function data()
                             con.fileName
                         )) then return end
 
-                        logger.infozOut({'selected open stairs or lift, it has conId =', conId, 'and con.fileName =', con.fileName})
+                        logger.infoOut('selected open stairs or lift, it has conId =', conId, 'and con.fileName =', con.fileName)
                         if con.fileName == _eventProperties.openLiftSelected.conName then
                             if not(_guiData.conOpenLiftParamsMetadataSorted) then
                                 logger.warn('_guiData.conOpenLiftParamsMetadataSorted is not available')
@@ -266,7 +266,7 @@ function data()
         end,
         handleEvent = function(src, id, name, args)
             if (id ~= _eventId) then return end
-            logger.infozOut({'handleEvent starting, src =', src, ', id =', id, ', name =', name, ', args =', args})
+            logger.infoOut('handleEvent starting, src =', src, ', id =', id, ', name =', name, ', args =', args)
             if type(args) ~= 'table' then return end
 
             xpcall(

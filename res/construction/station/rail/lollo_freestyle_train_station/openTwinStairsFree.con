@@ -9,7 +9,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        logger.thingsOut({'lollo openTwinStairsFree.con ERROR: ', err})
+        logger.thingOut('lollo openTwinStairsFree.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs_v1
@@ -449,7 +449,7 @@ function data()
                         { -_yHalfSize, _bridgeStartY, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
                         { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, _bridgeStartY, _zed},
                     }}
-                    logger.infozOut({'bridge faces =', _faces})
+                    logger.infoOut('bridge faces =', _faces)
                     table.insert(
                         result.terrainAlignmentLists,
                         {

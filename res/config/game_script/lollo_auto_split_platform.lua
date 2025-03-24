@@ -33,7 +33,7 @@ local guiTrackTypes = {
 -- these are for the worker thread
 local _actions = {
     replaceEdgeWithParallelNarrowTracks = function(oldEdgeId, newTrackTypeId)
-        logger.infozOut({'replaceEdgeWithParallelNarrowTracks starting, oldEdgeId =', oldEdgeId, 'newTrackTypeId =', newTrackTypeId})
+        logger.infoOut('replaceEdgeWithParallelNarrowTracks starting, oldEdgeId =', oldEdgeId, 'newTrackTypeId =', newTrackTypeId)
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
         if not(edgeUtils.isValidId(newTrackTypeId)) then return end
 
@@ -160,14 +160,14 @@ local _actions = {
             i = i + 1
         end
 
-        logger.infozOut({'lollo_auto_split_platform proposal =', proposal})
+        logger.infoOut('lollo_auto_split_platform proposal =', proposal)
 
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, nil, true),
             function(res, success)
-                logger.infozOut({'lollo_auto_split_platform replaceEdgeWithParallelNarrowTracks success = ', success})
+                logger.infoOut('lollo_auto_split_platform replaceEdgeWithParallelNarrowTracks success = ', success)
                 if not(success) then
-                    logger.warningsOut({'replaceEdgeWithParallelNarrowTracks failed, proposal = ', proposal})
+                    logger.warningOut('replaceEdgeWithParallelNarrowTracks failed, proposal = ', proposal)
                 end
             end
         )
@@ -184,7 +184,7 @@ function data()
             guiTrackTypes.eraA.narrowTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraA.narrowTrackName)
             guiTrackTypes.eraB.narrowTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraB.narrowTrackName)
             guiTrackTypes.eraC.narrowTrackId = api.res.trackTypeRep.find(guiTrackTypes.eraC.narrowTrackName)
-            logger.infozOut({'trackTypes =', guiTrackTypes})
+            logger.infoOut('trackTypes =', guiTrackTypes)
         end,
         guiHandleEvent = function(id, name, args)
             -- args can have different types, even boolean, depending on the event id and name
@@ -192,7 +192,7 @@ function data()
                 if id == 'trackBuilder' or id == 'streetTrackModifier' then
                     xpcall(
                         function()
-                            logger.infozOut({'guiHandleEvent caught id =', id, 'name =', name, 'args =', args})
+                            logger.infoOut('guiHandleEvent caught id =', id, 'name =', name, 'args =', args)
                             if not(args) or not(args.proposal) or not(args.proposal.proposal)
                             or not(args.proposal.proposal.addedSegments)
                             or not(args.data)
@@ -202,7 +202,7 @@ function data()
 
                             local eventParams = {}
                             for _, addedSegment in pairs(args.proposal.proposal.addedSegments) do
-                                logger.infozOut({'addedSegment =', addedSegment})
+                                logger.infoOut('addedSegment =', addedSegment)
                                 if addedSegment
                                 and addedSegment.trackEdge ~= nil
                                 and addedSegment.trackEdge.trackType ~= nil
@@ -213,12 +213,12 @@ function data()
                                 )
                                 and edgeUtils.isValidAndExistingId(addedSegment.entity)
                                 then
-                                    logger.infozOut({'addedSegment =', addedSegment})
+                                    logger.infoOut('addedSegment =', addedSegment)
                                     local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(addedSegment.entity)
                                     if not(edgeUtils.isValidId(conId)) then -- do not touch frozen segments
                                         -- local newTrackTypeId = nil
                                         for key, value in pairs(guiTrackTypes) do
-                                            logger.infozOut({'key =', key, 'value =', value})
+                                            logger.infoOut('key =', key, 'value =', value)
                                             if addedSegment.trackEdge.trackType == value.autoSplitTrackId then
                                                 eventParams[#eventParams+1] = {
                                                     edgeId = addedSegment.entity,
@@ -264,7 +264,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.infozOut({'lollo_auto_split_platform.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =', args})
+                    logger.infoOut('lollo_auto_split_platform.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =', args)
                     if name == _eventProperties.splitPlatformRequested.eventName then
                         _actions.replaceEdgeWithParallelNarrowTracks(args.edgeId, args.newTrackTypeId)
                     end

@@ -8,7 +8,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        logger.thingsOut({'lollo openTwinStairsFree_v2.con ERROR: ', err})
+        logger.thingOut('lollo openTwinStairsFree_v2.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs_v2
@@ -207,7 +207,7 @@ function data()
 
             local _addBase = function(isEast, leftOrRightTransf)
                 local stairsBase = isEast and _stairsBaseEast or _stairsBaseWest
-                logger.infozOut({'stairsBase =', stairsBase})
+                logger.infoOut('stairsBase =', stairsBase)
                 if stairsBase == -1 then
                     -- do nothing
                 elseif stairsBase == 0 or stairsBase == 1 or stairsBase == 2 or stairsBase == 3 then -- edge or snappy edge
@@ -404,7 +404,7 @@ function data()
                         { -_yHalfSize, _bridgeStartY, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
                         { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, _bridgeStartY, _zed},
                     }}
-                    logger.infozOut({'bridge faces =', _faces})
+                    logger.infoOut('bridge faces =', _faces)
                     table.insert(
                         result.terrainAlignmentLists,
                         {
