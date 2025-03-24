@@ -70,11 +70,11 @@ return {
         if not(_isExtendedLogActive) then return end
         return _printThings('lollo_freestyle_train_station INFO: ', tab)
     end,
-    ---@param val any
-    infoOut = function(val)
-        if not(_isExtendedLogActive) then return end
-        return _printOneThing('lollo_freestyle_train_station INFO: ', val)
-    end,
+    -- ---@param val any
+    -- infoOut = function(val)
+    --     if not(_isExtendedLogActive) then return end
+    --     return _printOneThing('lollo_freestyle_train_station INFO: ', val)
+    -- end,
     -- printInfoSkippingNils = function(...)
     --     if not(_isExtendedLogActive) then return end
     --     return _printThingsSkippingNils('lollo_freestyle_train_station INFO: ', ...)
@@ -83,11 +83,11 @@ return {
         if not(_isWarningLogActive) then return end
         print('lollo_freestyle_train_station WARNING: ' .. label, ...)
     end,
-    ---@param val any
-    warningOut = function(val)
-        if not(_isWarningLogActive) then return end
-        return _printOneThing('lollo_freestyle_train_station WARNING: ', val)
-    end,
+    -- ---@param val any
+    -- warningOut = function(val)
+    --     if not(_isWarningLogActive) then return end
+    --     return _printOneThing('lollo_freestyle_train_station WARNING: ', val)
+    -- end,
     ---@param tab table<any>
     warningsOut = function(tab)
         if not(_isWarningLogActive) then return end
@@ -101,11 +101,11 @@ return {
         if not(_isErrorLogActive) then return end
         print('lollo_freestyle_train_station ERROR: ' .. label, ...)
     end,
-    ---@param val any
-    errorOut = function(val)
-        if not(_isErrorLogActive) then return end
-        return _printOneThing('lollo_freestyle_train_station ERROR: ', val)
-    end,
+    -- ---@param val any
+    -- errorOut = function(val)
+    --     if not(_isErrorLogActive) then return end
+    --     return _printOneThing('lollo_freestyle_train_station ERROR: ', val)
+    -- end,
     ---@param tab table<any>
     errorsOut = function(tab)
         if not(_isErrorLogActive) then return end
