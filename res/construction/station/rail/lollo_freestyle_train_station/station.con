@@ -1548,9 +1548,11 @@ function data()
 									}
 								)
 							elseif (isOpenStairsUpLeft or isOpenStairsUpRight or isOpenLift) then
-								-- print('openLiftModule =') debugPrint(openLiftModule.name)
-								-- print('openStairsUpLeftModule =') debugPrint(openStairsUpLeftModule.name)
-								-- print('openStairsUpRightModule =') debugPrint(openStairsUpRightModule.name)
+								-- logger.infozOut({
+								-- 	'openLiftModule =', openLiftModule.name,
+								-- 	'openStairsUpLeftModule =', openStairsUpLeftModule.name,
+								-- 	'openStairsUpRightModule =', openStairsUpRightModule.name
+								-- })
 								if (openLiftModule or {}).name == _constants.openLift_NoAutoLink_ModuleFileName
 								or (openStairsUpLeftModule or {}).name == _constants.openStairsUpLeft_NoAutoLink_ModuleFileName
 								or (openStairsUpRightModule or {}).name == _constants.openStairsUpRight_NoAutoLink_ModuleFileName

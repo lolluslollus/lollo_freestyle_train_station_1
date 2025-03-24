@@ -339,8 +339,7 @@ local helpers = {
                 )
                 -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                 if nodeBetween == nil then
-                    logger.err('nodeBetween not found; pel =')
-                    logger.errorDebugPrint(refEdge)
+                    logger.errorsOut({'nodeBetween not found; pel =', refEdge})
                     return {}
                 end
                 local newEdgeLength = nodeBetween.refDistance0 - lengthCovered
@@ -562,9 +561,8 @@ local helpers = {
                         _refEdgeLength
                         -- logger.isExtendedLog()
                     )
-                    -- logger.print('nodeBetween =') logger.debugPrint(nodeBetween)
                     if nodeBetween == nil then
-                        logger.err('nodeBetween not found; oldEdge =') -- logger.errorDebugPrint(oldEdge)
+                        logger.errorsOut({'nodeBetween not found'})
                         return {}
                     end
                     -- local newEdgeLength = nodeBetween.refDistance0 - lastCoveredLengthInEdge
@@ -688,11 +686,11 @@ local helpers = {
             local _lastRefEdgePosition = arrayUtils.cloneDeepOmittingFields(previousRefEdge.posTanX2[2][1])
             -- if comparisonUtils.isVec3sVeryClose(_lastRefEdgePosition, results[#results].posTanX2[2][1], 5) then
             if comparisonUtils.isVec3sCloserThan(_lastRefEdgePosition, results[#results].posTanX2[2][1], stepLength * 0.01) then
-                logger.infozOut({'these position vectors are very close:', _lastRefEdgePosition}) logger.debugPrint(results[#results].posTanX2[2][1])
+                logger.infozOut({'these position vectors are very close:', _lastRefEdgePosition, results[#results].posTanX2[2][1]})
                 results[#results].posTanX2[2][1] = _lastRefEdgePosition
             -- ...otherwise, we make a new edge to reach to the original edge end
             elseif lengthUncovered > 0 and previousRefEdge ~= nil and previousRefEdgeLength ~= 0 then
-                logger.infozOut({'these position vectors are not close enough:', _lastRefEdgePosition}) logger.debugPrint(results[#results].posTanX2[2][1])
+                logger.infozOut({'these position vectors are not close enough:', _lastRefEdgePosition, results[#results].posTanX2[2][1]})
                 results[#results+1] = {
                     posTanX2 = {
                         {
@@ -1083,7 +1081,7 @@ local helpers = {
                         elseif distance == shortestDistance then
                             -- LOLLO TODO what if there are multiple nodes in the same position? It's academic, but how do I make sure it will take the best one?
                             -- after build 35716, this should never happen; it'd be nice to know the game tolerance for "same position".
-                            logger.warn('getNeighbourNodeIdsOfBulldozedTerminal got two nodes at') logger.warningDebugPrint(refPosition)
+                            logger.warningsOut({'getNeighbourNodeIdsOfBulldozedTerminal got two nodes at', refPosition})
                         end
                     end
                 end
@@ -1486,20 +1484,16 @@ local _getTrackEndNodeIds4T = function(nTerminal, frozenEdgeIds_indexed, frozenN
     }
 
     if result.platforms.node1Id == nil then
-        logger.warn('could not find platform.node1Id in station construction; nTerminal =')
-        logger.warningDebugPrint(nTerminal)
+        logger.warningsOut({'could not find platform.node1Id in station construction; nTerminal =', nTerminal})
     end
     if result.platforms.node2Id == nil then
-        logger.warn('could not find platform.node2Id in station construction; nTerminal =')
-        logger.warningDebugPrint(nTerminal)
+        logger.warningsOut({'could not find platform.node2Id in station construction; nTerminal =', nTerminal})
     end
     if result.tracks.node1Id == nil then
-        logger.warn('could not find track.node1Id in station construction; nTerminal =')
-        logger.warningDebugPrint(nTerminal)
+        logger.warningsOut({'could not find track.node1Id in station construction; nTerminal =', nTerminal})
     end
     if result.tracks.node2Id == nil then
-        logger.warn('WARNING: could not find track.node2Id in station construction; nTerminal =')
-        logger.warningDebugPrint(nTerminal)
+        logger.warningsOut({'could not find track.node2Id in station construction; nTerminal =', nTerminal})
     end
 
     return result
@@ -1687,16 +1681,15 @@ helpers.getStationTrackEndEntities = function(stationConstructionId, isSkipLoggi
     logger.infozOut({'_getStationTrackEndEntities started, conId =', stationConstructionId})
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         if isSkipLogging then return nil end
-        logger.err('getStationTrackEndEntities invalid stationConstructionId') logger.errorDebugPrint(stationConstructionId)
+        logger.errorsOut({'getStationTrackEndEntities invalid stationConstructionId', stationConstructionId})
         return nil
     end
 
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
         if isSkipLogging then return nil end
-        logger.err('getStationTrackEndEntities con.fileName =') logger.errorDebugPrint(con.fileName)
+        logger.errorsOut({'getStationTrackEndEntities con.fileName =', con.fileName})
         return nil
     end
 
@@ -1719,30 +1712,25 @@ helpers.getStationTrackEndEntities = function(stationConstructionId, isSkipLoggi
         end
     end
 
-    -- logger.print('getStationEndEntities result =') logger.debugPrint(result)
     return result
 end
 
 helpers.getStationTrackEndEntities4T = function(stationConstructionId, nTerminal)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
-        logger.err('getStationTrackEndEntities4T received an invalid stationConstructionId')
-        logger.errorDebugPrint(stationConstructionId)
+        logger.errorsOut({'getStationTrackEndEntities4T received an invalid stationConstructionId', stationConstructionId})
         return nil
     end
 
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
-        logger.err('getStationTrackEndEntities4T con.fileName =')
-        logger.errorDebugPrint(con.fileName)
+        logger.errorsOut({'getStationTrackEndEntities4T con.fileName =', con.fileName})
         return nil
     end
 
     local conParams = con.params
     if type(nTerminal) ~= 'number' or nTerminal < 1 or nTerminal > #conParams.terminals then
-        logger.warn('getStationTrackEndEntities4T received invalid nTerminal =')
-        logger.warningDebugPrint(nTerminal)
+        logger.warningsOut({'getStationTrackEndEntities4T received invalid nTerminal =', nTerminal})
         return nil
     end
 
@@ -1763,18 +1751,15 @@ end
 helpers.getStationStreetEndEntities = function(stationConstructionId, isSkipLogging)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         if isSkipLogging then return nil end
-        logger.err('getStationStreetEndEntities received an invalid stationConstructionId')
-        logger.errorDebugPrint(stationConstructionId)
+        logger.errorsOut({'getStationStreetEndEntities received an invalid stationConstructionId', stationConstructionId})
         return nil
     end
 
     local con = api.engine.getComponent(stationConstructionId, api.type.ComponentType.CONSTRUCTION)
     -- con contains fileName, params, transf, timeBuilt, frozenNodes, frozenEdges, depots, stations
-    -- logger.print('con =') logger.debugPrint(conData)
     if not(con) or con.fileName ~= _constants.stationConFileName then
         if isSkipLogging then return nil end
-        logger.err('getStationStreetEndEntities con.fileName =')
-        logger.errorDebugPrint(con.fileName)
+        logger.errorsOut({'getStationStreetEndEntities con.fileName =', con.fileName})
         return nil
     end
 
@@ -1823,8 +1808,7 @@ end
 helpers.getPlatformHeightProps_indexedByT = function(stationConstructionId, isSkipLogging)
     if not(edgeUtils.isValidAndExistingId(stationConstructionId)) then
         if isSkipLogging then return nil end
-        logger.err('getPlatformHeightProps_indexedByT received an invalid stationConstructionId')
-        logger.errorDebugPrint(stationConstructionId)
+        logger.errorsOut({'getPlatformHeightProps_indexedByT received an invalid stationConstructionId', stationConstructionId})
         return nil
     end
 
@@ -1833,8 +1817,7 @@ helpers.getPlatformHeightProps_indexedByT = function(stationConstructionId, isSk
     -- logger.print('con =') logger.debugPrint(conData)
     if not(_con) or _con.fileName ~= _constants.stationConFileName then
         if isSkipLogging then return nil end
-        logger.err('getPlatformHeightProps_indexedByT con.fileName =')
-        logger.errorDebugPrint(_con.fileName)
+        logger.errorsOut({'getPlatformHeightProps_indexedByT con.fileName =', _con.fileName})
         return nil
     end
 

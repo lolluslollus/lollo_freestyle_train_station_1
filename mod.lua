@@ -150,8 +150,6 @@ function data()
                 end
             end
             _arrayUtils.sort(trackTypes_sorted, 'name', true)
-            -- print('### trackFileNames =') debugPrint(trackFileNames)
-            -- print('### trackTypes_sorted =') debugPrint(trackTypes_sorted)
             local trackCount = 100
             for __, trackType in pairs(trackTypes_sorted) do
                 local props = trackType.props

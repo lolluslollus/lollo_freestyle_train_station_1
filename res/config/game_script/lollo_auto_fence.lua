@@ -936,12 +936,14 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     local distance100 = transfUtils.getPositionsDistance(node0.position, vec100Transformed)
     local isWaypointArrowAgainstTrackDirection = (distance100 < distance000)
     if logger.isExtendedLog() then
-        print('marker con transf =') debugPrint(newConTransf)
-        print('vector 000 transformed =') debugPrint(vec000Transformed)
-        print('vector 100 transformed =') debugPrint(vec100Transformed)
-        print('node0 position =') debugPrint(node0.position)
-        print('node1 position =') debugPrint(node1.position)
-        print('isWaypointArrowAgainstTrackDirection = ' .. tostring(isWaypointArrowAgainstTrackDirection))
+        logger.infozOut({
+            'marker con transf =', newConTransf,
+            'vector 000 transformed =', vec000Transformed,
+            'vector 100 transformed =', vec100Transformed,
+            'node0 position =', node0.position,
+            'node1 position =', node1.position,
+            'isWaypointArrowAgainstTrackDirection = ', isWaypointArrowAgainstTrackDirection
+        })
     end
 
     otherAutoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
