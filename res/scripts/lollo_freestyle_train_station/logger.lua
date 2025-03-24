@@ -22,7 +22,7 @@ local _printThings = function(outString, tab)
     if type(tab) ~= 'table' then
         -- local newOutString = _printOneThing(outString, tab)
         -- if newOutString ~= '' then print(newOutString) end
-        print(outString .. 'cannot output non-tab values')
+        print(outString .. ' Cannot output non-tab values')
         return
     end
 
@@ -30,7 +30,7 @@ local _printThings = function(outString, tab)
     if nTab == 0 then --indexed table
         -- if outString ~= '' then print(outString) end
         -- debugPrint(tab)
-        print(outString .. 'cannot output an indexed or empty table. If you want to output a single value or an indexed table, enclose it in curly brackets.')
+        print(outString .. ' Cannot output an indexed or empty table. If you want to output a single value or an indexed table, enclose it in curly brackets.')
         return
     end
 
@@ -40,27 +40,50 @@ local _printThings = function(outString, tab)
     end
     if newOutString ~= '' then print(newOutString) end
 end
-local _printThingsSkippingNils = function(outString, ...)
-    for _, value in pairs({...}) do
-        local typ = type(value)
-        if typ == 'function' or typ == 'table' then
-            if outString ~= '' then print(outString) end
-            debugPrint(value)
-            outString = ''
-        else
-            outString = outString .. ' ' .. tostring(value)
-        end
+local _printThingsVararg = function(outString, ...)
+    -- this skips the last consecutive nil values
+    -- arg is null and ... is numerical; both have no metatable
+    if type(outString) ~= 'string' then
+        print('outString must be a string at ')
+        -- local info1 = debug.getinfo(1)
+        -- if info1 then debugPrint(info1) end
+        local info2 = debug.getinfo(2)
+        if info2 then debugPrint(info2) end
+        local info3 = debug.getinfo(3)
+        if info3 then debugPrint(info3) end
+        return
     end
-    print(outString)
+
+    local tab = {...}
+    local nTab = #tab
+    local isLooped = false
+    local newOutString = outString
+    for i = 1, nTab, 1 do
+        newOutString = _printOneThing(newOutString, tab[i])
+        isLooped = true
+    end
+    if isLooped then
+        if newOutString ~= '' then print(newOutString) end
+    else
+        print(newOutString .. ' one or more NILs')
+    end
 end
 
+-- func = function(...) print('arg', type(arg)) print('...', type(...), ...) for k, v in pairs({...}) do print('k= ', k, ', v= ', v) end end
+-- func = function(...) debugPrint(getmetatable(...)) print('arg has type ', type(arg)) print('... has type ', type(...), 'and num records ', #{...}) debugPrint(getmetatable({...})) for k, v in pairs({...}) do print('k= ', k, ', v= ', v) end end
+-- func = function(...) print('... has type ', type(...), ' and num records ', #{...}) local tab = {...} for i=1, #tab, 1 do print('i= ', i, ', v= ', tab[i]) end end
 return {
     isExtendedLog = function()
         return _isExtendedLogActive
     end,
+    ---@param tab table<any>
     thingsOut = function(tab)
         return _printThings('', tab)
     end,
+    -- ---@param ... unknown
+    -- thingOut = function(...)
+    --     _printThingsVararg('', ...)
+    -- end,
     print = function(...)
         if not(_isExtendedLogActive) then return end
         print('lollo_freestyle_train_station INFO: ', ...)
@@ -70,10 +93,10 @@ return {
         if not(_isExtendedLogActive) then return end
         return _printThings('lollo_freestyle_train_station INFO: ', tab)
     end,
-    -- ---@param val any
-    -- infoOut = function(val)
+    -- ---@param ... unknown
+    -- infoOut = function(...)
     --     if not(_isExtendedLogActive) then return end
-    --     return _printOneThing('lollo_freestyle_train_station INFO: ', val)
+    --     _printThingsVararg('lollo_freestyle_train_station INFO: ', ...)
     -- end,
     -- printInfoSkippingNils = function(...)
     --     if not(_isExtendedLogActive) then return end
@@ -83,10 +106,10 @@ return {
         if not(_isWarningLogActive) then return end
         print('lollo_freestyle_train_station WARNING: ' .. label, ...)
     end,
-    -- ---@param val any
-    -- warningOut = function(val)
+    -- ---@param ... unknown
+    -- warningOut = function(...)
     --     if not(_isWarningLogActive) then return end
-    --     return _printOneThing('lollo_freestyle_train_station WARNING: ', val)
+    --     _printThingsVararg('lollo_freestyle_train_station WARNING: ', ...)
     -- end,
     ---@param tab table<any>
     warningsOut = function(tab)
@@ -101,10 +124,10 @@ return {
         if not(_isErrorLogActive) then return end
         print('lollo_freestyle_train_station ERROR: ' .. label, ...)
     end,
-    -- ---@param val any
-    -- errorOut = function(val)
+    -- ---@param ... unknown
+    -- errorOut = function(...)
     --     if not(_isErrorLogActive) then return end
-    --     return _printOneThing('lollo_freestyle_train_station ERROR: ', val)
+    --     _printThingsVararg('lollo_freestyle_train_station ERROR: ', ...)
     -- end,
     ---@param tab table<any>
     errorsOut = function(tab)
