@@ -30,7 +30,7 @@ function data()
 		skipCollision = false, -- true,
         params = _openLiftOpenStairsHelpers.getOpenLiftParamsMetadata(),
 		updateFn = function(params)
-            logger.infoOut({'openLiftFree_v2.updateFn firing, params = ', arrayUtils.cloneDeepOmittingFields(params, {'state'})})
+            logger.infozOut({'openLiftFree_v2.updateFn firing, params = ', arrayUtils.cloneDeepOmittingFields(params, {'state'})})
             local _face = {
                 {-2.2, -3.7, 0, 1}, {-2.2, 3.7, 0, 1}, {2.2, 3.7, 0, 1}, {2.2, -3.7, 0, 1}
             }
@@ -100,11 +100,11 @@ function data()
             }
 
             local _addBase = function(isEast)
-                logger.infoOut({'### isEast =', isEast})
-                logger.infoOut({'_baseModeEast =', _baseModeEast})
-                logger.infoOut({'_baseModeWest =', _baseModeWest})
+                logger.infozOut({'### isEast =', isEast})
+                logger.infozOut({'_baseModeEast =', _baseModeEast})
+                logger.infozOut({'_baseModeWest =', _baseModeWest})
                 local baseMode = isEast and _baseModeEast or _baseModeWest
-                logger.infoOut({'baseMode =', baseMode})
+                logger.infozOut({'baseMode =', baseMode})
                 if isEast then
                     result.models[#result.models+1] = {
                         id = (baseMode == -1
@@ -130,8 +130,8 @@ function data()
 
                 local isBridge = baseMode >= 2
                 local isSnap = baseMode % 2 ~= 0
-                logger.infoOut({'isBridge =', isBridge})
-                logger.infoOut({'isSnap =', isSnap})
+                logger.infozOut({'isBridge =', isBridge})
+                logger.infozOut({'isSnap =', isSnap})
                 local edges
                 if isEast then
                     edges = {
@@ -216,7 +216,7 @@ function data()
             end
 
             local _addTop = function(direction, bridgeChunk)
-                logger.infoOut({'direction, bridgeChunk, _height =', direction, bridgeChunk, _height})
+                logger.infozOut({'direction, bridgeChunk, _height =', direction, bridgeChunk, _height})
                 if bridgeChunk == -1 then return end
 
                 if direction == 'N' then

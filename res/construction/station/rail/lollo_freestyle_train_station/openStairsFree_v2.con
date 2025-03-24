@@ -32,10 +32,10 @@ function data()
 		skipCollision = false, -- true,
         params = _openLiftOpenStairsHelpers.getOpenStairsParamsMetadata_v2(),
 		updateFn = function(params)
-            logger.infoOut({'openStairsFree_v2.updateFn firing, params =', _arrayUtils.cloneDeepOmittingFields(params, {'state'}, true)})
+            logger.infozOut({'openStairsFree_v2.updateFn firing, params =', _arrayUtils.cloneDeepOmittingFields(params, {'state'}, true)})
             local _height = _paramReaders.getHeight(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
-            logger.infoOut({'### _bridgeChunkLength = ', _bridgeChunkLength})
+            logger.infozOut({'### _bridgeChunkLength = ', _bridgeChunkLength})
             local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)

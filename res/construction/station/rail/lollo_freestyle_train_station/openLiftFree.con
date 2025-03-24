@@ -66,7 +66,7 @@ function data()
             },
         },
 		updateFn = function(params)
-            logger.infoOut({'openLiftFree.updateFn firing, params = ', params})
+            logger.infozOut({'openLiftFree.updateFn firing, params = ', params})
             local _bridgeMode = _paramReaders.getBridgeMode(params)
             local _baseMode = _paramReaders.getBaseMode(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)

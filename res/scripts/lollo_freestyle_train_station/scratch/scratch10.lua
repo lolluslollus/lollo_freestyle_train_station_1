@@ -26,7 +26,7 @@ debugPrint = function(whatever)
 end
 -- logger.printInfoSkippingNils('lollo =', function(a) return a end, {1, 2, 3}, {a = 1, b = 2, c = 3}, nil, true, false, 123.456)
 -- logger.printWarningsSkippingNils('lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456)
-logger.infoOut({'lollo =', function(a) return a end, {1, 2, 3}, {a = 1, b = 2, c = 3}, nil, true, false, 123.456})
+logger.infozOut({'lollo =', function(a) return a end, {1, 2, 3}, {a = 1, b = 2, c = 3}, nil, true, false, 123.456})
 logger.warningsOut({'lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456})
 logger.errorsOut({'lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456})
 print('------')

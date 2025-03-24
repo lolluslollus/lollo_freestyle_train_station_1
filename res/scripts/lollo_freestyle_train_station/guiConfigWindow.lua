@@ -66,7 +66,7 @@ return {
                 end
 
                 local function addParam(paramKey, paramMetadata, paramValue)
-                    logger.infoOut({'addParam starting, paramKey =', paramKey})
+                    logger.infozOut({'addParam starting, paramKey =', paramKey})
                     if not(paramKey) or not(paramMetadata) or not(paramMetadata.values) or not(paramValue) then return end
 
                     local paramNameTextBox = api.gui.comp.TextView.new(paramMetadata.name)
@@ -78,7 +78,7 @@ return {
                     layout:addItem(textBoxLayout)
 
                     local _valueIndexBase0 = paramValue or (paramMetadata.defaultIndex or 0)
-                    logger.infoOut({'_valueIndexBase0 =', _valueIndexBase0})
+                    logger.infozOut({'_valueIndexBase0 =', _valueIndexBase0})
                     if paramMetadata.uiType == 'ICON_BUTTON' then
                         local buttonRowLayout = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
                         buttonRowLayout:setGravity(0.5, 0) -- center horizontally
@@ -90,7 +90,7 @@ return {
                             end
                         )
                         for indexBase1, value in pairs(paramMetadata.values) do
-                            -- logger.print('### paramMetadata =') logger.debugPrint(paramMetadata)
+                            -- logger.infozOut({'### paramMetadata =', paramMetadata})
                             local imageView = api.gui.comp.ImageView.new(value)
                             imageView:setMaximumSize(api.gui.util.Size.new(self.privateData.extraHeight4Param, self.privateData.extraHeight4Param))
                             local button = api.gui.comp.ToggleButton.new(imageView)
@@ -111,13 +111,13 @@ return {
                         end
                         comboBox:onIndexChanged(
                             function(indexBase0)
-                                logger.infoOut({'comboBox:onIndexChanged firing, one =', indexBase0})
+                                logger.infozOut({'comboBox:onIndexChanged firing, one =', indexBase0})
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, indexBase0)
                             end
                         )
                         layout:addItem(comboBox)
                     elseif paramMetadata.uiType == 'SLIDER' then
-                        logger.infoOut({'paramMetadata =', paramMetadata})
+                        logger.infozOut({'paramMetadata =', paramMetadata})
                         local sliderValueView = api.gui.comp.TextView.new(tostring(paramMetadata.values[_valueIndexBase0 + 1]))
                         sliderValueView:setGravity(0.5, 0) -- center horizontally
                         local slider = api.gui.comp.Slider.new(true) -- true means horizontal
@@ -128,7 +128,7 @@ return {
                         slider:setValue(_valueIndexBase0, false)
                         slider:onValueChanged(
                             function(newValueIndexBase0)
-                                logger.infoOut({'slider emitted newValue =', newValueIndexBase0})
+                                logger.infozOut({'slider emitted newValue =', newValueIndexBase0})
                                 sliderValueView:setText(tostring(paramMetadata.values[newValueIndexBase0 + 1]))
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, newValueIndexBase0)
                             end
@@ -162,7 +162,7 @@ return {
                         buttonRowLayout:setEmitSignal(false)
                         buttonRowLayout:onCurrentIndexChanged(
                             function(newIndexBase0)
-                                -- logger.infoOut({'buttonRowLayout:onCurrentIndexChanged, newIndexBase0 =', newIndexBase0})
+                                -- logger.infozOut({'buttonRowLayout:onCurrentIndexChanged, newIndexBase0 =', newIndexBase0})
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, newIndexBase0)
                             end
                         )
@@ -176,8 +176,7 @@ return {
                         layout:addItem(buttonRowLayout)
                     end
                 end
-                -- logger.print('paramsMetadata =') logger.debugPrint(paramsMetadata)
-                -- logger.print('paramValues =') logger.debugPrint(paramValues)
+                -- logger.infozOut({'paramValues =', paramValues})
                 for _, paramMetadata in pairs(paramsMetadataSorted) do
                     local isFound = false
                     for valueKey, value in pairs(paramValues) do
@@ -189,7 +188,7 @@ return {
                     end
                     -- allow adding new params to old cons that did not have them
                     if not(isFound) and paramMetadata ~= nil and paramMetadata.key ~= nil then
-                        logger.infoOut({'new param found, paramMetadata.key =', paramMetadata.key})
+                        logger.infozOut({'new param found, paramMetadata.key =', paramMetadata.key})
                         addParam(paramMetadata.key, paramMetadata, paramMetadata.defaultIndex)
                     end
                 end
@@ -226,14 +225,14 @@ return {
 
         self.addEntityConfigToWindow = function(entityId, handleParamValueChanged, conParamsMetadata, conParams, onBulldozeClicked)
             local conWindowId = 'temp.view.entity_' .. entityId
-            logger.print('conWindowId = \'' .. tostring(conWindowId) .. '\'')
+            logger.infozOut({'conWindowId = \'', conWindowId, '\''})
             local window = api.gui.util.getById(conWindowId) -- eg temp.view.entity_26372
             if window == nil then logger.err('cannot get config window by id') return end
             local windowContent = window:getContent()
             if windowContent == nil then logger.err('cannot get config window content') return end
             -- depending on the entity type, I attach my child to the window content (station group) or to its layout (construction)
             local isParentWindowContentLayout = type(windowContent.getName) == 'function' and windowContent:getName() == 'ConstructionContent'
-            logger.infoOut({'isParentWindowContentLayout =', isParentWindowContentLayout})
+            logger.infozOut({'isParentWindowContentLayout =', isParentWindowContentLayout})
             local parentLayout = isParentWindowContentLayout and windowContent:getLayout() or windowContent
             local configureButtonIndex = isParentWindowContentLayout and 0 or 1
             parentLayout:getItem(configureButtonIndex):setVisible(false, false) -- hide the "configure' button" without emitting a signal
@@ -258,8 +257,6 @@ return {
 
             local rect = window:getContentRect() -- this is mostly 0, 0 at this point
             local minSize = window:calcMinimumSize()
-            -- logger.print('rect =') logger.debugPrint(rect)
-            -- logger.print('minSize =') logger.debugPrint(minSize)
 
             local extraHeight = self.privateData.extraHeight4Title + arrayUtils.getCount(conParamsMetadata) * self.privateData.extraHeight4Param
             local size = api.gui.util.Size.new(math.max(rect.w, minSize.w), math.max(rect.h, minSize.h) + extraHeight)
@@ -282,7 +279,7 @@ return {
         ---@param wrongObjectId? integer
         ---@param similarObjectsIds? table<integer>
         self.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds, removeAllFunc)
-            logger.infoOut({'guiHelpers.showWarningWithGoto starting, text =', text})
+            logger.infozOut({'guiHelpers.showWarningWithGoto starting, text =', text})
             self.privateData.isShowingWarning = true
 
             local layout = api.gui.layout.BoxLayout.new('VERTICAL')
@@ -290,11 +287,11 @@ return {
             if window == nil then
                 window = api.gui.comp.Window.new(self.privateData.texts.warningWindowTitle, layout)
                 window:setId(self.privateData.warningWindowWithGotoId)
-                logger.infoOut({'the window does not exist yet, _warningWindowWithGotoId =', self.privateData.warningWindowWithGotoId})
+                logger.infozOut({'the window does not exist yet, _warningWindowWithGotoId =', self.privateData.warningWindowWithGotoId})
             else
                 window:setContent(layout)
                 window:setVisible(true, false)
-                logger.infoOut({'the window exists already, _warningWindowWithGotoId =', self.privateData.warningWindowWithGotoId})
+                logger.infozOut({'the window exists already, _warningWindowWithGotoId =', self.privateData.warningWindowWithGotoId})
             end
 
             layout:addItem(api.gui.comp.TextView.new(text))

@@ -44,13 +44,13 @@ guiHelpers.setWindowPosition = function(window, initialPosition)
     local gameContentRect = api.gui.util.getGameUI():getContentRect()
     local windowContentRect = window:getContentRect()
     local windowMinimumSize = window:calcMinimumSize()
-    logger.infoOut({'### gameContentRect =', gameContentRect, ', windowContentRect =', windowContentRect, ', windowMinimumSize =', windowMinimumSize})
+    logger.infozOut({'### gameContentRect =', gameContentRect, ', windowContentRect =', windowContentRect, ', windowMinimumSize =', windowMinimumSize})
 
     local windowHeight = math.max(windowContentRect.h, windowMinimumSize.h)
     local windowWidth = math.max(windowContentRect.w, windowMinimumSize.w)
     local positionX = (initialPosition ~= nil and initialPosition.x) or math.max(0, (gameContentRect.w - windowWidth) * 0.5)
     local positionY = (initialPosition ~= nil and initialPosition.y) or math.max(0, (gameContentRect.h - windowHeight) * 0.5)
-    logger.infoOut({'### positionX = ', positionX, ', positionY = ', positionY})
+    logger.infozOut({'### positionX = ', positionX, ', positionY = ', positionY})
 
     if (positionX + windowWidth) > gameContentRect.w then
         positionX = math.max(0, gameContentRect.w - windowWidth)
@@ -58,7 +58,7 @@ guiHelpers.setWindowPosition = function(window, initialPosition)
     if (positionY + windowHeight) > gameContentRect.h then
         positionY = math.max(0, gameContentRect.h - windowHeight -100)
     end
-    logger.infoOut({'### final position x = ', positionX, ', y = ', positionY})
+    logger.infozOut({'### final position x = ', positionX, ', y = ', positionY})
     window:setPosition(math.floor(positionX), math.floor(positionY))
 end
 ---@param text string
@@ -329,7 +329,7 @@ end
 ---@param wrongObjectId? integer
 ---@param similarObjectsIds? table<integer>
 guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds, removeAllFunc)
-    logger.infoOut({'guiHelpers.showWarningWithGoto starting, text =', text})
+    logger.infozOut({'guiHelpers.showWarningWithGoto starting, text =', text})
     guiHelpers.isShowingWarningWithGoTo = true
 
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
@@ -337,11 +337,11 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
     if window == nil then
         window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
         window:setId(_warningWindowWithGotoId)
-        logger.infoOut({'the window does not exist yet, _warningWindowWithGotoId =', _warningWindowWithGotoId})
+        logger.infozOut({'the window does not exist yet, _warningWindowWithGotoId =', _warningWindowWithGotoId})
     else
         window:setContent(layout)
         window:setVisible(true, false)
-        logger.infoOut({'the window exists already, _warningWindowWithGotoId =', _warningWindowWithGotoId})
+        logger.infozOut({'the window exists already, _warningWindowWithGotoId =', _warningWindowWithGotoId})
     end
 
     layout:addItem(api.gui.comp.TextView.new(text))

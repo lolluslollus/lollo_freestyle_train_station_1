@@ -15,7 +15,7 @@ local _eventProperties = {
 
 local _actions = {
     replaceEdgeWithSameOnBridge = function(oldEdgeId, bridgeTypeId)
-        logger.infoOut({'replaceEdgeWithSameOnBridge starting, oldEdgeId =', oldEdgeId, 'bridgeTypeId =', bridgeTypeId})
+        logger.infozOut({'replaceEdgeWithSameOnBridge starting, oldEdgeId =', oldEdgeId, 'bridgeTypeId =', bridgeTypeId})
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
 
         local oldEdge = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE)
@@ -76,14 +76,14 @@ local _actions = {
             proposal.streetProposal.edgeObjectsToRemove[i] = edgeObj[1]
             i = i + 1
         end
-        logger.print('lollo_open_stairs_free proposal =') logger.debugPrint(proposal)
+        logger.infozOut({'lollo_open_stairs_free proposal =', proposal})
 
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, nil, true),
             function(res, success)
-                logger.print('lollo_open_stairs_free replaceEdgeWithSameOnBridge success = ') logger.debugPrint(success)
+                logger.infozOut({'lollo_open_stairs_free replaceEdgeWithSameOnBridge success = ', success})
                 if not(success) then
-                    logger.warn('replaceEdgeWithStreetType failed, proposal = ') logger.warningDebugPrint(proposal)
+                    logger.warningsOut({'replaceEdgeWithStreetType failed, proposal = ', proposal})
                 end
             end
         )
@@ -103,7 +103,7 @@ function data()
                 if id == 'streetBuilder' or id == 'streetTrackModifier' then
                     xpcall(
                         function()
-                            -- logger.infoOut({'guiHandleEvent caught id =', id, 'name =', name, 'args =', args})
+                            -- logger.infozOut({'guiHandleEvent caught id =', id, 'name =', name, 'args =', args})
                             if not(args) or not(args.proposal) or not(args.proposal.proposal)
                             or not(args.proposal.proposal.addedSegments)
                             or not(args.data) or not(args.data.entity2tn) then return end
@@ -157,7 +157,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.infoOut({'lollo_auto_bridge_paths.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =', args})
+                    logger.infozOut({'lollo_auto_bridge_paths.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =', args})
 
                     if name == _eventProperties.buildBridgeRequested.eventName then
                         if edgeUtils.isValidAndExistingId(args.edgeId) and edgeUtils.isValidId(args.bridgeTypeId) then

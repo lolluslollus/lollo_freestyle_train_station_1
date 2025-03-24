@@ -18,7 +18,7 @@ local _printOneThing = function(outString, value)
     return outString
 end
 ---@param outString string
----@param tab any
+---@param tab table<any>
 local _printThings = function(outString, tab)
     if type(tab) ~= 'table' then
         -- local newOutString = _printOneThing(outString, tab)
@@ -66,9 +66,14 @@ return {
         print('lollo_freestyle_train_station INFO: ', ...)
     end,
     ---@param tab table<any>
-    infoOut = function(tab)
+    infozOut = function(tab)
         if not(_isExtendedLogActive) then return end
         return _printThings('lollo_freestyle_train_station INFO: ', tab)
+    end,
+    ---@param val any
+    infoOut = function(val)
+        if not(_isExtendedLogActive) then return end
+        return _printOneThing('lollo_freestyle_train_station INFO: ', val)
     end,
     -- printInfoSkippingNils = function(...)
     --     if not(_isExtendedLogActive) then return end
@@ -77,6 +82,11 @@ return {
     warn = function(label, ...)
         if not(_isWarningLogActive) then return end
         print('lollo_freestyle_train_station WARNING: ' .. label, ...)
+    end,
+    ---@param val any
+    warningOut = function(val)
+        if not(_isWarningLogActive) then return end
+        return _printOneThing('lollo_freestyle_train_station WARNING: ', val)
     end,
     ---@param tab table<any>
     warningsOut = function(tab)
@@ -90,6 +100,11 @@ return {
     err = function(label, ...)
         if not(_isErrorLogActive) then return end
         print('lollo_freestyle_train_station ERROR: ' .. label, ...)
+    end,
+    ---@param val any
+    errorOut = function(val)
+        if not(_isErrorLogActive) then return end
+        return _printOneThing('lollo_freestyle_train_station ERROR: ', val)
     end,
     ---@param tab table<any>
     errorsOut = function(tab)

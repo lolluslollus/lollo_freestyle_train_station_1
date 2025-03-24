@@ -302,7 +302,7 @@ privateFuncs.axialAreas = {
     end,
     addPassengerLaneToSelf = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
         -- not suitable for cargo elements
-        logger.infoOut({'axialAreas.addPassengerLaneToSelf starting, t =', nTerminal, ', nTrackEdge =', nTrackEdge})
+        logger.infozOut({'axialAreas.addPassengerLaneToSelf starting, t =', nTerminal, ', nTrackEdge =', nTrackEdge})
         -- no platform head => no lane
         local headInfo = result.getOccupiedInfo4PlatformHeads(nTerminal, nTrackEdge)
         if headInfo == nil
@@ -314,11 +314,11 @@ privateFuncs.axialAreas = {
         local innerPos123 = result.terminateConstructionHookInfo.autoStitchableInnerHeadPositions_by_T_I[nTerminal]
             and result.terminateConstructionHookInfo.autoStitchableInnerHeadPositions_by_T_I[nTerminal][nTrackEdge]
             and result.terminateConstructionHookInfo.autoStitchableInnerHeadPositions_by_T_I[nTerminal][nTrackEdge].pos
-        logger.print('innerPos123 =') logger.debugPrint(innerPos123)
+        logger.infozOut({'innerPos123 =', innerPos123})
         if not(innerPos123) then return end
 
         local outerPos123 = transfUtils.transf2Position(slotTransf)
-        logger.print('outerPos123 =') logger.debugPrint(outerPos123)
+        logger.infozOut({'outerPos123 =', outerPos123})
         if comparisonUtils.isVec3sCloserThan(innerPos123, outerPos123, 0.001) then return end
 
         local laneTransf = transfUtils.get1MLaneTransf(innerPos123, outerPos123)
@@ -760,15 +760,15 @@ privateFuncs.deco = {
 }
 privateFuncs.edges = {
     _addTrackEdges = function(result, tag2nodes, params, nTerminal, terminalData)
-        logger.infoOut({'_addTrackEdges starting for terminal =', nTerminal})
+        logger.infozOut({'_addTrackEdges starting for terminal =', nTerminal})
         local _modules = params.modules
 
         local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
-        logger.infoOut({'_isTrackOnPlatformLeft =', _isTrackOnPlatformLeft})
+        logger.infozOut({'_isTrackOnPlatformLeft =', _isTrackOnPlatformLeft})
         local platformHead1Module = _modules[slotHelpers.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]
         local platformHeadNModule = _modules[slotHelpers.mangleId(nTerminal, #terminalData.centrePlatformsRelative, constants.idBases.platformHeadSlotId)]
-        logger.infoOut({'platformHead1Module =', platformHead1Module, 'platformHeadNModule =', platformHeadNModule})
-        logger.infoOut({'terminalData.trackEdgeListVehicleNode0Index =', terminalData.trackEdgeListVehicleNode0Index, 'terminalData.trackEdgeListVehicleNode1Index =', terminalData.trackEdgeListVehicleNode1Index})
+        logger.infozOut({'platformHead1Module =', platformHead1Module, 'platformHeadNModule =', platformHeadNModule})
+        logger.infozOut({'terminalData.trackEdgeListVehicleNode0Index =', terminalData.trackEdgeListVehicleNode0Index, 'terminalData.trackEdgeListVehicleNode1Index =', terminalData.trackEdgeListVehicleNode1Index})
         local _getVehicleNodeIndex = function()
             -- these things were added in Jan 2024, leave if they are not there
             if terminalData.trackEdgeListVehicleNode0Index == nil or terminalData.trackEdgeListVehicleNode1Index == nil then return nil end
@@ -813,7 +813,7 @@ privateFuncs.edges = {
         local vehicleNodeIndex = _getVehicleNodeIndex() or terminalData.trackEdgeListMidIndex
         result.terminateConstructionHookInfo.vehicleNodes[nTerminal] = (#result.edgeLists + vehicleNodeIndex) * 2 - 2
 
-        logger.infoOut({
+        logger.infozOut({
             '#terminalData.trackEdgeLists =', #terminalData.trackEdgeLists,
             '#terminalData.platformEdgeLists =', #terminalData.platformEdgeLists,
             'result.terminateConstructionHookInfo.vehicleNodes[nTerminal] =', result.terminateConstructionHookInfo.vehicleNodes[nTerminal]
@@ -828,7 +828,7 @@ privateFuncs.edges = {
                 forceCatenary = 1
             end
         end
-        logger.infoOut({'forceCatenary =', forceCatenary})
+        logger.infozOut({'forceCatenary =', forceCatenary})
         local forceFast = 0
         local trackSpeedModuleKey = slotHelpers.mangleId(nTerminal, 0, constants.idBases.trackSpeedSlotId)
         if _modules[trackSpeedModuleKey] ~= nil then
@@ -838,7 +838,7 @@ privateFuncs.edges = {
                 forceFast = 1
             end
         end
-        logger.infoOut({'forceFast =', forceFast})
+        logger.infozOut({'forceFast =', forceFast})
     
         local maxI = #terminalData.trackEdgeLists
         for i = 1, maxI do
@@ -2004,12 +2004,12 @@ return {
             local isFreeFromFlatAreas = false
             local occupiedWidth = 0
             local occupiedInfo4AxialAreas = result.getOccupiedInfo4AxialAreas(nTerminal, nTrackEdge)
-            logger.infoOut({'occupiedInfo4AxialAreas =', occupiedInfo4AxialAreas})
+            logger.infozOut({'occupiedInfo4AxialAreas =', occupiedInfo4AxialAreas})
             isFreeFromFlatAreas = (occupiedInfo4AxialAreas == nil)
             if not(isFreeFromFlatAreas) then
                 occupiedWidth = occupiedInfo4AxialAreas.widthOnOwnTerminalHead
             end
-            logger.infoOut({'occupiedWidth =', occupiedWidth})
+            logger.infozOut({'occupiedWidth =', occupiedWidth})
 
             local _getSlopedAreaWidth = function(cpl)
                 local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, nTrackEdge).width
@@ -2018,7 +2018,7 @@ return {
             end
             local slopedAreaWidth = _getSlopedAreaWidth(_cps[nTrackEdge])
             local platformWidth = _cps[nTrackEdge].width
-            logger.infoOut({'slopedAreaWidth =', slopedAreaWidth, 'platformWidth =', platformWidth})
+            logger.infozOut({'slopedAreaWidth =', slopedAreaWidth, 'platformWidth =', platformWidth})
 
             local leftRightDistance = 0
             local leftTransf = transfUtils.getTransf_ZRotatedM90(slotTransf)
@@ -2623,7 +2623,7 @@ cpf =
     },
     edges = {
         addEdges = function(result, tag, params, nTerminal, terminalData)
-            logger.infoOut({'moduleHelpers.edges.addEdges starting for terminal', nTerminal, ', tag = ', tag})
+            logger.infozOut({'moduleHelpers.edges.addEdges starting for terminal', nTerminal, ', tag = ', tag})
             -- logger.print('result.edgeLists =') logger.debugPrint(result.edgeLists)
     
             local nNodesInTerminalSoFar = 0 -- privateFuncs.edges._getNNodesInTerminalsSoFar(params, nTerminal)
@@ -2648,7 +2648,7 @@ cpf =
             -- local sampleUpdateScriptParams = {
             --     bridgeFileName = "stone.lua",
             -- }
-			logger.print('dynamicBridgeTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+			logger.infozOut({'dynamicBridgeTypes_updateFn got updateScriptParams =', updateScriptParams})
             if updateScriptParams == nil then return end
 
 			local nTerminal, _, baseId = result.demangleId(slotId)
@@ -2695,7 +2695,7 @@ cpf =
             --     catenary = false,
             --     trackType = "tgr_thirdRail.lua",
             -- }
-			logger.print('dynamicTrackTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+			logger.infozOut({'dynamicTrackTypes_updateFn got updateScriptParams =', updateScriptParams})
             if updateScriptParams == nil or updateScriptParams.trackType == nil or updateScriptParams.catenary == nil then return end
 
 			local nTerminal, _, baseId = result.demangleId(slotId)
@@ -2730,7 +2730,7 @@ cpf =
             -- local sampleUpdateScriptParams = {
             --     tunnelFileName = "tunnel.lua",
             -- }
-			logger.print('dynamicTunnelTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+			logger.infozOut({'dynamicTunnelTypes_updateFn got updateScriptParams =', updateScriptParams})
             if updateScriptParams == nil then return end
 
 			local nTerminal, _, baseId = result.demangleId(slotId)
