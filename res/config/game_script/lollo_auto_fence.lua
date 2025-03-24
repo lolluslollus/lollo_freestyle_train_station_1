@@ -331,7 +331,6 @@ local _actions = {
             api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
                 logger.infozOut({'_updateConstruction callback, success =', success})
-                -- logger.debugPrint(result)
                 if not(success) then
                     logger.warningsOut({'_updateConstruction callback failed', '_updateConstruction proposal =', proposal, '_updateConstruction result =', result})
                     -- LOLLO TODO give feedback

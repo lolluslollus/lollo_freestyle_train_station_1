@@ -31,7 +31,7 @@ local _printThings = function(outString, tab)
     if nTab == 0 then --indexed table
         -- if outString ~= '' then print(outString) end
         -- debugPrint(tab)
-        print(outString .. 'cannot output an indexed or empty table. If you want to output a single value or an indexed table, enclose them in curly brackets.')
+        print(outString .. 'cannot output an indexed or empty table. If you want to output a single value or an indexed table, enclose it in curly brackets.')
         return
     end
 

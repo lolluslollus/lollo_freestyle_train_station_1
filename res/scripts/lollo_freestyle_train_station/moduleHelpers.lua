@@ -149,7 +149,7 @@ local privateFuncs = {
         )
     end,
     getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
-        -- logger.print('getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =') logger.debugPrint(posTanX2)
+        -- logger.infozOut({'getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =', posTanX2})
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -166,7 +166,7 @@ local privateFuncs = {
         }
     end,
     getPlatformObjectTransf_WithYRotationOLD = function(posTanX2) --, angleYFactor)
-        -- logger.print('_getUnderpassTransfWithYRotation starting, posTanX2 =') logger.debugPrint(posTanX2)
+        -- logger.infozOut({'_getUnderpassTransfWithYRotation starting, posTanX2 =', posTanX2})
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -197,7 +197,7 @@ local privateFuncs = {
         -- return transfUtilsUG.mul(transfY, transfZ) -- NO!
     end,
     getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
-        -- logger.print('_getUnderpassTransfWithYRotation starting, posTanX2 =') logger.debugPrint(posTanX2)
+        -- logger.infozOut({'_getUnderpassTransfWithYRotation starting, posTanX2 =', posTanX2})
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -429,7 +429,7 @@ privateFuncs.deco = {
                     }
                 end
             end
-            -- logger.print('transf 4 p = ') logger.debugPrint(transf4P)
+            -- logger.infozOut({'transf 4 p = ', transf4P})
         end
         -- close the last bit if it is shorter than 1 metre - remember walls are all 1 metre wide
         if endY == 0 and lengthAcross > math.floor(absDeltaY) then
@@ -1162,7 +1162,7 @@ privateFuncs.platforms = {
                 }
             end
         end
-        -- logger.print('terrainCoordinates =') logger.debugPrint(terrainCoordinates)
+        -- logger.infozOut({'terrainCoordinates =', terrainCoordinates})
         return terrainCoordinates
     end,
 }
@@ -1569,7 +1569,7 @@ privateFuncs.slopedAreas = {
                 end
             end
         end
-        -- logger.print('terrainCoordinates =') logger.debugPrint(terrainCoordinates)
+        -- logger.infozOut({'terrainCoordinates =', terrainCoordinates})
         return terrainCoordinates
     end,
 }
@@ -1668,7 +1668,7 @@ return {
             raisedFace[i] = face[i]
             raisedFace[i][3] = raisedFace[i][3] + raiseBy
         end
-        -- logger.print('LOLLO raisedFaces =') logger.debugPrint(raisedFace)
+        -- logger.infozOut({'raisedFace =', raisedFace})
         return {
             faces = {raisedFace},
             optional = true,
@@ -1678,7 +1678,7 @@ return {
         }
     end,
     getTerminalDecoTransf = function(posTanX2)
-        -- logger.print('getTerminalDecoTransf starting, posTanX2 =') logger.debugPrint(posTanX2)
+        -- logger.infozOut({'getTerminalDecoTransf starting, posTanX2 =', posTanX2})
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -2132,7 +2132,7 @@ return {
                 isFreeFromFlatAreas[i] = occupiedInfo4FlatAreas == nil
                 isLookAhead[i] = occupiedInfo4FlatAreas == nil or not(occupiedInfo4FlatAreas.isEven)
             end
-            -- logger.print('*** isFreeFromFlatAreas =') logger.debugPrint(isFreeFromFlatAreas)
+            -- logger.infozOut({'*** isFreeFromFlatAreas =', isFreeFromFlatAreas})
             local _getWidthAbove_0m_BarePlatformWidth = function(cpf)
                 local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, cpf.leadingIndex).width
                 if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
@@ -2624,7 +2624,7 @@ cpf =
     edges = {
         addEdges = function(result, tag, params, nTerminal, terminalData)
             logger.infozOut({'moduleHelpers.edges.addEdges starting for terminal', nTerminal, ', tag = ', tag})
-            -- logger.print('result.edgeLists =') logger.debugPrint(result.edgeLists)
+            -- logger.infozOut({'result.edgeLists =', result.edgeLists})
     
             local nNodesInTerminalSoFar = 0 -- privateFuncs.edges._getNNodesInTerminalsSoFar(params, nTerminal)
     
@@ -2641,8 +2641,6 @@ cpf =
     
             privateFuncs.edges._addPlatformEdges(result, tag2nodes, params, nTerminal, terminalData)
             privateFuncs.edges._addTrackEdges(result, tag2nodes, params, nTerminal, terminalData)
-    
-            -- logger.print('build 35716 moduleHelpers.edges.addEdges ending for terminal', nTerminal, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
         end,
         dynamicBridgeTypes_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
             -- local sampleUpdateScriptParams = {
@@ -2671,11 +2669,11 @@ cpf =
             end
 
             for telIndex, edgeListsIndex in pairs(result.platformEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infozOut({'edgeListsIndex =', edgeListsIndex})
                 _updateEdge(edgeListsIndex)
 			end
 			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infozOut({'edgeListsIndex =', edgeListsIndex})
                 _updateEdge(edgeListsIndex)
 				--[[
 				if telIndex ~= nil then
@@ -2707,11 +2705,11 @@ cpf =
             if not(result.trackEdgeListsIndexes) or not(result.trackEdgeListsIndexes[nTerminal]) then return end
 
 			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infozOut({'edgeListsIndex =', edgeListsIndex})
 				if edgeListsIndex ~= nil then
                     result.edgeLists[edgeListsIndex].params.catenary = updateScriptParams.catenary -- true
 					result.edgeLists[edgeListsIndex].params.type = updateScriptParams.trackType -- 'high_speed.lua'
-					-- logger.print('high speed module updated a track') logger.debugPrint(result.edgeLists[edgeListsIndex])
+					-- logger.infozOut({'high speed module updated a track', result.edgeLists[edgeListsIndex]})
 				end
 				--[[
 				if telIndex ~= nil then
@@ -2753,11 +2751,11 @@ cpf =
             end
 
             for telIndex, edgeListsIndex in pairs(result.platformEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infozOut({'edgeListsIndex =', edgeListsIndex})
                 _updateEdge(edgeListsIndex)
 			end
 			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infozOut({'edgeListsIndex =', edgeListsIndex})
                 _updateEdge(edgeListsIndex)
 				--[[
 				if telIndex ~= nil then
@@ -3835,9 +3833,9 @@ cpf =
                 local _modelId = privateFuncs.platformHeads.getHeadModelId(_eraPrefix, _isCargoTerminal, _isRight, _cpf.width, _platformStyleModuleFileName)
                 local posTanX2 = nTrackEdge == 1 and transfUtils.getPosTanX2Reversed(_cpf.posTanX2) or _cpf.posTanX2
                 for hh = 1, howMany4mChunks do
-                    -- logger.print('posTanX2 before =') logger.debugPrint(posTanX2)
+                    -- logger.infozOut({'posTanX2 before =', posTanX2})
                     posTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(posTanX2, _xSize)
-                    -- logger.print('posTanX2 after =') logger.debugPrint(posTanX2)
+                    -- logger.infozOut({'posTanX2 after =', posTanX2})
                     result.models[#result.models+1] = {
                         id = _modelId,
                         slotId = slotId,
@@ -4058,14 +4056,14 @@ cpf =
                         if ii == 1 then
                             local platformHeadModule = _modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]
                             if platformHeadModule ~= nil then
-                                -- logger.print('ii == 1; platformHeadModule =') logger.debugPrint(platformHeadModule)
+                                -- logger.infozOut({'ii == 1; platformHeadModule =', platformHeadModule})
                                 howMany1mChunks = platformHeadModule.metadata.howMany4mChunks * 4
                                 platformHeadExtensionPosTanX2 = transfUtils.getPosTanX2Reversed(centreAreaPosTanX2)
                             end
                         elseif ii == _maxII then
                             local platformHeadModule = _modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]
                             if platformHeadModule ~= nil then
-                                -- logger.print('ii == _maxII; platformHeadModule =') logger.debugPrint(platformHeadModule)
+                                -- logger.infozOut({'ii == _maxII; platformHeadModule =', platformHeadModule})
                                 howMany1mChunks = platformHeadModule.metadata.howMany4mChunks * 4
                                 platformHeadExtensionPosTanX2 = arrayUtils.cloneDeepOmittingFields(centreAreaPosTanX2)
                             end
@@ -4074,9 +4072,9 @@ cpf =
                             local terrainCoordinates = {}
 
                             for hh = 1, howMany1mChunks do
-                                -- logger.print('posTanX2 before =') logger.debugPrint(platformHeadExtensionPosTanX2)
+                                -- logger.infozOut({'posTanX2 before =', platformHeadExtensionPosTanX2})
                                 platformHeadExtensionPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(platformHeadExtensionPosTanX2, 1)
-                                -- logger.print('posTanX2 after =') logger.debugPrint(platformHeadExtensionPosTanX2)
+                                -- logger.infozOut({'posTanX2 after =', platformHeadExtensionPosTanX2})
                                 local platformHeadExtensionTransf = transfUtils.getTransf_Scaled(
                                     privateFuncs.getPlatformObjectTransf_WithYRotation(platformHeadExtensionPosTanX2),
                                     {xScaleFactor, 1, 1}
