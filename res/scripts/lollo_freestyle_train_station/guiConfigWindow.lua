@@ -141,9 +141,6 @@ return {
 
                         layout:addItem(sliderLayout)
                     elseif paramMetadata.uiType == 'CHECKBOX' then
-                        -- print('paramKey = ' .. tostring(paramKey))
-                        -- print('paramMetadata =') debugPrint(paramMetadata)
-                        -- print('paramValue = ' .. tostring(paramValue))
                         local checkbox = api.gui.comp.CheckBox.new('', 'ui/design/components/checkbox_invalid.tga', 'ui/design/components/checkbox_valid.tga')
                         checkbox:setGravity(0.5, 0) -- center horizontally
                         checkbox:onToggle(

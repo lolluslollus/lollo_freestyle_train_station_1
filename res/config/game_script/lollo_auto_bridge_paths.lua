@@ -124,7 +124,7 @@ function data()
                                         -- Street Tuning does 'paths', we do 'paths-on-forced-bridge', so there is no overlapping.
                                         -- If someone has this mod but no Street Tuning, they won't get path automation.
                                         if streetUtils.hasCategory(addedSegment.streetEdge.streetType, 'paths-on-forced-bridge') then
-                                            -- print('addedSegment =') debugPrint(addedSegment)
+                                            -- logger.infozOut({'addedSegment =', addedSegment})
                                             local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(addedSegment.entity)
                                             if not(edgeUtils.isValidId(conId)) then -- do not touch frozen segments
                                                 forceBridgeEventParams[#forceBridgeEventParams+1] = {
