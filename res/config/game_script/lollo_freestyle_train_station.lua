@@ -510,7 +510,7 @@ local _utils = {
         )
     end,
     ---Try to upgrade a construction such as stairs or a lift. This might crash and there is no way to catch it UG TODO, so call it last.
-    ---@return boolean, table<number> | nil
+    ---@return boolean
     tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId, oldConParams)
         logger.infoOut('_tryUpgradeStationOrStairsOrLiftConstruction starting, oldConId =', oldConId)
         if not(edgeUtils.isValidAndExistingId(oldConId)) then return false end
@@ -535,7 +535,7 @@ local _utils = {
 
         local paramsBak_NoSeed = nil
         if oldConParams == nil then
-            -- this is very expensive if it tries to upgrade another freestyle station
+            -- this is very expensive if it tries to upgrade another freestyle station, it should not happen anymore
             logger.warningOut('_tryUpgradeStationOrStairsOrLiftConstruction did NOT receive the params')
             paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
         else
@@ -543,8 +543,7 @@ local _utils = {
             paramsBak_NoSeed = oldConParams
             paramsBak_NoSeed.seed = nil
         end
-        -- local conTransf_lua = transfUtilsUG.new(oldCon.transf:cols(0), oldCon.transf:cols(1), oldCon.transf:cols(2), oldCon.transf:cols(3))
-        local conTransf_lua = transfUtils.getLuaTransfFromSolTransf(oldCon.transf)
+
         return xpcall(
             function()
                 -- UG TODO there is no such thing in the new api, nor an upgrade event, both would be useful
@@ -558,12 +557,12 @@ local _utils = {
                     paramsBak_NoSeed
                 )
                 logger.infoOut('_tryUpgradeStationOrStairsOrLiftConstruction succeeded, upgradedConId =', upgradedConId)
-                return conTransf_lua
+                return true
             end,
             function(error)
                 logger.warningOut('_tryUpgradeStationOrStairsOrLiftConstruction failed', error)
                 -- m_state.warningText = _('NeedAdjust4Snap')
-                return conTransf_lua
+                return false
             end
         )
     end,
@@ -1118,6 +1117,7 @@ local _actions = {
     -- Newly, I rebuild the cons one by one to ease the pain.
         local conProposals_indexedByConId = {}
         local conParams_indexedByConId = {}
+        local conTransfs_indexedByConId = {}
         if args.streetEndEntities ~= nil then
             for _, endEntity in pairs(args.streetEndEntities) do
                 for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
@@ -1141,6 +1141,7 @@ local _actions = {
 
                         conProposals_indexedByConId[conId] = newConProposal
                         conParams_indexedByConId[conId] = newParams
+                        conTransfs_indexedByConId[conId] = conProps.transf
                     end
                 end
             end
@@ -1200,7 +1201,8 @@ local _actions = {
                                 _eventNames.UPGRADE_NEIGHBOUR_CON,
                                 {
                                     conId = result.resultEntities[1],
-                                    conParams = conParams_indexedByConId[oldConId]
+                                    conParams = conParams_indexedByConId[oldConId],
+                                    conTransf = conTransfs_indexedByConId[oldConId]
                                 }
                             ))
                         end
@@ -1219,18 +1221,17 @@ local _actions = {
     end,
     --- Upgrade one of the adjoining constructions so that, if it has snappy edges, it will resnap.
     --- It calls an old routine that may crash uncatchable, so we call it last and one by one.
-    --- args has conId and conParams
+    --- args has conId, conParams, conTransf
     upgradeNeighbourCon = function(args)
-        logger.infoOut('_upgradeNeighbourCon started, args.conId =', args and args.conId)
+        logger.infoOut('_upgradeNeighbourCon started, args.conId =', args and args.conId, 'args.conTransf =', args and args.conTransf)
         if not(args) or not(args.conId) or type(args.conParams) ~= 'table' then return end
 
-        local isThisUpgradeOK, conTransf = _utils.tryUpgradeStationOrStairsOrLiftConstruction(args.conId, args.conParams)
-        if isThisUpgradeOK then return end
+        if _utils.tryUpgradeStationOrStairsOrLiftConstruction(args.conId, args.conParams) then return end
 
         logger.warningOut('_upgradeNeighbourCon failed upgrading construction', args.conId)
         m_state.warningText = _('UnsnappedRoads')
-        if conTransf ~= nil then
-            _utils.buildWarningHint(transfUtils.transf2Position(conTransf, true))
+        if args.conTransf ~= nil then
+            _utils.buildWarningHint(transfUtils.transf2Position(args.conTransf, true))
         end
     end,
     rebuildStationWithLatestProperties = function(oldCon, successEventName, args)

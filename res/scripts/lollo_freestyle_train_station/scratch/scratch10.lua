@@ -66,6 +66,18 @@ xpcall(
     logger.errorOut
 )
 
+local aaa = function()
+    return xpcall(
+        function()
+            assert(true == false)
+            return true
+        end,
+        function(error)
+            return false
+        end
+    )
+end
+local aaaIsTrue = aaa()
 -- they both take the same
 -- logger.profile('### tab', function() for i = 1, 10000 do logger.warningsOut({'lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456}) end end)
 -- logger.profile('### vararg', function() for i = 1, 10000 do logger.warningOut('lollo =', {a = 1, b = 2, c = 3}, nil, true, false, 123.456) end end)
