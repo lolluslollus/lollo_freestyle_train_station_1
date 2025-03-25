@@ -105,21 +105,22 @@ local _utils = {
         end
         _removeNearbyWarningHints()
 
-        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = _constants.unsnappedSomethingMessageConFileName
-        newCon.params = {
+        local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
+        newConProposal.fileName = _constants.unsnappedSomethingMessageConFileName
+        newConProposal.params = {
             message = message4Sign,
             seed = math.abs(math.ceil(pos.x * 1000)),
         }
-        newCon.playerEntity = api.engine.util.getPlayer()
-        newCon.transf = api.type.Mat4f.new(
-            api.type.Vec4f.new(1, 0, 0, 0),
-            api.type.Vec4f.new(0, 1, 0, 0),
-            api.type.Vec4f.new(0, 0, 1, 0),
-            api.type.Vec4f.new(pos.x, pos.y, pos.z, 1)
-        )
+        newConProposal.playerEntity = api.engine.util.getPlayer()
+        -- newConProposal.transf = api.type.Mat4f.new(
+        --     api.type.Vec4f.new(1, 0, 0, 0),
+        --     api.type.Vec4f.new(0, 1, 0, 0),
+        --     api.type.Vec4f.new(0, 0, 1, 0),
+        --     api.type.Vec4f.new(pos.x, pos.y, pos.z, 1)
+        -- )
+        newConProposal.transf = transfUtils.getSolTransfFromLuaTransf(transfUtils.position2Transf(pos))
         local warningProposal = api.type.SimpleProposal.new()
-        warningProposal.constructionsToAdd[1] = newCon
+        warningProposal.constructionsToAdd[1] = newConProposal
 
         local context = api.type.Context:new()
         -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
@@ -510,14 +511,14 @@ local _utils = {
     end,
     ---Try to upgrade a construction such as stairs or a lift. This might crash and there is no way to catch it UG TODO, so call it last.
     ---@return boolean, table<number> | nil
-    tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId)
+    tryUpgradeStationOrStairsOrLiftConstruction = function(oldConId, oldConParams)
         logger.infoOut('_tryUpgradeStationOrStairsOrLiftConstruction starting, oldConId =', oldConId)
         if not(edgeUtils.isValidAndExistingId(oldConId)) then return false end
 
         local oldCon = api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
         logger.infoOut('oldCon.fileName =', oldCon and oldCon.fileName or 'NIL')
         if not(oldCon)
-        or not(oldCon.params)
+        -- or not(oldCon.params)
         or not(arrayUtils.arrayHasValue(
             {
                 _constants.stationConFileName,
@@ -532,15 +533,23 @@ local _utils = {
         ))
         then return false end
 
-        -- this is very expensive if it tries to upgrade another freestyle station
-        local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
-        local conTransf_lua = transfUtilsUG.new(oldCon.transf:cols(0), oldCon.transf:cols(1), oldCon.transf:cols(2), oldCon.transf:cols(3))
+        local paramsBak_NoSeed = nil
+        if oldConParams == nil then
+            -- this is very expensive if it tries to upgrade another freestyle station
+            logger.warningOut('_tryUpgradeStationOrStairsOrLiftConstruction did NOT receive the params')
+            paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
+        else
+            logger.infoOut('_tryUpgradeStationOrStairsOrLiftConstruction received the params')
+            paramsBak_NoSeed = oldConParams
+            paramsBak_NoSeed.seed = nil
+        end
+        -- local conTransf_lua = transfUtilsUG.new(oldCon.transf:cols(0), oldCon.transf:cols(1), oldCon.transf:cols(2), oldCon.transf:cols(3))
+        local conTransf_lua = transfUtils.getLuaTransfFromSolTransf(oldCon.transf)
         return xpcall(
             function()
-                -- UG TODO there is no such thing in the new api,
-                -- nor an upgrade event, both would be useful
+                -- UG TODO there is no such thing in the new api, nor an upgrade event, both would be useful
                 -- print('api.util.getLuaUsedMemory() before = ' .. tostring(api.util.getLuaUsedMemory()))
-                collectgarbage() -- LOLLO TODO this is a stab in the dark to try and avoid crashes in the following
+                collectgarbage() -- this is a stab in the dark to try and avoid crashes in the following; it does reduce memory consumption
                 -- print('api.util.getLuaUsedMemory() after = ' .. tostring(api.util.getLuaUsedMemory()))
                 logger.infoOut('_tryUpgradeStationOrStairsOrLiftConstruction - collect garbage done, oldConId =', oldConId, 'oldCon.fileName =', oldCon.fileName)
                 local upgradedConId = game.interface.upgradeConstruction(
@@ -564,7 +573,7 @@ local _actions = {
     -- which has the same format as the result of api.cmd.make.buildProposal
     addSubway = function(successEventName, args)
         logger.infoOut('_addSubway starting, args =', args)
-        if not(edgeUtils.isValidAndExistingId(args.join2StationConId)) then 
+        if not(edgeUtils.isValidAndExistingId(args.join2StationConId)) then
             logger.warningOut('_addSubway got invalid join2StationConId', args.join2StationConId)
             _utils.sendHideProgress()
             return
@@ -591,8 +600,8 @@ local _actions = {
 
         local subwayTransf = subwayCon.transf
 
-        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = _constants.stationConFileName
+        local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
+        newConProposal.fileName = _constants.stationConFileName
 
         local oldConParams = oldCon.params
         local isSomethingChangedWithFakes, newModules = _utils.replaceFakeEdgesWithSnappy(arrayUtils.cloneDeepOmittingFields(oldConParams.modules, nil, true))
@@ -600,7 +609,7 @@ local _actions = {
             inverseMainTransf = arrayUtils.cloneDeepOmittingFields(oldConParams.inverseMainTransf, nil, true),
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldConParams.mainTransf, nil, true),
             modules = newModules,
-            seed = oldConParams.seed + 1,
+            seed = (oldConParams.seed or 0) + 1,
             subways = arrayUtils.cloneDeepOmittingFields(oldConParams.subways, nil, true),
             -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
             terminals = arrayUtils.cloneDeepOmittingFields(oldConParams.terminals, nil, true),
@@ -643,14 +652,14 @@ local _actions = {
             variant = 0,
         }
         newParams.subways[newSubway_Key] = newSubway_Value
-        newCon.params = newParams
+        newConProposal.params = newParams
 
-        newCon.transf = oldCon.transf
+        newConProposal.transf = oldCon.transf
 
-        newCon.playerEntity = api.engine.util.getPlayer()
+        newConProposal.playerEntity = api.engine.util.getPlayer()
 
         local proposal = api.type.SimpleProposal.new()
-        proposal.constructionsToAdd[1] = newCon
+        proposal.constructionsToAdd[1] = newConProposal
         proposal.constructionsToRemove = { args.join2StationConId, args.subwayConstructionId }
         -- proposal.old2new = {
         --     [join2StationConId] = 0,
@@ -692,8 +701,8 @@ local _actions = {
         and api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
         or nil
 
-        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = _constants.stationConFileName
+        local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
+        newConProposal.fileName = _constants.stationConFileName
 
         local _mainTransf = (oldCon == nil)
             and arrayUtils.cloneDeepOmittingFields(conTransf)
@@ -801,7 +810,7 @@ local _actions = {
         -- end
 
         if oldCon == nil then
-            newCon.params = {
+            newConProposal.params = {
                 -- it is not too correct to pass two parameters, one of which can be inferred from the other. However, performance matters more.
                 inverseMainTransf = _inverseMainTransf,
                 mainTransf = _mainTransf,
@@ -815,13 +824,14 @@ local _actions = {
                 subways = { },
                 terminals = { params_newTerminal },
             }
-            newCon.transf = api.type.Mat4f.new(
-                api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
-                api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
-                api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
-                api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
-            )
-            newCon.name = _('NewStationName') -- LOLLO TODO see if the name can be assigned automatically, as it should
+            -- newConProposal.transf = api.type.Mat4f.new(
+            --     api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
+            --     api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
+            --     api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
+            --     api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
+            -- )
+            newConProposal.transf = transfUtils.getSolTransfFromLuaTransf(conTransf)
+            newConProposal.name = _('NewStationName') -- LOLLO TODO see if the name can be assigned automatically, as it should
         else
             local oldConParams = oldCon.params
             local isSomethingChangedWithFakes, newModules = _utils.replaceFakeEdgesWithSnappy(arrayUtils.cloneDeepOmittingFields(oldConParams.modules, nil, true))
@@ -830,7 +840,7 @@ local _actions = {
                 inverseMainTransf = _inverseMainTransf,
                 mainTransf = _mainTransf,
                 modules = newModules,
-                seed = oldConParams.seed + 1,
+                seed = (oldConParams.seed or 0) + 1,
                 subways = arrayUtils.cloneDeepOmittingFields(oldConParams.subways, nil, true),
                 -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
                 terminals = arrayUtils.cloneDeepOmittingFields(oldConParams.terminals, nil, true),
@@ -839,16 +849,16 @@ local _actions = {
             newParams.modules[params_newModuleKeys[2]] = params_newModuleValues[2]
             newParams.modules[params_newModuleKeys[3]] = params_newModuleValues[3]
             newParams.terminals[#newParams.terminals+1] = params_newTerminal
-            newCon.params = newParams
-            newCon.transf = oldCon.transf
+            newConProposal.params = newParams
+            newConProposal.transf = oldCon.transf
         end
-        newCon.playerEntity = api.engine.util.getPlayer()
+        newConProposal.playerEntity = api.engine.util.getPlayer()
         -- local memorySizeAfter = collectgarbage('count')
         -- local roughTableSize = memorySizeAfter - memorySizeBefore
         -- logger.infoOut('rough table size (kB) =', roughTableSize, 'memory size now (kB) =', memorySizeAfter})
 
         local proposal = api.type.SimpleProposal.new()
-        proposal.constructionsToAdd[1] = newCon
+        proposal.constructionsToAdd[1] = newConProposal
         if edgeUtils.isValidAndExistingId(args.join2StationConId) then
             proposal.constructionsToRemove = { args.join2StationConId }
             -- proposal.old2new = {
@@ -893,271 +903,6 @@ local _actions = {
                     logger.warningOut('_buildStation failed, result =', result)
                     _utils.sendHideProgress()
                 end
-            end
-        )
-    end,
-    rebuildNeighboursOLD = function(args)
-        -- LOLLO TODO join two lifts with a bridge and halve it: one of the halves won't be rebuilt.
-        -- The problem is caused by two different proposals attempting to build nodes in the same location
-        -- This function sends out edge proposals one by one, in parallel, so one cannot use the node of the other.
-        -- Either I send them out in a sequence (the currentPosition function rebuildNeighbours() does that) or I wait for UG TODO to fix this.
-        logger.infoOut('_rebuildNeighbours starting, args =', args)
-        local errorPositions = {}
-
-        local _newNodePositionsXYZ_indexed = {}
-        local _getNearbyNodeId = function(positionXYZ)
-            local _tolerance = 0.001
-            for nodeId, nodePositionXYZ in pairs(_newNodePositionsXYZ_indexed) do
-                if math.abs(nodePositionXYZ.x - positionXYZ.x) < _tolerance
-                and math.abs(nodePositionXYZ.y - positionXYZ.y) < _tolerance
-                and math.abs(nodePositionXYZ.z - positionXYZ.z) < _tolerance then
-                    return nodeId
-                end
-            end
-            local _nearbyNodeIds = edgeUtils.getNearbyObjectIds(
-                transfUtils.position2Transf(positionXYZ),
-                _tolerance,
-                api.type.ComponentType.BASE_NODE,
-                positionXYZ.z - _tolerance,
-                positionXYZ.z + _tolerance
-            )
-            return _nearbyNodeIds[1]
-        end
-        local _setEdgeObjects = function(edgeData, newSegment, proposal)
-            if edgeData.edgeProps.edgeObjects == nil then return end
-
-            local segmentCompObjects = {}
-            for o, edgeObject in pairs(edgeData.edgeProps.edgeObjects) do
-                logger.infoOut('edgeObject =', edgeObject, '#proposal.streetProposal.edgeObjectsToAdd =', #proposal.streetProposal.edgeObjectsToAdd)
-                local eo = api.type.SimpleStreetProposal.EdgeObject.new()
-                eo.left = edgeObject.isLeft
-                eo.model = edgeObject.modelFileName
-                -- eo.model = edgeObject.modelId NO!
-                eo.name = edgeObject.name
-                eo.oneWay = edgeObject.isOneWay
-                eo.param = edgeObject.param
-                if edgeObject.playerEntity then eo.playerEntity = edgeObject.playerEntity end
-                -- LOLLO NOTE the api makes trouble with edge objects unless the edge has entity -1
-                -- 0 crash
-                -- 1 Assertion `eo.edgeEntity.GetId() < 0 && eo.edgeEntity.GetId() >= -(int)result.proposal.addedSegments.size()' failed.
-                -- 2 crash
-                -- 3 crash
-                -- 4 crash
-                -- 5 ecs::Engine::GetComponentDataIndex(const class ecs::Entity &,int) const: Assertion `it != components.end()' failed
-                -- 6 crash
-                -- 7 crash
-                -- 8 ecs::Engine::GetComponentDataIndex(const class ecs::Entity &,int) const: Assertion `it != components.end()' failed.
-
-                -- eo.edgeEntity = newSegment.entity -- 1
-                -- eo.edgeEntity = nNewSegments -- 0 2 3 4 5 6 7 8
-                eo.edgeEntity = -1 -- fix to avoid trouble
-
-                proposal.streetProposal.edgeObjectsToAdd[#proposal.streetProposal.edgeObjectsToAdd+1] = eo
-
-                segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects -1, edgeObject.flag}
-                -- segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects -1, edgeObject.flag} -- 5
-                -- segmentCompObjects[#segmentCompObjects+1] = {#segmentCompObjects -1, edgeObject.flag} -- 6
-                -- segmentCompObjects[#segmentCompObjects+1] = {-#segmentCompObjects, edgeObject.flag} -- 7
-                -- segmentCompObjects[#segmentCompObjects+1] = {#segmentCompObjects, edgeObject.flag} -- 8
-                -- segmentCompObjects[#segmentCompObjects+1] = {-#proposal.streetProposal.edgeObjectsToAdd, edgeObject.flag} -- 0 1
-                -- segmentCompObjects[#segmentCompObjects+1] = {#proposal.streetProposal.edgeObjectsToAdd, edgeObject.flag} -- 2
-                -- segmentCompObjects[#segmentCompObjects+1] = {-#proposal.streetProposal.edgeObjectsToAdd +1, edgeObject.flag} -- 3
-                -- segmentCompObjects[#segmentCompObjects+1] = {#proposal.streetProposal.edgeObjectsToAdd +1, edgeObject.flag} -- 4
-            end
-            logger.infoOut('segmentCompObjects =', segmentCompObjects)
-            newSegment.comp.objects = segmentCompObjects
-        end
-        local _setSegmentProps = function(edgeData, newSegment)
-            local props = edgeData.edgeProps
-            newSegment.comp.tangent0.x = props.posTanX2[1][2][1]
-            newSegment.comp.tangent0.y = props.posTanX2[1][2][2]
-            newSegment.comp.tangent0.z = props.posTanX2[1][2][3]
-            newSegment.comp.tangent1.x = props.posTanX2[2][2][1]
-            newSegment.comp.tangent1.y = props.posTanX2[2][2][2]
-            newSegment.comp.tangent1.z = props.posTanX2[2][2][3]
-            newSegment.comp.type = props.type
-            newSegment.comp.typeIndex = props.typeIndex
-            if props.player ~= nil then newSegment.playerOwned = { player = props.player } end
-            if props.isTrack then
-                newSegment.type = _constants.railEdgeType
-                newSegment.trackEdge.trackType = props.trackType
-                newSegment.trackEdge.catenary = props.catenary
-            else
-                newSegment.type = _constants.streetEdgeType
-                newSegment.streetEdge.streetType = props.streetType
-                newSegment.streetEdge.tramTrackType = props.tramTrackType
-                newSegment.streetEdge.hasBus = props.hasBus
-            end
-        end
-
-        -- edges and nodes
-        local allEdges_indexedByEdgeId = {}
-        if args.newTerminalNeighbours ~= nil then
-            arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, args.newTerminalNeighbours.platforms.edges)
-            arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, args.newTerminalNeighbours.tracks.edges)
-        end
-        if args.trackEndEntities ~= nil then
-            for t, terminalEndEntities in pairs(args.trackEndEntities) do
-                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, terminalEndEntities.platforms.jointNeighbourEdges.props)
-                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, terminalEndEntities.tracks.jointNeighbourEdges.props)
-            end
-        end
-        if args.streetEndEntities ~= nil then
-            for e, endEntity in pairs(args.streetEndEntities) do
-                -- you can't do the same edge twice coz the table is indexed by edgeId
-                arrayUtils.concatKeysValues(allEdges_indexedByEdgeId, endEntity.jointNeighbourEdges.props)
-            end
-        end
-        logger.infoOut('allEdges_indexedByEdgeId =', allEdges_indexedByEdgeId)
-
-        local nNewEntities_total = -1
-        local proposalWithObjectlessEdges = api.type.SimpleProposal.new()
-        local proposalsWithEdgesWithObjects = {}
-        local _getInitialLoopProps = function(edgeData)
-            local isSegmentWithEdgeObjects = edgeData.edgeProps.edgeObjects ~= nil
-            local proposal = nil
-            local nNewEntities_local = 0
-            if isSegmentWithEdgeObjects then
-                proposal = api.type.SimpleProposal.new()
-                proposalsWithEdgesWithObjects[#proposalsWithEdgesWithObjects+1] = proposal
-                nNewEntities_local = -1
-            else
-                proposal = proposalWithObjectlessEdges
-                nNewEntities_local = nNewEntities_total
-            end
-
-            return isSegmentWithEdgeObjects, proposal, nNewEntities_local
-        end
-        for e, edgeData in pairs(allEdges_indexedByEdgeId) do
-            local isSegmentWithEdgeObjects, proposal, nNewEntities_local = _getInitialLoopProps(edgeData)
-            -- first add the segment, so its "entity" will always be -1, so the edge objects won't suffer at the hands of the dumb api
-            local newSegment = api.type.SegmentAndEntity.new()
-            newSegment.entity = nNewEntities_local
-            _setSegmentProps(edgeData, newSegment)
-            _setEdgeObjects(edgeData, newSegment, proposal)
-            nNewEntities_local = nNewEntities_local - 1
-
-            local node0Id, node1Id = nil, nil
-            local _addNode = function(positionXYZ)
-                local newNode = api.type.NodeAndEntity.new()
-                newNode.entity = nNewEntities_local
-                newNode.comp.position.x = positionXYZ.x
-                newNode.comp.position.y = positionXYZ.y
-                newNode.comp.position.z = positionXYZ.z
-                proposal.streetProposal.nodesToAdd[#proposal.streetProposal.nodesToAdd+1] = newNode
-                _newNodePositionsXYZ_indexed[nNewEntities_local] = {
-                    x = positionXYZ.x,
-                    y = positionXYZ.y,
-                    z = positionXYZ.z,
-                }
-
-                nNewEntities_local = nNewEntities_local - 1
-                return newNode.entity
-            end
-            node0Id = _getNearbyNodeId(edgeData.node0Props.position) or _addNode(edgeData.node0Props.position)
-            node1Id = _getNearbyNodeId(edgeData.node1Props.position) or _addNode(edgeData.node1Props.position)
-
-            -- now the nodes are done, complete the segment
-            newSegment.comp.node0 = node0Id
-            newSegment.comp.node1 = node1Id
-            proposal.streetProposal.edgesToAdd[#proposal.streetProposal.edgesToAdd+1] = newSegment
-
-            if not(isSegmentWithEdgeObjects) then nNewEntities_total = nNewEntities_local end
-        end
-
-        -- neighbouring constructions
-        if args.streetEndEntities ~= nil then
-            local neighbourConIds = {}
-            for _, endEntity in pairs(args.streetEndEntities) do
-                for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
-                    if not(arrayUtils.arrayHasValue(neighbourConIds, conId)) then -- make sure you don't do the same con twice
-                        neighbourConIds[#neighbourConIds+1] = conId
-                        -- this is very expensive if the neighbouring con is a freestyle station
-                        local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
-                        newParams.seed = conProps.params.seed + 1
-                        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-                        newCon.fileName = conProps.fileName
-                        newCon.params = newParams
-                        newCon.playerEntity = api.engine.util.getPlayer()
-                        -- newCon.transf = oldCon.transf
-                        newCon.transf = api.type.Mat4f.new(
-                            api.type.Vec4f.new(conProps.transf[1], conProps.transf[2], conProps.transf[3], conProps.transf[4]),
-                            api.type.Vec4f.new(conProps.transf[5], conProps.transf[6], conProps.transf[7], conProps.transf[8]),
-                            api.type.Vec4f.new(conProps.transf[9], conProps.transf[10], conProps.transf[11], conProps.transf[12]),
-                            api.type.Vec4f.new(conProps.transf[13], conProps.transf[14], conProps.transf[15], conProps.transf[16])
-                        )
-
-                        proposalWithObjectlessEdges.constructionsToAdd[#proposalWithObjectlessEdges.constructionsToAdd+1] = newCon
-                    end
-                end
-            end
-        end
-
-        for _, pos in pairs(errorPositions) do
-            if pos ~= nil and type(pos.x) == 'number' and type(pos.y) == 'number' and type(pos.z) == 'number' then
-                local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-                newCon.fileName = _constants.unsnappedSomethingMessageConFileName
-                newCon.params = {
-                    seed = math.abs(math.ceil(pos.x * 1000)),
-                }
-                newCon.playerEntity = api.engine.util.getPlayer()
-                newCon.transf = api.type.Mat4f.new(
-                    api.type.Vec4f.new(1, 0, 0, 0),
-                    api.type.Vec4f.new(0, 1, 0, 0),
-                    api.type.Vec4f.new(0, 0, 1, 0),
-                    api.type.Vec4f.new(pos.x, pos.y, pos.z, 1)
-                )
-
-                proposalWithObjectlessEdges.constructionsToAdd[#proposalWithObjectlessEdges.constructionsToAdd+1] = newCon
-            end
-        end
-        logger.infoOut('_rebuildNeighbours made proposalWithObjectlessEdges =', proposalWithObjectlessEdges)
-        logger.infoOut('_rebuildNeighbours made proposalsWithEdgesWithObjects =', proposalsWithEdgesWithObjects)
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true -- default is false, true gives smoother Z
-        -- context.cleanupStreetGraph = true -- default is false
-        -- context.gatherBuildings = true  -- default is false
-        -- context.gatherFields = true -- default is true
-        context.player = api.engine.util.getPlayer() -- default is -1
-
-        api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposalWithObjectlessEdges, context, true),
-            function(result, success)
-                logger.infoOut('_rebuildNeighbours success_0 = ', success)
-                if success then
-                    -- Write away the adjoining constructions
-                    local newConIds = {}
-                    if result.resultEntities ~= nil then
-                        for _, conId in pairs(result.resultEntities) do
-                            newConIds[#newConIds+1] = conId
-                        end
-                        logger.infoOut('newConIds =', newConIds)
-                    end
-                    -- Add edges with objects, one by one coz the api does not work well with edge objects
-                    for _, proposal in pairs(proposalsWithEdgesWithObjects) do
-                        api.cmd.sendCommand(
-                            api.cmd.make.buildProposal(proposal, context, true),
-                            function(result_1, success_1)
-                                logger.infoOut('_rebuildNeighbours success_1 = ', success_1)
-                                if not(success_1) then logger.warningOut('cannot rebuild all the edge objects ONE') end
-                                if result_1.resultProposalData.errorState.critical then logger.warningOut('cannot rebuild all the edge objects ONE_TWO') end
-                            end
-                        )
-                    end
-                    -- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap.
-                    local _upgradeNeighbourCons = function()
-                        local isAnyUpgradeFailed = false
-                        for _, newConId in pairs(newConIds) do
-                            isAnyUpgradeFailed = isAnyUpgradeFailed or not(_utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId))
-                        end
-                        logger.infoOut('isAnyUpgradeFailed =', isAnyUpgradeFailed)
-                        if not(isAnyUpgradeFailed) then return end
-
-                        m_state.warningText = _('UnsnappedRoads')
-                    end
-                    _upgradeNeighbourCons()
-                end
-                _utils.sendHideProgress()
             end
         )
     end,
@@ -1371,32 +1116,37 @@ local _actions = {
     -- LOLLO NOTE sometimes the stairs, which were attached directly to the station, cannot be rebuilt.
     -- It helps if the faraway end is not snappy.
     -- Newly, I rebuild the cons one by one to ease the pain.
-        local neighbourCons_indexedByConId = {}
+        local conProposals_indexedByConId = {}
+        local conParams_indexedByConId = {}
         if args.streetEndEntities ~= nil then
             for _, endEntity in pairs(args.streetEndEntities) do
                 for conId, conProps in pairs(endEntity.jointNeighbourNode.conProps) do
-                    if not(neighbourCons_indexedByConId[conId]) then -- make sure you don't do the same con twice
+                    if not(conProposals_indexedByConId[conId]) then -- make sure you don't do the same con twice
                         -- this is very expensive if the neighbouring con is a freestyle station
-                        local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
-                        newParams.seed = conProps.params.seed + 1
-                        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-                        newCon.fileName = conProps.fileName
-                        newCon.params = newParams
-                        newCon.playerEntity = api.engine.util.getPlayer()
-                        newCon.transf = api.type.Mat4f.new(
-                            api.type.Vec4f.new(conProps.transf[1], conProps.transf[2], conProps.transf[3], conProps.transf[4]),
-                            api.type.Vec4f.new(conProps.transf[5], conProps.transf[6], conProps.transf[7], conProps.transf[8]),
-                            api.type.Vec4f.new(conProps.transf[9], conProps.transf[10], conProps.transf[11], conProps.transf[12]),
-                            api.type.Vec4f.new(conProps.transf[13], conProps.transf[14], conProps.transf[15], conProps.transf[16])
-                        )
+                        -- local newParams = arrayUtils.cloneDeepOmittingFields(conProps.params)
+                        -- this is faster
+                        local newParams = conProps.params
+                        newParams.seed = (conProps.params.seed or 0) + 1
+                        local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
+                        newConProposal.fileName = conProps.fileName
+                        newConProposal.params = newParams
+                        newConProposal.playerEntity = api.engine.util.getPlayer()
+                        -- newConProposal.transf = api.type.Mat4f.new(
+                        --     api.type.Vec4f.new(conProps.transf[1], conProps.transf[2], conProps.transf[3], conProps.transf[4]),
+                        --     api.type.Vec4f.new(conProps.transf[5], conProps.transf[6], conProps.transf[7], conProps.transf[8]),
+                        --     api.type.Vec4f.new(conProps.transf[9], conProps.transf[10], conProps.transf[11], conProps.transf[12]),
+                        --     api.type.Vec4f.new(conProps.transf[13], conProps.transf[14], conProps.transf[15], conProps.transf[16])
+                        -- )
+                        newConProposal.transf = transfUtils.getSolTransfFromLuaTransf(conProps.transf)
 
-                        neighbourCons_indexedByConId[conId] = newCon
+                        conProposals_indexedByConId[conId] = newConProposal
+                        conParams_indexedByConId[conId] = newParams
                     end
                 end
             end
         end
 
-        if arrayUtils.getCount(neighbourCons_indexedByConId, true) < 1 then
+        if arrayUtils.getCount(conProposals_indexedByConId, true) < 1 then
             _utils.sendHideProgress()
             collectgarbage() -- LOLLO TODO collect if error too
             return
@@ -1409,32 +1159,35 @@ local _actions = {
         -- context.gatherFields = true -- default is true
         context.player = api.engine.util.getPlayer() -- default is -1
 
-        local conProposals = {}
-        for _, conProps in pairs(neighbourCons_indexedByConId) do
-            conProposals[#conProposals+1] = conProps
+        local conIdsAndProposals = {} -- unindex the table
+        for conId, conProposal in pairs(conProposals_indexedByConId) do
+            conIdsAndProposals[#conIdsAndProposals+1] = {conId = conId, conProposal = conProposal}
         end
         local conIndex = 1
         local isSomethingWrong = false
 
         local _rebuildCon = function(nextFunc)
-            local newCon = conProposals[conIndex]
-            if not(newCon) then
+            local newConIdAndProposal = conIdsAndProposals[conIndex]
+            if not(newConIdAndProposal) then -- no more cons to be processed
                 if isSomethingWrong then
                     local stationCon = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
                     local stationConPositionXYZ = (stationCon ~= nil and stationCon.fileName == _constants.stationConFileName)
                         and transfUtils.transf2Position(
-                            transfUtilsUG.new(stationCon.transf:cols(0), stationCon.transf:cols(1), stationCon.transf:cols(2), stationCon.transf:cols(3)),
+                            -- transfUtilsUG.new(stationCon.transf:cols(0), stationCon.transf:cols(1), stationCon.transf:cols(2), stationCon.transf:cols(3)),
+                            transfUtils.getLuaTransfFromSolTransf(stationCon.transf),
                             true
                         )
                         _utils.buildWarningHint(stationConPositionXYZ, _('UnsnappedNeighbouringConstruction'), _('UnsnappedNeighbouringConstruction'))
                 end
                 _utils.sendHideProgress()
-                collectgarbage() -- LOLLO TODO collect if error too
+                collectgarbage()
                 return
             end
 
             local simpleProposal = api.type.SimpleProposal.new()
-            simpleProposal.constructionsToAdd[1] = conProposals[conIndex]
+            simpleProposal.constructionsToAdd[1] = newConIdAndProposal.conProposal
+            local oldConId = newConIdAndProposal.conId
+            logger.infoOut('about to rebuild the con with previous id =', oldConId)
             api.cmd.sendCommand(
                 api.cmd.make.buildProposal(simpleProposal, context, true),
                 function(result, success)
@@ -1444,15 +1197,19 @@ local _actions = {
                             api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                                 string.sub(debug.getinfo(1, 'S').source, 1),
                                 _eventId,
-                                _eventNames.UPGRADE_NEIGHBOUR_CONS,
+                                _eventNames.UPGRADE_NEIGHBOUR_CON,
                                 {
-                                    conIds = {result.resultEntities[1]}
+                                    conId = result.resultEntities[1],
+                                    conParams = conParams_indexedByConId[oldConId]
                                 }
                             ))
                         end
                     else
                         isSomethingWrong = true
-                        logger.warningOut('_rebuildNeighbourCons failed to rebuild some constructions, proposal and result.resultProposalData =', simpleProposal, result.resultProposalData)
+                        logger.warningOut(
+                            '_rebuildCon failed to rebuild the construction that previously had conId =', oldConId,
+                            ' , proposal and result.resultProposalData =', simpleProposal, result and result.resultProposalData
+                        )
                     end
                     nextFunc(nextFunc)
                 end
@@ -1460,26 +1217,21 @@ local _actions = {
         end
         _rebuildCon(_rebuildCon)
     end,
-    --- Upgrade the adjoining constructions so that, if they have snappy edges, they will resnap. It calls an old routine that may crash uncatchable, so call it last.
-    upgradeNeighbourCons = function(args)
-        logger.infoOut('_upgradeNeighbourCons started')
-        if not(args) or type(args.conIds) ~= 'table' then return end
+    --- Upgrade one of the adjoining constructions so that, if it has snappy edges, it will resnap.
+    --- It calls an old routine that may crash uncatchable, so we call it last and one by one.
+    --- args has conId and conParams
+    upgradeNeighbourCon = function(args)
+        logger.infoOut('_upgradeNeighbourCon started, args.conId =', args and args.conId)
+        if not(args) or not(args.conId) or type(args.conParams) ~= 'table' then return end
 
-        local isAnyUpgradeFailed = false
-        for _, newConId in pairs(args.conIds) do
-            local isThisUpgradeOK, conTransf = _utils.tryUpgradeStationOrStairsOrLiftConstruction(newConId)
-            if not(isThisUpgradeOK) then
-                logger.warningOut('_upgradeNeighbourCons failed upgrading construction', newConId)
-                if conTransf ~= nil then
-                    _utils.buildWarningHint(transfUtils.transf2Position(conTransf, true))
-                end
-            end
-            isAnyUpgradeFailed = isAnyUpgradeFailed or not(isThisUpgradeOK)
-        end
-        if not(isAnyUpgradeFailed) then return end
+        local isThisUpgradeOK, conTransf = _utils.tryUpgradeStationOrStairsOrLiftConstruction(args.conId, args.conParams)
+        if isThisUpgradeOK then return end
 
-        logger.warningOut('_upgradeNeighbourCons: some construction upgrades failed')
+        logger.warningOut('_upgradeNeighbourCon failed upgrading construction', args.conId)
         m_state.warningText = _('UnsnappedRoads')
+        if conTransf ~= nil then
+            _utils.buildWarningHint(transfUtils.transf2Position(conTransf, true))
+        end
     end,
     rebuildStationWithLatestProperties = function(oldCon, successEventName, args)
         logger.infoOut('_rebuildStationWithLatestProperties starting, args =', args)
@@ -1575,7 +1327,7 @@ local _actions = {
             local newTerminals = {}
             for t = 1, _maxT, 1 do
                 if not(arrayUtils.arrayHasValue(nTerminalsToRemove, t)) then
-                    -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
+                    -- this is expensive but we need it otherwise we get userdata - lua data mismatches
                     newTerminals[#newTerminals+1] = arrayUtils.cloneDeepOmittingFields(oldConParams.terminals[t], nil, true)
                     -- newTerminals[#newTerminals+1] = oldConParams.terminals[t]
                 end
@@ -1586,7 +1338,7 @@ local _actions = {
             inverseMainTransf = arrayUtils.cloneDeepOmittingFields(oldConParams.inverseMainTransf, nil, true),
             mainTransf = arrayUtils.cloneDeepOmittingFields(oldConParams.mainTransf, nil, true),
             modules = newModules,
-            seed = oldConParams.seed + 1,
+            seed = (oldConParams.seed or 0) + 1,
             subways = arrayUtils.cloneDeepOmittingFields(oldConParams.subways, nil, true),
             terminals = _getTerminalParams(),
         }
@@ -1594,14 +1346,14 @@ local _actions = {
         if #newParams.terminals < 1 then newParams.subways = {} end
         logger.infoOut('_rebuildStationWithLatestProperties newParams.modules =', newParams.modules)
 
-        local newCon = api.type.SimpleProposal.ConstructionEntity.new()
-        newCon.fileName = _constants.stationConFileName
-        newCon.params = newParams
-        newCon.playerEntity = api.engine.util.getPlayer()
-        newCon.transf = oldCon.transf
+        local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
+        newConProposal.fileName = _constants.stationConFileName
+        newConProposal.params = newParams
+        newConProposal.playerEntity = api.engine.util.getPlayer()
+        newConProposal.transf = oldCon.transf
 logger.infoOut('ONE')
         if #nTerminalsToRemove < _maxT then
-            proposal.constructionsToAdd[1] = newCon
+            proposal.constructionsToAdd[1] = newConProposal
         end
 logger.infoOut('TWO')
         proposal.constructionsToRemove = { args.stationConstructionId }
@@ -1681,14 +1433,16 @@ logger.infoOut('FOUR')
         )
     end,
     removeNeighbours = function(successEventName, args)
-        logger.infoOut('_removeNeighbours starting, successEventName = ', successEventName)
-        -- logger.infoOut('args =', args})
-        logger.thingOut('args.nTerminalsToRemove =', args.nTerminalsToRemove)
-        logger.thingOut('args.trackEdgeList =', args.trackEdgeList)
-        logger.thingOut('args.platformEdgeList =', args.platformEdgeList)
-        logger.thingOut('args.newTerminalNeighbours =', args.newTerminalNeighbours)
-        logger.thingOut('args.trackEndEntities =', args.trackEndEntities)
-        logger.thingOut('args.streetEndEntities =', args.streetEndEntities)
+        if logger.isExtendedLog() then
+            logger.infoOut('_removeNeighbours starting, successEventName = ', successEventName)
+            -- logger.infoOut('args =', args})
+            logger.thingOut('args.nTerminalsToRemove =', args.nTerminalsToRemove)
+            logger.thingOut('args.trackEdgeList =', args.trackEdgeList)
+            logger.thingOut('args.platformEdgeList =', args.platformEdgeList)
+            logger.thingOut('args.newTerminalNeighbours =', args.newTerminalNeighbours)
+            logger.thingOut('args.trackEndEntities =', args.trackEndEntities)
+            logger.thingOut('args.streetEndEntities =', args.streetEndEntities)
+        end
 
         local trackEdgeIds = {}
         local platformEdgeIds = {}
@@ -3734,8 +3488,8 @@ function data()
                         end
                     elseif name == _eventNames.REBUILD_NEIGHBOUR_CONS then
                         _actions.rebuildNeighbourCons(args)
-                    elseif name == _eventNames.UPGRADE_NEIGHBOUR_CONS then
-                        _actions.upgradeNeighbourCons(args)
+                    elseif name == _eventNames.UPGRADE_NEIGHBOUR_CON then
+                        _actions.upgradeNeighbourCon(args)
                     elseif name == _eventNames.BULLDOZE_STATION_REQUESTED then
                         _utils.sendHideProgress()
                         _actions.bulldozeConstruction(args.stationConstructionId)

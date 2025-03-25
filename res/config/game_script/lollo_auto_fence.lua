@@ -206,12 +206,13 @@ local _actions = {
             newParams[pm.key] = modelHelper.getDefaultIndexes()[pm.key]
         end
         newCon.params = newParams
-        newCon.transf = api.type.Mat4f.new(
-            api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
-            api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
-            api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
-            api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
-        )
+        -- newCon.transf = api.type.Mat4f.new(
+        --     api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
+        --     api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
+        --     api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
+        --     api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
+        -- )
+        newCon.transf = transfUtils.getSolTransfFromLuaTransf(conTransf)
 
         newCon.playerEntity = api.engine.util.getPlayer()
 
