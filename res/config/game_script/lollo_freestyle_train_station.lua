@@ -562,7 +562,7 @@ local _utils = {
             end,
             function(error)
                 logger.warningOut('_tryUpgradeStationOrStairsOrLiftConstruction failed', error)
-                m_state.warningText = _('NeedAdjust4Snap')
+                -- m_state.warningText = _('NeedAdjust4Snap')
                 return conTransf_lua
             end
         )
