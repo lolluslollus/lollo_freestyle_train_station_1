@@ -169,10 +169,12 @@ local _actions = {
 
 local _handlers = {
     guiHandleParamValueChanged = function(conId, paramsMetadata, paramKey, newParamValueIndexBase0)
-        logger.infoOut('guiHandleParamValueChanged firing, conId =', conId)
-        logger.thingOut('paramsMetadata =', paramsMetadata)
-        logger.thingOut('paramKey =', paramKey)
-        logger.thingOut('newParamValueIndexBase0 =', newParamValueIndexBase0)
+        if logger.isExtendedLog() then
+            logger.infoOut('guiHandleParamValueChanged firing, conId =', conId)
+            logger.thingOut('paramsMetadata =', paramsMetadata)
+            logger.thingOut('paramKey =', paramKey)
+            logger.thingOut('newParamValueIndexBase0 =', newParamValueIndexBase0)
+        end
         if not(edgeUtils.isValidAndExistingId(conId)) then
             logger.warningOut('guiHandleParamValueChanged got no con or no valid con')
         end

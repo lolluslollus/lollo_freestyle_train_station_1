@@ -611,7 +611,7 @@ _guiActions.validateFenceWaypointBuilt = function(targetWaypointModelId, newWayp
     logger.infoOut('similarObjectsIdsInAnyEdges =', similarObjectIdsInAnyEdges)
     -- forbid building more then two waypoints of the same type
     local bulldozeAllWaypointsFunc = function()
-        logger.thingOut('bulldozeAllWaypointsFunc starting')
+        logger.infoOut('bulldozeAllWaypointsFunc starting')
         _guiActions.bulldozeWaypoints(similarObjectIdsInAnyEdges)
     end
     if #similarObjectIdsInAnyEdges > 2 then
