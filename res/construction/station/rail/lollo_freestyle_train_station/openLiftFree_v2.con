@@ -30,7 +30,7 @@ function data()
 		skipCollision = false, -- true,
         params = _openLiftOpenStairsHelpers.getOpenLiftParamsMetadata(),
 		updateFn = function(params)
-            logger.infoOut('openLiftFree_v2.updateFn firing, params = ', arrayUtils.cloneDeepOmittingFields(params, {'state'}))
+            logger.infoOut('openLiftFree_v2.updateFn firing, params with no state = ', arrayUtils.cloneDeepOmittingFields(params, {'state'}))
             local _face = {
                 {-2.2, -3.7, 0, 1}, {-2.2, 3.7, 0, 1}, {2.2, 3.7, 0, 1}, {2.2, -3.7, 0, 1}
             }

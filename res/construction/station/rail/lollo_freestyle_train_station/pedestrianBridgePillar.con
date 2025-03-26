@@ -50,7 +50,7 @@ function data()
             },
         },
 		updateFn = function(params)
-            logger.infoOut('pedestrianBridgePillar.updateFn firing, params = ', arrayUtils.cloneDeepOmittingFields(params, {'state'}))
+            logger.infoOut('pedestrianBridgePillar.updateFn firing, params with no state = ', arrayUtils.cloneDeepOmittingFields(params, {'state'}))
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _height = _paramReaders.getHeight(params)
             local _face = {

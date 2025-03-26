@@ -27,7 +27,7 @@ local private = {
         -- Use the weight painting, then the gradient tool on every vertex group.
         -- Don't forget to clean and normalise each vertex group after editing, like with meshes.
         return function(params)
-            -- logger.infoOut('newUpdateFn starting with params =', arrayUtils.cloneOmittingFields(params, {'state'}))
+            -- logger.infoOut('newUpdateFn starting with params with no state =', arrayUtils.cloneOmittingFields(params, {'state'}))
             -- UG TODO
             -- LOLLO NOTE
             -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:

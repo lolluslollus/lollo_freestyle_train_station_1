@@ -107,8 +107,10 @@ local _actions = {
         newParams.seed = newParams.seed + 1 -- otherwise the game complains
         local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(newParams, {'seed'})
         newCon.params = newParams
-        logger.infoOut('oldCon.params =', oldCon.params)
-        logger.infoOut('newCon.params =', newCon.params)
+        if logger.isExtendedLog() then
+            logger.infoOut('oldCon.params =', oldCon.params)
+            logger.infoOut('newCon.params =', newCon.params)
+        end
         newCon.playerEntity = api.engine.util.getPlayer()
         newCon.transf = oldCon.transf
         -- local conTransf_lua = transfUtilsUG.new(newCon.transf:cols(0), newCon.transf:cols(1), newCon.transf:cols(2), newCon.transf:cols(3))

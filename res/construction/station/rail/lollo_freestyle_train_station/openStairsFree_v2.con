@@ -32,7 +32,7 @@ function data()
 		skipCollision = false, -- true,
         params = _openLiftOpenStairsHelpers.getOpenStairsParamsMetadata_v2(),
 		updateFn = function(params)
-            logger.infoOut('openStairsFree_v2.updateFn firing, params =', _arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+            logger.infoOut('openStairsFree_v2.updateFn firing, params with no state =', _arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
             local _height = _paramReaders.getHeight(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
             logger.infoOut('### _bridgeChunkLength = ', _bridgeChunkLength)

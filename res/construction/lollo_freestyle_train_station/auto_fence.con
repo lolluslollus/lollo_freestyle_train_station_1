@@ -177,7 +177,7 @@ function data()
 		params = {},
 		updateFn = function(params)
             logger.infoOut(
-                'auto_fence.updateFn firing, params =',
+                'auto_fence.updateFn firing, some params =',
                 arrayUtils.cloneDeepOmittingFields(
                     params,
                     {'state', 'transfs', 'transfs_ground', 'transfs_wallBehind'},

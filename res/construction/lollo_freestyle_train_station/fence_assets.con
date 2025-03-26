@@ -178,7 +178,7 @@ function data()
 		},
 		params = fenceModelHelper.getConParams(),
 		updateFn = function(params)
-            logger.infoOut('fenceAssetsScript.updateFn firing, params =', arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+            logger.infoOut('fenceAssetsScript.updateFn firing, params with no state =', arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
             local _initParams = function()
                 local defaults = fenceModelHelper.getDefaultIndexes()
                 params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
