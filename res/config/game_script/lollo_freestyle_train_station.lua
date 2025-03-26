@@ -597,8 +597,8 @@ local _actions = {
             return
         end
 
-        local _oldStationConParams = _oldStationCon.params
-        local _isSomethingChangedWithFakes, _newModules = _utils.replaceFakeEdgesWithSnappy(arrayUtils.cloneDeepOmittingFields(_oldStationConParams.modules, nil, true))
+        local _oldStationParams = _oldStationCon.params
+        local _isSomethingChangedWithFakes, _newModules = _utils.replaceFakeEdgesWithSnappy(arrayUtils.cloneDeepOmittingFields(_oldStationParams.modules, nil, true))
         if _isSomethingChangedWithFakes then logger.warningOut('_addSubway found some fake edges, this should never happen') end
         local _getNextAvailableSlotId = function()
             local _counter = 0
@@ -609,7 +609,7 @@ local _actions = {
                 if _newModules[_testResult] == nil then return _testResult end
             end
 
-            logger.warningOut('cannot find an available slot for a subway, this should never happen')
+            logger.warningOut('_addSubway cannot find an available slot for a subway, this should never happen')
             return false
         end
         local _newSubwayKey = _getNextAvailableSlotId()
@@ -618,24 +618,19 @@ local _actions = {
         local _subwayTransf_lua = transfUtils.getLuaTransfFromSolTransf(_oldSubwayCon.transf)
         local _newSubwayValue = {
             subwayConFileName = _oldSubwayCon.fileName,
-            -- transf = transfUtilsUG.new(subwayTransf_sol:cols(0), subwayTransf_sol:cols(1), subwayTransf_sol:cols(2), subwayTransf_sol:cols(3))
             transf = _subwayTransf_lua,
             transf2Link = transfUtils.getTransf_Shifted(_subwayTransf_lua, {constants.subwayPos2LinkX, constants.subwayPos2LinkY, constants.subwayPos2LinkZ}),
         }
-        -- newSubway_Value.transf2Link = transfUtilsUG.mul(
-        --     newSubway_Value.transf,
-        --     { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  constants.subwayPos2LinkX, constants.subwayPos2LinkY, constants.subwayPos2LinkZ, 1 }
-        -- )
-        local _newParams = {
-            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.inverseMainTransf, nil, true),
-            mainTransf = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.mainTransf, nil, true),
+        local _newStationParams = {
+            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(_oldStationParams.inverseMainTransf, nil, true),
+            mainTransf = arrayUtils.cloneDeepOmittingFields(_oldStationParams.mainTransf, nil, true),
             modules = _newModules,
-            seed = (_oldStationConParams.seed or 0) + 1,
-            subways = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.subways, nil, true),
+            seed = (_oldStationParams.seed or 0) + 1,
+            subways = arrayUtils.cloneDeepOmittingFields(_oldStationParams.subways, nil, true),
             -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
-            terminals = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.terminals, nil, true),
+            terminals = arrayUtils.cloneDeepOmittingFields(_oldStationParams.terminals, nil, true),
         }
-        _newParams.modules[_newSubwayKey] = {
+        _newStationParams.modules[_newSubwayKey] = {
             metadata = {}, -- it gets overwritten
             name = constants.subwayModuleFileName,
             updateScript = {
@@ -644,11 +639,11 @@ local _actions = {
             },
             variant = 0,
         }
-        _newParams.subways[_newSubwayKey] = _newSubwayValue
+        _newStationParams.subways[_newSubwayKey] = _newSubwayValue
 
         local _newStationConProposal = api.type.SimpleProposal.ConstructionEntity.new()
         _newStationConProposal.fileName = constants.stationConFileName
-        _newStationConProposal.params = _newParams
+        _newStationConProposal.params = _newStationParams
         _newStationConProposal.playerEntity = api.engine.util.getPlayer()
         _newStationConProposal.transf = _oldStationCon.transf
 
@@ -698,7 +693,7 @@ local _actions = {
         local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
         newConProposal.fileName = constants.stationConFileName
 
-        local _mainTransf = (oldCon == nil)
+        local _mainTransf = not(oldCon)
             and arrayUtils.cloneDeepOmittingFields(conTransf)
             or arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true)
         logger.infoOut('_mainTransf =', _mainTransf)
