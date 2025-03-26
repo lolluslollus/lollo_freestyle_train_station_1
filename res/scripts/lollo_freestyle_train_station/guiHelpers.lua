@@ -467,7 +467,13 @@ guiHelpers.showWaypointDistance = function(distance)
     guiHelpers.setWindowPosition(window, position)
 
     -- make title bar invisible without that dumb pseudo css
-    window:getLayout():getItem(0):setVisible(false, false)
+    local _wl = window:getLayout()
+    if _wl ~= nil then
+        local _wli0 = _wl:getItem(0)
+        if _wli0 ~= nil then
+            _wli0:setVisible(false, false)
+        end
+    end
 
     window:onClose(
         function()
