@@ -86,7 +86,7 @@ guiHelpers.showProgress = function(text, title, onCloseFunc)
     window:onClose(
         function()
             guiHelpers.isShowingProgress = false
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
             if type(onCloseFunc) == 'function' then onCloseFunc() end
         end
     )
@@ -152,7 +152,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                             eventArgs
                         ))
                     end
-                    window:setVisible(false, false)
+                    if window ~= nil then window:setVisible(false, false) end
                 end
             )
 
@@ -192,7 +192,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                         eventArgs
                     ))
                 end
-                window:setVisible(false, false)
+                if window ~= nil then window:setVisible(false, false) end
             end
         )
         layout:addItem(button)
@@ -250,7 +250,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             --         eventArgs
             --     ))
             -- end
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
         end
     )
 end
@@ -279,7 +279,7 @@ guiHelpers.showWarning = function(text, onCloseFunc)
     window:onClose(
         function()
             guiHelpers.isShowingWarning = false
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
             if type(onCloseFunc) == 'function' then onCloseFunc() end
         end
     )
@@ -319,7 +319,7 @@ guiHelpers.showSaveWarning = function(text)
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
             guiHelpers.isAllowSaving = false
         end
     )
@@ -439,7 +439,7 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
         function()
             logger.infoOut('guiHelpers.showWarningWithGoto closing')
             guiHelpers.isShowingWarningWithGoTo = false
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
         end
     )
 end
@@ -473,7 +473,7 @@ guiHelpers.showWaypointDistance = function(distance)
         function()
             logger.infoOut('guiHelpers 374')
             guiHelpers.isShowingWaypointDistance = false
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
         end
     )
 end
@@ -493,9 +493,7 @@ end
 
 -- guiHelpers.hideStationPicker = function()
 --     local window = api.gui.util.getById(_stationPickerWindowId)
---     if window ~= nil then
---         window:setVisible(false, false)
---     end
+--     if window ~= nil then window:setVisible(false, false) end
 -- end
 
 ---@param onCloseFunc? function

@@ -384,7 +384,7 @@ return {
                 function()
                     logger.infoOut('guiHelpers.showWarningWithGoto closing')
                     self.privateData.isShowingWarning = false
-                    window:setVisible(false, false)
+                    if window ~= nil then window:setVisible(false, false) end
                 end
             )
         end
