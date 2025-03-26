@@ -22,7 +22,7 @@ end
 ---@return string
 local _printOneThing = function(outString, value)
     local typ = type(value)
-    if typ == 'function' or typ == 'table' then
+    if typ == 'function' or typ == 'table' or typ == 'thread' or typ == 'userdata' then
         if outString ~= '' then print(outString) end
         debugPrint(value)
         return ''
