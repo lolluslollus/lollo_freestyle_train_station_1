@@ -67,6 +67,7 @@ function data()
         },
 		updateFn = function(params)
 			logger.infoOut('station.con updateFn starting')
+			logger.timeOut('station.con updateFn starting')
 			-- logger.infoOut('station.con updateFn starting, params.modules =', params.modules})
 			local _modules = params.modules or {}
 
@@ -1889,6 +1890,7 @@ function data()
 
 			result.terminateConstructionHook = function()
 				logger.infoOut('terminateConstructionHook starting')
+				logger.timeOut('terminateConstructionHook starting')
 		-- xpcall(
 		-- 	function()
 -- local timeMsec0 = os.clock() * 1000
@@ -2708,10 +2710,12 @@ function data()
 				-- logger.infoOut('LOLLO result.stations = ', result.stations})
 				-- logger.infoOut('LOLLO result.models = ', result.models})
 				-- logger.infoOut('LOLLO result.terminalGroups = ', result.terminalGroups})
+				logger.timeOut('terminateConstructionHook ending')
 			end -- end of terminateConstructionHook()
 
 			-- logger.infoOut('freestyleTrainStation.updateFn about to return')
 			-- logger.infoOut('freestyleTrainStation result.terrainAlignmentLists =', result.terrainAlignmentLists})
+			logger.timeOut('updateFn returning result')
 			return result
 		end,
  		preProcessFn = function(modules, change, three)
@@ -2917,31 +2921,40 @@ function data()
 		-- 	print('three =') debugPrint(three)
 		-- end,
         upgradeFn = function(args)
-			-- args contains the params and slotId, which is sometimes correct and sometimes -1, and no transf.
-			-- it also contains:
+			-- args contains:
+			-- params members (huge here)
+			-- slotId, which is sometimes correct and sometimes -1, and no transf
 			-- catenaryToggle = 1,
 			-- catenary = 1,
 			-- trackTypeToggle = 1,
 			-- trackType = 1,
-			-- logger.infoOut('LOLLO upgradeFn starting, args.slotId =', args.slotId})
+			-- no transf
 
 			-- LOLLO NOTE when hovering on a station with the track upgrade tool,
 			-- some terminals are recognised and others are not (ie args.slotId = -1)
-			-- This makes upgrading tracks impossible.
+			-- When it happens, this makes upgrading tracks impossible.
 			-- Workaround: let's upgrade them all!
 
-			-- logger.infoOut('args.catenaryToggle =', args.catenaryToggle, 'args.catenary =', args.catenary, 'args.trackTypeToggle =', args.trackTypeToggle, 'args.trackType =', args.trackType})
-			-- logger.infoOut('### args without modules and terminals =', arrayUtils.cloneOmittingFields(args, {'modules', 'terminals'}, true)})
-
-			-- if args.slotId == nil or args.slotId < 0 then return {} end
+			local _slotId = args.slotId
+			logger.infoOut(
+				'station.upgradeFn starting,',
+				'args.catenaryToggle =', args.catenaryToggle,
+				'args.catenary =', args.catenary,
+				'args.trackTypeToggle =', args.trackTypeToggle,
+				'args.trackType =', args.trackType,
+				'args.slotId =', _slotId, 'type(args.slotId) =', type(_slotId)
+			)
+			-- if _slotId == nil or _slotId < 0 then return {} end
 
 			local affectedTerminals = {}
-			-- logger.infoOut('args.slotId =', args.slotId})
-			if type(args.slotId) == 'number' and args.slotId > 0 then
-				local nTerminal, _, _ = slotHelpers.demangleId(args.slotId)
+			if type(_slotId) == 'number' and _slotId > 0 then
+				local nTerminal, _, _ = slotHelpers.demangleId(_slotId)
+				logger.infoOut('got the terminal from slotId')
 				if nTerminal == nil then return {} end
+				logger.infoOut('nTerminal =', nTerminal)
 				affectedTerminals[1] = nTerminal
 			else
+				logger.infoOut('all terminals affected')
 				for t = 1, #args.terminals do
 					affectedTerminals[t] = t
 				end
