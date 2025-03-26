@@ -127,8 +127,11 @@ return {
             return func()
         end
     end,
-    -- xpErrorHandler = function(error)
-    --     if not(_isErrorLogActive) then return end
-    --     _printThings('lollo_freestyle_train_station ERROR: ', {error})
-    -- end,
+    timeOut = function(label)
+        if not(_isTimersActive) then return end
+
+        local _currentTimeSec = os.clock()
+        print('######## ' .. tostring(label or '') .. ' at ' .. ("%.16g"):format(_currentTimeSec) .. ' sec')
+        -- print('######## ' .. tostring(label or '') .. ' at ' .. math.ceil(_currentTimeSec * 1000) .. ' mSec')
+    end,
 }
