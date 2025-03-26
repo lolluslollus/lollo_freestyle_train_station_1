@@ -3595,11 +3595,7 @@ function data()
                         m_conConfigMenu.isOpen = false
                         m_conConfigMenu.args = arrayUtils.cloneDeepOmittingFields(args)
                         m_conConfigMenu.isOpen = true
-                        logger.infoOut(
-                            'conConfigMenu.args.stationConstructionId =', m_conConfigMenu.args.stationConstructionId,
-                            'conConfigMenu.args.streetEndEntities =', m_conConfigMenu.args.streetEndEntities,
-                            'conConfigMenu.args.trackEndEntities =', m_conConfigMenu.args.trackEndEntities
-                        )
+                        logger.infoOut('conConfigMenu.args =', m_conConfigMenu.args)
                     elseif name == _eventNames.CON_CONFIG_MENU_CLOSED then
                         if m_state.isBusy then return end
 
