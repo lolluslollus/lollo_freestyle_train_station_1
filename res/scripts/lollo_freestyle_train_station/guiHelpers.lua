@@ -41,7 +41,8 @@ local guiHelpers = {
 ---@param window any
 ---@param initialPosition {x:number, y:number}|nil
 guiHelpers.setWindowPosition = function(window, initialPosition)
-    local gameContentRect = api.gui.util.getGameUI():getContentRect()
+    local gameUI = api.gui.util.getGameUI()
+    local gameContentRect = gameUI:getContentRect()
     local windowContentRect = window:getContentRect()
     local windowMinimumSize = window:calcMinimumSize()
     logger.infoOut('### gameContentRect =', gameContentRect, ', windowContentRect =', windowContentRect, ', windowMinimumSize =', windowMinimumSize)
