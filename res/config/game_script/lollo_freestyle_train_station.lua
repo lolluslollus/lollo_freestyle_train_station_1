@@ -682,7 +682,7 @@ local _actions = {
         )
     end,
     buildStation = function(successEventName, args)
-        local conTransf = args.platformWaypointMidTransf
+        local conTransfLua = args.platformWaypointMidTransf
 
         logger.infoOut('_buildStation starting, args =')
 
@@ -693,8 +693,8 @@ local _actions = {
         local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
         newConProposal.fileName = constants.stationConFileName
 
-        local _mainTransf = not(oldCon)
-            and arrayUtils.cloneDeepOmittingFields(conTransf)
+        local _mainTransf = not(oldCon and oldCon.params)
+            and arrayUtils.cloneDeepOmittingFields(conTransfLua)
             or arrayUtils.cloneDeepOmittingFields(oldCon.params.mainTransf, nil, true)
         logger.infoOut('_mainTransf =', _mainTransf)
         local _inverseMainTransf = transfUtils.getInverseTransf(_mainTransf)
@@ -809,17 +809,17 @@ local _actions = {
                     [params_newModuleKeys[3]] = params_newModuleValues[3],
                 },
                 -- seed = 123,
-                seed = math.abs(math.ceil(conTransf[13] * 1000)),
+                seed = math.abs(math.ceil(conTransfLua[13] * 1000)),
                 subways = { },
                 terminals = { params_newTerminal },
             }
             -- newConProposal.transf = api.type.Mat4f.new(
-            --     api.type.Vec4f.new(conTransf[1], conTransf[2], conTransf[3], conTransf[4]),
-            --     api.type.Vec4f.new(conTransf[5], conTransf[6], conTransf[7], conTransf[8]),
-            --     api.type.Vec4f.new(conTransf[9], conTransf[10], conTransf[11], conTransf[12]),
-            --     api.type.Vec4f.new(conTransf[13], conTransf[14], conTransf[15], conTransf[16])
+            --     api.type.Vec4f.new(conTransfLua[1], conTransfLua[2], conTransfLua[3], conTransfLua[4]),
+            --     api.type.Vec4f.new(conTransfLua[5], conTransfLua[6], conTransfLua[7], conTransfLua[8]),
+            --     api.type.Vec4f.new(conTransfLua[9], conTransfLua[10], conTransfLua[11], conTransfLua[12]),
+            --     api.type.Vec4f.new(conTransfLua[13], conTransfLua[14], conTransfLua[15], conTransfLua[16])
             -- )
-            newConProposal.transf = transfUtils.getSolTransfFromLuaTransf(conTransf)
+            newConProposal.transf = transfUtils.getSolTransfFromLuaTransf(conTransfLua)
             newConProposal.name = _('NewStationName') -- LOLLO TODO see if the name can be assigned automatically, as it should
         else
             local oldConParams = oldCon.params
@@ -1259,7 +1259,7 @@ local _actions = {
             for slotId, modu in pairs(oldModules) do
                 local nTerminal, nTrackEdge, baseId = slotHelpers.demangleId(slotId)
 
-                if nTerminal == 0 then -- some modules have terminal == 0, like subways
+                if nTerminal == 0 then -- some modules have terminal == 0, for example subways
                     moduleProps_indexedBySlotId[slotId] = {
                         baseId = baseId,
                         module = arrayUtils.cloneDeepOmittingFields(modu, nil, true),
