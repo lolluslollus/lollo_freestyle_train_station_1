@@ -676,7 +676,7 @@ local _actions = {
                         ))
                     end
                 else
-                    logger.infoOut('proposal =', _proposal, 'result =', result)
+                    logger.infoOut('result =', result)
                 end
             end
         )
