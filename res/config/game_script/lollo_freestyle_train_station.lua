@@ -624,7 +624,7 @@ local _actions = {
         }
         -- newSubway_Value.transf2Link = transfUtilsUG.mul(
         --     newSubway_Value.transf,
-        --     { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, _constants.subwayPos2LinkZ, 1 }
+        --     { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  constants.subwayPos2LinkX, constants.subwayPos2LinkY, constants.subwayPos2LinkZ, 1 }
         -- )
         local _newParams = {
             inverseMainTransf = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.inverseMainTransf, nil, true),
@@ -2627,7 +2627,7 @@ _actions.buildSnappyStreetEdges = function(stationConId)
         newSegment.comp.typeIndex = baseEdge.typeIndex
         newSegment.comp.objects = baseEdge.objects
         -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-        newSegment.type = _constants.streetEdgeType
+        newSegment.type = constants.streetEdgeType
         local baseEdgeStreet = api.engine.getComponent(disjointNeighbourEdgeId, api.type.ComponentType.BASE_EDGE_STREET)
         if baseEdgeStreet ~= nil then
             logger.infoOut('edgeId', disjointNeighbourEdgeId, 'is street')
@@ -3322,7 +3322,7 @@ function data()
                         local _trySetPlatformProps = function(platformEdgeList_notOrientated)
                             -- instead of basing these numbers on the edges, we base them on absolute distances as of minor version 81.
                             -- The result is much neater, irrespective of how the user placed the edges.
-                            -- There is an accuracy price to pay detecting if we are on a bridge or a tunnel, as large as _constants.fineSegmentLength
+                            -- There is an accuracy price to pay detecting if we are on a bridge or a tunnel, as large as constants.fineSegmentLength
                             -- There is also less data in centrePlatformsFine.
                             logger.infoOut('_setPlatformProps starting')
                             -- this name is for compatibility with older versions. Otherwise, I would choose a different name,
@@ -3559,7 +3559,7 @@ function data()
                                         --     {
                                         --         x = conTransf[13],
                                         --         y = conTransf[14],
-                                        --         z = conTransf[15] + _constants.splitterZShift,
+                                        --         z = conTransf[15] + constants.splitterZShift,
                                         --     },
                                         --     true,
                                         --     logger.isExtendedLog()
@@ -3586,7 +3586,7 @@ function data()
                     --         return
                     --     end
                     --     local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
-                    --     if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= _constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
+                    --     if con == nil or type(con.fileName) ~= 'string' or con.fileName ~= constants.stationConFileName or con.params == nil or #con.params.terminals < 1 then
                     --         logger.errorOut('construction', args.stationConstructionId, 'is not a freestyle station, I cannot build its snappy street edges')
                     --         return
                     --     end
