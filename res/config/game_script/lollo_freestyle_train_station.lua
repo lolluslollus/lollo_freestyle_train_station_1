@@ -1,4 +1,4 @@
-local _constants = require('lollo_freestyle_train_station.constants')
+local constants = require('lollo_freestyle_train_station.constants')
 local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 local comparisonUtils = require('lollo_freestyle_train_station.comparisonUtils')
 local guiHelpers = require('lollo_freestyle_train_station.guiHelpers')
@@ -32,8 +32,8 @@ local m_guiConConfigMenu = {
     openForConId = nil
 }
 
-local _eventId = _constants.eventData.lolloFreestyleTrainStation.eventId
-local _eventNames = _constants.eventData.lolloFreestyleTrainStation.eventNames
+local _eventId = constants.eventData.lolloFreestyleTrainStation.eventId
+local _eventNames = constants.eventData.lolloFreestyleTrainStation.eventNames
 local _guiPlatformWaypointModelId = nil
 local _guiSplitterWaypointModelId = nil
 local _guiTrackWaypointModelId = nil
@@ -106,7 +106,7 @@ local _utils = {
         _removeNearbyWarningHints()
 
         local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
-        newConProposal.fileName = _constants.unsnappedSomethingMessageConFileName
+        newConProposal.fileName = constants.unsnappedSomethingMessageConFileName
         newConProposal.params = {
             message = message4Sign,
             seed = math.abs(math.ceil(pos.x * 1000)),
@@ -161,8 +161,8 @@ local _utils = {
     ---@return boolean
     ---@return table
     replaceFakeEdgesWithSnappy = function (oldModules)
-        local _edgeModuleFileNames = _constants.edgeModuleFileNames
-        local _edgeModuleFileNamesV2 = _constants.edgeModuleFileNamesV2
+        local _edgeModuleFileNames = constants.edgeModuleFileNames
+        local _edgeModuleFileNamesV2 = constants.edgeModuleFileNamesV2
         local isSomethingChanged = false
         local newModules = {}
         for slotId, modu in pairs(oldModules) do
@@ -285,11 +285,11 @@ local _utils = {
         local _getRemovedTerminalsEdgeProps = function()
             local results_indexed = {}
             for _, t in pairs(nTerminalsToRemove) do
-                local electricModuleValue = arrayUtils.cloneDeepOmittingFields(oldModules[slotHelpers.mangleId(t, 0, _constants.idBases.trackElectrificationSlotId)], nil, true)
+                local electricModuleValue = arrayUtils.cloneDeepOmittingFields(oldModules[slotHelpers.mangleId(t, 0, constants.idBases.trackElectrificationSlotId)], nil, true)
                 local isForceTrackElectrification = electricModuleValue ~= nil
-                    and (electricModuleValue.name == _constants.trackElectrificationYesModuleFileName
-                        or electricModuleValue.name == _constants.trackElectrificationNoModuleFileName)
-                local forcedElectrificationValue = isForceTrackElectrification and electricModuleValue.name == _constants.trackElectrificationYesModuleFileName
+                    and (electricModuleValue.name == constants.trackElectrificationYesModuleFileName
+                        or electricModuleValue.name == constants.trackElectrificationNoModuleFileName)
+                local forcedElectrificationValue = isForceTrackElectrification and electricModuleValue.name == constants.trackElectrificationYesModuleFileName
                 results_indexed[t] = {
                     isForceTrackElectrification = isForceTrackElectrification,
                     forcedElectrificationValue = forcedElectrificationValue,
@@ -390,7 +390,7 @@ local _utils = {
                     newSegment.comp.type = trackEdgeList.type
                     newSegment.comp.typeIndex = trackEdgeList.typeIndex
                     -- newSegment.playerOwned = {player = api.engine.util.getPlayer()}
-                    newSegment.type = _constants.railEdgeType
+                    newSegment.type = constants.railEdgeType
                     newSegment.trackEdge.trackType = trackEdgeList.trackType
                     if removedTerminalEdgeProps.isForceTrackElectrification then
                         newSegment.trackEdge.catenary = removedTerminalEdgeProps.forcedElectrificationValue
@@ -430,7 +430,7 @@ local _utils = {
         local modules = conParams.modules
         for t, _ in pairs(conParams.terminals) do
             nTerminals = nTerminals + 1
-            local slotId = slotHelpers.mangleId(t, 0, _constants.idBases.terminalSlotId)
+            local slotId = slotHelpers.mangleId(t, 0, constants.idBases.terminalSlotId)
             if not(modules[slotId]) then
                 result_indexed[t] = true
             end
@@ -521,7 +521,7 @@ local _utils = {
         -- or not(oldCon.params)
         or not(arrayUtils.arrayHasValue(
             {
-                _constants.stationConFileName,
+                constants.stationConFileName,
                 -- 'station/rail/lollo_freestyle_train_station/openLiftFree.con',
                 'station/rail/lollo_freestyle_train_station/openLiftFree_v2.con',
                 'station/rail/lollo_freestyle_train_station/openStairsFree.con',
@@ -583,96 +583,91 @@ local _actions = {
             return
         end
 
-        local oldCon = api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
-        if oldCon == nil then
+        local _oldStationCon = api.engine.getComponent(args.join2StationConId, api.type.ComponentType.CONSTRUCTION)
+        if not(_oldStationCon) then
             logger.errorOut('_addSubway found no station con')
             _utils.sendHideProgress()
             return
         end
 
-        local subwayCon = api.engine.getComponent(args.subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
-        if not(subwayCon) or not(subwayCon.transf) then
+        local _oldSubwayCon = api.engine.getComponent(args.subwayConstructionId, api.type.ComponentType.CONSTRUCTION)
+        if not(_oldSubwayCon) or not(_oldSubwayCon.transf) then
             logger.errorOut('_addSubway found no subway con')
             _utils.sendHideProgress()
             return
         end
 
-        local subwayTransf = subwayCon.transf
-
-        local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
-        newConProposal.fileName = _constants.stationConFileName
-
-        local oldConParams = oldCon.params
-        local isSomethingChangedWithFakes, newModules = _utils.replaceFakeEdgesWithSnappy(arrayUtils.cloneDeepOmittingFields(oldConParams.modules, nil, true))
-        local newParams = {
-            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(oldConParams.inverseMainTransf, nil, true),
-            mainTransf = arrayUtils.cloneDeepOmittingFields(oldConParams.mainTransf, nil, true),
-            modules = newModules,
-            seed = (oldConParams.seed or 0) + 1,
-            subways = arrayUtils.cloneDeepOmittingFields(oldConParams.subways, nil, true),
-            -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
-            terminals = arrayUtils.cloneDeepOmittingFields(oldConParams.terminals, nil, true),
-        }
+        local _oldStationConParams = _oldStationCon.params
+        local _isSomethingChangedWithFakes, _newModules = _utils.replaceFakeEdgesWithSnappy(arrayUtils.cloneDeepOmittingFields(_oldStationConParams.modules, nil, true))
+        if _isSomethingChangedWithFakes then logger.warningOut('_addSubway found some fake edges, this should never happen') end
         local _getNextAvailableSlotId = function()
-            local counter = 0
-            while counter < 1000 do
-                counter = counter + 1
+            local _counter = 0
+            while _counter < 1000 do
+                _counter = _counter + 1
 
-                local testResult = slotHelpers.mangleId(0, counter, _constants.idBases.subwaySlotId)
-                if newParams.modules[testResult] == nil then return testResult end
+                local _testResult = slotHelpers.mangleId(0, _counter, constants.idBases.subwaySlotId)
+                if _newModules[_testResult] == nil then return _testResult end
             end
 
-            logger.warningOut('cannot find an available slot for a subway')
+            logger.warningOut('cannot find an available slot for a subway, this should never happen')
             return false
         end
-        local newSubway_Key = _getNextAvailableSlotId()
-        if not(newSubway_Key) then _utils.sendHideProgress() return end
+        local _newSubwayKey = _getNextAvailableSlotId()
+        if not(_newSubwayKey) then _utils.sendHideProgress() return end
 
-        local newSubway_Value = {
-            subwayConFileName = subwayCon.fileName,
-            transf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
+        local _subwayTransf_lua = transfUtils.getLuaTransfFromSolTransf(_oldSubwayCon.transf)
+        local _newSubwayValue = {
+            subwayConFileName = _oldSubwayCon.fileName,
+            -- transf = transfUtilsUG.new(subwayTransf_sol:cols(0), subwayTransf_sol:cols(1), subwayTransf_sol:cols(2), subwayTransf_sol:cols(3))
+            transf = _subwayTransf_lua,
+            transf2Link = transfUtils.getTransf_Shifted(_subwayTransf_lua, {constants.subwayPos2LinkX, constants.subwayPos2LinkY, constants.subwayPos2LinkZ}),
         }
-        newSubway_Value.transf2Link = transfUtilsUG.mul(
-            newSubway_Value.transf,
-            { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, _constants.subwayPos2LinkZ, 1 }
-        )
-
-        newParams.modules[newSubway_Key] = {
-            metadata = { -- it gets overwritten
-                -- myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
-            },
-            name = _constants.subwayModuleFileName,
+        -- newSubway_Value.transf2Link = transfUtilsUG.mul(
+        --     newSubway_Value.transf,
+        --     { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  _constants.subwayPos2LinkX, _constants.subwayPos2LinkY, _constants.subwayPos2LinkZ, 1 }
+        -- )
+        local _newParams = {
+            inverseMainTransf = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.inverseMainTransf, nil, true),
+            mainTransf = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.mainTransf, nil, true),
+            modules = _newModules,
+            seed = (_oldStationConParams.seed or 0) + 1,
+            subways = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.subways, nil, true),
+            -- this is very expensive but we need it otherwise we get userdata - lua data mismatches
+            terminals = arrayUtils.cloneDeepOmittingFields(_oldStationConParams.terminals, nil, true),
+        }
+        _newParams.modules[_newSubwayKey] = {
+            metadata = {}, -- it gets overwritten
+            name = constants.subwayModuleFileName,
             updateScript = {
                 fileName = '', -- 'construction/station/rail/lollo_freestyle_train_station/subwayUpdateFn.updateFn',
-                params = { -- it gets overwritten
-                    -- myTransf = transfUtilsUG.new(subwayTransf:cols(0), subwayTransf:cols(1), subwayTransf:cols(2), subwayTransf:cols(3))
-                },
+                params = {} -- it gets overwritten
             },
             variant = 0,
         }
-        newParams.subways[newSubway_Key] = newSubway_Value
-        newConProposal.params = newParams
+        _newParams.subways[_newSubwayKey] = _newSubwayValue
 
-        newConProposal.transf = oldCon.transf
+        local _newStationConProposal = api.type.SimpleProposal.ConstructionEntity.new()
+        _newStationConProposal.fileName = constants.stationConFileName
+        _newStationConProposal.params = _newParams
+        _newStationConProposal.playerEntity = api.engine.util.getPlayer()
+        _newStationConProposal.transf = _oldStationCon.transf
 
-        newConProposal.playerEntity = api.engine.util.getPlayer()
-
-        local proposal = api.type.SimpleProposal.new()
-        proposal.constructionsToAdd[1] = newConProposal
-        proposal.constructionsToRemove = { args.join2StationConId, args.subwayConstructionId }
-        -- proposal.old2new = {
-        --     [join2StationConId] = 0,
+        local _proposal = api.type.SimpleProposal.new()
+        _proposal.constructionsToAdd[1] = _newStationConProposal
+        _proposal.constructionsToRemove = { args.join2StationConId, args.subwayConstructionId }
+        -- _proposal.old2new = {
+        --     [args.join2StationConId] = 0,
         -- }
 
-        local context = api.type.Context:new()
-        -- context.checkTerrainAlignment = true
-        -- context.cleanupStreetGraph = true
-        -- context.gatherBuildings = false -- default is false
-        -- context.gatherFields = true -- default is true
-        -- context.player = api.engine.util.getPlayer()
+        local _context = api.type.Context:new()
+        -- _context.checkTerrainAlignment = true
+        -- _context.cleanupStreetGraph = true
+        -- _context.gatherBuildings = false -- default is false
+        -- _context.gatherFields = true -- default is true
+        -- _context.player = api.engine.util.getPlayer()
 
         api.cmd.sendCommand(
-            api.cmd.make.buildProposal(proposal, context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
+            api.cmd.make.buildProposal(_proposal, _context, true), -- the 3rd param is "ignore errors"; wrong proposals will be discarded anyway
             function(result, success)
                 logger.infoOut('_addSubway callback, success =', success)
                 if success then
@@ -686,7 +681,7 @@ local _actions = {
                         ))
                     end
                 else
-                    logger.infoOut('proposal =', proposal, 'result =', result)
+                    logger.infoOut('proposal =', _proposal, 'result =', result)
                 end
             end
         )
@@ -701,7 +696,7 @@ local _actions = {
         or nil
 
         local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
-        newConProposal.fileName = _constants.stationConFileName
+        newConProposal.fileName = constants.stationConFileName
 
         local _mainTransf = (oldCon == nil)
             and arrayUtils.cloneDeepOmittingFields(conTransf)
@@ -710,14 +705,14 @@ local _actions = {
         local _inverseMainTransf = transfUtils.getInverseTransf(_mainTransf)
 
         local params_newModuleKeys = {
-            slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.terminalSlotId),
-            slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.trackElectrificationSlotId),
-            slotHelpers.mangleId(args.nTerminal, 0, _constants.idBases.trackSpeedSlotId),
+            slotHelpers.mangleId(args.nTerminal, 0, constants.idBases.terminalSlotId),
+            slotHelpers.mangleId(args.nTerminal, 0, constants.idBases.trackElectrificationSlotId),
+            slotHelpers.mangleId(args.nTerminal, 0, constants.idBases.trackSpeedSlotId),
         }
         local params_newModuleValues = {
             {
                 metadata = { },
-                name = args.isCargo and _constants.cargoTerminalModuleFileName or _constants.passengerTerminalModuleFileName,
+                name = args.isCargo and constants.cargoTerminalModuleFileName or constants.passengerTerminalModuleFileName,
                 updateScript = {
                     fileName = '',
                     params = { },
@@ -726,7 +721,7 @@ local _actions = {
             },
             {
                 metadata = { },
-                name = _constants.trackElectrificationUndefinedModuleFileName,
+                name = constants.trackElectrificationUndefinedModuleFileName,
                 updateScript = {
                     fileName = '',
                     params = { },
@@ -735,7 +730,7 @@ local _actions = {
             },
             {
                 metadata = { },
-                name = _constants.trackSpeedUndefinedModuleFileName,
+                name = constants.trackSpeedUndefinedModuleFileName,
                 updateScript = {
                     fileName = '',
                     params = { },
@@ -965,11 +960,11 @@ local _actions = {
             newSegment.comp.typeIndex = props.typeIndex
             if props.player ~= nil then newSegment.playerOwned = { player = props.player } end
             if props.isTrack then
-                newSegment.type = _constants.railEdgeType
+                newSegment.type = constants.railEdgeType
                 newSegment.trackEdge.trackType = props.trackType
                 newSegment.trackEdge.catenary = props.catenary
             else
-                newSegment.type = _constants.streetEdgeType
+                newSegment.type = constants.streetEdgeType
                 newSegment.streetEdge.streetType = props.streetType
                 newSegment.streetEdge.tramTrackType = props.tramTrackType
                 newSegment.streetEdge.hasBus = props.hasBus
@@ -1172,7 +1167,7 @@ local _actions = {
             if not(newConIdAndProposal) then -- no more cons to be processed
                 if isSomethingWrong then
                     local stationCon = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
-                    local stationConPositionXYZ = (stationCon ~= nil and stationCon.fileName == _constants.stationConFileName)
+                    local stationConPositionXYZ = (stationCon ~= nil and stationCon.fileName == constants.stationConFileName)
                         and transfUtils.transf2Position(
                             -- transfUtilsUG.new(stationCon.transf:cols(0), stationCon.transf:cols(1), stationCon.transf:cols(2), stationCon.transf:cols(3)),
                             transfUtils.getLuaTransfFromSolTransf(stationCon.transf),
@@ -1348,7 +1343,7 @@ local _actions = {
         logger.infoOut('_rebuildStationWithLatestProperties newParams.modules =', newParams.modules)
 
         local newConProposal = api.type.SimpleProposal.ConstructionEntity.new()
-        newConProposal.fileName = _constants.stationConFileName
+        newConProposal.fileName = constants.stationConFileName
         newConProposal.params = newParams
         newConProposal.playerEntity = api.engine.util.getPlayer()
         newConProposal.transf = oldCon.transf
@@ -1763,13 +1758,13 @@ logger.infoOut('FOUR')
         if distance0 == 0 then reasonForNotSplitting = 1
         elseif distance1 == 0 then reasonForNotSplitting = 2
         elseif not(mustSplit) then
-            if isNode0EndOfLine and distance0 < _constants.minSplitDistanceAtEndOfLine then
+            if isNode0EndOfLine and distance0 < constants.minSplitDistanceAtEndOfLine then
                 reasonForNotSplitting = 3
-            elseif isNode1EndOfLine and distance1 < _constants.minSplitDistanceAtEndOfLine then
+            elseif isNode1EndOfLine and distance1 < constants.minSplitDistanceAtEndOfLine then
                 reasonForNotSplitting = 4
-            elseif distance0 < _constants.minSplitDistance then
+            elseif distance0 < constants.minSplitDistance then
                 reasonForNotSplitting = 5
-            elseif distance1 < _constants.minSplitDistance then
+            elseif distance1 < constants.minSplitDistance then
                 reasonForNotSplitting = 6
             end
         end
@@ -1835,7 +1830,7 @@ logger.infoOut('FOUR')
 
         local newEdge0 = api.type.SegmentAndEntity.new()
         newEdge0.entity = -1
-        newEdge0.type = _constants.railEdgeType
+        newEdge0.type = constants.railEdgeType
         newEdge0.comp.node0 = oldBaseEdge.node0
         newEdge0.comp.node1 = -3
         newEdge0.comp.tangent0 = api.type.Vec3f.new(
@@ -1855,7 +1850,7 @@ logger.infoOut('FOUR')
 
         local newEdge1 = api.type.SegmentAndEntity.new()
         newEdge1.entity = -2
-        newEdge1.type = _constants.railEdgeType
+        newEdge1.type = constants.railEdgeType
         newEdge1.comp.node0 = -3
         newEdge1.comp.node1 = oldBaseEdge.node1
         newEdge1.comp.tangent0 = api.type.Vec3f.new(
@@ -1968,7 +1963,7 @@ logger.infoOut('FOUR')
         local oldCon = edgeUtils.isValidAndExistingId(oldConId) and api.engine.getComponent(oldConId, api.type.ComponentType.CONSTRUCTION)
         if not(oldCon) or not(oldCon.fileName) then return end
 
-        if oldCon.fileName ~= _constants.undergroundDepotConFileName then return end
+        if oldCon.fileName ~= constants.undergroundDepotConFileName then return end
 
         logger.infoOut('oldCon =', oldCon)
         local paramsBak_NoSeed = arrayUtils.cloneDeepOmittingFields(oldCon.params, {'seed'}, true)
@@ -2052,7 +2047,7 @@ local _guiActions = {
             trackWaypoint2Id = distance11 < distance12 and trackWaypointIds[2] or trackWaypointIds[1],
         }
 
-        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(platformWaypointMidTransf, _constants.searchRadius4NearbyStation2Join, false, true)
+        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(platformWaypointMidTransf, constants.searchRadius4NearbyStation2Join, false, true)
         logger.infoOut('handleValidWaypointBuilt found #nearbyFreestyleStations = ', #nearbyFreestyleStations)
         if #nearbyFreestyleStations > 0 then
             guiHelpers.showNearbyStationPicker(
@@ -2077,7 +2072,7 @@ local _guiActions = {
     tryJoinSubway = function(conId, con)
         if con == nil
         or type(con.fileName) ~= 'string'
-        or not(_constants.subwayConFileNames[con.fileName])
+        or not(constants.subwayConFileNames[con.fileName])
         or con.transf == nil
         then
             return false
@@ -2091,7 +2086,7 @@ local _guiActions = {
         if subwayTransf_lua == nil then return false end
 
         logger.infoOut('conTransf =', subwayTransf_lua)
-        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(subwayTransf_lua, _constants.searchRadius4NearbyStation2Join, true, false)
+        local nearbyFreestyleStations = stationHelpers.getNearbyFreestyleStationConsList(subwayTransf_lua, constants.searchRadius4NearbyStation2Join, true, false)
 
         logger.infoOut('#nearbyFreestyleStations =', #nearbyFreestyleStations)
         if #nearbyFreestyleStations == 0 then return false end
@@ -2184,7 +2179,7 @@ local _guiActions = {
         local newWaypointPosition = edgeUtils.getObjectPosition(newWaypointId)
         -- make sure the waypoint is not too close to station end nodes, or the game will complain later with it != components.end()
         local endEdgeIds = edgeUtils.getEdgeIdsConnectedToEdgeId(waypointEdgeId)
-        local _minDistance = _constants.minSplitDistance * 2
+        local _minDistance = constants.minSplitDistance * 2
         for ___, edgeId in pairs(endEdgeIds) do
             local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
             -- if the edge belongs to a construction
@@ -2192,7 +2187,7 @@ local _guiActions = {
                 local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
                 -- and the construction is a station, freestyle or otherwise
                 if con ~= nil then
-                    if (type(con.fileName) == 'string' and con.fileName == _constants.stationConFileName) then
+                    if (type(con.fileName) == 'string' and con.fileName == constants.stationConFileName) then
                         logger.infoOut('validateWaypointBuilt about to search for stationTrackEndEntities, conId = ', conId)
                         local stationEndEntities = stationHelpers.getStationTrackEndEntities(conId)
                         -- if any end nodes are too close to my waypoint
@@ -2260,7 +2255,7 @@ local _guiActions = {
         if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
             local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition)
             -- forbid building waypoints too far apart, which would make the station too large
-            if distance > _constants.maxWaypointDistance then
+            if distance > constants.maxWaypointDistance then
                 guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooFar, newWaypointId, similarObjectIdsInAnyEdges)
                 api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                     string.sub(debug.getinfo(1, 'S').source, 1),
@@ -2274,7 +2269,7 @@ local _guiActions = {
                 return false
             end
             -- forbid building waypoints too close, which would make the station too short and error prone
-            if distance < _constants.minWaypointDistance then
+            if distance < constants.minWaypointDistance then
                 guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooNear, newWaypointId, similarObjectIdsInAnyEdges)
                 api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                     string.sub(debug.getinfo(1, 'S').source, 1),
@@ -2292,7 +2287,7 @@ local _guiActions = {
         local contiguousTrackEdgeIds = edgeUtils.track.getTrackEdgeIdsBetweenEdgeIds(
             api.engine.system.streetSystem.getEdgeForEdgeObject(newWaypointId),
             api.engine.system.streetSystem.getEdgeForEdgeObject(twinWaypointId),
-            _constants.maxWaypointDistance,
+            constants.maxWaypointDistance,
             false,
             logger.isExtendedLog()
         )
@@ -2792,9 +2787,9 @@ function data()
         -- end,
         guiInit = function()
             -- read variables
-            _guiPlatformWaypointModelId = api.res.modelRep.find(_constants.platformWaypointModelId)
-            _guiSplitterWaypointModelId = api.res.modelRep.find(_constants.splitterWaypointModelId)
-            _guiTrackWaypointModelId = api.res.modelRep.find(_constants.trackWaypointModelId)
+            _guiPlatformWaypointModelId = api.res.modelRep.find(constants.platformWaypointModelId)
+            _guiSplitterWaypointModelId = api.res.modelRep.find(constants.splitterWaypointModelId)
+            _guiTrackWaypointModelId = api.res.modelRep.find(constants.trackWaypointModelId)
             -- read texts
             _guiTexts.awaitFinalisationBeforeSaving = _('AwaitFinalisationBeforeSaving')
             _guiTexts.differentPlatformWidths = _('DifferentPlatformWidths')
@@ -2976,7 +2971,7 @@ function data()
                         local trackEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(
                             args.splitTrackNode1Id,
                             args.splitTrackNode2Id,
-                            _constants.maxWaypointDistance,
+                            constants.maxWaypointDistance,
                             logger.isExtendedLog()
                         )
                         -- LOLLO NOTE I need this, or a station with only one track edge will dump with
@@ -3016,7 +3011,7 @@ function data()
                         local platformEdgeIdsBetweenNodeIds = edgeUtils.track.getTrackEdgeIdsBetweenNodeIds(
                             args.splitPlatformNode1Id,
                             args.splitPlatformNode2Id,
-                            _constants.maxWaypointDistance,
+                            constants.maxWaypointDistance,
                             logger.isExtendedLog()
                         )
                         -- LOLLO NOTE I need this, or a station with only one platform edge will dump with
@@ -3087,10 +3082,10 @@ function data()
                                 local currentLength = trackLengths[i]
                                 if lengthSoFar <= lengthAtSplit and lengthSoFar + currentLength >= lengthAtSplit then
                                     iAcrossSplit = i
-                                    if math.abs(lengthAtSplit - lengthSoFar) < _constants.maxAbsoluteDeviation4Midpoint then
+                                    if math.abs(lengthAtSplit - lengthSoFar) < constants.maxAbsoluteDeviation4Midpoint then
                                         iCloseEnoughToSplit = i
                                         logger.infoOut('### tel[i] =', trackEdgeList[i])
-                                    elseif math.abs(lengthAtSplit - lengthSoFar - currentLength) < _constants.maxAbsoluteDeviation4Midpoint then
+                                    elseif math.abs(lengthAtSplit - lengthSoFar - currentLength) < constants.maxAbsoluteDeviation4Midpoint then
                                         --[[
                                             take this example: 2 segments, each 10 m, length AtSplit = 19
                                             the second segment will be ok and output iCloseEnoughToSplit = 3, which is out of bounds
@@ -3195,7 +3190,7 @@ function data()
 
                         local trackEdgeListVehicleNode0Index, vehicleNode0EdgeId, vehicleNode0NodeBetween = _getTrackIndex_orSplitPoint_atPosition(
                             eventArgs.trackEdgeList,
-                            function(totalLength) return (args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength) end
+                            function(totalLength) return (args.isCargo and constants.maxCargoWaitingAreaEdgeLength or constants.maxPassengerWaitingAreaEdgeLength) end
                         )
                         if trackEdgeListVehicleNode0Index < 1 then
                             if vehicleNode0EdgeId ~= nil and vehicleNode0NodeBetween ~= nil then
@@ -3221,7 +3216,7 @@ function data()
 
                         local trackEdgeListVehicleNode1Index, vehicleNode1EdgeId, vehicleNode1NodeBetween = _getTrackIndex_orSplitPoint_atPosition(
                             eventArgs.trackEdgeList,
-                            function(totalLength) return (args.isCargo and (totalLength - _constants.maxCargoWaitingAreaEdgeLength) or (totalLength - _constants.maxPassengerWaitingAreaEdgeLength)) end
+                            function(totalLength) return (args.isCargo and (totalLength - constants.maxCargoWaitingAreaEdgeLength) or (totalLength - constants.maxPassengerWaitingAreaEdgeLength)) end
                         )
                         if trackEdgeListVehicleNode1Index < 1 then
                             if vehicleNode1EdgeId ~= nil and vehicleNode1NodeBetween ~= nil then
@@ -3345,7 +3340,7 @@ function data()
 
                             eventArgs.centrePlatformsFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 platformEdgeList_orientated,
-                                _constants.fineSegmentLength,
+                                constants.fineSegmentLength,
                                 false,
                                 true
                             )
@@ -3354,7 +3349,7 @@ function data()
 
                             eventArgs.centrePlatforms = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
                                 eventArgs.centrePlatformsFine,
-                                args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
+                                args.isCargo and constants.maxCargoWaitingAreaEdgeLength or constants.maxPassengerWaitingAreaEdgeLength,
                                 true,
                                 true
                             )
@@ -3431,7 +3426,7 @@ function data()
 
                             eventArgs.centreTracksFine = stationHelpers.getCentralEdgePositions_OnlyOuterBounds(
                                 trackEdgeList_orientated,
-                                _constants.fineSegmentLength,
+                                constants.fineSegmentLength,
                                 false,
                                 false
                             )
@@ -3440,7 +3435,7 @@ function data()
 
                             eventArgs.centreTracks = stationHelpers.calcCentralEdgePositions_GroupByMultiple(
                                 eventArgs.centreTracksFine,
-                                args.isCargo and _constants.maxCargoWaitingAreaEdgeLength or _constants.maxPassengerWaitingAreaEdgeLength,
+                                args.isCargo and constants.maxCargoWaitingAreaEdgeLength or constants.maxPassengerWaitingAreaEdgeLength,
                                 false,
                                 false
                             )
@@ -3525,8 +3520,8 @@ function data()
                                     logger.infoOut('type(conTransf) =', type(conTransfLua), conTransfLua)
                                     local nearestEdgeId = edgeUtils.track.getNearestEdgeIdStrict(
                                         conTransfLua,
-                                        conTransfLua[15] + _constants.splitterZShift - _constants.splitterZToleranceM,
-                                        conTransfLua[15] + _constants.splitterZShift + _constants.splitterZToleranceM,
+                                        conTransfLua[15] + constants.splitterZShift - constants.splitterZToleranceM,
+                                        conTransfLua[15] + constants.splitterZShift + constants.splitterZToleranceM,
                                         logger.isExtendedLog()
                                     )
                                     logger.infoOut('track splitter got nearestEdge =', nearestEdgeId)
@@ -3648,7 +3643,7 @@ function data()
                         end
 
                         local con = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
-                        if con == nil or con.fileName ~= _constants.stationConFileName then
+                        if con == nil or con.fileName ~= constants.stationConFileName then
                             logger.errorOut('REBUILD_STATION_WITH_LATEST_PROPERTIES found no station or a non-freestyle station')
                             _utils.sendHideProgress()
                             return
@@ -3767,7 +3762,7 @@ function data()
                                             { conId = conId }
                                         )
                                     )
-                                elseif con.fileName == _constants.undergroundDepotConFileName then
+                                elseif con.fileName == constants.undergroundDepotConFileName then
                                     api.cmd.sendCommand(
                                         api.cmd.make.sendScriptEvent(
                                             string.sub(debug.getinfo(1, 'S').source, 1),
@@ -3883,7 +3878,7 @@ function data()
                             -- edgeUtils.getNearbyObjectIds(transf, 0.1, api.type.ComponentType.FIELD, pos.z -10, pos.z + 1)
                             logger.infoOut('idAdded fired, conId = ', conId)
                             local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-                            if not(con) or con.fileName ~= _constants.stationConFileName then return end
+                            if not(con) or con.fileName ~= constants.stationConFileName then return end
 
                             local streetEndEntities = stationHelpers.getStationStreetEndEntities(conId, true)
                             local trackEndEntities = stationHelpers.getStationTrackEndEntities(conId, true)
@@ -3915,7 +3910,7 @@ function data()
                             if not(edgeUtils.isValidAndExistingId(conId)) then return end
 
                             local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-                            if con == nil or con.fileName ~= _constants.stationConFileName then return end
+                            if con == nil or con.fileName ~= constants.stationConFileName then return end
 
                             -- prevent a crash if loading a game when the con config menu is open.
                             local _ingameMenu = api.gui.util.getById('ingameMenu')
