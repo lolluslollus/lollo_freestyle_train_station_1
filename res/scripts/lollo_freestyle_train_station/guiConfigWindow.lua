@@ -232,7 +232,9 @@ return {
             logger.infoOut('isParentWindowContentLayout =', isParentWindowContentLayout)
             local parentLayout = isParentWindowContentLayout and windowContent:getLayout() or windowContent
             local configureButtonIndex = isParentWindowContentLayout and 0 or 1
-            parentLayout:getItem(configureButtonIndex):setVisible(false, false) -- hide the "configure' button" without emitting a signal
+             -- hide the "configure button" without emitting a signal
+            local configureButton = parentLayout:getItem(configureButtonIndex)
+            if configureButton ~= nil then configureButton:setVisible(false, false) end
 
             for i = 0, parentLayout:getNumItems() - 1, 1 do
                 local item = parentLayout:getItem(i)
