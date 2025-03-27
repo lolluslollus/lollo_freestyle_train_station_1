@@ -1,3 +1,4 @@
+-- LOLLO TODO this should not be in the station folder, fix it in a future major release
 function data()
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
