@@ -643,7 +643,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["FenceAssetsName"] = "Walls and fences",
 			["FenceAssetsDesc"] = "Walls and fences to match freestyle stations. Adjust them with the Construction Mover.",
 			["fenceModelName"] = "Wall top",
-			["isFlipped"] = "Wall on opposite side",
+			["isFlipped"] = "Flip wall side",
 			["isFlippedTooltip"] = "Only effective for walls built as of mid March 2025",
 			["isTunnelWallLikeOutside"] = "Tunnel walls like outside walls",
 			["isWallBehindThick"] = "Thick supporting wall",
