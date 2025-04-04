@@ -2,10 +2,11 @@ function data()
     -- LOLLO OBSOLETE we keep this for compatibility with older games
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
+    local logger = require('lollo_freestyle_train_station.logger')
     local _openLiftOpenStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
 
     local function _myErrorHandler(err)
-        print('lollo openLiftFree.con ERROR: ', err)
+        logger.thingOut('lollo openLiftFree.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.lift_v1
@@ -65,7 +66,7 @@ function data()
             },
         },
 		updateFn = function(params)
-            print('openLiftFree.updateFn firing, params = ') debugPrint(params)
+            logger.infoOut('openLiftFree.updateFn firing, params = ', params)
             local _bridgeMode = _paramReaders.getBridgeMode(params)
             local _baseMode = _paramReaders.getBaseMode(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
@@ -323,7 +324,7 @@ function data()
                 end,
                 _myErrorHandler
             )
-            -- print('result.models =') debugPrint(result.models)
+            -- logger.infoOut('result.models =', result.models})
 			return result
 		end,
 

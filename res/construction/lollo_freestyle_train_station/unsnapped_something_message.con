@@ -16,8 +16,7 @@ function data()
         },
 		-- order = 1110,
 		updateFn = function(params)
-            logger.print('unsnapped_something_message.updateFn firing, params =') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
-            logger.print('params.message =') debugPrint(params.message)
+            logger.infoOut('unsnapped_something_message.updateFn firing, params with no state =', arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
             local message = params.message or _('UnsnappedSomethingHere')
             local result = {
                 colliders = {},

@@ -15,7 +15,7 @@ local _eventProperties = {
 
 local _actions = {
     replaceEdgeWithSameOnBridge = function(oldEdgeId, bridgeTypeId)
-        logger.print('replaceEdgeWithSameOnBridge starting, oldEdgeId =', oldEdgeId, 'bridgeTypeId =', bridgeTypeId)
+        logger.infoOut('replaceEdgeWithSameOnBridge starting, oldEdgeId =', oldEdgeId, 'bridgeTypeId =', bridgeTypeId)
         if not(edgeUtils.isValidAndExistingId(oldEdgeId)) then return end
 
         local oldEdge = api.engine.getComponent(oldEdgeId, api.type.ComponentType.BASE_EDGE)
@@ -63,7 +63,7 @@ local _actions = {
         and newEdge.comp.type == oldEdge.type
         and newEdge.comp.typeIndex == oldEdge.typeIndex
         then
-            logger.print('nothing changed, leaving')
+            logger.infoOut('nothing changed, leaving')
             return
         end
 
@@ -76,14 +76,14 @@ local _actions = {
             proposal.streetProposal.edgeObjectsToRemove[i] = edgeObj[1]
             i = i + 1
         end
-        logger.print('lollo_open_stairs_free proposal =') logger.debugPrint(proposal)
+        logger.infoOut('lollo_open_stairs_free proposal =', proposal)
 
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(proposal, nil, true),
             function(res, success)
-                logger.print('lollo_open_stairs_free replaceEdgeWithSameOnBridge success = ') logger.debugPrint(success)
+                logger.infoOut('lollo_open_stairs_free replaceEdgeWithSameOnBridge success = ', success)
                 if not(success) then
-                    logger.warn('replaceEdgeWithStreetType failed, proposal = ') logger.warningDebugPrint(proposal)
+                    logger.warningOut('replaceEdgeWithStreetType failed, proposal = ', proposal)
                 end
             end
         )
@@ -103,7 +103,7 @@ function data()
                 if id == 'streetBuilder' or id == 'streetTrackModifier' then
                     xpcall(
                         function()
-                            -- logger.print('guiHandleEvent caught id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+                            -- logger.infoOut('guiHandleEvent caught id =', id, 'name =', name, 'args =', args})
                             if not(args) or not(args.proposal) or not(args.proposal.proposal)
                             or not(args.proposal.proposal.addedSegments)
                             or not(args.data) or not(args.data.entity2tn) then return end
@@ -124,7 +124,7 @@ function data()
                                         -- Street Tuning does 'paths', we do 'paths-on-forced-bridge', so there is no overlapping.
                                         -- If someone has this mod but no Street Tuning, they won't get path automation.
                                         if streetUtils.hasCategory(addedSegment.streetEdge.streetType, 'paths-on-forced-bridge') then
-                                            -- print('addedSegment =') debugPrint(addedSegment)
+                                            -- logger.infoOut('addedSegment =', addedSegment})
                                             local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(addedSegment.entity)
                                             if not(edgeUtils.isValidId(conId)) then -- do not touch frozen segments
                                                 forceBridgeEventParams[#forceBridgeEventParams+1] = {
@@ -146,7 +146,7 @@ function data()
                                 end
                             end
                         end,
-                        logger.xpErrorHandler
+                        logger.errorOut
                     )
                 end
             end
@@ -157,7 +157,7 @@ function data()
 
             xpcall(
                 function()
-                    logger.print('lollo_auto_bridge_paths.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =') logger.debugPrint(args)
+                    logger.infoOut('lollo_auto_bridge_paths.handleEvent firing, src =', src, 'id =', id, 'name =', name, 'args =', args)
 
                     if name == _eventProperties.buildBridgeRequested.eventName then
                         if edgeUtils.isValidAndExistingId(args.edgeId) and edgeUtils.isValidId(args.bridgeTypeId) then
@@ -165,7 +165,7 @@ function data()
                         end
                     end
                 end,
-                logger.xpErrorHandler
+                logger.errorOut
             )
         end,
         -- update = function()

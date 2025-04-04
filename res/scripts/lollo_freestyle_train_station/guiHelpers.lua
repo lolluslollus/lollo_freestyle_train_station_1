@@ -41,19 +41,17 @@ local guiHelpers = {
 ---@param window any
 ---@param initialPosition {x:number, y:number}|nil
 guiHelpers.setWindowPosition = function(window, initialPosition)
-    local gameContentRect = api.gui.util.getGameUI():getContentRect()
+    local gameUI = api.gui.util.getGameUI()
+    local gameContentRect = gameUI:getContentRect()
     local windowContentRect = window:getContentRect()
     local windowMinimumSize = window:calcMinimumSize()
-    logger.print('### gameContentRect =') logger.debugPrint(gameContentRect)
-    logger.print('### windowContentRect =') logger.debugPrint(windowContentRect)
-    logger.print('### windowMinimumSize =') logger.debugPrint(windowMinimumSize)
+    logger.infoOut('### gameContentRect =', gameContentRect, ', windowContentRect =', windowContentRect, ', windowMinimumSize =', windowMinimumSize)
 
     local windowHeight = math.max(windowContentRect.h, windowMinimumSize.h)
     local windowWidth = math.max(windowContentRect.w, windowMinimumSize.w)
     local positionX = (initialPosition ~= nil and initialPosition.x) or math.max(0, (gameContentRect.w - windowWidth) * 0.5)
     local positionY = (initialPosition ~= nil and initialPosition.y) or math.max(0, (gameContentRect.h - windowHeight) * 0.5)
-
-    logger.print('### positionX = ' .. tostring(positionX) .. ', positionY = ' .. tostring(positionY))
+    logger.infoOut('### positionX = ', positionX, ', positionY = ', positionY)
 
     if (positionX + windowWidth) > gameContentRect.w then
         positionX = math.max(0, gameContentRect.w - windowWidth)
@@ -61,7 +59,7 @@ guiHelpers.setWindowPosition = function(window, initialPosition)
     if (positionY + windowHeight) > gameContentRect.h then
         positionY = math.max(0, gameContentRect.h - windowHeight -100)
     end
-    logger.print('### final position x = ' .. tostring(positionX) .. ', y = ' .. tostring(positionY))
+    logger.infoOut('### final position x = ', positionX, ', y = ', positionY)
     window:setPosition(math.floor(positionX), math.floor(positionY))
 end
 ---@param text string
@@ -89,7 +87,7 @@ guiHelpers.showProgress = function(text, title, onCloseFunc)
     window:onClose(
         function()
             guiHelpers.isShowingProgress = false
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
             if type(onCloseFunc) == 'function' then onCloseFunc() end
         end
     )
@@ -145,7 +143,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             joinButton:onClick(
                 function()
                     if type(onClickJoinFunc) == 'function' then onClickJoinFunc() end
-                    logger.print('guiHelpers 120')
+                    logger.infoOut('guiHelpers 120')
                     if not(stringUtils.isNullOrEmptyString(joinEventName)) then
                         eventArgs.join2StationConId = station.id
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -155,7 +153,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                             eventArgs
                         ))
                     end
-                    window:setVisible(false, false)
+                    if window ~= nil then window:setVisible(false, false) end
                 end
             )
 
@@ -186,7 +184,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 3) =') debugPrint(string.sub(debug.getinfo(3, 'S').source, 1))
                 -- print('string.sub(debug.getinfo(1, \'S\').source, 4) =') debugPrint(string.sub(debug.getinfo(4, 'S').source, 1))
                 -- if type(onClickJoinFunc) == 'function' then onClickJoinFunc() end
-                logger.print('guiHelpers 160')
+                logger.infoOut('guiHelpers 160')
                 if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -195,7 +193,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
                         eventArgs
                     ))
                 end
-                window:setVisible(false, false)
+                if window ~= nil then window:setVisible(false, false) end
             end
         )
         layout:addItem(button)
@@ -243,7 +241,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
 
     window:onClose(
         function()
-            logger.print('guiHelpers 215')
+            logger.infoOut('guiHelpers 215')
             -- do not do anything!
             -- if not(stringUtils.isNullOrEmptyString(noJoinEventName)) then
             --     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -253,7 +251,7 @@ guiHelpers.showNearbyStationPicker = function(isTheNewObjectCargo, stations, eve
             --         eventArgs
             --     ))
             -- end
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
         end
     )
 end
@@ -282,7 +280,7 @@ guiHelpers.showWarning = function(text, onCloseFunc)
     window:onClose(
         function()
             guiHelpers.isShowingWarning = false
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
             if type(onCloseFunc) == 'function' then onCloseFunc() end
         end
     )
@@ -322,7 +320,7 @@ guiHelpers.showSaveWarning = function(text)
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
             guiHelpers.isAllowSaving = false
         end
     )
@@ -332,7 +330,7 @@ end
 ---@param wrongObjectId? integer
 ---@param similarObjectsIds? table<integer>
 guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds, removeAllFunc)
-    logger.print('guiHelpers.showWarningWithGoto starting, text =', text or 'NIL')
+    logger.infoOut('guiHelpers.showWarningWithGoto starting, text =', text)
     guiHelpers.isShowingWarningWithGoTo = true
 
     local layout = api.gui.layout.BoxLayout.new('VERTICAL')
@@ -340,11 +338,11 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
     if window == nil then
         window = api.gui.comp.Window.new(_texts.warningWindowTitle, layout)
         window:setId(_warningWindowWithGotoId)
-        logger.print('the window does not exist yet, _warningWindowWithGotoId =', _warningWindowWithGotoId)
+        logger.infoOut('the window does not exist yet, _warningWindowWithGotoId =', _warningWindowWithGotoId)
     else
         window:setContent(layout)
         window:setVisible(true, false)
-        logger.print('the window exists already, _warningWindowWithGotoId =', _warningWindowWithGotoId)
+        logger.infoOut('the window exists already, _warningWindowWithGotoId =', _warningWindowWithGotoId)
     end
 
     layout:addItem(api.gui.comp.TextView.new(text))
@@ -440,9 +438,9 @@ guiHelpers.showWarningWithGoto = function(text, wrongObjectId, similarObjectsIds
     -- window:addHideOnCloseHandler()
     window:onClose(
         function()
-            logger.print('guiHelpers.showWarningWithGoto closing')
+            logger.infoOut('guiHelpers.showWarningWithGoto closing')
             guiHelpers.isShowingWarningWithGoTo = false
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
         end
     )
 end
@@ -470,13 +468,19 @@ guiHelpers.showWaypointDistance = function(distance)
     guiHelpers.setWindowPosition(window, position)
 
     -- make title bar invisible without that dumb pseudo css
-    window:getLayout():getItem(0):setVisible(false, false)
+    local _wl = window:getLayout()
+    if _wl ~= nil then
+        local _wli0 = _wl:getItem(0)
+        if _wli0 ~= nil then
+            _wli0:setVisible(false, false)
+        end
+    end
 
     window:onClose(
         function()
-            logger.print('guiHelpers 374')
+            logger.infoOut('guiHelpers 374')
             guiHelpers.isShowingWaypointDistance = false
-            window:setVisible(false, false)
+            if window ~= nil then window:setVisible(false, false) end
         end
     )
 end
@@ -496,9 +500,7 @@ end
 
 -- guiHelpers.hideStationPicker = function()
 --     local window = api.gui.util.getById(_stationPickerWindowId)
---     if window ~= nil then
---         window:setVisible(false, false)
---     end
+--     if window ~= nil then window:setVisible(false, false) end
 -- end
 
 ---@param onCloseFunc? function
@@ -531,7 +533,7 @@ guiHelpers.hideWaypointDistance = function()
 
         local window = api.gui.util.getById(_waypointDistanceWindowId)
         if window ~= nil then
-            logger.print('guiHelpers 431')
+            logger.infoOut('guiHelpers 431')
             window:setVisible(false, false)
         end
     end

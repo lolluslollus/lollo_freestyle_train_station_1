@@ -72,7 +72,7 @@ public.guiInit = function()
     public.eraA.streetTypeId_withBridge = api.res.streetTypeRep.find(public.eraA.streetTypeName_withBridge)
     public.eraB.streetTypeId_withBridge = api.res.streetTypeRep.find(public.eraB.streetTypeName_withBridge)
     public.eraC.streetTypeId_withBridge = api.res.streetTypeRep.find(public.eraC.streetTypeName_withBridge)
-    -- logger.print('guiInit has initialised the bridge types, they are:') logger.debugPrint(public)
+    -- logger.infoOut('guiInit has initialised the bridge types, they are:', public})
 end
 
 return public

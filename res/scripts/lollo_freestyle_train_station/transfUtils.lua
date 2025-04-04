@@ -17,7 +17,8 @@ if math.atan2 == nil then
             return result
         elseif dy < 0 then
             return - result
-        else return false
+        -- else return false
+        else return 0
         end
     end
 end
@@ -1188,9 +1189,8 @@ utils.get1MModelTransf = function(pos1, pos2)
 end
 
 -- gets a transf to fit something with length xObjectLength between two positions. x size is scaled, y and z sizes are preserved
-utils.getTransf2FitObjectBetweenPositions = function(pos0, pos1, xObjectLength, logger)
+utils.getTransf2FitObjectBetweenPositions = function(pos0, pos1, xObjectLength, isExtendedLog)
     local _absX0I = xObjectLength / 2
-    local _logger = logger == nil and {print = function() end, debugPrint = function() end, getIsExtendedLog = function() return false end} or logger
     local x0 = pos0.x or pos0[1]
     local x1 = pos1.x or pos1[1]
     local y0 = pos0.y or pos0[2]
@@ -1205,7 +1205,9 @@ utils.getTransf2FitObjectBetweenPositions = function(pos0, pos1, xObjectLength, 
     local ipotenusaYX = math.sqrt((x1 - x0)^2 + (y1 - y0)^2)
     local sinYX = (y1-y0) / ipotenusaYX
     local cosYX = (x1-x0) / ipotenusaYX
-    _logger.print('ipotenusaYX =', ipotenusaYX, 'sinYX =', sinYX, 'cosYX =', cosYX)
+    if isExtendedLog then
+        print('ipotenusaYX =', ipotenusaYX, 'sinYX =', sinYX, 'cosYX =', cosYX)
+    end
     local vecY0 = {0, 1, 0} -- transforms to {xMid - sinYX, yMid + cosYX, zMid}
     local vecZ0 = {0, 0, 1} -- transforms to {xMid, yMid, zMid + 1}
     local vecZTilted = {0, 0, 1} -- transforms to
@@ -1246,7 +1248,9 @@ utils.getTransf2FitObjectBetweenPositions = function(pos0, pos1, xObjectLength, 
     unknownTransf[9] = 0
     unknownTransf[10] = 0
     unknownTransf[11] = 1
-    _logger.print('unknownTransf straight =') _logger.debugPrint(unknownTransf)
+    if isExtendedLog then
+        print('unknownTransf straight =') debugPrint(unknownTransf)
+    end
     -- solving for vecZ0 tilted
     -- this makes buildings perpendicular to the road, the points match. Curves seem to get less angry.
     -- LOLLO TODO these three are fine for the edges but tilt the construction models, the con should compensate for it
@@ -1256,15 +1260,18 @@ utils.getTransf2FitObjectBetweenPositions = function(pos0, pos1, xObjectLength, 
     unknownTransf[10] = -math.sin(math.atan2((z1-z0), (ipotenusaYX))) * sinYX
     -- zMid +math.cos(math.atan2((z1-z0), (ipotenusaYX))) = unknownTransf[11] + zMid
     unknownTransf[11] = math.cos(math.atan2((z1-z0), (ipotenusaYX)))
-    _logger.print('unknownTransf tilted =') _logger.debugPrint(unknownTransf)
-
+    if isExtendedLog then
+        print('unknownTransf tilted =') debugPrint(unknownTransf)
+    end
     local result = unknownTransf
-    _logger.print('result =') _logger.debugPrint(result)
+    if isExtendedLog then
+        print('result =') debugPrint(result)
+    end
     local vecX0Transformed = utils.getVecTransformed(utils.oneTwoThree2XYZ(vecX0), result)
     local vecX1Transformed = utils.getVecTransformed(utils.oneTwoThree2XYZ(vecX1), result)
     local vecYTransformed = utils.getVecTransformed(utils.oneTwoThree2XYZ(vecY0), result)
     local vecZ0Transformed = utils.getVecTransformed(utils.oneTwoThree2XYZ(vecZ0), result)
-    if _logger.getIsExtendedLog() then
+    if isExtendedLog then
         print('vecX0 straight and transformed =') debugPrint(vecX0) debugPrint(vecX0Transformed)
         print('should be') debugPrint({x0, y0, z0})
         print('vecX1 straight and transformed =') debugPrint(vecX1) debugPrint(vecX1Transformed)
@@ -1433,6 +1440,27 @@ utils.getDistanceBetweenPointAndStraight = function(segmentPosition1, segmentPos
     return dist_sq(px, py, pz, lx1 + t * (lx2 - lx1), ly1 + t * (ly2 - ly1), lz1 + t * (lz2 - lz1));
     }
 ]]
+end
+
+local _getLuaTransfFromSolCols = function(col0, col1, col2, col3)
+	return {
+		col0.x, col0.y, col0.z, col0.w,
+		col1.x, col1.y, col1.z, col1.w,
+		col2.x, col2.y, col2.z, col2.w,
+		col3.x, col3.y, col3.z, col3.w
+	}
+end
+utils.getLuaTransfFromSolTransf = function(solTransf)
+    return _getLuaTransfFromSolCols(solTransf:cols(0), solTransf:cols(1), solTransf:cols(2), solTransf:cols(3))
+end
+-- only call this where the api is available
+utils.getSolTransfFromLuaTransf = function(luaTransf)
+    return api.type.Mat4f.new(
+        api.type.Vec4f.new(luaTransf[1], luaTransf[2], luaTransf[3], luaTransf[4]),
+        api.type.Vec4f.new(luaTransf[5], luaTransf[6], luaTransf[7], luaTransf[8]),
+        api.type.Vec4f.new(luaTransf[9], luaTransf[10], luaTransf[11], luaTransf[12]),
+        api.type.Vec4f.new(luaTransf[13], luaTransf[14], luaTransf[15], luaTransf[16])
+    )
 end
 
 return utils

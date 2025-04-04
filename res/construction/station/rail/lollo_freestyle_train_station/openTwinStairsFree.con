@@ -9,7 +9,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo openTwinStairsFree.con ERROR: ', err)
+        logger.thingOut('lollo openTwinStairsFree.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs_v1
@@ -275,8 +275,6 @@ function data()
                         { { edgeX0 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
                     }
                     local _edgesAfterTransf = _transfUtils.getPosTanX2Transformed(_edges, leftOrRightTransf)
-                    -- logger.print('edgesBeforeTransf =') logger.debugPrint(edgesBeforeTransf)
-                    -- logger.print('edgesAfterTransf =') logger.debugPrint(edgesAfterTransf)
                     table.insert(
                         result.edgeLists,
                         {
@@ -417,7 +415,6 @@ function data()
                         { -_yHalfSize, 0, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
                         { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, 0, _zed},
                     }}
-                    logger.print('bridge faces =') logger.debugPrint(_faces)
                     table.insert(
                         result.terrainAlignmentLists,
                         {
@@ -452,7 +449,7 @@ function data()
                         { -_yHalfSize, _bridgeStartY, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
                         { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, _bridgeStartY, _zed},
                     }}
-                    logger.print('bridge faces =') logger.debugPrint(_faces)
+                    logger.infoOut('bridge faces =', _faces)
                     table.insert(
                         result.terrainAlignmentLists,
                         {

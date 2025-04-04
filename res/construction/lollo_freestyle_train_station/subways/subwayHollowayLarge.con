@@ -21,9 +21,7 @@ function data()
         -- autoRemovable = true,
         -- skipCollision = true,
         updateFn = function(params)
-            -- logger.print('subway.con.updateFn starting')
-            -- logger.debugPrint(params)
-
+            -- logger.infoOut('subway.con.updateFn starting, params =', params})
             local result = {
                 colliders = { },
                 cost = 0,

@@ -250,7 +250,7 @@ function data()
 
             local _fileName = (_paramHelpers.eraPrefix.getActualValues())[(params.lollo_platform_as_asset_era_prefix or 0) + 1]
             local _isOnlyTerrain = type(_fileName) ~= 'string' or _fileName:len() == 0
-            logger.print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax, '_zShift =', _zShift)
+            logger.infoOut('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, '_zMax =', _zMax, '_zShift =', _zShift)
             if _isOnlyTerrain then
                 result.models[#result.models+1] = {
                     id = 'lollo_freestyle_train_station/railroad/assets/cargo/era_a_cube_1x1.mdl',
@@ -286,10 +286,10 @@ function data()
 
             local _embankmentTypeIndex = (params.lollo_platform_as_asset_embankment or 0)
             local _embankment = _paramHelpers.embankment.getValueFromSliderParamValue(_embankmentTypeIndex)
-            logger.print('_embankment =') logger.debugPrint(_embankment)
+            logger.infoOut('_embankment =', _embankment)
             -- local _terrainZ = 0
             local _terrainZ = math.max(_zShift, 0)
-            logger.print('_terrainZ =') logger.debugPrint(_terrainZ)
+            logger.infoOut('_terrainZ =', _terrainZ)
             local _flatTerrainFaces = { {
                 {-_xHalfSize -_embankment, -_yHalfSize -_embankment, _zMax + _terrainZ},
                 {-_xHalfSize -_embankment, _yHalfSize +_embankment, _zMax + _terrainZ},

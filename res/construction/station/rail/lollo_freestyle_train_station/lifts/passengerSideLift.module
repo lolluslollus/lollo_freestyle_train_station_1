@@ -47,7 +47,7 @@ function data()
 			if not(buildingHeight) then return end
 			local buildingModelId = moduleHelpers.lifts.tryGetSideLiftModelId(params, nTerminal, nTrackEdge, eraPrefix, buildingHeight)
 			if not(buildingModelId) then return end
-			-- logger.print('buildingHeight, buildingModelId =', buildingHeight, buildingModelId)
+			-- logger.infoOut('buildingHeight, buildingModelId =', buildingHeight, buildingModelId})
 
 			-- add building
 			local buildingTransf = transfUtils.getTransf_ZRotatedP90(slotTransf)

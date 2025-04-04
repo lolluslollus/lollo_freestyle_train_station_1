@@ -1,3 +1,4 @@
+-- LOLLO TODO this should not be in the station folder, fix it in a future major release
 function data()
     local _arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
@@ -8,7 +9,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo openStairsFree_v2.con ERROR: ', err)
+        logger.thingOut('lollo openStairsFree_v2.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.stairs_v2
@@ -32,10 +33,10 @@ function data()
 		skipCollision = false, -- true,
         params = _openLiftOpenStairsHelpers.getOpenStairsParamsMetadata_v2(),
 		updateFn = function(params)
-            logger.print('openStairsFree_v2.updateFn firing, params =') logger.debugPrint(_arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+            logger.infoOut('openStairsFree_v2.updateFn firing, params with no state =', _arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
             local _height = _paramReaders.getHeight(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
-            logger.print('### _bridgeChunkLength = ' .. tostring(_bridgeChunkLength))
+            logger.infoOut('### _bridgeChunkLength = ', _bridgeChunkLength)
             local _stairsBase = _paramReaders.getStairsBase(params)
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _autoBridgePathsRefData = _autoBridgePathsHelper.getData4Era(_era_prefix)
@@ -151,8 +152,6 @@ function data()
                     },
                 },
             }
-
-            -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
 
             local _addBase = function()
                 if _stairsBase == -1 then

@@ -47,7 +47,6 @@ function data()
                     if data and data.metadata and data.metadata.streetTerminal then
                         data.boundingInfo = _mdlHelpers.getVoidBoundingInfo()
                         data.collider = _mdlHelpers.getVoidCollider()
-                        -- print('LOLLO bounding reset, filename =', fileName)
                     end
                     return data
                 end
@@ -151,8 +150,6 @@ function data()
                 end
             end
             _arrayUtils.sort(trackTypes_sorted, 'name', true)
-            -- print('### trackFileNames =') debugPrint(trackFileNames)
-            -- print('### trackTypes_sorted =') debugPrint(trackTypes_sorted)
             local trackCount = 100
             for __, trackType in pairs(trackTypes_sorted) do
                 local props = trackType.props

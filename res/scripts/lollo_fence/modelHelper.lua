@@ -449,8 +449,8 @@ return {
         for _, record in pairs(metadata_sorted) do
             metadata_indexed[record.key] = record
         end
-        -- logger.print('metadata_sorted =') logger.debugPrint(metadata_sorted)
-        -- logger.print('metadata_indexed =') logger.debugPrint(metadata_indexed)
+        -- logger.infoOut('metadata_sorted =', metadata_sorted})
+        -- logger.infoOut('metadata_indexed =', metadata_indexed})
         return metadata_sorted, metadata_indexed
     end,
     getUiTypeNumber = function(uiTypeStr)

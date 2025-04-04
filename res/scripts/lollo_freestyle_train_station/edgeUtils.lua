@@ -795,13 +795,15 @@ end
 helper.isNodeStreet = function(nodeId)
     if not(helper.isValidAndExistingId(nodeId)) then return false end
 
-    return (#api.engine.system.streetSystem.getNode2StreetEdgeMap()[nodeId] > 0)
+    local _map = api.engine.system.streetSystem.getNode2StreetEdgeMap()
+    return (#(_map[nodeId]) > 0)
 end
 
 helper.isNodeTrack = function(nodeId)
     if not(helper.isValidAndExistingId(nodeId)) then return false end
 
-    return (#api.engine.system.streetSystem.getNode2TrackEdgeMap()[nodeId] > 0)
+    local _map = api.engine.system.streetSystem.getNode2TrackEdgeMap()
+    return (#(_map[nodeId]) > 0)
 end
 
 helper.getObjectPosition = function(objectId)
@@ -1142,8 +1144,7 @@ helper.track = {
 
         return results
     end,
-    getNearestEdgeIdStrict = function(transf, minZ, maxZ, myLogger)
-        if myLogger == nil then myLogger = {print = function(q) end, debugPrint = function (q) end} end
+    getNearestEdgeIdStrict = function(transf, minZ, maxZ, isExtendedLog)
         if type(transf) ~= 'table' then return nil end
 
         local _position = transfUtils.getVec123Transformed({0, 0, 0}, transf)
@@ -1171,14 +1172,14 @@ helper.track = {
         api.engine.system.octreeSystem.findIntersectingEntities(_box0, callback0)
 
         if #baseEdgeIds == 0 then
-            myLogger.print('#baseEdgeIds == 0')
+            if isExtendedLog then print('#baseEdgeIds == 0') end
             return nil
             -- LOLLO NOTE comment this out to make it less strict
         -- elseif #baseEdgeIds == 1 then
             -- print('#baseEdgeIds == 1')
             -- return baseEdgeIds[1]
         else
-            myLogger.print('#baseEdgeIds == ' .. tostring(#baseEdgeIds) .. ', position = ') myLogger.debugPrint(_position)
+            if isExtendedLog then print('#baseEdgeIds == ' .. tostring(#baseEdgeIds) .. ', position = ') debugPrint(_position) end
             -- print('multiple base edges found')
             -- choose one edge and return its id
 
@@ -1232,7 +1233,7 @@ helper.track = {
             --         -- local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
             --         local trackTypeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
             --         local halfTrackWidth = (trackTypeProperties.shapeWidth or 0) * 0.5
-            --         lmyLoggerogger.print('halfTrackWidth = ' .. tostring(halfTrackWidth))
+            --         if isExtendedLog then print('halfTrackWidth = ' .. tostring(halfTrackWidth)) end
             --         local testPosition = transfUtils.transf2Position(transf, true)
             --         local nodeBetween = helper.getNodeBetweenByPosition(baseEdgeIds[i], testPosition)
             --         if nodeBetween ~= nil and nodeBetween.length0 ~= 0 and nodeBetween.length1 ~= 0 and nodeBetween.position ~= nil then
@@ -1257,7 +1258,7 @@ helper.track = {
                     -- local node1 = api.engine.getComponent(baseEdge.node1, api.type.ComponentType.BASE_NODE)
                     local trackTypeProperties = api.res.trackTypeRep.get(baseEdgeTrack.trackType)
                     local halfTrackWidth = (trackTypeProperties.shapeWidth or 0) * 0.5
-                    myLogger.print('halfTrackWidth = ' .. tostring(halfTrackWidth))
+                    if isExtendedLog then print('halfTrackWidth = ' .. tostring(halfTrackWidth)) end
                     -- local testPosition = transfUtils.transf2Position(transf, true)
                     local shifts = {}
                     local howManySplitsM1 = 32.0 -- the higher, he better. Over 100 would be nonsense. 18 is not enough.
@@ -1310,23 +1311,23 @@ local nodeBetween = {
                             nodesBetween[#nodesBetween+1] = nodeBetween
                         end
                     end
-                    -- myLogger.print('nodesBetween for edgeId ' .. tostring(edgeId) .. ' =') myLogger.debugPrint(nodesBetween)
+                    -- if isExtendedLog then print('nodesBetween for edgeId ' .. tostring(edgeId) .. ' =') debugPrint(nodesBetween) end
                     if #nodesBetween > 1 then
                         for k = 1, #nodesBetween - 1, 1 do
                             -- local distance = transfUtils.getDistanceBetweenPointAndStraight(segmentPosition[1], segmentPosition[2], testPosition)
                             local distance = transfUtils.getDistanceBetweenPointAndStraight(nodesBetween[k].position, nodesBetween[k+1].position, _position)
                             if type(distance) == 'number' and distance < minDistance_edgeId.distance and distance < halfTrackWidth then
-                                myLogger.print('new lower distance found for edge ' .. tostring(edgeId) .. ', it is ' .. tostring(distance))
+                                if isExtendedLog then print('new lower distance found for edge ' .. tostring(edgeId) .. ', it is ' .. tostring(distance)) end
                                 minDistance_edgeId.distance = distance
                                 minDistance_edgeId.edgeId = edgeId
                             else
-                                myLogger.print('no lower distance found for edge ' .. tostring(edgeId) .. ', it would be ' .. tostring(distance))
+                                if isExtendedLog then print('no lower distance found for edge ' .. tostring(edgeId) .. ', it would be ' .. tostring(distance)) end
                             end
                         end
                     end
                 end
             end -- loop over edges
-            myLogger.print('track.getNearestEdgeIdStrict is about to return; minDistance_edgeId = ') myLogger.debugPrint(minDistance_edgeId)
+            if isExtendedLog then print('track.getNearestEdgeIdStrict is about to return; minDistance_edgeId = ') debugPrint(minDistance_edgeId) end
             return minDistance_edgeId.edgeId
         end
     end,
@@ -1347,7 +1348,7 @@ local nodeBetween = {
             if baseEdge ~= nil and api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK) ~= nil then
                 local nEdgesAttached2Node0 = #(_map[baseEdge.node0] or {})
                 if nEdgesAttached2Node0 == 0 then -- should never happen
-                    logger.warn('should never happen: 0 edges are attached to node ' .. baseEdge.node0)
+                    logger.warningOut('should never happen: 0 edges are attached to node ' .. baseEdge.node0)
                     sharedNodeIds_indexed[baseEdge.node0] = true
                 elseif nEdgesAttached2Node0 == 1 then
                     if isIncludeOuterEndNodes then
@@ -1358,7 +1359,7 @@ local nodeBetween = {
                 end
                 local nEdgesAttached2Node1 = #(_map[baseEdge.node1] or {})
                 if nEdgesAttached2Node1 == 0 then -- should never happen
-                    logger.warn('should never happen: 0 edges are attached to node ' .. baseEdge.node1)
+                    logger.warningOut('should never happen: 0 edges are attached to node ' .. baseEdge.node1)
                     sharedNodeIds_indexed[baseEdge.node1] = true
                 elseif nEdgesAttached2Node1 == 1 then
                     if isIncludeOuterEndNodes then

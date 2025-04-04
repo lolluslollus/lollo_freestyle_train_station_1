@@ -60,7 +60,7 @@ local privateFuncs = {
         local tilt = -variant * 0.025
         local _maxRadAbs = 0.36
         if tilt > _maxRadAbs then tilt = _maxRadAbs elseif tilt < -_maxRadAbs then tilt = -_maxRadAbs end
-        -- logger.print('getFromVariant_AxialAreaTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
+        -- logger.infoOut('getFromVariant_AxialAreaTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
         return tilt, -_maxRadAbs, _maxRadAbs
     end,
     ---@param variant integer
@@ -69,7 +69,7 @@ local privateFuncs = {
         local tilt = variant * 0.0125
         local _maxRadAbs = 0.36
         if tilt > _maxRadAbs then tilt = _maxRadAbs elseif tilt < -_maxRadAbs then tilt = -_maxRadAbs end
-        -- logger.print('getFromVariant_BridgeTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
+        -- logger.infoOut('getFromVariant_BridgeTilt returning', tilt, -_maxRadAbs, _maxRadAbs)
         -- LOLLO TODO in a future major release, return -tilt instead of tilt
         return tilt, -_maxRadAbs, _maxRadAbs
     end,
@@ -79,7 +79,7 @@ local privateFuncs = {
         local zShift = variant * 0.1 + (isFlush and 0 or constants.platformSideBitsZ)
         local _maxValueAbs = 1.2
         if zShift > _maxValueAbs then zShift = _maxValueAbs elseif zShift < -_maxValueAbs then zShift = -_maxValueAbs end
-        -- logger.print('_getFromVariant_FlatAreaHeight returning', zShift, -_maxValueAbs, _maxValueAbs)
+        -- logger.infoOut('_getFromVariant_FlatAreaHeight returning', zShift, -_maxValueAbs, _maxValueAbs)
         return zShift, -_maxValueAbs, _maxValueAbs
     end,
     ---@param variant integer
@@ -96,7 +96,7 @@ local privateFuncs = {
         elseif variant >= 1 then
             deltaZ = 5
         end
-        -- logger.print('getFromVariant_LiftHeight returning', deltaZ, -10, 10)
+        -- logger.infoOut('getFromVariant_LiftHeight returning', deltaZ, -10, 10)
         return deltaZ, -10, 10
     end,
     ---get era prefix of current terminal bit and overwrite it with the era module if present
@@ -149,7 +149,7 @@ local privateFuncs = {
         )
     end,
     getPlatformObjectTransf_AlwaysVertical = function(posTanX2)
-        -- logger.print('getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =') logger.debugPrint(posTanX2)
+        -- logger.infoOut('getPlatformObjectTransf_AlwaysVertical starting, posTanX2 =', posTanX2})
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -166,7 +166,7 @@ local privateFuncs = {
         }
     end,
     getPlatformObjectTransf_WithYRotationOLD = function(posTanX2) --, angleYFactor)
-        -- logger.print('_getUnderpassTransfWithYRotation starting, posTanX2 =') logger.debugPrint(posTanX2)
+        -- logger.infoOut('_getUnderpassTransfWithYRotation starting, posTanX2 =', posTanX2})
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -197,7 +197,7 @@ local privateFuncs = {
         -- return transfUtilsUG.mul(transfY, transfZ) -- NO!
     end,
     getPlatformObjectTransf_WithYRotation = function(posTanX2) --, angleYFactor)
-        -- logger.print('_getUnderpassTransfWithYRotation starting, posTanX2 =') logger.debugPrint(posTanX2)
+        -- logger.infoOut('_getUnderpassTransfWithYRotation starting, posTanX2 =', posTanX2})
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -302,7 +302,7 @@ privateFuncs.axialAreas = {
     end,
     addPassengerLaneToSelf = function(result, slotTransf, tag, slotId, params, nTerminal, terminalData, nTrackEdge)
         -- not suitable for cargo elements
-        logger.print('axialAreas.addPassengerLaneToSelf starting, t =', tostring(nTerminal), ', nTrackEdge =', tostring(nTrackEdge))
+        logger.infoOut('axialAreas.addPassengerLaneToSelf starting, t =', nTerminal, ', nTrackEdge =', nTrackEdge)
         -- no platform head => no lane
         local headInfo = result.getOccupiedInfo4PlatformHeads(nTerminal, nTrackEdge)
         if headInfo == nil
@@ -314,11 +314,11 @@ privateFuncs.axialAreas = {
         local innerPos123 = result.terminateConstructionHookInfo.autoStitchableInnerHeadPositions_by_T_I[nTerminal]
             and result.terminateConstructionHookInfo.autoStitchableInnerHeadPositions_by_T_I[nTerminal][nTrackEdge]
             and result.terminateConstructionHookInfo.autoStitchableInnerHeadPositions_by_T_I[nTerminal][nTrackEdge].pos
-        logger.print('innerPos123 =') logger.debugPrint(innerPos123)
+        logger.infoOut('innerPos123 =', innerPos123)
         if not(innerPos123) then return end
 
         local outerPos123 = transfUtils.transf2Position(slotTransf)
-        logger.print('outerPos123 =') logger.debugPrint(outerPos123)
+        logger.infoOut('outerPos123 =', outerPos123)
         if comparisonUtils.isVec3sCloserThan(innerPos123, outerPos123, 0.001) then return end
 
         local laneTransf = transfUtils.get1MLaneTransf(innerPos123, outerPos123)
@@ -388,7 +388,7 @@ privateFuncs.deco = {
         --         sinX = -sinX -- invert
         --     end
         -- end
-        -- logger.print('sinX, cosX =', sinX, cosX)
+        -- logger.infoOut('sinX, cosX =', sinX, cosX)
 
         local tunnelYShift = (cpf.type == 2) and 0.5 or 0
         -- print('(isLowIEnd == isTrackOnPlatformLeft)' .. tostring((isLowIEnd == isTrackOnPlatformLeft)))
@@ -429,7 +429,7 @@ privateFuncs.deco = {
                     }
                 end
             end
-            -- logger.print('transf 4 p = ') logger.debugPrint(transf4P)
+            -- logger.infoOut('transf 4 p = ', transf4P})
         end
         -- close the last bit if it is shorter than 1 metre - remember walls are all 1 metre wide
         if endY == 0 and lengthAcross > math.floor(absDeltaY) then
@@ -610,7 +610,7 @@ privateFuncs.deco = {
     getMNAdjustedValue_0_1_2_Cycling = function(params, slotId)
         local variant = privateFuncs.getVariant(params, slotId)
         local result = math.ceil(privateFuncs.getFromVariant_0_to_1(variant, 3) * 2)
-        -- logger.print('_getMNAdjustedValue_0_1_2_Cycling; variant = ' .. tostring(variant) .. '; result = ' .. tostring(result))
+        -- logger.infoOut('_getMNAdjustedValue_0_1_2_Cycling; variant = ' .. tostring(variant) .. '; result = ' .. tostring(result))
         return result
     end,
     getStationSignFineIndexes = function(params, nTerminal, terminalData)
@@ -760,17 +760,15 @@ privateFuncs.deco = {
 }
 privateFuncs.edges = {
     _addTrackEdges = function(result, tag2nodes, params, nTerminal, terminalData)
-        logger.print('_addTrackEdges starting for terminal =', nTerminal)
+        logger.infoOut('_addTrackEdges starting for terminal =', nTerminal)
         local _modules = params.modules
 
         local _isTrackOnPlatformLeft = terminalData.isTrackOnPlatformLeft
-        logger.print('_isTrackOnPlatformLeft =', tostring(_isTrackOnPlatformLeft))
+        logger.infoOut('_isTrackOnPlatformLeft =', _isTrackOnPlatformLeft)
         local platformHead1Module = _modules[slotHelpers.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]
         local platformHeadNModule = _modules[slotHelpers.mangleId(nTerminal, #terminalData.centrePlatformsRelative, constants.idBases.platformHeadSlotId)]
-        logger.print('platformHead1Module =') logger.debugPrint(platformHead1Module)
-        logger.print('platformHeadNModule =') logger.debugPrint(platformHeadNModule)
-        logger.print('terminalData.trackEdgeListVehicleNode0Index =', tostring(terminalData.trackEdgeListVehicleNode0Index))
-        logger.print('terminalData.trackEdgeListVehicleNode1Index =', tostring(terminalData.trackEdgeListVehicleNode1Index))
+        logger.infoOut('platformHead1Module =', platformHead1Module, 'platformHeadNModule =', platformHeadNModule)
+        logger.infoOut('terminalData.trackEdgeListVehicleNode0Index =', terminalData.trackEdgeListVehicleNode0Index, 'terminalData.trackEdgeListVehicleNode1Index =', terminalData.trackEdgeListVehicleNode1Index)
         local _getVehicleNodeIndex = function()
             -- these things were added in Jan 2024, leave if they are not there
             if terminalData.trackEdgeListVehicleNode0Index == nil or terminalData.trackEdgeListVehicleNode1Index == nil then return nil end
@@ -783,10 +781,10 @@ privateFuncs.edges = {
             local vnNIndex = math.max(terminalData.trackEdgeListVehicleNode0Index, terminalData.trackEdgeListVehicleNode1Index)
             local telVn1 = terminalData.trackEdgeLists[vn1Index]
             local telVnN = terminalData.trackEdgeLists[vnNIndex]
-            if telVn1 == nil or telVnN == nil then logger.warn('telVn1 == nil or telVnN == nil') return nil end
+            if telVn1 == nil or telVnN == nil then logger.warningOut('telVn1 == nil or telVnN == nil') return nil end
             local tel1 = terminalData.trackEdgeLists[1]
             local telN = terminalData.trackEdgeLists[#terminalData.trackEdgeLists]
-            if tel1 == nil or telN == nil then logger.warn('tel1 == nil or telN == nil') return nil end
+            if tel1 == nil or telN == nil then logger.warningOut('tel1 == nil or telN == nil') return nil end
             local tel1Pos = transfUtils.getPosTanX2Transformed(tel1.posTanX2, _inverseMainTransf)[1][1]
             local telNPos = transfUtils.getPosTanX2Transformed(telN.posTanX2, _inverseMainTransf)[2][1]
 
@@ -799,25 +797,27 @@ privateFuncs.edges = {
                 and vn1Index
                 or vnNIndex
             if logger.isExtendedLog() then
-                print('*** _getVehicleNodeIndex is about to return', tostring(vehicleNodeIndex))
-            --     print('terminalData.centrePlatformsRelative[1].posTanX2[1][1] =') debugPrint(terminalData.centrePlatformsRelative[1].posTanX2[1][1])
-            --     print('terminalData.centrePlatformsRelative[#terminalData.centrePlatformsRelative].posTanX2[2][1] =') debugPrint(terminalData.centrePlatformsRelative[#terminalData.centrePlatformsRelative].posTanX2[2][1])
-            --     print('cplPos =') debugPrint(cplPos)
-            --     print('...')
-            --     print('tel1Pos =') debugPrint(tel1Pos)
-            --     print('telNPos =') debugPrint(telNPos)
-            --     print('terminalData.trackEdgeLists[vehicleNodeIndex] =') debugPrint(terminalData.trackEdgeLists[vehicleNodeIndex])
-            --     print('terminalData.trackEdgeLists[vn1Index] =') debugPrint(terminalData.trackEdgeLists[vn1Index])
-            --     print('terminalData.trackEdgeLists[vnNIndex] =') debugPrint(terminalData.trackEdgeLists[vnNIndex])
+                logger.infoOut('*** _getVehicleNodeIndex is about to return', vehicleNodeIndex)
+            --     logger.thingOut('terminalData.centrePlatformsRelative[1].posTanX2[1][1] =', terminalData.centrePlatformsRelative[1].posTanX2[1][1])
+            --     logger.thingOut('terminalData.centrePlatformsRelative[#terminalData.centrePlatformsRelative].posTanX2[2][1] =', terminalData.centrePlatformsRelative[#terminalData.centrePlatformsRelative].posTanX2[2][1])
+            --     logger.thingOut('cplPos =', cplPos)
+            --     logger.thingOut('...')
+            --     logger.thingOut('tel1Pos =', tel1Pos)
+            --     logger.thingOut('telNPos =', telNPos)
+            --     logger.thingOut('terminalData.trackEdgeLists[vehicleNodeIndex] =', terminalData.trackEdgeLists[vehicleNodeIndex])
+            --     logger.thingOut('terminalData.trackEdgeLists[vn1Index] =', terminalData.trackEdgeLists[vn1Index])
+            --     logger.thingOut('terminalData.trackEdgeLists[vnNIndex] =', terminalData.trackEdgeLists[vnNIndex])
             end
             return vehicleNodeIndex
         end
         local vehicleNodeIndex = _getVehicleNodeIndex() or terminalData.trackEdgeListMidIndex
         result.terminateConstructionHookInfo.vehicleNodes[nTerminal] = (#result.edgeLists + vehicleNodeIndex) * 2 - 2
 
-        logger.print('#terminalData.trackEdgeLists =', tostring(#terminalData.trackEdgeLists))
-        logger.print('#terminalData.platformEdgeLists =', tostring(#terminalData.platformEdgeLists))
-        logger.print('result.terminateConstructionHookInfo.vehicleNodes[nTerminal] =', tostring(result.terminateConstructionHookInfo.vehicleNodes[nTerminal]))
+        logger.infoOut(
+            '#terminalData.trackEdgeLists =', #terminalData.trackEdgeLists,
+            '#terminalData.platformEdgeLists =', #terminalData.platformEdgeLists,
+            'result.terminateConstructionHookInfo.vehicleNodes[nTerminal] =', result.terminateConstructionHookInfo.vehicleNodes[nTerminal]
+        )
 
         local forceCatenary = 0
         local trackElectrificationModuleKey = slotHelpers.mangleId(nTerminal, 0, constants.idBases.trackElectrificationSlotId)
@@ -828,7 +828,7 @@ privateFuncs.edges = {
                 forceCatenary = 1
             end
         end
-        logger.print('forceCatenary =', forceCatenary)
+        logger.infoOut('forceCatenary =', forceCatenary)
         local forceFast = 0
         local trackSpeedModuleKey = slotHelpers.mangleId(nTerminal, 0, constants.idBases.trackSpeedSlotId)
         if _modules[trackSpeedModuleKey] ~= nil then
@@ -838,7 +838,7 @@ privateFuncs.edges = {
                 forceFast = 1
             end
         end
-        logger.print('forceFast =', forceFast)
+        logger.infoOut('forceFast =', forceFast)
     
         local maxI = #terminalData.trackEdgeLists
         for i = 1, maxI do
@@ -1162,7 +1162,7 @@ privateFuncs.platforms = {
                 }
             end
         end
-        -- logger.print('terrainCoordinates =') logger.debugPrint(terrainCoordinates)
+        -- logger.infoOut('terrainCoordinates =', terrainCoordinates})
         return terrainCoordinates
     end,
 }
@@ -1391,7 +1391,7 @@ privateFuncs.slopedAreas = {
             xM = centrePlatforms[nTrackEdge].posTanX2[2][1][1]
             yM = centrePlatforms[nTrackEdge].posTanX2[2][1][2]
         else
-            logger.warn('cannot get inner degree')
+            logger.warningOut('cannot get inner degree')
             return privateConstants.slopedAreasOLD.innerDegrees.neutral
         end
     
@@ -1400,13 +1400,13 @@ privateFuncs.slopedAreas = {
             {x2, y2, 0},
             {xM, yM, 0}
         )
-        -- logger.print('segmentHunch =', segmentHunch)
+        -- logger.infoOut('segmentHunch =', segmentHunch)
     
         -- local segmentLength = transfUtils.getPositionsDistance(
         --     centrePlatforms[nTrackEdge - 1].posTanX2[1][1],
         --     centrePlatforms[nTrackEdge + 1].posTanX2[1][1]
         -- )
-        -- logger.print('segmentLength =', segmentLength)
+        -- logger.infoOut('segmentLength =', segmentLength)
         -- if segmentHunch / segmentLength < privateConstants.slopedAreas.hunchLengthRatioToClaimBend then return privateConstants.slopedAreas.innerDegrees.neutral end
         if segmentHunch < privateConstants.slopedAreasOLD.hunchToClaimBend then return privateConstants.slopedAreasOLD.innerDegrees.neutral end
     
@@ -1426,7 +1426,7 @@ privateFuncs.slopedAreas = {
         local innerSign = comparisonUtils.sgn((y1 - yM) * (x1 - x2) + (y1 - y2) * (xM - x1))
     
         if not(params.terminals[nTerminal].isTrackOnPlatformLeft) then innerSign = -innerSign end
-        -- logger.print('terminal', nTerminal, 'innerSign =', innerSign)
+        -- logger.infoOut('terminal', nTerminal, 'innerSign =', innerSign)
         return innerSign
     end,
     _getSlopedAreaTweakFactorsOLD = function(innerDegree, areaWidth)
@@ -1487,8 +1487,8 @@ privateFuncs.slopedAreas = {
                 xScaleFactor = 1.25
             end
         end
-        -- logger.print('xScaleFactor =', xScaleFactor)
-        -- logger.print('angleYFactor =', angleYFactor)
+        -- logger.infoOut('xScaleFactor =', xScaleFactor)
+        -- logger.infoOut('angleYFactor =', angleYFactor)
     
         return waitingAreaScaleFactor, xScaleFactor
     end,
@@ -1569,7 +1569,7 @@ privateFuncs.slopedAreas = {
                 end
             end
         end
-        -- logger.print('terrainCoordinates =') logger.debugPrint(terrainCoordinates)
+        -- logger.infoOut('terrainCoordinates =', terrainCoordinates})
         return terrainCoordinates
     end,
 }
@@ -1668,7 +1668,7 @@ return {
             raisedFace[i] = face[i]
             raisedFace[i][3] = raisedFace[i][3] + raiseBy
         end
-        -- logger.print('LOLLO raisedFaces =') logger.debugPrint(raisedFace)
+        -- logger.infoOut('raisedFace =', raisedFace})
         return {
             faces = {raisedFace},
             optional = true,
@@ -1678,7 +1678,7 @@ return {
         }
     end,
     getTerminalDecoTransf = function(posTanX2)
-        -- logger.print('getTerminalDecoTransf starting, posTanX2 =') logger.debugPrint(posTanX2)
+        -- logger.infoOut('getTerminalDecoTransf starting, posTanX2 =', posTanX2})
         local pos1 = posTanX2[1][1]
         local pos2 = posTanX2[2][1]
 
@@ -1787,7 +1787,7 @@ return {
         getPreviewIcon = function(params)
 			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
 			local zeroOneOrTwo = math.ceil(privateFuncs.getFromVariant_0_to_1(variant, 3) * 2)
-            -- logger.print('getPreviewIcon variant = ' .. tostring(variant) .. '; zeroOneOrTwo = ' .. tostring(zeroOneOrTwo))
+            -- logger.infoOut('getPreviewIcon variant = ' .. tostring(variant) .. '; zeroOneOrTwo = ' .. tostring(zeroOneOrTwo))
             local arrowModelId = 'lollo_freestyle_train_station/icon/perpendicular_wall.mdl'
             local arrowModelTransf = {0.5, 0, 0, 0,  0, 0.5, 0, 0,  0, 0, 0.5, 0,  2, 5, 2, 1}
             if zeroOneOrTwo == 1 then
@@ -2004,12 +2004,12 @@ return {
             local isFreeFromFlatAreas = false
             local occupiedWidth = 0
             local occupiedInfo4AxialAreas = result.getOccupiedInfo4AxialAreas(nTerminal, nTrackEdge)
-            logger.print('occupiedInfo4AxialAreas =') logger.debugPrint(occupiedInfo4AxialAreas)
+            logger.infoOut('occupiedInfo4AxialAreas =', occupiedInfo4AxialAreas)
             isFreeFromFlatAreas = (occupiedInfo4AxialAreas == nil)
             if not(isFreeFromFlatAreas) then
                 occupiedWidth = occupiedInfo4AxialAreas.widthOnOwnTerminalHead
             end
-            logger.print('occupiedWidth =', tostring(occupiedWidth))
+            logger.infoOut('occupiedWidth =', occupiedWidth)
 
             local _getSlopedAreaWidth = function(cpl)
                 local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, nTrackEdge).width
@@ -2017,9 +2017,8 @@ return {
                 return slopedAreaWidth
             end
             local slopedAreaWidth = _getSlopedAreaWidth(_cps[nTrackEdge])
-            logger.print('slopedAreaWidth =', tostring(slopedAreaWidth))
             local platformWidth = _cps[nTrackEdge].width
-            logger.print('platformWidth =', tostring(platformWidth))
+            logger.infoOut('slopedAreaWidth =', slopedAreaWidth, 'platformWidth =', platformWidth)
 
             local leftRightDistance = 0
             local leftTransf = transfUtils.getTransf_ZRotatedM90(slotTransf)
@@ -2088,7 +2087,7 @@ return {
             local _transfXZoom = _isTrackOnPlatformLeft and -1 or 1
             local _transfYZoom = _isTrackOnPlatformLeft and -1 or 1
             local _isEndFiller = privateFuncs.getIsEndFillerEvery3(nTrackEdge)
-            -- logger.print('_isEndFiller =', _isEndFiller)
+            -- logger.infoOut('_isEndFiller =', _isEndFiller)
             local _laneZ = result.laneZs[nTerminal]
             local _defaultLaneZ = constants.defaultPlatformHeight
             local _zShift = _laneZ - _defaultLaneZ
@@ -2133,7 +2132,7 @@ return {
                 isFreeFromFlatAreas[i] = occupiedInfo4FlatAreas == nil
                 isLookAhead[i] = occupiedInfo4FlatAreas == nil or not(occupiedInfo4FlatAreas.isEven)
             end
-            -- logger.print('*** isFreeFromFlatAreas =') logger.debugPrint(isFreeFromFlatAreas)
+            -- logger.infoOut('*** isFreeFromFlatAreas =', isFreeFromFlatAreas})
             local _getWidthAbove_0m_BarePlatformWidth = function(cpf)
                 local slopedAreaWidth = result.getOccupiedInfo4SlopedAreas(nTerminal, cpf.leadingIndex).width
                 if not(privateFuncs.slopedAreas.isSlopedAreaAllowed(cpf, slopedAreaWidth)) then slopedAreaWidth = 0 end
@@ -2141,7 +2140,7 @@ return {
             end
 
             local _iiMax = #_cpfs
-            -- logger.print('############')
+            -- logger.infoOut('############')
             if not(_isWallEnd) then
                 for ii = 1, _iiMax, privateConstants.deco.ceilingStep do
                     local cpf = _cpfs[ii]
@@ -2156,10 +2155,10 @@ return {
                                 isCanDrawVsFlatAreas = not(cpfAheadByDeco2FlatAreaShift)
                                     or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex]
                                     or not(isLookAhead[cpfAheadByDeco2FlatAreaShift.leadingIndex])
-                                -- logger.print('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
+                                -- logger.infoOut('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
                             else
                                 isCanDrawVsFlatAreas = isFreeFromFlatAreas[cpf.leadingIndex]
-                                -- logger.print('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
+                                -- logger.infoOut('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
                             end
                             if isCanDrawVsFlatAreas then
                                 -- tunnels: do not raise the walls or they may cut through the ceiling.
@@ -2318,11 +2317,11 @@ return {
                                     local cpfP1 = _cpfs[ii+1]
                                     if leadingIndex ~= cpfM1.leadingIndex then
                                         local deltaY = cpf.width + slopedAreaWidth - cpfM1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfM1.leadingIndex).width
-                                            -- logger.print('_FIVE')
+                                            -- logger.infoOut('_FIVE')
                                             privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                     elseif leadingIndex ~= cpfP1.leadingIndex then
                                         local deltaY = cpf.width + slopedAreaWidth - cpfP1.width - result.getOccupiedInfo4SlopedAreas(nTerminal, cpfP1.leadingIndex).width
-                                        -- logger.print('_SIX')
+                                        -- logger.infoOut('_SIX')
                                         privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, deltaY, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                     end
                                 end
@@ -2344,10 +2343,10 @@ return {
                                 isCanDrawVsFlatAreas = not(cpfAheadByDeco2FlatAreaShift)
                                     or isFreeFromFlatAreas[cpfAheadByDeco2FlatAreaShift.leadingIndex]
                                     or not(isLookAhead[cpfAheadByDeco2FlatAreaShift.leadingIndex])
-                                -- logger.print('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
+                                -- logger.infoOut('platform wall acting on a shifted flat area, nTerminal = ' .. nTerminal)
                             else
                                 isCanDrawVsFlatAreas = isFreeFromFlatAreas[cpf.leadingIndex]
-                                -- logger.print('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
+                                -- logger.infoOut('platform wall acting on a non-shifted flat area, nTerminal = ' .. nTerminal)
                             end
                             if isCanDrawVsFlatAreas then
                                 -- tunnels: do not raise the walls or they may cut through the ceiling.
@@ -2378,10 +2377,10 @@ return {
                                         -- skip near platform head
                                         if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
                                             if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                                -- logger.print('_ONE')
+                                                -- logger.infoOut('_ONE')
                                                 privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                             else
-                                                -- logger.print('_TWO')
+                                                -- logger.infoOut('_TWO')
                                                 privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                             end
                                         end
@@ -2389,10 +2388,10 @@ return {
                                         -- skip near platform head
                                         if not(_modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
                                             if not(result.getOccupiedInfo4AxialAreas(nTerminal, cpf.leadingIndex)) then
-                                                -- logger.print('_THREE')
+                                                -- logger.infoOut('_THREE')
                                                 privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth + cpf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                             else
-                                                -- logger.print('_FOUR')
+                                                -- logger.infoOut('_FOUR')
                                                 privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, slopedAreaWidth, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                             end
                                         end
@@ -2508,13 +2507,13 @@ cpf =
                                 if pp == 1 then
                                     -- skip near platform head
                                     if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
-                                        -- logger.print('_ONE')
+                                        -- logger.infoOut('_ONE')
                                         privateFuncs.deco.addWallAcross(cpf, true, result, tag, _wallAcrossModelId, ctf.width + cpf.width, _isTrackOnPlatformLeft, wallTransf, pp, _ppMax, wallBaseModelId, ctf.width)
                                     end
                                 elseif pp == _ppMax then
                                     -- skip near platform head
                                     if not(_modules[result.mangleId(nTerminal, _cpfs[pp].leadingIndex, constants.idBases.platformHeadSlotId)]) then
-                                        -- logger.print('_THREE')
+                                        -- logger.infoOut('_THREE')
                                         privateFuncs.deco.addWallAcross(cpf, false, result, tag, _wallAcrossModelId, ctf.width + cpf.width, _isTrackOnPlatformLeft, wallTransf, pp, _ppMax, wallBaseModelId, ctf.width)
                                     end
                                 end
@@ -2543,10 +2542,10 @@ cpf =
                                     -- skip near platform head
                                     if not(_modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]) then
                                         -- if not(result.getOccupiedInfo4AxialAreas(nTerminal, ctf.leadingIndex)) then
-                                            -- logger.print('_ONE')
+                                            -- logger.infoOut('_ONE')
                                             privateFuncs.deco.addWallAcross(ctf, true, result, tag, _wallAcrossModelId, ctf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                         -- else
-                                        --     -- logger.print('_TWO')
+                                        --     -- logger.infoOut('_TWO')
                                         --     privateFuncs.deco.addWallAcross(ctf, true, result, tag, _wallAcrossModelId, 0, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                         -- end
                                     end
@@ -2554,10 +2553,10 @@ cpf =
                                     -- skip near platform head
                                     if not(_modules[result.mangleId(nTerminal, _ctfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]) then
                                         -- if not(result.getOccupiedInfo4AxialAreas(nTerminal, ctf.leadingIndex)) then
-                                            -- logger.print('_THREE')
+                                            -- logger.infoOut('_THREE')
                                             privateFuncs.deco.addWallAcross(ctf, false, result, tag, _wallAcrossModelId, ctf.width, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                         -- else
-                                        --     -- logger.print('_FOUR')
+                                        --     -- logger.infoOut('_FOUR')
                                         --     privateFuncs.deco.addWallAcross(ctf, false, result, tag, _wallAcrossModelId, 0, _isTrackOnPlatformLeft, wallTransf, ii, _iiMax, wallBaseModelId, 0)
                                         -- end
                                     end
@@ -2624,8 +2623,8 @@ cpf =
     },
     edges = {
         addEdges = function(result, tag, params, nTerminal, terminalData)
-            logger.print('moduleHelpers.edges.addEdges starting for terminal', nTerminal, ', tag = ', (tag or 'NIL'))
-            -- logger.print('result.edgeLists =') logger.debugPrint(result.edgeLists)
+            logger.infoOut('moduleHelpers.edges.addEdges starting for terminal', nTerminal, ', tag = ', tag)
+            -- logger.infoOut('result.edgeLists =', result.edgeLists})
     
             local nNodesInTerminalSoFar = 0 -- privateFuncs.edges._getNNodesInTerminalsSoFar(params, nTerminal)
     
@@ -2642,14 +2641,12 @@ cpf =
     
             privateFuncs.edges._addPlatformEdges(result, tag2nodes, params, nTerminal, terminalData)
             privateFuncs.edges._addTrackEdges(result, tag2nodes, params, nTerminal, terminalData)
-    
-            -- logger.print('build 35716 moduleHelpers.edges.addEdges ending for terminal', nTerminal, ', result.edgeLists =') logger.debugPrint(result.edgeLists)
         end,
         dynamicBridgeTypes_updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)
             -- local sampleUpdateScriptParams = {
             --     bridgeFileName = "stone.lua",
             -- }
-			logger.print('dynamicBridgeTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+			logger.infoOut('dynamicBridgeTypes_updateFn got updateScriptParams =', updateScriptParams)
             if updateScriptParams == nil then return end
 
 			local nTerminal, _, baseId = result.demangleId(slotId)
@@ -2672,20 +2669,19 @@ cpf =
             end
 
             for telIndex, edgeListsIndex in pairs(result.platformEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infoOut('edgeListsIndex =', edgeListsIndex})
                 _updateEdge(edgeListsIndex)
 			end
 			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infoOut('edgeListsIndex =', edgeListsIndex})
                 _updateEdge(edgeListsIndex)
 				--[[
 				if telIndex ~= nil then
 					local tel = params.terminals[nTerminal].trackEdgeLists[telIndex]
-					print('tel =')
-					debugPrint(params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
+					logger.thingOut('tel =', params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
 					if tel ~= nil then
 						params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName = 'high_speed.lua'
-						print('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
+						logger.thingOut('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
 					end
 				end
 				]]
@@ -2696,7 +2692,7 @@ cpf =
             --     catenary = false,
             --     trackType = "tgr_thirdRail.lua",
             -- }
-			logger.print('dynamicTrackTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+			logger.infoOut('dynamicTrackTypes_updateFn got updateScriptParams =', updateScriptParams)
             if updateScriptParams == nil or updateScriptParams.trackType == nil or updateScriptParams.catenary == nil then return end
 
 			local nTerminal, _, baseId = result.demangleId(slotId)
@@ -2708,20 +2704,19 @@ cpf =
             if not(result.trackEdgeListsIndexes) or not(result.trackEdgeListsIndexes[nTerminal]) then return end
 
 			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infoOut('edgeListsIndex =', edgeListsIndex})
 				if edgeListsIndex ~= nil then
                     result.edgeLists[edgeListsIndex].params.catenary = updateScriptParams.catenary -- true
 					result.edgeLists[edgeListsIndex].params.type = updateScriptParams.trackType -- 'high_speed.lua'
-					-- logger.print('high speed module updated a track') logger.debugPrint(result.edgeLists[edgeListsIndex])
+					-- logger.infoOut('high speed module updated a track', result.edgeLists[edgeListsIndex]})
 				end
 				--[[
 				if telIndex ~= nil then
 					local tel = params.terminals[nTerminal].trackEdgeLists[telIndex]
-					print('tel =')
-					debugPrint(params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
+					logger.thingOut('tel =', params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
 					if tel ~= nil then
 						params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName = 'high_speed.lua'
-						print('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
+						logger.thingOut('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
 					end
 				end
 				]]
@@ -2731,7 +2726,7 @@ cpf =
             -- local sampleUpdateScriptParams = {
             --     tunnelFileName = "tunnel.lua",
             -- }
-			logger.print('dynamicTunnelTypes_updateFn got updateScriptParams =') logger.debugPrint(updateScriptParams)
+			logger.infoOut('dynamicTunnelTypes_updateFn got updateScriptParams =', updateScriptParams)
             if updateScriptParams == nil then return end
 
 			local nTerminal, _, baseId = result.demangleId(slotId)
@@ -2754,20 +2749,19 @@ cpf =
             end
 
             for telIndex, edgeListsIndex in pairs(result.platformEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infoOut('edgeListsIndex =', edgeListsIndex})
                 _updateEdge(edgeListsIndex)
 			end
 			for telIndex, edgeListsIndex in pairs(result.trackEdgeListsIndexes[nTerminal]) do
-				-- logger.print('edgeListsIndex =') logger.debugPrint(edgeListsIndex)
+				-- logger.infoOut('edgeListsIndex =', edgeListsIndex})
                 _updateEdge(edgeListsIndex)
 				--[[
 				if telIndex ~= nil then
 					local tel = params.terminals[nTerminal].trackEdgeLists[telIndex]
-					print('tel =')
-					debugPrint(params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
+					logger.thingOut('tel =', params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName)
 					if tel ~= nil then
 						params.terminals[nTerminal].trackEdgeLists[telIndex].trackTypeName = 'high_speed.lua'
-						print('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
+						logger.thingOut('tel updated') -- this does nothing to the params, there seems to be a deep copy at work
 					end
 				end
 				]]
@@ -3653,7 +3647,7 @@ cpf =
                     end
                 else
                     local _underpassModule = _modules[result.mangleId(nTerminal, currentLeadingIndex, constants.idBases.underpassSlotId)]
-                    -- if _underpassModule ~= nil then print('ii = ') debugPrint(ii) end
+                    -- if _underpassModule ~= nil then logger.thingOut('ii = ', ii) end
 
                     local _isHole = _underpassModule ~= nil
                         and previousLeadingIndex == currentLeadingIndex
@@ -3817,7 +3811,7 @@ cpf =
 			-- 	tag = tag
 			-- }
 
-			logger.print('### platformHeadModule')
+			logger.infoOut('### platformHeadModule')
 			local _terminalData = params.terminals[nTerminal]
 			local _cpfs = _terminalData.centrePlatformsFineRelative
 			local _laneZ = result.laneZs[nTerminal]
@@ -3836,9 +3830,9 @@ cpf =
                 local _modelId = privateFuncs.platformHeads.getHeadModelId(_eraPrefix, _isCargoTerminal, _isRight, _cpf.width, _platformStyleModuleFileName)
                 local posTanX2 = nTrackEdge == 1 and transfUtils.getPosTanX2Reversed(_cpf.posTanX2) or _cpf.posTanX2
                 for hh = 1, howMany4mChunks do
-                    -- logger.print('posTanX2 before =') logger.debugPrint(posTanX2)
+                    -- logger.infoOut('posTanX2 before =', posTanX2})
                     posTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(posTanX2, _xSize)
-                    -- logger.print('posTanX2 after =') logger.debugPrint(posTanX2)
+                    -- logger.infoOut('posTanX2 after =', posTanX2})
                     result.models[#result.models+1] = {
                         id = _modelId,
                         slotId = slotId,
@@ -4026,7 +4020,7 @@ cpf =
                         local myTransf = privateFuncs.getPlatformObjectTransf_WithYRotation(centreAreaPosTanX2)
                         local xScaleFactor = math.max(xRatio * yRatio, 1.05) -- this is a bit crude but it's cheap
                         -- local xScaleFactor = xRatio * 1.05 -- dx/dl -- no good here
-                        -- logger.print('xScaleFactor w ratios =', xScaleFactor)
+                        -- logger.infoOut('xScaleFactor w ratios =', xScaleFactor)
                         result.models[#result.models+1] = {
                             id = modelId,
                             -- transf = transfUtils.getTransf_XScaled(myTransf, xScaleFactor),
@@ -4059,14 +4053,14 @@ cpf =
                         if ii == 1 then
                             local platformHeadModule = _modules[result.mangleId(nTerminal, 1, constants.idBases.platformHeadSlotId)]
                             if platformHeadModule ~= nil then
-                                -- logger.print('ii == 1; platformHeadModule =') logger.debugPrint(platformHeadModule)
+                                -- logger.infoOut('ii == 1; platformHeadModule =', platformHeadModule})
                                 howMany1mChunks = platformHeadModule.metadata.howMany4mChunks * 4
                                 platformHeadExtensionPosTanX2 = transfUtils.getPosTanX2Reversed(centreAreaPosTanX2)
                             end
                         elseif ii == _maxII then
                             local platformHeadModule = _modules[result.mangleId(nTerminal, _cpfs[ii].leadingIndex, constants.idBases.platformHeadSlotId)]
                             if platformHeadModule ~= nil then
-                                -- logger.print('ii == _maxII; platformHeadModule =') logger.debugPrint(platformHeadModule)
+                                -- logger.infoOut('ii == _maxII; platformHeadModule =', platformHeadModule})
                                 howMany1mChunks = platformHeadModule.metadata.howMany4mChunks * 4
                                 platformHeadExtensionPosTanX2 = arrayUtils.cloneDeepOmittingFields(centreAreaPosTanX2)
                             end
@@ -4075,9 +4069,9 @@ cpf =
                             local terrainCoordinates = {}
 
                             for hh = 1, howMany1mChunks do
-                                -- logger.print('posTanX2 before =') logger.debugPrint(platformHeadExtensionPosTanX2)
+                                -- logger.infoOut('posTanX2 before =', platformHeadExtensionPosTanX2})
                                 platformHeadExtensionPosTanX2 = transfUtils.getExtrapolatedPosTanX2Continuation(platformHeadExtensionPosTanX2, 1)
-                                -- logger.print('posTanX2 after =') logger.debugPrint(platformHeadExtensionPosTanX2)
+                                -- logger.infoOut('posTanX2 after =', platformHeadExtensionPosTanX2})
                                 local platformHeadExtensionTransf = transfUtils.getTransf_Scaled(
                                     privateFuncs.getPlatformObjectTransf_WithYRotation(platformHeadExtensionPosTanX2),
                                     {xScaleFactor, 1, 1}

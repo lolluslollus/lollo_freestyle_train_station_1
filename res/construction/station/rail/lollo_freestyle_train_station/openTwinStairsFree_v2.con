@@ -1,3 +1,4 @@
+-- LOLLO TODO this should not be in the station folder, fix it in a future major release
 function data()
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
     local _constants = require('lollo_freestyle_train_station.constants')
@@ -8,7 +9,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo openTwinStairsFree_v2.con ERROR: ', err)
+        logger.thingOut('lollo openTwinStairsFree_v2.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.twinStairs_v2
@@ -205,11 +206,9 @@ function data()
                 },
             }
 
-            -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
-
             local _addBase = function(isEast, leftOrRightTransf)
                 local stairsBase = isEast and _stairsBaseEast or _stairsBaseWest
-                logger.print('stairsBase =', stairsBase)
+                logger.infoOut('stairsBase =', stairsBase)
                 if stairsBase == -1 then
                     -- do nothing
                 elseif stairsBase == 0 or stairsBase == 1 or stairsBase == 2 or stairsBase == 3 then -- edge or snappy edge
@@ -231,8 +230,6 @@ function data()
                         { { edgeX0 -_baseLen, 0, 0 }, { -_baseLen, 0, 0 } },  -- node 1 pos, tan
                     }
                     local _edgesAfterTransf = _transfUtils.getPosTanX2Transformed(_edges, leftOrRightTransf)
-                    -- logger.print('edgesBeforeTransf =') logger.debugPrint(edgesBeforeTransf)
-                    -- logger.print('edgesAfterTransf =') logger.debugPrint(edgesAfterTransf)
                     table.insert(
                         result.edgeLists,
                         {
@@ -374,7 +371,6 @@ function data()
                         { -_yHalfSize, 0, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
                         { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, 0, _zed},
                     }}
-                    logger.print('bridge faces =') logger.debugPrint(_faces)
                     table.insert(
                         result.terrainAlignmentLists,
                         {
@@ -409,7 +405,7 @@ function data()
                         { -_yHalfSize, _bridgeStartY, _zed}, { -_yHalfSize, _bridgeEndY, _zed},
                         { _yHalfSize, _bridgeEndY, _zed}, { _yHalfSize, _bridgeStartY, _zed},
                     }}
-                    logger.print('bridge faces =') logger.debugPrint(_faces)
+                    logger.infoOut('bridge faces =', _faces)
                     table.insert(
                         result.terrainAlignmentLists,
                         {

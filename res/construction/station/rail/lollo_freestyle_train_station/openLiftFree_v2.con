@@ -1,3 +1,4 @@
+-- LOLLO TODO this should not be in the station folder, fix it in a future major release
 function data()
     local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
     local _autoBridgePathsHelper = require('lollo_freestyle_train_station.autoBridgePathsHelper')
@@ -6,7 +7,7 @@ function data()
     local _openLiftOpenStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
 
     local function _myErrorHandler(err)
-        print('lollo openLiftFree_v2.con ERROR: ', err)
+        logger.thingOut('lollo openLiftFree_v2.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.lift_v2
@@ -30,7 +31,7 @@ function data()
 		skipCollision = false, -- true,
         params = _openLiftOpenStairsHelpers.getOpenLiftParamsMetadata(),
 		updateFn = function(params)
-            logger.print('openLiftFree_v2.updateFn firing, params = ') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}))
+            logger.infoOut('openLiftFree_v2.updateFn firing, params with no state = ', arrayUtils.cloneDeepOmittingFields(params, {'state'}))
             local _face = {
                 {-2.2, -3.7, 0, 1}, {-2.2, 3.7, 0, 1}, {2.2, 3.7, 0, 1}, {2.2, -3.7, 0, 1}
             }
@@ -100,11 +101,11 @@ function data()
             }
 
             local _addBase = function(isEast)
-                logger.print('### isEast =', isEast)
-                logger.print('_baseModeEast =', _baseModeEast)
-                logger.print('_baseModeWest =', _baseModeWest)
+                logger.infoOut('### isEast =', isEast)
+                logger.infoOut('_baseModeEast =', _baseModeEast)
+                logger.infoOut('_baseModeWest =', _baseModeWest)
                 local baseMode = isEast and _baseModeEast or _baseModeWest
-                logger.print('baseMode =', baseMode)
+                logger.infoOut('baseMode =', baseMode)
                 if isEast then
                     result.models[#result.models+1] = {
                         id = (baseMode == -1
@@ -130,8 +131,8 @@ function data()
 
                 local isBridge = baseMode >= 2
                 local isSnap = baseMode % 2 ~= 0
-                logger.print('isBridge =', isBridge)
-                logger.print('isSnap =', isSnap)
+                logger.infoOut('isBridge =', isBridge)
+                logger.infoOut('isSnap =', isSnap)
                 local edges
                 if isEast then
                     edges = {
@@ -216,7 +217,7 @@ function data()
             end
 
             local _addTop = function(direction, bridgeChunk)
-                logger.print('direction, bridgeChunk, _height =', direction, bridgeChunk, _height)
+                logger.infoOut('direction, bridgeChunk, _height =', direction, bridgeChunk, _height)
                 if bridgeChunk == -1 then return end
 
                 if direction == 'N' then
@@ -297,7 +298,7 @@ function data()
                 end,
                 _myErrorHandler
             )
-            -- print('result.models =') debugPrint(result.models)
+            -- logger.infoOut('result.models =', result.models})
 			return result
 		end,
 

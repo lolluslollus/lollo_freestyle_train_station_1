@@ -11,7 +11,7 @@ function data()
         local _yOutward = (isLowerTerrain and (not(wallBehindModelId) and 0.7 or (isWallBehindThick and 2.7 or 1.7)) or (not(wallBehindModelId) and 0.5 or 1.0)) + yStart
         local _zInward = math.max(zShiftOverDefaultPlatformHeight, 0) -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
         local _zOutward = _zInward + zDeltaOutward
-        logger.print('_yInward = ' .. tostring(_yInward) .. '_yMiddle = ' .. tostring(_yMiddle) .. '_yOutward = ' .. tostring(_yOutward) .. '_zInward = ' .. tostring(_zInward) .. '; _zOutward = ' .. tostring(_zOutward))
+        logger.infoOut('_yInward =', _yInward, '_yMiddle =', _yMiddle, '_yOutward =', _yOutward, '_zInward =', _zInward, '; _zOutward =', _zOutward)
         local _facesTransformed = (isRaiseTerrain or isLowerTerrain)
         and {
             transfUtils.getFaceTransformed_FAST(
@@ -176,9 +176,14 @@ function data()
 		},
 		params = {},
 		updateFn = function(params)
-            logger.print('auto_fence.updateFn firing, params =')
-            logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state', 'transfs', 'transfs_ground', 'transfs_wallBehind'}, true))
-
+            logger.infoOut(
+                'auto_fence.updateFn firing, some params =',
+                arrayUtils.cloneDeepOmittingFields(
+                    params,
+                    {'state', 'transfs', 'transfs_ground', 'transfs_wallBehind'},
+                    true
+                )
+            )
             local _initParams = function()
                 -- allow adding new params to old cons that did not have them
                 local defaults = fenceModelHelper.getDefaultIndexes()
@@ -287,7 +292,7 @@ function data()
                     or 'lollo_freestyle_train_station/trackWalls/behind/tunnely_wall_base_5m.mdl')
 
             -- make sure something appears even if the models are all nil, so the costruction will not stay around as a ghost
-            logger.print('wallMainModelId =', wallMainModelId, 'wallBaseModelId =', wallBaseModelId, 'wallBehindModelId =', wallBehindModelId)
+            logger.infoOut('wallMainModelId =', wallMainModelId, 'wallBaseModelId =', wallBaseModelId, 'wallBehindModelId =', wallBehindModelId)
             if not(wallMainModelId) and not(wallBaseModelId) and not(wallBehindModelId) then
                 result.labelText = {
                     [0] = { _('wallWithNoModelsHere'), _('wallWithNoModelsHere') }
@@ -310,7 +315,7 @@ function data()
                 return result
             end
 
-            logger.print('wallMainModelId = ' .. tostring(wallMainModelId).. '; wallBaseModelId = ' .. tostring(wallBaseModelId) .. '; #params.transfs = ' .. tostring(#params.transfs))
+            logger.infoOut('wallMainModelId =', wallMainModelId, '; wallBaseModelId =', wallBaseModelId, '; #params.transfs =', #params.transfs)
             local _yStart = fenceModelHelper.getYShiftFineActualValues()[params.lolloFenceAssets_yShiftFine + 1]
             local _zShift = fenceModelHelper.getZShiftActualValues()[params.lolloFenceAssets_zShift + 1] -- it is 0 when the platform height is 0.8, which is the default
             -- the wall base is 1.4m tall, constants.defaultPlatformHeight is 1.2m, so we sink all by 20cm. This is level with freestyle stations and looks good.
@@ -320,7 +325,7 @@ function data()
             if isLowerTerrain then _zDeltaOutward = (-constants.wallHeight - (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) +0.3 --adjusted to smooth it out a bit
             elseif isRaiseTerrain then _zDeltaOutward = (constants.wallHeight + (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -0.3 --adjusted to smooth it out a bit
             end
-            logger.print('_yStart = ' .. tostring(_yStart) .. '; _zShift = ' .. tostring(_zShift) .. '; _zStart = ' .. tostring(_zStart))
+            logger.infoOut('_yStart =', _yStart, '; _zShift =', _zShift, '; _zStart =', _zStart)
             local _transfs_ground = isFlipped and params.transfs_ground_yFlipped or params.transfs_ground
             for _, transfData in pairs(_transfs_ground) do
                 if not(transfData.hasLevelCrossing) then

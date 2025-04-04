@@ -21,7 +21,7 @@ local helpers = {
         return _constants.eras.era_c.prefix
     end,
     getInvisibleTwinFileName = function(trackFileName)
-        -- logger.print('build 35716, trackFileName = ' .. (trackFileName or 'NIL'))
+        -- logger.infoOut('build 35716, trackFileName = ' .. (trackFileName or 'NIL'))
         -- return trackFileName
         local result = stringUtils.stringContains(trackFileName, '_cargo_')
             and trackFileName:gsub('_cargo_', '_invisible_')
@@ -31,7 +31,7 @@ local helpers = {
         result = result:gsub('era_b_', '')
         result = result:gsub('era_c_', '')
 
-        -- logger.print('build 35716, invisibleTwinFileName = ' .. (result or 'NIL'))
+        -- logger.infoOut('build 35716, invisibleTwinFileName = ' .. (result or 'NIL'))
         return result
     end,
     getTrackAvailability = function(trackFileName)

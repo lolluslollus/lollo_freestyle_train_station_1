@@ -8,7 +8,7 @@ function data()
     local _openLiftOpenStairsHelpers = require('lollo_open_lifts_open_stairs_free.openLiftOpenStairsHelpers')
 
     local function _myErrorHandler(err)
-        print('lollo pedestrianBridgePillar.con ERROR: ', err)
+        logger.thingOut('lollo pedestrianBridgePillar.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.pedestrianBridgePillar
@@ -50,7 +50,7 @@ function data()
             },
         },
 		updateFn = function(params)
-            logger.print('pedestrianBridgePillar.updateFn firing, params = ') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}))
+            logger.infoOut('pedestrianBridgePillar.updateFn firing, params with no state = ', arrayUtils.cloneDeepOmittingFields(params, {'state'}))
             local _era_prefix = _paramReaders.getEraPrefix(params)
             local _height = _paramReaders.getHeight(params)
             local _face = {
@@ -121,7 +121,7 @@ function data()
                 end,
                 _myErrorHandler
             )
-            print('result.models =') debugPrint(result.models)
+            logger.infoOut('result.models =', result.models)
 			return result
 		end,
 

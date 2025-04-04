@@ -8,7 +8,7 @@ function data()
     local _transfUtilsUG = require('transf')
 
     local function _myErrorHandler(err)
-        print('lollo openStairsFree.con ERROR: ', err)
+        logger.thingOut('lollo openStairsFree.con ERROR: ', err)
     end
 
     local _paramValues = _openLiftOpenStairsHelpers.paramValues.stairs_v1
@@ -32,7 +32,7 @@ function data()
 		skipCollision = false, -- true,
         params = _openLiftOpenStairsHelpers.getOpenStairsParamsMetadata(),
 		updateFn = function(params)
-            logger.print('openStairsFree.updateFn firing, params =') logger.debugPrint(_arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+            logger.infoOut('openStairsFree.updateFn firing, params with no state =', _arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
             local _height = _paramReaders.getHeight(params)
             local _bridgeChunkLength = _paramReaders.getBridgeChunkLength(params)
             local _stairsBase = _paramReaders.getStairsBase(params)
@@ -158,8 +158,6 @@ function data()
                 },
             }
             if true then return result end
-
-            -- logger.print('_paramReaders.getTerrainAlignmentType(params) =', _paramReaders.getTerrainAlignmentType(params))
 
             local _addBase = function()
                 if _stairsBase == -1 then

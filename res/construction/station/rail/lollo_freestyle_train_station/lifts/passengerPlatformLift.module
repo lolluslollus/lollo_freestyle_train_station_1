@@ -49,7 +49,6 @@ return {
 		if not(buildingHeight) then return end
 		local buildingModelId = moduleHelpers.lifts.tryGetPlatformLiftModelId(params, nTerminal, nTrackEdge, era, buildingHeight)
 		if not(buildingModelId) then return end
-		-- logger.print('buildingHeight, buildingModelId =', buildingHeight, buildingModelId)
 
 		-- add building
 		result.models[#result.models + 1] = {

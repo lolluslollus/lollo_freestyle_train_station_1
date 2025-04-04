@@ -39,7 +39,7 @@ return {
 		local _cpfs = _terminalData.centrePlatformsFineRelative
 
 		moduleHelpers.edges.addEdges(result, tag, params, nTerminal, _terminalData)
-		-- print('freestyleTrainStation result.edgeLists =') debugPrint(result.edgeLists)
+		-- logger.infoOut('freestyleTrainStation result.edgeLists =', result.edgeLists})
 		moduleHelpers.platforms.addPlatform(result, tag, slotId, params, nTerminal, _terminalData)
 
 		local laneZ = result.laneZs[nTerminal]
@@ -460,7 +460,7 @@ return {
 			end
 		end
 
-		-- logger.print('passengerTerminal.module.updateFn ending')
+		-- logger.infoOut('passengerTerminal.module.updateFn ending')
 	end,
 
 	getModelsFn = function(params)

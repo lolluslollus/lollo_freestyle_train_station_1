@@ -27,7 +27,7 @@ local private = {
         -- Use the weight painting, then the gradient tool on every vertex group.
         -- Don't forget to clean and normalise each vertex group after editing, like with meshes.
         return function(params)
-            -- print('newUpdateFn starting with params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+            -- logger.infoOut('newUpdateFn starting with params with no state =', arrayUtils.cloneOmittingFields(params, {'state'}))
             -- UG TODO
             -- LOLLO NOTE
             -- when making a sharp bend, railingWidth is 10 instead of 0.5 and the lanes are screwed:
@@ -42,24 +42,24 @@ local private = {
                 params.pillarWidth = _pillarWidth
 
                 for _, railingInterval in pairs(params.railingIntervals) do
-                    -- print('railingInterval =') debugPrint(railingInterval)
+                    -- logger.infoOut('railingInterval =', railingInterval)
                     -- railingInterval.hasPillar = { -1, -1, }
                     for _, lane in pairs(railingInterval.lanes) do
                         -- lane.offset = -0.5 -- goodish, it is minus the road width * 0.5
-                        -- print('lane before =') debugPrint(lane)
+                        -- logger.infoOut('lane before =', lane)
                         lane.offset = -_roadWidth * 0.5
                         -- lane.type = 0
-                        -- print('lane after =') debugPrint(lane)
+                        -- logger.infoOut('lane after =', lane)
                     end
                 end
                 -- params.railingWidth = 0.5
                 -- params.railingWidth = 1 -- goodish, it is the road width
                 params.railingWidth = _roadWidth
-                -- print('newUpdateFn tweaked params =') debugPrint(arrayUtils.cloneOmittingFields(params, {'state'}))
+                -- logger.infoOut('newUpdateFn tweaked params =', arrayUtils.cloneOmittingFields(params, {'state'}))
             end
 
             local results = _oldUpdateFn(params)
-            -- print('newUpdateFn returning =') debugPrint(results)
+            -- logger.infoOut('newUpdateFn returning =', results)
             return results
         end
     end,

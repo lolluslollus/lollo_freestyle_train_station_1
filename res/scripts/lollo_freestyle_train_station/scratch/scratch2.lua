@@ -92,7 +92,7 @@ local aka = ''
 local akn = tonumber(aka)
 local akk = tonumber(nil)
 
-for i = 1, -1 do
+for i = 1, -1, -1 do
     print('LOLLO')
 end
 

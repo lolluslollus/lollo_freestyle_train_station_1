@@ -148,7 +148,7 @@ function data()
             },
         },
         updateFn = function(params)
-            logger.print('params =') logger.debugPrint(params)
+            logger.infoOut('params =', params)
             local result = {
                 -- colliders = {},
                 cost = 0,
@@ -168,7 +168,7 @@ function data()
                 _paramHelpers.MinusN2PlusN.getValueFromSliderParamValue('lollo_terrain_cube_z_1m', params.lollo_terrain_cube_z_1m)
             ) / 2
 
-            logger.print('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, 'z Size =', _zHalfSize * 2)
+            logger.infoOut('x Size =', _xHalfSize * 2, 'y Size =', _yHalfSize * 2, 'z Size =', _zHalfSize * 2)
 
             -- local _fileName = 'lollo_freestyle_train_station/railroad/assets/cube_1x1.mdl'
             -- for x = -_xHalfSize, _xHalfSize, 1 do
@@ -218,7 +218,7 @@ function data()
                     faces = { _flatGroundFace },
                 },
             }
-            logger.print('result =') logger.debugPrint(result)
+            logger.infoOut('result =', result)
             return result
         end,
         upgradeFn = function(params)

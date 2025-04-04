@@ -13,7 +13,7 @@ function data()
         local _yOutward = isLowerTerrain and (not(wallBehindModelId) and 0.7 or (isWallBehindThick and 2.7 or 1.7)) or (not(wallBehindModelId) and 0.5 or 1.0)
         local _zInward = 2*math.max(zShift, 0) - zStart -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
         local _zOutward = _zInward + zDeltaOutward
-        logger.print('_yInward = ' .. tostring(_yInward) .. '_yMiddle = ' .. tostring(_yMiddle) .. '_yOutward = ' .. tostring(_yOutward) .. '_zInward = ' .. tostring(_zInward) .. '; _zOutward = ' .. tostring(_zOutward))
+        logger.infoOut('_yInward =', _yInward, '_yMiddle =', _yMiddle, '_yOutward =', _yOutward, '_zInward =', _zInward, '; _zOutward =', _zOutward)
         local _facesTransformed = (isRaiseTerrain or isLowerTerrain)
             and {
                 transfUtils.getFaceTransformed_FAST(
@@ -178,7 +178,7 @@ function data()
 		},
 		params = fenceModelHelper.getConParams(),
 		updateFn = function(params)
-            logger.print('fenceAssetsScript.updateFn firing, params =') logger.debugPrint(arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
+            logger.infoOut('fenceAssetsScript.updateFn firing, params with no state =', arrayUtils.cloneDeepOmittingFields(params, {'state'}, true))
             local _initParams = function()
                 local defaults = fenceModelHelper.getDefaultIndexes()
                 params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
@@ -308,11 +308,12 @@ function data()
                 local wallBehindBaseModelId = _getWallBehindBaseModelId()
                 -- local wallBehindModelId = fenceModelHelper.getWallBehindModels(params.lolloFenceAssets_isWallTall == 1, params.lolloFenceAssets_isWallBehindThick == 1)[params.lolloFenceAssets_wallBehindModel + 1].fileName
                 local wallBehindModelId = fenceModelHelper.getWallBehindModels(false, params.lolloFenceAssets_isWallBehindThick == 1)[params.lolloFenceAssets_wallBehindModel + 1].fileName
-                logger.print('_addModels got isDoTerrain =', isDoTerrain,
-                    'wallMainModelId =', wallMainModelId or 'NIL',
-                    'wallBaseModelId =', wallBaseModelId or 'NIL',
-                    'wallBehindBaseModelId =', wallBehindBaseModelId or 'NIL',
-                    'wallBehindModelId =', wallBehindModelId or 'NIL'
+                logger.infoOut(
+                    '_addModels got isDoTerrain =', isDoTerrain,
+                    'wallMainModelId =', wallMainModelId,
+                    'wallBaseModelId =', wallBaseModelId,
+                    'wallBehindBaseModelId =', wallBehindBaseModelId,
+                    'wallBehindModelId =', wallBehindModelId
                 )
                 -- make sure something appears even if the models are all nil, so the costruction will not stay around as a ghost
                 if not(wallMainModelId) and not(wallBaseModelId) and not(wallBehindModelId) then
@@ -336,7 +337,7 @@ function data()
                 end
                 local _xShift, _yShift, _zRotRad = _getZRotationParameters()
                 local zDelta = _getZDelta()
-                logger.print('_addModels got zRotRad =', 180 / math.pi * _zRotRad, ', xShift =', _xShift, ', yShift =', _yShift, ', yStart =', _yStart, ', zDelta =', zDelta, ', zShift =', _zShift, ', zStart =', _zStart)
+                logger.infoOut('_addModels got zRotRad =', 180 / math.pi * _zRotRad, ', xShift =', _xShift, ', yShift =', _yShift, ', yStart =', _yStart, ', zDelta =', zDelta, ', zShift =', _zShift, ', zStart =', _zStart)
 
                 local transf = {
                     1, 0, 0, 0,
