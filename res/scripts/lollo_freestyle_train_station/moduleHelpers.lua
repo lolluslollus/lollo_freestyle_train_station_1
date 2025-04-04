@@ -4190,6 +4190,15 @@ cpf =
                 }
             )
         end,
+        doTerrain4HollowaySmall = function(result, slotTransf, groundFacesStrokeOuterKey)
+            local terrainFace = { -- the ground faces ignore z, the alignment lists don't
+                {-3.4, -2.4, 0, 1},
+                {-3.4, 2.4, 0, 1},
+                {3.4, 2.4, 0, 1},
+                {3.4, -2.4, 0, 1},
+            }
+            return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
+        end,
         doTerrain4HollowayMedium = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't
                 {-3.4, -4.7, 0, 1},
