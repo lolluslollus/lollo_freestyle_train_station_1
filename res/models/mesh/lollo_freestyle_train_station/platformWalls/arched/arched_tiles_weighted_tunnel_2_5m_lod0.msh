@@ -1,86 +1,117 @@
 function data()
 return {
 	matConfigs = {
-		{ 0, 0, 0, }, 
+		{
+			0, 0, 0, 0, 
+		}, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				jointWeights = {
-					count = 216,
-					offset = 1600,
+					count = 192,
+					offset = 2152,
 				},
 				normal = {
-					count = 216,
-					offset = 2248,
+					count = 192,
+					offset = 1768,
 				},
 				position = {
-					count = 216,
-					offset = 1816,
-				},
-				tangent = {
-					count = 216,
+					count = 192,
 					offset = 1384,
 				},
+				tangent = {
+					count = 192,
+					offset = 1576,
+				},
 				uv0 = {
-					count = 216,
-					offset = 2032,
+					count = 192,
+					offset = 1960,
 				},
 			},
 			materials = {
-				'lollo_freestyle_train_station/tube_tiles_creamy.mtl',
+				"lollo_freestyle_train_station/tube_tiles_creamy.mtl", 
 			},
-		}, {
+		},
+		{
 			indices = {
 				jointWeights = {
 					count = 48,
-					offset = 2512,
+					offset = 2536,
 				},
 				normal = {
 					count = 48,
-					offset = 2656,
+					offset = 2440,
 				},
 				position = {
 					count = 48,
-					offset = 2560,
+					offset = 2344,
 				},
 				tangent = {
 					count = 48,
-					offset = 2464,
+					offset = 2392,
 				},
 				uv0 = {
 					count = 48,
-					offset = 2608,
+					offset = 2488,
 				},
 			},
 			materials = {
-				'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl', -- bricked edge
+				"lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl", 
 			},
-		}, {
+		},
+		{
 			indices = {
 				jointWeights = {
 					count = 192,
-					offset = 2896,
+					offset = 3352,
 				},
 				normal = {
 					count = 192,
-					offset = 3472,
+					offset = 2968,
 				},
 				position = {
 					count = 192,
-					offset = 3088,
+					offset = 2584,
 				},
 				tangent = {
 					count = 192,
-					offset = 2704,
+					offset = 2776,
 				},
 				uv0 = {
 					count = 192,
-					offset = 3280,
+					offset = 3160,
 				},
 			},
 			materials = {
-				'lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl', -- bricked edge
+				"lollo_freestyle_train_station/lollo_trainstation_wall_white.mtl", 
+			},
+		},
+		{
+			indices = {
+				jointWeights = {
+					count = 24,
+					offset = 3640,
+				},
+				normal = {
+					count = 24,
+					offset = 3592,
+				},
+				position = {
+					count = 24,
+					offset = 3544,
+				},
+				tangent = {
+					count = 24,
+					offset = 3568,
+				},
+				uv0 = {
+					count = 24,
+					offset = 3616,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/platformWalls/arched/green.mtl", 
 			},
 		}, 
 	},
@@ -88,27 +119,27 @@ return {
 		jointWeights = {
 			count = 32,
 			numComp = 4,
-			offset = 208,
+			offset = 1352,
 		},
 		normal = {
 			count = 348,
 			numComp = 3,
-			offset = 1036,
+			offset = 628,
 		},
 		position = {
 			count = 420,
 			numComp = 3,
-			offset = 240,
+			offset = 0,
 		},
 		tangent = {
 			count = 208,
 			numComp = 4,
-			offset = 0,
+			offset = 420,
 		},
 		uv0 = {
 			count = 376,
 			numComp = 2,
-			offset = 660,
+			offset = 976,
 		},
 	},
 }

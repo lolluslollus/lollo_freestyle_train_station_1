@@ -31,7 +31,7 @@ privateValues.defaults = {
     lolloFenceAssets_isWallBehindThick = 0,
     -- lolloFenceAssets_isWallTall = 0,
     lolloFenceAssets_length = 9,
-    lolloFenceAssets_model = 19,
+    lolloFenceAssets_model = 20,
     lolloFenceAssets_wallEraPrefix = 1,
     lolloFenceAssets_wallBehindModel = 0,
     lolloFenceAssets_wallBehindInTunnels = 0,
@@ -139,6 +139,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/arched/iron_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronWLargeRivets.tga', _("WallIronWLargeRivetsName"))
             add('lollo_freestyle_train_station/platformWalls/arched/metal_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalWLargeRivets.tga', _("WallMetalWLargeRivetsName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
+            add('lollo_freestyle_train_station/platformWalls/arched/tiles_green_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledGreen.tga', _("wallTiledGreenName"))
             add('lollo_freestyle_train_station/platformWalls/arched/iron_glass_copper_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
             add('lollo_freestyle_train_station/platformWalls/arched/iron_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
             add('lollo_freestyle_train_station/platformWalls/arched/metal_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronCream.tga', _("WallIronCreamName"))
@@ -165,6 +166,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/iron_large_rivets/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronWLargeRivets.tga', _("WallIronWLargeRivetsName"))
             add('lollo_freestyle_train_station/platformWalls/metal_large_rivets/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalWLargeRivets.tga', _("WallMetalWLargeRivetsName"))
             add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
+            add('lollo_freestyle_train_station/platformWalls/tiled_green/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledGreen.tga', _("wallTiledGreenName"))
             add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
             add('lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
             add('lollo_freestyle_train_station/platformWalls/iron_cream/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronCream.tga', _("WallIronCreamName"))
