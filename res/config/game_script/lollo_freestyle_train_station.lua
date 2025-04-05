@@ -2068,7 +2068,7 @@ local _guiActions = {
     tryJoinSubway = function(conId, con)
         if con == nil
         or type(con.fileName) ~= 'string'
-        or not(constants.subwayConFileNames[con.fileName])
+        or not(constants.subwayConFileNames_indexed[con.fileName])
         or con.transf == nil
         then
             return false
