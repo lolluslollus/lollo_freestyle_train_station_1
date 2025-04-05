@@ -141,6 +141,7 @@ local constants = {
     stationConFileName = 'station/rail/lollo_freestyle_train_station/station.con',
     subwayConFileNames = {
         ['lollo_freestyle_train_station/subways/subway.con'] = true,
+        ['lollo_freestyle_train_station/subways/subwayPiccadilly.con'] = true,
         ['lollo_freestyle_train_station/subways/subwayHollowaySmall.con'] = true,
         ['lollo_freestyle_train_station/subways/subwayHollowayMedium.con'] = true,
         ['lollo_freestyle_train_station/subways/subwayHollowayLarge.con'] = true,
