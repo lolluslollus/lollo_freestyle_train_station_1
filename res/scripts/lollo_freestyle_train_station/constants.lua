@@ -154,7 +154,6 @@ local constants = {
         ['station/rail/lollo_freestyle_train_station/subwayClaphamLarge.con'] = true, -- OBSOLETE, it is here for compatibility with older code
         ['station/rail/lollo_freestyle_train_station/subwayClaphamMedium.con'] = true, -- OBSOLETE, it is here for compatibility with older code
         ['station/rail/lollo_freestyle_train_station/subwayClaphamSmall.con'] = true, -- OBSOLETE, it is here for compatibility with older code
-        -- ['station/rail/lollo_freestyle_train_station/subwayMetropolitain.con'] = true,
     },
     undergroundDepotConFileName = 'depot/lollo_freestyle_train_station/underground_train_depot_era_a.con',
     unsnappedSomethingMessageConFileName = 'lollo_freestyle_train_station/unsnapped_something_message.con',
