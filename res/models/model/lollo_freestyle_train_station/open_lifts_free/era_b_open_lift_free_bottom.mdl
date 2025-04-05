@@ -13,9 +13,11 @@ function data()
                             materials = {
                                 'lollo_freestyle_train_station/wall_marble_1.mtl',
                                 'lollo_freestyle_train_station/era_b_doors.mtl',
-                                'lollo_freestyle_train_station/wall_marble_2.mtl',
                                 'lollo_freestyle_train_station/black_transparent.mtl',
                                 'lollo_freestyle_train_station/era_b_doors_solid.mtl',
+                                'lollo_freestyle_train_station/wall_marble_2.mtl',
+                                'lollo_freestyle_train_station/glass_half_transparent_plain_rough.mtl',
+                                'lollo_freestyle_train_station/metal/rough_iron.mtl',
                             },
                             mesh = 'lollo_freestyle_train_station/open_lifts/era_b_open-lift-free-bottom.msh',
                             transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}

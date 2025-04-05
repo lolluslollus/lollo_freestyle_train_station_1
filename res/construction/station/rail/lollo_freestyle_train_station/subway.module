@@ -71,6 +71,50 @@ function data()
 				}
 				result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 10
 				moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
+			elseif subwayConFileName == 'lollo_freestyle_train_station/subways/subwayPiccadilly.con'
+				then
+					result.models[#result.models + 1] = {
+						id = 'lollo_freestyle_train_station/subway/piccadilly.mdl',
+						slotId = slotId,
+						transf = slotTransf,
+						tag = tag
+					}
+					local modelId = 'lollo_freestyle_train_station/subway/piccadilly_signs_era_c.mdl'
+					if eraPrefix == _constants.eras.era_a.prefix then
+						modelId = 'lollo_freestyle_train_station/subway/piccadilly_signs_era_a.mdl'
+					elseif eraPrefix == _constants.eras.era_b.prefix then
+						modelId = 'lollo_freestyle_train_station/subway/piccadilly_signs_era_b.mdl'
+					end
+					result.models[#result.models + 1] = {
+						id = modelId,
+						slotId = slotId,
+						transf = slotTransf,
+						tag = tag
+					}
+					result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 10
+					moduleHelpers.subways.doTerrain4Subways(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
+			elseif subwayConFileName == 'lollo_freestyle_train_station/subways/subwayHollowaySmall.con'
+			then
+				result.models[#result.models + 1] = {
+					id = 'lollo_freestyle_train_station/subway/holloway_5_5_6.mdl',
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+				local modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_c.mdl'
+				if eraPrefix == _constants.eras.era_a.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_a.mdl'
+				elseif eraPrefix == _constants.eras.era_b.prefix then
+					modelId = 'lollo_freestyle_train_station/subway/holloway_signs_era_b.mdl'
+				end
+                result.models[#result.models + 1] = {
+					id = modelId,
+					slotId = slotId,
+					transf = slotTransf,
+					tag = tag
+				}
+				result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances = result.terminateConstructionHookInfo.extraCapacityFromSubwayEntrances + 10
+				moduleHelpers.subways.doTerrain4HollowaySmall(result, slotTransf, _constants.era_c_groundFacesStrokeOuterKey)
 			elseif subwayConFileName == 'lollo_freestyle_train_station/subways/subwayHollowayMedium.con'
 			or subwayConFileName == 'station/rail/lollo_freestyle_train_station/subwayHollowayMedium.con' -- OBSOLETE, it is here for compatibility with olde code
 			then

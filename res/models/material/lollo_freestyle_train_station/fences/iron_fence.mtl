@@ -19,12 +19,16 @@ function data()
             map_albedo_opacity = {
                 fileName = 'lollo_freestyle_train_station/fences/iron_fence_albedo_bc3.dds',
                 type = 'TWOD',
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
                 -- wrapS = 'CLAMP_TO_EDGE',            -- maps to GL_TEXTURE_WRAP_S: REPEAT, CLAMP_TO_EDGE
                 -- wrapT = 'CLAMP_TO_EDGE',            -- maps to GL_TEXTURE_WRAP_T: REPEAT, CLAMP_TO_EDGE
             },
             map_metal_gloss_ao = {
                 fileName = 'lollo_freestyle_train_station/fences/iron_fence_metal_gloss_ao_bc3.dds',
                 type = 'TWOD',
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
                 -- wrapS = 'CLAMP_TO_EDGE',            -- maps to GL_TEXTURE_WRAP_S: REPEAT, CLAMP_TO_EDGE
                 -- wrapT = 'CLAMP_TO_EDGE',            -- maps to GL_TEXTURE_WRAP_T: REPEAT, CLAMP_TO_EDGE
             },
@@ -32,6 +36,8 @@ function data()
                 fileName = 'lollo_freestyle_train_station/fences/iron_fence_normal_bc5.dds',
                 redGreen = true,
                 type = 'TWOD',
+                wrapS = "REPEAT",
+                wrapT = "REPEAT",
                 -- wrapS = 'CLAMP_TO_EDGE',            -- maps to GL_TEXTURE_WRAP_S: REPEAT, CLAMP_TO_EDGE
                 -- wrapT = 'CLAMP_TO_EDGE',            -- maps to GL_TEXTURE_WRAP_T: REPEAT, CLAMP_TO_EDGE
             },

@@ -1,0 +1,53 @@
+local _constants = require('lollo_freestyle_train_station.constants')
+local logger = require('lollo_freestyle_train_station.logger')
+local moduleHelpers = require('lollo_freestyle_train_station.moduleHelpers')
+local transf = require 'transf'
+
+function data()
+    return {
+        -- type = 'RAIL_STATION',
+        type = 'ASSET_DEFAULT',
+        description = {
+            description = _("SubwayDesc"),
+			name = _("UndergroundName"),
+        },
+        icon = "ui/construction/station/rail/lollo_freestyle_train_station/subwayHollowaySmall.tga",
+        availability = {
+            yearFrom = 0,
+            yearTo = 0
+        },
+        categories = { 'subways' },
+        order = 1050,
+        -- autoRemovable = true,
+        -- skipCollision = true,
+        updateFn = function(params)
+            -- logger.infoOut('subway.con.updateFn starting, params =', params})
+            local result = {
+                colliders = { },
+                cost = 0,
+                edgeLists = { },
+                groundFaces = { },
+                labelText = {
+                    [1] = { _('SubwayNotConnected'), _('SubwayNotConnected') }
+                },
+                models = {
+                    {
+                        id = 'lollo_freestyle_train_station/subway/holloway_5_5_6.mdl',
+                        transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+                    },
+                    {
+                        id = _constants.yellowMessageModelFileName,
+                        transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1 }
+                    }
+                },
+                terrainAlignmentLists = { },
+            }
+
+            moduleHelpers.subways.doTerrain4HollowaySmall(result, nil, _constants.era_c_groundFacesStrokeOuterKey)
+
+            return result
+        end,
+        upgradeFn = function(_)
+        end
+    }
+end

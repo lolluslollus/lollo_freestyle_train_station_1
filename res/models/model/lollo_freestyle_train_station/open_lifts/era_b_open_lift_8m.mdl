@@ -24,6 +24,8 @@ function data()
                                 'lollo_freestyle_train_station/era_b_doors_solid.mtl',
 
                                 'lollo_freestyle_train_station/era_b_lift_doors.mtl',
+                                'lollo_freestyle_train_station/glass_half_transparent_plain_rough.mtl',
+                                'lollo_freestyle_train_station/metal/rough_iron.mtl',
                             },
                             -- mesh = 'lollo_freestyle_train_station/open_lifts/era_b_open-lift-8m.msh',
                             mesh = 'lollo_freestyle_train_station/open_lifts/era_b_open-lift-all-sides-open-8m.msh',

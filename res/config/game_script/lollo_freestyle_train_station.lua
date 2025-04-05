@@ -1987,7 +1987,8 @@ local _guiActions = {
     getCon = function(constructionId)
         if not(edgeUtils.isValidAndExistingId(constructionId)) then return nil end
 
-        return api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+        local result = api.engine.getComponent(constructionId, api.type.ComponentType.CONSTRUCTION)
+        return result
     end,
     handleSplitterWaypointBuilt = function()
         local splitterWaypointIds = stationHelpers.getAllEdgeObjectsWithModelId(_guiSplitterWaypointModelId)
@@ -2067,7 +2068,7 @@ local _guiActions = {
     tryJoinSubway = function(conId, con)
         if con == nil
         or type(con.fileName) ~= 'string'
-        or not(constants.subwayConFileNames[con.fileName])
+        or not(constants.subwayConFileNames_indexed[con.fileName])
         or con.transf == nil
         then
             return false
@@ -3908,7 +3909,6 @@ function data()
                             if _ingameMenu ~= nil and _ingameMenu:isVisible() then return end
 
                             logger.infoOut('the con config menu was closed, about to send command CON_CONFIG_MENU_CLOSED, conId = ', conId)
-                            collectgarbage()
                             guiHelpers.showProgress(_guiTexts.rebuildNeighboursInProgress, _guiTexts.modName, _guiUtils.sendAllowProgress)
                             api.cmd.sendCommand(
                                 api.cmd.make.sendScriptEvent(

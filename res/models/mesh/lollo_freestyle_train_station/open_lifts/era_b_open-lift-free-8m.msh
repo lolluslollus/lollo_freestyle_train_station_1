@@ -2,27 +2,27 @@ function data()
 return {
 	matConfigs = {
 		{
-			0, 0, 0, 0, 0, 0, 
+			0, 0, 0, 0, 0, 0, 0, 0, 
 		}, 
 	},
 	subMeshes = {
 		{
 			indices = {
 				normal = {
-					count = 1188,
-					offset = 8236,
+					count = 1308,
+					offset = 18480,
 				},
 				position = {
-					count = 1188,
-					offset = 10612,
+					count = 1308,
+					offset = 19788,
 				},
 				tangent = {
-					count = 1188,
-					offset = 7048,
+					count = 1308,
+					offset = 17172,
 				},
 				uv0 = {
-					count = 1188,
-					offset = 9424,
+					count = 1308,
+					offset = 15864,
 				},
 			},
 			materials = {
@@ -33,19 +33,19 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 11848,
+					offset = 21192,
 				},
 				position = {
 					count = 48,
-					offset = 11944,
+					offset = 21240,
 				},
 				tangent = {
 					count = 48,
-					offset = 11800,
+					offset = 21144,
 				},
 				uv0 = {
 					count = 48,
-					offset = 11896,
+					offset = 21096,
 				},
 			},
 			materials = {
@@ -55,20 +55,20 @@ return {
 		{
 			indices = {
 				normal = {
-					count = 1680,
-					offset = 13672,
+					count = 4488,
+					offset = 30264,
 				},
 				position = {
-					count = 1680,
-					offset = 17032,
+					count = 4488,
+					offset = 34752,
 				},
 				tangent = {
-					count = 1680,
-					offset = 11992,
+					count = 4488,
+					offset = 25776,
 				},
 				uv0 = {
-					count = 1680,
-					offset = 15352,
+					count = 4488,
+					offset = 21288,
 				},
 			},
 			materials = {
@@ -79,19 +79,19 @@ return {
 			indices = {
 				normal = {
 					count = 96,
-					offset = 18808,
+					offset = 39432,
 				},
 				position = {
 					count = 96,
-					offset = 19000,
+					offset = 39528,
 				},
 				tangent = {
 					count = 96,
-					offset = 18712,
+					offset = 39336,
 				},
 				uv0 = {
 					count = 96,
-					offset = 18904,
+					offset = 39240,
 				},
 			},
 			materials = {
@@ -102,19 +102,19 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 19144,
+					offset = 39720,
 				},
 				position = {
 					count = 48,
-					offset = 19240,
+					offset = 39768,
 				},
 				tangent = {
 					count = 48,
-					offset = 19096,
+					offset = 39672,
 				},
 				uv0 = {
 					count = 48,
-					offset = 19192,
+					offset = 39624,
 				},
 			},
 			materials = {
@@ -125,46 +125,92 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 19336,
+					offset = 39912,
 				},
 				position = {
 					count = 48,
-					offset = 19432,
+					offset = 39960,
 				},
 				tangent = {
 					count = 48,
-					offset = 19288,
+					offset = 39864,
 				},
 				uv0 = {
 					count = 48,
-					offset = 19384,
+					offset = 39816,
 				},
 			},
 			materials = {
 				"lollo_freestyle_train_station/open_lifts/lift-doors.002.mtl", 
 			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 1536,
+					offset = 43080,
+				},
+				position = {
+					count = 1536,
+					offset = 44616,
+				},
+				tangent = {
+					count = 1536,
+					offset = 41544,
+				},
+				uv0 = {
+					count = 1536,
+					offset = 40008,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_lifts/glass.mtl", 
+			},
+		},
+		{
+			indices = {
+				normal = {
+					count = 2160,
+					offset = 50472,
+				},
+				position = {
+					count = 2160,
+					offset = 52632,
+				},
+				tangent = {
+					count = 2160,
+					offset = 48312,
+				},
+				uv0 = {
+					count = 2160,
+					offset = 46152,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/open_lifts/iron.mtl", 
+			},
 		}, 
 	},
 	vertexAttr = {
 		normal = {
-			count = 804,
+			count = 1152,
 			numComp = 3,
-			offset = 1152,
+			offset = 9096,
 		},
 		position = {
-			count = 2220,
+			count = 5616,
 			numComp = 3,
-			offset = 4828,
+			offset = 10248,
 		},
 		tangent = {
-			count = 1152,
+			count = 3440,
 			numComp = 4,
-			offset = 0,
+			offset = 5656,
 		},
 		uv0 = {
-			count = 2872,
+			count = 5656,
 			numComp = 2,
-			offset = 1956,
+			offset = 0,
 		},
 	},
 }

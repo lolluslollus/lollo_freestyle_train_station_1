@@ -656,6 +656,8 @@ privateFuncs.deco = {
         if isWallThick then
             if wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m_2m_thick.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled_green/platformWall_low_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m_2m_thick.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m_2m_thick.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl' then
@@ -705,6 +707,8 @@ privateFuncs.deco = {
             end
         else
             if wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled_green/platformWall_low_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl'
@@ -4189,6 +4193,15 @@ cpf =
                     type = 'EQUAL',
                 }
             )
+        end,
+        doTerrain4HollowaySmall = function(result, slotTransf, groundFacesStrokeOuterKey)
+            local terrainFace = { -- the ground faces ignore z, the alignment lists don't
+                {-3.4, -2.4, 0, 1},
+                {-3.4, 2.4, 0, 1},
+                {3.4, 2.4, 0, 1},
+                {3.4, -2.4, 0, 1},
+            }
+            return privateFuncs.subways.doTerrain4ClosedSubways(result, slotTransf, groundFacesStrokeOuterKey, terrainFace)
         end,
         doTerrain4HollowayMedium = function(result, slotTransf, groundFacesStrokeOuterKey)
             local terrainFace = { -- the ground faces ignore z, the alignment lists don't

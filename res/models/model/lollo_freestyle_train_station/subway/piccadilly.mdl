@@ -1,0 +1,97 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    -- local function _getRegexParams(text)
+    --     return {
+    --         -- expr = "@_" .. counter .. "_@([^@]+)@",
+    --         -- replace = "\\1",
+    --         -- expr = tostring(text),
+    --         expr = "",
+    --         replace = tostring(text),
+    --     }
+    -- end
+    return {
+        boundingInfo = _mdlHelpers.getSubwayBoundingInfo(),
+        collider = _mdlHelpers.getSubwayCollider(),
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl',
+                                'lollo_freestyle_train_station/hole.mtl',
+                                'lollo_freestyle_train_station/fences/iron_fence.mtl',
+                                'lollo_freestyle_train_station/metal/rough_iron.mtl',
+                                'lollo_freestyle_train_station/emissive/tungsten_low.mtl',
+                                'lollo_freestyle_train_station/icon/red.mtl',
+                                'lollo_freestyle_train_station/icon/white.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/subway/piccadilly-lod0.msh',
+                            name = 'RootNode',
+                        },
+                    },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 250,
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            materials = {
+                                'lollo_freestyle_train_station/wall_marble_1.mtl',
+                                'lollo_freestyle_train_station/era_b_station_tiles_1_z.mtl',
+                                'lollo_freestyle_train_station/hole.mtl',
+                            },
+                            mesh = 'lollo_freestyle_train_station/subway/piccadilly-lod1.msh',
+                        },
+                    },
+                },
+                static = false,
+                visibleFrom = 250,
+                visibleTo = 1000,
+            },
+        },
+        metadata = {
+            transportNetworkProvider = _mdlHelpers.subway.getSubwayTransportNetworkProvider(),
+            -- labelList = {
+            --     labels = {
+            --         {
+            --             alignment = 'LEFT',
+            --             alphaMode = 'CUTOUT',
+            --             childId = 'RootNode',
+            --             color = {1.0, 1.0, 0.95},
+            --             filter = "CUSTOM",
+            --             fitting = 'CUT',
+            --             nLines = 1,
+            --             params = _getRegexParams('Public'),
+            --             -- renderMode = 'EMISSIVE',
+            --             size = {1.0, 0.1},
+            --             transf = { 0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 0,  0.06, 0.82, 2.68, 1, },
+            --             type = 'CUSTOM',
+            --             verticalAlignment = 'CENTER'
+            --         },
+            --         {
+            --             alignment = 'RIGHT',
+            --             alphaMode = 'CUTOUT',
+            --             childId = 'RootNode',
+            --             color = {1.0, 1.0, 0.95},
+            --             filter = "CUSTOM",
+            --             fitting = 'CUT',
+            --             nLines = 1,
+            --             params = _getRegexParams('Subway'),
+            --             -- renderMode = 'EMISSIVE',
+            --             size = {1.0, 0.1},
+            --             transf = { 0, -1, 0, 0,  0, 0, 1, 0,  -1, 0, 0, 0,  0.06, 0.14, 2.68, 1, },
+            --             type = 'CUSTOM',
+            --             verticalAlignment = 'CENTER'
+            --         },
+            --     }
+            -- }
+        },
+        version = 1
+    }
+end
