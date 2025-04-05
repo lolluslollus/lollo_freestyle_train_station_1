@@ -35,7 +35,7 @@ function data()
                 },
                 static = false,
                 visibleFrom = 0,
-                visibleTo = 200,
+                visibleTo = 250,
             },
             {
                 node = {
@@ -51,7 +51,7 @@ function data()
                     },
                 },
                 static = false,
-                visibleFrom = 200,
+                visibleFrom = 250,
                 visibleTo = 1000,
             },
         },
