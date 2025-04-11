@@ -8,8 +8,12 @@ function data()
             {
                 node = {
                     materials = {
-                        'lollo_freestyle_train_station/tube_tiles_white.mtl',
-                        'lollo_freestyle_train_station/tube_deco.mtl',
+                        -- swap blue and white in tunnels, otherwise they look too close to the creamy tiles
+                        -- 'lollo_freestyle_train_station/tube_tiles_white.mtl',
+                        -- 'lollo_freestyle_train_station/tube_deco.mtl',
+                        'lollo_freestyle_train_station/tube_tiles_blue.mtl',
+                        -- 'lollo_freestyle_train_station/tube_deco_creamy.mtl',
+                        'lollo_freestyle_train_station/tube_tiles_creamy.mtl',
                         'lollo_freestyle_train_station/station_concrete_1.mtl',
                         'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
                     },
@@ -23,8 +27,12 @@ function data()
             {
                 node = {
                     materials = {
-                        'lollo_freestyle_train_station/tube_tiles_white.mtl',
-                        'lollo_freestyle_train_station/tube_deco.mtl',
+                        -- swap blue and white in tunnels, otherwise they look too close to the creamy tiles
+                        -- 'lollo_freestyle_train_station/tube_tiles_white.mtl',
+                        -- 'lollo_freestyle_train_station/tube_deco.mtl',
+                        'lollo_freestyle_train_station/tube_tiles_blue.mtl',
+                        -- 'lollo_freestyle_train_station/tube_deco_creamy.mtl',
+                        'lollo_freestyle_train_station/tube_tiles_creamy.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/platformWalls/concrete_plain/wall_low_5m_lod1.msh',
                     -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}

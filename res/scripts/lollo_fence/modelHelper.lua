@@ -31,7 +31,7 @@ privateValues.defaults = {
     lolloFenceAssets_isWallBehindThick = 0,
     -- lolloFenceAssets_isWallTall = 0,
     lolloFenceAssets_length = 9,
-    lolloFenceAssets_model = 20,
+    lolloFenceAssets_model = 21,
     lolloFenceAssets_wallEraPrefix = 1,
     lolloFenceAssets_wallBehindModel = 0,
     lolloFenceAssets_wallBehindInTunnels = 0,
@@ -140,21 +140,21 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/arched/metal_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalWLargeRivets.tga', _("WallMetalWLargeRivetsName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tiles_green_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledGreen.tga', _("wallTiledGreenName"))
+            add('lollo_freestyle_train_station/platformWalls/arched/tiled_large_stripes_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga', _("WallTiledWLargeStripesName"))
             add('lollo_freestyle_train_station/platformWalls/arched/iron_glass_copper_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
             add('lollo_freestyle_train_station/platformWalls/arched/iron_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
             add('lollo_freestyle_train_station/platformWalls/arched/metal_large_rivets_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronCream.tga', _("WallIronCreamName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_light_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
+            add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
             add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
             add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceMattoni.tga', _("WallFenceMattoniName"))
-            add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
             add('lollo_freestyle_train_station/platformWalls/arched/bricks_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFs.tga', _("WallStaccionataFsName"))
             add('lollo_freestyle_train_station/platformWalls/arched/tiles_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFsTall.tga', _("WallStaccionataFsTallName"))
             add('lollo_freestyle_train_station/platformWalls/arched/concrete_plain_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
             add('lollo_freestyle_train_station/platformWalls/arched/concrete_rough_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteRough.tga', _("WallConcreteRoughName"))
-            add('lollo_freestyle_train_station/platformWalls/arched/tiled_large_stripes_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga', _("WallTiledWLargeStripesName"))
             add('lollo_freestyle_train_station/platformWalls/arched/concrete_modern_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteModern.tga', _("WallConcreteModernName"))
             add('lollo_freestyle_train_station/platformWalls/arched/metal_glass_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalGlass.tga', _("WallMetalGlassName"))
         else
@@ -167,21 +167,21 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/metal_large_rivets/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalWLargeRivets.tga', _("WallMetalWLargeRivetsName"))
             add('lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiled.tga', _("WallTiledName"))
             add('lollo_freestyle_train_station/platformWalls/tiled_green/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledGreen.tga', _("wallTiledGreenName"))
+            add('lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga', _("WallTiledWLargeStripesName"))
             add('lollo_freestyle_train_station/platformWalls/iron_glass_copper/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronGlassCopper.tga', _("WallIronGlassCopperName"))
             add('lollo_freestyle_train_station/platformWalls/iron/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIron.tga', _("WallIronName"))
             add('lollo_freestyle_train_station/platformWalls/iron_cream/wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallIronCream.tga', _("WallIronCreamName"))
             add('lollo_freestyle_train_station/platformWalls/tunnely/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
             add('lollo_freestyle_train_station/platformWalls/tunnely_light/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
+            add('lollo_freestyle_train_station/platformWalls/arco_mattoni/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
             add('lollo_freestyle_train_station/platformWalls/fence_wood/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
             add('lollo_freestyle_train_station/platformWalls/fence_bricks_stone/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
             add('lollo_freestyle_train_station/platformWalls/fence_mattoni/square_fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceMattoni.tga', _("WallFenceMattoniName"))
-            add('lollo_freestyle_train_station/platformWalls/arco_mattoni/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
             add('lollo_freestyle_train_station/platformWalls/bricks/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBricks.tga', _('WallBricksName'))
             add('lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFs.tga', _("WallStaccionataFsName"))
             add('lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallStaccionataFsTall.tga', _("WallStaccionataFsTallName"))
             add('lollo_freestyle_train_station/platformWalls/concrete_plain/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcretePlain.tga', _("WallConcretePlainName"))
             add('lollo_freestyle_train_station/platformWalls/concrete_rough/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteRough.tga', _("WallConcreteRoughName"))
-            add('lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTiledWLargeStripes.tga', _("WallTiledWLargeStripesName"))
             add('lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallConcreteModern.tga', _("WallConcreteModernName"))
             add('lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallMetalGlass.tga', _("WallMetalGlassName"))
         end

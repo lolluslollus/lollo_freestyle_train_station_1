@@ -26,7 +26,7 @@ function data()
 		},
 		metadata = { },
 		order = {
-			value = 41,
+			value = 61,
 		},
 		type = _constants.trackWallModuleType,
 		updateFn = function(result, slotTransf, tag, slotId, addModelFn, params, updateScriptParams)

@@ -4,7 +4,8 @@ function data()
         order = 0,
         params = {
             albedo_scale = {
-                albedoScale = { 0.6, 1, 0.5, },
+                -- albedoScale = { 0.6, 1, 0.5, },
+                albedoScale = { 0.6, 0.85, 0.54, },
             },
             fade_out_range = {
                 fadeOutEndDist = 20000,

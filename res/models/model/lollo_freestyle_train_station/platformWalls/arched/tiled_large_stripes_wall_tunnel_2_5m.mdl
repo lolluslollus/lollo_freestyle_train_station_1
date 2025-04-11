@@ -29,11 +29,15 @@ function data()
                                 -- },
                             },
                             skinMaterials = {
-                                'lollo_freestyle_train_station/tube_tiles_white_skinned.mtl',
-                                'lollo_freestyle_train_station/tube_deco_skinned.mtl',
-                                -- 'lollo_freestyle_train_station/station_concrete_1_skinned.mtl',
-                                'lollo_freestyle_train_station/tube_tiles_white_skinned.mtl',
-                                'lollo_freestyle_train_station/tube_tiles_white_skinned.mtl',
+                                -- swap blue and white in tunnels, otherwise they look too close to the creamy tiles
+                                -- 'lollo_freestyle_train_station/tube_tiles_white_skinned.mtl',
+                                -- 'lollo_freestyle_train_station/tube_deco_skinned.mtl',
+                                -- 'lollo_freestyle_train_station/tube_tiles_white_skinned.mtl',
+                                -- 'lollo_freestyle_train_station/tube_tiles_white_skinned.mtl',
+                                'lollo_freestyle_train_station/tube_tiles_blue_skinned.mtl',
+                                'lollo_freestyle_train_station/tube_tiles_creamy_skinned.mtl',
+                                'lollo_freestyle_train_station/station_concrete_1_low_prio.mtl',
+                                'lollo_freestyle_train_station/tube_tiles_blue_skinned.mtl',
                             },
                             skin = 'lollo_freestyle_train_station/platformWalls/arched/arched_tiles_weighted_tunnel_2_5m_lod0.msh',
                         },
@@ -48,8 +52,11 @@ function data()
             {
                 node = {
                     materials = {
-                        'lollo_freestyle_train_station/tube_tiles_white.mtl',
-                        'lollo_freestyle_train_station/tube_deco.mtl',
+                        -- swap blue and white in tunnels, otherwise they look too close to the creamy tiles
+                        -- 'lollo_freestyle_train_station/tube_tiles_white.mtl',
+                        -- 'lollo_freestyle_train_station/tube_deco.mtl',
+                        'lollo_freestyle_train_station/tube_tiles_blue.mtl',
+                        'lollo_freestyle_train_station/tube_tiles_creamy.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/platformWalls/concrete_plain/wall_5m_lod1.msh',
                     -- transf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 0, 0, 1}
