@@ -622,7 +622,7 @@ local public = {
     ---@param isWithEdge boolean
     ---@return table
     getModel4StationBridge = function(nSegments, isCompressed, eraPrefix, isWithEdge)
-        if (not(nSegments) or nSegments < 1) then nSegments = 1 end
+        if (type(nSegments) ~= 'number' or nSegments < 1) then nSegments = 1 end
 
         local _2nSegments = 2 * nSegments
         local _iMaxLod0 = _2nSegments - 2
@@ -912,7 +912,7 @@ local public = {
     ---@param eraPrefix eraPrefix
     ---@return table
     getModel4StationTube = function(nSegments, isCompressed, eraPrefix)
-        if (not(nSegments) or nSegments < 1) then nSegments = 1 end
+        if (type(nSegments) ~= 'number' or nSegments < 1) then nSegments = 1 end
 
         local _2nSegments = 2 * nSegments
         local _iMaxLod0 = _2nSegments - 2
