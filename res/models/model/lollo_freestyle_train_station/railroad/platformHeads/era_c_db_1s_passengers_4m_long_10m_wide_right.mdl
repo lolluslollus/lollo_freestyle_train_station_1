@@ -12,6 +12,7 @@ function data()
                         "lollo_freestyle_train_station/station_concrete_1.mtl",
                         'lollo_freestyle_train_station/square_concrete_tiles_z.mtl',
                         "lollo_freestyle_train_station/station_concrete_1_z.mtl",
+                        'lollo_freestyle_train_station/station_concrete_1.mtl',
                     },
                     mesh = 'lollo_freestyle_train_station/railroad/platformHeads/_4m_long_10m_wide_1_2m_high_10cm_edge_z.msh',
                     transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 2.5, 0, 1, },

@@ -1,4 +1,5 @@
 local _constants = require('lollo_freestyle_train_station.constants')
+local _arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
 
 local helpers = {}
     local _minExtent = 0.1
@@ -53,6 +54,9 @@ local helpers = {}
             'lollo_freestyle_train_station/square_cobbles_z.mtl',
         }
     end
+    helpers.getPlatformHeadTrackEraACargoMaterials = function()
+        return _arrayUtils.getConcatValues(helpers.getPlatformTrackEraACargoMaterials(), {'lollo_freestyle_train_station/square_cobbles.mtl'})
+    end
 
     helpers.getPlatformTrackEraBCargoMaterials = function()
         return {
@@ -61,6 +65,9 @@ local helpers = {}
             'lollo_freestyle_train_station/station_concrete_3_z.mtl',
             'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
         }
+    end
+    helpers.getPlatformHeadTrackEraBCargoMaterials = function()
+        return _arrayUtils.getConcatValues(helpers.getPlatformTrackEraBCargoMaterials(), {'lollo_freestyle_train_station/square_marble_tiles.mtl'})
     end
 
     helpers.getPlatformTrackEraCCargoMaterials = function()
@@ -71,6 +78,9 @@ local helpers = {}
             'lollo_freestyle_train_station/station_concrete_1_z.mtl',
         }
     end
+    helpers.getPlatformHeadTrackEraCCargoMaterials = function()
+        return _arrayUtils.getConcatValues(helpers.getPlatformTrackEraCCargoMaterials(), {'lollo_freestyle_train_station/station_concrete_1.mtl'})
+    end
 
     helpers.getPlatformTrackEarthCargoMaterials = function()
         return {
@@ -79,6 +89,9 @@ local helpers = {}
             'lollo_freestyle_train_station/earth_z.mtl',
             'lollo_freestyle_train_station/wood_sawmill_z.mtl',
         }
+    end
+    helpers.getPlatformHeadTrackEarthCargoMaterials = function()
+        return _arrayUtils.getConcatValues(helpers.getPlatformTrackEarthCargoMaterials(), {'lollo_freestyle_train_station/wood_sawmill.mtl'})
     end
 
     helpers.getPlatformTrackGravelCargoMaterials = function()
@@ -89,6 +102,9 @@ local helpers = {}
             'lollo_freestyle_train_station/gravel_tiles_z.mtl',
         }
     end
+    helpers.getPlatformHeadTrackGravelCargoMaterials = function()
+        return _arrayUtils.getConcatValues(helpers.getPlatformTrackGravelCargoMaterials(), {'lollo_freestyle_train_station/gravel_tiles.mtl'})
+    end
 
     helpers.getPlatformTrackEraAPassengerMaterials = function()
         return {
@@ -97,6 +113,9 @@ local helpers = {}
             'lollo_freestyle_train_station/era_a_station_tiles_1_z.mtl',
             'lollo_freestyle_train_station/square_cobbles_z.mtl',
         }
+    end
+    helpers.getPlatformHeadTrackEraAPassengerMaterials = function()
+        return _arrayUtils.getConcatValues(helpers.getPlatformTrackEraAPassengerMaterials(), {'lollo_freestyle_train_station/square_cobbles.mtl'})
     end
 
     helpers.getPlatformTrackEraBPassengerMaterials = function()
@@ -107,6 +126,9 @@ local helpers = {}
             'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
         }
     end
+    helpers.getPlatformHeadTrackEraBPassengerMaterials = function()
+        return _arrayUtils.getConcatValues(helpers.getPlatformTrackEraBPassengerMaterials(), {'lollo_freestyle_train_station/square_marble_tiles.mtl'})
+    end
 
     helpers.getPlatformTrackEraCPassengerMaterials = function()
         return {
@@ -115,6 +137,9 @@ local helpers = {}
             'lollo_freestyle_train_station/era_c_station_tiles_1_z.mtl',
             'lollo_freestyle_train_station/station_concrete_1_z.mtl',
         }
+    end
+    helpers.getPlatformHeadTrackEraCPassengerMaterials = function()
+        return _arrayUtils.getConcatValues(helpers.getPlatformTrackEraCPassengerMaterials(), {'lollo_freestyle_train_station/station_concrete_1.mtl'})
     end
 
     helpers.getTrackBoundingInfo = function(length, width, height)

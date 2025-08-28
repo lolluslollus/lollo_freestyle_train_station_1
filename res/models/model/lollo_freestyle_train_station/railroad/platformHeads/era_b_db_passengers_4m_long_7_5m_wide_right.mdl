@@ -12,6 +12,7 @@ function data()
                         'lollo_freestyle_train_station/square_marble_tiles.mtl',
                         'lollo_freestyle_train_station/square_concrete_tiles_z.mtl',
                         'lollo_freestyle_train_station/square_marble_tiles_z.mtl',
+                        'lollo_freestyle_train_station/square_marble_tiles.mtl'
                     },
                     mesh = 'lollo_freestyle_train_station/railroad/platformHeads/_4m_long_7_5m_wide_1_2m_high_z.msh',
                     transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, 2.5, 0, 1, },

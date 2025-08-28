@@ -7,7 +7,7 @@ function data()
         lods = {
             {
                 node = {
-                    materials = _mdlHelpers.getPlatformTrackEarthCargoMaterials(),
+                    materials = _mdlHelpers.getPlatformHeadTrackEarthCargoMaterials(),
                     mesh = 'lollo_freestyle_train_station/railroad/platformHeads/_4m_long_25m_wide_1_2m_high_z.msh',
                     transf = { 1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  0, -2.5, 0, 1, },
                 },
