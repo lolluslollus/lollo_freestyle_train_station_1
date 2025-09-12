@@ -18,6 +18,7 @@ end
 
 local privateValues = {
     maxLength = 200,
+    maxNumWalls = 5,
     yShiftMaxIndex = 24,
     yShiftFineMaxIndex = 5,
     zDeltaMaxIndex = 64,
@@ -25,13 +26,15 @@ local privateValues = {
 }
 privateValues.defaults = {
     -- lolloFenceAssets_buildOnFrozenEdges = 0,
-    lolloFenceAssets_doTerrain = 1,
-    lolloFenceAssets_isYFlipped = 0,
+    lolloFenceAssets_doTerrain = 0,
+    lolloFenceAssets_numWalls = 0,
+    lolloFenceAssets_isSkewed = 0,
     lolloFenceAssets_isTunnelWallLikeOutside = 0,
     lolloFenceAssets_isWallBehindThick = 0,
+    lolloFenceAssets_isYFlipped = 0,
     -- lolloFenceAssets_isWallTall = 0,
     lolloFenceAssets_length = 9,
-    lolloFenceAssets_model = 21,
+    lolloFenceAssets_model = 23,
     lolloFenceAssets_wallEraPrefix = 1,
     lolloFenceAssets_wallBehindModel = 0,
     lolloFenceAssets_wallBehindInTunnels = 0,
@@ -43,9 +46,23 @@ privateValues.defaults = {
     lolloFenceAssets_zShift = _getZShiftDefaultIndex(),
 }
 local privateFuncs = {
+    getNumWallsActualValues = function()
+        local results = {}
+        for i = 1, privateValues.maxNumWalls, 1 do
+            results[#results+1] = i
+        end
+        return results
+    end,
     getLengthValues = function()
         local results = {}
         for i = 1, privateValues.maxLength, 1 do
+            results[#results+1] = tostring(i)
+        end
+        return results
+    end,
+    getNumWallsDisplayValues = function()
+        local results = {}
+        for i = 1, privateValues.maxNumWalls, 1 do
             results[#results+1] = tostring(i)
         end
         return results
@@ -147,6 +164,8 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_light_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
+            add('lollo_freestyle_train_station/platformWalls/arched/arco_concrete_rough_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/arco_concrete_rough_wall.tga', _("WallArcoConcreteRough"))
+            add('lollo_freestyle_train_station/platformWalls/arched/arco_concrete_rough_light_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/arco_concrete_rough_light_wall.tga', _("WallArcoConcreteRoughLight"))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
             add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
             add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceMattoni.tga', _("WallFenceMattoniName"))
@@ -174,6 +193,8 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/tunnely/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
             add('lollo_freestyle_train_station/platformWalls/tunnely_light/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/arco_mattoni/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
+            add('lollo_freestyle_train_station/platformWalls/arco_concrete_rough/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/arco_concrete_rough_wall.tga', _("WallArcoConcreteRough"))
+            add('lollo_freestyle_train_station/platformWalls/arco_concrete_rough_light/wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/arco_concrete_rough_light_wall.tga', _("WallArcoConcreteRoughLight"))
             add('lollo_freestyle_train_station/platformWalls/fence_wood/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
             add('lollo_freestyle_train_station/platformWalls/fence_bricks_stone/fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
             add('lollo_freestyle_train_station/platformWalls/fence_mattoni/square_fence_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceMattoni.tga', _("WallFenceMattoniName"))
@@ -204,12 +225,14 @@ local privateFuncs = {
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyNLightame'))
                 add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindBricks.tga', _('WallBricksName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcretePlain.tga', _("WallConcretePlainName"))
+                add('lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcreteLightPlain.tga', _("WallConcreteLightPlainName"))
             else
                 add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyLightName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindBricks.tga', _('WallBricksName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcretePlain.tga', _("WallConcretePlainName"))
+                add('lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_low_5m_2m_thick.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcreteLightPlain.tga', _("WallConcreteLightPlainName"))
             end
         else
             if isWallTall then
@@ -218,12 +241,14 @@ local privateFuncs = {
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyNLightame'))
                 add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindBricks.tga', _('WallBricksName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcretePlain.tga', _("WallConcretePlainName"))
+                add('lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcreteLightPlain.tga', _("WallConcreteLightPlainName"))
             else
                 add(nil, 'ui/lollo_freestyle_train_station/none.tga', _('NoWallName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnely.tga', _('WallTunnelyName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/tunnely_light_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindTunnelyLight.tga', _('WallTunnelyLightName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindBricks.tga', _('WallBricksName'))
                 add('lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcretePlain.tga', _("WallConcretePlainName"))
+                add('lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_low_5m.mdl', 'ui/lollo_freestyle_train_station/wallBehindConcreteLightPlain.tga', _("WallConcreteLightPlainName"))
             end
         end
         return results
@@ -253,6 +278,13 @@ return {
                     end
                 ),
                 uiType = 'ICON_BUTTON',
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_isSkewed,
+                key = 'lolloFenceAssets_isSkewed',
+                name = _('baseWall_isSkewed'),
+                uiType = 'CHECKBOX',
+                values = {_('NO'), _('YES')}
             },
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_wallEraPrefix,
@@ -294,6 +326,13 @@ return {
                 name = _('Length'),
                 uiType = 'SLIDER',
                 values = privateFuncs.getLengthValues(),
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_numWalls,
+                key = 'lolloFenceAssets_numWalls',
+                name = _('NumWalls'),
+                uiType = 'SLIDER',
+                values = privateFuncs.getNumWallsDisplayValues(),
             },
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_yShift,
@@ -357,6 +396,20 @@ return {
                 uiType = 'ICON_BUTTON',
             },
             {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_isSkewed,
+                key = 'lolloFenceAssets_isSkewed',
+                name = _('baseWall_isSkewed'),
+                uiType = 'CHECKBOX',
+                values = {_('NO'), _('YES')}
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_isTunnelWallLikeOutside,
+                key = 'lolloFenceAssets_isTunnelWallLikeOutside',
+                name = _('isTunnelWallLikeOutside'),
+                uiType = 'CHECKBOX',
+                values = {_('NO'), _('YES')}
+            },
+            {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_wallEraPrefix,
                 key = 'lolloFenceAssets_wallEraPrefix',
                 name = _('wallEraPrefix_0IsNoWall'),
@@ -398,13 +451,6 @@ return {
                 values = {_('NO'), _('YES')}
             },
             {
-                defaultIndex = privateValues.defaults.lolloFenceAssets_isTunnelWallLikeOutside,
-                key = 'lolloFenceAssets_isTunnelWallLikeOutside',
-                name = _('isTunnelWallLikeOutside'),
-                uiType = 'CHECKBOX',
-                values = {_('NO'), _('YES')}
-            },
-            {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_isYFlipped,
                 key = 'lolloFenceAssets_isYFlipped',
                 name = _('isFlipped'),
@@ -418,6 +464,13 @@ return {
                 name = _('DoTerrain'),
                 uiType = 'BUTTON',
                 values = {_('NO'), _('YES'), _('Raise'), _('Lower')}
+            },
+            {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_numWalls,
+                key = 'lolloFenceAssets_numWalls',
+                name = _('NumWalls'),
+                uiType = 'SLIDER',
+                values = privateFuncs.getNumWallsDisplayValues(),
             },
             {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_yShiftFine,
@@ -463,6 +516,9 @@ return {
         elseif uiTypeStr == 'CHECKBOX' then return 4 -- double-check this
         else return 0
         end
+    end,
+    getNumWallsActualValues = function ()
+        return privateFuncs.getNumWallsActualValues()
     end,
     getYShiftActualValues = function()
         return privateFuncs.getYShiftActualValues()

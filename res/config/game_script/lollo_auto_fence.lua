@@ -1037,8 +1037,9 @@ function data()
                                 false,
                                 true
                             )
-                            -- precise markers: cull the bits on the marker edges but outside the markers
+
                             if #trackEdgeListFine > 0 then
+                                -- precise markers: cull the bits on the marker edges but outside the markers
                                 if args.isPrecise then
                                     logger.infoOut('isPrecise, about to cull the bits beyond the markers')
                                     local maxII = #trackEdgeListFine

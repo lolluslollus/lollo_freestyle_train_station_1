@@ -5,12 +5,17 @@ function data()
     local logger = require('lollo_freestyle_train_station.logger')
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
-    local function _addGround(transf, yStart, zShiftOverDefaultPlatformHeight, result, wallBehindModelId, zDeltaOutward, isLowerTerrain, isRaiseTerrain, isWallBehindThick)
+    local function _addGround(transf, yStart, zShiftOverDefaultPlatformHeight, result, wallBaseModelId, wallBehindModelId, isLowerTerrain, isRaiseTerrain, isWallBehindThick, numWalls)
+        local _yShift = isRaiseTerrain and ((numWalls -1) * constants.wallSkew * constants.wallHeight) or 0
         local _yInward = -0.2
-        local _yMiddle = (isLowerTerrain and (not(wallBehindModelId) and 0.3 or (isWallBehindThick and 2.3 or 1.3)) or 0.2) + yStart
-        local _yOutward = (isLowerTerrain and (not(wallBehindModelId) and 0.7 or (isWallBehindThick and 2.7 or 1.7)) or (not(wallBehindModelId) and 0.5 or 1.0)) + yStart
+        local _yMiddle = (isLowerTerrain and (not(wallBehindModelId) and 0.3 or (isWallBehindThick and 2.3 or 1.3)) or 0.2) + yStart + _yShift
+        local _yOutward = (isLowerTerrain and (not(wallBehindModelId) and 0.7 or (isWallBehindThick and 2.7 or 1.7)) or (not(wallBehindModelId) and 0.5 or 1.0)) + yStart + _yShift
         local _zInward = math.max(zShiftOverDefaultPlatformHeight, 0) -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
-        local _zOutward = _zInward + zDeltaOutward
+        local _zDeltaOutward = 0
+        if isLowerTerrain then _zDeltaOutward = (-constants.wallHeight - (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -- +0.3 --adjusted to smooth it out a bit
+        elseif isRaiseTerrain then _zDeltaOutward = (constants.wallHeight * numWalls + (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -- -0.3 --adjusted to smooth it out a bit
+        end
+        local _zOutward = zShiftOverDefaultPlatformHeight + _zDeltaOutward
         logger.infoOut('_yInward =', _yInward, '_yMiddle =', _yMiddle, '_yOutward =', _yOutward, '_zInward =', _zInward, '; _zOutward =', _zOutward)
         local _facesTransformed = (isRaiseTerrain or isLowerTerrain)
         and {
@@ -21,19 +26,15 @@ function data()
                     {0.5, _yInward, _zInward, 1.0},
                     {0.5, _yMiddle, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
                     {-0.5, _yMiddle, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    -- {x, positive outwards, z, 1}
                 }
             ),
             transfUtils.getFaceTransformed_FAST(
                 transf,
                 {
-                    -- {-0.5, _yMiddle, _zOutward, 1.0},
-                    -- {0.5, _yMiddle, _zOutward, 1.0},
                     {-0.5, _yMiddle, _zInward, 1.0},
                     {0.5, _yMiddle, _zInward, 1.0},
                     {0.5, _yOutward, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
                     {-0.5, _yOutward, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    -- {x, positive outwards, z, 1}
                 }
             )
         } or {
@@ -44,7 +45,6 @@ function data()
                     {0.5, _yInward, _zInward, 1.0},
                     {0.5, _yOutward, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
                     {-0.5, _yOutward, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
-                    -- {x, positive outwards, z, 1}
                 }
             )
         }
@@ -82,9 +82,7 @@ function data()
                     faces =  {_facesTransformed[2]},
                     optional = true,
                     slopeHigh = 9.9,
-                    -- slopeHigh = 0.9,
-                    -- slopeLow = 9.6,
-                    slopeLow = 0.1,
+                    slopeLow = 0.9,
                     -- type = 'EQUAL',
                     -- type = 'LESS',
                     type = 'GREATER',
@@ -97,58 +95,127 @@ function data()
                     faces =  {_facesTransformed[2]},
                     optional = true,
                     slopeHigh = 9.9,
-                    -- slopeHigh = 0.9,
-                    -- slopeLow = 9.6,
-                    slopeLow = 0.3,
+                    slopeLow = 0.9,
                     -- type = 'EQUAL',
                     type = 'LESS',
                     -- type = 'GREATER',
                 }
             )
         end
-    end
 
-    local function _addWall(transf, result, yShift, zShift, wallMainModelId, wallBaseModelId)
-        local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
-        if wallMainModelId ~= nil then
+        if logger.isExtendedLog() then
             table.insert(
                 result.models,
-                {
-                    id = wallMainModelId,
-                    transf = _transfShifted
-                }
+                    {
+                        id = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl',
+                        transf = transfUtils.getTransf_Shifted(transf, {0, _yOutward, _zOutward})
+                    }
+            )
+            table.insert(
+                result.models,
+                    {
+                        id = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl',
+                        transf = transfUtils.getTransf_Shifted(transf, {0, _yInward-1, _zInward})
+                    }
             )
         end
+    end
+
+    local function _addWall(transf, result, yShift, zShift, wallMainModelId, wallBaseModelId, numWalls, isSkewed)
+        local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
+        local _transfSkewed = isSkewed and transfUtils.getTransf_ZSkewedOnY(_transfShifted, constants.wallSkew) or _transfShifted
+
         if wallBaseModelId ~= nil then
             table.insert(
                 result.models,
                 {
                     id = wallBaseModelId,
-                    transf = _transfShifted
+                    transf = _transfSkewed
                 }
             )
         end
+        if wallMainModelId ~= nil then
+            if isSkewed then
+                -- the skew can change the wall size, the farther a wall is from the curve centre
+                local xLeft = transfUtils.getVec123Transformed({-0.5, 0, 0}, _transfSkewed)
+                local xRight = transfUtils.getVec123Transformed({0.5, 0, 0}, _transfSkewed)
+                local xLength_power2 = transfUtils.getVectorLength_power2({xRight[1] - xLeft[1], xRight[2] - xLeft[2], xRight[3] - xLeft[3]})
+                local xLength = xLength_power2 and math.sqrt(xLength_power2) or 1
+                logger.infoOut('xLength =', xLength)
+
+                for i = 1, numWalls, 1 do
+                    _transfSkewed = transfUtils.getTransf_XScaled(_transfSkewed, (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1)
+                    -- logger.infoOut('(xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1 =', (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1, 'i =', i)
+                    table.insert(
+                        result.models,
+                        {
+                            id = wallMainModelId,
+                            transf = _transfSkewed
+                        }
+                    )
+                    _transfSkewed = transfUtils.getTransf_ZShifted(_transfSkewed, constants.wallHeight)
+                end
+            else
+                for i = 1, numWalls, 1 do
+                    table.insert(
+                        result.models,
+                        {
+                            id = wallMainModelId,
+                            transf = _transfSkewed
+                        }
+                    )
+                    _transfSkewed = transfUtils.getTransf_ZShifted(_transfSkewed, constants.wallHeight)
+                end
+            end
+        end
     end
 
-    local function _addWallBehind(transf, result, yShift, zShift, wallBehindModelId, wallBehindBaseModelId)
+    local function _addWallBehind(transf, result, yShift, zShift, wallBehindModelId, wallBehindBaseModelId, numWalls, isSkewed)
         if wallBehindModelId == nil then return end
 
-        local _wallBehindTransf_Shifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
-        table.insert(
-            result.models,
-            {
-                id = wallBehindModelId,
-                transf = _wallBehindTransf_Shifted
-            }
-        )
+        local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
+        local _transfSkewed = isSkewed and transfUtils.getTransf_ZSkewedOnY(_transfShifted, constants.wallSkew) or _transfShifted
+
         if wallBehindBaseModelId ~= nil then
             table.insert(
                 result.models,
                 {
                     id = wallBehindBaseModelId,
-                    transf = _wallBehindTransf_Shifted
+                    transf = _transfSkewed
                 }
             )
+        end
+        if isSkewed then
+            -- the skew can change the wall size, the farther a wall is from the curve centre
+            local xLeft = transfUtils.getVec123Transformed({-0.5, 0, 0}, _transfSkewed)
+            local xRight = transfUtils.getVec123Transformed({0.5, 0, 0}, _transfSkewed)
+            local xLength_power2 = transfUtils.getVectorLength_power2({xRight[1] - xLeft[1], xRight[2] - xLeft[2], xRight[3] - xLeft[3]})
+            local xLength = xLength_power2 and math.sqrt(xLength_power2) or 1
+            logger.infoOut('xLength for wall behind =', xLength)
+
+            for i = 1, numWalls, 1 do
+                _transfSkewed = transfUtils.getTransf_XScaled(_transfSkewed, (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1)
+                -- logger.infoOut('(xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1 =', (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1, 'i =', i)
+                table.insert(
+                    result.models,
+                    {
+                        id = wallBehindModelId,
+                        transf = _transfSkewed
+                    }
+                )
+                _transfSkewed = transfUtils.getTransf_ZShifted(_transfSkewed, constants.wallHeight)
+            end
+        else
+            for i = 1, numWalls, 1 do
+                table.insert(
+                    result.models,
+                    {
+                        id = wallBehindModelId,
+                        transf = _transfSkewed
+                    }
+                )
+                _transfSkewed = transfUtils.getTransf_ZShifted(_transfSkewed, constants.wallHeight)
+            end
         end
     end
 
@@ -188,10 +255,12 @@ function data()
                 -- allow adding new params to old cons that did not have them
                 local defaults = fenceModelHelper.getDefaultIndexes()
                 params.lolloFenceAssets_doTerrain = params.lolloFenceAssets_doTerrain or defaults.lolloFenceAssets_doTerrain
-                params.lolloFenceAssets_isYFlipped = params.lolloFenceAssets_isYFlipped or defaults.lolloFenceAssets_isYFlipped
+                params.lolloFenceAssets_isSkewed = params.lolloFenceAssets_isSkewed or defaults.lolloFenceAssets_isSkewed
                 params.lolloFenceAssets_isTunnelWallLikeOutside = params.lolloFenceAssets_isTunnelWallLikeOutside or defaults.lolloFenceAssets_isTunnelWallLikeOutside
                 params.lolloFenceAssets_isWallBehindThick = params.lolloFenceAssets_isWallBehindThick or defaults.lolloFenceAssets_isWallBehindThick
+                params.lolloFenceAssets_isYFlipped = params.lolloFenceAssets_isYFlipped or defaults.lolloFenceAssets_isYFlipped
                 params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.lolloFenceAssets_model
+                params.lolloFenceAssets_numWalls = params.lolloFenceAssets_numWalls or defaults.lolloFenceAssets_numWalls
                 params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.lolloFenceAssets_wallEraPrefix
                 params.lolloFenceAssets_wallBehindOnBridges = params.lolloFenceAssets_wallBehindOnBridges or defaults.lolloFenceAssets_wallBehindOnBridges
                 params.lolloFenceAssets_wallBehindInTunnels = params.lolloFenceAssets_wallBehindInTunnels or defaults.lolloFenceAssets_wallBehindInTunnels
@@ -243,6 +312,7 @@ function data()
             }
 
             local isFlipped = params.lolloFenceAssets_isYFlipped == 1 and #params.transfs_ground_yFlipped > 0 -- I try to be compatible with outdated versions
+            local isSkewed = params.lolloFenceAssets_isSkewed == 1
             local isTunnelWallLikeOutside = params.lolloFenceAssets_isTunnelWallLikeOutside == 1
             local isWallBehindInTunnels = params.lolloFenceAssets_wallBehindInTunnels == 1
             local isWallBehindOnBridges = params.lolloFenceAssets_wallBehindOnBridges == 1
@@ -318,24 +388,22 @@ function data()
             logger.infoOut('wallMainModelId =', wallMainModelId, '; wallBaseModelId =', wallBaseModelId, '; #params.transfs =', #params.transfs)
             local _yStart = fenceModelHelper.getYShiftFineActualValues()[params.lolloFenceAssets_yShiftFine + 1]
             local _zShift = fenceModelHelper.getZShiftActualValues()[params.lolloFenceAssets_zShift + 1] -- it is 0 when the platform height is 0.8, which is the default
-            -- the wall base is 1.4m tall, constants.defaultPlatformHeight is 1.2m, so we sink all by 20cm. This is level with freestyle stations and looks good.
+            -- This is level with freestyle stations and looks good.
             local _zStart = ((wallBaseModelId == nil) and (constants.defaultPlatformHeight - constants.wallBaseHeight) or constants.defaultPlatformHeight) + _zShift
-            local _zStart_Tunnel = (constants.defaultPlatformHeight) -- in tunnels, always add a wall base and ignore platform heights, so the walls reach the top
-            local _zDeltaOutward = 0
-            if isLowerTerrain then _zDeltaOutward = (-constants.wallHeight - (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) +0.3 --adjusted to smooth it out a bit
-            elseif isRaiseTerrain then _zDeltaOutward = (constants.wallHeight + (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -0.3 --adjusted to smooth it out a bit
-            end
+            local _zStart_Tunnel = constants.defaultPlatformHeight -- in tunnels, always add a wall base and ignore platform heights, so the walls reach the top
+
+            local _numWalls = fenceModelHelper.getNumWallsActualValues()[params.lolloFenceAssets_numWalls + 1]
             logger.infoOut('_yStart =', _yStart, '; _zShift =', _zShift, '; _zStart =', _zStart)
             local _transfs_ground = isFlipped and params.transfs_ground_yFlipped or params.transfs_ground
             for _, transfData in pairs(_transfs_ground) do
                 if not(transfData.hasLevelCrossing) then
                     if transfData.groundBridgeTunnel_012 == 2 and not(isTunnelWallLikeOutside) then -- tunnel
-                        _addWall(transfData.transf, result, 0, _zStart_Tunnel, wallMainModelId_Tunnel, wallBaseModelId_Tunnel)
+                        _addWall(transfData.transf, result, 0, _zStart_Tunnel, wallMainModelId_Tunnel, wallBaseModelId_Tunnel, _numWalls, isSkewed)
                     else -- ground, bridge or tunnel like outside
-                        _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId)
+                        _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId, _numWalls, isSkewed)
                     end
                     if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then -- ground
-                        _addGround(transfData.transf, _yStart, _zShift, result, wallBehindModelId, _zDeltaOutward, isLowerTerrain, isRaiseTerrain, isWallBehindThick)
+                        _addGround(transfData.transf, _yStart, _zShift, result, wallBaseModelId, wallBehindModelId, isLowerTerrain, isRaiseTerrain, isWallBehindThick, _numWalls)
                     end
                 end
             end
@@ -346,9 +414,9 @@ function data()
                     or (transfData.groundBridgeTunnel_012 == 1 and isWallBehindOnBridges) -- bridge
                     or (transfData.groundBridgeTunnel_012 == 2 and isTunnelWallLikeOutside and isWallBehindInTunnels) -- tunnel
                     then
-                        _addWallBehind(transfData.transf, result, _yStart,_zStart, wallBehindModelId, wallBehindBaseModelId)
+                        _addWallBehind(transfData.transf, result, _yStart,_zStart, wallBehindModelId, wallBehindBaseModelId, _numWalls, isSkewed)
                     elseif (transfData.groundBridgeTunnel_012 == 2 and isWallBehindInTunnels) then -- tunnel
-                        _addWallBehind(transfData.transf, result, 0,_zStart_Tunnel, wallBehindModelId_Tunnel, wallBehindBaseModelId_Tunnel)
+                        _addWallBehind(transfData.transf, result, 0,_zStart_Tunnel, wallBehindModelId_Tunnel, wallBehindBaseModelId_Tunnel, _numWalls, isSkewed)
                     end
                 end
             end

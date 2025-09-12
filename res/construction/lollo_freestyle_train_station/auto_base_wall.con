@@ -1,0 +1,337 @@
+function data()
+    local arrayUtils = require('lollo_freestyle_train_station.arrayUtils')
+    local constants = require('lollo_freestyle_train_station.constants')
+    local fenceModelHelper = require('lollo_base_wall.modelHelper')
+    local logger = require('lollo_freestyle_train_station.logger')
+    local transfUtils = require('lollo_freestyle_train_station.transfUtils')
+
+    local function _addGround(transf, result, yStart, zShiftOverDefaultPlatformHeight, wallHeight)
+        local _wallHeight = (wallHeight or 0)
+        local _yInward = -0.5 + yStart
+        local _yMiddleIn = -0.25 + yStart
+        local _yMiddleOut = 0.0 + yStart
+        local _yOutward = 1.0 + yStart + _wallHeight -- follow the width of the standard track terrapin
+        -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
+        -- it may be a bit too low with the default setting, but it matters more that it matches the wall
+        local _zInward = math.max(zShiftOverDefaultPlatformHeight, 0)
+        local _zOutward = - _wallHeight - constants.defaultPlatformHeight
+        logger.infoOut('_yInward =', _yInward, '_yMiddleIn =', _yMiddleIn, '_yMiddleOut =', _yMiddleOut, '_yOutward =', _yOutward, '_zInward =', _zInward, '; _zOutward =', _zOutward)
+
+        if logger.isExtendedLog() then
+            table.insert(
+                result.models,
+                    {
+                        id = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl',
+                        transf = transfUtils.getTransf_Shifted(transf, {0, _yOutward, _zOutward})
+                    }
+            )
+            table.insert(
+                result.models,
+                    {
+                        id = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl',
+                        transf = transfUtils.getTransf_Shifted(transf, {0, _yMiddleOut, _zOutward})
+                    }
+            )
+        end
+
+        local _facesTransformed = {
+            transfUtils.getFaceTransformed_FAST(
+                transf,
+                {
+                    {-0.5, _yInward, _zInward, 1.0},
+                    {0.5, _yInward, _zInward, 1.0},
+                    {0.5, _yMiddleIn, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                    {-0.5, _yMiddleIn, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                }
+            ),
+            transfUtils.getFaceTransformed_FAST(
+                transf,
+                {
+                    {-0.5, _yMiddleIn, _zInward, 1.0},
+                    {0.5, _yMiddleIn, _zInward, 1.0},
+                    {0.5, _yMiddleOut, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                    {-0.5, _yMiddleOut, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                }
+            ),
+            transfUtils.getFaceTransformed_FAST(
+                transf,
+                {
+                    {-0.5, _yMiddleOut, _zOutward, 1.0},
+                    {0.5, _yMiddleOut, _zOutward, 1.0},
+                    {0.5, _yOutward, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                    {-0.5, _yOutward, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
+                }
+            )
+        }
+
+        table.insert(
+            result.groundFaces,
+            {
+                face = _facesTransformed[1],
+                loop = true,
+                modes = {
+                    {
+                        type = 'FILL',
+                        key = 'ballast.lua' -- 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                    }
+                }
+            }
+        )
+        table.insert(
+            result.groundFaces,
+            {
+                face = _facesTransformed[2],
+                loop = true,
+                modes = {
+                    {
+                        type = 'FILL',
+                        key = 'shared/gravel_03.gtex.lua'
+                    }
+                }
+            }
+        )
+        -- table.insert(
+        --     result.groundFaces,
+        --     {
+        --         face = _facesTransformed[3],
+        --         loop = true,
+        --         modes = {
+        --             {
+        --                 type = 'FILL',
+        --                 key = 'shared/gravel_03.gtex.lua'
+        --             }
+        --         }
+        --     }
+        -- )
+
+        table.insert(
+            result.terrainAlignmentLists,
+            {
+                faces =  {_facesTransformed[1]},
+                optional = true,
+                slopeHigh = 9.9,
+                slopeLow = 9.6,
+                type = 'EQUAL',
+                -- type = 'LESS',
+                -- type = 'GREATER',
+            }
+        )
+        table.insert(
+            result.terrainAlignmentLists,
+            {
+                faces =  {_facesTransformed[2]},
+                optional = true,
+                slopeHigh = 9.9,
+                slopeLow = 9.6,
+                -- type = 'EQUAL',
+                type = 'LESS',
+                -- type = 'GREATER',
+            }
+        )
+        table.insert(
+            result.terrainAlignmentLists,
+            {
+                faces =  {_facesTransformed[3]},
+                optional = true,
+                slopeHigh = 9.9,
+                slopeLow = 0.9, -- large enough so it won't affect the terrain on the other side too much, small enough so it won't look too bad
+                -- type = 'EQUAL',
+                type = 'LESS',
+                -- type = 'GREATER',
+            }
+        )
+    end
+
+    local function _addWall(transf, result, yShift, zShift, wallMainModelId, wallHeight, isDownToGround, isSkewed)
+        if not(wallMainModelId) then return end
+
+        local _wallHeight = (wallHeight or 0)
+        local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
+        local _transfSkewed = isSkewed and transfUtils.getTransf_ZSkewedOnY(_transfShifted, -constants.wallSkew) or _transfShifted
+        local _numWalls = (not (isDownToGround) or _wallHeight <= 0) and 1 or math.ceil((_wallHeight + constants.defaultPlatformHeight) / constants.baseWallHeight)
+        if isSkewed then
+            -- the skew can change the wall size, the farther a wall is from the curve centre
+            local xLeft = transfUtils.getVec123Transformed({-0.5, 0, 0}, _transfSkewed)
+            local xRight = transfUtils.getVec123Transformed({0.5, 0, 0}, _transfSkewed)
+            local xLength_power2 = transfUtils.getVectorLength_power2({xRight[1] - xLeft[1], xRight[2] - xLeft[2], xRight[3] - xLeft[3]})
+            local xLength = xLength_power2 and math.sqrt(xLength_power2) or 1
+            logger.infoOut('xLength for base wall =', xLength)
+
+            for i = 1, _numWalls, 1 do
+                _transfSkewed = transfUtils.getTransf_XScaled(_transfSkewed, (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1)
+                -- logger.infoOut('(xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1 =', (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1, 'i =', i)
+                table.insert(
+                    result.models,
+                    {
+                        id = wallMainModelId,
+                        transf = _transfSkewed
+                    }
+                )
+                _transfSkewed = transfUtils.getTransf_ZShifted(_transfSkewed, -constants.baseWallHeight)
+            end
+        else
+            for i = 1, _numWalls, 1 do
+                table.insert(
+                    result.models,
+                    {
+                        id = wallMainModelId,
+                        transf = _transfSkewed
+                    }
+                )
+                _transfSkewed = transfUtils.getTransf_ZShifted(_transfSkewed, -constants.baseWallHeight)
+            end
+        end
+    end
+
+	return {
+        -- type = 'ASSET_DEFAULT',
+        type = 'ASSET_TRACK', -- this is not the same as snapping.rail below, coz it lowers the asset to the ground.
+		availability = {
+			yearFrom = -1,
+			yearTo = -1,
+		},
+        categories = { 'stairs' },
+		description = {
+			name = _('BaseWallAssetsName'),
+			description = _('BaseWallAssetsDesc'),
+            icon = 'ui/construction/lollo_freestyle_train_station/base_wall_assets.tga',
+		},
+		order = 103,
+		autoRemovable = false,
+        -- buildMode = 'MULTI',
+		skipCollision = true,
+        snapping = {
+			rail = true,
+			road = true,
+			water = false
+		},
+		params = {},
+		updateFn = function(params)
+            logger.infoOut(
+                'auto_base_wall.updateFn firing, some params =',
+                arrayUtils.cloneDeepOmittingFields(
+                    params,
+                    {'state', 'transfs', 'transfs_ground'},
+                    true
+                )
+            )
+            local _initParams = function()
+                -- allow adding new params to old cons that did not have them
+                local defaults = fenceModelHelper.getDefaultIndexes()
+                params.lolloBaseWallAssets_doTerrain = params.lolloBaseWallAssets_doTerrain or defaults.lolloBaseWallAssets_doTerrain
+                params.lolloBaseWallAssets_isDownToGround = params.lolloBaseWallAssets_isDownToGround or defaults.lolloBaseWallAssets_isDownToGround
+                params.lolloBaseWallAssets_isSkewed = params.lolloBaseWallAssets_isSkewed or defaults.lolloBaseWallAssets_isSkewed
+                params.lolloBaseWallAssets_isThick = params.lolloBaseWallAssets_isThick or defaults.lolloBaseWallAssets_isThick
+                params.lolloBaseWallAssets_isYFlipped = params.lolloBaseWallAssets_isYFlipped or defaults.lolloBaseWallAssets_isYFlipped
+                params.lolloBaseWallAssets_onlyOn = params.lolloBaseWallAssets_onlyOn or defaults.lolloBaseWallAssets_onlyOn
+                params.lolloBaseWallAssets_model = params.lolloBaseWallAssets_model or defaults.lolloBaseWallAssets_model
+                params.lolloBaseWallAssets_yShiftFine = params.lolloBaseWallAssets_yShiftFine or defaults.lolloBaseWallAssets_yShiftFine
+                params.lolloBaseWallAssets_zShift = params.lolloBaseWallAssets_zShift or defaults.lolloBaseWallAssets_zShift
+                params.transfs = params.transfs or {} -- obsolete, it was an early release, newer releases have transfs_ground instead
+                params.transfs_ground = params.transfs_ground or {}
+                params.transfs_ground_yFlipped = params.transfs_ground_yFlipped or {}
+            end
+            _initParams()
+
+            local result = {
+                colliders = {},
+                cost = 0,
+                edgeLists = {},
+                groundFaces = { -- dummy ground faces so this is treated as a proper construction, and the construction mover can adjust it
+                    {
+                        face = {
+                            {0.1, -0.1, 0.0, 1.0},
+                            {0.1, 0.1, 0.0, 1.0},
+                            {-0.1, 0.1, 0.0, 1.0},
+                            {-0.1, -0.1, 0.0, 1.0},
+                        },
+                        modes = {
+                            {
+                                type = 'FILL',
+                                key = 'shared/asphalt_01.gtex.lua' --'shared/gravel_03.gtex.lua'
+                            }
+                        }
+                    },
+                },
+                models = {
+					-- {
+					-- 	id = 'lollo_freestyle_train_station/icon/blue.mdl',
+                    --     transf = {1, 0, 0, 0,
+                    --         0, 1, 0, 0,
+                    --         0, 0, 1, 0,
+                    --         0, 0, 0, 1},
+					-- },
+                },
+                terrainAlignmentLists = { {
+                    type = 'EQUAL',
+                    optional = true,
+                    faces =  { }
+                } },
+            }
+
+            local isDoTerrain = params.lolloBaseWallAssets_doTerrain == 1 or params.lolloBaseWallAssets_doTerrain == 2
+            local isDownToGround = params.lolloBaseWallAssets_isDownToGround == 1
+            local isSkewed = params.lolloBaseWallAssets_isSkewed == 1
+            local isThick = params.lolloBaseWallAssets_isThick == 1
+            local isFlipped = params.lolloBaseWallAssets_isYFlipped == 1 and #params.transfs_ground_yFlipped > 0 -- I try to be compatible with outdated versions
+            local isBuildOnBridges = params.lolloBaseWallAssets_onlyOn == 0 or params.lolloBaseWallAssets_onlyOn == 1
+            local isBuildOnGround = params.lolloBaseWallAssets_onlyOn == 0 or params.lolloBaseWallAssets_onlyOn == 2
+
+            local wallMainModelId = fenceModelHelper.getModels(isThick)[params.lolloBaseWallAssets_model + 1].fileName
+
+            -- make sure something appears even if the models are all nil, so the costruction will not stay around as a ghost
+            logger.infoOut('wallMainModelId =', wallMainModelId)
+            if not(wallMainModelId) then
+                result.labelText = {
+                    [0] = { _('wallWithNoModelsHere'), _('wallWithNoModelsHere') }
+                }
+                result.models = {{
+                    id = constants.yellowMessageModelFileName,
+                    transf = constants.idTransf
+                }}
+                return result
+            end
+            -- warn about outdated version
+            if not(params.transfs_ground) or #params.transfs_ground == 0 then
+                result.labelText = {
+                    [0] = { _('OutdatedConstruction'), _('OutdatedConstruction') }
+                }
+                result.models = {{
+                    id = constants.yellowMessageModelFileName,
+                    transf = constants.idTransf
+                }}
+                return result
+            end
+
+            logger.infoOut('wallMainModelId =', wallMainModelId, '; #params.transfs =', #params.transfs)
+            local _yStart = fenceModelHelper.getYShiftFineActualValues()[params.lolloBaseWallAssets_yShiftFine + 1]
+            local _zShift = fenceModelHelper.getZShiftActualValues()[params.lolloBaseWallAssets_zShift + 1] -- it is 0 when the platform height is 0.8, which is the default
+            -- This is level with freestyle stations and looks good.
+            local _zStart = (constants.defaultPlatformHeight - constants.wallBaseHeight) + _zShift
+            logger.infoOut('_yStart =', _yStart, '; _zShift =', _zShift, '; _zStart =', _zStart)
+            local _transfs_ground = isFlipped and params.transfs_ground_yFlipped or params.transfs_ground
+            for _, transfData in pairs(_transfs_ground) do
+                if not(transfData.hasLevelCrossing) then
+                    if transfData.groundBridgeTunnel_012 == 2 then -- tunnel
+                        -- do nothing
+                    elseif transfData.groundBridgeTunnel_012 == 1 then -- bridge
+                        if isBuildOnBridges then
+                            _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, transfData.height or 0, isDownToGround, isSkewed)
+                        end
+                    elseif isBuildOnGround then -- ground
+                        _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, transfData.height or 0, isDownToGround, isSkewed)
+                        if isDoTerrain then
+                            _addGround(transfData.transf, result, _yStart, _zShift, transfData.height or 0)
+                        end
+                    end
+                end
+            end
+
+			return result
+		end,
+
+        upgradeFn = function(params)
+            return {}
+        end,
+	}
+end

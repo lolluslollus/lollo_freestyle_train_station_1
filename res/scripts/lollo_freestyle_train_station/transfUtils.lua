@@ -402,6 +402,33 @@ local utils = {
             transf[16],
         }
     end,
+    getTransf_ZSkewedOnY = function(transf, skew)
+        local m2 = {
+            1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, skew, 1, 0,
+            0, 0, 0, 1,
+        }
+
+        return {
+            transf[1],
+            transf[2],
+            transf[3],
+            transf[4],
+            transf[5],
+            transf[6],
+            transf[7],
+            transf[8],
+            transf[9] + transf[5] * skew,
+            transf[10] + transf[6] * skew,
+            transf[11] + transf[7] * skew,
+            transf[12] + transf[8] * skew,
+            transf[13],
+            transf[14],
+            transf[15],
+            transf[16],
+        }
+    end,
     getTransf_XSkewedOnY = function(transf, skew)
         local m2 = {
             1, skew, 0, 0,

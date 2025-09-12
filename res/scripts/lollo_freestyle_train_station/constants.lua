@@ -7,6 +7,14 @@ local constants = {
     trainTracksCategory = 'train-tracks',
 
     eventData = {
+        autoBaseWall = {
+            eventId = '__lolloAutoBaseWall__',
+            eventNames = {
+                BULLDOZE_CON_REQUESTED = 'bulldozeConRequested',
+                CON_PARAMS_UPDATED = 'conParamsUpdated',
+                FENCE_WAYPOINTS_BUILT = 'fenceWaypointsBuilt',
+            },
+        },
         autoFence = {
             eventId = '__lolloAutoFence__',
             eventNames = {
@@ -72,6 +80,7 @@ local constants = {
         era_c_fs_1_stripe = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleFSEraC_OneStripe.module'},
         era_c_uk_2_stripes = {moduleFileName = 'station/rail/lollo_freestyle_train_station/platformStyles/platformStyleUKEraC_TwoStripes.module'},
     },
+    baseWallHeight = 4.0, -- set by the mesh, do not touch
     platformSideBitsZ = -0.10, -- a bit lower than the platform, to look good in bends
     platformRoofZ = -0.20, -- a bit lower than the platform, to look good on slopes
     underpassZ = -4, -- must be negative and different from the lift heights (5, 10, 15 etc)
@@ -83,8 +92,10 @@ local constants = {
     openStairsUpZ = 8,
     trackCrossingZ = 0.45,
     trackCrossingRaise = 0.25,
-    wallBaseHeight = 1.4, -- do not touch
+    wallBaseHeight = 1.2, -- set by the mesh, do not touch
     wallHeight = 4.25, -- do not touch
+    wallSkew = 0.2,
+    wallSkewXAdjustmentFactor = 0.12,
 
     -- stairsEdgeSpacing = {-1, 3, 0.5, 0.5}, -- old
     -- stairsEdgeSpacing = {-0.2, 0.5, 0.4, 0.4}, -- touches the external edge
@@ -134,6 +145,9 @@ local constants = {
     era_b_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_01_high_priority.lua',
     era_c_groundFacesStrokeOuterKey = 'lollo_freestyle_train_station/asphalt_02_high_priority.lua',
 
+    autoBaseWallConFileName = 'lollo_freestyle_train_station/auto_base_wall.con',
+    autoBaseWallMarkerConFileName = 'lollo_freestyle_train_station/auto_base_wall_marker.con',
+    autoBaseWallMarkerPreciseConFileName = 'lollo_freestyle_train_station/auto_base_wall_marker_precise.con',
     autoFenceConFileName = 'lollo_freestyle_train_station/auto_fence.con',
     autoFenceMarkerConFileName = 'lollo_freestyle_train_station/auto_fence_marker.con',
     autoFenceMarkerPreciseConFileName = 'lollo_freestyle_train_station/auto_fence_marker_precise.con',
@@ -309,6 +323,8 @@ local constants = {
     era_c_slopedPassengerArea1x20ModelFileName = 'lollo_freestyle_train_station/railroad/slopedSides/passengers/area1x20.mdl',
 
     terminalModelFileName = 'lollo_freestyle_train_station/asset/terminal_signal.mdl',
+    baseWallWaypointModelId = 'lollo_freestyle_train_station/railroad/base_wall_waypoint.mdl',
+    baseWallWaypointPreciseModelId = 'lollo_freestyle_train_station/railroad/base_wall_waypoint_precise.mdl',
     fenceWaypointModelId = 'lollo_freestyle_train_station/railroad/fence_waypoint.mdl',
     fenceWaypointPreciseModelId = 'lollo_freestyle_train_station/railroad/fence_waypoint_precise.mdl',
     platformWaypointModelId = 'lollo_freestyle_train_station/railroad/platform_waypoint.mdl',

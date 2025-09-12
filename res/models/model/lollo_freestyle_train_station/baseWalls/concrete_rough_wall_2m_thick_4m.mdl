@@ -1,0 +1,25 @@
+function data()
+    local _constants = require('lollo_freestyle_train_station.constants')
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        lods = {
+            {
+                node = {
+                    materials = {
+                        'lollo_freestyle_train_station/wall_grey_dark_z.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark_low_prio.mtl',
+                    },
+                    mesh = 'lollo_freestyle_train_station/baseWalls/wall_2m_thick_4m_lod0.msh',
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 1000,
+            },
+        },
+        metadata = { },
+        version = 1
+    }
+end

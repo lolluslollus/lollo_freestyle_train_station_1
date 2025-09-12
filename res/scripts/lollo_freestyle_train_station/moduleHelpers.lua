@@ -569,7 +569,7 @@ privateFuncs.deco = {
         local faceTransformed = transfUtils.getFaceTransformed_FAST(
             wallBehindTransf,
             {
-                {-0.5, 0, -laneZ, 1}, -- put the terrain level with wallBehindBase, which is 1.4m high, plus a little something to get the wall jammed in
+                {-0.5, 0, -laneZ, 1}, -- put the terrain level with wallBehindBase, which is 1.2m high, plus a little something to get the wall jammed in
                 {-0.5, 0.5, -laneZ, 1}, -- {-0.5, 1, -laneZ, 1}, -- smaller y integrates better with steep slopes but the earth might come into the station
                 {0.5, 0.5, -laneZ, 1}, -- {0.5, 1, -laneZ, 1}, -- smaller y integrates better with steep slopes but the earth might come into the station
                 {0.5, 0, -laneZ, 1},
@@ -685,9 +685,9 @@ privateFuncs.deco = {
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl' then
-                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl'
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_low_5m_2m_thick.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_5m.mdl' then
-                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl'
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_low_5m_2m_thick.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl' then
@@ -704,6 +704,10 @@ privateFuncs.deco = {
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m_2m_thick.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/metal_large_rivets/wall_low_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m_2m_thick.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arco_concrete_rough/wall_low_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m_2m_thick.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arco_concrete_rough_light/wall_low_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_low_5m_2m_thick.mdl'
             end
         else
             if wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled/platformWall_low_5m.mdl' then
@@ -737,9 +741,9 @@ privateFuncs.deco = {
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/tiled_large_stripes/wall_low_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/concrete_modern/wall_low_5m.mdl' then
-                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_low_5m.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/metal_glass/platformWall_low_5m.mdl' then
-                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_low_5m.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/staccionata_fs/modelled_wall_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/staccionata_fs_tall/modelled_wall_5m.mdl' then
@@ -756,6 +760,10 @@ privateFuncs.deco = {
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl'
             elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/metal_large_rivets/wall_low_5m.mdl' then
                 wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/brick_wall_low_5m.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arco_concrete_rough/wall_low_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_wall_low_5m.mdl'
+            elseif wall_low_5m_ModelId == 'lollo_freestyle_train_station/platformWalls/arco_concrete_rough_light/wall_low_5m.mdl' then
+                wallBehindLowModelId = 'lollo_freestyle_train_station/platformWalls/behind/concrete_light_wall_low_5m.mdl'
             end
         end
 

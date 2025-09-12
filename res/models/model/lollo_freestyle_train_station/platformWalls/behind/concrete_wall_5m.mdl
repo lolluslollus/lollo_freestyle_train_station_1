@@ -8,9 +8,9 @@ function data()
             {
                 node = {
                     materials = {
-                        'lollo_freestyle_train_station/wall_grey_dark.mtl',
                         'lollo_freestyle_train_station/wall_grey_dark_low_prio.mtl',
-                        'lollo_freestyle_train_station/wall_grey_dark_z.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark_lower_prio.mtl',
+                        'lollo_freestyle_train_station/wall_grey_dark.mtl',
                         'lollo_freestyle_train_station/wall_grey_dark_world_dirt_z.mtl',
                         'lollo_freestyle_train_station/wall_grey_dark_world_dirt.mtl',
                     },

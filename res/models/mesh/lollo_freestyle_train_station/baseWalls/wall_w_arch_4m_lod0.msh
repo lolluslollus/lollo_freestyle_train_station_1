@@ -1,0 +1,98 @@
+function data()
+return {
+	matConfigs = {
+		{ 0, 0, 0, }, 
+	},
+	subMeshes = {
+		{
+			indices = {
+				normal = {
+					count = 492,
+					offset = 4012,
+				},
+				position = {
+					count = 492,
+					offset = 4996,
+				},
+				tangent = {
+					count = 492,
+					offset = 5488,
+				},
+				uv0 = {
+					count = 492,
+					offset = 4504,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/bridge/high_prio.002.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 1128,
+					offset = 5980,
+				},
+				position = {
+					count = 1128,
+					offset = 8236,
+				},
+				tangent = {
+					count = 1128,
+					offset = 9364,
+				},
+				uv0 = {
+					count = 1128,
+					offset = 7108,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/platformWalls/tiled/medium_prio.002.mtl", 
+			},
+		}, {
+			indices = {
+				normal = {
+					count = 48,
+					offset = 10492,
+				},
+				position = {
+					count = 48,
+					offset = 10588,
+				},
+				tangent = {
+					count = 48,
+					offset = 10636,
+				},
+				uv0 = {
+					count = 48,
+					offset = 10540,
+				},
+			},
+			materials = {
+				"lollo_freestyle_train_station/baseWalls/low_prio.mtl", 
+			},
+		}, 
+	},
+	vertexAttr = {
+		normal = {
+			count = 924,
+			numComp = 3,
+			offset = 0,
+		},
+		position = {
+			count = 936,
+			numComp = 3,
+			offset = 1972,
+		},
+		tangent = {
+			count = 1104,
+			numComp = 4,
+			offset = 2908,
+		},
+		uv0 = {
+			count = 1048,
+			numComp = 2,
+			offset = 924,
+		},
+	},
+}
+end

@@ -8,19 +8,19 @@ return {
 			indices = {
 				normal = {
 					count = 72,
-					offset = 620,
+					offset = 604,
 				},
 				position = {
 					count = 72,
-					offset = 548,
+					offset = 748,
 				},
 				tangent = {
 					count = 72,
-					offset = 764,
+					offset = 532,
 				},
 				uv0 = {
 					count = 72,
-					offset = 692,
+					offset = 676,
 				},
 			},
 			materials = {
@@ -30,19 +30,19 @@ return {
 			indices = {
 				normal = {
 					count = 72,
-					offset = 908,
+					offset = 892,
 				},
 				position = {
 					count = 72,
-					offset = 836,
+					offset = 1036,
 				},
 				tangent = {
 					count = 72,
-					offset = 1052,
+					offset = 820,
 				},
 				uv0 = {
 					count = 72,
-					offset = 980,
+					offset = 964,
 				},
 			},
 			materials = {
@@ -52,23 +52,23 @@ return {
 			indices = {
 				normal = {
 					count = 48,
-					offset = 1172,
+					offset = 1156,
 				},
 				position = {
 					count = 48,
-					offset = 1124,
+					offset = 1252,
 				},
 				tangent = {
 					count = 48,
-					offset = 1268,
+					offset = 1108,
 				},
 				uv0 = {
 					count = 48,
-					offset = 1220,
+					offset = 1204,
 				},
 			},
 			materials = {
-				"lollo_freestyle_train_station/trackWalls/low_prio.mtl", 
+				"lollo_freestyle_train_station/trackWalls/low_prio.003.mtl", 
 			},
 		}, 
 	},
@@ -76,22 +76,22 @@ return {
 		normal = {
 			count = 60,
 			numComp = 3,
-			offset = 144,
+			offset = 80,
 		},
 		position = {
 			count = 144,
 			numComp = 3,
-			offset = 0,
+			offset = 388,
 		},
 		tangent = {
-			count = 112,
+			count = 80,
 			numComp = 4,
-			offset = 436,
+			offset = 0,
 		},
 		uv0 = {
-			count = 232,
+			count = 248,
 			numComp = 2,
-			offset = 204,
+			offset = 140,
 		},
 	},
 }
