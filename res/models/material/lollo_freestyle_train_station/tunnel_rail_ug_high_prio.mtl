@@ -15,7 +15,7 @@ function data()
 			map_albedo = {
 				-- fileName = "tracks/tunnel_rail_wall_01_albedo.dds",
 				-- fileName = "lollo_freestyle_train_station/wall_tunnely/tunnel_rail_wallB_512_albedo.dds",
-				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_albedo_bc1.dds",
+				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_finer_albedo_bc1.dds",
 				type = "TWOD",
 				wrapS = "REPEAT",
 				wrapT = "REPEAT",
@@ -23,7 +23,7 @@ function data()
 			map_metal_gloss_ao = {
 				-- fileName = "tracks/tunnel_rail_wall_01_metal_gloss_ao.dds",
 				-- fileName = "lollo_freestyle_train_station/wall_tunnely/tunnel_rail_wallB_512_metal_gloss_ao.dds",
-				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_metal_gloss_ao_bc1.dds",
+				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_finer_metal_gloss_ao_bc1.dds",
 				type = "TWOD",
 				wrapS = "REPEAT",
 				wrapT = "REPEAT",
@@ -32,7 +32,7 @@ function data()
 				-- fileName = "tracks/tunnel_rail_wall_01_normal.dds",
 				-- fileName = "lollo_freestyle_train_station/tunnel_rail_wall_01_normal.dds",
 				-- fileName = "lollo_freestyle_train_station/wall_tunnely/tunnel_rail_wallB_512_inverse_normal.dds",
-				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_normal_bc5.dds",
+				fileName = "lollo_freestyle_train_station/wall_tunnely/tunnely_wall_finer_normal_bc5.dds",
 				redGreen = true,
 				type = "TWOD",
 				wrapS = "REPEAT",

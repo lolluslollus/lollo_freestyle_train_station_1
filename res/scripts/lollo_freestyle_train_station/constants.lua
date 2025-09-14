@@ -93,6 +93,7 @@ local constants = {
     trackCrossingZ = 0.45,
     trackCrossingRaise = 0.25,
     wallBaseHeight = 1.2, -- set by the mesh, do not touch
+    wallBaseMaxNum = 20,
     wallHeight = 4.25, -- do not touch
     wallSkew = 0.2,
     wallSkewXAdjustmentFactor = 0.12,

@@ -148,7 +148,7 @@ function data()
         local _wallHeight = (wallHeight or 0)
         local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
         local _transfSkewed = isSkewed and transfUtils.getTransf_ZSkewedOnY(_transfShifted, -constants.wallSkew) or _transfShifted
-        local _numWalls = (not (isDownToGround) or _wallHeight <= 0) and 1 or math.ceil((_wallHeight + constants.defaultPlatformHeight) / constants.baseWallHeight)
+        local _numWalls = (not (isDownToGround) or _wallHeight <= 0) and 1 or math.min(constants.wallBaseMaxNum, math.ceil((_wallHeight + constants.defaultPlatformHeight) / constants.baseWallHeight))
         if isSkewed then
             -- the skew can change the wall size, the farther a wall is from the curve centre
             local xLeft = transfUtils.getVec123Transformed({-0.5, 0, 0}, _transfSkewed)
