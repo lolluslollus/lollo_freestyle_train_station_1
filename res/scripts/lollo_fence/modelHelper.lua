@@ -18,9 +18,9 @@ end
 
 local privateValues = {
     maxLength = 200,
-    maxNumWalls = 5,
+    maxNumWalls = 6,
     yShiftMaxIndex = 24,
-    yShiftFineMaxIndex = 5,
+    yShiftFineMaxIndex = 10,
     zDeltaMaxIndex = 64,
     zRotationMaxIndex = 64,
 }

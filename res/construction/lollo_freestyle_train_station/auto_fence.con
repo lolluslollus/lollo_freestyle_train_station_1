@@ -6,14 +6,15 @@ function data()
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
     local function _addGround(transf, yStart, zShiftOverDefaultPlatformHeight, result, wallBaseModelId, wallBehindModelId, isLowerTerrain, isRaiseTerrain, isWallBehindThick, numWalls)
-        local _yShift = isRaiseTerrain and ((numWalls -1) * constants.wallSkew * constants.wallHeight) or 0
+        local _numWalls = numWalls or 1
+        local _yShift = isRaiseTerrain and ((_numWalls -1) * constants.wallSkew * constants.wallHeight) or 0
         local _yInward = -0.2
         local _yMiddle = (isLowerTerrain and (not(wallBehindModelId) and 0.3 or (isWallBehindThick and 2.3 or 1.3)) or 0.2) + yStart + _yShift
         local _yOutward = (isLowerTerrain and (not(wallBehindModelId) and 0.7 or (isWallBehindThick and 2.7 or 1.7)) or (not(wallBehindModelId) and 0.5 or 1.0)) + yStart + _yShift
         local _zInward = math.max(zShiftOverDefaultPlatformHeight, 0) -- platforms lower than default: we sink them into the ground; higher platforms: we adjust the terrain
         local _zDeltaOutward = 0
         if isLowerTerrain then _zDeltaOutward = (-constants.wallHeight - (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -- +0.3 --adjusted to smooth it out a bit
-        elseif isRaiseTerrain then _zDeltaOutward = (constants.wallHeight * numWalls + (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -- -0.3 --adjusted to smooth it out a bit
+        elseif isRaiseTerrain then _zDeltaOutward = (constants.wallHeight * _numWalls + (wallBaseModelId == nil and 0 or constants.wallBaseHeight)) -- -0.3 --adjusted to smooth it out a bit
         end
         local _zOutward = zShiftOverDefaultPlatformHeight + _zDeltaOutward
         logger.infoOut('_yInward =', _yInward, '_yMiddle =', _yMiddle, '_yOutward =', _yOutward, '_zInward =', _zInward, '; _zOutward =', _zOutward)
@@ -122,6 +123,7 @@ function data()
     end
 
     local function _addWall(transf, result, yShift, zShift, wallMainModelId, wallBaseModelId, numWalls, isSkewed)
+        local _numWalls = numWalls or 1
         local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
         local _transfSkewed = isSkewed and transfUtils.getTransf_ZSkewedOnY(_transfShifted, constants.wallSkew) or _transfShifted
 
@@ -143,7 +145,7 @@ function data()
                 local xLength = xLength_power2 and math.sqrt(xLength_power2) or 1
                 logger.infoOut('xLength =', xLength)
 
-                for i = 1, numWalls, 1 do
+                for i = 1, _numWalls, 1 do
                     _transfSkewed = transfUtils.getTransf_XScaled(_transfSkewed, (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1)
                     -- logger.infoOut('(xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1 =', (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1, 'i =', i)
                     table.insert(
@@ -156,7 +158,7 @@ function data()
                     _transfSkewed = transfUtils.getTransf_ZShifted(_transfSkewed, constants.wallHeight)
                 end
             else
-                for i = 1, numWalls, 1 do
+                for i = 1, _numWalls, 1 do
                     table.insert(
                         result.models,
                         {
@@ -173,6 +175,7 @@ function data()
     local function _addWallBehind(transf, result, yShift, zShift, wallBehindModelId, wallBehindBaseModelId, numWalls, isSkewed)
         if wallBehindModelId == nil then return end
 
+        local _numWalls = numWalls or 1
         local _transfShifted = transfUtils.getTransf_Shifted(transf, {0, yShift, zShift})
         local _transfSkewed = isSkewed and transfUtils.getTransf_ZSkewedOnY(_transfShifted, constants.wallSkew) or _transfShifted
 
@@ -193,7 +196,7 @@ function data()
             local xLength = xLength_power2 and math.sqrt(xLength_power2) or 1
             logger.infoOut('xLength for wall behind =', xLength)
 
-            for i = 1, numWalls, 1 do
+            for i = 1, _numWalls, 1 do
                 _transfSkewed = transfUtils.getTransf_XScaled(_transfSkewed, (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1)
                 -- logger.infoOut('(xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1 =', (xLength-1) * i * constants.wallSkewXAdjustmentFactor + 1, 'i =', i)
                 table.insert(
@@ -206,7 +209,7 @@ function data()
                 _transfSkewed = transfUtils.getTransf_ZShifted(_transfSkewed, constants.wallHeight)
             end
         else
-            for i = 1, numWalls, 1 do
+            for i = 1, _numWalls, 1 do
                 table.insert(
                     result.models,
                     {
@@ -333,9 +336,7 @@ function data()
                 wallBaseModelId = 'lollo_freestyle_train_station/trackWalls/era_c_wall_base_5m.mdl'
             end
             local wallBaseModelId_Tunnel = wallBaseModelId or 'lollo_freestyle_train_station/trackWalls/tunnely_wall_base_5m.mdl' -- always add a wall base in tunnels so the walls reach the top
-
             local wallBehindModelId = fenceModelHelper.getWallBehindModels(false, params.lolloFenceAssets_isWallBehindThick == 1)[params.lolloFenceAssets_wallBehindModel + 1].fileName
-            local wallBehindModelId_Tunnel = fenceModelHelper.getWallBehindModels(true, params.lolloFenceAssets_isWallBehindThick == 1)[params.lolloFenceAssets_wallBehindModel + 1].fileName
 
             local wallBehindBaseModelId = nil
             if wallBehindModelId ~= nil then
@@ -357,9 +358,6 @@ function data()
                     end
                 end
             end
-            local wallBehindBaseModelId_Tunnel = wallBehindBaseModelId
-                or (isWallBehindThick and 'lollo_freestyle_train_station/trackWalls/behind/tunnely_wall_base_5m_2m_thick.mdl'
-                    or 'lollo_freestyle_train_station/trackWalls/behind/tunnely_wall_base_5m.mdl')
 
             -- make sure something appears even if the models are all nil, so the costruction will not stay around as a ghost
             logger.infoOut('wallMainModelId =', wallMainModelId, 'wallBaseModelId =', wallBaseModelId, 'wallBehindModelId =', wallBehindModelId)
@@ -397,9 +395,13 @@ function data()
             local _transfs_ground = isFlipped and params.transfs_ground_yFlipped or params.transfs_ground
             for _, transfData in pairs(_transfs_ground) do
                 if not(transfData.hasLevelCrossing) then
-                    if transfData.groundBridgeTunnel_012 == 2 and not(isTunnelWallLikeOutside) then -- tunnel
-                        _addWall(transfData.transf, result, 0, _zStart_Tunnel, wallMainModelId_Tunnel, wallBaseModelId_Tunnel, _numWalls, isSkewed)
-                    else -- ground, bridge or tunnel like outside
+                    if transfData.groundBridgeTunnel_012 == 2 then -- tunnel
+                        if isTunnelWallLikeOutside then
+                            _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId, _numWalls, isSkewed)
+                        else
+                            _addWall(transfData.transf, result, 0, _zStart_Tunnel, wallMainModelId_Tunnel, wallBaseModelId_Tunnel, 1, false)
+                        end
+                    else -- ground or bridge
                         _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId, _numWalls, isSkewed)
                     end
                     if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then -- ground
@@ -410,13 +412,20 @@ function data()
             local _transfs_wallBehind = isFlipped and params.transfs_wallBehind_yFlipped or params.transfs_wallBehind
             for _, transfData in pairs(_transfs_wallBehind) do
                 if not(transfData.hasLevelCrossing) then
-                    if transfData.groundBridgeTunnel_012 == 0 -- ground
-                    or (transfData.groundBridgeTunnel_012 == 1 and isWallBehindOnBridges) -- bridge
-                    or (transfData.groundBridgeTunnel_012 == 2 and isTunnelWallLikeOutside and isWallBehindInTunnels) -- tunnel
-                    then
-                        _addWallBehind(transfData.transf, result, _yStart,_zStart, wallBehindModelId, wallBehindBaseModelId, _numWalls, isSkewed)
-                    elseif (transfData.groundBridgeTunnel_012 == 2 and isWallBehindInTunnels) then -- tunnel
-                        _addWallBehind(transfData.transf, result, 0,_zStart_Tunnel, wallBehindModelId_Tunnel, wallBehindBaseModelId_Tunnel, _numWalls, isSkewed)
+                    if transfData.groundBridgeTunnel_012 == 2 then -- tunnel
+                        if isWallBehindInTunnels then
+                            if isTunnelWallLikeOutside then
+                                _addWallBehind(transfData.transf, result, _yStart, _zStart, wallBehindModelId, wallBehindBaseModelId, _numWalls, isSkewed)
+                            else
+                                _addWallBehind(transfData.transf, result, math.max(0, _yStart), _zStart, wallBehindModelId, wallBehindBaseModelId, _numWalls, isSkewed)
+                            end
+                        end
+                    elseif transfData.groundBridgeTunnel_012 == 1 then -- bridge
+                        if isWallBehindOnBridges then
+                            _addWallBehind(transfData.transf, result, _yStart, _zStart, wallBehindModelId, wallBehindBaseModelId, _numWalls, isSkewed)
+                        end
+                    else -- ground
+                        _addWallBehind(transfData.transf, result, _yStart, _zStart, wallBehindModelId, wallBehindBaseModelId, _numWalls, isSkewed)
                     end
                 end
             end
