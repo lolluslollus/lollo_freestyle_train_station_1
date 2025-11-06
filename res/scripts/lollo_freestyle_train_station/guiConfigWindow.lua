@@ -19,10 +19,12 @@ local samplePrivateData = {
         warningWindowTitle = _('WarningWindowTitle'),
     },
 
-    extraHeight4Title = 60,
-    extraHeight4Param = 45, -- half the height of module icons, which we reuse here
-    windowXShift = 40,
-    windowYShift = 40,
+    extraHeight4Param = 40, -- half the height of module icons, which we reuse here
+    extraHeight4Window = 50,
+    extraWidth4Window = 20,
+    minWindowWidth = 490,
+    windowXShift = -60,
+    windowYShift = 20,
 
     -- attributes
     isShowingWarning = false,
@@ -33,36 +35,35 @@ return {
     ---@param configLayoutIdPrefix string
     ---@param warningWindowWithGotoId string
     ---@param texts table<string, string>
-    ---@param extraHeight4Title? number
-    ---@param extraHeight4Param? number
     ---@param windowXShift? number
     ---@param windowYShift? number
     ---@return table
-    new = function(configLayoutIdPrefix, warningWindowWithGotoId, texts, extraHeight4Title, extraHeight4Param, windowXShift, windowYShift)
+    new = function(configLayoutIdPrefix, warningWindowWithGotoId, texts, windowXShift, windowYShift)
         local self = {
             privateData = {
                 conConfigLayoutIdPrefix = configLayoutIdPrefix,
                 warningWindowWithGotoId = warningWindowWithGotoId,
                 texts = texts,
-                extraHeight4Title = extraHeight4Title or samplePrivateData.extraHeight4Title,
-                extraHeight4Param = extraHeight4Param or samplePrivateData.extraHeight4Param,
+                extraHeight4Window = samplePrivateData.extraHeight4Window,
+                extraHeight4Param = samplePrivateData.extraHeight4Param,
+                extraWidth4Window = samplePrivateData.extraWidth4Window,
+                minWindowWidth = samplePrivateData.minWindowWidth,
                 windowXShift = windowXShift or samplePrivateData.windowXShift,
                 windowYShift = windowYShift or samplePrivateData.windowYShift,
             }
         }
 
         self.privateFuncs = {
-            getConstructionConfigLayout = function(entityId, paramsMetadataSorted, paramValues, onParamValueChanged, isAddTitle, onBulldozeClicked)
-                local layout = api.gui.layout.BoxLayout.new('VERTICAL')
-                layout:setId(self.privateData.conConfigLayoutIdPrefix .. entityId)
+            getConstructionConfigList = function(entityId, paramsMetadataSorted, paramValues, onParamValueChanged, isAddTitle, onBulldozeClicked)
+                local mainLayout = api.gui.layout.BoxLayout.new('VERTICAL')
 
                 if isAddTitle then
-                    local br = api.gui.comp.TextView.new('')
-                    br:setGravity(0.5, 0)
-                    layout:addItem(br)
-                    local title = api.gui.comp.TextView.new(self.privateData.texts.conConfigWindowTitle)
+                    -- local br = api.gui.comp.TextView.new('')
+                    -- br:setGravity(0.5, 0)
+                    -- mainLayout:addItem(br)
+                    local title = api.gui.comp.TextView.new('- ' .. self.privateData.texts.conConfigWindowTitle .. (entityId or '') .. ' -')
                     title:setGravity(0.5, 0)
-                    layout:addItem(title)
+                    mainLayout:addItem(title)
                 end
 
                 local function addParam(paramKey, paramMetadata, paramValue)
@@ -75,16 +76,18 @@ return {
                     end
                     local textBoxLayout = api.gui.layout.BoxLayout.new('HORIZONTAL')
                     textBoxLayout:addItem(paramNameTextBox)
-                    layout:addItem(textBoxLayout)
+                    local textBoxComponent = api.gui.comp.Component.new('')
+                    textBoxComponent:setLayout(textBoxLayout)
+                    mainLayout:addItem(textBoxComponent)
 
                     local _valueIndexBase0 = paramValue or (paramMetadata.defaultIndex or 0)
                     logger.infoOut('_valueIndexBase0 =', _valueIndexBase0)
                     if paramMetadata.uiType == 'ICON_BUTTON' then
-                        local buttonRowLayout = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
-                        buttonRowLayout:setGravity(0.5, 0) -- center horizontally
-                        buttonRowLayout:setOneButtonMustAlwaysBeSelected(true)
-                        buttonRowLayout:setEmitSignal(false)
-                        buttonRowLayout:onCurrentIndexChanged(
+                        local buttonRow = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
+                        buttonRow:setGravity(0.5, 0) -- center horizontally
+                        buttonRow:setOneButtonMustAlwaysBeSelected(true)
+                        buttonRow:setEmitSignal(false)
+                        buttonRow:onCurrentIndexChanged(
                             function(newIndexBase0)
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, newIndexBase0)
                             end
@@ -94,12 +97,12 @@ return {
                             local imageView = api.gui.comp.ImageView.new(value)
                             imageView:setMaximumSize(api.gui.util.Size.new(self.privateData.extraHeight4Param, self.privateData.extraHeight4Param))
                             local button = api.gui.comp.ToggleButton.new(imageView)
-                            buttonRowLayout:add(button)
+                            buttonRow:add(button)
                             if indexBase1 -1 == _valueIndexBase0 then
                                 button:setSelected(true, false)
                             end
                         end
-                        layout:addItem(buttonRowLayout)
+                        mainLayout:addItem(buttonRow)
                     elseif paramMetadata.uiType == 'COMBOBOX' then
                         local comboBox = api.gui.comp.ComboBox.new()
                         comboBox:setGravity(0.5, 0) -- center horizontally
@@ -115,7 +118,7 @@ return {
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, indexBase0)
                             end
                         )
-                        layout:addItem(comboBox)
+                        mainLayout:addItem(comboBox)
                     elseif paramMetadata.uiType == 'SLIDER' then
                         logger.infoOut('paramMetadata =', paramMetadata)
                         local sliderValueView = api.gui.comp.TextView.new(tostring(paramMetadata.values[_valueIndexBase0 + 1]))
@@ -133,19 +136,21 @@ return {
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, newValueIndexBase0)
                             end
                         )
-                        slider:setMinimumSize(api.gui.util.Size.new(360, 40))
+                        slider:setMinimumSize(api.gui.util.Size.new(self.privateData.minWindowWidth, 20))
 
                         local sliderLayout = api.gui.layout.BoxLayout.new('VERTICAL')
                         sliderLayout:addItem(slider)
                         sliderLayout:addItem(sliderValueView)
 
-                        layout:addItem(sliderLayout)
+                        local sliderComponent = api.gui.comp.Component.new('')
+                        sliderComponent:setLayout(sliderLayout)
+                        mainLayout:addItem(sliderComponent)
                     elseif paramMetadata.uiType == 'CHECKBOX' then
                         local checkbox = api.gui.comp.CheckBox.new('', 'ui/design/components/checkbox_invalid.tga', 'ui/design/components/checkbox_valid.tga')
                         checkbox:setGravity(0.5, 0) -- center horizontally
                         checkbox:onToggle(
                             function(isSelected)
-                                -- print('checkbox selected = ' .. tostring(isSelected))
+                                -- logger.thingOut('checkbox selected = ' .. tostring(isSelected))
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, isSelected and 1 or 0)
                             end
                         )
@@ -153,11 +158,11 @@ return {
                         textBoxLayout:addItem(checkbox)
                     else -- BUTTON or anything else
                         -- logger.infoOut('button clicked')
-                        local buttonRowLayout = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
-                        buttonRowLayout:setGravity(0.5, 0) -- center horizontally
-                        buttonRowLayout:setOneButtonMustAlwaysBeSelected(true)
-                        buttonRowLayout:setEmitSignal(false)
-                        buttonRowLayout:onCurrentIndexChanged(
+                        local buttonRow = api.gui.comp.ToggleButtonGroup.new(api.gui.util.Alignment.HORIZONTAL, 0, true)
+                        buttonRow:setGravity(0.5, 0) -- center horizontally
+                        buttonRow:setOneButtonMustAlwaysBeSelected(true)
+                        buttonRow:setEmitSignal(false)
+                        buttonRow:onCurrentIndexChanged(
                             function(newIndexBase0)
                                 -- logger.infoOut('buttonRowLayout:onCurrentIndexChanged, newIndexBase0 =', newIndexBase0})
                                 onParamValueChanged(entityId, paramsMetadataSorted, paramKey, newIndexBase0)
@@ -165,12 +170,12 @@ return {
                         )
                         for indexBase1, value in pairs(paramMetadata.values) do
                             local button = api.gui.comp.ToggleButton.new(api.gui.comp.TextView.new(value))
-                            buttonRowLayout:add(button)
+                            buttonRow:add(button)
                             if indexBase1 -1 == _valueIndexBase0 then
                                 button:setSelected(true, false)
                             end
                         end
-                        layout:addItem(buttonRowLayout)
+                        mainLayout:addItem(buttonRow)
                     end
                 end
                 -- logger.infoOut('paramValues =', paramValues})
@@ -209,10 +214,15 @@ return {
                         end
                     )
                     bulldozeButton:setGravity(0.5, 0.0)
-                    layout:addItem(bulldozeButton)
+                    mainLayout:addItem(bulldozeButton)
                 end
 
-                return layout
+                local resultComponent = api.gui.comp.Component.new('')
+                resultComponent:setLayout(mainLayout)
+                return resultComponent
+            end,
+            getListId = function(entityId)
+                return self.privateData.conConfigLayoutIdPrefix .. entityId
             end,
             moveCamera = function(position)
                 local cameraData = game.gui.getCamera()
@@ -221,57 +231,60 @@ return {
         }
 
         self.addEntityConfigToWindow = function(entityId, handleParamValueChanged, conParamsMetadata, conParams, onBulldozeClicked)
-            local conWindowId = 'temp.view.entity_' .. entityId
-            logger.infoOut('conWindowId = \'', conWindowId, '\'')
-            local window = api.gui.util.getById(conWindowId) -- eg temp.view.entity_26372
-            if window == nil then logger.errorOut('cannot get config window by id') return end
-            local windowContent = window:getContent()
-            if windowContent == nil then logger.errorOut('cannot get config window content') return end
-            -- depending on the entity type, I attach my child to the window content (station group) or to its layout (construction)
-            local isParentWindowContentLayout = type(windowContent.getName) == 'function' and windowContent:getName() == 'ConstructionContent'
-            logger.infoOut('isParentWindowContentLayout =', isParentWindowContentLayout)
-            local parentLayout = isParentWindowContentLayout and windowContent:getLayout() or windowContent
-            local configureButtonIndex = isParentWindowContentLayout and 0 or 1
-             -- hide the "configure button" without emitting a signal
-            local configureButton = parentLayout:getItem(configureButtonIndex)
-            if configureButton ~= nil then configureButton:setVisible(false, false) end
+            local _conWindowId = 'temp.view.entity_' .. entityId
+            logger.infoOut('conWindowId = \'', _conWindowId, '\'')
+            local _window = api.gui.util.getById(_conWindowId) -- eg temp.view.entity_26372
+            if _window == nil then logger.errorOut('cannot get config window by id') return end
 
-            for i = 0, parentLayout:getNumItems() - 1, 1 do
-                local item = parentLayout:getItem(i)
-                if item ~= nil and type(item.getId) == 'function' and stringUtils.stringStartsWith(item:getId() or '', self.privateData.conConfigLayoutIdPrefix) then
-                    logger.infoOut('one of my menus is already in the window, about to remove it')
-                    parentLayout:removeItem(item)
-                    logger.infoOut('about to reset its id')
-                    if type(item.setId) == 'function' then item:setId('') else logger.errorOut('cannot set config window id') end
-                    logger.infoOut('about to call destroy')
-                    -- api.gui.util.destroyLater(item) -- this errors out
-                    item:destroy()
-                    logger.infoOut('called destroy')
+            local _windowOldContent = _window:getContent()
+            if _windowOldContent ~= nil and type(_windowOldContent.getId) == 'function' and _windowOldContent:getId() == self.privateFuncs.getListId(entityId) then
+                logger.infoOut('### window with content with old id')
+                -- these crash:
+                -- if windowOldContent ~= nil and type(windowOldContent.destroy) == 'function' then logger.thingOut('### about to destroy') windowOldContent:destroy() end
+                -- if windowOldContent ~= nil and type(windowOldContent.destroy) == 'function' then logger.thingOut('### about to destroy') api.gui.util.destroyLater(windowOldContent) end
+            else
+                logger.infoOut('### window with content with new id')
+                local _gameGUI = api.gui.util.getGameUI()
+                if _gameGUI == nil or type(_gameGUI.getContentRect) ~= 'function' then
+                    logger.errorOut('no game GUI found')
+                    return
                 end
-            end
-
-            local newLayout = self.privateFuncs.getConstructionConfigLayout(entityId, conParamsMetadata, conParams, handleParamValueChanged, true, onBulldozeClicked)
-            parentLayout:addItem(newLayout)
-            parentLayout:setGravity(0, 0) -- center top left
-
-            local rect = window:getContentRect() -- this is mostly 0, 0 at this point
-            local minSize = window:calcMinimumSize()
-
-            local extraHeight = self.privateData.extraHeight4Title + arrayUtils.getCount(conParamsMetadata) * self.privateData.extraHeight4Param
-            local size = api.gui.util.Size.new(math.max(rect.w, minSize.w), math.max(rect.h, minSize.h) + extraHeight)
-            window:setSize(size)
-            window:setResizable(true)
-
-            -- window:setAttached(false)
-            window:setPinned(false)
-
-            local gameGUI = api.gui.util.getGameUI()
-            if gameGUI and gameGUI.getContentRect then
-                local contentRect = gameGUI:getContentRect()
-                if contentRect and type(contentRect.w) == 'number' then
-                    guiHelpers.setWindowPosition(window, {x = contentRect.w - size.w})
+                local _GUIContentRect = _gameGUI:getContentRect()
+                if _GUIContentRect == nil or type(_GUIContentRect.w) ~= 'number' then
+                    logger.errorOut('no game GUI content rectangle found')
+                    return
                 end
+                local _configComponent = self.privateFuncs.getConstructionConfigList(entityId, conParamsMetadata, conParams, handleParamValueChanged, true, onBulldozeClicked)
+                if _configComponent == nil then
+                    logger.errorOut('no config component')
+                    return
+                end
+
+                _configComponent:setGravity(0.0, -1)
+                local _configWrapper = api.gui.comp.ScrollArea.new(_configComponent, '')
+                -- ALWAYS_OFF, ALWAYS_ON, AS_NEEDED, SIMPLE
+                _configWrapper:setHorizontalScrollBarPolicy(api.gui.comp.ScrollBarPolicy.SIMPLE)
+                -- _configWrapper:ensureVisible(_configComponent)
+                _configWrapper:setGravity(0.0, -1)
+                _configWrapper:setId(self.privateFuncs.getListId(entityId))
+                _window:setContent(_configWrapper)
+                local _wrapperContentSize = _configWrapper:calcMinimumSize()
+                local _windowSize = api.gui.util.Size.new(
+                    math.max(self.privateData.minWindowWidth, _wrapperContentSize.w) + self.privateData.extraWidth4Window,
+                    _wrapperContentSize.h + self.privateData.extraHeight4Window
+                )
+                _window:setSize(_windowSize)
+                guiHelpers.setWindowPosition(
+                    _window,
+                    {
+                        x = _GUIContentRect.w + self.privateData.windowXShift - _windowSize.w,
+                        y = self.privateData.windowYShift
+                    }
+                )
             end
+            _window:setResizable(true)
+            -- _window:setAttached(false)
+            -- _window:setPinned(false)
         end
         self.isShowingWarning = self.privateData.isShowingWarning
         ---@param text string

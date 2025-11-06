@@ -5,7 +5,7 @@ function data()
     local logger = require('lollo_freestyle_train_station.logger')
     local transfUtils = require('lollo_freestyle_train_station.transfUtils')
 
-    local function _addGround(transf, yStart, zShiftOverDefaultPlatformHeight, result, wallBaseModelId, wallBehindModelId, isLowerTerrain, isRaiseTerrain, isWallBehindThick, numWalls)
+    local function _addGround(transf, yStart, zShiftOverDefaultPlatformHeight, result, wallBaseModelId, wallBehindModelId, isLowerTerrain, isRaiseTerrain, isWallBehindThick, numWalls, terrainExtraWidth)
         local _numWalls = numWalls or 1
         local _yShift = isRaiseTerrain and ((_numWalls -1) * constants.wallSkew * constants.wallHeight) or 0
         local _yInward = -0.2
@@ -37,7 +37,16 @@ function data()
                     {0.5, _yOutward, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
                     {-0.5, _yOutward, _zOutward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
                 }
-            )
+            ),
+            terrainExtraWidth > 0 and transfUtils.getFaceTransformed_FAST(
+                transf,
+                {
+                    {-0.5, _yOutward, _zOutward, 1.0},
+                    {0.5, _yOutward, _zOutward, 1.0},
+                    {0.5, _yOutward + terrainExtraWidth, _zOutward, 1.0},
+                    {-0.5, _yOutward + terrainExtraWidth, _zOutward, 1.0},
+                }
+            ) or nil
         } or {
             transfUtils.getFaceTransformed_FAST(
                 transf,
@@ -47,7 +56,16 @@ function data()
                     {0.5, _yOutward, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
                     {-0.5, _yOutward, _zInward, 1.0}, -- smaller y integrates better with steep slopes but the earth might come into the station
                 }
-            )
+            ),
+            terrainExtraWidth > 0 and transfUtils.getFaceTransformed_FAST(
+                transf,
+                {
+                    {-0.5, _yOutward, _zInward, 1.0},
+                    {0.5, _yOutward, _zInward, 1.0},
+                    {0.5, _yOutward + terrainExtraWidth, _zInward, 1.0},
+                    {-0.5, _yOutward + terrainExtraWidth, _zInward, 1.0},
+                }
+            ) or nil
         }
 
         if not(isRaiseTerrain) then
@@ -76,30 +94,19 @@ function data()
                 type = 'EQUAL',
             }
         )
-        if isRaiseTerrain then
+        local _terrainType = 'EQUAL'
+        if isRaiseTerrain then _terrainType = 'GREATER'
+        elseif isLowerTerrain then _terrainType = 'LESS'
+        end
+        for i = 2, #_facesTransformed, 1 do
             table.insert(
                 result.terrainAlignmentLists,
                 {
-                    faces =  {_facesTransformed[2]},
+                    faces =  {_facesTransformed[i]},
                     optional = true,
                     slopeHigh = 9.9,
                     slopeLow = 0.9,
-                    -- type = 'EQUAL',
-                    -- type = 'LESS',
-                    type = 'GREATER',
-                }
-            )
-        elseif isLowerTerrain then
-            table.insert(
-                result.terrainAlignmentLists,
-                {
-                    faces =  {_facesTransformed[2]},
-                    optional = true,
-                    slopeHigh = 9.9,
-                    slopeLow = 0.9,
-                    -- type = 'EQUAL',
-                    type = 'LESS',
-                    -- type = 'GREATER',
+                    type = _terrainType
                 }
             )
         end
@@ -264,6 +271,7 @@ function data()
                 params.lolloFenceAssets_isYFlipped = params.lolloFenceAssets_isYFlipped or defaults.lolloFenceAssets_isYFlipped
                 params.lolloFenceAssets_model = params.lolloFenceAssets_model or defaults.lolloFenceAssets_model
                 params.lolloFenceAssets_numWalls = params.lolloFenceAssets_numWalls or defaults.lolloFenceAssets_numWalls
+                params.lolloFenceAssets_terrainExtraWidth = params.lolloFenceAssets_terrainExtraWidth or defaults.lolloFenceAssets_terrainExtraWidth
                 params.lolloFenceAssets_wallEraPrefix = params.lolloFenceAssets_wallEraPrefix or defaults.lolloFenceAssets_wallEraPrefix
                 params.lolloFenceAssets_wallBehindOnBridges = params.lolloFenceAssets_wallBehindOnBridges or defaults.lolloFenceAssets_wallBehindOnBridges
                 params.lolloFenceAssets_wallBehindInTunnels = params.lolloFenceAssets_wallBehindInTunnels or defaults.lolloFenceAssets_wallBehindInTunnels
@@ -384,6 +392,7 @@ function data()
             end
 
             logger.infoOut('wallMainModelId =', wallMainModelId, '; wallBaseModelId =', wallBaseModelId, '; #params.transfs =', #params.transfs)
+            local _terrainExtraWidth = fenceModelHelper.getTerrainExtraWidthActualValues()[params.lolloFenceAssets_terrainExtraWidth + 1]
             local _yStart = fenceModelHelper.getYShiftFineActualValues()[params.lolloFenceAssets_yShiftFine + 1]
             local _zShift = fenceModelHelper.getZShiftActualValues()[params.lolloFenceAssets_zShift + 1] -- it is 0 when the platform height is 0.8, which is the default
             -- This is level with freestyle stations and looks good.
@@ -405,7 +414,7 @@ function data()
                         _addWall(transfData.transf, result, _yStart, _zStart, wallMainModelId, wallBaseModelId, _numWalls, isSkewed)
                     end
                     if isDoTerrain and transfData.groundBridgeTunnel_012 == 0 then -- ground
-                        _addGround(transfData.transf, _yStart, _zShift, result, wallBaseModelId, wallBehindModelId, isLowerTerrain, isRaiseTerrain, isWallBehindThick, _numWalls)
+                        _addGround(transfData.transf, _yStart, _zShift, result, wallBaseModelId, wallBehindModelId, isLowerTerrain, isRaiseTerrain, isWallBehindThick, _numWalls, _terrainExtraWidth)
                     end
                 end
             end

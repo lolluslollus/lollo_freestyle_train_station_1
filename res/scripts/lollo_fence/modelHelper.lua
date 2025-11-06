@@ -19,6 +19,8 @@ end
 local privateValues = {
     maxLength = 200,
     maxNumWalls = 6,
+    maxTerrainExtraWidth = 25,
+    minTerrainExtraWidth = 0,
     yShiftMaxIndex = 24,
     yShiftFineMaxIndex = 10,
     zDeltaMaxIndex = 64,
@@ -35,6 +37,7 @@ privateValues.defaults = {
     -- lolloFenceAssets_isWallTall = 0,
     lolloFenceAssets_length = 9,
     lolloFenceAssets_model = 23,
+    lolloFenceAssets_terrainExtraWidth = 0,
     lolloFenceAssets_wallEraPrefix = 1,
     lolloFenceAssets_wallBehindModel = 0,
     lolloFenceAssets_wallBehindInTunnels = 0,
@@ -63,6 +66,20 @@ local privateFuncs = {
     getNumWallsDisplayValues = function()
         local results = {}
         for i = 1, privateValues.maxNumWalls, 1 do
+            results[#results+1] = tostring(i)
+        end
+        return results
+    end,
+    getTerrainExtraWidthActualValues = function()
+        local results = {}
+        for i = privateValues.minTerrainExtraWidth, privateValues.maxTerrainExtraWidth, 1 do
+            results[#results+1] = i
+        end
+        return results
+    end,
+    getTerrainExtraWidthDisplayValues = function()
+        local results = {}
+        for i = privateValues.minTerrainExtraWidth, privateValues.maxTerrainExtraWidth, 1 do
             results[#results+1] = tostring(i)
         end
         return results
@@ -164,7 +181,7 @@ local privateFuncs = {
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnely.tga', _('WallTunnelyName'))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_light_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallTunnelyLight.tga', _('WallTunnelyLightName'))
             add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallArcoMattoni.tga', _("WallArcoMattoniName"))
-            add('lollo_freestyle_train_station/platformWalls/arched/arco_concrete_rough_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/arco_concrete_rough_wall.tga', _("WallArcoConcreteRough"))
+            add('lollo_freestyle_train_station/platformWalls/arched/arco_concrete_rough_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/arco_concrete_rough_wall.tga', _("WallArcoConcreteRough"))
             add('lollo_freestyle_train_station/platformWalls/arched/arco_concrete_rough_light_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/arco_concrete_rough_light_wall.tga', _("WallArcoConcreteRoughLight"))
             add('lollo_freestyle_train_station/platformWalls/arched/tunnely_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceWood.tga', _("WallFenceWoodName"))
             add('lollo_freestyle_train_station/platformWalls/arched/arco_mattoni_wall_tunnel_2_5m.mdl', 'ui/lollo_freestyle_train_station/wallFenceBricksStone.tga', _("WallFenceBricksStoneName"))
@@ -321,6 +338,13 @@ return {
                 values = {_('NO'), _('YES'), _('Raise'), _('Lower')}
             },
             {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_terrainExtraWidth,
+                key = 'lolloFenceAssets_terrainExtraWidth',
+                name = _('TerrainExtraWidthName'),
+                uiType = 'SLIDER',
+                values = privateFuncs.getTerrainExtraWidthDisplayValues(),
+            },
+            {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_length,
                 key = 'lolloFenceAssets_length',
                 name = _('Length'),
@@ -466,6 +490,13 @@ return {
                 values = {_('NO'), _('YES'), _('Raise'), _('Lower')}
             },
             {
+                defaultIndex = privateValues.defaults.lolloFenceAssets_terrainExtraWidth,
+                key = 'lolloFenceAssets_terrainExtraWidth',
+                name = _('TerrainExtraWidthName'),
+                uiType = 'SLIDER',
+                values = privateFuncs.getTerrainExtraWidthDisplayValues(),
+            },
+            {
                 defaultIndex = privateValues.defaults.lolloFenceAssets_numWalls,
                 key = 'lolloFenceAssets_numWalls',
                 name = _('NumWalls'),
@@ -519,6 +550,9 @@ return {
     end,
     getNumWallsActualValues = function ()
         return privateFuncs.getNumWallsActualValues()
+    end,
+    getTerrainExtraWidthActualValues = function ()
+        return privateFuncs.getTerrainExtraWidthActualValues()
     end,
     getYShiftActualValues = function()
         return privateFuncs.getYShiftActualValues()

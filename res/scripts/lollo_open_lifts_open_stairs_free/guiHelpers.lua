@@ -11,9 +11,5 @@ return guiConfigWindow.new(
         goBack = _('GoBack'),
         goThere = _('GoThere'), -- cannot put this directly inside the loop for some reason
         warningWindowTitle = _('WarningWindowTitle'),
-    },
-    100,
-    65, -- half the height of module icons, which we reuse here
-    40,
-    40
+    }
 )
