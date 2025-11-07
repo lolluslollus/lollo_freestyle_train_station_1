@@ -921,7 +921,7 @@ _guiActions.validateFenceMarkerBuilt = function(newConId)
     otherAutoFenceMarkerEdgeIds_indexedByConId[newConId] = newEdgeId
     return {
         autoFenceMarkerEdgeIds_indexedByConId = otherAutoFenceMarkerEdgeIds_indexedByConId,
-        isPrecise = (fileName == constants.autoFenceMarkerPreciseConFileName),
+        isPrecise = (fileName == constants.autoBaseWallMarkerPreciseConFileName),
         isWaypointArrowAgainstTrackDirection = isWaypointArrowAgainstTrackDirection,
         newWaypointId = newConId,
         twinWaypointId = twinConId

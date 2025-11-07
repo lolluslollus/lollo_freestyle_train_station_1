@@ -634,6 +634,7 @@ Lifts, stairs and underground entrances are in the assets, search for "freestyle
 			["PlatformAsAsset_Y1m"] = "Y size, fine, m",
 			["PlatformAsAsset_Z10m"] = "Z size, coarse, m",
 			["PlatformAsAsset_Z1m"] = "Z size, fine, m",
+			["Style"] = "Style",
 			["TerrainCubeName"] = "Terrain cube",
 			["TerrainCubeDesc"] = "Terrain cube to build streets and tracks on - or under. With negative height, it is an alternative to the track construction \"Look Underground\". Adjust it with the Construction Mover.",
 
@@ -1339,6 +1340,7 @@ Aufzüge, Treppen und unterirdische Eingänge findest du in den Assets, suche na
 			["PlatformAsAsset_Y1m"] = "Y-Größe, fein, m",
 			["PlatformAsAsset_Z10m"] = "Z Größe, grob, m",
 			["PlatformAsAsset_Z1m"] = "Z Größe, fein, m",
+			["Style"] = "Stil",
 			["TerrainCubeName"] = "Erdkubus",
 			["TerrainCubeDesc"] = "Erdkubus, um darauf  - oder darunter - Straßen und Gleise zu bauen. Mit negativer Höhe, ist er eine Alternative zu der Gleiskonstruktion \"Unterirdisch aussehen\". Pass ihn mit dem \"Construction Mover\" an.",
 

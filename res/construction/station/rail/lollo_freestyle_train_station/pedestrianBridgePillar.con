@@ -48,6 +48,12 @@ function data()
                 name = _('Era'),
                 values = _paramValues.era_prefix,
             },
+            {
+                key = 'pedestrian_bridge_pillar_style',
+                name = _('Style'),
+                uiType = 'ICON_BUTTON',
+                values = _paramValues.styleValues,
+            },
         },
 		updateFn = function(params)
             logger.infoOut('pedestrianBridgePillar.updateFn firing, params with no state = ', arrayUtils.cloneDeepOmittingFields(params, {'state'}))
@@ -103,7 +109,7 @@ function data()
             }
 
             local _addModels = function()
-                local _modelId = 'lollo_freestyle_train_station/open_stairs_free/' .. _era_prefix .. 'pillar_1m.mdl'
+                local _modelId = _paramReaders.getStyle(params)
                 for i = 1, _height, 1 do
                     table.insert(
                         result.models,

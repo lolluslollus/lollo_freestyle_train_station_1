@@ -35,6 +35,24 @@ local _paramHelpers = {
     pedestrianBridgePillar = {
         heights = _pedestrianBridgeHeights,
         eraPrefixes = {_constants.eras.era_a.prefix, _constants.eras.era_b.prefix, _constants.eras.era_c.prefix},
+        styles = {
+            icons = {
+                'ui/lollo_freestyle_train_station/PlatformEraASwitcher.tga',
+                'ui/lollo_freestyle_train_station/PlatformEraBSwitcher.tga',
+                'ui/lollo_freestyle_train_station/PlatformEraCSwitcher.tga',
+                'ui/lollo_freestyle_train_station/wallCopperWLargeRivets.tga',
+                'ui/lollo_freestyle_train_station/wallIronWLargeRivets.tga',
+                'ui/lollo_freestyle_train_station/wallMetalWLargeRivets.tga',
+            },
+            modelIds = {
+                'lollo_freestyle_train_station/open_stairs_free/era_a_pillar_1m.mdl',
+                'lollo_freestyle_train_station/open_stairs_free/era_b_pillar_1m.mdl',
+                'lollo_freestyle_train_station/open_stairs_free/era_c_pillar_1m.mdl',
+                'lollo_freestyle_train_station/open_stairs_free/copper_pillar_1m.mdl',
+                'lollo_freestyle_train_station/open_stairs_free/iron_pillar_1m.mdl',
+                'lollo_freestyle_train_station/open_stairs_free/metal_pillar_1m.mdl',
+            }
+        }
     },
     stairs_v1 = {
         heights = {2, 4, 6, 8, 10},
@@ -116,6 +134,10 @@ local public = {
             getEraPrefix = function(params)
                 return _paramHelpers.pedestrianBridgePillar.eraPrefixes[params.era_prefix + 1] or _paramHelpers.pedestrianBridgePillar.eraPrefixes[1]
             end,
+            getStyle = function(params)
+                local _modelIds = _paramHelpers.pedestrianBridgePillar.styles.modelIds
+                return _modelIds[(params.pedestrian_bridge_pillar_style or 0) + 1]
+            end
         },
         stairs_v1 = {
             getHeight = function(params)
@@ -236,7 +258,8 @@ local public = {
         },
         pedestrianBridgePillar = {
             era_prefix = {'A', 'B', 'C'},
-            pedestrian_bridge_pillar_height = _arrayUtils.map(_paramHelpers.pedestrianBridgePillar.heights, function(int) return tostring(int) .. 'm' end)
+            pedestrian_bridge_pillar_height = _arrayUtils.map(_paramHelpers.pedestrianBridgePillar.heights, function(int) return tostring(int) .. 'm' end),
+            styleValues = _paramHelpers.pedestrianBridgePillar.styles.icons
         },
         stairs_v1 = {
             bridge_chunk_length = {_('NoRailing0'), '0', '4 m', '8 m', '16 m', '32 m', '64 m', _('EdgeWithNoBridge'), _('SnappyEdgeWithNoBridge'), _('EdgeWithBridge'), _('SnappyEdgeWithBridge')},
