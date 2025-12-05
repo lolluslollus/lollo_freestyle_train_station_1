@@ -1797,7 +1797,7 @@ return {
             return privateFuncs.getFromVariant_0_or_1(variant)
         end,
         getPreviewIcon = function(params)
-			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local variant = (params and type(params.variant) == 'number') and params.variant or 0
 			local zeroOneOrTwo = math.ceil(privateFuncs.getFromVariant_0_to_1(variant, 3) * 2)
             -- logger.infoOut('getPreviewIcon variant = ' .. tostring(variant) .. '; zeroOneOrTwo = ' .. tostring(zeroOneOrTwo))
             local arrowModelId = 'lollo_freestyle_train_station/icon/perpendicular_wall.mdl'
@@ -2920,7 +2920,7 @@ cpf =
             return privateFuncs.axialAreas.getMNTiltedTransf(params, slotId, slotTransf)
         end,
         getPreviewIcon = function(params)
-			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local variant = (params and type(params.variant) == 'number') and params.variant or 0
 			local tilt, min, max = privateFuncs.getFromVariant_AxialAreaTilt(variant)
 			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
 			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  10, -2, 8, 1}
@@ -2995,7 +2995,7 @@ cpf =
             return privateFuncs.getFromVariant_0_to_1(variant, nSteps)
         end,
         getPreviewIcon = function(params)
-			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local variant = (params and type(params.variant) == 'number') and params.variant or 0
 			local deltaZ, min, max = privateFuncs.getFromVariant_FlatAreaHeight(variant, false)
 			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
 			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  10, -2, 8, 1}
@@ -3185,7 +3185,7 @@ cpf =
     },
     lifts = {
         getPreview = function(params, isSideLift)
-			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local variant = (params and type(params.variant) == 'number') and params.variant or 0
 			local deltaZ, min, max = privateFuncs.getFromVariant_LiftHeight(variant)
 			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
 			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  -10, -10, 0, 1}
@@ -3589,7 +3589,7 @@ cpf =
             end
         end,
         getPreviewIcon = function(params)
-			local variant = (params ~= nil and type(params.variant) == 'number') and params.variant or 0
+			local variant = (params and type(params.variant) == 'number') and params.variant or 0
 			local tilt, min, max = privateFuncs.getFromVariant_BridgeTilt(variant)
 			local arrowModelId = 'lollo_freestyle_train_station/icon/arrows_mid_blue.mdl'
 			local arrowModelTransf = {1, 0, 0, 0,  0, 1, 0, 0,  0, 0, 1, 0,  10, -2, 8, 1}

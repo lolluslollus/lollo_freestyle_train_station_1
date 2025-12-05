@@ -811,7 +811,7 @@ function data()
 						)
 
 						local platformHeadId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.platformHeadSlotId)
-						if _terminalData.trackEdgeListVehicleNode0Index ~= nil and _terminalData.trackEdgeListVehicleNode1Index ~= nil then
+						if _terminalData.trackEdgeListVehicleNode0Index and _terminalData.trackEdgeListVehicleNode1Index ~= nil then
 							-- heads only on ground or bridges (they generate terrain, no bridges) and if the station is new enough (Jan 2024)
 							-- the spacing is adjusted so that I can add or remove a head even if an exit is already in place
 							if (cpf.type ~= 2) then -- not in tunnels
@@ -883,7 +883,7 @@ function data()
 							end
 						end
 						-- more stuff only available on heads, no tunnels
-						if _modules[platformHeadId] ~= nil and cpf.type ~= 2 then
+						if _modules[platformHeadId] and cpf.type ~= 2 then
 							local axialWallSlotId = result.mangleId(t, cpf.leadingIndex, _constants.idBases.axialWallSlotId)
 							table.insert(result.slots, {
 								-- height = 0,
@@ -911,7 +911,7 @@ function data()
 							-- add slot for station square here coz it won't work in the module: the chain head - station - square is probably too long
 							local myModule5m = _modules[station5mId]
 							if myModule5m ~= nil then
-								local stationSquareShift_XYZ_rotZ = myModule5m.metadata ~= nil and myModule5m.metadata.stationSquareShift_XYZ_rotZ
+								local stationSquareShift_XYZ_rotZ = myModule5m.metadata and myModule5m.metadata.stationSquareShift_XYZ_rotZ
 								if stationSquareShift_XYZ_rotZ ~= nil then
 									local variant = myModule5m.variant
 									local deltaZ = moduleHelpers.getFromVariant_FlatAreaHeight(variant, false)
@@ -941,7 +941,7 @@ function data()
 							-- add slot for station square here coz it won't work in the module: the chain head - station - square is probably too long
 							local myModule0m = _modules[station0mId]
 							if myModule0m ~= nil then
-								local stationSquareShift_XYZ_rotZ = myModule0m.metadata ~= nil and myModule0m.metadata.stationSquareShift_XYZ_rotZ
+								local stationSquareShift_XYZ_rotZ = myModule0m.metadata and myModule0m.metadata.stationSquareShift_XYZ_rotZ
 								if stationSquareShift_XYZ_rotZ ~= nil then
 									local variant = myModule0m.variant
 									local deltaZ = moduleHelpers.getFromVariant_FlatAreaHeight(variant, false)
@@ -2154,7 +2154,7 @@ function data()
 									for tt = 1, _maxT do
 										if minDistanceSegments_T_TT[t][tt] ~= nil then
 											for _, segmentA in pairs(minDistanceSegments_T_TT[t][tt]) do
-												if segmentA ~= nil and segmentA.bottomTwinIndexT1 ~= nil and segmentA.bottomTwinIndexT2 ~= nil then
+												if segmentA and segmentA.bottomTwinIndexT1 and segmentA.bottomTwinIndexT2 ~= nil then
 													for _, segmentB in pairs(minDistanceSegments_T_TT[t][tt]) do
 														if segmentB.topTwinIndexT1 == segmentA.bottomTwinIndexT1
 														and segmentB.topTwinIndexT2 == segmentA.bottomTwinIndexT2
@@ -2176,7 +2176,7 @@ function data()
 									for tt = 1, _maxT do
 										if minDistanceSegments_T_TT[t][tt] ~= nil then
 											for _, segmentA in pairs(minDistanceSegments_T_TT[t][tt]) do
-												if segmentA ~= nil and not(segmentA.isNeedDeleting) then
+												if segmentA and not(segmentA.isNeedDeleting) then
 													table.insert(minDistanceSegments, segmentA)
 												end
 											end
@@ -2225,7 +2225,7 @@ function data()
 						-- local _linkAlong = function(positions)
 						-- 	for t = 1, _numTerminals do
 						-- 		local positionsInTerminal = positions[t]
-						-- 		if positionsInTerminal ~= nil and #positionsInTerminal > 1 then
+						-- 		if positionsInTerminal and #positionsInTerminal > 1 then
 						-- 			local previousPosition = positionsInTerminal[1]
 						-- 			for i = 2, #positionsInTerminal do
 						-- 				local currentPosition = positionsInTerminal[i]
@@ -2489,7 +2489,7 @@ function data()
 										end
 									end
 									-- logger.infoOut('terminal t = ', minDistanceT, 'about to link to subway'})
-									if minDistanceT ~= nil and minDistanceI ~= nil then
+									if minDistanceT and minDistanceI ~= nil then
 										-- logger.infoOut('allPositionsUnderground[minDistanceT][minDistanceI] =', allPositionsUnderground[minDistanceT][minDistanceI]})
 										links_slotId[slotId] = {
 											t = minDistanceT,
@@ -2560,7 +2560,7 @@ function data()
 									for checkSlotId, distance2Twin in pairs(refLink.distances2Twins) do
 										if checkSlotId ~= refSlotId and distance2Twin ~= nil then
 											local checkLink = links_slotId_WDistances2Twins[checkSlotId]
-											if checkLink ~= nil and checkLink.distance2Platform ~= nil then
+											if checkLink and checkLink.distance2Platform ~= nil then
 												-- search for a neighbour that is closer to the platform...
 												if checkLink.distance2Platform < refLink.distance2Platform
 												-- ...and is not too far out of the way...
@@ -2969,7 +2969,7 @@ function data()
 					local oldModuleValue = args.modules[slotId]
 					-- logger.infoOut('oldModuleValue =', oldModuleValue})
 
-					if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
+					if oldModuleValue and oldModuleValue.name ~= nil then
 						if oldModuleValue.name == _constants.trackElectrificationNoModuleFileName
 						or oldModuleValue.name == _constants.trackElectrificationUndefinedModuleFileName
 						then
@@ -2988,7 +2988,7 @@ function data()
 					local oldModuleValue = args.modules[slotId]
 					-- logger.infoOut('oldModuleValue =', oldModuleValue})
 
-					if oldModuleValue ~= nil and oldModuleValue.name ~= nil then
+					if oldModuleValue and oldModuleValue.name ~= nil then
 						if oldModuleValue.name == _constants.trackSpeedSlowModuleFileName
 						or oldModuleValue.name == _constants.trackSpeedUndefinedModuleFileName
 						then

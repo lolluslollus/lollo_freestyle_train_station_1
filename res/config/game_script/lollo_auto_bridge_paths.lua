@@ -29,7 +29,7 @@ local _actions = {
         newEdge.entity = -1
         newEdge.type = 0 -- 0 is api.type.enum.Carrier.ROAD, 1 is api.type.enum.Carrier.RAIL
         newEdge.comp = oldEdge
-        newEdge.comp.type = bridgeTypeId ~= nil and _compTypeBridge or _compTypeGround
+        newEdge.comp.type = bridgeTypeId and _compTypeBridge or _compTypeGround
         newEdge.comp.typeIndex = bridgeTypeId or -1 -- bridge type
         newEdge.comp.objects = {}
         -- newEdge.playerOwned = {player = api.engine.util.getPlayer()}

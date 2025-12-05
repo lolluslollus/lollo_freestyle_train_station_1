@@ -87,7 +87,7 @@ local _utils = {
     ---@param pos {x: number, y: number, z: number} | boolean | nil
     buildWarningHint = function(pos, message4Sign, message4Warning)
         if not(pos) then
-            if message4Warning ~= nil and m_state.warningText ~= message4Warning then m_state.warningText = message4Warning end
+            if message4Warning and m_state.warningText ~= message4Warning then m_state.warningText = message4Warning end
             return
         end
 
@@ -132,7 +132,7 @@ local _utils = {
         api.cmd.sendCommand(
             api.cmd.make.buildProposal(warningProposal, context, true),
             function(result, success)
-                if message4Warning ~= nil and m_state.warningText ~= message4Warning then m_state.warningText = message4Warning end
+                if message4Warning and m_state.warningText ~= message4Warning then m_state.warningText = message4Warning end
             end
         )
     end,
@@ -261,8 +261,8 @@ local _utils = {
         end
     --[[
         local innerSharedNodeIds = {}
-        if innerNode1Id ~= nil and is1Shared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNode1Id end
-        if innerNodeNId ~= nil and innerNodeNId ~= innerNode1Id and isNShared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNodeNId end
+        if innerNode1Id and is1Shared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNode1Id end
+        if innerNodeNId and innerNodeNId ~= innerNode1Id and isNShared then innerSharedNodeIds[#innerSharedNodeIds+1] = innerNodeNId end
     
         local outerLoneNodeIds = {}
         for id, _ in pairs(outerLoneNodeIds_indexed) do outerLoneNodeIds[#outerLoneNodeIds+1] = id end
@@ -1089,7 +1089,7 @@ local _actions = {
                 function(result, success)
                     allEdgesIndex = allEdgesIndex + 1
                     if not(success) then
-                        logger.warningOut('_rebuildEdge: edgeId ', edgeId, ' was not rebuilt; _rebuildEdge proposal =', proposal)
+                        logger.warningOut('_rebuildEdge: edgeId ', edgeId, ' was not rebuilt; _rebuildEdge proposal =', proposal, 'result =', result)
                         _utils.buildWarningHint(edge.node0Props.position, _('UnsnappedSomethingHere'), _('UnsnappedSomething'))
                         _utils.sendHideProgress()
                     end
@@ -1162,7 +1162,7 @@ local _actions = {
             if not(newConIdAndProposal) then -- no more cons to be processed
                 if isSomethingWrong then
                     local stationCon = api.engine.getComponent(args.stationConstructionId, api.type.ComponentType.CONSTRUCTION)
-                    local stationConPositionXYZ = (stationCon ~= nil and stationCon.fileName == constants.stationConFileName)
+                    local stationConPositionXYZ = (stationCon and stationCon.fileName == constants.stationConFileName)
                         and transfUtils.transf2Position(
                             -- transfUtilsUG.new(stationCon.transf:cols(0), stationCon.transf:cols(1), stationCon.transf:cols(2), stationCon.transf:cols(3)),
                             transfUtils.getLuaTransfFromSolTransf(stationCon.transf),
@@ -1369,9 +1369,9 @@ logger.infoOut('FOUR')
                         local newPlatformHeightProps_indexedByT = stationHelpers.getPlatformHeightProps_indexedByT(args.stationConstructionId, true)
                         if newPlatformHeightProps_indexedByT ~= nil then
                             for nTerminal, oldHeightProps in pairs(args.platformHeightProps_indexedByT) do
-                                if oldHeightProps ~= nil and oldHeightProps.hasEdges then
+                                if oldHeightProps and oldHeightProps.hasEdges then
                                     local newHeightProps = newPlatformHeightProps_indexedByT[nTerminal]
-                                    if newHeightProps ~= nil and newHeightProps.hasEdges then
+                                    if newHeightProps and newHeightProps.hasEdges then
                                         if type(newHeightProps.heightCm) == 'number' and newHeightProps.heightCm ~= oldHeightProps.heightCm then
                                             logger.infoOut('isHeightChanged = true; oldHeightCm = ', oldHeightProps.heightCm, '; newHeightCm = ', newHeightProps.heightCm)
                                             _utils.buildWarningHint(nil, _('UnsnappedMaybe_CheckEdgeExits'), _('UnsnappedMaybe_CheckEdgeExits'))
@@ -1435,9 +1435,7 @@ logger.infoOut('FOUR')
             logger.thingOut('args.streetEndEntities =', args.streetEndEntities)
         end
 
-        local trackEdgeIds = {}
-        local platformEdgeIds = {}
-        local allEdgeIds = {}
+        local allEdgeIds_indexed = {}
         local nTerminalsToRemove_indexed = {}
         if args.nTerminalsToRemove ~= nil then
             for _, t in pairs(args.nTerminalsToRemove) do
@@ -1446,27 +1444,29 @@ logger.infoOut('FOUR')
         end
         if args.trackEdgeList ~= nil then
             for _, edgeProps in pairs(args.trackEdgeList) do
-                allEdgeIds[#allEdgeIds+1] = edgeProps.edgeId
-                trackEdgeIds[#trackEdgeIds+1] = edgeProps.edgeId
+                allEdgeIds_indexed[edgeProps.edgeId] = true
             end
         end
         if args.platformEdgeList ~= nil then
             for _, edgeProps in pairs(args.platformEdgeList) do
-                allEdgeIds[#allEdgeIds+1] = edgeProps.edgeId
-                platformEdgeIds[#platformEdgeIds+1] = edgeProps.edgeId
+                allEdgeIds_indexed[edgeProps.edgeId] = true
             end
         end
         if args.newTerminalNeighbours ~= nil then
-            arrayUtils.concatValues(allEdgeIds, args.newTerminalNeighbours.platforms.edgeIds)
-            arrayUtils.concatValues(allEdgeIds, args.newTerminalNeighbours.tracks.edgeIds)
+            for _, edgeId in pairs(args.newTerminalNeighbours.platforms.edgeIds) do
+                allEdgeIds_indexed[edgeId] = true
+            end
+            for _, edgeId in pairs(args.newTerminalNeighbours.tracks.edgeIds) do
+                allEdgeIds_indexed[edgeId] = true
+            end
         end
         if args.trackEndEntities ~= nil then
             for t, terminalEndEntities in pairs(args.trackEndEntities) do
                 for edgeId, _ in pairs(terminalEndEntities.platforms.jointNeighbourEdges.props) do
-                    allEdgeIds[#allEdgeIds+1] = edgeId
+                    allEdgeIds_indexed[edgeId] = true
                 end
                 for edgeId, _ in pairs(terminalEndEntities.tracks.jointNeighbourEdges.props) do
-                    allEdgeIds[#allEdgeIds+1] = edgeId
+                    allEdgeIds_indexed[edgeId] = true
                 end
             end
         end
@@ -1474,21 +1474,22 @@ logger.infoOut('FOUR')
         if args.streetEndEntities ~= nil then
             for _a, endEntity in pairs(args.streetEndEntities) do
                 for edgeId, _b in pairs(endEntity.jointNeighbourEdges.props) do
-                    allEdgeIds[#allEdgeIds+1] = edgeId
+                    allEdgeIds_indexed[edgeId] = true
                 end
             end
         end
-        logger.infoOut('_removeNeighbours allEdgeIds =', allEdgeIds)
+        logger.infoOut('_removeNeighbours allEdgeIds_indexed =', allEdgeIds_indexed)
 
         -- If the user added or removed modules, preProcessFn() has deleted the street edges, so their edgeIds and nodeIds will be moot.
         -- This is why we check if stuff exists.
-        local allEdgeIds_indexed = {}
+        
         local allExistingEdgeIds_indexed = {}
-        for _, edgeId in pairs(allEdgeIds) do
+        for edgeId, _ in pairs(allEdgeIds_indexed) do
             if edgeUtils.isValidAndExistingId(edgeId) then
                 allExistingEdgeIds_indexed[edgeId] = true
+            else
+                logger.infoOut('_removeNeighbours found non existing or invalid edge:', (edgeId or 'NIL'))
             end
-            allEdgeIds_indexed[edgeId] = true
         end
 
         local isAnythingChanged = false
@@ -1514,11 +1515,13 @@ logger.infoOut('FOUR')
                             break
                         end
                     end
-                    if isNodeToBeRemoved then sharedNodeIds_indexed[nodeId] = true end
+                    if isNodeToBeRemoved then
+                        sharedNodeIds_indexed[nodeId] = true
+                    end
                 end
             end
         end
-        logger.infoOut('sharedNodeIds_indexed ONE =', sharedNodeIds_indexed)
+        logger.infoOut('sharedNodeIds_indexed before counting streetEndEntities =', sharedNodeIds_indexed)
 
         if args.streetEndEntities ~= nil then
             local _tolerance = 0.001
@@ -1569,7 +1572,7 @@ logger.infoOut('FOUR')
                 end
             end
         end
-        logger.infoOut('sharedNodeIds_indexed FOUR =', sharedNodeIds_indexed)
+        logger.infoOut('sharedNodeIds_indexed after counting streetEndEntities =', sharedNodeIds_indexed)
         local i = 0
         for nodeId, _ in pairs(sharedNodeIds_indexed) do
             i = i + 1
@@ -1591,7 +1594,8 @@ logger.infoOut('FOUR')
             isAnythingChanged = true
         end
 
-        logger.infoOut('_removeNeighbours proposal =', proposal)
+        logger.infoOut('### neighbourConIds =', neighbourConIds)
+        -- logger.infoOut('_removeNeighbours proposal =', proposal)
         if not(isAnythingChanged) then
             logger.infoOut('_removeNeighbours skipping an empty proposal')
             if successEventName ~= nil then
@@ -1630,8 +1634,12 @@ logger.infoOut('FOUR')
                         _utils.sendHideProgress()
                     end
                 else
-                    logger.errorOut('_removeNeighbours proposal failed, result.resultProposalData =', result and result.resultProposalData or 'NIL')
-                    m_state.warningText = _('UnsnappedSomething')
+                    logger.errorOut('_removeNeighbours proposal failed, result.resultProposalData =', (result and result.resultProposalData or 'NIL'), 'proposal was =', proposal)
+                    if successEventName == _eventNames.BUILD_STATION_REQUESTED then
+                        m_state.warningText =  _('ErrorAddingTerminal')
+                    else
+                        m_state.warningText = _('UnsnappedSomething')
+                    end
                     _utils.sendHideProgress()
                 end
             end
@@ -2115,7 +2123,7 @@ local _guiActions = {
         local newWaypointPosition = transfUtils.transf2Position(
             transfUtilsUG.new(newWaypointTransf:cols(0), newWaypointTransf:cols(1), newWaypointTransf:cols(2), newWaypointTransf:cols(3))
         )
-        if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
+        if newWaypointPosition and twinWaypointPosition ~= nil then
             local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition) or 0
             guiHelpers.showWaypointDistance(distance)
             return true
@@ -2220,7 +2228,7 @@ local _guiActions = {
                                 end
                             end
                         end
-                    else -- if con.stations ~= nil and #con.stations > 0 then
+                    else -- if con.stations and #con.stations > 0 then
                         -- no knowledge of end nodes: just forbid the waypoint
                         guiHelpers.showWarningWithGoto(_guiTexts.waypointsTooCloseToStation, newWaypointId)
                         api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
@@ -2248,7 +2256,7 @@ local _guiActions = {
             newWaypointId == similarObjectIdsInAnyEdges[1] and similarObjectIdsInAnyEdges[2] or similarObjectIdsInAnyEdges[1]
         local twinWaypointPosition = edgeUtils.getObjectPosition(twinWaypointId)
 
-        if newWaypointPosition ~= nil and twinWaypointPosition ~= nil then
+        if newWaypointPosition and twinWaypointPosition ~= nil then
             local distance = transfUtils.getPositionsDistance(newWaypointPosition, twinWaypointPosition)
             -- forbid building waypoints too far apart, which would make the station too large
             if distance > constants.maxWaypointDistance then
@@ -2308,7 +2316,7 @@ local _guiActions = {
             local conId = api.engine.system.streetConnectorSystem.getConstructionEntityForEdge(edgeId)
             if edgeUtils.isValidAndExistingId(conId) then
                 local con = api.engine.getComponent(conId, api.type.ComponentType.CONSTRUCTION)
-                if con ~= nil and con.stations ~= nil and #con.stations > 0 then
+                if con and con.stations and #con.stations > 0 then
                     guiHelpers.showWarningWithGoto(_guiTexts.waypointsCrossStation, newWaypointId)
                     api.cmd.sendCommand(api.cmd.make.sendScriptEvent(
                         string.sub(debug.getinfo(1, 'S').source, 1),
@@ -3163,7 +3171,7 @@ function data()
                             function(totalLength) return totalLength * 0.5 end
                         )
                         if trackEdgeListMidIndex < 1 then
-                            if midEdgeId ~= nil and midNodeBetween ~= nil then
+                            if midEdgeId and midNodeBetween ~= nil then
                                 logger.infoOut('about to split the centre of the track')
                                 _actions.splitEdgeRemovingObject(
                                     midEdgeId,
@@ -3189,7 +3197,7 @@ function data()
                             function(totalLength) return (args.isCargo and constants.maxCargoWaitingAreaEdgeLength or constants.maxPassengerWaitingAreaEdgeLength) end
                         )
                         if trackEdgeListVehicleNode0Index < 1 then
-                            if vehicleNode0EdgeId ~= nil and vehicleNode0NodeBetween ~= nil then
+                            if vehicleNode0EdgeId and vehicleNode0NodeBetween ~= nil then
                                 logger.infoOut('about to split the beginning of the track')
                                 _actions.splitEdgeRemovingObject(
                                     vehicleNode0EdgeId,
@@ -3215,7 +3223,7 @@ function data()
                             function(totalLength) return (args.isCargo and (totalLength - constants.maxCargoWaitingAreaEdgeLength) or (totalLength - constants.maxPassengerWaitingAreaEdgeLength)) end
                         )
                         if trackEdgeListVehicleNode1Index < 1 then
-                            if vehicleNode1EdgeId ~= nil and vehicleNode1NodeBetween ~= nil then
+                            if vehicleNode1EdgeId and vehicleNode1NodeBetween ~= nil then
                                 logger.infoOut('about to split the end of the track')
                                 _actions.splitEdgeRemovingObject(
                                     vehicleNode1EdgeId,
@@ -3507,7 +3515,7 @@ function data()
                     elseif name == _eventNames.SUBWAY_BUILD then
                         _actions.addSubway(_eventNames.REBUILD_NEIGHBOURS_ALL, args)
                     elseif name == _eventNames.TRACK_SPLIT_REQUESTED then
-                        if args ~= nil and args.conId ~= nil then
+                        if args and args.conId ~= nil then
                             if edgeUtils.isValidAndExistingId(args.conId) then
                                 local con = api.engine.getComponent(args.conId, api.type.ComponentType.CONSTRUCTION)
                                 if con and con.transf then
@@ -3824,7 +3832,7 @@ function data()
                                     local edgeId = api.engine.system.streetSystem.getEdgeForEdgeObject(args)
                                     if edgeUtils.isValidAndExistingId(edgeId) then
                                         local trackEdge = api.engine.getComponent(edgeId, api.type.ComponentType.BASE_EDGE_TRACK)
-                                        if trackEdge ~= nil and edgeUtils.isValidId(trackEdge.trackType) then
+                                        if trackEdge and edgeUtils.isValidId(trackEdge.trackType) then
                                             local waypointData = _guiActions.validateWaypointBuilt(
                                                 modelId,
                                                 args,
@@ -3906,7 +3914,7 @@ function data()
 
                             -- prevent a crash if loading a game when the con config menu is open.
                             local _ingameMenu = api.gui.util.getById('ingameMenu')
-                            if _ingameMenu ~= nil and _ingameMenu:isVisible() then return end
+                            if _ingameMenu and _ingameMenu:isVisible() then return end
 
                             logger.infoOut('the con config menu was closed, about to send command CON_CONFIG_MENU_CLOSED, conId = ', conId)
                             guiHelpers.showProgress(_guiTexts.rebuildNeighboursInProgress, _guiTexts.modName, _guiUtils.sendAllowProgress)
@@ -3938,7 +3946,7 @@ function data()
                                     logger.warningOut('force-saving a game with a possibly unready station')
                                 else
                                     local _ingameMenu = api.gui.util.getById('ingameMenu')
-                                    if _ingameMenu ~= nil and _ingameMenu:isVisible() then
+                                    if _ingameMenu and _ingameMenu:isVisible() then
                                         _ingameMenu:setVisible(false, true)
                                         guiHelpers.showSaveWarning(userMessage)
                                     end

@@ -189,7 +189,7 @@ return {
                         end
                     end
                     -- allow adding new params to old cons that did not have them
-                    if not(isFound) and paramMetadata ~= nil and paramMetadata.key ~= nil then
+                    if not(isFound) and paramMetadata and paramMetadata.key ~= nil then
                         logger.infoOut('new param found, paramMetadata.key =', paramMetadata.key)
                         addParam(paramMetadata.key, paramMetadata, paramMetadata.defaultIndex)
                     end
@@ -237,11 +237,11 @@ return {
             if _window == nil then logger.errorOut('cannot get config window by id') return end
 
             local _windowOldContent = _window:getContent()
-            if _windowOldContent ~= nil and type(_windowOldContent.getId) == 'function' and _windowOldContent:getId() == self.privateFuncs.getListId(entityId) then
+            if _windowOldContent and type(_windowOldContent.getId) == 'function' and _windowOldContent:getId() == self.privateFuncs.getListId(entityId) then
                 logger.infoOut('### window with content with old id')
                 -- these crash:
-                -- if windowOldContent ~= nil and type(windowOldContent.destroy) == 'function' then logger.thingOut('### about to destroy') windowOldContent:destroy() end
-                -- if windowOldContent ~= nil and type(windowOldContent.destroy) == 'function' then logger.thingOut('### about to destroy') api.gui.util.destroyLater(windowOldContent) end
+                -- if windowOldContent and type(windowOldContent.destroy) == 'function' then logger.thingOut('### about to destroy') windowOldContent:destroy() end
+                -- if windowOldContent and type(windowOldContent.destroy) == 'function' then logger.thingOut('### about to destroy') api.gui.util.destroyLater(windowOldContent) end
             else
                 logger.infoOut('### window with content with new id')
                 local _gameGUI = api.gui.util.getGameUI()

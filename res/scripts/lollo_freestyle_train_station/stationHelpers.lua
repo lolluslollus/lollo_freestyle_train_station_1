@@ -1512,22 +1512,26 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
     -- I cannot clone these, for some reason: it dumps
     local tempNode = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node1Id)
         and api.engine.getComponent(endNodeIds4T.platforms.node1Id, api.type.ComponentType.BASE_NODE)
-    local platformNode1Position = (tempNode ~= nil and tempNode.position ~= nil)
+        or nil
+    local platformNode1Position = (tempNode and tempNode.position ~= nil)
         and edgeUtils.getPositionTableFromUserdata(tempNode.position)
         or nil
     tempNode = edgeUtils.isValidAndExistingId(endNodeIds4T.platforms.node2Id)
         and api.engine.getComponent(endNodeIds4T.platforms.node2Id, api.type.ComponentType.BASE_NODE)
-    local platformNode2Position = (tempNode ~= nil and tempNode.position ~= nil)
+        or nil
+    local platformNode2Position = (tempNode and tempNode.position ~= nil)
         and edgeUtils.getPositionTableFromUserdata(tempNode.position)
         or nil
     tempNode = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node1Id)
         and api.engine.getComponent(endNodeIds4T.tracks.node1Id, api.type.ComponentType.BASE_NODE)
-    local trackNode1Position = (tempNode ~= nil and tempNode.position ~= nil)
+        or nil
+    local trackNode1Position = (tempNode and tempNode.position ~= nil)
         and edgeUtils.getPositionTableFromUserdata(tempNode.position)
         or nil
     tempNode = edgeUtils.isValidAndExistingId(endNodeIds4T.tracks.node2Id)
         and api.engine.getComponent(endNodeIds4T.tracks.node2Id, api.type.ComponentType.BASE_NODE)
-    local trackNode2Position = (tempNode ~= nil and tempNode.position ~= nil)
+        or nil
+    local trackNode2Position = (tempNode and tempNode.position ~= nil)
         and edgeUtils.getPositionTableFromUserdata(tempNode.position)
         or nil
 
@@ -1562,8 +1566,8 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
                 node2Id = endNodeIds4T.platforms.node2Id,
             },
             stationEndNodePositions = {
-                node1 = platformNode1Position ~= nil and { x = platformNode1Position.x, y = platformNode1Position.y, z = platformNode1Position.z } or nil,
-                node2 = platformNode2Position ~= nil and { x = platformNode2Position.x, y = platformNode2Position.y, z = platformNode2Position.z } or nil,
+                node1 = platformNode1Position and { x = platformNode1Position.x, y = platformNode1Position.y, z = platformNode1Position.z } or nil,
+                node2 = platformNode2Position and { x = platformNode2Position.x, y = platformNode2Position.y, z = platformNode2Position.z } or nil,
             }
         },
         tracks = {
@@ -1596,8 +1600,8 @@ local _getStationTrackEndEntities4T = function(nTerminal, frozenEdgeIds_indexed,
                 node2Id = endNodeIds4T.tracks.node2Id,
             },
             stationEndNodePositions = {
-                node1 = trackNode1Position ~= nil and { x = trackNode1Position.x, y = trackNode1Position.y, z = trackNode1Position.z } or nil,
-                node2 = trackNode2Position ~= nil and { x = trackNode2Position.x, y = trackNode2Position.y, z = trackNode2Position.z } or nil,
+                node1 = trackNode1Position and { x = trackNode1Position.x, y = trackNode1Position.y, z = trackNode1Position.z } or nil,
+                node2 = trackNode2Position and { x = trackNode2Position.x, y = trackNode2Position.y, z = trackNode2Position.z } or nil,
             }
         },
     }

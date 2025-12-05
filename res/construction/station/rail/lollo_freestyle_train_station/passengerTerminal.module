@@ -251,7 +251,7 @@ return {
 					end
 				end
 			elseif cpf.type == 2 then -- tunnel lights
-				if cpfM1 ~= nil and cpfM1.type == 2 then -- no tunnel lights near tunnel entrances, so they don't get out by rounding accident
+				if cpfM1 and cpfM1.type == 2 then -- no tunnel lights near tunnel entrances, so they don't get out by rounding accident
 					if (cpf.width >= 5 and _eraPrefix == moduleHelpers.eras.era_c.prefix)
 					or not(isTunnelStairs_indexed[cpf.leadingIndex]) then
 						local yShift = 0

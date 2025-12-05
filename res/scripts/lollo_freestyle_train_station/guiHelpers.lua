@@ -49,8 +49,8 @@ guiHelpers.setWindowPosition = function(window, initialPosition)
 
     local windowHeight = math.max(windowContentRect.h, windowMinimumSize.h)
     local windowWidth = math.max(windowContentRect.w, windowMinimumSize.w)
-    local positionX = (initialPosition ~= nil and initialPosition.x) or math.max(0, (gameContentRect.w - windowWidth) * 0.5)
-    local positionY = (initialPosition ~= nil and initialPosition.y) or math.max(0, (gameContentRect.h - windowHeight) * 0.5)
+    local positionX = (initialPosition and initialPosition.x) or math.max(0, (gameContentRect.w - windowWidth) * 0.5)
+    local positionY = (initialPosition and initialPosition.y) or math.max(0, (gameContentRect.h - windowHeight) * 0.5)
     logger.infoOut('### positionX = ', positionX, ', positionY = ', positionY)
 
     if (positionX + windowWidth) > gameContentRect.w then
