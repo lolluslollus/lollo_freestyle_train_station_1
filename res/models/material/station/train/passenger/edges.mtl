@@ -1,0 +1,18 @@
+function data()
+return {
+	params = {
+		fade_out_range = {
+			fadeOutEndDist = 20000,
+			fadeOutStartDist = 10000,
+		},
+		polygon_offset = {
+			factor = 0,
+			units = 0,
+		},
+		two_sided = {
+			twoSided = false,
+		},
+	},
+	type = "NONE",
+}
+end
