@@ -1,0 +1,97 @@
+function data()
+return { 
+		boundingInfo = { 
+			bbMax = { 0.2, 1.45396, 4.50883, },
+			bbMin = { -0.2, -1.45396, -0.01, },
+		},
+		collider = { 
+			params = { 
+				halfExtents = { 0.2, 1.45396, 2.25942, },
+			},
+			transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+			type = "BOX",
+		},
+		lods = {
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
+							mesh = "msh/c_lightpole_lod0.msh",
+							name = "c_lightpole",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 0,
+				visibleTo = 81.5913,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
+							mesh = "msh/c_lightpole_lod1.msh",
+							name = "c_lightpole",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 81.5913,
+				visibleTo = 244.774,
+			},
+			{ 
+				node = { 
+					children = {
+						{ 
+							materials = { "lollo_freestyle_train_station/asset/arrivi_partenze.mtl", },
+							mesh = "msh/c_lightpole_lod2.msh",
+							name = "c_lightpole",
+							transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+						},
+					},
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 244.774,
+				visibleTo = 500,
+			},
+			{ 
+				node = { 
+					name = "RootNode",
+					transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+				},
+				visibleFrom = 500,
+				visibleTo = 1000,
+			},
+		},
+		metadata = { 
+			lightSourceList = { 
+				lights = {
+					{ 
+						angleMax = 50,
+						angleMin = 20,
+						color = { 0.866667, 0.945139, 1, },
+						fadeOutStart = 600,
+						invertMask = true,
+						lightId = "",
+						mask = 0,
+						meshId = "",
+						mode = "LIGHT",
+						radius = 10,
+						strength = 2,
+						transf = { 0, 0, -1, 0, 1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 4.2, 1, },
+						type = "SPOT",
+						visibleFrom = -1,
+						visibleTo = 1000,
+					},
+				},
+			},
+		},
+		version = 2,
+	}
+end
