@@ -1,0 +1,93 @@
+function data()
+    local _mdlHelpers = require('lollo_freestyle_train_station.mdlHelpers')
+    return {
+        boundingInfo = _mdlHelpers.getVoidBoundingInfo(),
+        collider = _mdlHelpers.getVoidCollider(),
+        -- boundingInfo = {
+        --     bbMax = { 1.050400018692, 0.045885197818279, 1.9019999504089, },
+        --     bbMin = { -1.050400018692, -0.045885197818279, 0, },
+        -- },
+        -- collider = {
+        --     params = {
+        --         halfExtents = { 1.050400018692, 0.045885197818279, 0.95099997520447, },
+        --     },
+        --     transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+        --     type = "BOX",
+        -- },
+        lods = {
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    materials = {
+                                        "station/rail/era_a/era_a_trainstation_assets.mtl", 
+                                        "station/rail/era_c/era_c_trainstation_assets.mtl",
+                                    },
+                                    mesh = "lollo_freestyle_train_station/asset/era_a_station_sign_4_pole_lod0.msh",
+                                    name = "era_a_station_name",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                            },
+                            name = "era_a_station_name_grp",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 0,
+                visibleTo = 200,
+            },
+            {
+                node = {
+                    children = {
+                        {
+                            children = {
+                                {
+                                    materials = {
+                                        "station/rail/era_a/era_a_trainstation_assets.mtl", 
+                                    },
+                                    mesh = "lollo_freestyle_train_station/asset/era_a_station_sign_4_pole_lod1.msh",
+                                    name = "era_a_station_name",
+                                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                                },
+                            },
+                            name = "era_a_station_name_grp",
+                            transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                        },
+                    },
+                    name = "RootNode",
+                    transf = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, },
+                },
+                static = false,
+                visibleFrom = 200,
+                visibleTo = 1000,
+            },
+        },
+        metadata = {
+            labelList = {
+                labels = {
+                    {
+                        alignment = "CENTER",
+                        alpha = 1,
+                        alphaMode = "CUTOUT",
+                        childId = "RootNode",
+                        color = { 0, 0, 0, },
+                        filter = "NONE",
+                        fitting = "SCALE",
+                        nLines = 2,
+                        size = { 2, 0.5, },
+                        transf = { -1, 0, 0, 0,  0, 0, 1, 0,  0, 1, 0, 0,  1.0, 0.22, 2.5, 1, },
+                        type = "STATION_NAME",
+                        verticalAlignment = "CENTER",
+                    },
+                },
+            },
+        },
+        version = 1,
+    }
+    end
+    
